@@ -1,0 +1,70 @@
+{
+  "name": "norvig_spell",
+  "output_level" : "token",
+
+  "description": "todo",
+  "outputs": [
+    "token"
+  ],
+  "inputs": [
+    "token"
+  ],
+  "type": "spell_checker",
+  "file_dependencies": {
+    "dictionary": "path_to_dict"
+  },
+  "pipe_priorioty_slot": "3",
+  "spark_input_column_names": [
+    "token"
+  ],
+  "spark_output_column_names": [
+    "checked"
+  ],
+  "critical_parameters": [],
+  "tags": [
+    "embeddings",
+    "transformer",
+    "deep learning"
+  ],
+  "categories": [
+    "embeddings",
+    "contextual embeddings"
+  ],
+  "metrics": [
+    "squad",
+    "etc.."
+  ],
+  "made_from_components": [],
+  "component_options": [],
+  "languages": [
+    "eng"
+  ],
+  "component_parameters_info": {
+    "set_embedding()": "Sets the output embedding for Bert. A, B,C and D are available"
+  },
+  "component_language_options": {},
+  "meta_data": {
+    "model size": "(very big).Mb",
+    "more meta": "data"
+  },
+  "provider": "sparknlp",
+  "version": "1.0",
+  "support_version": "1.0",
+  "documentation_urls": [
+    "todo.com"
+  ],
+  "source_urls": [
+    "todo.com"
+  ],
+  "reference_urls": [
+    "todo.com"
+  ],
+  "citations": [
+    "todo.com"
+  ],
+  "license": "open source",
+  "docs_author" : "todo" ,
+  "component_author" : "Google",
+  "nlu_author" : "todo",
+  "computation_context" : "spark",
+  "output_context" : "spark"}
