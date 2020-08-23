@@ -12,7 +12,7 @@ The **load** and **predict** method.
 
 When building a NLU programm you will usually go through the following steps :  
 
- 1. Pick a model/pipeline/component you want to create from the [NLU namespace](model_namespace)
+ 1. Pick a model/pipeline/component you want to create from the [NLU namespace](/docs/en/namespace)
  2. Call the nlu.load(component) method which returns a NLU model pipeline object
  3. call model.predict() on some String input
  
@@ -34,12 +34,12 @@ NLU algorithms are represented by pretrained models or pipelines.
 A **pretrained model** could be a Deep Neural Network or a simple word matcher.    
 A **pipeline** consists of a stack of pretrained models.     
 
-### NLU component types
+###NLU component types
 
 Any of these component types can be passed as a string to nlu.load() and will return you the default model for that component type.  
 You can further specify your model selection by placing a '.' behind your component selection.
 After the '.' you can specify the model you want via metioning a dataset or model version.    
-See [The NLU components namespace](model_namespace) and [The load f](load_api)
+See [the NLU components namespace](model_namespace) and [The load function](load_api)
 
 
 - classifiers
@@ -63,23 +63,20 @@ You can view it on the [Name Space page](model_namespace)
 
 NLU also provides a few handy funtions to gain insight into the NLU namespace.
 
-**Print all supported languages:**
+### Print all supported languages
+Any of thesea are partial NLU references which can be prefixed to a request to specify a language
 ```python
-import nlu
 nlu.print_all_nlu_supported_languages()
 ```
 
-**Print every component for one specific language:**
+### Print every component for one specific language
+These are complete NLU reference and can be passed to the nlu.load() metod right away
 ```python
-import nlu
 nlu.print_all_nlu_components_for_lang(lang='de')
 ```
 
-**Print the entire NLU namespace offering:**
+### Print the entire NLU namespace offering 
+This is every reference 
 ```python
-import nlu
 nlu.print_all_nlu_components()
 ```
-
-
-

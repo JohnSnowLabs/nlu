@@ -11,9 +11,6 @@ modify_date: "2020-05-26"
 ```bash
 # Install Spark NLU from PyPI
 pip install nlu
-
-# Install Spark NLP from Anacodna/Conda
-conda install -c johnsnowlabs nlu
 ```
 ## Requirements & Setup
 

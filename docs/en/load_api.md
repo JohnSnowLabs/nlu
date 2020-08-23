@@ -7,7 +7,7 @@ modify_date: "2020-05-08"
 ---
 
 The nlu.load() method takes in one or multiple NLU pipeline, model or component references seperated by whitespaces.      
-See [the NLU namespace](model_namespace) for an overview of all possibles NLU references.      
+See [the NLU namespace]( /docs/en/namespace) for an overview of all possibles NLU references.      
 
 NLU  will induce the following reference format for any query to the load method:        
 **language.component_type.dataset.embeddings** i.e.: en.sentiment.twitter.use      
@@ -72,6 +72,3 @@ Param Name [ classes ] :  Param Info : get the tags used to trained this NerDLMo
 Param Name [ storageRef ] :  Param Info : unique reference name for identification  currenlty Configured as :  tfhub_use
 ```
 
-# TODO outputs
-pipe.components['sentiment'].setConfig(Bla)
-pipe.components['tokenizer'].setConfig(bla)
