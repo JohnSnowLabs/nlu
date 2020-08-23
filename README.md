@@ -67,17 +67,14 @@ Choose the right tool for the right task! Wether you analyise movies or twitter,
 ## Utilities for the Data Science NLU applications  
 Working with text data can be sometimes quite a dirty Job. NLU helps you keep your hands clean by providing lots of components that take away data engineering intensive tasks.  
   
-  
- 
-- Matchers  
  - Datetime Matcher 
  - Pattern Matcher 
  - Chunk Matcher 
  - Phrases Matcher 
-- Text cleaners 
  - Stopword Cleaners
  - Pattern Cleaners 
  - Slang Cleaner  
+ 
 ## Where can I see NLUs entire offer?  
 Checkout the [NLU Namespace](https://nlu.johnsnowlabs.com/docs/en/namespace) for everything that NLU has to offer!  
   
