@@ -82,7 +82,7 @@ setup(
     #
     # This field corresponds to the "Home-Page" metadata field:
     # https://packaging.python.org/specifications/core-metadata/#home-page-optional
-    url='http://nlp.johnsnowlabs.com',  # Optional
+    url='http://nlu.johnsnowlabs.com',  # Optional
 
     # This should be your name or the name of the organization which owns the
     # project.

@@ -11,7 +11,7 @@ It is powerd by John Snow Labs powerful Spark NLP library.
 ## Getting Started with NLU  
 To get your hands on the power of NLU, you just need to install it via pip and ensure Java 8 is installed and properly configured. Checkout [Quickstart for more infos](https://nlu.johnsnowlabs.com/docs/en/install)
 ```bash  
-pip install nlu  
+pip install nlu==2.5rc1
 ```  
   
 ## Loading and predict with any model in 1 line python  
