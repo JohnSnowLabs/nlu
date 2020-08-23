@@ -69,8 +69,15 @@ Working with text data can be sometimes quite a dirty Job. NLU helps you keep yo
   
   
   
-- Matchers  
- - Datetime Matcher - Pattern Matcher - Chunk Matcher - Phrases Matcher - Text cleaners - Stopword Cleaners - Pattern Cleaners - Slang Cleaner  
+    - Matchers  
+     - Datetime Matcher 
+     - Pattern Matcher 
+     - Chunk Matcher 
+     - Phrases Matcher 
+    - Text cleaners 
+     - Stopword Cleaners
+     - Pattern Cleaners 
+     - Slang Cleaner  
 ## Where can I see NLUs entire offer?  
 Checkout the [NLU Namespace](https://nlu.johnsnowlabs.com/docs/en/namespace) for everything that NLU has to offer!  
   
