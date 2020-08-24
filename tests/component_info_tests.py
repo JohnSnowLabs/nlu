@@ -12,7 +12,8 @@ class MyTestCase(unittest.TestCase):
 
     def test_list_all_names(self):
         nlu.print_all_nlu_components()
-        nlu.print_all_nlu_components_for_lang()
+        nlu.print_all_nlu_components_for_lang(lang='de')
+
         nlu.print_all_nlu_supported_languages()
 
     def test_print_all_default_components_as_markdown(self):

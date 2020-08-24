@@ -1,0 +1,293 @@
+# Columns for models
+
+
+## Docs  :
+Flexible and universally interchangable NLU/NLP pipelines based on simplistic pythonic API best pratices.
+
+
+
+
+#Trouble shoot :
+Spark/ Pyspark erro https://stackoverflow.com/questions/53865015/org-apache-spark-sparkexception-no-port-number-in-pyspark-daemons-stdout
+
+
+
+Sample notes and outputs :
+
+import nlu
+
+nlu.load('recognize_entities_bert').predict('Ernie and Bert are buddies').get('entities')
+  >> ['Ernie', 'Bert']
+
+nlu.load('spell_check').predict('What a graet muvie')
+  >> 'What a great movie'
+
+df['xlnet'] = nlu.load('xlnet_embeddings').predict(df['sentences'])
+  # will add an 'xlnet' column to df with xlnet embeddings for the 'sentences' column
+
+pipe = nlu.build(['sentence_splitter', 'tokenizer', 'lemmatizer', 'stemmer', 'pos'])
+pipe['tokenizer'].addException('New York')
+pipe.predict('What's going on in New York?')
+  # should pretty-print a dataframe with a column for each pipeline step output
+
+pipe = nlu.load('lemmatizer')
+pipe.fit(df_train)
+pipe.predict(df_test)
+
+
+
+
+
+
+
+nlu.load('recognize_entities_bert').predict('Ernie and Bert are buddies. The live together.', 'Today is Friday')
+
+BY DOCUMENT:
+
+document                            entities              entity_type     start_pos       end_pos
+---------------------------------------------------------------------------------
+Ernie and Bert are buddies          ['Ernie', 'Bert']     [PER,PER]       [1, 9]          [5, 15]
+Today is Friday                     ['Friday']            [MISC]          [1]             [6]
+
+
+
+BY SENTENCE:
+sentence                            entities              entity_type    start_pos       end_pos
+---------------------------------------------------------------------------------
+Ernie and Bert are buddies          ['Ernie', 'Bert']                    [1, 9]          [5, 15]
+They live together                  []                                   []              []
+Today is Friday                     ['Friday']                           [1]             [6]
+
+
+BY ENTITY:
+entity               entity_type              start_pos           end_pos
+-------------------------------------------------------------------------
+Ernie                PER                      1
+Bert                 PER
+Friday               MISC
+
+
+
+BY TOKEN:
+
+token
+--------------------------------------------------------------------------
+Ernie                B-PER
+Bert                 B-PER
+Friday               B-MISC
+
+
+
+
+nlu("explain_document_dl").predict("She went home")
+
+token         stem         lemma          checked          start         end          pos
+-----------------------------------------------------------------------------------------
+She           she          she
+went          went         go
+home          home         home
+
+
+
+
+nlu("sentiment").predict("Today is a wonderful day. Tomorrow will be even better!", level=byDocument)
+
+document                                    sentiment         sentiment_score
+-----------------------------------------------------------------------------
+Today is a wonderful day. Tomorrow...       Positive          0.92
+
+
+
+nlu("sentiment").predict("Today is a wonderful day. Tomorrow will be even better", bySentence)
+
+sentence                          sentiment         sentiment_score
+-------------------------------------------------------------------
+Today is a wonderful day.         Positive          0.91
+Tomorrow will be event better!    Positive          0.86
+
+
+
+nlu("analyze_sentiment").predict("Today is a wonderful day. Tomorrow will be even better").byToken()
+token            sentiment          sentiment_score
+---------------------------------------------------
+Today            Neutral            0.0
+is               Neutral            0.0
+a                Neutral            0.0
+wonderful        Positive           0.98
+...
+
+
+
+
+nlu("use").predict("Today is a wonderful day. Tomorrow will be even better!")
+
+sentence                         embedding
+---------------------------------------------------
+Today is a wonderful day.        [.....]
+Tomorrow will be even better!    [.....]
+
+
+df['use'] = nlu("use").predict("Today is a wonderful day. Tomorrow will be even better!)["embedding"]
+
+df['xlnet'] = nlu('xlnet_embeddings').predict(df['sentences'])
+
+
+
+
+nlu.load('spell_check').predict('What a graet muvie', byToken)
+token         checked
+---------------------
+What          What
+a             a
+graet         great
+muvie         movie
+
+
+nlu('spell_check').predict('What a graet muvie')
+
+document               checked
+-----------------------------------------
+What a graet muvie     What a great movie
+
+
+
+nlu('spell_check').predict('What a graet muvie', byText)
+  >> 'What a great movie'
+
+
+
+
+Annotators withouth pretrained :
+
+
+
+
+
+
+# If we map every model in a pipelines stages, then we can construct a list of NLU components from this!!!
+# TODO get name of EVERY spark nlp model and make a JSON and map it in NLU (Alternatively, we could also put it in the info.json as attribute "SparkNLP model name")
+for mod in pipeline.model.stages : print(mod.name) ! workszzz
+
+
+DOCUMENT = “document”
+TOKEN = “token”
+CHUNK = “chunk”
+POS = “pos”
+WORD_EMBEDDINGS = “word_embeddings”
+SENTENCE_EMBEDDINGS = “sentence_embeddings”
+DATE = “date”
+ENTITY = “entity”
+CATEGORY = “category”
+SENTIMENT = “sentiment”
+NAMED_ENTITY = “named_entity”
+DEPENDENCY = “dependency”
+LABELED_DEPENDENCY = “labeled_dependency”
+
+
+
+# OG build notes for __init__.py root
+
+    # 0. Build option , just one compoenent : nlu("sentiment_pipeline")
+    # 1. Build Option : List of String identifiers : nlu("Tokenizer", "Bert", "Elmo", "Sentiment")
+    # 2. Build Option : List of Component Objects : nlu(WordEmbedding("Emlo"), Tokenizer("sparknlp"), Spell("Vivkien")
+    # 3. Build option via returned pipe object : nlu.build().add("elmo").add("bert").add("tokenizer).add("Sentiment_vivkien")
+    # 4. Build option same as 3. but with Component object
+    # 5. Build by white space sepetrated string : nlu("tokenizer bert albert elmo sentiment")
+
+
+
+# OG build notes __init.py parse_comonent_data_from_name_query()
+    # 1. Check if either a default cmponent or one specific pretrained component or pipe  or alias of them is is requested without more sepcificatin about lang,dataset or embeding.
+
+    # 2. check if it is just 'embed'  (get default component)
+
+    # 4. check if it is 'ner.onto' format (with dataset)
+
+    # 5. check if it is 'en.ner.onto' format (with datasetvlang,)
+
+    # 6. check if it is 'en.ner.onto.glove_100d' full format (with lang, dataset, emb)
+
+
+
+
+NLP Docs updates Todo :
+annotators :
+1. NER-Converter, Output Type input type linebreak missing
+2. Write at DeepSentenceDetector that you need to use NER Converter on some NER output to use it ! Duh
+
+
+
+
+# QOUTES!
+You are here because Zion is about to be destroyed. Its every living inhabitant terminated, its entire existence eradicated.
+
+
+
+Denial is the most predictable of all human responses. But, rest assured, this will be the sixth time we have destroyed it, and we have become exceedingly efficient at it.
+
+
+Your life is the sum of a remainder of an unbalanced equation inherent to the programming of the matrix. You are the eventuality of an anomaly, which despite my sincerest efforts I have been unable to eliminate from what is otherwise a harmony of mathematical precision. While it remains a burden assiduously avoided, it is not unexpected, and thus not beyond a measure of control. Which has led you, inexorably, here.
+
+
+Hope, it is the quintessential human delusion, simultaneously the source of your greatest strength, and your greatest weakness.
+
+
+
+
+The first matrix I designed was quite naturally perfect. It was a work of art. Flawless. Sublime. A triumph only equaled by its monumental failure.
+
+Don't Think You Are, Know You Are.
+
+As you were undoubtedly gathering, the anomaly is systemic, creating fluctuations in even the most simplistic equations.
+
+ If I am the father of the Matrix, she would undoubtedly be its mother.
+ \\\
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+We should add our moms, dads and Bosses to this convo at some point.
+I am sure they could contribute greatly to our research efforts.
+They have decades of Jizzdom to share.
+
+
+
+NLU - a treasure chest full of machine learning booty!
+
+
+ for style
+
+{:.steelBlueCols}
+ vs
+ {:.paleBlueRows}
+ 
+
+https://johnsnowlabs.github.io/nlu/
+
+#nlu.johnsnowlabs.com
+
+https://pypi.org/project/nlu/2.5rc1/
+
+Hey @all a swiss army knife of NLP and NLU goodies has been released! 
+Check out our latest library, nlu, it makes every feature that spark NLP offers avaiable in just 1 line of python code!
+
+- Github page
+- Website and Docs https://johnsnowlabs.github.io/
+- Docs https://johnsnowlabs.github.io/nlu/ 
+- Collab Demo of most features https://colab.research.google.com/drive/1hJ6BiYXxfeDfDjsZu0ZI2TnOa9nrIxfI?usp=sharing
+- Twitter Airline Sentiment Analysis nlu demo https://www.kaggle.com/kasimchristianloan/nlu-sentiment-airline-demo
+- Twitter Airline Emotion Analysis nlu demo https://www.kaggle.com/kasimchristianloan/nlu-emotion-airline-demo
+- Twitter COVID Sentiment Analysis nlu demo https://www.kaggle.com/kasimchristianloan/nlu-covid-sentiment-showcase
+- Twitter COVID Emotion Analysis nlu demo https://www.kaggle.com/kasimchristianloan/nlu-covid-emotion-showcase
+ 
+```
+ pip install nlu==2.5.rc1
+```
+then just open your Pyshell or a Jupyter notebook and run
+```
+import nlu
+nlu.load('sentiment').predict('NLU is great!')
+```

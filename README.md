@@ -20,13 +20,23 @@ import nlu
 nlu.load('sentiment').predict('I love NLU! <3')  
 ```  
   
-## Loading and predict with  <u>multiple models</u> in 1 line  
+## Loading and predict with multiple models in 1 line  
   
 Get 6 different embeddings in 1 line and use them for downstream datas cience tasks!  
   
 ```python  
 nlu.load('bert elmo albert xlnet glove use').predict('I love NLU! <3')  
 ```  
+
+## NLU notebooks and examples
+
+- [Collab demo of all NLU features](https://colab.research.google.com/drive/1hJ6BiYXxfeDfDjsZu0ZI2TnOa9nrIxfI?usp=sharing)
+- [Twitter Airline Sentiment Analysis nlu demo](https://www.kaggle.com/kasimchristianloan/nlu-sentiment-airline-demo)
+- [Twitter Airline Emotion Analysis nlu demo](https://www.kaggle.com/kasimchristianloan/nlu-emotion-airline-demo)
+- [Twitter COVID Sentiment Analysis nlu demo](https://www.kaggle.com/kasimchristianloan/nlu-covid-sentiment-showcase)
+- [Twitter COVID Emotion Analysis nlu demo](https://www.kaggle.com/kasimchristianloan/nlu-covid-emotion-showcase)
+
+
   
 ## What kind of models does NLU provides?  
 NLU provides everything a data scientist might want to wish for in one line of code!   

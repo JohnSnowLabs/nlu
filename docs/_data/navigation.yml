@@ -30,9 +30,9 @@ docs-en:
     children:
       - title:  General Concepts
         url:    /docs/en/concepts
-      - title:  The NLU Load function
+      - title:  NLU Load Function
         url:    /docs/en/load_api
-      - title:  The NLU Predict function
+      - title:  NLU Predict Function
         url:    /docs/en/predict_api
       - title:  Pipelines and Models Namespace
         url:    /docs/en/namespace
