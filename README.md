@@ -4,7 +4,7 @@ John Snow Labs NLU provides state of the art algorithms for NLP&NLU with hundred
 It is powerd by John Snow Labs powerful Spark NLP library.  
  
 ## Project's Website
-Take a look at our official Spark NLP page: [https://johnsnowlabs.github.io/nlu/](https://johnsnowlabs.github.io/nlu/)  for user documentation and examples
+Take a look at our official Spark NLP page: [https://nlu.johnsnowlabs.com/docs/en/namespace](https://nlu.johnsnowlabs.com/docs/en/namespace)  for user documentation and examples
 
 
 
@@ -91,7 +91,7 @@ Working with text data can be sometimes quite a dirty Job. NLU helps you keep yo
  - Slang Cleaner  
  
 ## Where can I see NLUs entire offer?  
-Checkout the [NLU Namespace](https://johnsnowlabs.github.io/nlu/docs/en/namespace) for everything that NLU has to offer!  
+Checkout the [NLU Namespace](https://nlu.johnsnowlabs.com/docs/en/namespace) for everything that NLU has to offer!  
   
   
   
