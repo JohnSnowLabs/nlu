@@ -68,5 +68,5 @@ Detailed information about NLU APIs, concepts, componnents and more can be found
 
 - [The NLU load function](load_api)
 - [The NLU predict function](predict_api)
-- [The NLU components namespace](model_namespace)
+- [The NLU components namespace](https://nlu.johnsnowlabs.com/docs/en/namespace)
 - [NLU starter Collab notebook](https://colab.research.google.com/drive/1hJ6BiYXxfeDfDjsZu0ZI2TnOa9nrIxfI?usp=sharing)

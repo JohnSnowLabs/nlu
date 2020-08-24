@@ -39,7 +39,7 @@ A **pipeline** consists of a stack of pretrained models.
 Any of these component types can be passed as a string to nlu.load() and will return you the default model for that component type.  
 You can further specify your model selection by placing a '.' behind your component selection.
 After the '.' you can specify the model you want via metioning a dataset or model version.    
-See [the NLU components namespace](model_namespace) and [The load function](load_api)
+See [the NLU components namespace](https://nlu.johnsnowlabs.com/docs/en/namespace) and [The load function](https://nlu.johnsnowlabs.com/docs/en/load_api)
 
 
 - classifiers
@@ -59,7 +59,7 @@ See [the NLU components namespace](model_namespace) and [The load function](load
 
 ## Component Name Space
 The NLU name space describes the collection of all models, pipelines and components available in NLU and supported by the nlu.load() method.        
-You can view it on the [Name Space page](model_namespace)
+You can view it on the [Name Space page](https://nlu.johnsnowlabs.com/docs/en/load_api)
 
 NLU also provides a few handy funtions to gain insight into the NLU namespace.
 
