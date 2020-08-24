@@ -31,10 +31,10 @@ nlu.load('bert elmo albert xlnet glove use').predict('I love NLU! <3')
 ## NLU notebooks and examples
 
 - [Collab demo of all NLU features](https://colab.research.google.com/drive/1hJ6BiYXxfeDfDjsZu0ZI2TnOa9nrIxfI?usp=sharing)
-- [Twitter Airline Sentiment Analysis nlu demo](https://www.kaggle.com/kasimchristianloan/nlu-sentiment-airline-demo)
-- [Twitter Airline Emotion Analysis nlu demo](https://www.kaggle.com/kasimchristianloan/nlu-emotion-airline-demo)
-- [Twitter COVID Sentiment Analysis nlu demo](https://www.kaggle.com/kasimchristianloan/nlu-covid-sentiment-showcase)
-- [Twitter COVID Emotion Analysis nlu demo](https://www.kaggle.com/kasimchristianloan/nlu-covid-emotion-showcase)
+- [Kaggle Twitter Airline Sentiment Analysis NLU demo](https://www.kaggle.com/kasimchristianloan/nlu-sentiment-airline-demo)
+- [Kaggle Twitter Airline Emotion Analysis NLU demo](https://www.kaggle.com/kasimchristianloan/nlu-emotion-airline-demo)
+- [Kaggle Twitter COVID Sentiment Analysis NLU demo](https://www.kaggle.com/kasimchristianloan/nlu-covid-sentiment-showcase)
+- [Kaggle Twitter COVID Emotion Analysis nlu demo](https://www.kaggle.com/kasimchristianloan/nlu-covid-emotion-showcase)
 
 
   
