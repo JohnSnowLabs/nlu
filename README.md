@@ -2,7 +2,12 @@
 # NLU : State of the Art Natural Language understanding  
 John Snow Labs NLU provides state of the art algorithms for NLP&NLU with hundreds of pretrained models in 59 languages.  It enables swift and simple development and research with its powerful Pythonic and Keras inspired API.  NLU's focus lies in providing the latest and greatest results of NLP&NLU research with **1 Line of code at most**  
 It is powerd by John Snow Labs powerful Spark NLP library.  
-  
+ 
+# Project's Website
+Take a look at our official Spark NLP page: [https://johnsnowlabs.github.io/nlu/](https://johnsnowlabs.github.io/nlu/)  for user documentation and examples
+
+
+
 ## NLU in action  
 ![NLU in action](http://ckl-it.de/wp-content/uploads/2020/08/NLU_IN_ACTION_high_qual.gif)
   
@@ -86,7 +91,7 @@ Working with text data can be sometimes quite a dirty Job. NLU helps you keep yo
  - Slang Cleaner  
  
 ## Where can I see NLUs entire offer?  
-Checkout the [NLU Namespace](https://nlu.johnsnowlabs.com/docs/en/namespace) for everything that NLU has to offer!  
+Checkout the [NLU Namespace](https://johnsnowlabs.github.io/nlu/docs/en/namespace) for everything that NLU has to offer!  
   
   
   
