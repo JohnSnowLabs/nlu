@@ -95,7 +95,7 @@ Checkout the [NLU Namespace](https://johnsnowlabs.github.io/nlu/docs/en/namespac
   
   
   
-### Support Pandas and Pandas Dataframes  
+### Support for Pandas and Spark Dataframes  
   
 # Want to contribute?  
 Use John Snow Labs model hub! Soon to be released  
