@@ -22,13 +22,13 @@ emotion_df = nlu.load('sentiment').predict(df)
 emotion_df['sentiment'].value_counts().plot.bar()
 ```
 
-![Sentiment Counts](/nlu/assets/images/nlu/VizExamples/sentiment_counts.png)
+![Sentiment Counts](/assets/images/nlu/VizExamples/sentiment_counts.png)
 
 ```python
 emotion_df = nlu.load('emotion').predict(df)
 emotion_df['category'].value_counts().plot.bar()
 ```
-![Category counts](/nlu/assets/images/nlu/VizExamples/category_counts.png)
+![Category counts](/assets/images/nlu/VizExamples/category_counts.png)
 
 
 
