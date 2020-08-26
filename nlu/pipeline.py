@@ -417,13 +417,13 @@ class NLUPipeline(BasePipe):
             return sdf.toPandas()
         elif self.output_datatype == 'modin' :
             return mpd.DataFrame(sdf.toPandas())
-        # todo actual series and return String/numpy/array objects
+        # todo actual series and return String/array objects
         elif self.output_datatype == 'pandas_series' :
             return sdf.toPandas()
         elif self.output_datatype == 'modin_series' :
             return mpd.DataFrame(sdf.toPandas())
         elif self.output_datatype == 'numpy' :
-            return sdf.toPandas()
+            return sdf.toPandas().to_numpy()
         elif self.output_datatype == 'string' :
             return sdf.toPandas()
         elif self.output_datatype == 'array' :
@@ -475,7 +475,7 @@ class NLUPipeline(BasePipe):
         import pyspark  
         stranger_features = []
         try:
-            if type(data) is  pyspark.sql.dataframe : # casting follows spark->pd
+            if type(data) is  pyspark.sql.dataframe.DataFrame : # casting follows spark->pd
                 self.output_datatype = 'spark'
                 if self.raw_text_column in data.columns:
                     # store all stranger features 
