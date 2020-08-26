@@ -13,6 +13,7 @@ from pyspark.sql.functions import flatten, explode, arrays_zip, map_keys, map_va
 from pyspark.sql.functions import col as pyspark_col
 from pyspark.sql.functions import udf
 from pyspark.sql.types import ArrayType,FloatType, StringType, DoubleType
+import modin.pandas as mpd
 
 
 class BasePipe():
@@ -26,6 +27,7 @@ class BasePipe():
         self.output_level = ''  # either document, chunk, sentence, token
         self.output_different_levels = True
         self.pipe_components = []  # orderd list of nlu_component objects
+        self.output_datatype = 'pandas' # What data type should be returned after predict either spark, pandas, modin, numpy, string or array 
     def add(self, component, component_name="auto_generate"):
         self.pipe_components.append(component)
         # self.component_execution_plan.update()
@@ -396,9 +398,37 @@ class NLUPipeline(BasePipe):
          
         final_cols = final_select_same_output_level + final_select_not_at_same_output_level
         if drop_irrelevant_cols : final_cols = self.drop_irrelevant_cols(final_cols)
+        
+        final_df = ptmp.select(final_cols)
                 
-        return ptmp.select(final_cols).toPandas()
+        return  self.finalize_return_datatype(final_df)
 
+    def finalize_return_datatype(self, sdf):
+        '''
+        Take in a Spark dataframe with only relevant columns remaining.
+        Depending on what value is set in self.output_datatype, this method will cast the final SDF into Pandas/Spark/Numpy/Modin/List objects
+        :param sdf: 
+        :return: The predicted Data as datatype dependign on self.output_datatype
+        '''
+
+        if self.output_datatype == 'spark' : 
+            return sdf
+        elif self.output_datatype == 'pandas' : 
+            return sdf.toPandas()
+        elif self.output_datatype == 'modin' :
+            return mpd.DataFrame(sdf.toPandas())
+        # todo actual series and return String/numpy/array objects
+        elif self.output_datatype == 'pandas_series' :
+            return sdf.toPandas()
+        elif self.output_datatype == 'modin_series' :
+            return mpd.DataFrame(sdf.toPandas())
+        elif self.output_datatype == 'numpy' :
+            return sdf.toPandas()
+        elif self.output_datatype == 'string' :
+            return sdf.toPandas()
+        elif self.output_datatype == 'array' :
+            return sdf.toPandas()
+        
 
     def drop_irrelevant_cols(self, cols):
         '''
@@ -446,6 +476,7 @@ class NLUPipeline(BasePipe):
         stranger_features = []
         try:
             if type(data) is  pyspark.sql.dataframe : # casting follows spark->pd
+                self.output_datatype = 'spark'
                 if self.raw_text_column in data.columns:
                     # store all stranger features 
                     if len(data.columns) > 1 :
@@ -453,8 +484,13 @@ class NLUPipeline(BasePipe):
                     sdf = self.spark_transformer_pipe.transform(data )
                 else :
                     print('Could not find column named "text" in input Pandas Dataframe. Please ensure one column named such exists. Columns in DF are : ', data.columns)
-
-            if type(data) is pd.DataFrame:  # casting follows pd->spark->pd
+            if type(data) is pd.DataFrame or type(data) is mpd.DataFrame :  # casting follows pd->spark->pd
+                self.output_datatype = 'pandas'
+ 
+                if type(data) is mpd.DataFrame  : 
+                    data = pd.DataFrame(data.to_dict()) # create pandas to support type inference
+                    self.output_datatype = 'modin'
+                
                 if self.raw_text_column in data.columns:
                     if len(data.columns) > 1 :
                         data = data.where(pd.notnull(data), None) # make  Nans to None, or spark will crash
@@ -465,7 +501,12 @@ class NLUPipeline(BasePipe):
                     self.spark.createDataFrame(data ))
                 else : 
                     print('Could not find column named "text" in input Pandas Dataframe. Please ensure one column named such exists. Columns in DF are : ', data.columns)
-            elif type(data) is pd.Series:  # for df['text'] colum/series passing casting follows pseries->pdf->spark->pd
+            elif type(data) is pd.Series or type(data) is mpd.Series:  # for df['text'] colum/series passing casting follows pseries->pdf->spark->pd
+                self.output_datatype='pandas_series'
+                if type(data) is mpd.Series  :
+                    self.output_datatype='modin_series'
+                    data = pd.Series(data.to_dict()) # create pandas to support type inference
+
                 data = pd.DataFrame(data).dropna(axis=1, how='all')
                 
                 if self.raw_text_column in data.columns: sdf = \
@@ -474,6 +515,7 @@ class NLUPipeline(BasePipe):
                 else: print('Could not find column named "text" in  Pandas Dataframe generated from input  Pandas Series. Please ensure one column named such exists. Columns in DF are : ', data.columns)
     
             elif type(data) is np.ndarray:  # This is a bit inefficient. Casting follow  np->pd->spark->pd. We could cut out the first pd step
+                self.output_datatype='numpy_array'
                 if len(data.shape) != 1:
                     print("Exception : Input numpy array must be 1 Dimensional for prediction.. Input data shape is",data.shape)
                     return ''
@@ -482,9 +524,11 @@ class NLUPipeline(BasePipe):
                 print('Predicting on np matrices currently not supported. Please input either a Pandas Dataframe with a string column named "text"  or a String or a list of strings. ' )
                 return ''
             elif type(data) is str:  # inefficient, str->pd->spark->pd , we can could first pd
+                self.output_datatype='string'
                 sdf = self.spark_transformer_pipe.transform(self.spark.createDataFrame(
                     pd.DataFrame({self.raw_text_column: data}, index=[0])))  
             elif type(data) is list:  # inefficient, list->pd->spark->pd , we can could first pd
+                self.output_datatype='string_list'
                 if all(type(elem) == str for elem in data):
                     sdf = self.spark_transformer_pipe.transform(self.spark.createDataFrame(pd.DataFrame(
                         {self.raw_text_column: pd.Series(data)})))  
@@ -494,6 +538,8 @@ class NLUPipeline(BasePipe):
                 print('Predicting on dictionaries currently not supported. Please input either a Pandas Dataframe with a string column named "text"  or a String or a list of strings. ' )
                 return ''
             
+            
+            # TODO pass the datatype we got to the pythonify  method, so we can returnt he same datatype to the user
             return self.pythonify_spark_dataframe(sdf, self.output_different_levels, keep_stranger_features=keep_stranger_features, stranger_features=stranger_features)
         except : 
             import sys
