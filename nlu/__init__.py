@@ -2,6 +2,8 @@ import nlu
 import logging
 from nlu.namespace import NameSpace
 from sys import exit
+import warnings
+warnings.filterwarnings("ignore")
 
 logger = logging.getLogger('nlu')
 # logger.setLevel(logging.INFO)
@@ -518,5 +520,5 @@ def print_all_nlu_components():
 class NLU_error():
     def __init__(self):
         pass
-    def predict(self, text, output_level='error', output_positions='error'):
+    def predict(self, text, output_level='error', positions='error', metadata='error'):
         print('The NLU components could not be properly created. Please check previous print and Verbose mode for further info')
