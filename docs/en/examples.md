@@ -16,6 +16,7 @@ You need to pass one NLU reference to the load method.
 You can also pass multiple whitespace seperated references.       
 [You can find all NLU references here](https://nlu.johnsnowlabs.com/docs/en/namespace) 
 
+
 ## Tokenization
 ```python
 nlu.load('tokenize').predict('Each word and symbol in a sentence will generate token.')

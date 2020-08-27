@@ -139,10 +139,10 @@ nlu.load('emotion').predict('I love NLU!')
 
 {:.steelBlueCols}
 
-|sentence_embeddings	|category_sentence	|category_surprise	|category_sadness	|category_joy|	category_fear	|sentence	|category	|id|
-|-----------------------|-------------------|-------------------|-------------------|------------|------------------|-----------|----------|----|
-|[0.027570432052016258, -0.052647676318883896, ...] | 0	| 0.012899903	| 0.0015578865	| 0.9760173	|0.0095249	| I love NLU!	| joy	|1|
 
+|sentence_embeddings| 	category_confidence| 	sentence| 	category| 	id|
+|--------------------|---------------------|------------|------------|-----|
+|[0.027570432052016258, -0.052647676318883896, ...]	|0.976017	|I love NLU!	|joy	|1|
 
 ## Sentiment
 ```python
@@ -219,10 +219,12 @@ nlu.load('lang').predict(['NLU is an open-source text processing library for adv
 ```
 
 {:.steelBlueCols}
-|language_de | 	language_no | 	language_ru | 	language_sv | 	language_fi | 	language_pt | 	language_bg | 	language_el | 	language_en | 	language_hr | 	language_it | 	language_fr | 	language_hu | 	language_es| 	language_cs | 	language_uk | 	language_sk | 	language_pl | 	language_ro| 	language_tr| 	document|	language|	id|
-|------------|--------------|----------------|-------------|----------------|--------------|-----------------|---------------|--------------|---------------|----------------|--------------|---------------|--------------|----------------|---------------|----------------|---------------|-------------|-----------------|-----------|----------|------|
-|1.10927795E-4	|1.786265E-4 | 	3.09676E-5 | 	0.005297283	| 1.085274E-5	 | 4.7062217E-6| 	6.4429906E-7| 	0.0011827932|	0.9854069	|1.6956832E-6 | 1.4030554E-5 | 	1.466399E-4 | 	3.2495E-6 | 0.007108454	| 8.250847E-5 | 	1.2385209E-4 | 	2.4604517E-6 | 	1.9354234E-4 | 	1.2024728E-5 | 	8.7725675E-5 | 	NLU is an open-source text processing library ... | 	en	| 0| 
-|2.9392602E-6	|3.7423422E-5 | 1.5859371E-6 | 	4.2966826E-6 | 	2.0913217E-6 | 	3.0820165E-6 | 	3.3508215E-7 | 	8.960027E-8	| 2.0083774E-6	| 4.2742064E-7	| 4.701018E-5 | 	0.9998223	| 6.3511393E-6	| 6.6381785E-5	| 8.5110266E-8 | 	1.8988333E-6	| 1.6178213E-8	| 3.8753042E-10	| 9.3351207E-7	| 6.692207E-7	| NLU est une bibliothèque de traitement de text...	|fr	|1| 
+
+|language_confidence|	document| 	language|	id|
+|------------------|-----------|-------------|------|
+|0.985407	|NLU is an open-source text processing library ...]|	en|	0|
+|0.999822	|NLU est une bibliothèque de traitement de text...]|	fr|	1|
+
 
 ## Named Entity Recognition (NER)
 ```python
@@ -551,7 +553,7 @@ nlu.load('en.classify.trec50').predict('How expensive is the Watch?')
 {:.steelBlueCols}
 | sentence_embeddings	| category_ ENTY_letter	| category_ DESC_reason	| category_ ENTY_word	| category_ LOC_country	| category_ ENTY_other	| category_ ENTY_instru	| category_ HUM_desc	| category_ LOC_mount	| category_ NUM_dist	| category_ ENTY_symbol | 	category_ DESC_manner	| category_ ABBR_abb	| category_ NUM_count	| category_ DESC_def	| category_ ENTY_color | 	category_sentence	| category_ ENTY_event	| category_ ENTY_veh | 	category_ NUM_ord | 	 category_ NUM_other| 	category_ NUM_code	| category_ DESC_desc| 	category_ HUM_title	| category_ NUM_weight	| category_ ENTY_substance	| category_ HUM_gr	| category_ ENTY_body| 	category_ HUM_ind	| category_ LOC_other	| category_ NUM_speed	| category_ NUM_volsize	| category_ ENTY_religion	| category_ ENTY_dismed	| category_ ABBR_exp	| category_ ENTY_product	| category_ ENTY_currency	| category_ ENTY_sport	| category_ NUM_perc	| category_ ENTY_cremat	| category_ ENTY_plant	| category_ NUM_money	 | category_ NUM_temp | 	category_ ENTY_animal	| category_ NUM_period	| category_ ENTY_lang	| category_ NUM_date	| category_ ENTY_techmeth	| category_ ENTY_termeq	| category_ LOC_state	| category_ LOC_city	| category_ ENTY_food	| sentence	| category	|id| 
 |------------------------|----------------------|----------------------|----------------------|----------------------|----------------------|----------------------|---------------------------|----------------------|-------------------------|----------------------|----------------------|--------------------------|----------------------|---------------------------|----------------------|----------------------|-------------------------|----------------------|------------------|--------------------------|----------------------|--------------------|----------------------|-----------------------|---------------------------|-------------------|---------------------|----------------------|----------------------|-----------------------|-----------------------|---------------------------|----------------------|-------------------------|---------------------------|--------------------------|-----------------------|-----------------------|----------------------|----------------------|----------------------|----------------------|-------------------------------|-----------------------|----------------------|-----------------------|----------------------------|----------------------|------------------------|----------------------|------------------------|-----------------------|---|
-|[0.051809534430503845, 0.03128402680158615, -0...]|	8.459624E-23 |	3.4999828E-14	| 3.5003475E-23	 | 5.841585E-20 | 	4.958728E-9	 | 1.2962921E-22	| 3.265098E-23	| 2.7989845E-22	| 1.1879483E-22	| 3.3417754E-23	| 1.1275173E-10	| 2.0653923E-23	| 0.91943645	| 1.1442368E-20	| 6.967735E-21	0	| 6.008502E-24	| 4.201739E-23	 |  1.9875016E-25	| 7.991396E-25	 | 5.3842046E-22	| 3.6065938E-8	| 9.143437E-24	| 5.219503E-23	| 4.7433556E-23	| 4.337756E-19	| 2.7589757E-23	| 5.1413796E-18	| 7.611624E-14	| 4.302599E-21	|4.125377E-23	|5.2841376E-21	|1.519717E-21	| 7.546624E-23	| 8.906359E-22	| 2.617869E-25	| 1.8343639E-24	| 3.1659472E-22  | 	2.537563E-21	| 4.2162198E-24	| 2.3034208E-20 | 	1.740357E-22	| 4.4444944E-23| 	7.8172316E-20	| 8.119662E-24	| 0.0805635	| 4.5887844E-21	| 3.4650898E-22	| 2.3069434E-23	| 4.631075E-22| 	1.0575064E-22  | 1.2962221E-22   | 	How expensive is the Watch? | 	NUM_count	| 1 | 
+|[0.051809534430503845, 0.03128402680158615, -0...]|	8.459624E-23 |	3.4999828E-14	| 3.5003475E-23	 | 5.841585E-20 | 	4.958728E-9	 | 1.2962921E-22	| 3.265098E-23	| 2.7989845E-22	| 1.1879483E-22	| 3.3417754E-23	| 1.1275173E-10	| 2.0653923E-23	| 0.91943645	| 1.1442368E-20	| 6.967735E-21	0	| 6.008502E-24	| 4.201739E-23	 |  1.9875016E-25	| 7.991396E-25	 | 5.3842046E-22	| 3.6065938E-8	| 9.143437E-24	| 5.219503E-23	| 4.7433556E-23	| 4.337756E-19	| 2.7589757E-23	| 5.1413796E-18	| 7.611624E-14	| 4.302599E-21	|4.125377E-23	|5.2841376E-21	|1.519717E-21	| 7.546624E-23	| 8.906359E-22	| 2.617869E-25	| 1.8343639E-24	| 3.1659472E-22  | 	2.537563E-21	| 4.2162198E-24	| 2.3034208E-20 | 	1.740357E-22	| 4.4444944E-23| 	7.8172316E-20	| 8.119662E-24	| 0.0805635	| 4.5887844E-21	| 3.4650898E-22	| 2.3069434E-23	| 4.631075E-22| 	1.0575064E-22  |  1.2962221E-22  | 	How expensive is the Watch? | 	NUM_count	| 1 | 
 
 ## Fakenews Classifier
 
@@ -560,9 +562,10 @@ nlu.load('en.classify.fakenews').predict('Unicorns have been sighted on Mars!')
 ```
 
 {:.steelBlueCols}
-| sentence_embeddings | 	category_sentence  | 	category_REAL | 	category_FAKE| 	sentence | 	category | 	id| 
-|--------------------|--------------------------|----------------|-------------------|-----------|-----------|-----|
-|[-0.01756167598068714, 0.015006818808615208, -...]	| 0	| 3.1013436E-16	| 1.0	| Unicorns have been sighted on Mars!	|FAKE	|1|
+|sentence_embeddings|	category_confidence| 	sentence| 	category| 	id| 
+|------------------|-----------------------|------------|-----------|------|
+|[-0.01756167598068714, 0.015006818808615208, -...]	| 1.000000	| Unicorns have been sighted on Mars!	|FAKE	|1|
+
 
 ## Cyberbullying Classifier (sexism and Racism calssifier)
 
@@ -582,9 +585,9 @@ nlu.load('en.classify.spam').predict('Please sign up for this FREE membership it
 ```
 
 {:.steelBlueCols}
-| sentence_embeddings | 	category_sentence | 	category_spam | 	category_ham | 	sentence | 	category | 	id| 
-|---------------------|-----------------------|-------------------|-----------------|------------|----------|------|
-|[0.008322705514729023, 0.009957313537597656, 0...]| 	0 | 	1.0	 | 5.211698E-11 | 	Please sign up for this FREE membership it cos... | 	spam	| 1 | 
+|sentence_embeddings|	category_confidence| 	sentence| 	category | 	id | 
+|-------------------|----------------------|------------|-----------|-------|
+|[0.008322705514729023, 0.009957313537597656, 0...]	| 1.000000	| Please sign up for this FREE membership it cos...	|spam	|1 | 
 
 ## Sarcasm Classifier
 
@@ -594,11 +597,10 @@ nlu.load('en.classify.sarcasm').predict('gotta love the teachers who give examns
 
 
 {:.steelBlueCols}
-
-| sentence_embeddings | 	category_sentence  | 	category_normal	| category_sarcasm |  	sentence | 	category | 	id | 
-|---------------------|------------------------|--------------------|------------------|-------------|-----------|-----|
-| [-0.03146284446120262, 0.04071342945098877, 0....	] | 0 | 	1.5087321E-5 | 	0.99998486	| gotta love the teachers who give examns on the...	| sarcasm | 	1 |  
-
+| sentence_embeddings | 	category_confidence  | 	sentence | 	category  | 	id| 
+|---------------------|--------------------------|-----------|-----------|---------|
+|[-0.03146284446120262, 0.04071342945098877, 0....] | 0.999985	| gotta love the teachers who give examns on the...	| sarcasm	| 1 | 
+ 
 
 ## IMDB Movie Sentiment
 ```python
