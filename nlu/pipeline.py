@@ -231,11 +231,20 @@ class NLUPipeline(BasePipe):
     
                             logger.info('Created Meta Data for : nr=%s , original Meta Data key name=%s and new  new_name=%s ', i, key,new_fields[-1])
                     else :  # Get only meta data with greatest value (highest prob)
+
                         cols_to_max = []
                         for key in keys_in_metadata: cols_to_max.append('res.' + str(fields_to_rename.index(field)) + '.'+key)
+
+                        # sadly because the Spark SQL method 'greatest()' does not work properly on scientific notation, we must cast our metadata to decimal with limited precision
+                        # scientific notation starts after 6 decimal places, so we can have at most exactly 6
+                        # since greatest() breaks the dataframe Schema, we must rename the columns first or run into issues with Pysark Struct queriying
+                        for key in cols_to_max : ptmp = ptmp.withColumn(key.replace('.','_'), pyspark_col(key).cast('decimal(6,6)'))
+                        # casted = ptmp.select(*(pyspark_col(c).cast("decimal(6,6)").alias(c.replace('.','_')) for c in cols_to_max))
                         
                         max_confidence_name  = field.split('.')[0] +'_confidence'
-                        ptmp = ptmp.withColumn(max_confidence_name , greatest(*cols_to_max))
+                        renamed_cols_to_max = [col.replace('.','_') for col in cols_to_max]
+
+                        ptmp = ptmp.withColumn(max_confidence_name , greatest(*renamed_cols_to_max))
                         columns_for_select.append(max_confidence_name)
                         
                     continue
@@ -276,6 +285,9 @@ class NLUPipeline(BasePipe):
 
                     if meta == True : continue 
                     else : # We gotta get the max confidence column, remove all other cols for selection
+                        # todo this case 
+                        
+                        
                         ptmp = ptmp.withColumn('prediction_confidence',array_map_values(*new_fields))
                         columns_for_select -= new_fields  
                         columns_for_select.append('prediction_confidence') 
@@ -442,6 +454,8 @@ class NLUPipeline(BasePipe):
         elif self.output_datatype == 'numpy' :
             return sdf.toPandas().to_numpy()
         elif self.output_datatype == 'string' :
+            return sdf.toPandas()
+        elif self.output_datatype == 'string_list' :
             return sdf.toPandas()
         elif self.output_datatype == 'array' :
             return sdf.toPandas()
