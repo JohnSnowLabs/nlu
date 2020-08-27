@@ -9,11 +9,10 @@ import nlu
 logger = logging.getLogger('nlu')
 
 
-from pyspark.sql.functions import flatten, explode, arrays_zip, map_keys, map_values, monotonically_increasing_id
+from pyspark.sql.functions import flatten, explode, arrays_zip, map_keys, map_values, monotonically_increasing_id, greatest
 from pyspark.sql.functions import col as pyspark_col
 from pyspark.sql.functions import udf
 from pyspark.sql.types import ArrayType,FloatType, StringType, DoubleType
-import modin.pandas as mpd
 
 
 class BasePipe():
@@ -176,8 +175,8 @@ class NLUPipeline(BasePipe):
         return field_types_dict
 
 
-    def rename_columns_and_extract_map_values(self,ptmp, fields_to_rename, same_output_level, stranger_features=[]):
-        # This method takes in a Spark dataframe that is the result of an explosion or not lol.
+    def rename_columns_and_extract_map_values(self,ptmp, fields_to_rename, same_output_level, stranger_features=[], meta=True):
+        # This method takes in a Spark dataframe that is the result of an explosion or not after the spark Pipeline transformation .
         # It will peform the following transformations on the dataframe:
         # 1. Rename the exploded columns to something more meaningful
         # 2. Extract Meta data values of columns that contain maps if the data is relevant
@@ -185,6 +184,7 @@ class NLUPipeline(BasePipe):
         # @ param ptmp The dataframe which contains the columns wto be renamed
         # @ param fields_to_nreame : A list of field names that will be renamed in the dataframe.
         # @ param same_output_level : Wether the fields that are going to be renamed are at the same output level as the pipe or at a different one.
+        # @ param meta: wether  to get meta data like prediction confidence or not
         # @ return : Returns tuple (list, SparkDataFrame), where the first element is a list with all the new names and the second element is a new Spark Dataframe which contains all the renamed and also old columns
 
         columns_for_select = []
@@ -216,26 +216,37 @@ class NLUPipeline(BasePipe):
                     new_fields = []
                     # we iterate over the keys in the metadata and use them as new column names. The values will become the values in the columns.
                     keys_in_metadata = list(ptmp.select(field).take(1)[0].asDict()['metadata'][0].keys()) # 
+                    
+                    if meta == True :  # get all meta data 
+                        for key in keys_in_metadata:
+                            #drop sentences keys from Lang detector, they seem irrelevant.
+                            if key == 'sentence' and 'language' in field  : continue 
+                            new_fields.append(new_field.replace('metadata',key))
+    
+                            
+                            ptmp = ptmp.withColumn(new_fields[-1],pyspark_col(('res.' + str(fields_to_rename.index(field)) + '.'+key) ))
+    
+                            columns_for_select.append(new_fields[-1])   
+    
+    
+                            logger.info('Created Meta Data for : nr=%s , original Meta Data key name=%s and new  new_name=%s ', i, key,new_fields[-1])
+                    else :  # Get only meta data with greatest value (highest prob)
 
-                    for key in keys_in_metadata:
-                        #drop sentences keys from Lang detector, they seem irrelevant.
-                        if key == 'sentence' and 'language' in field  : continue 
-                        new_fields.append(new_field.replace('metadata',key))
+                        cols_to_max = []
+                        for key in keys_in_metadata: cols_to_max.append('res.' + str(fields_to_rename.index(field)) + '.'+key)
 
-                        # all the metadata is in a list together with then non meta data features. We must select them via res.i
-                        # ptmp = ptmp.withColumn(new_fields[-1],map_values('res.' + str(fields_to_rename.index(field)) + '.'+key) )
+                        # sadly because the Spark SQL method 'greatest()' does not work properly on scientific notation, we must cast our metadata to decimal with limited precision
+                        # scientific notation starts after 6 decimal places, so we can have at most exactly 6
+                        # since greatest() breaks the dataframe Schema, we must rename the columns first or run into issues with Pysark Struct queriying
+                        for key in cols_to_max : ptmp = ptmp.withColumn(key.replace('.','_'), pyspark_col(key).cast('decimal(7,6)'))
+                        # casted = ptmp.select(*(pyspark_col(c).cast("decimal(6,6)").alias(c.replace('.','_')) for c in cols_to_max))
                         
-                        # Normal case or make this specialf for language
-                        # ptmp = ptmp.withColumnRenamed('res.' + str(fields_to_rename.index(field)) + '.'+key ,new_fields[-1])                        
-                        # ptmp = ptmp.withColumn(new_fields[-1],lit('res.' + str(fields_to_rename.index(field)) + '.'+key) )
-                        # ptmp[new_fields[-1]] = ptmp.select('res.' + str(fields_to_rename.index(field)) + '.'+key)
-                        ptmp = ptmp.withColumn(new_fields[-1],pyspark_col(('res.' + str(fields_to_rename.index(field)) + '.'+key) ))
+                        max_confidence_name  = field.split('.')[0] +'_confidence'
+                        renamed_cols_to_max = [col.replace('.','_') for col in cols_to_max]
 
-                        columns_for_select.append(new_fields[-1])   
-
-
-                        logger.info('Created Meta Data for : nr=%s , original Meta Data key name=%s and new  new_name=%s ', i, key,new_fields[-1])
-
+                        ptmp = ptmp.withColumn(max_confidence_name , greatest(*renamed_cols_to_max))
+                        columns_for_select.append(max_confidence_name)
+                        
                     continue
 
 
@@ -249,13 +260,16 @@ class NLUPipeline(BasePipe):
             for i, field in enumerate(reorderd_fields_to_rename):
                 if self.raw_text_column in field: continue
                 new_field = field.replace('.', '_').replace('_result','').replace('_embeddings_embeddings','_embeddings')
-                if 'metadata' in field :  
+                if 'metadata' in field :
+
                     logger.info('Getting Meta Data for   : nr=%s , name=%s with new_name=%s and original', i, field,new_field)
                     # we iterate over the keys in the metadata and use them as new column names. The values will become the values in the columns.
                     keys_in_metadata = list(ptmp.select(field).take(1)[0].asDict()['metadata'][0].keys()) # 
                     if 'sentence' in keys_in_metadata : keys_in_metadata.remove('sentence')
+                    
                     new_fields=[]
                     for key in keys_in_metadata: 
+                        # we cant skip getting  key values for everything, even if meta=false. This is because we need to get the greatest of all confidence values , for this we must unpack them first..
                         new_fields.append(new_field.replace('metadata',key))
 
                         # These Pyspark UDF extracts from a list of maps all the map values for positive and negative confidence and also spell costs
@@ -263,11 +277,22 @@ class NLUPipeline(BasePipe):
 
                         #extract map values for list of maps 
                         array_map_values = udf(lambda z: extract_map_values(z), ArrayType(FloatType()))
-                        ptmp = ptmp.withColumn(new_fields[-1],array_map_values(field)) 
-                        columns_for_select += new_fields
-                        logger.info('Created Meta Data for   : nr=%s , name=%s with new_name=%s and original', i, field,new_fields[-1])
-                    continue
 
+                        ptmp = ptmp.withColumn(new_fields[-1],array_map_values(field)) 
+                        
+                        columns_for_select += new_fields # todo somwhow seems wierd to add here 
+                        logger.info('Created Meta Data for   : nr=%s , name=%s with new_name=%s and original', i, field,new_fields[-1])
+
+                    if meta == True : continue 
+                    else : # We gotta get the max confidence column, remove all other cols for selection
+                        # todo this case 
+                        
+                        
+                        ptmp = ptmp.withColumn('prediction_confidence',array_map_values(*new_fields))
+                        columns_for_select -= new_fields  
+                        columns_for_select.append('prediction_confidence') 
+                    continue # end of special meta data case 
+                
 
                 ptmp = ptmp.withColumn(new_field, ptmp[field])  # get the outputlevel results row by row
                 logger.info('Renaming non exploded field  : nr=%s , name=%s to new_name=%s', i, field,new_field)
@@ -303,7 +328,7 @@ class NLUPipeline(BasePipe):
 
 
 
-    def pythonify_spark_dataframe(self, processed, get_different_level_output=True, keep_stranger_features = True, stranger_features = [] , drop_irrelevant_cols=True):
+    def pythonify_spark_dataframe(self, processed, get_different_level_output=True, keep_stranger_features = True, stranger_features = [] , drop_irrelevant_cols=True, output_metadata=False):
         '''
         This functions takes in a spark dataframe with Spark NLP annotations in it and transforms it into a Pandas Dataframe with common feature types for further NLP/NLU downstream tasks.
             It does this by performing the following consecutive steps :
@@ -318,6 +343,7 @@ class NLUPipeline(BasePipe):
         :param stranger_features: A list of features which are not known to NLU and inside of the input DF. 
                                     Basically all columns, which are not named 'text' in the input. 
                                     If keep_stranger_features== True, then these features will be exploded, if output_level == DOCUMENt, otherwise they will not be exploded
+        :param output_metadata: Wether to keep or drop additional metadataf or predictions, like prediction confidence  
         :return: Pandas dataframe which easy accessable features
         '''
         
@@ -383,9 +409,10 @@ class NLUPipeline(BasePipe):
         logger.info(' zipping and exploding columnns %s-', same_output_level_fields)
 
         # explode the columns which are at the same output level..if there are maps at the different output level we will get array maps.  then we use some UDF functions to extract the resulting array maps 
-        ptmp,final_select_same_output_level =  self.rename_columns_and_extract_map_values(ptmp=ptmp, fields_to_rename=same_output_level_fields, same_output_level=True, stranger_features=stranger_features)
+      
+        ptmp,final_select_same_output_level =  self.rename_columns_and_extract_map_values(ptmp=ptmp, fields_to_rename=same_output_level_fields, same_output_level=True, stranger_features=stranger_features, meta=output_metadata)
         if get_different_level_output :
-            ptmp,final_select_not_at_same_output_level = self.rename_columns_and_extract_map_values(ptmp=ptmp, fields_to_rename=not_at_same_output_level_fields, same_output_level=False)
+            ptmp,final_select_not_at_same_output_level = self.rename_columns_and_extract_map_values(ptmp=ptmp, fields_to_rename=not_at_same_output_level_fields, same_output_level=False, meta=output_metadata)
 
 
         if self.output_level != 'document':final_select_not_at_same_output_level+= stranger_features
@@ -416,15 +443,19 @@ class NLUPipeline(BasePipe):
         elif self.output_datatype == 'pandas' : 
             return sdf.toPandas()
         elif self.output_datatype == 'modin' :
+            import modin.pandas as mpd
             return mpd.DataFrame(sdf.toPandas())
         # todo actual series and return String/array objects
         elif self.output_datatype == 'pandas_series' :
             return sdf.toPandas()
         elif self.output_datatype == 'modin_series' :
+            import modin.pandas as mpd
             return mpd.DataFrame(sdf.toPandas())
         elif self.output_datatype == 'numpy' :
             return sdf.toPandas().to_numpy()
         elif self.output_datatype == 'string' :
+            return sdf.toPandas()
+        elif self.output_datatype == 'string_list' :
             return sdf.toPandas()
         elif self.output_datatype == 'array' :
             return sdf.toPandas()
@@ -458,18 +489,19 @@ class NLUPipeline(BasePipe):
 
         return cols
 
-    def predict(self, data, output_level='', output_positions=False, keep_stranger_features=True):
+    def predict(self, data, output_level='', positions=False, keep_stranger_features=True, metadata=False):
         '''
         Annotates a Pandas Dataframe/Pandas Series/Numpy Array/Spark DataFrame/Python List strings /Python String
         
         :param data: 
         :param output_level: 
-        :param output_positions: 
+        :param positions: 
         :param keep_stranger_features: 
+        :param metadata:weather to keep additonal metadata in final df or not 
         :return: 
         '''
         if output_level !='': self.output_level = output_level
-        self.output_positions= output_positions
+        self.output_positions= positions
         if not self.is_fitted: self.fit()
         sdf = None
         import pyspark  
@@ -484,12 +516,8 @@ class NLUPipeline(BasePipe):
                     sdf = self.spark_transformer_pipe.transform(data )
                 else :
                     print('Could not find column named "text" in input Pandas Dataframe. Please ensure one column named such exists. Columns in DF are : ', data.columns)
-            if type(data) is pd.DataFrame or type(data) is mpd.DataFrame :  # casting follows pd->spark->pd
+            if type(data) is pd.DataFrame:  # casting follows pd->spark->pd
                 self.output_datatype = 'pandas'
- 
-                if type(data) is mpd.DataFrame  : 
-                    data = pd.DataFrame(data.to_dict()) # create pandas to support type inference
-                    self.output_datatype = 'modin'
                 
                 if self.raw_text_column in data.columns:
                     if len(data.columns) > 1 :
@@ -501,12 +529,8 @@ class NLUPipeline(BasePipe):
                     self.spark.createDataFrame(data ))
                 else : 
                     print('Could not find column named "text" in input Pandas Dataframe. Please ensure one column named such exists. Columns in DF are : ', data.columns)
-            elif type(data) is pd.Series or type(data) is mpd.Series:  # for df['text'] colum/series passing casting follows pseries->pdf->spark->pd
+            elif type(data) is pd.Series:  # for df['text'] colum/series passing casting follows pseries->pdf->spark->pd
                 self.output_datatype='pandas_series'
-                if type(data) is mpd.Series  :
-                    self.output_datatype='modin_series'
-                    data = pd.Series(data.to_dict()) # create pandas to support type inference
-
                 data = pd.DataFrame(data).dropna(axis=1, how='all')
                 
                 if self.raw_text_column in data.columns: sdf = \
@@ -537,10 +561,40 @@ class NLUPipeline(BasePipe):
             elif type(data) is dict():  # Assumes values should be predicted
                 print('Predicting on dictionaries currently not supported. Please input either a Pandas Dataframe with a string column named "text"  or a String or a list of strings. ' )
                 return ''
-            
-            
-            # TODO pass the datatype we got to the pythonify  method, so we can returnt he same datatype to the user
-            return self.pythonify_spark_dataframe(sdf, self.output_different_levels, keep_stranger_features=keep_stranger_features, stranger_features=stranger_features)
+            else : # Modin tests, This could crash if Modin not installed 
+                try : 
+                    import modin.pandas as mpd
+                    if type(data) is mpd.DataFrame  :
+                        data = pd.DataFrame(data.to_dict()) # create pandas to support type inference
+                        self.output_datatype = 'modin'
+    
+                    if self.raw_text_column in data.columns:
+                        if len(data.columns) > 1 :
+                            data = data.where(pd.notnull(data), None) # make  Nans to None, or spark will crash
+                            data = data.dropna(axis=1, how='all')
+                            stranger_features = list( set(data.columns) - set(self.raw_text_column))
+                        sdf = self.spark_transformer_pipe.transform(
+                            # self.spark.createDataFrame(data[['text']]), ) # this takes text column as series and makes it DF
+                            self.spark.createDataFrame(data ))
+                    else :
+                        print('Could not find column named "text" in input Pandas Dataframe. Please ensure one column named such exists. Columns in DF are : ', data.columns)
+
+                    if type(data) is mpd.Series  :
+                        self.output_datatype='modin_series'
+                        data = pd.Series(data.to_dict()) # create pandas to support type inference
+                        data = pd.DataFrame(data).dropna(axis=1, how='all')
+        
+                        if self.raw_text_column in data.columns: sdf = \
+                            self.spark_transformer_pipe.transform(
+                                self.spark.createDataFrame(data[['text']]), )
+                        else: print('Could not find column named "text" in  Pandas Dataframe generated from input  Pandas Series. Please ensure one column named such exists. Columns in DF are : ', data.columns)
+                        
+                    
+                except : 
+                    print("If you use Modin, make sure you have installed 'pip install modin[ray]' or 'pip install modin[dask]' backend for Modin ")
+
+
+            return self.pythonify_spark_dataframe(sdf, self.output_different_levels, keep_stranger_features=keep_stranger_features, stranger_features=stranger_features, output_metadata=metadata)
         except : 
             import sys
             e = sys.exc_info()

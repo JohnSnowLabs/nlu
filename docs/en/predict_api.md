@@ -9,6 +9,18 @@ modify_date: "2019-05-16"
 # Predict method Parameters 
 
 
+## Output metadata
+The NLU predict method has a boolean metdata parameter.     
+When it is set to True, NLU will output the confidence and additional metadata for each prediction.
+Its default value is False.
+
+```python
+nlu.load('lang').predict('What a wonderful day!')
+```
+
+
+
+
 ## Output Level parameter
 NLU defines 4 output levels for the generated predictions.     
 The output levels define how granular the predictions and outputs of NLU will be.     

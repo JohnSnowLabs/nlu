@@ -8,13 +8,13 @@ article_header:
   actions:
     - text: Getting Started
       type: error
-      url: /docs/en/quickstart    
+      url: /docs/en/install    
     - text: '<i class="fab fa-github"></i> GitHub'
       type: outline-theme-dark
-      url: https://github.com/johnsnowlabs/spark-nlp  
+      url: https://github.com/JohnSnowLabs/nlu  
     - text: '<i class="fab fa-slack-hash"></i> Slack' 
       type: outline-theme-dark
-      url: https://join.slack.com/t/spark-nlp/shared_invite/enQtNjA4MTE2MDI1MDkxLWVjNWUzOGNlODg1Y2FkNGEzNDQ1NDJjMjc3Y2FkOGFmN2Q3ODIyZGVhMzU0NGM3NzRjNDkyZjZlZTQ0YzY1N2I    
+      url: https://app.slack.com/client/T9BRVC9AT/C0196BQCDPY    
 
   height: 50vh
   theme: dark
