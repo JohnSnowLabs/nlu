@@ -238,7 +238,7 @@ class NLUPipeline(BasePipe):
                         # sadly because the Spark SQL method 'greatest()' does not work properly on scientific notation, we must cast our metadata to decimal with limited precision
                         # scientific notation starts after 6 decimal places, so we can have at most exactly 6
                         # since greatest() breaks the dataframe Schema, we must rename the columns first or run into issues with Pysark Struct queriying
-                        for key in cols_to_max : ptmp = ptmp.withColumn(key.replace('.','_'), pyspark_col(key).cast('decimal(6,6)'))
+                        for key in cols_to_max : ptmp = ptmp.withColumn(key.replace('.','_'), pyspark_col(key).cast('decimal(7,6)'))
                         # casted = ptmp.select(*(pyspark_col(c).cast("decimal(6,6)").alias(c.replace('.','_')) for c in cols_to_max))
                         
                         max_confidence_name  = field.split('.')[0] +'_confidence'
