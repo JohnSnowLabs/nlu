@@ -92,18 +92,18 @@ from nlu.components.chunkers.ngram.ngram import NGram
 from nlu.components.utils.sentence_detector.sentence_detector import SparkNLPSentenceDetector
 
 from nlu.info import AllComponentsInfo
-global NLU_PACKAGE_LOCATION
-NLU_PACKAGE_LOCATION = nlu.__file__[:-11]
+global nlu_package_location
+nlu_package_location = nlu.__file__[:-11]
 
-global ALL_COMPONENTS_INFO
-ALL_COMPONENTS_INFO = nlu.AllComponentsInfo()
+global all_components_info
+all_components_info = nlu.AllComponentsInfo()
 
 global active_pipes
 active_pipes = []
-global SPARK_STARTED, SPARK_CONNECTION
-SPARK_STARTED = True
-SPARK_CONNECTION = sparknlp.start()
-SPARK_CONNECTION.sparkContext.setLogLevel("ERROR")
+global spark_started, spark
+spark_started = True
+spark = sparknlp.start()
+spark.sparkContext.setLogLevel("ERROR")
 
 
 
@@ -131,7 +131,7 @@ def load(request, verbose = False):
                 pipe.add(nlu_component)
                 pipe = pipeline.PipelineQueryVerifier.check_and_fix_nlu_pipeline(pipe)
     
-        pipe.fit()
+        # pipe.fit()
     except :
         import sys
         e = sys.exc_info()
@@ -163,7 +163,7 @@ def build(component_request):
                 pipe.add(component_to_build)  # its already built
 
     pipe = pipeline.PipelineQueryVerifier.check_and_fix_nlu_pipeline(pipe)
-    pipe.fit()
+    # pipe.fit()
     return pipe
 
 
@@ -245,10 +245,10 @@ def parse_component_data_from_name_query(request, detect_lang=False):
     elif len(infos) == 1:
         logger.info('Setting default lang to english')
         language = 'en'
-        if infos[0] in ALL_COMPONENTS_INFO.all_components or ALL_COMPONENTS_INFO.all_component_types:
+        if infos[0] in all_components_info.all_components or all_components_info.all_component_types:
             component_type = infos[0]
     #  check if it is any query of style #<lang>.<class>.<dataset>.<embeddings>
-    elif infos[0] in ALL_COMPONENTS_INFO.all_languages:
+    elif infos[0] in all_components_info.all_languages:
         language = infos[0]
         component_type = infos[1]
 
@@ -487,10 +487,10 @@ def construct_component_from_identifier(language, component_type, dataset, compo
 def print_all_nlu_supported_languages():
     ''' Print all languages which are avaiable in NLU Spark NLP pointer '''
     print('Languages available in NLU : \n ')
-    for lang in  ALL_COMPONENTS_INFO.all_languages : print (lang)
+    for lang in  all_components_info.all_languages : print (lang)
 def print_all_nlu_components_for_lang(lang='en'):
     '''Print all NLU components avialable for a language Spark NLP pointer'''
-    if lang in ALL_COMPONENTS_INFO.all_languages :
+    if lang in all_components_info.all_languages :
         # print('All Pipelines for language', lang, '\n',)
         for nlu_reference in NameSpace.pretrained_pipe_references[lang] :
             print('NLU pipe reference :  <', nlu_reference, '> points to Spark NLP Pipeline:', NameSpace.pretrained_pipe_references[lang][nlu_reference])

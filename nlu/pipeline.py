@@ -187,6 +187,7 @@ class NLUPipeline(BasePipe):
         # @ param meta: wether  to get meta data like prediction confidence or not
         # @ return : Returns tuple (list, SparkDataFrame), where the first element is a list with all the new names and the second element is a new Spark Dataframe which contains all the renamed and also old columns
 
+        logger.info('Renaming columns and extracting meta data for  outputlevel_same=%s and fields_to_rename=%s and get_meta=%s', same_output_level,fields_to_rename,meta)
         columns_for_select = []
         
         # edge case swap. We must rename .metadata fields before we get the .result fields or there will be errors because of column name overwrites.. So we swap position of them
@@ -215,7 +216,9 @@ class NLUPipeline(BasePipe):
                     logger.info('Getting Meta Data for   : nr=%s , name=%s with new_name=%s and original', i, field, new_field)
                     new_fields = []
                     # we iterate over the keys in the metadata and use them as new column names. The values will become the values in the columns.
-                    keys_in_metadata = list(ptmp.select(field).take(1)[0].asDict()['metadata'][0].keys()) # 
+                    keys_in_metadata = list(ptmp.select(field).take(1))
+                    if len(keys_in_metadata) == 0 : continue # no resulting values for this column, we wont include it in the final output
+                    keys_in_metadata = keys_in_metadata[0].asDict()['metadata'][0].keys() #
                     
                     if meta == True :  # get all meta data 
                         for key in keys_in_metadata:
@@ -269,7 +272,9 @@ class NLUPipeline(BasePipe):
                     reorderd_fields_to_rename[reorderd_fields_to_rename.index(unpack_name+'.result')] = unpack_name+'_result' 
                     logger.info('Getting Meta Data for   : nr=%s , name=%s with new_name=%s and original', i, field,new_field)
                     # we iterate over the keys in the metadata and use them as new column names. The values will become the values in the columns.
-                    keys_in_metadata = list(ptmp.select(field).take(1)[0].asDict()['metadata'][0].keys()) # 
+                    keys_in_metadata = list(ptmp.select(field).take(1))
+                    if len(keys_in_metadata) == 0 : continue
+                    keys_in_metadata = keys_in_metadata[0].asDict()['metadata'][0].keys() #
                     if 'sentence' in keys_in_metadata : keys_in_metadata.remove('sentence')
                     
                     new_fields=[]
@@ -514,6 +519,14 @@ class NLUPipeline(BasePipe):
         '''
         if output_level !='': self.output_level = output_level
         self.output_positions= positions
+        if output_level=='chunk': 
+            # If chunk not in pipe we must add it and run the query verifyier again 
+            chunk_provided = False
+            for component in self.pipe_components:
+                if component.component_info.type =='chunker' : chunk_provided = True 
+            if chunk_provided == False : 
+                self.pipe_components.append(nlu.get_default_component_of_type('chunk'))
+                self =  PipelineQueryVerifier.check_and_fix_nlu_pipeline(self)
         if not self.is_fitted: self.fit()
         sdf = None
         import pyspark  
@@ -696,7 +709,7 @@ class PipelineQueryVerifier():
         If it is some kind of model that uses embeddings, it will check the metadata for that model and return a string with moelName@spark_nlp_embedding_reference format
         '''
         logger.info('Resolving missing components')
-        pipe_requirements = []
+        pipe_requirements = [['sentence','token']] #default requirements so we can support all output levels. minimal extra comoputation effort. If we add CHUNK here, we will aalwayshave POS default
         pipe_provided_features = []
         # pipe_types = [] # list of string identifiers
         for component in pipe.pipe_components:
@@ -763,20 +776,20 @@ class PipelineQueryVerifier():
             if len(missing_components) == 0: break  # Now all features are provided
 
             components_to_add = []
-            # 3. Create missing components
+            # Create missing components
             for missing_component in missing_components:
                 components_to_add.append(nlu.get_default_component_of_type(missing_component))
             logger.info('Resolved for missing components the following NLU components : %s', str(components_to_add))
 
 
-            # 3. Add missing components and validate order of components is correct
+            # Add missing components and validate order of components is correct
             for new_component in components_to_add:
                 pipe.add(new_component)
                 logger.info('adding %s=', new_component.component_info.name)
 
 
         logger.info('Fixing column names')
-        # 4. Validate naming of output columns is correct and no error will be thrown in spark
+        #  Validate naming of output columns is correct and no error will be thrown in spark
         pipe = PipelineQueryVerifier.check_and_fix_component_output_column_names(pipe)
 
         # 3.  fix order

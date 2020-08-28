@@ -11,7 +11,7 @@ class NLUComponent():
     def __init__(self, component_name, component_type):
 
         self.model = None # Either Spark NLP model or some 3rd party custom model. Reference to a model
-        self.component_path = nlu.NLU_PACKAGE_LOCATION + 'components/' + component_type + 's/' + component_name + '/'
+        self.component_path = nlu.nlu_package_location + 'components/' + component_type + 's/' + component_name + '/'
         self.component_info = nlu.ComponentInfo.from_directory(component_info_dir= self.component_path)
 
 
@@ -45,8 +45,8 @@ class SparkNLUComponent(NLUComponent):
         # super(SparkNLUComponent,self).__init__(component_name, component_type)
         NLUComponent.__init__(self, component_name, component_type)
         self.spark = nlu.sparknlp.start()
-        nlu.SPARK_CONNECTION = self.spark
-        nlu.SPARK_STARTED = True
+        nlu.spark = self.spark
+        nlu.spark_started = True
 
 class Component():
     # returns a component for a given name
