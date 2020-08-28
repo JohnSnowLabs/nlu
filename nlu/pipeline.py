@@ -9,7 +9,7 @@ import nlu
 logger = logging.getLogger('nlu')
 
 
-from pyspark.sql.functions import flatten, explode, arrays_zip, map_keys, map_values, monotonically_increasing_id, greatest
+from pyspark.sql.functions import flatten, explode, arrays_zip, map_keys, map_values, monotonically_increasing_id, greatest,expr
 from pyspark.sql.functions import col as pyspark_col
 from pyspark.sql.functions import udf
 from pyspark.sql.types import ArrayType,FloatType, StringType, DoubleType
@@ -261,7 +261,10 @@ class NLUPipeline(BasePipe):
                 if self.raw_text_column in field: continue
                 new_field = field.replace('.', '_').replace('_result','').replace('_embeddings_embeddings','_embeddings')
                 if 'metadata' in field :
-
+                    # since the have a field with metadata, the values of the original data for which we have metadata for must exist in the dataframe as singular elements inside of a list
+                    # by applying the expr method, we unpack the elements from the list 
+                    unpack_name = field.split('.')[0]
+                    ptmp = ptmp.withColumn(unpack_name+'_result', expr(unpack_name+'.result[0]'))
                     logger.info('Getting Meta Data for   : nr=%s , name=%s with new_name=%s and original', i, field,new_field)
                     # we iterate over the keys in the metadata and use them as new column names. The values will become the values in the columns.
                     keys_in_metadata = list(ptmp.select(field).take(1)[0].asDict()['metadata'][0].keys()) # 
@@ -279,18 +282,25 @@ class NLUPipeline(BasePipe):
                         array_map_values = udf(lambda z: extract_map_values(z), ArrayType(FloatType()))
 
                         ptmp = ptmp.withColumn(new_fields[-1],array_map_values(field)) 
-                        
-                        columns_for_select += new_fields # todo somwhow seems wierd to add here 
+                        # We apply Expr here because all resulting meta data is inside of a list and just a single element, which we can take out 
+                        ptmp = ptmp.withColumn(new_fields[-1],expr(new_fields[-1]+'[0]'))
                         logger.info('Created Meta Data for   : nr=%s , name=%s with new_name=%s and original', i, field,new_fields[-1])
+                        if meta == True : continue
+                        columns_for_select += new_fields #?
 
                     if meta == True : continue 
                     else : # We gotta get the max confidence column, remove all other cols for selection
-                        # todo this case 
-                        
-                        
-                        ptmp = ptmp.withColumn('prediction_confidence',array_map_values(*new_fields))
-                        columns_for_select -= new_fields  
-                        columns_for_select.append('prediction_confidence') 
+                        cols_to_max = []
+                        prefix = field.split('.')[0]
+                        for key in keys_in_metadata: cols_to_max.append( prefix+'_'+key)
+
+                        #cast all the types to decimal, remove scientific notation
+                        for key in cols_to_max : ptmp = ptmp.withColumn(key, pyspark_col(key).cast('decimal(7,6)'))
+
+                        max_confidence_name  = field.split('.')[0] +'_confidence'
+
+                        ptmp = ptmp.withColumn(max_confidence_name , greatest(*cols_to_max))
+                        columns_for_select.append(max_confidence_name)
                     continue # end of special meta data case 
                 
 
@@ -413,7 +423,7 @@ class NLUPipeline(BasePipe):
         ptmp,final_select_same_output_level =  self.rename_columns_and_extract_map_values(ptmp=ptmp, fields_to_rename=same_output_level_fields, same_output_level=True, stranger_features=stranger_features, meta=output_metadata)
         if get_different_level_output :
             ptmp,final_select_not_at_same_output_level = self.rename_columns_and_extract_map_values(ptmp=ptmp, fields_to_rename=not_at_same_output_level_fields, same_output_level=False, meta=output_metadata)
-
+        
 
         if self.output_level != 'document':final_select_not_at_same_output_level+= stranger_features
             
