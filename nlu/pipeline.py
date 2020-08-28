@@ -264,7 +264,9 @@ class NLUPipeline(BasePipe):
                     # since the have a field with metadata, the values of the original data for which we have metadata for must exist in the dataframe as singular elements inside of a list
                     # by applying the expr method, we unpack the elements from the list 
                     unpack_name = field.split('.')[0]
+                    
                     ptmp = ptmp.withColumn(unpack_name+'_result', expr(unpack_name+'.result[0]'))
+                    reorderd_fields_to_rename[reorderd_fields_to_rename.index(unpack_name+'.result')] = unpack_name+'_result' 
                     logger.info('Getting Meta Data for   : nr=%s , name=%s with new_name=%s and original', i, field,new_field)
                     # we iterate over the keys in the metadata and use them as new column names. The values will become the values in the columns.
                     keys_in_metadata = list(ptmp.select(field).take(1)[0].asDict()['metadata'][0].keys()) # 
