@@ -23,7 +23,7 @@ class MyTestCase(unittest.TestCase):
 
 
         print('TESTING SDF')
-        sdf = nlu.SPARK_CONNECTION.createDataFrame(pdf)
+        sdf = nlu.spark.createDataFrame(pdf)
         res = nlu.load('sentiment', verbose=True).predict(sdf)
         self.assertTrue(type(res) == pyspark.sql.dataframe.DataFrame)
     

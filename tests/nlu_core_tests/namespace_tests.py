@@ -42,6 +42,23 @@ class TestNameSpace(unittest.TestCase):
     # 
 
 
+    def test_output_levels(self):
+        print('token test')
+        df = nlu.load('sentiment',verbose=True).predict('What a wonderful day!', output_level='token')
+        print(df)
+
+        print('document test')
+        df = nlu.load('sentiment',verbose=True).predict('What a wonderful day!', output_level='document')
+        print(df)
+
+        print('sentence test')
+        df = nlu.load('sentiment',verbose=True).predict('What a wonderful day!', output_level='sentence')
+        print(df)
+
+        print('chunk test')
+        df = nlu.load('sentiment',verbose=True).predict('What a wonderful day!', output_level='chunk')
+        print(df)
+
 
 
     def test_sentiment(self):

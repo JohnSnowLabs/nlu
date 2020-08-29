@@ -100,7 +100,7 @@ class MyTestCase(unittest.TestCase):
         print(spark_nlp_references)
         
     def test_get_count_of_unique_languages(self):
-        print('num languages in NLU : ',len(nlu.ALL_COMPONENTS_INFO.all_languages))
+        print('num languages in NLU : ', len(nlu.all_components_info.all_languages))
     
     
     def test_print_pipe_info(self):
