@@ -13,7 +13,7 @@ ch.setLevel(logging.CRITICAL)
 
 logger.addHandler(ch)
 
-
+import gc
 from nlu.pipeline import *
 
 from nlu import info
@@ -130,8 +130,7 @@ def load(request, verbose = False):
             else:
                 pipe.add(nlu_component)
                 pipe = pipeline.PipelineQueryVerifier.check_and_fix_nlu_pipeline(pipe)
-    
-        # pipe.fit()
+            
     except :
         import sys
         e = sys.exc_info()
@@ -141,8 +140,16 @@ def load(request, verbose = False):
         print("Something went wrong during loading and fitting the pipe. Check the other prints for more information and also verbose mode. Did you use a correct model reference?")
 
         return NLU_error()
+    active_pipes.append(pipe)
     return pipe
 
+def clear_model_ram():
+    '''
+    Deletes all active pipelines and frees up RAM
+    :return: 
+    '''
+    del active_pipes[:]
+    gc.collect()
 
 def build(component_request):
     '''
