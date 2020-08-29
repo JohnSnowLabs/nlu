@@ -367,8 +367,8 @@ def construct_component_from_pipe_identifier(language, sparknlp_reference):
         logger.info("Parsed Component for : %s", parsed)
         if parsed == 'match': constructed_components.append(nlu.Matcher(model=component)) 
         if parsed == 'document': constructed_components.append(nlu.Util(model=component)) 
-        if parsed == 'sentence': constructed_components.append(nlu.Util(model=component)) # todo utils abuse(?) 
-        if parsed == 'regex': constructed_components.append(nlu.Matcher(model=component))
+        if parsed == 'sentence': constructed_components.append(nlu.Util(component_name='sentence_detector',model=component)) # todo differentiate normal and deep detector
+        if parsed == 'regex': constructed_components.append(nlu.Matcher(component_name='regex', model=component))
         if parsed == 'text': constructed_components.append(nlu.Matcher(model=component))
 
         if parsed == 'spell': constructed_components.append(nlu.SpellChecker(model=component))
@@ -378,14 +378,14 @@ def construct_component_from_pipe_identifier(language, sparknlp_reference):
         if parsed == 'pos' or parsed =='language': constructed_components.append(nlu.Classifier(model=component))
         if parsed == 'word': constructed_components.append(nlu.Embeddings(model=component))
         if parsed == 'nerdlmodel': constructed_components.append(nlu.Classifier(model=component))
-        if parsed == 'ner': constructed_components.append(nlu.Util(model=component))
+        if parsed == 'ner': constructed_components.append(nlu.Classifier(component_name='ner',model=component))
         if parsed == 'dependency': constructed_components.append(nlu.Util(model=component))
-        if parsed == 'typed': constructed_components.append(nlu.Util(model=component))
-        if parsed == 'multi': constructed_components.append(nlu.Util(model=component))
+        if parsed == 'typed': constructed_components.append(nlu.Util(model=component)) # todo util abuse
+        if parsed == 'multi': constructed_components.append(nlu.Util(model=component)) # todo util abuse 
         if parsed == 'sentimentdlmodel': constructed_components.append(nlu.Classifier(model=component))
         if parsed == 'universal' or parsed == 'bert' or parsed == 'albert' or parsed == 'elmo' or parsed == 'xlnet' or parsed == 'glove':
             constructed_components.append(nlu.Embeddings(model=component))
-        if parsed == 'vivekn': constructed_components.append(nlu.Classifier(model=component))
+        if parsed == 'vivekn': constructed_components.append(nlu.Classifier(component_name='vivekn', model=component))
         if parsed == 'chunker': constructed_components.append(nlu.chunker.Chunker(model=component))
         if parsed == 'ngram': constructed_components.append(nlu.chunker.Chunker(model=component))
 

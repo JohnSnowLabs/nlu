@@ -5,8 +5,8 @@ class RegexMatcher:
     def get_default_model():
         return   sparknlp.annotator.RegexMatcherModel() \
             .setStrategy("MATCH_ALL") \
-            .setInputCols("document") \
-            .setOutputCol("entity") \
+            .setInputCols("document", "token") \
+            .setOutputCol("regex_entity") \
 
 
     @staticmethod

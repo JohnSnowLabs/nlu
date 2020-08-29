@@ -6,13 +6,13 @@
     "document"
   ],
   "inputs": [
-    "raw_text"
+    "text"
   ],
   "type": "util",
   "file_dependencies": {},
   "pipe_priorioty_slot": "0",
   "spark_input_column_names": [
-    "raw_text"
+    "text"
   ],
   "spark_output_column_names": [
     "document"

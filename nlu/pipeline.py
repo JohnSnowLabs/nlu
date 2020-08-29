@@ -49,7 +49,6 @@ class NLUPipeline(BasePipe):
             # embedding level  annotators output levels depend on the level of the embeddings they are fed. If we have Doc/Chunk/Word/Sentence embeddings, those annotators output at the same level.
 
         }
-        # ' todo output levels for : date? dependencty, labeld dependency? ( depnendcy probably token, sentiment maybe too depending on annoator)
 
     def get_sample_spark_dataframe(self):
         data = {"text": ['This day sucks', 'I love this day', 'I dont like Sami' ]}
@@ -59,6 +58,7 @@ class NLUPipeline(BasePipe):
 
     def fit(self, dataset=None):
         if dataset == None:  # todo implement fitting on input datset
+            #todo somehow regex matcher does not see document column?????>>?>!@>!?>??!@
             stages = []
             for component in self.pipe_components:
                 stages.append(component.model)
@@ -218,7 +218,7 @@ class NLUPipeline(BasePipe):
                     # we iterate over the keys in the metadata and use them as new column names. The values will become the values in the columns.
                     keys_in_metadata = list(ptmp.select(field).take(1))
                     if len(keys_in_metadata) == 0 : continue # no resulting values for this column, we wont include it in the final output
-                    keys_in_metadata = keys_in_metadata[0].asDict()['metadata'][0].keys() #
+                    keys_in_metadata = list(keys_in_metadata[0].asDict()['metadata'][0].keys()) #
                     
                     if meta == True :  # get all meta data 
                         for key in keys_in_metadata:
@@ -247,9 +247,13 @@ class NLUPipeline(BasePipe):
                         max_confidence_name  = field.split('.')[0] +'_confidence'
                         renamed_cols_to_max = [col.replace('.','_') for col in cols_to_max]
 
-                        ptmp = ptmp.withColumn(max_confidence_name , greatest(*renamed_cols_to_max))
-                        columns_for_select.append(max_confidence_name)
-                        
+                        if len(cols_to_max) > 1 :
+                            ptmp = ptmp.withColumn(max_confidence_name , greatest(*renamed_cols_to_max))
+                            columns_for_select.append(max_confidence_name)
+                        else :
+                            ptmp = ptmp.withColumnRenamed(renamed_cols_to_max[0], max_confidence_name  )
+                            columns_for_select.append(max_confidence_name)
+
                     continue
 
 
@@ -274,8 +278,8 @@ class NLUPipeline(BasePipe):
                     # we iterate over the keys in the metadata and use them as new column names. The values will become the values in the columns.
                     keys_in_metadata = list(ptmp.select(field).take(1))
                     if len(keys_in_metadata) == 0 : continue
-                    keys_in_metadata = keys_in_metadata[0].asDict()['metadata'][0].keys() #
-                    if 'sentence' in keys_in_metadata : keys_in_metadata.remove('sentence')
+                    keys_in_metadata = list(keys_in_metadata[0].asDict()['metadata'][0].keys()) #
+                    if 'sentence' in keys_in_metadata : keys_in_metadata.remove('sentence') # todo realy remove here?
                     
                     new_fields=[]
                     for key in keys_in_metadata: 
@@ -305,9 +309,13 @@ class NLUPipeline(BasePipe):
                         for key in cols_to_max : ptmp = ptmp.withColumn(key, pyspark_col(key).cast('decimal(7,6)'))
 
                         max_confidence_name  = field.split('.')[0] +'_confidence'
+                        if len(cols_to_max) > 1 : 
+                            ptmp = ptmp.withColumn(max_confidence_name , greatest(*cols_to_max))
+                            columns_for_select.append(max_confidence_name)
+                        else :
+                            ptmp = ptmp.withColumnRenamed( cols_to_max[0], max_confidence_name )
+                            columns_for_select.append(max_confidence_name)
 
-                        ptmp = ptmp.withColumn(max_confidence_name , greatest(*cols_to_max))
-                        columns_for_select.append(max_confidence_name)
                     continue # end of special meta data case 
                 
 
