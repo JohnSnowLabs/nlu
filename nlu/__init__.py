@@ -100,9 +100,8 @@ all_components_info = nlu.AllComponentsInfo()
 global active_pipes
 active_pipes = []
 global spark_started, spark
-spark_started = True
-spark = sparknlp.start()
-spark.sparkContext.setLogLevel("ERROR")
+spark_started = False
+spark = None
 
 
 
@@ -112,6 +111,8 @@ def load(request, verbose = False):
     :param request: A NLU model/pipeline/component reference
     :return: returns a fitted nlu pipeline object
     '''
+    spark =  sparknlp.start()
+    spark_started = True
     if verbose:
         logger.setLevel(logging.INFO)
         ch = logging.StreamHandler()
@@ -517,7 +518,7 @@ def print_all_nlu_components_for_lang(lang='en', type='classifier'):
     else : print ("Language ", lang, ' Does not exsist in NLU. Please check the docs or nlu.print_all_languages() for supported language references')
 
 
-def components(lang='', action='' ):
+def print_components(lang='', action='' ):
     '''
     Print every single NLU reference for models and pipeliens and their Spark NLP pointer
     :param lang: Language requirements for the components filterd. See nlu.languages() for supported languages 
@@ -549,7 +550,7 @@ def components(lang='', action='' ):
         for nlu_reference in nlu.NameSpace.pretrained_models_references[lang] :
             print('NLU reference <', nlu_reference, '> for lang', lang, ' points to SPARK NLP model :', nlu.NameSpace.pretrained_models_references[lang][nlu_reference])
 
-def component_types():
+def print_component_types():
     ''' Prints all unique component types in NLU'''
     types = []
     for key, val in nlu.all_components_info.all_components.items() : types.append(val.type)
@@ -592,7 +593,7 @@ class NLU_error():
     def predict(self, text, output_level='error', positions='error', metadata='error'):
         print('The NLU components could not be properly created. Please check previous print messages and Verbose mode for further info')
 
-
+    def print_info(self): print("Sorry something went wrong when building the pipeline. Please check verbose mode and your NLU reference.")
 # 
 # def print_all_nlu_models_of_type_for_lang(type='classifier', lang='de'):
 #     '''
