@@ -159,10 +159,15 @@ class NLUPipeline(BasePipe):
         """
         logger.info('Getting field types for output SDF')
         field_types_dict = {}
+        
+        
+        
         for field in sdf.schema.fieldNames():
             if field in stranger_features : continue
             if field == self.raw_text_column: continue
             if 'label' in field: continue  # speciel case for input lables
+            
+            # For empty DF this will crash
             a_row = sdf.select(field + '.annotatorType').take(1)[0]['annotatorType']
             if len(a_row) > 0:
                 a_type = a_row[0]
@@ -379,7 +384,7 @@ class NLUPipeline(BasePipe):
         field_dict = self.get_field_types_dict(processed, stranger_features) #map field to type of field
         not_at_same_output_level_fields = []
         same_output_level_fields = [self.output_level + '.result']
-        logger.info('Setting Output level as : %s', same_output_level_fields[0])
+        logger.info('Setting Output level as : %s', self.output_level=='')
 
                 
         if keep_stranger_features :
@@ -640,7 +645,7 @@ class NLUPipeline(BasePipe):
 
     def print_info(self,):
         '''
-        Print out information about every component currenlty loaded in the pipe and their configurable parameters
+        Print out information about every component currently loaded in the pipe and their configurable parameters
         :return: None
         '''
         for i, component in enumerate(self.pipe_components) :
@@ -649,7 +654,7 @@ class NLUPipeline(BasePipe):
             p_map = component.model.extractParamMap()
             for key in p_map.keys():
                 if 'outputCol' in key.name or 'labelCol' in key.name or 'inputCol' in key.name or 'labelCol' in key.name : continue
-                print("Param Name [",key.name, "] :  Param Info :" , key.doc, ' currenlty Configured as : ',p_map[key] )
+                print("Param Name [",key.name, "] :  Param Info :" , key.doc, ' currently Configured as : ',p_map[key] )
 
 class PipelineQueryVerifier():
     '''
