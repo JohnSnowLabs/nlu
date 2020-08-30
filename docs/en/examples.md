@@ -88,28 +88,31 @@ nlu.load('sentiment').predict("I hate this guy Sami")
 
 
 ## Question Classifier 6 class
-Classify between 6 different types of questions trainec on Trec6
+Classify between 6 different types of questions trainec on Trec6       
+When setting predict(meta=True) nlu will output the probabilities for all other 5 question classes.
 
 ```python
 nlu.load('en.classify.trec6').predict('Where is the next food store?')
 ```
 
 {:.steelBlueCols}
-| sentence_embeddings |    category_ ABBR |   category_sentence  | category_ DESC |     category_ NUM |    category_ ENTY |   category_ LOC |    category_ HUM|     sentence   | category|    id|
-|---------------------|--------------------|------------------------|-----------------|---------------|--------------------|------------------|-------------------|--------------|--------|-------|
-|[-0.05699703469872475, 0.039651867002248764, -...]|    2.2486939E-13  | 0   | 1.2741682E-9 | 2.3458482E-9 | 1.6385917E-8 | 1.0  | 7.901978E-9  | Where is the next food store?    | LOC  |1 |
+| sentence_embeddings|	category_confidence| 	sentence| 	category| 	id| 
+|-------------------|----------------------|------------|-----------|-----|
+|[-0.05699703469872475, 0.039651867002248764, -...]|	1.000000 | 	Where is the next food store? | 	LOC	|1|
 
 ## Question Classifier 50 class
-Classify between 50 different types of questions trained on Trec50
+Classify between 50 different types of questions trained on Trec50     
+When setting predict(meta=True) nlu will output the probabilities for all other 49 question classes.
 
 ```python
 nlu.load('en.classify.trec50').predict('How expensive is the Watch?')
 ```
 
 {:.steelBlueCols}
-| sentence_embeddings  | category_ ENTY_letter    | category_ DESC_reason    | category_ ENTY_word  | category_ LOC_country    | category_ ENTY_other | category_ ENTY_instru    | category_ HUM_desc   | category_ LOC_mount  | category_ NUM_dist   | category_ ENTY_symbol |  category_ DESC_manner  | category_ ABBR_abb   | category_ NUM_count  | category_ DESC_def   | category_ ENTY_color |   category_sentence  | category_ ENTY_event | category_ ENTY_veh |     category_ NUM_ord |     category_ NUM_other|  category_ NUM_code | category_ DESC_desc|     category_ HUM_title    | category_ NUM_weight | category_ ENTY_substance | category_ HUM_gr | category_ ENTY_body|     category_ HUM_ind  | category_ LOC_other  | category_ NUM_speed  | category_ NUM_volsize    | category_ ENTY_religion  | category_ ENTY_dismed    | category_ ABBR_exp   | category_ ENTY_product   | category_ ENTY_currency  | category_ ENTY_sport | category_ NUM_perc   | category_ ENTY_cremat    | category_ ENTY_plant | category_ NUM_money   | category_ NUM_temp |    category_ ENTY_animal  | category_ NUM_period | category_ ENTY_lang  | category_ NUM_date   | category_ ENTY_techmeth  | category_ ENTY_termeq    | category_ LOC_state  | category_ LOC_city   | category_ ENTY_food  | sentence | category |id|
-|------------------------|----------------------|----------------------|----------------------|----------------------|----------------------|----------------------|---------------------------|----------------------|-------------------------|----------------------|----------------------|--------------------------|----------------------|---------------------------|----------------------|----------------------|-------------------------|----------------------|------------------|--------------------------|----------------------|--------------------|----------------------|-----------------------|---------------------------|-------------------|---------------------|----------------------|----------------------|-----------------------|-----------------------|---------------------------|----------------------|-------------------------|---------------------------|--------------------------|-----------------------|-----------------------|----------------------|----------------------|----------------------|----------------------|-------------------------------|-----------------------|----------------------|-----------------------|----------------------------|----------------------|------------------------|----------------------|------------------------|-----------------------|---|
-|[0.051809534430503845, 0.03128402680158615, -0...]|   8.459624E-23 | 3.4999828E-14  | 3.5003475E-23     | 5.841585E-20 |  4.958728E-9     | 1.2962921E-22   | 3.265098E-23 | 2.7989845E-22    | 1.1879483E-22    | 3.3417754E-23    | 1.1275173E-10    | 2.0653923E-23    | 0.91943645   | 1.1442368E-20    | 6.967735E-21 0  | 6.008502E-24 | 4.201739E-23  |  1.9875016E-25  | 7.991396E-25  | 5.3842046E-22   | 3.6065938E-8 | 9.143437E-24 | 5.219503E-23 | 4.7433556E-23    | 4.337756E-19 | 2.7589757E-23    | 5.1413796E-18    | 7.611624E-14 | 4.302599E-21 |4.125377E-23  |5.2841376E-21 |1.519717E-21  | 7.546624E-23 | 8.906359E-22 | 2.617869E-25 | 1.8343639E-24    | 3.1659472E-22  |     2.537563E-21   | 4.2162198E-24    | 2.3034208E-20 |  1.740357E-22   | 4.4444944E-23|   7.8172316E-20  | 8.119662E-24 | 0.0805635    | 4.5887844E-21    | 3.4650898E-22    | 2.3069434E-23    | 4.631075E-22|    1.0575064E-22  |  1.2962221E-22  |     How expensive is the Watch? |  NUM_count  | 1 |
+|	sentence_embeddings| 	category_confidence| 	sentence| 	category| 	id|
+|----------------------|----------------------|-------------|----------|------|
+|[0.051809534430503845, 0.03128402680158615, -0...]|	0.919436 | 	How expensive is the watch?| 	NUM_count	|1|
+
 
 ## Fakenews Classifier
 
@@ -130,10 +133,9 @@ nlu.load('en.classify.cyberbullying').predict('Women belong in the kitchen.') # 
 ```
 
 {:.steelBlueCols}
-| sentence_embeddings |    category_sentence |    category_sexism |  category_neutral |     category_racism |  sentence |     category |     id |
-|---------------------|-----------------------|---------------------|--------------------|------------------|------------|-----------|-----|
-|[-0.054944973438978195, -0.022223370149731636,...] |  0 |    0.999998 |     1.87933E-6 |   7.737535E-8     | Women belong in the kitchen. |  sexism | 1 |
-
+|sentence_embeddings| 	category_confidence| 	sentence| 	category| 	id|
+|-------------------|----------------------|------------|-----------|------|
+|[-0.054944973438978195, -0.022223370149731636,...]|	0.999998 	| Women belong in the kitchen. | 	sexism| 	1  | 
 ## Spam Classifier
 
 ```python
@@ -576,15 +578,53 @@ nlu.load('match.datetime').predict('In the years 2000/01/01 to 2010/01/01 a lot 
 |---------|--------|--------|
 |In the years 2000/01/01 to 2010/01/01 a lot of things happened | 1 | [2000/01/01, 2001/01/01] |
 
-## Chunking (Work in Progres)
+## Chunking   
+Checkout https://www.ling.upenn.edu/courses/Fall_2003/ling001/penn_treebank_pos.html for all possible POS labels       
+Splits text into rows based on matched grammatical entities.     
 ```python
-nlu.load('match.chunks').predict('What a wondful day!') 
+# First we load the pipeline
+pipe = nlu.load('match.chunks')
+# Now we print the info to see at which index which com,ponent is and what parameters we can configure on them 
+pipe.print_info()
+# Lets set our Chunker to only match NN
+pipe.pipe_components[4].model.setRegexParsers(['<NN>+'])
+# Now we can predict with the configured pipeline
+pipe.predict("Jim and Joe went to the market next to the town hall")
+```
+
+```bash
+# the outputs of pipe.print_info()
+-------------------------------------At pipe.pipe_components[0].model  : document_assembler with configurable parameters: --------------------------------------
+Param Name [ cleanupMode ] :  Param Info : possible values: disabled, inplace, inplace_full, shrink, shrink_full, each, each_full, delete_full  currenlty Configured as :  disabled
+--------------------------------------At pipe.pipe_components[1].model  : sentence_detector with configurable parameters: --------------------------------------
+Param Name [ customBounds ] :  Param Info : characters used to explicitly mark sentence bounds  currenlty Configured as :  []
+Param Name [ explodeSentences ] :  Param Info : whether to explode each sentence into a different row, for better parallelization. Defaults to false.  currenlty Configured as :  False
+Param Name [ lazyAnnotator ] :  Param Info : Whether this AnnotatorModel acts as lazy in RecursivePipelines  currenlty Configured as :  False
+Param Name [ maxLength ] :  Param Info : Set the maximum allowed length for each sentence  currenlty Configured as :  99999
+Param Name [ minLength ] :  Param Info : Set the minimum allowed length for each sentence.  currenlty Configured as :  0
+Param Name [ useAbbreviations ] :  Param Info : whether to apply abbreviations at sentence detection  currenlty Configured as :  True
+Param Name [ useCustomBoundsOnly ] :  Param Info : Only utilize custom bounds in sentence detection  currenlty Configured as :  False
+----------------------------------------At pipe.pipe_components[2].model  : regex_matcher with configurable parameters: ----------------------------------------
+Param Name [ caseSensitiveExceptions ] :  Param Info : Whether to care for case sensitiveness in exceptions  currenlty Configured as :  True
+Param Name [ lazyAnnotator ] :  Param Info : Whether this AnnotatorModel acts as lazy in RecursivePipelines  currenlty Configured as :  False
+Param Name [ targetPattern ] :  Param Info : pattern to grab from text as token candidates. Defaults \S+  currenlty Configured as :  \S+
+Param Name [ maxLength ] :  Param Info : Set the maximum allowed length for each token  currenlty Configured as :  99999
+Param Name [ minLength ] :  Param Info : Set the minimum allowed length for each token  currenlty Configured as :  0
+----------------------------------------At pipe.pipe_components[3].model  : sentiment_dl  with configurable parameters: ----------------------------------------
+Param Name [ lazyAnnotator ] :  Param Info : Whether this AnnotatorModel acts as lazy in RecursivePipelines  currenlty Configured as :  False
+---------------------------------------At pipe.pipe_components[4].model  : default_chunker with configurable parameters: ---------------------------------------
+Param Name [ lazyAnnotator ] :  Param Info : Whether this AnnotatorModel acts as lazy in RecursivePipelines  currenlty Configured as :  False
+Param Name [ regexParsers ] :  Param Info : an array of grammar based chunk parsers  currenlty Configured as :  ['<DT>?<JJ>*<NN>+']
 ```
 
 {:.steelBlueCols}
-|chunk|    id|    pos|
-|-----|----|----|
-|a wondful day | 1 |  [WP, DT, JJ, NN, .] |
+| chunk| 	id| 	pos| 
+|-------|-----|--------|
+|market|	1| 	[NNP, CC, NNP, VBD, TO, DT, NN, JJ, TO, DT, NN... |
+|town | 	1	| [NNP, CC, NNP, VBD, TO, DT, NN, JJ, TO, DT, NN... |
+| hall| 	1	| [NNP, CC, NNP, VBD, TO, DT, NN, JJ, TO, DT, NN... |
+
+
 
 
 ## Sentence Detector
