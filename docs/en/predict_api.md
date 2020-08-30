@@ -224,7 +224,7 @@ nlu.load('sentiment').predict(text_df)
 
 ### Pandas Series
 
-One column must be named text and of object/string type
+One column must be named text and of object/string type      
 **note** : This way is the most memory efficient way 
 
 ```python
@@ -244,7 +244,7 @@ import nlu
 import pandas as pd
 data = {"text": ['This day sucks', 'I love this day', 'I dont like Sami']}
 text_pdf = pd.DataFrame(data)
-text_sdf = nlu.SPARK_CONNECTION.createDataFrame(text_pdf)
+text_sdf = nlu.spark.createDataFrame(text_pdf)
 nlu.load('sentiment').predict(text_sdf)
 ```
 
