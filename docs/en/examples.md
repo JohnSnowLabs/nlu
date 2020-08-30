@@ -114,7 +114,7 @@ nlu.load('en.classify.trec50').predict('How expensive is the Watch?')
 |[0.051809534430503845, 0.03128402680158615, -0...]|	0.919436 | 	How expensive is the watch?| 	NUM_count	|1|
 
 
-## Fakenews Classifier
+## Fake News Classifier
 
 ```python
 nlu.load('en.classify.fakenews').predict('Unicorns have been sighted on Mars!')
@@ -136,6 +136,7 @@ nlu.load('en.classify.cyberbullying').predict('Women belong in the kitchen.') # 
 |sentence_embeddings| 	category_confidence| 	sentence| 	category| 	id|
 |-------------------|----------------------|------------|-----------|------|
 |[-0.054944973438978195, -0.022223370149731636,...]|	0.999998 	| Women belong in the kitchen. | 	sexism| 	1  | 
+
 ## Spam Classifier
 
 ```python
@@ -356,24 +357,6 @@ nlu.load('use').predict('USE is designed to encode whole sentences and documents
 |---------|--------------------|--------|
 |USE  is designed to encode whole sentences and ...]   | [0.03302069380879402, -0.004255455918610096, -...]    | 1 |
 
-## General Sentence Embeddings  (Work in Progress)
-Via the sentence Embeddings converter provided by Spark NLP any token Embeddings can be
-converted to a sentence or document embedding.      
-
-```python
-#Any works!
-nlu.load('embeddings_sentence.elmo').predict('Wht a wondful day!')
-nlu.load('embeddings_sentence.xlnet').predict('Wht a wondful day!')
-nlu.load('embeddings_sentence.bert').predict('Wht a wondful day!')
-```
-
-## Chunk Embeddings (Work in Progres)
-```python
-#Any works!
-nlu.load('embeddings_chunk.elmo').predict('Wht a wondful day!')
-nlu.load('embeddings_chunk.bert').predict('Wht a wondful day!')
-nlu.load('embeddings_chunk.xlnet').predict('Wht a wondful day!')
-```
 
 
 ## Spell Checking
@@ -394,7 +377,7 @@ nlu.load('spell').predict('I liek pentut butr and jelli')
 
 
 
-## Dependency Parsing Unlabelled
+## Dependency Parsing Unlabeled
 ```python
 nlu.load('dep.untyped').predict('Untyped Dependencies represent a grammatical tree structure')
 ```
@@ -553,19 +536,6 @@ nlu.load('ngram').predict('Wht a wondful day!')
 |To be or not to be| 1 |   [To, be, or, not, to, be, To be, be or, or not...] |   [TO, VB, CC, RB, TO, VB] |
 
 
-
-## Regex Matching (Work in Progres)
-```python
-regex_pipe = nlu.load('match.regex')
-regex_pipe.predict('Wht a wondful day!')
-```
-
-## Text Matching (Work in Progres)
-```python
-regex_pipe = nlu.load('match.text')
-regex_pipe.pipe['regex_model']setParam()
-regex_pipe.predict('Wht a wondful day!')
-```
 
 
 ## Date Matching
