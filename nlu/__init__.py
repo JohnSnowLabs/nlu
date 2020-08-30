@@ -529,9 +529,12 @@ def components(lang='', action='' ):
         return
 
     if lang !='' and action != '':
-        print_all_model_kinds_for_action(lang, action)
+        print_all_model_kinds_for_action_and_lang(lang, action)
         return
 
+    if lang =='' and action != '':
+        print_all_model_kinds_for_action(action)
+        return
 
     # Print entire Namespace below
     for nlu_reference in nlu.NameSpace.default_pretrained_component_references.keys():
@@ -557,8 +560,23 @@ def component_types():
         print(i, '. ', type)
     return
 
+def print_all_model_kinds_for_action(action):
 
-def print_all_model_kinds_for_action(lang, action):
+    for lang, lang_models in nlu.NameSpace.pretrained_models_references.items():
+        lang_printed=False
+        for nlu_reference, nlp_reference in lang_models.items():
+            ref_action  =  nlu_reference.split('.')
+            if len(ref_action) > 1 : 
+                ref_action=ref_action[1]
+
+            if ref_action == action:
+                if lang_printed==False :
+                    print('For language <',lang ,'> NLU provides the following Models : ')
+                    lang_printed=True
+                print('NLU reference <', nlu_reference, '> points to Spark NLP reference', nlp_reference)
+        
+
+def print_all_model_kinds_for_action_and_lang(lang, action):
     lang_candidates = nlu.NameSpace.pretrained_models_references[lang]
     print("All NLU components for lang ", lang , " that peform action ", action)    
     for nlu_reference, nlp_reference in lang_candidates.items():
@@ -566,6 +584,15 @@ def print_all_model_kinds_for_action(lang, action):
         if len(ref_action) > 1 : ref_action=ref_action[1]
         if ref_action == action:
             print('NLU reference <', nlu_reference, '> points to Spark NLP reference', nlp_reference)
+
+
+class NLU_error():
+    def __init__(self):
+        pass
+    def predict(self, text, output_level='error', positions='error', metadata='error'):
+        print('The NLU components could not be properly created. Please check previous print messages and Verbose mode for further info')
+
+
 # 
 # def print_all_nlu_models_of_type_for_lang(type='classifier', lang='de'):
 #     '''
@@ -598,10 +625,3 @@ def print_all_model_kinds_for_action(lang, action):
 
 
 
-
-
-class NLU_error():
-    def __init__(self):
-        pass
-    def predict(self, text, output_level='error', positions='error', metadata='error'):
-        print('The NLU components could not be properly created. Please check previous print messages and Verbose mode for further info')
