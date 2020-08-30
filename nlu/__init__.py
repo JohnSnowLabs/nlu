@@ -37,8 +37,7 @@ from nlu.components.utils.document_assembler.spark_nlp_document_assembler import
 # we cant call the embdding file "embeddings" because namespacing wont let us import the Embeddings class inside of it then
 from nlu.components.embedding import Embeddings
 from nlu.components.util import Util
-from nlu.components.utils.ner_to_chunk_converter import NerToChunkConverter
-
+from nlu.components.utils.ner_to_chunk_converter import ner_to_chunk_converter
 
 # sentence
 from nlu.components.sentence_detectors.pragmatic_sentence_detector.sentence_detector import PragmaticSentenceDetector
@@ -143,13 +142,7 @@ def load(request, verbose = False):
     active_pipes.append(pipe)
     return pipe
 
-def clear_model_ram():
-    '''
-    Deletes all active pipelines and frees up RAM
-    :return: 
-    '''
-    del active_pipes[:]
-    gc.collect()
+
 
 def build(component_request):
     '''
@@ -491,10 +484,11 @@ def construct_component_from_identifier(language, component_type, dataset, compo
 
 
 # Functionality discovery methods
-def print_all_nlu_supported_languages():
+def languages():
     ''' Print all languages which are avaiable in NLU Spark NLP pointer '''
     print('Languages available in NLU : \n ')
     for lang in  all_components_info.all_languages : print (lang)
+
 def print_all_nlu_components_for_lang(lang='en'):
     '''Print all NLU components avialable for a language Spark NLP pointer'''
     if lang in all_components_info.all_languages :
@@ -508,8 +502,38 @@ def print_all_nlu_components_for_lang(lang='en'):
 
     else : print ("Language ", lang, ' Does not exsist in NLU. Please check the docs or nlu.print_all_languages() for supported language references')
 
-def print_all_nlu_components():
-    '''Print every single NLU reference for models and pipeliens and their Spark NLP pointer'''
+
+def print_all_nlu_components_for_lang(lang='en', type='classifier'):
+    '''Print all NLU components avialable for a language Spark NLP pointer'''
+    if lang in all_components_info.all_languages :
+        # print('All Pipelines for language', lang, '\n',)
+        for nlu_reference in NameSpace.pretrained_pipe_references[lang] :
+            print('NLU pipe reference :  <', nlu_reference, '> points to Spark NLP Pipeline:', NameSpace.pretrained_pipe_references[lang][nlu_reference])
+        print('All Pipelines for language', lang, '\n', NameSpace.pretrained_models_references[lang])
+
+        for nlu_reference in NameSpace.pretrained_models_references[lang] :
+            print('NLU reference : <', nlu_reference , '> points to Spark NLP Model: ', NameSpace.pretrained_models_references[lang][nlu_reference])
+
+    else : print ("Language ", lang, ' Does not exsist in NLU. Please check the docs or nlu.print_all_languages() for supported language references')
+
+
+def components(lang='', action='' ):
+    '''
+    Print every single NLU reference for models and pipeliens and their Spark NLP pointer
+    :param lang: Language requirements for the components filterd. See nlu.languages() for supported languages 
+    :param type: Components that will be filterd.
+    :return: None. This method will print its results.
+    '''
+    if lang !='' and action == '':
+        print_all_nlu_components_for_lang(lang)
+        return
+
+    if lang !='' and action != '':
+        print_all_model_kinds_for_action(lang, action)
+        return
+
+
+    # Print entire Namespace below
     for nlu_reference in nlu.NameSpace.default_pretrained_component_references.keys():
         print('Default NLU reference : <', nlu_reference , '> of type :' , nlu.NameSpace.default_pretrained_component_references[nlu_reference][1], ' points to : ',nlu.NameSpace.default_pretrained_component_references[nlu_reference][0] , 'Points to Spark NLP reference : ', nlu.NameSpace.default_pretrained_component_references[nlu_reference])
 
@@ -522,10 +546,62 @@ def print_all_nlu_components():
         for nlu_reference in nlu.NameSpace.pretrained_models_references[lang] :
             print('NLU reference <', nlu_reference, '> for lang', lang, ' points to SPARK NLP model :', nlu.NameSpace.pretrained_models_references[lang][nlu_reference])
 
+def component_types():
+    ''' Prints all unique component types in NLU'''
+    types = []
+    for key, val in nlu.all_components_info.all_components.items() : types.append(val.type)
+
+    types = set(types)
+    print("Provided component types in this NLU version are : ")
+    for i, type in enumerate(types):
+        print(i, '. ', type)
+    return
+
+
+def print_all_model_kinds_for_action(lang, action):
+    lang_candidates = nlu.NameSpace.pretrained_models_references[lang]
+    print("All NLU components for lang ", lang , " that peform action ", action)    
+    for nlu_reference, nlp_reference in lang_candidates.items():
+        ref_action  =  nlu_reference.split('.')
+        if len(ref_action) > 1 : ref_action=ref_action[1]
+        if ref_action == action:
+            print('NLU reference <', nlu_reference, '> points to Spark NLP reference', nlp_reference)
+# 
+# def print_all_nlu_models_of_type_for_lang(type='classifier', lang='de'):
+#     '''
+#     
+#     :param type: 
+#     :param lang: 
+#     :return: 
+#     '''
+# 
+#     types = []
+#     for key, component in nlu.all_components_info.all_components.items() : 
+#         if component.type ==type:
+#             # We wound a component of correct type, now we must search the namespace for references for this model in the specific lang            
+#             
+#             if lang in nlu.NameSpace.pretrained_models_references.keys(): 
+#                 lang_candidates = nlu.NameSpace.pretrained_models_references[lang]
+#                 
+#                 for 
+# 
+#                 types.append(component.name)
+# 
+#             
+#             else: print('The requested language <',lang,'> has no avaiable NLU pretrained models. Check nlu.languages() function for supported languages')            
+# 
+#     types = set(types)
+#     print("Provided component types in this NLU version are : ")
+#     for i, type in enumerate(types):
+#         print(i, '. ', type)
+#     return
+
+
+
 
 
 class NLU_error():
     def __init__(self):
         pass
     def predict(self, text, output_level='error', positions='error', metadata='error'):
-        print('The NLU components could not be properly created. Please check previous print and Verbose mode for further info')
+        print('The NLU components could not be properly created. Please check previous print messages and Verbose mode for further info')
