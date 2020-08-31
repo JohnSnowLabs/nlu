@@ -123,6 +123,7 @@ def load(request, verbose = False):
         components_requested = request.split(' ')
         pipe = NLUPipeline()
         for component in components_requested:
+            if component == ' ' : continue
             nlu_component = parse_component_data_from_name_query(component)
             if type(nlu_component) == type([]): # if we get a list of components, then the NLU reference is a pipeline, we do not need to check order
                 # lists are parsed down to multiple components

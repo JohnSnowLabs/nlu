@@ -15,10 +15,8 @@ class TestNameSpace(unittest.TestCase):
         
 
     def test_pos(self):
-        df = nlu.load('en.pos').predict('What is this')
-        print(df)
 
-        df = nlu.load('pos').predict('What a wonderful day!')
+        df = nlu.load('pos', verbose=True).predict('What a wonderful day!')
         print(df)
     # 
     # def test_embed(self):
@@ -40,13 +38,18 @@ class TestNameSpace(unittest.TestCase):
     #     df = nlu.load('glove').predict('What a wonderful day!')
     #     print(df)
     # 
+    
+    def test_sentiment_twitter_out(self):
+        # res=nlu.load('en.sentiment.twitter',verbose=True).predict('@elonmusk Tesla stock price is too high imo') # ifninite loop ?? 
+        res = nlu.load('en.sentiment.imdb',verbose=True).predict('The Matrix was a pretty good movie')
 
+        print(res)
+        print(res.columns)
 
     def test_output_levels(self):
         print('token test')
         df = nlu.load('sentiment',verbose=True).predict('What a wonderful day!', output_level='token')
         print(df)
-
         print('document test')
         df = nlu.load('sentiment',verbose=True).predict('What a wonderful day!', output_level='document')
         print(df)
@@ -56,10 +59,13 @@ class TestNameSpace(unittest.TestCase):
         print(df)
 
         print('chunk test')
-        df = nlu.load('sentiment',verbose=True).predict('What a wonderful day!', output_level='chunk')
+        df = nlu.load('sentiment',verbose=True).predict('I like peanut butter and jelly!', output_level='chunk')
         print(df)
 
+    def test_ner_multilingual(self):
+        df = nlu.load('ner',verbose=True).predict('New York is a great place and America aswell')
 
+        print(df)
 
     def test_sentiment(self):
         df = nlu.load('en.sentiment.vivekn').predict('What a wonderful day!')
@@ -85,9 +91,9 @@ class TestNameSpace(unittest.TestCase):
 
     def test_spell(self):
 
-        df = nlu.load('en.spell').predict(get_sample_pdf())
+        # df = nlu.load('en.spell').predict(get_sample_pdf())
 
-        print(df)
+        # print(df)
 
         df = nlu.load('spell').predict('What a wonderful day!')
         print(df)
@@ -354,11 +360,8 @@ class TestNameSpace(unittest.TestCase):
         # print(res)
 
     def test_chunk(self):
-        pdf = get_sample_pdf()
-        res = nlu.load('chunk',verbose=True).predict(pdf )
-        print(res)
-        res = nlu.load('en.chunk',verbose=True).predict(pdf)
-        print(res)
+        res = nlu.load('chunk',verbose=True).predict('I like peanut butter and jelly!' )
+        print(res)        
 
     def test_ngram(self):
         pdf = get_sample_pdf()
@@ -387,12 +390,12 @@ class TestNameSpace(unittest.TestCase):
         res = nlu.load('match.text',verbose=True).predict(pdf )
         print(res)
 
-    def test_auto_sentence_embed_bert(self): # TODO 
+    def test_auto_sentence_embed_bert(self): # TODO WIP
         pdf = get_sample_pdf()
         res = nlu.load('embed_sentence.bert',verbose=True).predict(pdf )
         print(res)
 
-    def test_auto_sentence_embed_elmo(self): # TODO  
+    def test_auto_sentence_embed_elmo(self): # TODO  WIP
         pdf = get_sample_pdf()
         res = nlu.load('embed_sentence.elmo',verbose=True).predict(pdf )
         print(res)

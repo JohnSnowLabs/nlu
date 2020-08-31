@@ -11,10 +11,10 @@ class MyTestCase(unittest.TestCase):
         a.DEBUG_list_all_components()
 
     def test_list_all_names(self):
-        nlu.print_all_nlu_components()
+        nlu.components()
         nlu.print_all_nlu_components_for_lang(lang='de')
 
-        nlu.print_all_nlu_supported_languages()
+        nlu.languages()
 
     def test_print_all_default_components_as_markdown(self):
         print(pd.DataFrame(nlu.NameSpace.default_pretrained_component_references).T.to_markdown())
@@ -108,8 +108,31 @@ class MyTestCase(unittest.TestCase):
         
         pipe.print_info()
         
+    def test_print_all_components_for_lang(self):
+        # Test printing of all components for one specific language
+        nlu.print_components( 'de')
+
+
+    def test_print_all_component_types(self):
+        # Test printing of all components types
+        nlu.print_component_types()
         
+
         
+    def test_print_all_components_for_action_in_lang(self):
+        # Test printing of all components for one specific action and language
+        nlu.print_components( lang='en', action='classify')
+
+    def test_print_all_components_for_action(self):
+        # Test printing of all components for one specific type
+        nlu.print_components(action='lemma')
+
+
+    def test_print_all_components(self):
+        nlu.print_components()
+
+
+
     
 if __name__ == '__main__':
     MyTestCase().test_entities_config()

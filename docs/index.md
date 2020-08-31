@@ -51,64 +51,28 @@ data:
 
 
 
-
-## Tokenization
+## Named Entity Recognition (NER)
 ```python
-nlu.load('tokenize').predict('Each word and symbol in a sentence will generate token.')
-```
-
-{:.steelBlueCols}
-|token         |id|
-|--------------|----|
-|  Each        |1|
-|  word     |1|
-|     and     |1|
-|  symbol     |1|
-|   will |1|
-|     generate      |1|
-|         a  |1|
-|       token  |1|
-|       \.  |1|
-
-## Stemmer
-```python
-nlu.load('stemm').predict('NLU can get you the stem of a word')
-```
-
-{:.steelBlueCols}
-|token|    stem|  id|
-|----|------|-----|
-|NLU | nlu |  1 |
-|can | can |  1 |
-|get | get |  1 |
-|you | you |  1 |
-|the | the |  1 |
-|stem |    stem | 1 |
-|of |  of |   1 |
-|a |   a |    1 |
-|word |    word | 1 |
-
-
-## Stopwords Removal
-```python
-nlu.load('stopwords').predict('I want you to remove stopwords from this sentence please')
+nlu.load('ner').predict('Angela Merkel from Germany and the American Donald Trump dont share many opinions')
 ```
 
 
 {:.steelBlueCols}
-|token|    cleanTokens|   id|
-|-----|------------|-------|
-|I|    remove |   1 |
-|want| stopewords |   1 |
-|you|  sentence | 1 |
-|to|   None | 1 |
-|remove|   None | 1 |
-|stopwords|    None | 1 |
-|from| None | 1 |
-|this| None | 1 |
-|sentence| None | 1 |
-|please|   None | 1 |
-
+|word_embeddings |token |ner   |id    |entities|
+|--------------------|-------|-----|----|-------|
+|[-0.563759982585907, 0.26958999037742615, 0.35...]|   Angela|    B-PER| 1| [Angela Merkel, Germany, American, Donald Trump]|
+|[-1.000499963760376, 0.41997000575065613, 0.59...]|   Merkel|    I-PER| 1| [Angela Merkel, Germany, American, Donald Trump]|
+|[0.30730998516082764, 0.24737000465393066, 0.6...]|   from|  O| 1| [Angela Merkel, Germany, American, Donald Trump]|
+|[0.6208900213241577, 0.7105100154876709, 0.495...]|   Germany|   B-LOC|     1| [Angela Merkel, Germany, American, Donald Trump] |
+|[-0.07195299863815308, 0.23127000033855438, 0....]|   and|   O| 1| [Angela Merkel, Germany, American, Donald Trump]|
+|[-0.03819400072097778, -0.24487000703811646, 0...]|   the|   O| 1| [Angela Merkel, Germany, American, Donald Trump]|
+|[0.38666000962257385, 0.6482700109481812, 0.72...]|   American|  B-MISC|    1| [Angela Merkel, Germany, American, Donald Trump]|
+|[-0.5496799945831299, -0.488319993019104, 0.59...]|   Donald|    B-PER| 1| [Angela Merkel, Germany, American, Donald Trump]|
+|[-0.15730999410152435, -0.7550299763679504, 0....]|   Trump|     I-PER| 1| [Angela Merkel, Germany, American, Donald Trump]|
+|[0.0024119000881910324, 0.5014399886131287, 0....]|   dont|  O|     1| [Angela Merkel, Germany, American, Donald Trump]|
+|[0.5208799839019775, 0.761210024356842, 0.2608...]|   share|     O|     1| [Angela Merkel, Germany, American, Donald Trump]|
+|[-0.3291400074958801, 0.8288699984550476, -0.1...]|   many|  O|     1| [Angela Merkel, Germany, American, Donald Trump]|
+|[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, ...]|   opinions|     O| 1| [Angela Merkel, Germany, American, Donald Trump]|
 
 ## Part of speech  (POS)
 ```python
@@ -132,7 +96,10 @@ nlu.load('pos').predict('Part of speech assigns each token in a sentence a gramm
 |grammatical|  JJ|     1|
 |label          |NN| 1|
 
-## Multi Class Emotion detection
+
+
+
+## Emotion Classifier
 ```python
 nlu.load('emotion').predict('I love NLU!')
 ```
@@ -144,7 +111,7 @@ nlu.load('emotion').predict('I love NLU!')
 |--------------------|---------------------|------------|------------|-----|
 |[0.027570432052016258, -0.052647676318883896, ...]    |0.976017  |I love NLU!   |joy   |1|
 
-## Sentiment
+## Sentiment Classifier
 ```python
 nlu.load('sentiment').predict("I hate this guy Sami")
 ```
@@ -154,66 +121,99 @@ nlu.load('sentiment').predict("I hate this guy Sami")
 |-----------|----------------------|------------|---|---------|
 |0.5778 |  I hate this guy Sami   | negative |   1 |    [I, hate, this, guy, Sami] |
 
-## Spell Checking
+
+## Question Classifier 6 class
+
 ```python
-nlu.load('spell').predict('I liek pentut butr and jelli')
+nlu.load('en.classify.trec6').predict('Where is the next food store?')
 ```
 
 {:.steelBlueCols}
-|  token | checked    |id|
-|--------|--------|-----|
-|I|    I |    1|
-|liek| like | 1|
-|peantut|  peanut |   1|
-|buttr|    butter |   1|
-|and|  and |  1|
-|jelli|    jelly |    1|
+| sentence_embeddings|	category_confidence| 	sentence| 	category| 	id| 
+|-------------------|----------------------|------------|-----------|-----|
+|[-0.05699703469872475, 0.039651867002248764, -...]|	1.000000 | 	Where is the next food store? | 	LOC	|1|
 
-## Lemmatization
+## Question Classifier 50 class
+
 ```python
-nlu.load('lemma').predict('Lemmatizing generates a less noisy version of the inputted tokens')
+nlu.load('en.classify.trec50').predict('How expensive is the Watch?')
+```
+
+{:.steelBlueCols}
+|	sentence_embeddings| 	category_confidence| 	sentence| 	category| 	id|
+|----------------------|----------------------|-------------|----------|------|
+|[0.051809534430503845, 0.03128402680158615, -0...]|	0.919436 | 	How expensive is the watch?| 	NUM_count	|1|
+
+
+## Fake News Classifier
+
+```python
+nlu.load('en.classify.fakenews').predict('Unicorns have been sighted on Mars!')
+```
+
+{:.steelBlueCols}
+|sentence_embeddings|  category_confidence|   sentence|  category|  id|
+|------------------|-----------------------|------------|-----------|------|
+|[-0.01756167598068714, 0.015006818808615208, -...]    | 1.000000 | Unicorns have been sighted on Mars!  |FAKE  |1|
+
+
+## Cyberbullying Classifier
+Classifies sexism and racism
+```python
+nlu.load('en.classify.cyberbullying').predict('Women belong in the kitchen.') # sorry we really don't mean it
+```
+
+{:.steelBlueCols}
+|sentence_embeddings| 	category_confidence| 	sentence| 	category| 	id|
+|-------------------|----------------------|------------|-----------|------|
+|[-0.054944973438978195, -0.022223370149731636,...]|	0.999998 	| Women belong in the kitchen. | 	sexism| 	1  | 
+
+## Spam Classifier
+
+```python
+nlu.load('en.classify.spam').predict('Please sign up for this FREE membership it costs $$NO MONEY$$ just your mobile number!')
+```
+
+{:.steelBlueCols}
+|sentence_embeddings|  category_confidence|   sentence|  category |     id |
+|-------------------|----------------------|------------|-----------|-------|
+|[0.008322705514729023, 0.009957313537597656, 0...]    | 1.000000 | Please sign up for this FREE membership it cos...    |spam  |1 |
+
+## Sarcasm Classifier
+
+```python
+nlu.load('en.classify.sarcasm').predict('gotta love the teachers who give exams on the day after halloween')
 ```
 
 
 {:.steelBlueCols}
-|token|    lemma| id|
-|------|------|-----|
-|Lemmatizing|  Lemmatizing|   1 |
-|generates|    generate|  1 |
-|a|    a| 1 |
-|less| less|  1 |
-|noisy|    noisy| 1 |
-|version|  version|   1 |
-|of|   of|    1 |
-|the|  the|   1 |
-|inputted| input| 1 |
-|tokens|   token| 1 |
+| sentence_embeddings |    category_confidence  |     sentence |     category  |    id|
+|---------------------|--------------------------|-----------|-----------|---------|
+|[-0.03146284446120262, 0.04071342945098877, 0....] | 0.999985 | gotta love the teachers who give exams on the...    | sarcasm  | 1 |
 
-## Normalizers
+
+## IMDB Movie Sentiment Classifier
 ```python
-nlu.load('norm').predict('@CKL_IT says that #normalizers are pretty useful to clean #structured_strings in #NLU like tweets')
+nlu.load('en.sentiment.imdb').predict('The Matrix was a pretty good movie')
 ```
 
 {:.steelBlueCols}
-|normalized     | token   | id|
-|------------|----------|----|
-|CKLIT|    @CKL_IT    |  1|
-|says| says|  1|
-|that| that|  1|
-|normalizers|  #normalizers|  1|
-|are|  are|   1|
-|pretty|   pretty|    1|
-|useful|   useful|    1|
-|to|   to|    1|
-|clean|    clean|     1|
-|structuredstrings|    #structured_strings|   1|
-|in|   in|    1|
-|NLU|  #NLU|  1|
-|like| like|  1|
-|tweets|   tweets|    1|
+|document |    id |   sentence_embeddings|   sentiment_negative|    sentiment_negative|    sentiment_positive|    sentiment |
+|-------|-----|-------------------------|---------------------|----------------------|-------------------------|-------------|
+|The Matrix was a pretty good movie    |1 |   [[0.04629608988761902, -0.020867452025413513, ...  ]| [2.7235753918830596e-07]     | [2.7235753918830596e-07] |  [0.9999997615814209]|  [positive] |
+
+## Twitter Sentiment Classifier
+```python
+nlu.load('en.sentiment.twitter').predict('@elonmusk Tesla stock price is too high imo')
+```
+
+{:.steelBlueCols}
+|document |    id |   sentence_embeddings |  sentiment_negative |   sentiment_negative|    sentiment_positive |   sentiment|
+|--------|---------|-----------------------|-----------------------|---------------------|-------------------------|-------------|
+| @elonmusk Tesla stock price is too high imo  | 1    | [[0.08604438602924347, 0.04703635722398758, -0...]|  [1.0] |    [1.0]  | [1.692714735043349e-36]  | [negative]|
 
 
-## Language Classification
+## Language Classifier
 ```python
 nlu.load('lang').predict(['NLU is an open-source text processing library for advanced natural language processing for the Python.','NLU est une bibliothèque de traitement de texte open source pour le traitement avancé du langage naturel pour les langages de programmation Python.'])
 ```
@@ -225,90 +225,6 @@ nlu.load('lang').predict(['NLU is an open-source text processing library for adv
 |0.985407  |NLU is an open-source text processing library ...]|   en|    0|
 |0.999822  |NLU est une bibliothèque de traitement de text...]|   fr|    1|
 
-
-## Named Entity Recognition (NER)
-```python
-nlu.load('ner').predict('Donald Trump had a meeting with Tim Apple in new York !')
-```
-
-
-{:.steelBlueCols}
-|token | embeddings_embeddings    |ner   |id    | entities |
-|-------|-----------------------|-------|----|---------|
-|Donald|   [-0.5496799945831299, -0.488319993019104, 0.59...] |B-PER |1|    [Donald Trump, Tim Apple, York!] |
-|Trump|    [-0.15730999410152435, -0.7550299763679504, 0...]      |I-PER |1|    [Donald Trump, Tim Apple, York!] |
-|had|  [0.6325600147247314, -0.12717999517917633, -0...]      |O     |1|    [Donald Trump, Tim Apple, York!] |
-|a|    [-0.2708599865436554, 0.04400600120425224, -0...]          |O     |1|    [Donald Trump, Tim Apple, York!] |
-|meeting|  [-0.4541400074958801, -0.5592300295829773, 0.7...] |O     |1|    [Donald Trump, Tim Apple, York!] |
-|with| [-0.4360800087451935, 0.39103999733924866, 0.5...]     |O     |1|    [Donald Trump, Tim Apple, York!] |
-|Tim|  [0.07363300025463104, -0.037108998745679855, 0...]     |B-PER |1|    [Donald Trump, Tim Apple, York!] |
-|Apple|    [0.2628200054168701, -0.19162000715732574, 0.1...]     |I-PER |1|    [Donald Trump, Tim Apple, York!] |
-|in|   [0.08570300042629242, -0.22201000154018402, 0...]      |O     |1|    [Donald Trump, Tim Apple, York!] |
-|new|  [-0.04395899921655655, 0.18935999274253845, 0...]      |O     |1|    [Donald Trump, Tim Apple, York!] |
-|York| [0.7569400072097778, 0.03385699912905693, 0.37...]     |B-LOC |1|    [Donald Trump, Tim Apple, York!] |
-|!|    [0.38471999764442444, 0.49351000785827637, 0.4...]         |I-LOC |1|    [Donald Trump, Tim Apple, York!] |
-
-
-## NGrams TODO FIX
-
-
-```python
-nlu.load('ngram').predict('What a wondful day!')
-```
-
-{:.steelBlueCols}
-|document |    id|    ngrams|    pos|
-|---------|-----|------|---------|
-|To be or not to be| 1 |   [To, be, or, not, to, be, To be, be or, or not...] |   [TO, VB, CC, RB, TO, VB] |
-
-
-
-## Regex Matching (Work in Progres)
-```python
-regex_pipe = nlu.load('match.regex')
-regex_pipe.predict('Wht a wondful day!')
-```
-
-## Text Matching (Work in Progres)
-```python
-regex_pipe = nlu.load('match.text')
-regex_pipe.pipe['regex_model']setParam()
-regex_pipe.predict('Wht a wondful day!')
-```
-
-
-## Date Matching
-```python
-nlu.load('match.datetime').predict('In the years 2000/01/01 to 2010/01/01 a lot of things happened')
-```
-
-{:.steelBlueCols}
-|document |    id |   date|
-|---------|--------|--------|
-|In the years 2000/01/01 to 2010/01/01 a lot of things happened | 1 | [2000/01/01, 2001/01/01] |
-
-## Chunking (Work in Progres)
-```python
-nlu.load('match.chunks').predict('What a wondful day!') 
-```
-
-{:.steelBlueCols}
-|chunk|    id|    pos|
-|-----|----|----|
-|a wondful day | 1 |  [WP, DT, JJ, NN, .] |
-
-
-## Sentence Detector
-```python 
-nlu.load('sentence_detector').predict('NLU can detect things. Like beginning and endings of sentences. It can also do much more!', output_level ='sentence')  
-```
-
-{:.steelBlueCols}
-|sentence|     id|    word_embeddings|   pos|   ner|
-|--------|----|---------------------|-------|------|
-|NLU can detect things.    | 1    | [[0.4970400035381317, -0.013454999774694443, 0...]|  [NNP, MD, VB, NNS, ., IN, VBG, CC, NNS, IN, NN...  ]|[O, O, O, O, O, B-sent, O, O, O, O, O, O, B-se...] |
-|Like beginning and endings of sentences.  |   1 | [[0.4970400035381317, -0.013454999774694443, 0...]|    [NNP, MD, VB, NNS, ., IN, VBG, CC, NNS, IN, NN...]|    [O, O, O, O, O, B-sent, O, O, O, O, O, O, B-se...] |
-|It can also do much more! | 1    |[[0.4970400035381317, -0.013454999774694443, 0...]|   [NNP, MD, VB, NNS, ., IN, VBG, CC, NNS, IN, NN...]|    [O, O, O, O, O, B-sent, O, O, O, O, O, O, B-se...] |
 
 
 ## Word Embeddings Bert
@@ -472,27 +388,27 @@ nlu.load('use').predict('USE is designed to encode whole sentences and documents
 |---------|--------------------|--------|
 |USE  is designed to encode whole sentences and ...]   | [0.03302069380879402, -0.004255455918610096, -...]    | 1 |
 
-## General Sentence Embeddings  (Work in Progress)
-Via the sentence Embeddings converter provided by Spark NLP any token Embeddings can be
-converted to a sentence or document embedding.      
 
+
+## Spell Checking
 ```python
-#Any works!
-nlu.load('embeddings_sentence.elmo').predict('Wht a wondful day!')
-nlu.load('embeddings_sentence.xlnet').predict('Wht a wondful day!')
-nlu.load('embeddings_sentence.bert').predict('Wht a wondful day!')
+nlu.load('spell').predict('I liek pentut butr and jelli')
 ```
 
-## Chunk Embeddings (Work in Progres)
-```python
-#Any works!
-nlu.load('embeddings_chunk.elmo').predict('Wht a wondful day!')
-nlu.load('embeddings_chunk.bert').predict('Wht a wondful day!')
-nlu.load('embeddings_chunk.xlnet').predict('Wht a wondful day!')
-```
+{:.steelBlueCols}
+|  token | checked    |id|
+|--------|--------|-----|
+|I|    I |    1|
+|liek| like | 1|
+|peantut|  peanut |   1|
+|buttr|    butter |   1|
+|and|  and |  1|
+|jelli|    jelly |    1|
 
 
-## Dependency Parsing Unlabelled
+
+
+## Dependency Parsing Unlabeled
 ```python
 nlu.load('dep.untyped').predict('Untyped Dependencies represent a grammatical tree structure')
 ```
@@ -531,96 +447,173 @@ nlu.load('dep').predict('Typed Dependencies represent a grammatical tree structu
 |label|    NN |   has|   nsubj|     1 |
 
 
-## Classify Question (6 class)
-Classify between 6 different types of questions trainec on Trec6
 
+
+## Tokenization
 ```python
-nlu.load('en.classify.trec6').predict('Where is the next food store?')
+nlu.load('tokenize').predict('Each word and symbol in a sentence will generate token.')
 ```
 
 {:.steelBlueCols}
-| sentence_embeddings |    category_ ABBR |   category_sentence  | category_ DESC |     category_ NUM |    category_ ENTY |   category_ LOC |    category_ HUM|     sentence   | category|    id|
-|---------------------|--------------------|------------------------|-----------------|---------------|--------------------|------------------|-------------------|--------------|--------|-------|
-|[-0.05699703469872475, 0.039651867002248764, -...]|    2.2486939E-13  | 0   | 1.2741682E-9 | 2.3458482E-9 | 1.6385917E-8 | 1.0  | 7.901978E-9  | Where is the next food store?    | LOC  |1 |
+|token         |id|
+|--------------|----|
+|  Each        |1|
+|  word     |1|
+|     and     |1|
+|  symbol     |1|
+|   will |1|
+|     generate      |1|
+|         a  |1|
+|       token  |1|
+|       \.  |1|
 
-## Classify Question (50 class)
-Classify between 50 different types of questions trained on Trec50
-
+## Stemmer
 ```python
-nlu.load('en.classify.trec50').predict('How expensive is the Watch?')
+nlu.load('stemm').predict('NLU can get you the stem of a word')
 ```
 
 {:.steelBlueCols}
-| sentence_embeddings  | category_ ENTY_letter    | category_ DESC_reason    | category_ ENTY_word  | category_ LOC_country    | category_ ENTY_other | category_ ENTY_instru    | category_ HUM_desc   | category_ LOC_mount  | category_ NUM_dist   | category_ ENTY_symbol |  category_ DESC_manner  | category_ ABBR_abb   | category_ NUM_count  | category_ DESC_def   | category_ ENTY_color |   category_sentence  | category_ ENTY_event | category_ ENTY_veh |     category_ NUM_ord |     category_ NUM_other|  category_ NUM_code | category_ DESC_desc|     category_ HUM_title    | category_ NUM_weight | category_ ENTY_substance | category_ HUM_gr | category_ ENTY_body|     category_ HUM_ind  | category_ LOC_other  | category_ NUM_speed  | category_ NUM_volsize    | category_ ENTY_religion  | category_ ENTY_dismed    | category_ ABBR_exp   | category_ ENTY_product   | category_ ENTY_currency  | category_ ENTY_sport | category_ NUM_perc   | category_ ENTY_cremat    | category_ ENTY_plant | category_ NUM_money   | category_ NUM_temp |    category_ ENTY_animal  | category_ NUM_period | category_ ENTY_lang  | category_ NUM_date   | category_ ENTY_techmeth  | category_ ENTY_termeq    | category_ LOC_state  | category_ LOC_city   | category_ ENTY_food  | sentence | category |id|
-|------------------------|----------------------|----------------------|----------------------|----------------------|----------------------|----------------------|---------------------------|----------------------|-------------------------|----------------------|----------------------|--------------------------|----------------------|---------------------------|----------------------|----------------------|-------------------------|----------------------|------------------|--------------------------|----------------------|--------------------|----------------------|-----------------------|---------------------------|-------------------|---------------------|----------------------|----------------------|-----------------------|-----------------------|---------------------------|----------------------|-------------------------|---------------------------|--------------------------|-----------------------|-----------------------|----------------------|----------------------|----------------------|----------------------|-------------------------------|-----------------------|----------------------|-----------------------|----------------------------|----------------------|------------------------|----------------------|------------------------|-----------------------|---|
-|[0.051809534430503845, 0.03128402680158615, -0...]|   8.459624E-23 | 3.4999828E-14  | 3.5003475E-23     | 5.841585E-20 |  4.958728E-9     | 1.2962921E-22   | 3.265098E-23 | 2.7989845E-22    | 1.1879483E-22    | 3.3417754E-23    | 1.1275173E-10    | 2.0653923E-23    | 0.91943645   | 1.1442368E-20    | 6.967735E-21 0  | 6.008502E-24 | 4.201739E-23  |  1.9875016E-25  | 7.991396E-25  | 5.3842046E-22   | 3.6065938E-8 | 9.143437E-24 | 5.219503E-23 | 4.7433556E-23    | 4.337756E-19 | 2.7589757E-23    | 5.1413796E-18    | 7.611624E-14 | 4.302599E-21 |4.125377E-23  |5.2841376E-21 |1.519717E-21  | 7.546624E-23 | 8.906359E-22 | 2.617869E-25 | 1.8343639E-24    | 3.1659472E-22  |     2.537563E-21   | 4.2162198E-24    | 2.3034208E-20 |  1.740357E-22   | 4.4444944E-23|   7.8172316E-20  | 8.119662E-24 | 0.0805635    | 4.5887844E-21    | 3.4650898E-22    | 2.3069434E-23    | 4.631075E-22|    1.0575064E-22  |  1.2962221E-22  |     How expensive is the Watch? |  NUM_count  | 1 |
+|token|    stem|  id|
+|----|------|-----|
+|NLU | nlu |  1 |
+|can | can |  1 |
+|get | get |  1 |
+|you | you |  1 |
+|the | the |  1 |
+|stem |    stem | 1 |
+|of |  of |   1 |
+|a |   a |    1 |
+|word |    word | 1 |
 
-## Fakenews Classifier
 
+## Stopwords Removal
 ```python
-nlu.load('en.classify.fakenews').predict('Unicorns have been sighted on Mars!')
-```
-
-{:.steelBlueCols}
-|sentence_embeddings|  category_confidence|   sentence|  category|  id|
-|------------------|-----------------------|------------|-----------|------|
-|[-0.01756167598068714, 0.015006818808615208, -...]    | 1.000000 | Unicorns have been sighted on Mars!  |FAKE  |1|
-
-
-## Cyberbullying Classifier (sexism and Racism Classifier)
-
-```python
-nlu.load('en.classify.cyberbullying').predict('Women belong in the kitchen.') # sorry we really don't mean it
-```
-
-{:.steelBlueCols}
-| sentence_embeddings |    category_sentence |    category_sexism |  category_neutral |     category_racism |  sentence |     category |     id |
-|---------------------|-----------------------|---------------------|--------------------|------------------|------------|-----------|-----|
-|[-0.054944973438978195, -0.022223370149731636,...] |  0 |    0.999998 |     1.87933E-6 |   7.737535E-8     | Women belong in the kitchen. |  sexism | 1 |
-
-## Spam Classifier
-
-```python
-nlu.load('en.classify.spam').predict('Please sign up for this FREE membership it costs $$NO MONEY$$ just your mobile number!')
-```
-
-{:.steelBlueCols}
-|sentence_embeddings|  category_confidence|   sentence|  category |     id |
-|-------------------|----------------------|------------|-----------|-------|
-|[0.008322705514729023, 0.009957313537597656, 0...]    | 1.000000 | Please sign up for this FREE membership it cos...    |spam  |1 |
-
-## Sarcasm Classifier
-
-```python
-nlu.load('en.classify.sarcasm').predict('gotta love the teachers who give exams on the day after halloween')
+nlu.load('stopwords').predict('I want you to remove stopwords from this sentence please')
 ```
 
 
 {:.steelBlueCols}
-| sentence_embeddings |    category_confidence  |     sentence |     category  |    id|
-|---------------------|--------------------------|-----------|-----------|---------|
-|[-0.03146284446120262, 0.04071342945098877, 0....] | 0.999985 | gotta love the teachers who give exams on the...    | sarcasm  | 1 |
+|token|    cleanTokens|   id|
+|-----|------------|-------|
+|I|    remove |   1 |
+|want| stopewords |   1 |
+|you|  sentence | 1 |
+|to|   None | 1 |
+|remove|   None | 1 |
+|stopwords|    None | 1 |
+|from| None | 1 |
+|this| None | 1 |
+|sentence| None | 1 |
+|please|   None | 1 |
 
 
-## IMDB Movie Sentiment
+## Lemmatization
 ```python
-nlu.load('en.sentiment.imdb').predict('The Matrix was a pretty good movie')
+nlu.load('lemma').predict('Lemmatizing generates a less noisy version of the inputted tokens')
+```
+
+
+{:.steelBlueCols}
+|token|    lemma| id|
+|------|------|-----|
+|Lemmatizing|  Lemmatizing|   1 |
+|generates|    generate|  1 |
+|a|    a| 1 |
+|less| less|  1 |
+|noisy|    noisy| 1 |
+|version|  version|   1 |
+|of|   of|    1 |
+|the|  the|   1 |
+|inputted| input| 1 |
+|tokens|   token| 1 |
+
+## Normalizers
+```python
+nlu.load('norm').predict('@CKL_IT says that #normalizers are pretty useful to clean #structured_strings in #NLU like tweets')
 ```
 
 {:.steelBlueCols}
-|document |    id |   sentence_embeddings|   sentiment_negative|    sentiment_negative|    sentiment_positive|    sentiment |
-|-------|-----|-------------------------|---------------------|----------------------|-------------------------|-------------|
-|The Matrix was a pretty good movie    |1 |   [[0.04629608988761902, -0.020867452025413513, ...  ]| [2.7235753918830596e-07]     | [2.7235753918830596e-07] |  [0.9999997615814209]|  [positive] |
+|normalized     | token   | id|
+|------------|----------|----|
+|CKLIT|    @CKL_IT    |  1|
+|says| says|  1|
+|that| that|  1|
+|normalizers|  #normalizers|  1|
+|are|  are|   1|
+|pretty|   pretty|    1|
+|useful|   useful|    1|
+|to|   to|    1|
+|clean|    clean|     1|
+|structuredstrings|    #structured_strings|   1|
+|in|   in|    1|
+|NLU|  #NLU|  1|
+|like| like|  1|
+|tweets|   tweets|    1|
 
-## Twitter Sentiment
+
+
+
+
+## NGrams
+
+
 ```python
-nlu.load('en.sentiment.twitter').predict('@elonmusk Tesla stock price is too high imo')
+nlu.load('ngram').predict('Wht a wondful day!')
 ```
 
 {:.steelBlueCols}
-|document |    id |   sentence_embeddings |  sentiment_negative |   sentiment_negative|    sentiment_positive |   sentiment|
-|--------|---------|-----------------------|-----------------------|---------------------|-------------------------|-------------|
-| @elonmusk Tesla stock price is too high imo  | 1    | [[0.08604438602924347, 0.04703635722398758, -0...]|  [1.0] |    [1.0]  | [1.692714735043349e-36]  | [negative]|
+|document |    id|    ngrams|    pos|
+|---------|-----|------|---------|
+|To be or not to be| 1 |   [To, be, or, not, to, be, To be, be or, or not...] |   [TO, VB, CC, RB, TO, VB] |
+
+
+
+
+## Date Matching
+```python
+nlu.load('match.datetime').predict('In the years 2000/01/01 to 2010/01/01 a lot of things happened')
+```
+
+{:.steelBlueCols}
+|document |    id |   date|
+|---------|--------|--------|
+|In the years 2000/01/01 to 2010/01/01 a lot of things happened | 1 | [2000/01/01, 2001/01/01] |
+
+## Chunking   
+Checkout https://www.ling.upenn.edu/courses/Fall_2003/ling001/penn_treebank_pos.html for all possible POS labels       
+Splits text into rows based on matched grammatical entities.     
+```python
+# First we load the pipeline
+pipe = nlu.load('match.chunks')
+# Now we print the info to see at which index which com,ponent is and what parameters we can configure on them 
+pipe.print_info()
+# Lets set our Chunker to only match NN
+pipe.pipe_components[4].model.setRegexParsers(['<NN>+'])
+# Now we can predict with the configured pipeline
+pipe.predict("Jim and Joe went to the market next to the town hall")
+```
+
+{:.steelBlueCols}
+| chunk| 	id| 	pos| 
+|-------|-----|--------|
+|market|	1| 	[NNP, CC, NNP, VBD, TO, DT, NN, JJ, TO, DT, NN... |
+|town | 	1	| [NNP, CC, NNP, VBD, TO, DT, NN, JJ, TO, DT, NN... |
+| hall| 	1	| [NNP, CC, NNP, VBD, TO, DT, NN, JJ, TO, DT, NN... |
+
+
+
+
+## Sentence Detector
+```python 
+nlu.load('sentence_detector').predict('NLU can detect things. Like beginning and endings of sentences. It can also do much more!', output_level ='sentence')  
+```
+
+{:.steelBlueCols}
+|sentence|     id|    word_embeddings|   pos|   ner|
+|--------|----|---------------------|-------|------|
+|NLU can detect things.    | 1    | [[0.4970400035381317, -0.013454999774694443, 0...]|  [NNP, MD, VB, NNS, ., IN, VBG, CC, NNS, IN, NN...  ]|[O, O, O, O, O, B-sent, O, O, O, O, O, O, B-se...] |
+|Like beginning and endings of sentences.  |   1 | [[0.4970400035381317, -0.013454999774694443, 0...]|    [NNP, MD, VB, NNS, ., IN, VBG, CC, NNS, IN, NN...]|    [O, O, O, O, O, B-sent, O, O, O, O, O, O, B-se...] |
+|It can also do much more! | 1    |[[0.4970400035381317, -0.013454999774694443, 0...]|   [NNP, MD, VB, NNS, ., IN, VBG, CC, NNS, IN, NN...]|    [O, O, O, O, O, B-sent, O, O, O, O, O, O, B-se...] |
 
 
 
