@@ -9,7 +9,7 @@ modify_date: "2020-05-08"
 
 # Default Component References 
 
-See [the John Snow Labs Model Repository](https://github.com/JohnSnowLabs/spark-nlp-models#english---models\) and the upcomming Modelshub from John Snow Laba for further information about the models and pipelines.   
+See [the John Snow Labs Model Repository](https://github.com/JohnSnowLabs/spark-nlp-models#english---models\) information about the models and pipelines.   
 
 
 {:.steelBlueCols}

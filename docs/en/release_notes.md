@@ -6,8 +6,16 @@ key: docs-release-notes
 modify_date: "2020-06-12"
 ---
 
-NLU release notes 
+NLU release notes
 
+### 2.5.6
+ - Better Defaults for spell checking
+ - Lots of bug fixes
+ - Additional feature discovery via nlu.components()
+ - Memory optimization
+ - Refactoring
+ - Docs and Examples updates
+ 
 ### 2.5.5
 - Confidence extraction bugfix
 
@@ -16,11 +24,11 @@ NLU release notes
 
 
 ### 2.5.3
-- metadata paraemter for predict function, prettier outputs
+- metadata parameter for predict function, prettier outputs
 - Datatype consistency added for predictions
 
 ### 2.5.2
-- Modin depenency bugfix
+- Modin dependency bugfix
 
 ### 2.5.1
 - Modin Support
@@ -28,16 +36,18 @@ NLU release notes
 ### 2.5.0
 
 - Support for Modin with Ray and Dask Backends
-- Consisten input and outputs for predict() . If you input Spark Dataframe , you get Spark Dataframe Back. If you input Modin dataframe, you get Modin back. Analogus for predictions on Numpy and Pandas objects
+- Consistent input and outputs for predict() . If you input Spark Dataframe , you get Spark Dataframe Back. If you input Modin dataframe, you get Modin back. Analogous for predictions on Numpy and Pandas objects
 
 
 
 ### 2.5.0.rc1
 
-The birth of a new Machine Learning library       
+The birth of a new Machine Learning library      
 NLU provides out of the box
 
-- 200+ pretrained models and pipelines for most NLU tasks ( Sentiment, Language Detection, NER, POS, Spellchecking)
+- 200+ pretrained models and pipelines for most NLU tasks ( Sentiment, Language Detection, NER, POS, Spell Checking)
 - 60 languages
 - Latest and greatest embeddings in different flavors (Elmo, Bert, Albert, Xlnert, Glove, Use)
-- 13 Different types of NLU components 
+- 13 Different types of NLU components
+
+

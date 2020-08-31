@@ -9,7 +9,7 @@ import nlu
 logger = logging.getLogger('nlu')
 
 
-from pyspark.sql.functions import flatten, explode, arrays_zip, map_keys, map_values, monotonically_increasing_id, greatest
+from pyspark.sql.functions import flatten, explode, arrays_zip, map_keys, map_values, monotonically_increasing_id, greatest,expr
 from pyspark.sql.functions import col as pyspark_col
 from pyspark.sql.functions import udf
 from pyspark.sql.types import ArrayType,FloatType, StringType, DoubleType
@@ -49,7 +49,6 @@ class NLUPipeline(BasePipe):
             # embedding level  annotators output levels depend on the level of the embeddings they are fed. If we have Doc/Chunk/Word/Sentence embeddings, those annotators output at the same level.
 
         }
-        # ' todo output levels for : date? dependencty, labeld dependency? ( depnendcy probably token, sentiment maybe too depending on annoator)
 
     def get_sample_spark_dataframe(self):
         data = {"text": ['This day sucks', 'I love this day', 'I dont like Sami' ]}
@@ -59,6 +58,7 @@ class NLUPipeline(BasePipe):
 
     def fit(self, dataset=None):
         if dataset == None:  # todo implement fitting on input datset
+            #todo somehow regex matcher does not see document column?????>>?>!@>!?>??!@
             stages = []
             for component in self.pipe_components:
                 stages.append(component.model)
@@ -159,10 +159,15 @@ class NLUPipeline(BasePipe):
         """
         logger.info('Getting field types for output SDF')
         field_types_dict = {}
+        
+        
+        
         for field in sdf.schema.fieldNames():
             if field in stranger_features : continue
             if field == self.raw_text_column: continue
             if 'label' in field: continue  # speciel case for input lables
+            
+            # For empty DF this will crash
             a_row = sdf.select(field + '.annotatorType').take(1)[0]['annotatorType']
             if len(a_row) > 0:
                 a_type = a_row[0]
@@ -187,6 +192,7 @@ class NLUPipeline(BasePipe):
         # @ param meta: wether  to get meta data like prediction confidence or not
         # @ return : Returns tuple (list, SparkDataFrame), where the first element is a list with all the new names and the second element is a new Spark Dataframe which contains all the renamed and also old columns
 
+        logger.info('Renaming columns and extracting meta data for  outputlevel_same=%s and fields_to_rename=%s and get_meta=%s', same_output_level,fields_to_rename,meta)
         columns_for_select = []
         
         # edge case swap. We must rename .metadata fields before we get the .result fields or there will be errors because of column name overwrites.. So we swap position of them
@@ -215,7 +221,9 @@ class NLUPipeline(BasePipe):
                     logger.info('Getting Meta Data for   : nr=%s , name=%s with new_name=%s and original', i, field, new_field)
                     new_fields = []
                     # we iterate over the keys in the metadata and use them as new column names. The values will become the values in the columns.
-                    keys_in_metadata = list(ptmp.select(field).take(1)[0].asDict()['metadata'][0].keys()) # 
+                    keys_in_metadata = list(ptmp.select(field).take(1))
+                    if len(keys_in_metadata) == 0 : continue # no resulting values for this column, we wont include it in the final output
+                    keys_in_metadata = list(keys_in_metadata[0].asDict()['metadata'][0].keys()) #
                     
                     if meta == True :  # get all meta data 
                         for key in keys_in_metadata:
@@ -244,9 +252,13 @@ class NLUPipeline(BasePipe):
                         max_confidence_name  = field.split('.')[0] +'_confidence'
                         renamed_cols_to_max = [col.replace('.','_') for col in cols_to_max]
 
-                        ptmp = ptmp.withColumn(max_confidence_name , greatest(*renamed_cols_to_max))
-                        columns_for_select.append(max_confidence_name)
-                        
+                        if len(cols_to_max) > 1 :
+                            ptmp = ptmp.withColumn(max_confidence_name , greatest(*renamed_cols_to_max))
+                            columns_for_select.append(max_confidence_name)
+                        else :
+                            ptmp = ptmp.withColumnRenamed(renamed_cols_to_max[0], max_confidence_name  )
+                            columns_for_select.append(max_confidence_name)
+
                     continue
 
 
@@ -261,11 +273,18 @@ class NLUPipeline(BasePipe):
                 if self.raw_text_column in field: continue
                 new_field = field.replace('.', '_').replace('_result','').replace('_embeddings_embeddings','_embeddings')
                 if 'metadata' in field :
-
+                    # since the have a field with metadata, the values of the original data for which we have metadata for must exist in the dataframe as singular elements inside of a list
+                    # by applying the expr method, we unpack the elements from the list 
+                    unpack_name = field.split('.')[0]
+                    
+                    ptmp = ptmp.withColumn(unpack_name+'_result', expr(unpack_name+'.result[0]'))
+                    reorderd_fields_to_rename[reorderd_fields_to_rename.index(unpack_name+'.result')] = unpack_name+'_result' 
                     logger.info('Getting Meta Data for   : nr=%s , name=%s with new_name=%s and original', i, field,new_field)
                     # we iterate over the keys in the metadata and use them as new column names. The values will become the values in the columns.
-                    keys_in_metadata = list(ptmp.select(field).take(1)[0].asDict()['metadata'][0].keys()) # 
-                    if 'sentence' in keys_in_metadata : keys_in_metadata.remove('sentence')
+                    keys_in_metadata = list(ptmp.select(field).take(1))
+                    if len(keys_in_metadata) == 0 : continue
+                    keys_in_metadata = list(keys_in_metadata[0].asDict()['metadata'][0].keys()) #
+                    if 'sentence' in keys_in_metadata : keys_in_metadata.remove('sentence') # todo realy remove here?
                     
                     new_fields=[]
                     for key in keys_in_metadata: 
@@ -279,18 +298,34 @@ class NLUPipeline(BasePipe):
                         array_map_values = udf(lambda z: extract_map_values(z), ArrayType(FloatType()))
 
                         ptmp = ptmp.withColumn(new_fields[-1],array_map_values(field)) 
-                        
-                        columns_for_select += new_fields # todo somwhow seems wierd to add here 
+                        # We apply Expr here because all resulting meta data is inside of a list and just a single element, which we can take out 
+                        ptmp = ptmp.withColumn(new_fields[-1],expr(new_fields[-1]+'[0]'))
                         logger.info('Created Meta Data for   : nr=%s , name=%s with new_name=%s and original', i, field,new_fields[-1])
+                        if meta == True : continue
+                        columns_for_select.append(new_fields[-1]) #?
 
                     if meta == True : continue 
                     else : # We gotta get the max confidence column, remove all other cols for selection
-                        # todo this case 
+                        cols_to_max = []
+                        prefix = field.split('.')[0]
+                        for key in keys_in_metadata: cols_to_max.append( prefix+'_'+key)
+
+                        #cast all the types to decimal, remove scientific notation
+                        for key in cols_to_max : ptmp = ptmp.withColumn(key, pyspark_col(key).cast('decimal(7,6)'))
+
+                        max_confidence_name  = field.split('.')[0] +'_confidence'
+                        if len(cols_to_max) > 1 : 
+                            ptmp = ptmp.withColumn(max_confidence_name , greatest(*cols_to_max))
+                            columns_for_select.append(max_confidence_name)
+                        else :
+                            ptmp = ptmp.withColumnRenamed( cols_to_max[0], max_confidence_name )
+                            columns_for_select.append(max_confidence_name)
+                            
+                        for f in new_fields:
+                            # we remove the new fields becasue they duplicate the infomration of max confidence field
+                            if f in columns_for_select: columns_for_select.remove(f)
                         
-                        
-                        ptmp = ptmp.withColumn('prediction_confidence',array_map_values(*new_fields))
-                        columns_for_select -= new_fields  
-                        columns_for_select.append('prediction_confidence') 
+
                     continue # end of special meta data case 
                 
 
@@ -354,7 +389,7 @@ class NLUPipeline(BasePipe):
         field_dict = self.get_field_types_dict(processed, stranger_features) #map field to type of field
         not_at_same_output_level_fields = []
         same_output_level_fields = [self.output_level + '.result']
-        logger.info('Setting Output level as : %s', same_output_level_fields[0])
+        logger.info('Setting Output level as : %s', self.output_level=='')
 
                 
         if keep_stranger_features :
@@ -413,7 +448,7 @@ class NLUPipeline(BasePipe):
         ptmp,final_select_same_output_level =  self.rename_columns_and_extract_map_values(ptmp=ptmp, fields_to_rename=same_output_level_fields, same_output_level=True, stranger_features=stranger_features, meta=output_metadata)
         if get_different_level_output :
             ptmp,final_select_not_at_same_output_level = self.rename_columns_and_extract_map_values(ptmp=ptmp, fields_to_rename=not_at_same_output_level_fields, same_output_level=False, meta=output_metadata)
-
+        
 
         if self.output_level != 'document':final_select_not_at_same_output_level+= stranger_features
             
@@ -426,7 +461,7 @@ class NLUPipeline(BasePipe):
         final_cols = final_select_same_output_level + final_select_not_at_same_output_level
         if drop_irrelevant_cols : final_cols = self.drop_irrelevant_cols(final_cols)
         
-        final_df = ptmp.select(final_cols)
+        final_df = ptmp.select(list(set(final_cols)))
                 
         return  self.finalize_return_datatype(final_df)
 
@@ -502,6 +537,14 @@ class NLUPipeline(BasePipe):
         '''
         if output_level !='': self.output_level = output_level
         self.output_positions= positions
+        if output_level=='chunk': 
+            # If chunk not in pipe we must add it and run the query verifyier again 
+            chunk_provided = False
+            for component in self.pipe_components:
+                if component.component_info.type =='chunker' : chunk_provided = True 
+            if chunk_provided == False : 
+                self.pipe_components.append(nlu.get_default_component_of_type('chunk'))
+                self =  PipelineQueryVerifier.check_and_fix_nlu_pipeline(self)
         if not self.is_fitted: self.fit()
         sdf = None
         import pyspark  
@@ -607,7 +650,7 @@ class NLUPipeline(BasePipe):
 
     def print_info(self,):
         '''
-        Print out information about every component currenlty loaded in the pipe and their configurable parameters
+        Print out information about every component currently loaded in the pipe and their configurable parameters
         :return: None
         '''
         for i, component in enumerate(self.pipe_components) :
@@ -616,7 +659,7 @@ class NLUPipeline(BasePipe):
             p_map = component.model.extractParamMap()
             for key in p_map.keys():
                 if 'outputCol' in key.name or 'labelCol' in key.name or 'inputCol' in key.name or 'labelCol' in key.name : continue
-                print("Param Name [",key.name, "] :  Param Info :" , key.doc, ' currenlty Configured as : ',p_map[key] )
+                print("Param Name [",key.name, "] :  Param Info :" , key.doc, ' currently Configured as : ',p_map[key] )
 
 class PipelineQueryVerifier():
     '''
@@ -684,7 +727,7 @@ class PipelineQueryVerifier():
         If it is some kind of model that uses embeddings, it will check the metadata for that model and return a string with moelName@spark_nlp_embedding_reference format
         '''
         logger.info('Resolving missing components')
-        pipe_requirements = []
+        pipe_requirements = [['sentence','token']] #default requirements so we can support all output levels. minimal extra comoputation effort. If we add CHUNK here, we will aalwayshave POS default
         pipe_provided_features = []
         # pipe_types = [] # list of string identifiers
         for component in pipe.pipe_components:
@@ -751,20 +794,20 @@ class PipelineQueryVerifier():
             if len(missing_components) == 0: break  # Now all features are provided
 
             components_to_add = []
-            # 3. Create missing components
+            # Create missing components
             for missing_component in missing_components:
                 components_to_add.append(nlu.get_default_component_of_type(missing_component))
             logger.info('Resolved for missing components the following NLU components : %s', str(components_to_add))
 
 
-            # 3. Add missing components and validate order of components is correct
+            # Add missing components and validate order of components is correct
             for new_component in components_to_add:
                 pipe.add(new_component)
                 logger.info('adding %s=', new_component.component_info.name)
 
 
         logger.info('Fixing column names')
-        # 4. Validate naming of output columns is correct and no error will be thrown in spark
+        #  Validate naming of output columns is correct and no error will be thrown in spark
         pipe = PipelineQueryVerifier.check_and_fix_component_output_column_names(pipe)
 
         # 3.  fix order

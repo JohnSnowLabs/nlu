@@ -7,6 +7,6 @@ class DefaultChunker:
         return Chunker() \
             .setInputCols(["document", "pos"]) \
             .setOutputCol("chunk") \
-            .setRegexParsers(["‹NNP›+", "‹DT|PP\\$›?‹JJ›*‹NN›"])
+            .setRegexParsers(["<NN>+", "<PP>"])
 
 

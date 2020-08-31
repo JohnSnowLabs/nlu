@@ -44,8 +44,8 @@ class NameSpace():
         'clean.stop': ('clean_stop','pipe'),
         'clean.pattern': ('clean_pattern','pipe'),
         'clean.slang': ('clean_slang','pipe'),
-        'spell': ('check_spelling','pipe'),  # default spell
-        'spell.dl': ('check_spelling_dl','pipe'),
+        # 'spell': ('check_spelling','pipe'),  # bad spell_checker,
+        'spell': ('check_spelling_dl','pipe'),  # default spell 
         'sentiment': ('analyze_sentiment','pipe'),
         'emotion': ('classifierdl_use_emotion','model'), # default emotion model
 
@@ -185,7 +185,7 @@ class NameSpace():
             'en.clean.stop': 'clean_stop',
             'en.clean.pattern': 'clean_pattern',
             'en.clean.slang': 'clean_slang',
-            'en.spell': 'check_spelling',  # dfault spell
+            'en.spell': 'check_spelling_dl',  # dfault spell
             'en.spell.dl': 'check_spelling_dl',
             'en.spell.context': 'check_spelling_dl',
             'en.sentiment': 'analyze_sentiment',

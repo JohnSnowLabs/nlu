@@ -18,9 +18,9 @@ def get_sample_pdf_with_labels():
 
 
 def get_sample_sdf():
-    nlu.SPARK_CONNECTION = sparknlp.start()
-    nlu.SPARK_STARTED = True
-    return nlu.SPARK_CONNECTION.createDataFrame(get_sample_pdf())
+    nlu.spark = sparknlp.start()
+    nlu.spark_started = True
+    return nlu.spark.createDataFrame(get_sample_pdf())
 
 
 def get_sample_pdf_with_extra_cols():

@@ -33,7 +33,7 @@ class AllComponentsInfo:
                                     'labled_dependency','lemma', 'norm', 'select', 'pretrained_pipe','util']
 
 
-        all_component_paths_regex = nlu.NLU_PACKAGE_LOCATION +'components/*/*/'
+        all_component_paths_regex = nlu.nlu_package_location + 'components/*/*/'
         all_component_paths = glob.glob(all_component_paths_regex)
 
         for path in all_component_paths :

@@ -25,6 +25,8 @@ docs-en:
         url:    /docs/en/examples
       - title:  Visualization Examples
         url:    /docs/en/viz_examples
+      - title:  Notebooks
+        url:    /docs/en/notebooks
 
   - title:      Documentation
     children:
