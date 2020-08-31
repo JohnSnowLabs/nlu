@@ -302,7 +302,7 @@ class NLUPipeline(BasePipe):
                         ptmp = ptmp.withColumn(new_fields[-1],expr(new_fields[-1]+'[0]'))
                         logger.info('Created Meta Data for   : nr=%s , name=%s with new_name=%s and original', i, field,new_fields[-1])
                         if meta == True : continue
-                        columns_for_select += new_fields #?
+                        columns_for_select.append(new_fields[-1]) #?
 
                     if meta == True : continue 
                     else : # We gotta get the max confidence column, remove all other cols for selection
@@ -320,6 +320,11 @@ class NLUPipeline(BasePipe):
                         else :
                             ptmp = ptmp.withColumnRenamed( cols_to_max[0], max_confidence_name )
                             columns_for_select.append(max_confidence_name)
+                            
+                        for f in new_fields:
+                            # we remove the new fields becasue they duplicate the infomration of max confidence field
+                            if f in columns_for_select: columns_for_select.remove(f)
+                        
 
                     continue # end of special meta data case 
                 
@@ -456,7 +461,7 @@ class NLUPipeline(BasePipe):
         final_cols = final_select_same_output_level + final_select_not_at_same_output_level
         if drop_irrelevant_cols : final_cols = self.drop_irrelevant_cols(final_cols)
         
-        final_df = ptmp.select(final_cols)
+        final_df = ptmp.select(list(set(final_cols)))
                 
         return  self.finalize_return_datatype(final_df)
 
