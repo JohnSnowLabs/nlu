@@ -8,6 +8,14 @@ modify_date: "2020-06-12"
 
 NLU release notes
 
+### 2.5.6
+ - Better Defaults for spell checking
+ - Lots of bug fixes
+ - Additional feature discovery via nlu.components()
+ - Memory optimization
+ - Refactoring
+ - Docs and Examples updates
+ 
 ### 2.5.5
 - Confidence extraction bugfix
 
