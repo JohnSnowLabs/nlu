@@ -16,7 +16,9 @@ You only need to configure Java 8 on your machine and are good to go!
 - [Setup Java 8 on Linux](https://openjdk.java.net/install/)
 - [Setup Java 8 on Mac](https://docs.oracle.com/javase/8/docs/technotes/guides/install/mac_jdk.html)
 
-## Setup Java Google Collab
+## Setup Java in Google Collab or Kaggle
+If you work in a Kaggle or Collab Notebook you can simply configure Java by running the following code in a cell
+
 ```bash
 import os
 ! apt-get update -qq > /dev/null   
