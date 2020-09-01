@@ -16,6 +16,18 @@ You only need to configure Java 8 on your machine and are good to go!
 - [Setup Java 8 on Linux](https://openjdk.java.net/install/)
 - [Setup Java 8 on Mac](https://docs.oracle.com/javase/8/docs/technotes/guides/install/mac_jdk.html)
 
+## Setup Java Google Collab
+```bash
+import os
+! apt-get update -qq > /dev/null   
+# Install java
+! apt-get install -y openjdk-8-jdk-headless -qq > /dev/null
+os.environ["JAVA_HOME"] = "/usr/lib/jvm/java-8-openjdk-amd64"
+os.environ["PATH"] = os.environ["JAVA_HOME"] + "/bin:" + os.environ["PATH"]
+```
+
+
+
 ## Verify Java 8 works
 ```bash
 # should be Java 8 (Oracle or OpenJDK)
