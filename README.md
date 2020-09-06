@@ -4,7 +4,7 @@ John Snow Labs' NLU is a Python library for applying state-of-the-art text minin
 As a facade of the award-winning Spark NLP library, it comes with hundreds of pretrained models in tens of languages - all production-grade, scalable, and trainable.
 
 ## Project's Website
-Take a look at our official Spark NLP page: [https://nlu.johnsnowlabs.com/](https://nlu.johnsnowlabs.com/)  for user documentation and examples
+Take a look at our official Spark NLU page: [https://nlu.johnsnowlabs.com/](https://nlu.johnsnowlabs.com/)  for user documentation and examples
 
 
 
