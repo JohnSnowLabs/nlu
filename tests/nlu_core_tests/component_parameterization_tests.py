@@ -4,15 +4,13 @@ import pandas as pd
 import numpy as np
 
 
-class MyTestCase(unittest.TestCase):
+class TestParameterization(unittest.TestCase):
     def test_set_parameters(self):
-        
-        configs = {}
-        configs['match.entities'] = ['dog', 'cat','sami']
-        configs['sentiment.CaseSensitive'] = True
-        
-        predictions = nlu.load('sentiment').predict('That guy sami stinks')
-    
+
+
+        pipe =  nlu.load('sentiment')
+        print(pipe.keys())    
+        pipe.print_info()
     
 if __name__ == '__main__':
-    MyTestCase().test_entities_config()
+    TestParameterization().test_entities_config()

@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 
 
-class MyTestCase(unittest.TestCase):
+class TestComponentInfo(unittest.TestCase):
     def test_list_all_names(self):
         a = nlu.AllComponentsInfo()
         a.list_all_components()
@@ -135,4 +135,4 @@ class MyTestCase(unittest.TestCase):
 
     
 if __name__ == '__main__':
-    MyTestCase().test_entities_config()
+    TestComponentInfo().test_entities_config()
