@@ -15,7 +15,8 @@ from pyspark.sql.functions import udf
 from pyspark.sql.types import ArrayType,FloatType, StringType, DoubleType
 
 
-class BasePipe():
+class BasePipe(dict):
+    # we inherhit from dict so the pipe is indexable and we have a nice shortcut for accessing the spark nlp model
     def __init__(self):
         self.raw_text_column = 'text'
         self.raw_text_matrix_slice = 1  # place holder for getting text from matrix
@@ -25,10 +26,17 @@ class BasePipe():
         self.output_positions = False  # Wether to putput positions of Features in the final output. E.x. positions of tokens, entities, dependencies etc.. inside of the input document.
         self.output_level = ''  # either document, chunk, sentence, token
         self.output_different_levels = True
-        self.pipe_components = []  # orderd list of nlu_component objects
+        self.pipe_components = []                                         # orderd list of nlu_component objects
         self.output_datatype = 'pandas' # What data type should be returned after predict either spark, pandas, modin, numpy, string or array 
     def add(self, component, component_name="auto_generate"):
+        
         self.pipe_components.append(component)
+        
+        
+        # Spark NLP model reference shortcut
+        name = component.component_info.name.replace(' ','')
+        if name not in self.keys() : self[name]=component.model 
+        else : self[name]=component.model
         # self.component_execution_plan.update()
 
 class NLUPipeline(BasePipe):
@@ -648,18 +656,47 @@ class NLUPipeline(BasePipe):
             print('Stacktrace was',e)
             return None
 
+
     def print_info(self,):
         '''
         Print out information about every component currently loaded in the pipe and their configurable parameters
         :return: None
         '''
-        for i, component in enumerate(self.pipe_components) :
-            s='At pipe.pipe_components['+str(i)+'].model  : ' + component.component_info.name+ ' with configurable parameters: '
-            print(s.center(160, '-'))
-            p_map = component.model.extractParamMap()
+        
+        print('The following parameters are configurable for this NLU pipeline:')
+        # list of tuples, where first element is component name and second element is list of param tuples, all ready formatted for printing
+        all_outputs = []
+    
+        for i, component_key in enumerate(self.keys()) :
+            s=">>> pipe['"+ component_key +"'] has settable params:"
+            p_map = self[component_key].extractParamMap()
+            
+            component_outputs = []
+            max_len = 0
             for key in p_map.keys():
-                if 'outputCol' in key.name or 'labelCol' in key.name or 'inputCol' in key.name or 'labelCol' in key.name : continue
-                print("Param Name [",key.name, "] :  Param Info :" , key.doc, ' currently Configured as : ',p_map[key] )
+                if "outputCol" in key.name or "labelCol" in key.name or "inputCol" in key.name or "labelCol" in key.name : continue
+                # print("pipe['"+ component_key +"'].set"+ str( key.name[0].capitalize())+ key.name[1:]+"("+str(p_map[key])+")" + " | Info: " + str(key.doc)+ " currently Configured as : "+str(p_map[key]) )
+                # print("Param Info: " + str(key.doc)+ " currently Configured as : "+str(p_map[key]) )
+                s1 = "pipe['"+ component_key +"'].set"+ str( key.name[0].capitalize())+ key.name[1:]+"("+str(p_map[key])+") "
+                s2 =  " | Info: " + str(key.doc)+ " | Currently set to : "+str(p_map[key])  
+                if len(s1) > max_len : max_len = len(s1)
+                component_outputs.append((s1,s2))
+
+            all_outputs.append((s,component_outputs))
+                
+        # make strings aligned
+        form = "{:<"+str(max_len) + "}"
+        for o in all_outputs : 
+            print(o[0]) # component name
+            for o_parm in o[1] : 
+                if len(o_parm[0]) < max_len : 
+                    print(form.format(o_parm[0]) + o_parm[1])
+                else :
+                    print(o_parm[0] + o_parm[1])
+
+
+
+
 
 class PipelineQueryVerifier():
     '''
