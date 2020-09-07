@@ -663,7 +663,7 @@ class NLUPipeline(BasePipe):
         :return: None
         '''
         
-        print('The following parameters are configurable for this NLU pipeline:')
+        print('The following parameters are configurable for this NLU pipeline (You can copy paste the examples) :')
         # list of tuples, where first element is component name and second element is list of param tuples, all ready formatted for printing
         all_outputs = []
     
@@ -677,7 +677,12 @@ class NLUPipeline(BasePipe):
                 if "outputCol" in key.name or "labelCol" in key.name or "inputCol" in key.name or "labelCol" in key.name : continue
                 # print("pipe['"+ component_key +"'].set"+ str( key.name[0].capitalize())+ key.name[1:]+"("+str(p_map[key])+")" + " | Info: " + str(key.doc)+ " currently Configured as : "+str(p_map[key]) )
                 # print("Param Info: " + str(key.doc)+ " currently Configured as : "+str(p_map[key]) )
-                s1 = "pipe['"+ component_key +"'].set"+ str( key.name[0].capitalize())+ key.name[1:]+"("+str(p_map[key])+") "
+                
+                if type(p_map[key]) == str :
+                    s1 = "pipe['"+ component_key +"'].set"+ str( key.name[0].capitalize())+ key.name[1:]+"('"+str(p_map[key])+"') "
+                else :
+                    s1 = "pipe['"+ component_key +"'].set"+ str( key.name[0].capitalize())+ key.name[1:]+"("+str(p_map[key])+") "
+
                 s2 =  " | Info: " + str(key.doc)+ " | Currently set to : "+str(p_map[key])  
                 if len(s1) > max_len : max_len = len(s1)
                 component_outputs.append((s1,s2))
