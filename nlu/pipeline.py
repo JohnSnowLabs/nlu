@@ -371,14 +371,17 @@ class NLUPipeline(BasePipe):
 
 
 
-    def pythonify_spark_dataframe(self, processed, get_different_level_output=True, keep_stranger_features = True, stranger_features = [] , drop_irrelevant_cols=True, output_metadata=False):
+    def pythonify_spark_dataframe(self, processed, get_different_level_output=True, keep_stranger_features = True, stranger_features = [] , drop_irrelevant_cols=True, output_metadata=False, index_provided=False):
         '''
         This functions takes in a spark dataframe with Spark NLP annotations in it and transforms it into a Pandas Dataframe with common feature types for further NLP/NLU downstream tasks.
+        It will recylce Indexes from Pandas DataFrames and Series if they exist, otherwise a custom id column will be created
             It does this by performing the following consecutive steps :
                 1. Select columns to explode
                 2. Select columns to keep
                 3. Rename columns
                 4. Create Pandas Dataframe object
+                
+        
         :param processed: Spark dataframe which an NLU pipeline has transformed
         :param output_level: The output level at which returned pandas Dataframe should be
         :param get_different_level_output:  Wheter to get features from different levels
@@ -397,15 +400,19 @@ class NLUPipeline(BasePipe):
         field_dict = self.get_field_types_dict(processed, stranger_features) #map field to type of field
         not_at_same_output_level_fields = []
         same_output_level_fields = [self.output_level + '.result']
-        logger.info('Setting Output level as : %s', self.output_level=='')
+        logger.info('Setting Output level as : %s', self.output_level)
+
 
                 
         if keep_stranger_features :
-            sdf = processed.select(['*', monotonically_increasing_id().alias('id')])  # todo implement optional ID provided by user or use pandas index if there is one
+            sdf = processed.select(['*']) 
         else :
             features_to_keep = list(set(processed.columns) - set(stranger_features))
-            sdf = processed.select(features_to_keep +[ monotonically_increasing_id().alias('id')])  # todo implement optional ID provided by user or use pandas index if there is one
+            sdf = processed.select(features_to_keep)
 
+        if index_provided == False : 
+            logger.info("Generating origin Index via Spark. May contain non monotonically increasing index values.")
+            sdf = sdf.withColumn(monotonically_increasing_id().alias('origin_index'))
         # loop over all fields and decide which ones to keep and also if there are at the current output level or at a different one .
         # We sort the fields by output level. Thez are at the same as the current output level and will be exploded
         # Or they are at a different level, in which case they will be left as is and not zipped before explode
@@ -444,12 +451,14 @@ class NLUPipeline(BasePipe):
                 
         if self.output_level == 'document':
             #explode stranger features if output level is document
-            same_output_level_fields =list(set( same_output_level_fields + stranger_features))
-                
+            # same_output_level_fields =list(set( same_output_level_fields + stranger_features))
+            same_output_level_fields =list(set( same_output_level_fields))
+            # same_output_level_fields.remove('origin_index')
 
+        logger.info(' exploding=%s', same_output_level_fields)
         ptmp = sdf.withColumn("tmp", arrays_zip(*same_output_level_fields)).withColumn("res", explode('tmp'))
         final_select_not_at_same_output_level = []
-        logger.info(' zipping and exploding columnns %s-', same_output_level_fields)
+        logger.info(' zipping %s', same_output_level_fields)
 
         # explode the columns which are at the same output level..if there are maps at the different output level we will get array maps.  then we use some UDF functions to extract the resulting array maps 
       
@@ -460,18 +469,24 @@ class NLUPipeline(BasePipe):
 
         if self.output_level != 'document':final_select_not_at_same_output_level+= stranger_features
             
-        final_select_same_output_level.append('id')
+        
+        
         ptmp.toPandas()
         logger.info('Final cleanup select of same level =%s', final_select_same_output_level)
         logger.info('Final cleanup select of different level =%s', final_select_not_at_same_output_level)
         logger.info('Final ptmp columns = %s', ptmp.columns)
          
-        final_cols = final_select_same_output_level + final_select_not_at_same_output_level
+        final_cols = final_select_same_output_level + final_select_not_at_same_output_level + ['origin_index']
         if drop_irrelevant_cols : final_cols = self.drop_irrelevant_cols(final_cols)
         
         final_df = ptmp.select(list(set(final_cols)))
-                
-        return  self.finalize_return_datatype(final_df)
+        
+        pandas_df = self.finalize_return_datatype(final_df)
+        pandas_df.set_index(pandas_df['origin_index'],inplace=True)
+        
+        # Todo, we could we drop origin index, optinally sometimes..
+        
+        return  pandas_df
 
     def finalize_return_datatype(self, sdf):
         '''
@@ -543,7 +558,9 @@ class NLUPipeline(BasePipe):
         :param metadata:weather to keep additonal metadata in final df or not 
         :return: 
         '''
-        if output_level !='': self.output_level = output_level
+        if output_level !='': 
+            self.output_level = output_level
+            
         self.output_positions= positions
         if output_level=='chunk': 
             # If chunk not in pipe we must add it and run the query verifyier again 
@@ -552,14 +569,20 @@ class NLUPipeline(BasePipe):
                 if component.component_info.type =='chunker' : chunk_provided = True 
             if chunk_provided == False : 
                 self.pipe_components.append(nlu.get_default_component_of_type('chunk'))
+                # TODO THIS COULD BREAK DICT INDEXIGN!!
                 self =  PipelineQueryVerifier.check_and_fix_nlu_pipeline(self)
         if not self.is_fitted: self.fit()
         sdf = None
         import pyspark  
         stranger_features = []
+        index_provided=False
+
         try:
             if type(data) is  pyspark.sql.dataframe.DataFrame : # casting follows spark->pd
                 self.output_datatype = 'spark'
+                data = data.withColumn(monotonically_increasing_id().alias('origin_index'))
+                index_provided=True
+
                 if self.raw_text_column in data.columns:
                     # store all stranger features 
                     if len(data.columns) > 1 :
@@ -569,7 +592,8 @@ class NLUPipeline(BasePipe):
                     print('Could not find column named "text" in input Pandas Dataframe. Please ensure one column named such exists. Columns in DF are : ', data.columns)
             if type(data) is pd.DataFrame:  # casting follows pd->spark->pd
                 self.output_datatype = 'pandas'
-                
+                data['origin_index']=data.index
+                index_provided=True
                 if self.raw_text_column in data.columns:
                     if len(data.columns) > 1 :
                         data = data.where(pd.notnull(data), None) # make  Nans to None, or spark will crash
@@ -583,6 +607,8 @@ class NLUPipeline(BasePipe):
             elif type(data) is pd.Series:  # for df['text'] colum/series passing casting follows pseries->pdf->spark->pd
                 self.output_datatype='pandas_series'
                 data = pd.DataFrame(data).dropna(axis=1, how='all')
+                data['origin_index']=data.index
+                index_provided=True
                 
                 if self.raw_text_column in data.columns: sdf = \
                     self.spark_transformer_pipe.transform(
@@ -594,19 +620,25 @@ class NLUPipeline(BasePipe):
                 if len(data.shape) != 1:
                     print("Exception : Input numpy array must be 1 Dimensional for prediction.. Input data shape is",data.shape)
                     return ''
-                sdf = self.spark_transformer_pipe.transform(self.spark.createDataFrame(pd.DataFrame({self.raw_text_column:data})))
+                sdf = self.spark_transformer_pipe.transform(self.spark.createDataFrame(pd.DataFrame({self.raw_text_column:data, 'origin_index':list(range(len(data)))})))
+                index_provided=True
+
             elif type(data) is np.matrix: # assumes default axis for raw texts
                 print('Predicting on np matrices currently not supported. Please input either a Pandas Dataframe with a string column named "text"  or a String or a list of strings. ' )
                 return ''
             elif type(data) is str:  # inefficient, str->pd->spark->pd , we can could first pd
                 self.output_datatype='string'
                 sdf = self.spark_transformer_pipe.transform(self.spark.createDataFrame(
-                    pd.DataFrame({self.raw_text_column: data}, index=[0])))  
+                    pd.DataFrame({self.raw_text_column: data, 'origin_index':[0]}, index=[0])))
+                index_provided=True
+
             elif type(data) is list:  # inefficient, list->pd->spark->pd , we can could first pd
                 self.output_datatype='string_list'
                 if all(type(elem) == str for elem in data):
                     sdf = self.spark_transformer_pipe.transform(self.spark.createDataFrame(pd.DataFrame(
-                        {self.raw_text_column: pd.Series(data)})))  
+                        {self.raw_text_column: pd.Series(data), 'origin_index':list(range(len(data))) })))
+                    index_provided=True
+
                 else:
                     print("Exception: Not all elements in input list are of type string.")
             elif type(data) is dict():  # Assumes values should be predicted
@@ -618,7 +650,9 @@ class NLUPipeline(BasePipe):
                     if type(data) is mpd.DataFrame  :
                         data = pd.DataFrame(data.to_dict()) # create pandas to support type inference
                         self.output_datatype = 'modin'
-    
+                        data['origin_index']=data.index
+                        index_provided=True
+
                     if self.raw_text_column in data.columns:
                         if len(data.columns) > 1 :
                             data = data.where(pd.notnull(data), None) # make  Nans to None, or spark will crash
@@ -634,7 +668,8 @@ class NLUPipeline(BasePipe):
                         self.output_datatype='modin_series'
                         data = pd.Series(data.to_dict()) # create pandas to support type inference
                         data = pd.DataFrame(data).dropna(axis=1, how='all')
-        
+                        data['index']=data.index
+                        index_provided=True
                         if self.raw_text_column in data.columns: sdf = \
                             self.spark_transformer_pipe.transform(
                                 self.spark.createDataFrame(data[['text']]), )
@@ -645,7 +680,7 @@ class NLUPipeline(BasePipe):
                     print("If you use Modin, make sure you have installed 'pip install modin[ray]' or 'pip install modin[dask]' backend for Modin ")
 
 
-            return self.pythonify_spark_dataframe(sdf, self.output_different_levels, keep_stranger_features=keep_stranger_features, stranger_features=stranger_features, output_metadata=metadata)
+            return self.pythonify_spark_dataframe(sdf, self.output_different_levels, keep_stranger_features=keep_stranger_features, stranger_features=stranger_features, output_metadata=metadata, index_provided=index_provided)
         except : 
             import sys
             e = sys.exc_info()
