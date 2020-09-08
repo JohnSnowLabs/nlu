@@ -172,9 +172,11 @@ class NLUPipeline(BasePipe):
         
         for field in sdf.schema.fieldNames():
             if field in stranger_features : continue
+            if field =='origin_index' :continue
+
             if field == self.raw_text_column: continue
             if 'label' in field: continue  # speciel case for input lables
-            
+            # print(field)
             # For empty DF this will crash
             a_row = sdf.select(field + '.annotatorType').take(1)[0]['annotatorType']
             if len(a_row) > 0:
@@ -392,8 +394,9 @@ class NLUPipeline(BasePipe):
         :param output_metadata: Wether to keep or drop additional metadataf or predictions, like prediction confidence  
         :return: Pandas dataframe which easy accessable features
         '''
-        
-        
+
+        stranger_features +=['origin_index']
+
         if self.output_level==''  : self.infer_and_set_output_level(processed)
         
         
