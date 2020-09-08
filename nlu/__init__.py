@@ -52,6 +52,8 @@ from nlu.components.embeddings.glove.glove import Glove
 
 # classifiers
 from nlu.components.classifiers.classifier_dl.classifier_dl import ClassifierDl
+from nlu.components.classifiers.multi_classifier_dl.multi_classifier_dl import MultiClassifierDl
+
 from nlu.components.classifiers.language_detector.language_detector import LanguageDetector
 from nlu.components.classifiers.named_entity_recognizer_crf.ner_crf import NERDLCRF
 from nlu.components.classifiers.ner.ner_dl import NERDL
@@ -123,7 +125,8 @@ def load(request, verbose = False):
         components_requested = request.split(' ')
         pipe = NLUPipeline()
         for component in components_requested:
-            if component == ' ' : continue
+            component.replace(' ','')
+            # if component == ' ' : continue
             nlu_component = parse_component_data_from_name_query(component)
             if type(nlu_component) == type([]): # if we get a list of components, then the NLU reference is a pipeline, we do not need to check order
                 # lists are parsed down to multiple components
@@ -385,11 +388,12 @@ def construct_component_from_pipe_identifier(language, sparknlp_reference):
         if parsed == 'typed': constructed_components.append(nlu.Util(model=component)) # todo util abuse
         if parsed == 'multi': constructed_components.append(nlu.Util(model=component)) # todo util abuse 
         if parsed == 'sentimentdlmodel': constructed_components.append(nlu.Classifier(model=component))
-        if parsed == 'universal' or parsed == 'bert' or parsed == 'albert' or parsed == 'elmo' or parsed == 'xlnet' or parsed == 'glove':
-            constructed_components.append(nlu.Embeddings(model=component))
+        # if parsed == 'universal' or parsed == 'bert' or parsed == 'albert' or parsed == 'elmo' or parsed == 'xlnet' or parsed == 'glove'\
+        if parsed in ['universal','bert','albert', 'elmo', 'xlnet', 'glove','electra','covidbert','small_bert','']  : constructed_components.append(nlu.Embeddings(model=component))
         if parsed == 'vivekn': constructed_components.append(nlu.Classifier(component_name='vivekn', model=component))
         if parsed == 'chunker': constructed_components.append(nlu.chunker.Chunker(model=component))
         if parsed == 'ngram': constructed_components.append(nlu.chunker.Chunker(model=component))
+        if '2e2' in parsed: constructed_components.append(nlu.Embeddings(model=component))
 
         if parsed == 'embeddings_chunk': constructed_components.append(embeddings_chunker.EmbeddingsChunker(model=component))
 
@@ -417,7 +421,8 @@ def construct_component_from_identifier(language, component_type, dataset, compo
     '''
     logger.info('Creating singular NLU component for type=%s sparknlp reference=%s , dataset=%s, language=%s ', component_type, sparknlp_reference, dataset, language)
     try : 
-        if component_type == 'embed' or 'albert' in component_type or 'bert' in component_type or 'xlnet' in component_type or 'use' in component_type or 'glove' in component_type or 'elmo' in component_type or 'tfhub_use' in sparknlp_reference:
+        if 'bert' in dataset or component_type == 'embed' or 'albert' in component_type or 'bert' in component_type or 'xlnet' in component_type or 'use' in component_type or 'glove' in component_type or 'elmo' in component_type or 'tfhub_use' in sparknlp_reference\
+                or 'bert' in sparknlp_reference or 'labse' in sparknlp_reference:
             if component_type == 'embed' and dataset != '' :
                 return Embeddings(component_name=dataset, language=language, get_default=False,
                                   sparknlp_reference=sparknlp_reference)

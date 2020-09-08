@@ -484,7 +484,7 @@ class NLUPipeline(BasePipe):
         pandas_df = self.finalize_return_datatype(final_df)
         pandas_df.set_index(pandas_df['origin_index'],inplace=True)
         
-        # Todo, we could we drop origin index, optinally sometimes..
+        # Todo, we could we drop origin index, optinally sometimes.. Or just always since its IN the pandas index now?
         
         return  pandas_df
 

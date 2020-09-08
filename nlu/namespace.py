@@ -2,17 +2,8 @@ class NameSpace():
     # The vocabulary of the nlu Namespace. Any of this references give you a model
     # keys inside a language dict are NLU references and value is the name in SparkNLP
 
-    # component_references = {
-    # #refers to singular components similar to the keras stacking API in build().
-    # # For Components that dont have pretrained models, like Chunkers, Tokeizers, matchers, etc..
-    #     #TODO IDEA: Use sepcial Character like $ after component name for passing params??
-    # 'regex_matcher' : '',
-    # 'text_matcher' : '',
-    # 'regex_matcher' : '',
-    # 'regex_matcher' : '',
-    # 
-    # }
-    default_pretrained_component_references = {  # references for SparkNLPAnnotators without pretrained models.
+    default_pretrained_component_references = {  
+        # references for SparkNLPAnnotators without pretrained models.
         #  These are names for NLU components that can be created withouth a language prefix
 
         # multi lang pipes
@@ -53,7 +44,7 @@ class NameSpace():
         'sentiment.imdb.use': ('analyze_sentimentdl_use_imdb','pipe'),
         'sentiment.twitter.use': ('analyze_sentimentdl_use_twitter','pipe'),
         'sentiment.twitter': ('analyze_sentimentdl_use_twitter','pipe'),
-        # 'dependency': ('dependency_parse','pipe'),
+        'dependency': ('dependency_parse','pipe'),
 
         # models
         'tokenize': ('spark_nlp_tokenizer', 'model'),  # tokenizer rule based model
@@ -70,10 +61,10 @@ class NameSpace():
         'pos.anc': ('pos_anc', 'model'),
         'pos.ud_ewt': ('pos_ud_ewt', 'model'),
         # 'ner.crf' :'ner_crf', # crf not supported in NLU
-        'ner.dl.glove_6B_100d': ('ner_dl', 'model'),
+        'ner.dl.glove.6B_100d': ('ner_dl', 'model'),
         'ner.dl.bert': ('ner_dl_bert', 'model'),  # points ner bert
-        'ner.onto.glove_6B_100d': ('onto_100', 'model'),
-        'ner.onto.glove_6B_300d': ('onto_300', 'model'),  # this uses multi lang embeds!
+        'ner.onto.glove.6B_100d': ('onto_100', 'model'),
+        'ner.onto.glove.6B_300d': ('onto_300', 'model'),  # this uses multi lang embeds!
         'sentence_detector': ('ner_dl_sentence', 'model'),
         'sentence_detector.deep': ('ner_dl_sentence', 'model'), #ALIAS
         # 'sentence_detector.pragmatic': ('ner_dl_sentence', 'model'), # todo
@@ -93,18 +84,18 @@ class NameSpace():
         'embed': ('glove_100d','model'),  # default overall embed
         'glove': ('glove_100d', 'model'),  # default glove
         'embed.glove': ('glove_100d', 'model'),  # default glove en
-        'embed.glove_100d': ('glove_100d', 'model'),
+        'embed.glove.100d': ('glove_100d', 'model'),
         'bert': ('bert_base_uncased', 'model'),  # default bert
         'embed.bert': ('bert_base_uncased', 'model'),  # default bert
         'embed.bert_base_uncased': ('bert_base_uncased', 'model'),
         'embed.bert_base_cased': ('bert_base_cased', 'model'),
-        # 'embed.bert_large_uncased': ('bert_large_uncased', 'model'),
-        # 'embed.bert_large_cased': ('bert_large_cased', 'model'),
+        'embed.bert_large_uncased': ('bert_large_uncased', 'model'),
+        'embed.bert_large_cased': ('bert_large_cased', 'model'),
         'biobert': ('biobert_pubmed_base_cased', 'model'),  # alias
         'embed.biobert': ('biobert_pubmed_base_cased', 'model'),  # default bio bert
         'embed.biobert_pubmed_base_cased': ('biobert_pubmed_base_cased', 'model'),
-        # 'embed.biobert_pubmed_large_cased': ('biobert_pubmed_large_cased', 'model'),
-        # 'embed.biobert_pmc_base_cased': ('biobert_pmc_base_cased', 'model'),
+        'embed.biobert_pubmed_large_cased': ('biobert_pubmed_large_cased', 'model'),
+        'embed.biobert_pmc_base_cased': ('biobert_pmc_base_cased', 'model'),
         'embed.biobert_pubmed_pmc_base_cased': ('biobert_pubmed_pmc_base_cased', 'model'),
         'embed.biobert_clinical_base_cased': ('biobert_clinical_base_cased', 'model'),
         'embed.biobert_discharge_base_cased': ('biobert_discharge_base_cased', 'model'),
@@ -118,13 +109,13 @@ class NameSpace():
         'embed_sentence.tfhub_use_lg': ('tfhub_use_lg', 'model'),
         'albert': ('albert_base_uncased', 'model'),  # albert alias en
         'embed.albert_base_uncased': ('albert_base_uncased', 'model'),
-        # 'embed.albert_large_uncased': ('albert_large_uncased', 'model'),
-        # 'embed.albert_xlarge_uncased': ('albert_xlarge_uncased', 'model'),
-        # 'embed.albert_xxlarge_uncased': ('albert_xxlarge_uncased', 'model'),
+        'embed.albert_large_uncased': ('albert_large_uncased', 'model'),
+        'embed.albert_xlarge_uncased': ('albert_xlarge_uncased', 'model'),
+        'embed.albert_xxlarge_uncased': ('albert_xxlarge_uncased', 'model'),
         'embed.xlnet': ('xlnet_base_cased', 'model'),  # xlnet default en
         'xlnet': ('xlnet_base_cased', 'model'),  # xlnet alias
-        # 'embed.xlnet_base_cased': ('xlnet_base_cased', 'model'),
-        # 'embed.xlnet_large_cased': ('xlnet_large_cased', 'model'),
+        'embed.xlnet_base_cased': ('xlnet_base_cased', 'model'),
+        'embed.xlnet_large_cased': ('xlnet_large_cased', 'model'),
 
 
 
@@ -146,8 +137,8 @@ class NameSpace():
         'classify.cyberbullying': ('classifierdl_use_cyberbullying','model'),  # Alias withouth embedding
         'classify.sarcasm': ('classifierdl_use_sarcasm','model'),  # Alias withouth embedding
 
-        'embed.glove_840B_300': ('glove_840B_300','model'),
-        'embed.glove_6B_300': ('glove_6B_300','model'),
+        'embed.glove.840B_300': ('glove_840B_300','model'),
+        'embed.glove.6B_300': ('glove_6B_300','model'),
         'embed.bert_multi_cased': ('bert_multi_cased','model'),
         'classify.wiki_7': ('ld_wiki_7','model'),
         'classify.wiki_20': ('ld_wiki_20','model'),
@@ -155,6 +146,17 @@ class NameSpace():
 
     # multi lang models
     pretrained_pipe_references = {
+
+        'da': {
+                'da.explain': 'explain_document_sm',
+                'da.explain.sm': 'explain_document_sm',
+                'da.explain.md': 'explain_document_md',
+                'da.explain.lg': 'explain_document_lg',
+                'da.ner': 'entity_recognizer_sm',
+                'da.ner.sm': 'entity_recognizer_sm',
+                'da.ner.md': 'entity_recognizer_md',
+                'da.ner.lg': 'entity_recognizer_lg'},
+         
         'nl': {
             'nl.explain': 'explain_document_sm',  # default
             'nl.explain.sm': 'explain_document_sm',
@@ -195,6 +197,29 @@ class NameSpace():
             'en.sentiment.twitter': 'analyze_sentimentdl_use_twitter',
             # 'en.dependency': 'dependency_parse',
         },
+
+
+        'sv': {
+                'sv.explain': 'explain_document_sm',
+               'sv.explain.sm': 'explain_document_sm',
+               'sv.explain.md': 'explain_document_md',
+               'sv.explain.lg': 'explain_document_lg',
+               'sv.ner': 'entity_recognizer_sm',
+               'sv.ner.sm': 'entity_recognizer_sm',
+               'sv.ner.md': 'entity_recognizer_md',
+               'sv.ner.lg': 'entity_recognizer_lg'},
+    
+    
+        'fi' : {
+            'fi.explain': 'explain_document_sm',
+              'fi.explain.sm': 'explain_document_sm',
+               'fi.explain.md': 'explain_document_md',
+               'fi.explain.lg': 'explain_document_lg',
+                'fi.ner': 'entity_recognizer_sm',
+               'fi.ner.sm': 'entity_recognizer_sm',
+               'fi.ner.md': 'entity_recognizer_md',
+               'fi.ner.lg': 'entity_recognizer_lg'},
+
         'fr': {
             'fr.explain': 'explain_document_lg',  # default fr explain
             'fr.explain.lg': 'explain_document_lg',
@@ -286,9 +311,9 @@ class NameSpace():
             'nl.pos.ud_alpino': 'pos_ud_alpino',
             'nl.ner': 'wikiner_6B_100',  # default ner nl
             'nl.ner.wikiner': 'wikiner_6B_100',  # default ner nl with embeds
-            'nl.ner.wikiner.glove_6B_100': 'wikiner_6B_100',
-            'nl.ner.wikiner.glove_6B_300': 'wikiner_6B_300',
-            'nl.ner.wikiner.glove_840B_300': 'wikiner_840B_300',
+            'nl.ner.wikiner.glove.6B_100': 'wikiner_6B_100',
+            'nl.ner.wikiner.glove.6B_300': 'wikiner_6B_300',
+            'nl.ner.wikiner.glove.840B_300': 'wikiner_840B_300',
 
         },
         'en': {
@@ -309,41 +334,41 @@ class NameSpace():
             # 'en.ner.crf' :'ner_crf', # crf not supported in NLU
             'en.ner': 'ner_dl',  # ner default en
             'en.ner.dl': 'ner_dl',  # ner embeds  default  en
-            'en.ner.dl.glove_6B_100d': 'ner_dl',
+            'en.ner.dl.glove.6B_100d': 'ner_dl',
             'en.ner.dl.bert': 'ner_dl_bert',  # points ner bert
             'en.ner.onto': 'onto_100',  # ner  onto default embeds en
-            'en.ner.onto.glove_6B_100d': 'onto_100',
-            'en.ner.onto.glove_6B_300d': 'onto_300',  # this uses multi lang embeds!
-            'en.ner.glove_100d': 'ner_dl_sentence',
+            'en.ner.onto.glove.6B_100d': 'onto_100',
+            'en.ner.onto.glove.6B_300d': 'onto_300',  # this uses multi lang embeds!
+            'en.ner.glove.100d': 'ner_dl_sentence',
             # 'en.spell.symmetric': 'spellcheck_sd',
             'en.spell.norvig': 'spellcheck_norvig',
             'en.sentiment.vivekn': 'sentiment_vivekn',
             'en.dep.untyped.conllu': 'dependency_conllu',
             'en.dep.untyped': 'dependency_conllu',  # default untyped dependency
-            # 'en.dep': 'dependency_typed_conllu',  # default typed dependency
-            # 'en.dep.typed': 'dependency_typed_conllu',  # default typed dependency dataset
-            # 'en.dep.typed.conllu': 'dependency_typed_conllu',
+            'en.dep': 'dependency_typed_conllu',  # default typed dependency
+            'en.dep.typed': 'dependency_typed_conllu',  # default typed dependency dataset
+            'en.dep.typed.conllu': 'dependency_typed_conllu',
             'en.stopwords': 'stopwords_en',
 
             # embeddings
             'en.glove': 'glove_100d',  # default embed
             'en.embed': 'glove_100d',  # default glove en
             'en.embed.glove': 'glove_100d',  # default glove en
-            'en.embed.glove_100d': 'glove_100d',
+            'en.embed.glove.100d': 'glove_100d',
             'en.bert': 'bert_base_uncased',  # default bert
             'en.embed.bert': 'bert_base_uncased',  # default bert
-            'en.embed.bert_base_uncased': 'bert_base_uncased',
-            'en.embed.bert_base_cased': 'bert_base_cased',
-            # 'en.embed.bert_large_uncased': 'bert_large_uncased',
-            # 'en.embed.bert_large_cased': 'bert_large_cased',
+            'en.embed.bert.base_uncased': 'bert_base_uncased',
+            'en.embed.bert.base_cased': 'bert_base_cased',
+            'en.embed.bert.large_uncased': 'bert_large_uncased',
+            'en.embed.bert.large_cased': 'bert_large_cased',
             'biobert': 'biobert_pubmed_base_cased',  # alias
             'en.embed.biobert': 'biobert_pubmed_base_cased',  # default bio bert
-            # 'en.embed.biobert_pubmed_base_cased': 'biobert_pubmed_base_cased',
-            # 'en.embed.biobert_pubmed_large_cased': 'biobert_pubmed_large_cased',
-            # 'en.embed.biobert_pmc_base_cased': 'biobert_pmc_base_cased',
-            'en.embed.biobert_pubmed_pmc_base_cased': 'biobert_pubmed_pmc_base_cased',
-            'en.embed.biobert_clinical_base_cased': 'biobert_clinical_base_cased',
-            'en.embed.biobert_discharge_base_cased': 'biobert_discharge_base_cased',
+            'en.embed.biobert.pubmed_base_cased': 'biobert_pubmed_base_cased',
+            'en.embed.biobert.pubmed_large_cased': 'biobert_pubmed_large_cased',
+            'en.embed.biobert.pmc_base_cased': 'biobert_pmc_base_cased',
+            'en.embed.biobert.pubmed_pmc_base_cased': 'biobert_pubmed_pmc_base_cased',
+            'en.embed.biobert.clinical_base_cased': 'biobert_clinical_base_cased',
+            'en.embed.biobert.discharge_base_cased': 'biobert_discharge_base_cased',
             'en.embed.elmo': 'elmo',
             'en.embed_sentence': 'tfhub_use',  # default sentence
 
@@ -351,8 +376,8 @@ class NameSpace():
             'en.use': 'tfhub_use',  # alias
             'en.embed.use': 'tfhub_use',  # alias
             'en.embed_sentence.tfhub_use': 'tfhub_use',
-            'en.embed_sentence.use_lg': 'tfhub_use_lg',  # alias
-            'en.embed_sentence.tfhub_use_lg': 'tfhub_use_lg',
+            'en.embed_sentence.use.lg': 'tfhub_use_lg',  # alias
+            'en.embed_sentence.tfhub_use.lg': 'tfhub_use_lg',
 
 
             'en.embed_sentence.albert': 'albert_base_uncased',  # albert default en
@@ -360,10 +385,10 @@ class NameSpace():
 
             'en.albert': 'albert_base_uncased',  # albert alias en
             'en.embed.albert': 'albert_base_uncased',  # albert alias en
-            'en.embed.albert_base_uncased': 'albert_base_uncased',
-            # 'en.embed.albert_large_uncased': 'albert_large_uncased',
-            # 'en.embed.albert_xlarge_uncased': 'albert_xlarge_uncased',
-            # 'en.embed.albert_xxlarge_uncased': 'albert_xxlarge_uncased',
+            'en.embed.albert.base_uncased': 'albert_base_uncased',
+            'en.embed.albert.large_uncased': 'albert_large_uncased',
+            'en.embed.albert.xlarge_uncased': 'albert_xlarge_uncased',
+            'en.embed.albert.xxlarge_uncased': 'albert_xxlarge_uncased',
             'en.embed.xlnet': 'xlnet_base_cased',  # xlnet default en
             'en.xlnet': 'xlnet_base_cased',  # xlnet alias
             'en.embed.xlnet_base_cased': 'xlnet_base_cased',
@@ -390,6 +415,89 @@ class NameSpace():
             'en.classify.sarcasm': 'classifierdl_use_sarcasm',  # Alias withouth embedding
             'en.sentiment.twitter': 'sentimentdl_use_twitter',  # Alias withouth embedding
             'en.sentiment.imdb': 'sentimentdl_glove_imdb',  # Default sentiment imdb with embeddigns glvoe
+        
+            #2.6 Release models
+
+            #2.6  embeds
+            'en.embed.electra': 'electra_small_uncased',
+            'en.embed.electra.small_uncased': 'electra_small_uncased',
+            'en.embed.electra.base_uncased': 'electra_base_uncased',
+            'en.embed.electra.large_uncased': 'electra_large_uncased',
+
+
+            'en.embed.covidbert': 'covidbert_large_uncased',
+            'en.embed.covidbert.large_uncased': 'covidbert_large_uncased',
+            'en.embed.bert.small_L2_128': 'small_bert_L2_128',
+            'en.embed.bert.small_L4_128': 'small_bert_L4_128',
+            'en.embed.bert.small_L6_128': 'small_bert_L6_128',
+            'en.embed.bert.small_L8_128': 'small_bert_L8_128',
+            'en.embed.bert.small_L10_128': 'small_bert_L10_128',
+            'en.embed.bert.small_L12_128': 'small_bert_L12_128',
+            'en.embed.bert.small_L2_256': 'small_bert_L2_256',
+            'en.embed.bert.small_L4_256': 'small_bert_L4_256',
+            'en.embed.bert.small_L6_256': 'small_bert_L6_256',
+            'en.embed.bert.small_L8_256': 'small_bert_L8_256',
+            'en.embed.bert.small_L10_256': 'small_bert_L10_256',
+            'en.embed.bert.small_L12_256': 'small_bert_L12_256',
+            'en.embed.bert.small_L2_512': 'small_bert_L2_512',
+            'en.embed.bert.small_L4_512': 'small_bert_L4_512',
+            'en.embed.bert.small_L6_512': 'small_bert_L6_512',
+            'en.embed.bert.small_L8_512': 'small_bert_L8_512',
+            'en.embed.bert.small_L10_512': 'small_bert_L10_512',
+            'en.embed.bert.small_L12_512': 'small_bert_L12_512',
+            'en.embed.bert.small_L2_768': 'small_bert_L2_768',
+            'en.embed.bert.small_L4_768': 'small_bert_L4_768',
+            'en.embed.bert.small_L6_768': 'small_bert_L6_768',
+            'en.embed.bert.small_L8_768': 'small_bert_L8_768',
+            'en.embed.bert.small_L10_768': 'small_bert_L10_768',
+            'en.embed.bert.small_L12_768': 'small_bert_L12_768',
+            
+            #2.6 sent embeddings
+            'en.embed_sentence.electra_small_uncased': 'sent_electra_small_uncased',
+            'en.embed_sentence.electra_base_uncased': 'sent_electra_base_uncased',
+            'en.embed_sentence.electra_large_uncased': 'sent_electra_large_uncased',
+            'en.embed_sentence.bert_base_uncased': 'sent_bert_base_uncased',
+            'en.embed_sentence.bert_base_cased': 'sent_bert_base_cased',
+            'en.embed_sentence.bert_large_uncased': 'sent_bert_large_uncased',
+            'en.embed_sentence.bert_large_cased': 'sent_bert_large_cased',
+            'en.embed_sentence.biobert.pubmed_base_cased': 'sent_biobert_pubmed_base_cased',
+            'en.embed_sentence.biobert.pubmed_large_cased': 'sent_biobert_pubmed_large_cased',
+            'en.embed_sentence.biobert.pmc_base_cased': 'sent_biobert_pmc_base_cased',
+            'en.embed_sentence.biobert.pubmed_pmc_base_cased': 'sent_biobert_pubmed_pmc_base_cased',
+            'en.embed_sentence.biobert.clinical_base_cased': 'sent_biobert_clinical_base_cased',
+            'en.embed_sentence.biobert.discharge_base_cased': 'sent_biobert_discharge_base_cased',
+            'en.embed_sentence.covidbert.large_uncased': 'sent_covidbert_large_uncased',
+            'en.embed_sentence.small_bert_L2_128': 'sent_small_bert_L2_128',
+            'en.embed_sentence.small_bert_L4_128': 'sent_small_bert_L4_128',
+            'en.embed_sentence.small_bert_L6_128': 'sent_small_bert_L6_128',
+            'en.embed_sentence.small_bert_L8_128': 'sent_small_bert_L8_128',
+            'en.embed_sentence.small_bert_L10_128': 'sent_small_bert_L10_128',
+            'en.embed_sentence.small_bert_L12_128': 'sent_small_bert_L12_128',
+            'en.embed_sentence.small_bert_L2_256': 'sent_small_bert_L2_256',
+            'en.embed_sentence.small_bert_L4_256': 'sent_small_bert_L4_256',
+            'en.embed_sentence.small_bert_L6_256': 'sent_small_bert_L6_256',
+            'en.embed_sentence.small_bert_L8_256': 'sent_small_bert_L8_256',
+            'en.embed_sentence.small_bert_L10_256': 'sent_small_bert_L10_256',
+            'en.embed_sentence.small_bert_L12_256': 'sent_small_bert_L12_256',
+            'en.embed_sentence.small_bert_L2_512': 'sent_small_bert_L2_512',
+            'en.embed_sentence.small_bert_L4_512': 'sent_small_bert_L4_512',
+            'en.embed_sentence.small_bert_L6_512': 'sent_small_bert_L6_512',
+            'en.embed_sentence.small_bert_L8_512': 'sent_small_bert_L8_512',
+            'en.embed_sentence.small_bert_L10_512': 'sent_small_bert_L10_512',
+            'en.embed_sentence.small_bert_L12_512': 'sent_small_bert_L12_512',
+            'en.embed_sentence.small_bert_L2_768': 'sent_small_bert_L2_768',
+            'en.embed_sentence.small_bert_L4_768': 'sent_small_bert_L4_768',
+            'en.embed_sentence.small_bert_L6_768': 'sent_small_bert_L6_768',
+            'en.embed_sentence.small_bert_L8_768': 'sent_small_bert_L8_768',
+            'en.embed_sentence.small_bert_L10_768': 'sent_small_bert_L10_768',
+            'en.embed_sentence.small_bert_L12_768': 'sent_small_bert_L12_768',
+            
+            # 2.6 classifiers
+            'en.classify.toxic': 'multiclassifierdl_use_toxic',
+            'en.classify.toxic.sm': 'multiclassifierdl_use_toxic_sm',
+            'en.classify.e2e': 'multiclassifierdl_use_e2e',
+            
+
         },
         'fr': {
             'fr.lemma': 'lemma',
@@ -397,7 +505,7 @@ class NameSpace():
             'fr.pos.ud_gsd': 'pos_ud_gsd',
             'fr.ner': 'wikiner_840B_300',  # default ner fr
             'fr.ner.wikiner': 'wikiner_840B_300',  # default nr embeds fr
-            'fr.ner.wikiner.glove_840B_300': 'wikiner_840B_300',
+            'fr.ner.wikiner.glove.840B_300': 'wikiner_840B_300',
             'fr.stopwords': 'stopwords_fr',
 
         },
@@ -407,7 +515,7 @@ class NameSpace():
             'de.pos': 'pos_ud_hdt',  # default pos de
             'de.ner': 'wikiner_840B_300',  # default ner de
             'de.ner.wikiner': 'wikiner_840B_300',  # default ner embeds de
-            'de.ner.wikiner.glove_840B_300': 'wikiner_840B_300',
+            'de.ner.wikiner.glove.840B_300': 'wikiner_840B_300',
             'de.stopwords': 'stopwords_de',
 
         },
@@ -420,7 +528,7 @@ class NameSpace():
             'it.pos.ud_isdt': 'pos_ud_isdt',
             'it.ner': 'wikiner_840B_300',  # default ner it
             'it.ner.wikiner': 'wikiner_840B_300',  # default ner embeds it
-            'it.ner.wikiner.glove_840B_300': 'wikiner_840B_300',
+            'it.ner.wikiner.glove.840B_300': 'wikiner_840B_300',
             'it.stopwords': 'stopwords_it',
         },
         'nb': {
@@ -431,9 +539,9 @@ class NameSpace():
         'no': {
             'no.ner': 'norne_6B_100',  # ner default no
             'no.ner.norne': 'norne_6B_100',  # ner default no embeds
-            'no.ner.norne.glove_6B_100': 'norne_6B_100',
-            'no.ner.norne.glove_6B_300': 'norne_6B_300',
-            'no.ner.norne.glove_840B_300': 'norne_840B_300',
+            'no.ner.norne.glove.6B_100': 'norne_6B_100',
+            'no.ner.norne.glove.6B_300': 'norne_6B_300',
+            'no.ner.norne.glove.840B_300': 'norne_840B_300',
 
         },
         'nn': {
@@ -447,9 +555,9 @@ class NameSpace():
             'pl.pos.ud_lfg': 'pos_ud_lfg',
             'pl.ner': 'wikiner_6B_100',  # pl default ner
             'pl.ner.wikiner': 'wikiner_6B_100',  # pls default ner embeds
-            'pl.ner.wikiner.glove_6B_100': 'wikiner_6B_100',
-            'pl.ner.wikiner.glove_6B_300': 'wikiner_6B_300',
-            'pl.ner.wikiner.glove_840B_300': 'wikiner_840B_300',
+            'pl.ner.wikiner.glove.6B_100': 'wikiner_6B_100',
+            'pl.ner.wikiner.glove.6B_300': 'wikiner_6B_300',
+            'pl.ner.wikiner.glove.840B_300': 'wikiner_840B_300',
             'pl.stopwords': 'stopwords_pl'
         },
         'pt': {
@@ -457,9 +565,9 @@ class NameSpace():
             'pt.pos.ud_bosque': 'pos_ud_bosque',
             'pt.pos': 'pos_ud_bosque',  # pt default pos
             'pt.ner': 'wikiner_6B_100',  # pt default ner
-            'pt.ner.wikiner.glove_6B_100': 'wikiner_6B_100',  # pt default embeds ner
-            'pt.ner.wikiner.glove_6B_300': 'wikiner_6B_300',
-            'pt.ner.wikiner.glove_840B_300': 'wikiner_840B_300',
+            'pt.ner.wikiner.glove.6B_100': 'wikiner_6B_100',  # pt default embeds ner
+            'pt.ner.wikiner.glove.6B_300': 'wikiner_6B_300',
+            'pt.ner.wikiner.glove.840B_300': 'wikiner_840B_300',
             'pt.stopwords': 'stopwords_pt',
         },
         'ru': {
@@ -468,9 +576,9 @@ class NameSpace():
             'ru.pos': 'pos_ud_gsd',  # pos default ru
             'ru.ner': 'wikiner_6B_100',  # ner default ru
             'ru.ner.wikiner': 'wikiner_6B_100',  # ner embeds default ru
-            'ru.ner.wikiner.glove_6B_100': 'wikiner_6B_100',
-            'ru.ner.wikiner.glove_6B_300': 'wikiner_6B_300',
-            'ru.ner.wikiner.glove_840B_300': 'wikiner_840B_300',
+            'ru.ner.wikiner.glove.6B_100': 'wikiner_6B_100',
+            'ru.ner.wikiner.glove.6B_300': 'wikiner_6B_300',
+            'ru.ner.wikiner.glove.840B_300': 'wikiner_840B_300',
             'ru.stopwords': 'stopwords_ru',
 
         },
@@ -480,9 +588,9 @@ class NameSpace():
             'es.pos.ud_gsd': 'pos_ud_gsd',
             'es.ner': 'wikiner_6B_100',  # ner default es
             'es.ner.wikiner': 'wikiner_6B_100',  # ner default embeds es
-            'es.ner.wikiner.glove_6B_100': 'wikiner_6B_100',
-            'es.ner.wikiner.glove_6B_300': 'wikiner_6B_300',
-            'es.ner.wikiner.glove_840B_300': 'wikiner_840B_300',
+            'es.ner.wikiner.glove.6B_100': 'wikiner_6B_100',
+            'es.ner.wikiner.glove.6B_300': 'wikiner_6B_300',
+            'es.ner.wikiner.glove.840B_300': 'wikiner_840B_300',
             'es.stopwords_es': 'stopwords_es',
         },
         'af': {
@@ -544,6 +652,16 @@ class NameSpace():
             'fi.pos.ud_tdt': 'pos_ud_tdt',
             'fi.pos': 'pos_ud_tdt',  # default pos fi
             'fi.stopwords': 'stopwords_fi',
+            'fi.ner': 'wikiner_6B_100',
+            'fi.ner.6B_100': 'wikiner_6B_100',
+            'fi.ner.6B_300': 'wikiner_6B_300',
+            'fi.ner.840B_300': 'wikiner_840B_300',
+            'fi.embed.bert.': 'bert_finnish_cased',
+            'fi.embed.bert.cased.': 'bert_finnish_cased',
+            'fi.embed.bert.uncased.': 'bert_finnish_uncased',
+            'fi.embed_sentence': 'sent_bert_finnish_cased',
+            'fi.embed_sentence.bert.cased': 'sent_bert_finnish_cased',
+            'fi.embed_sentence.bert.uncased': 'sent_bert_finnish_uncased'
 
         },
         'gl': {
@@ -596,6 +714,11 @@ class NameSpace():
         'da': {
             'da.lemma': 'lemma',
             'da.pos': 'pos_ud_ddt',
+            'da.ner': 'dane_ner_6B_100',
+            'da.ner.6B100D': 'dane_ner_6B_100',
+            'da.ner.6B300D': 'dane_ner_6B_300',
+            'da.ner840B100D.': 'dane_ner_840B_100'
+            
 
 
         },
@@ -659,6 +782,10 @@ class NameSpace():
             'sv.pos': 'pos_ud_tal',  # default sv pos
             'sv.pos.ud_tal': 'pos_ud_tal',
             'sv.stopwords': 'stopwords_sv',
+            'sv.ner': 'swedish_ner_6B_100',
+            'sv.ner.6B_100': 'swedish_ner_6B_100',
+            'sv.ner.6B_300': 'swedish_ner_6B_300',
+            'sv.ner.840B_300': 'swedish_ner_840B_300'
         },
         'th': {
             'th.stopwords': 'stopwords_th'
@@ -684,11 +811,18 @@ class NameSpace():
             'zu.stopwords': 'stopwords_zu'
         },
         'xx': {
-            'xx.embed.glove_840B_300': 'glove_840B_300',
-            'xx.embed.glove_6B_300': 'glove_6B_300',
+            'xx.embed': 'glove_840B_300',
+
+            'xx.embed.glove.840B_300': 'glove_840B_300',
+            'xx.embed.glove.6B_300': 'glove_6B_300',
             'xx.embed.bert_multi_cased': 'bert_multi_cased',
             'xx.classify.wiki_7': 'ld_wiki_7',
             'xx.classify.wiki_20': 'ld_wiki_20',
+
+            'xx.embed_sentence': 'sent_bert_multi_cased',
+            'xx.embed_sentence.bert': 'sent_bert_multi_cased',
+            'xx.embed_sentence.bert.cased': 'sent_bert_multi_cased',
+            'xx.embed_sentence.labse': 'labse'
 
         },
 
