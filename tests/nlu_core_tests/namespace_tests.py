@@ -163,10 +163,10 @@ class TestNameSpace(unittest.TestCase):
 
 
     def test_match(self):
-        df = nlu.load('match.datetime').predict('What a wonderful day!')
+        df = nlu.load('match.date',verbose=True).predict('What a wonderful day!')
         print(df)
-        df = nlu.load('en.match.datetime').predict('What a wonderful day!')
-        print(df)
+        # df = nlu.load('en.match.date').predict('What a wonderful day!')
+        # print(df)
 
     def test_clean_stop(self):
         # df = nlu.load('clean.stop').predict('What a wonderful day!')
@@ -415,6 +415,50 @@ class TestNameSpace(unittest.TestCase):
     # 
     #     print(res)
 
+    #2.6 test
+
+
+    def test_electra(self):
+        pdf = get_sample_pdf()
+        res = nlu.load('en.embed.electra',verbose=True).predict(pdf )
+        print(res)
+
+    def test_embed_sentence_bert(self):
+        pdf = get_sample_pdf()
+        res = nlu.load('en.embed_sentence.small_bert_L2_128',verbose=True).predict(pdf )
+        print(res)
+
+    def test_embed_sentence_bert(self):
+        pdf = get_sample_pdf()
+        res = nlu.load('en.embed_sentence.biobert.pubmed_base_cased',verbose=True).predict(pdf )
+        print(res)
+
+
+    def test_toxic(self):
+        pdf = get_sample_pdf()
+        res = nlu.load('en.classify.toxic',verbose=True).predict(pdf )
+        print(res)
+
+    def test_e2e(self):
+        pdf = get_sample_pdf()
+        res = nlu.load('en.classify.e2e',verbose=True).predict(pdf )
+        print(res)
+
+
+
+    def test_labse(self):
+        pdf = get_sample_pdf()
+        res = nlu.load('xx.embed_sentence.labse',verbose=True).predict(pdf )
+        print(res)
+
+    def test_xx_bert(self):
+        pdf = get_sample_pdf()
+        res = nlu.load('xx.embed_sentence',verbose=True).predict(pdf )
+        print(res)
+        
+    def test_26_bert(self):
+        res = nlu.load('en.ner.bert',verbose=True).predict('The NLU library is a machine learning library, simmilar to Tensorflow and Keras')
+        print(res)
 if __name__ == '__main__':
     unittest.main()
 

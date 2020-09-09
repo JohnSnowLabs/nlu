@@ -19,7 +19,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 
 REQUIRED_PKGS = [
     'pyspark==2.4.4',
-    'spark-nlp',
+    'spark-nlp==2.6',
     'numpy',
     'pyarrow>=0.16.0',
     'pandas',
@@ -48,7 +48,7 @@ setup(
     # project code, see
     # https://packaging.python.org/en/latest/single_source_version.html
 
-    version='2.5.6',  # Required
+    version='2.6.rc2',  # Required
 
     # This is a one-line description or tagline of what your project does. This
     # corresponds to the "Summary" metadata field:
@@ -135,6 +135,7 @@ setup(
     data_files=[
         #classifiers
         ('', ['nlu/components/classifiers/classifier_dl/component_infos.json']),
+        ('', ['nlu/components/classifiers/multi_classifier_dl/component_infos.json']),
         ('', ['nlu/components/classifiers/language_detector/component_infos.json']),
         ('', ['nlu/components/classifiers/named_entity_recognizer_crf/component_infos.json']),
         ('', ['nlu/components/classifiers/ner/component_infos.json']),
@@ -207,3 +208,4 @@ setup(
     include_package_data=True  # Needed to install jar file
 
 )
+
