@@ -8,7 +8,7 @@ import logging
 import nlu
 logger = logging.getLogger('nlu')
 
-
+from sparknlp.base import LightPipeline
 from pyspark.sql.functions import flatten, explode, arrays_zip, map_keys, map_values, monotonically_increasing_id, greatest,expr
 from pyspark.sql.functions import col as pyspark_col
 from pyspark.sql.functions import udf
@@ -172,7 +172,9 @@ class NLUPipeline(BasePipe):
         
         for field in sdf.schema.fieldNames():
             if field in stranger_features : continue
-            if field =='origin_index' :continue
+            if field =='origin_index' :
+                field_types_dict[field] = 'document'
+                continue
 
             if field == self.raw_text_column: continue
             if 'label' in field: continue  # speciel case for input lables
@@ -487,9 +489,8 @@ class NLUPipeline(BasePipe):
         pandas_df = self.finalize_return_datatype(final_df)
         pandas_df.set_index(pandas_df['origin_index'],inplace=True)
         
-        # Todo, we could we drop origin index, optinally sometimes.. Or just always since its IN the pandas index now?
         
-        return  pandas_df
+        return  pandas_df.drop('origin_index')
 
     def finalize_return_datatype(self, sdf):
         '''
@@ -549,8 +550,19 @@ class NLUPipeline(BasePipe):
             if 'sentence' in cols: cols.remove('sentence')
 
         return cols
+    def configure_light_pipe_usage(self, data_instances ):
 
-    def predict(self, data, output_level='', positions=False, keep_stranger_features=True, metadata=False):
+        if data_instances > 50000 :
+            logger.info("Configuring Light Pipeline Usage")
+            logger.info("Disabling light pipeline")
+            self.spark_transformer_pipe = self.spark_non_light_transformer_pipe 
+            return
+        else : 
+            logger.info("Enabling light pipeline")
+            self.spark_non_light_transformer_pipe = self.spark_transformer_pipe 
+            self.spark_transformer_pipe = LightPipeline(self.spark_transformer_pipe)            
+        
+    def predict(self, data, output_level='', positions=False, keep_stranger_features=True, metadata=False, multithread=True):
         '''
         Annotates a Pandas Dataframe/Pandas Series/Numpy Array/Spark DataFrame/Python List strings /Python String
         
@@ -559,8 +571,12 @@ class NLUPipeline(BasePipe):
         :param positions: 
         :param keep_stranger_features: 
         :param metadata:weather to keep additonal metadata in final df or not 
+        :param multithread: Whether to use multithreading based lightpipeline. In some cases, this may cause errors.  
         :return: 
         '''
+        
+        
+        
         if output_level !='': 
             self.output_level = output_level
             
@@ -575,6 +591,8 @@ class NLUPipeline(BasePipe):
                 # TODO THIS COULD BREAK DICT INDEXIGN!!
                 self =  PipelineQueryVerifier.check_and_fix_nlu_pipeline(self)
         if not self.is_fitted: self.fit()
+        self.configure_light_pipe_usage(len(data))
+
         sdf = None
         import pyspark  
         stranger_features = []
@@ -602,9 +620,7 @@ class NLUPipeline(BasePipe):
                         data = data.where(pd.notnull(data), None) # make  Nans to None, or spark will crash
                         data = data.dropna(axis=1, how='all')
                         stranger_features = list( set(data.columns) - set(self.raw_text_column))
-                    sdf = self.spark_transformer_pipe.transform(
-                    # self.spark.createDataFrame(data[['text']]), ) # this takes text column as series and makes it DF
-                    self.spark.createDataFrame(data ))
+                    sdf = self.spark_transformer_pipe.transform(self.spark.createDataFrame(data ))
                 else : 
                     print('Could not find column named "text" in input Pandas Dataframe. Please ensure one column named such exists. Columns in DF are : ', data.columns)
             elif type(data) is pd.Series:  # for df['text'] colum/series passing casting follows pseries->pdf->spark->pd
@@ -613,22 +629,21 @@ class NLUPipeline(BasePipe):
                 data['origin_index']=data.index
                 index_provided=True
                 
-                if self.raw_text_column in data.columns: sdf = \
-                    self.spark_transformer_pipe.transform(
-                    self.spark.createDataFrame(data[['text']]), )
+                if self.raw_text_column in data.columns: sdf = self.spark_transformer_pipe.transform(self.spark.createDataFrame(data), )
+
                 else: print('Could not find column named "text" in  Pandas Dataframe generated from input  Pandas Series. Please ensure one column named such exists. Columns in DF are : ', data.columns)
-    
+                        
             elif type(data) is np.ndarray:  # This is a bit inefficient. Casting follow  np->pd->spark->pd. We could cut out the first pd step
                 self.output_datatype='numpy_array'
                 if len(data.shape) != 1:
                     print("Exception : Input numpy array must be 1 Dimensional for prediction.. Input data shape is",data.shape)
-                    return ''
+                    return '' #todo return error obj
                 sdf = self.spark_transformer_pipe.transform(self.spark.createDataFrame(pd.DataFrame({self.raw_text_column:data, 'origin_index':list(range(len(data)))})))
                 index_provided=True
 
             elif type(data) is np.matrix: # assumes default axis for raw texts
                 print('Predicting on np matrices currently not supported. Please input either a Pandas Dataframe with a string column named "text"  or a String or a list of strings. ' )
-                return ''
+                return ''#todo return error obj
             elif type(data) is str:  # inefficient, str->pd->spark->pd , we can could first pd
                 self.output_datatype='string'
                 sdf = self.spark_transformer_pipe.transform(self.spark.createDataFrame(
@@ -671,7 +686,7 @@ class NLUPipeline(BasePipe):
                         self.output_datatype='modin_series'
                         data = pd.Series(data.to_dict()) # create pandas to support type inference
                         data = pd.DataFrame(data).dropna(axis=1, how='all')
-                        data['index']=data.index
+                        data['origin_index']=data.index
                         index_provided=True
                         if self.raw_text_column in data.columns: sdf = \
                             self.spark_transformer_pipe.transform(
@@ -686,6 +701,9 @@ class NLUPipeline(BasePipe):
             return self.pythonify_spark_dataframe(sdf, self.output_different_levels, keep_stranger_features=keep_stranger_features, stranger_features=stranger_features, output_metadata=metadata, index_provided=index_provided)
         except : 
             import sys
+            if multithread == True : 
+                logger.warning("Multithreaded mode failed. trying to predict again with non multithreaded mode ")
+                return self.predict(data, output_level=output_level, positions=positions, keep_stranger_features=keep_stranger_features, metadata=metadata, multithread=False)
             e = sys.exc_info()
             print(e[0])
             print(e[1])
@@ -859,6 +877,32 @@ class PipelineQueryVerifier():
             # we must recaclulate the difference, because we reoved the spark nlp reference previously for our set operation. Since it was not 0, we ad the Spark NLP rererence back
             logger.info('Components missing=%s', str(missing_components))
             return missing_components
+    @staticmethod
+    def add_ner_converter_if_required(pipe:NLUPipeline):
+        '''
+        This method loops over every component in the pipeline and check if any of them outputs an NER type column.
+        If NER exists in the pipeline, then this method checks if NER converter is already in pipeline.
+        If NER exists and NER converter is NOT in pipeline, NER converter will be added to pipeline.
+        :param pipe: The pipeline we wish to configure ner_converter dependency for
+        :return: pipeline with NER configured
+        '''
+        
+        ner_converter_exists = False
+        ner_exists = False
+        
+        for component in pipe.pipe_components:
+            if 'ner' in component.component_info.outputs: ner_exists = True
+            if 'ner_merged' in component.component_info.outputs: ner_converter_exists = True
+
+        if ner_converter_exists == True :
+            logger.info('NER converter already in pipeline')
+            return pipe 
+        
+        if not ner_converter_exists  and ner_exists : 
+            logger.info('Adding NER Converter to pipeline')
+            pipe.add(nlu.get_default_component_of_type(('ner_converter')))
+        
+        return  pipe            
 
     @staticmethod
     def check_and_fix_nlu_pipeline(pipe:NLUPipeline):
@@ -885,16 +929,23 @@ class PipelineQueryVerifier():
                 pipe.add(new_component)
                 logger.info('adding %s=', new_component.component_info.name)
 
+            # 3 Add NER converter if NER component is in pipeline : (This is a bit ineficcent but it is more stable
+            pipe = PipelineQueryVerifier.add_ner_converter_if_required(pipe)
+
+
 
         logger.info('Fixing column names')
         #  Validate naming of output columns is correct and no error will be thrown in spark
         pipe = PipelineQueryVerifier.check_and_fix_component_output_column_names(pipe)
 
-        # 3.  fix order
+        # 4.  fix order
         logger.info('Optimizing pipe component order')
-
         pipe = PipelineQueryVerifier.check_and_fix_component_order(pipe)
-        # 5. Todo Download all file depenencies like train files or  dictionaries
+
+
+
+        
+        # 6. Todo Download all file depenencies like train files or  dictionaries
         logger.info('Done with pipe optimizing')
 
         return pipe
