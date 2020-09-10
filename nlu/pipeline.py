@@ -206,6 +206,9 @@ class NLUPipeline(BasePipe):
 
         logger.info('Renaming columns and extracting meta data for  outputlevel_same=%s and fields_to_rename=%s and get_meta=%s', same_output_level,fields_to_rename,meta)
         columns_for_select = []
+
+
+        meta = True
         
         # edge case swap. We must rename .metadata fields before we get the .result fields or there will be errors because of column name overwrites.. So we swap position of them
         cols_to_swap = [field for field in fields_to_rename if '.metadata' in field]
@@ -237,10 +240,13 @@ class NLUPipeline(BasePipe):
                     if len(keys_in_metadata) == 0 : continue # no resulting values for this column, we wont include it in the final output
                     keys_in_metadata = list(keys_in_metadata[0].asDict()['metadata'][0].keys()) #
                     
-                    if meta == True :  # get all meta data 
+                    if meta == True or 'ner_chunk' in field  :  # get all meta data
                         for key in keys_in_metadata:
-                            #drop sentences keys from Lang detector, they seem irrelevant.
-                            if key == 'sentence' and 'language' in field  : continue 
+                            #drop sentences keys from Lang detector, they seem irrelevant. same for NER chunk map keys
+                            if key == 'sentence' and 'language' in field  : continue
+                            if key == 'chunk' and 'ner_chunk' in field  : continue
+                            if key == 'sentence' and 'ner_chunk' in field  : continue
+
                             new_fields.append(new_field.replace('metadata',key))
     
                             
@@ -373,7 +379,18 @@ class NLUPipeline(BasePipe):
             elif 'token'  in sdf.columns: self.output_level='token'
         logger.info('Inferred and set output level of pipeline to %s', self.output_level)
 
-
+    def get_chunk_col_name(self):
+        '''
+        This methdo checks wether there is a chunk component in the pipelien.
+        If there is, it will return the name of the output columns for that component
+        :return: Name of the chunk type column in the dataset
+        '''
+        
+        for component in self.pipe_components:
+            if component.component_info.output_level =='chunk':
+                # Usually al chunk components ahve only one output and that is the cunk col so we can safely just pass the first element of the output list to the caller
+                logger.info("Detected %s as chunk output column for later zipping", component.component_info.name)
+                return component.component_info.spark_output_column_names[0]
 
     def pythonify_spark_dataframe(self, processed, get_different_level_output=True, keep_stranger_features = True, stranger_features = [] , drop_irrelevant_cols=True, output_metadata=False, index_provided=False):
         '''
@@ -404,7 +421,15 @@ class NLUPipeline(BasePipe):
         
         field_dict = self.get_field_types_dict(processed, stranger_features) #map field to type of field
         not_at_same_output_level_fields = []
-        same_output_level_fields = [self.output_level + '.result']
+        
+        # if output level is chunk, we must check if we actually have a chunk column in the pipe. 
+        # I
+        
+        if self.output_level == 'chunk':
+            chunk_col = self.get_chunk_col_name()
+            same_output_level_fields = [chunk_col + '.result']
+        else : same_output_level_fields = [self.output_level + '.result']
+
         logger.info('Setting Output level as : %s', self.output_level)
 
 
@@ -438,6 +463,8 @@ class NLUPipeline(BasePipe):
                     same_output_level_fields.append(field + '.end')
                 if 'embeddings' in f_type:
                     same_output_level_fields.append(field + '.embeddings')
+                if 'ner_chunk' in field:
+                    same_output_level_fields.append(field + '.metadata')
                 if 'category' in f_type  or 'spell' in f_type or 'sentiment' in f_type or 'class' in f_type or 'language' in f_type :
                     same_output_level_fields.append(field + '.metadata')
 
@@ -452,6 +479,8 @@ class NLUPipeline(BasePipe):
                     not_at_same_output_level_fields.append(field + '.embeddings')
                 if 'category' in f_type  or 'spell' in f_type or 'sentiment' in f_type or 'class' in f_type :
                     not_at_same_output_level_fields.append(field + '.metadata')
+                if 'ner_chunk' in field:
+                    not_at_same_output_level_fields.append(field + '.metadata')
 
                 
         if self.output_level == 'document':
@@ -461,6 +490,12 @@ class NLUPipeline(BasePipe):
             # same_output_level_fields.remove('origin_index')
 
         logger.info(' exploding=%s', same_output_level_fields)
+        
+        #debug 2lins
+        # same_output_level_fields += ['pos.result','ner.result']
+        # not_at_same_output_level_fields.remove('pos.result')
+        # not_at_same_output_level_fields.remove('ner.result')
+
         ptmp = sdf.withColumn("tmp", arrays_zip(*same_output_level_fields)).withColumn("res", explode('tmp'))
         final_select_not_at_same_output_level = []
         logger.info(' zipping %s', same_output_level_fields)
@@ -476,7 +511,7 @@ class NLUPipeline(BasePipe):
             
         
         
-        ptmp.toPandas()
+        # ptmp.toPandas()
         logger.info('Final cleanup select of same level =%s', final_select_same_output_level)
         logger.info('Final cleanup select of different level =%s', final_select_not_at_same_output_level)
         logger.info('Final ptmp columns = %s', ptmp.columns)
@@ -487,10 +522,13 @@ class NLUPipeline(BasePipe):
         final_df = ptmp.select(list(set(final_cols)))
         
         pandas_df = self.finalize_return_datatype(final_df)
-        pandas_df.set_index(pandas_df['origin_index'],inplace=True)
+        # i = pandas_df['origin_index'] 
+        pandas_df.set_index('origin_index',inplace=True)
+        # pandas_df.drop('origin_index')
+        # pandas_df.set_index(pandas_df['origin_index'],inplace=True)
         
         
-        return  pandas_df.drop('origin_index')
+        return  pandas_df#.drop('origin_index')
 
     def finalize_return_datatype(self, sdf):
         '''
@@ -582,10 +620,10 @@ class NLUPipeline(BasePipe):
             
         self.output_positions= positions
         if output_level=='chunk': 
-            # If chunk not in pipe we must add it and run the query verifyier again 
+            # If no chunk output componten in pipe we must add it and run the query verifyier again 
             chunk_provided = False
             for component in self.pipe_components:
-                if component.component_info.type =='chunker' : chunk_provided = True 
+                if component.component_info.output_level =='chunk' : chunk_provided = True 
             if chunk_provided == False : 
                 self.pipe_components.append(nlu.get_default_component_of_type('chunk'))
                 # TODO THIS COULD BREAK DICT INDEXIGN!!
