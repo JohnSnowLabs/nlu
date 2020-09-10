@@ -208,7 +208,6 @@ class NLUPipeline(BasePipe):
         columns_for_select = []
 
 
-        meta = True
         
         # edge case swap. We must rename .metadata fields before we get the .result fields or there will be errors because of column name overwrites.. So we swap position of them
         cols_to_swap = [field for field in fields_to_rename if '.metadata' in field]
@@ -302,7 +301,8 @@ class NLUPipeline(BasePipe):
                     keys_in_metadata = list(ptmp.select(field).take(1))
                     if len(keys_in_metadata) == 0 : continue
                     keys_in_metadata = list(keys_in_metadata[0].asDict()['metadata'][0].keys()) #
-                    if 'sentence' in keys_in_metadata : keys_in_metadata.remove('sentence') # todo realy remove here?
+                    if 'sentence' in keys_in_metadata : keys_in_metadata.remove('sentence') 
+                    if 'chunk' in keys_in_metadata and field =='ner_chunk.metadata' : keys_in_metadata.remove('chunk') 
                     
                     new_fields=[]
                     for key in keys_in_metadata: 
@@ -310,20 +310,29 @@ class NLUPipeline(BasePipe):
                         new_fields.append(new_field.replace('metadata',key))
 
                         # These Pyspark UDF extracts from a list of maps all the map values for positive and negative confidence and also spell costs
-                        def extract_map_values(x): return [float(sentence[key]) for sentence in x]
+                        def extract_map_values_float(x): 
+                            return [float(sentence[key]) for sentence in x]
+
+                        def extract_map_values_str(x):
+                            return [str(sentence[key]) for sentence in x]
+
 
                         #extract map values for list of maps 
-                        array_map_values = udf(lambda z: extract_map_values(z), ArrayType(FloatType()))
-
+                        # Since ner is only component  wit string metadata, we have this simple conditional
+                        if field == 'ner_chunk.metadata' : array_map_values = udf(lambda z: extract_map_values_str(z), ArrayType(StringType()))
+                        else : array_map_values = udf(lambda z: extract_map_values_float(z), ArrayType(FloatType()))
+ 
                         ptmp = ptmp.withColumn(new_fields[-1],array_map_values(field)) 
                         # We apply Expr here because all resulting meta data is inside of a list and just a single element, which we can take out 
-                        ptmp = ptmp.withColumn(new_fields[-1],expr(new_fields[-1]+'[0]'))
+                        if not  field == 'ner_chunk.metadata' : ptmp = ptmp.withColumn(new_fields[-1],expr(new_fields[-1]+'[0]'))
                         logger.info('Created Meta Data for   : nr=%s , name=%s with new_name=%s and original', i, field,new_fields[-1])
-                        if meta == True : continue
                         columns_for_select.append(new_fields[-1]) #?
 
-                    if meta == True : continue 
+                        if meta == True : continue
+
+                    if meta == True : continue  #??
                     else : # We gotta get the max confidence column, remove all other cols for selection
+                        if field == 'ner_chunk.metadata' : continue
                         cols_to_max = []
                         prefix = field.split('.')[0]
                         for key in keys_in_metadata: cols_to_max.append( prefix+'_'+key)
