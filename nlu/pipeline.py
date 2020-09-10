@@ -294,7 +294,10 @@ class NLUPipeline(BasePipe):
                     # by applying the expr method, we unpack the elements from the list 
                     unpack_name = field.split('.')[0]
                     
-                    ptmp = ptmp.withColumn(unpack_name+'_result', expr(unpack_name+'.result[0]'))
+                    ## ONLY for NER we actually expect array type output for different output levels and must do proper casting. Otherwise we just get the first(?)
+                    if field == 'ner_chunk.metadata' : pass # ner result wil be fatched later
+                    else  : ptmp = ptmp.withColumn(unpack_name+'_result', expr(unpack_name+'.result[0]'))
+                    
                     reorderd_fields_to_rename[reorderd_fields_to_rename.index(unpack_name+'.result')] = unpack_name+'_result' 
                     logger.info('Getting Meta Data for   : nr=%s , name=%s with new_name=%s and original', i, field,new_field)
                     # we iterate over the keys in the metadata and use them as new column names. The values will become the values in the columns.
@@ -326,9 +329,8 @@ class NLUPipeline(BasePipe):
                         # We apply Expr here because all resulting meta data is inside of a list and just a single element, which we can take out 
                         if not  field == 'ner_chunk.metadata' : ptmp = ptmp.withColumn(new_fields[-1],expr(new_fields[-1]+'[0]'))
                         logger.info('Created Meta Data for   : nr=%s , name=%s with new_name=%s and original', i, field,new_fields[-1])
-                        columns_for_select.append(new_fields[-1]) #?
+                        columns_for_select.append(new_fields[-1]) 
 
-                        if meta == True : continue
 
                     if meta == True : continue  #??
                     else : # We gotta get the max confidence column, remove all other cols for selection
@@ -355,8 +357,11 @@ class NLUPipeline(BasePipe):
 
                     continue # end of special meta data case 
                 
-
+                if field == 'ner_chunk_result' :
+                    ptmp = ptmp.withColumn('ner_chunk_result', ptmp['ner_chunk.result'].cast(ArrayType(StringType())))  #
                 ptmp = ptmp.withColumn(new_field, ptmp[field])  # get the outputlevel results row by row
+                # ptmp = ptmp.withColumnRenamed(field,new_field)  # EXPERIMENTAL engine test, only works sometimes since it can break dataframe struct
+
                 logger.info('Renaming non exploded field  : nr=%s , name=%s to new_name=%s', i, field,new_field)
                 columns_for_select.append(new_field)
             return ptmp, columns_for_select
