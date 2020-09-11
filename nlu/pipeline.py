@@ -457,6 +457,9 @@ class NLUPipeline(BasePipe):
         if index_provided == False : 
             logger.info("Generating origin Index via Spark. May contain non monotonically increasing index values.")
             sdf = sdf.withColumn(monotonically_increasing_id().alias('origin_index'))
+            
+            
+            
         # loop over all fields and decide which ones to keep and also if there are at the current output level or at a different one .
         # We sort the fields by output level. Thez are at the same as the current output level and will be exploded
         # Or they are at a different level, in which case they will be left as is and not zipped before explode
