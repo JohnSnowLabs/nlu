@@ -193,6 +193,83 @@ class NLUPipeline(BasePipe):
 
     def rename_columns_and_extract_map_values_same_level(self,ptmp, fields_to_rename, same_output_level, stranger_features=[], meta=True):
 
+        logger.info('Renaming columns and extracting meta data for  outputlevel_same=%s and fields_to_rename=%s and get_meta=%s', same_output_level,fields_to_rename,meta)
+        columns_for_select = []
+
+
+
+        # edge case swap. We must rename .metadata fields before we get the .result fields or there will be errors because of column name overwrites.. So we swap position of them
+        cols_to_swap = [field for field in fields_to_rename if '.metadata' in field]
+        reorderd_fields_to_rename = fields_to_rename.copy()
+        for swap in cols_to_swap :
+            name = swap.split('.')[0] +'.result'
+            reorderd_fields_to_rename[reorderd_fields_to_rename.index(swap)], reorderd_fields_to_rename[reorderd_fields_to_rename.index(name)] = reorderd_fields_to_rename[reorderd_fields_to_rename.index(name)] , reorderd_fields_to_rename   [reorderd_fields_to_rename.index(swap)]
+            logger.info('Swapped selection order for  %s and %s before renaming ', swap, name)
+
+        # second analogus edge case for positional fields (.begin and .end) and .result. We will put every rseult column into the end of the list and thus avoid the erronous case always
+        for col in reorderd_fields_to_rename :
+            if '.result' in col  : reorderd_fields_to_rename.append(reorderd_fields_to_rename.pop(reorderd_fields_to_rename.index(col)))
+        # fields that are at the same output level have been exploded.
+        # thus we ened to use the res.1 etc.. reference to get the map values and keys
+        for i, field in enumerate(reorderd_fields_to_rename):
+            if field in stranger_features : continue
+            if self.raw_text_column in field: continue
+            new_field = field.replace('.', '_').replace('_result','').replace('_embeddings_embeddings','_embeddings')
+
+            if 'metadata' in field :  # rename metadata to something more meaningful
+                logger.info('Getting Meta Data for   : nr=%s , name=%s with new_name=%s and original', i, field, new_field)
+                new_fields = []
+                # we iterate over the keys in the metadata and use them as new column names. The values will become the values in the columns.
+                keys_in_metadata = list(ptmp.select(field).take(1))
+                if len(keys_in_metadata) == 0 : continue # no resulting values for this column, we wont include it in the final output
+                keys_in_metadata = list(keys_in_metadata[0].asDict()['metadata'][0].keys()) #
+
+                if meta == True or 'ner_chunk' in field  :  # get all meta data
+                    for key in keys_in_metadata:
+                        #drop sentences keys from Lang detector, they seem irrelevant. same for NER chunk map keys
+                        if key == 'sentence' and 'language' in field  : continue
+                        if key == 'chunk' and 'ner_chunk' in field  : continue
+                        if key == 'sentence' and 'ner_chunk' in field  : continue
+
+                        new_fields.append(new_field.replace('metadata',key))
+
+
+                        ptmp = ptmp.withColumn(new_fields[-1],pyspark_col(('res.' + str(fields_to_rename.index(field)) + '.'+key) ))
+
+                        columns_for_select.append(new_fields[-1])
+
+
+                        logger.info('Created Meta Data for : nr=%s , original Meta Data key name=%s and new  new_name=%s ', i, key,new_fields[-1])
+                else :  # Get only meta data with greatest value (highest prob)
+
+                    cols_to_max = []
+                    for key in keys_in_metadata: cols_to_max.append('res.' + str(fields_to_rename.index(field)) + '.'+key)
+
+                    # sadly because the Spark SQL method 'greatest()' does not work properly on scientific notation, we must cast our metadata to decimal with limited precision
+                    # scientific notation starts after 6 decimal places, so we can have at most exactly 6
+                    # since greatest() breaks the dataframe Schema, we must rename the columns first or run into issues with Pysark Struct queriying
+                    for key in cols_to_max : ptmp = ptmp.withColumn(key.replace('.','_'), pyspark_col(key).cast('decimal(7,6)'))
+                    # casted = ptmp.select(*(pyspark_col(c).cast("decimal(6,6)").alias(c.replace('.','_')) for c in cols_to_max))
+
+                    max_confidence_name  = field.split('.')[0] +'_confidence'
+                    renamed_cols_to_max = [col.replace('.','_') for col in cols_to_max]
+
+                    if len(cols_to_max) > 1 :
+                        ptmp = ptmp.withColumn(max_confidence_name , greatest(*renamed_cols_to_max))
+                        columns_for_select.append(max_confidence_name)
+                    else :
+                        ptmp = ptmp.withColumnRenamed(renamed_cols_to_max[0], max_confidence_name  )
+                        columns_for_select.append(max_confidence_name)
+
+                continue
+
+
+            ptmp = ptmp.withColumn(new_field, ptmp['res.' + str(fields_to_rename.index(field))])  # get the outputlevel results row by row
+            columns_for_select.append(new_field)
+            logger.info('Renaming exploded field  : nr=%s , name=%s to new_name=%s', i, field,new_field)
+        return ptmp, columns_for_select
+
+
 
     def rename_columns_and_extract_map_values_different_level(self,ptmp, fields_to_rename, same_output_level, stranger_features=[], meta=True):
         # This method takes in a Spark dataframe that is the result of an explosion or not after the spark Pipeline transformation .
@@ -224,149 +301,86 @@ class NLUPipeline(BasePipe):
             if '.result' in col  : reorderd_fields_to_rename.append(reorderd_fields_to_rename.pop(reorderd_fields_to_rename.index(col)))
             
         
-
-        if same_output_level == True :
-            # fields that are at the same output level have been exploded.
-            # thus we ened to use the res.1 etc.. reference to get the map values and keys
-            for i, field in enumerate(reorderd_fields_to_rename):
-                if field in stranger_features : continue
-                if self.raw_text_column in field: continue
-                new_field = field.replace('.', '_').replace('_result','').replace('_embeddings_embeddings','_embeddings')
-
-                if 'metadata' in field :  # rename metadata to something more meaningful
-                    logger.info('Getting Meta Data for   : nr=%s , name=%s with new_name=%s and original', i, field, new_field)
-                    new_fields = []
-                    # we iterate over the keys in the metadata and use them as new column names. The values will become the values in the columns.
-                    keys_in_metadata = list(ptmp.select(field).take(1))
-                    if len(keys_in_metadata) == 0 : continue # no resulting values for this column, we wont include it in the final output
-                    keys_in_metadata = list(keys_in_metadata[0].asDict()['metadata'][0].keys()) #
-                    
-                    if meta == True or 'ner_chunk' in field  :  # get all meta data
-                        for key in keys_in_metadata:
-                            #drop sentences keys from Lang detector, they seem irrelevant. same for NER chunk map keys
-                            if key == 'sentence' and 'language' in field  : continue
-                            if key == 'chunk' and 'ner_chunk' in field  : continue
-                            if key == 'sentence' and 'ner_chunk' in field  : continue
-
-                            new_fields.append(new_field.replace('metadata',key))
-    
-                            
-                            ptmp = ptmp.withColumn(new_fields[-1],pyspark_col(('res.' + str(fields_to_rename.index(field)) + '.'+key) ))
-    
-                            columns_for_select.append(new_fields[-1])   
-    
-    
-                            logger.info('Created Meta Data for : nr=%s , original Meta Data key name=%s and new  new_name=%s ', i, key,new_fields[-1])
-                    else :  # Get only meta data with greatest value (highest prob)
-
-                        cols_to_max = []
-                        for key in keys_in_metadata: cols_to_max.append('res.' + str(fields_to_rename.index(field)) + '.'+key)
-
-                        # sadly because the Spark SQL method 'greatest()' does not work properly on scientific notation, we must cast our metadata to decimal with limited precision
-                        # scientific notation starts after 6 decimal places, so we can have at most exactly 6
-                        # since greatest() breaks the dataframe Schema, we must rename the columns first or run into issues with Pysark Struct queriying
-                        for key in cols_to_max : ptmp = ptmp.withColumn(key.replace('.','_'), pyspark_col(key).cast('decimal(7,6)'))
-                        # casted = ptmp.select(*(pyspark_col(c).cast("decimal(6,6)").alias(c.replace('.','_')) for c in cols_to_max))
-                        
-                        max_confidence_name  = field.split('.')[0] +'_confidence'
-                        renamed_cols_to_max = [col.replace('.','_') for col in cols_to_max]
-
-                        if len(cols_to_max) > 1 :
-                            ptmp = ptmp.withColumn(max_confidence_name , greatest(*renamed_cols_to_max))
-                            columns_for_select.append(max_confidence_name)
-                        else :
-                            ptmp = ptmp.withColumnRenamed(renamed_cols_to_max[0], max_confidence_name  )
-                            columns_for_select.append(max_confidence_name)
-
-                    continue
-
-
-                ptmp = ptmp.withColumn(new_field, ptmp['res.' + str(fields_to_rename.index(field))])  # get the outputlevel results row by row
-                columns_for_select.append(new_field)
-                logger.info('Renaming exploded field  : nr=%s , name=%s to new_name=%s', i, field,new_field)
-            return ptmp, columns_for_select
-
-        elif same_output_level==False :
             # This case works on the original Spark Columns which have beenn untouched sofar.
-            for i, field in enumerate(reorderd_fields_to_rename):
-                if self.raw_text_column in field: continue
-                new_field = field.replace('.', '_').replace('_result','').replace('_embeddings_embeddings','_embeddings')
-                if 'metadata' in field :
-                    # since the have a field with metadata, the values of the original data for which we have metadata for must exist in the dataframe as singular elements inside of a list
-                    # by applying the expr method, we unpack the elements from the list 
-                    unpack_name = field.split('.')[0]
-                    
-                    ## ONLY for NER we actually expect array type output for different output levels and must do proper casting. Otherwise we just get the first(?)
-                    if field == 'ner_chunk.metadata' : pass # ner result wil be fatched later
-                    else  : ptmp = ptmp.withColumn(unpack_name+'_result', expr(unpack_name+'.result[0]'))
-                    
-                    reorderd_fields_to_rename[reorderd_fields_to_rename.index(unpack_name+'.result')] = unpack_name+'_result' 
-                    logger.info('Getting Meta Data for   : nr=%s , name=%s with new_name=%s and original', i, field,new_field)
-                    # we iterate over the keys in the metadata and use them as new column names. The values will become the values in the columns.
-                    keys_in_metadata = list(ptmp.select(field).take(1))
-                    if len(keys_in_metadata) == 0 : continue
-                    keys_in_metadata = list(keys_in_metadata[0].asDict()['metadata'][0].keys()) #
-                    if 'sentence' in keys_in_metadata : keys_in_metadata.remove('sentence') 
-                    if 'chunk' in keys_in_metadata and field =='ner_chunk.metadata' : keys_in_metadata.remove('chunk') 
-                    
-                    new_fields=[]
-                    for key in keys_in_metadata: 
-                        # we cant skip getting  key values for everything, even if meta=false. This is because we need to get the greatest of all confidence values , for this we must unpack them first..
-                        new_fields.append(new_field.replace('metadata',key))
-
-                        # These Pyspark UDF extracts from a list of maps all the map values for positive and negative confidence and also spell costs
-                        def extract_map_values_float(x): 
-                            return [float(sentence[key]) for sentence in x]
-
-                        def extract_map_values_str(x):
-                            return [str(sentence[key]) for sentence in x]
-
-
-                        #extract map values for list of maps 
-                        # Since ner is only component  wit string metadata, we have this simple conditional
-                        if field == 'ner_chunk.metadata' : array_map_values = udf(lambda z: extract_map_values_str(z), ArrayType(StringType()))
-                        else : array_map_values = udf(lambda z: extract_map_values_float(z), ArrayType(FloatType()))
- 
-                        ptmp = ptmp.withColumn(new_fields[-1],array_map_values(field)) 
-                        # We apply Expr here because all resulting meta data is inside of a list and just a single element, which we can take out 
-                        if not  field == 'ner_chunk.metadata' : ptmp = ptmp.withColumn(new_fields[-1],expr(new_fields[-1]+'[0]'))
-                        logger.info('Created Meta Data for   : nr=%s , name=%s with new_name=%s and original', i, field,new_fields[-1])
-                        columns_for_select.append(new_fields[-1]) 
-
-
-                    if meta == True : continue  #??
-                    else : # We gotta get the max confidence column, remove all other cols for selection
-                        if field == 'ner_chunk.metadata' : continue
-                        cols_to_max = []
-                        prefix = field.split('.')[0]
-                        for key in keys_in_metadata: cols_to_max.append( prefix+'_'+key)
-
-                        #cast all the types to decimal, remove scientific notation
-                        for key in cols_to_max : ptmp = ptmp.withColumn(key, pyspark_col(key).cast('decimal(7,6)'))
-
-                        max_confidence_name  = field.split('.')[0] +'_confidence'
-                        if len(cols_to_max) > 1 : 
-                            ptmp = ptmp.withColumn(max_confidence_name , greatest(*cols_to_max))
-                            columns_for_select.append(max_confidence_name)
-                        else :
-                            ptmp = ptmp.withColumnRenamed( cols_to_max[0], max_confidence_name )
-                            columns_for_select.append(max_confidence_name)
-                            
-                        for f in new_fields:
-                            # we remove the new fields becasue they duplicate the infomration of max confidence field
-                            if f in columns_for_select: columns_for_select.remove(f)
-                        
-
-                    continue # end of special meta data case 
+        for i, field in enumerate(reorderd_fields_to_rename):
+            if self.raw_text_column in field: continue
+            new_field = field.replace('.', '_').replace('_result','').replace('_embeddings_embeddings','_embeddings')
+            if 'metadata' in field :
+                # since the have a field with metadata, the values of the original data for which we have metadata for must exist in the dataframe as singular elements inside of a list
+                # by applying the expr method, we unpack the elements from the list 
+                unpack_name = field.split('.')[0]
                 
-                if field == 'ner_chunk_result' :
-                    ptmp = ptmp.withColumn('ner_chunk_result', ptmp['ner_chunk.result'].cast(ArrayType(StringType())))  #
-                ptmp = ptmp.withColumn(new_field, ptmp[field])  # get the outputlevel results row by row
-                # ptmp = ptmp.withColumnRenamed(field,new_field)  # EXPERIMENTAL engine test, only works sometimes since it can break dataframe struct
+                ## ONLY for NER we actually expect array type output for different output levels and must do proper casting. Otherwise we just get the first(?)
+                if field == 'ner_chunk.metadata' : pass # ner result wil be fatched later
+                else  : ptmp = ptmp.withColumn(unpack_name+'_result', expr(unpack_name+'.result[0]'))
+                
+                reorderd_fields_to_rename[reorderd_fields_to_rename.index(unpack_name+'.result')] = unpack_name+'_result' 
+                logger.info('Getting Meta Data for   : nr=%s , name=%s with new_name=%s and original', i, field,new_field)
+                # we iterate over the keys in the metadata and use them as new column names. The values will become the values in the columns.
+                keys_in_metadata = list(ptmp.select(field).take(1))
+                if len(keys_in_metadata) == 0 : continue
+                keys_in_metadata = list(keys_in_metadata[0].asDict()['metadata'][0].keys()) #
+                if 'sentence' in keys_in_metadata : keys_in_metadata.remove('sentence') 
+                if 'chunk' in keys_in_metadata and field =='ner_chunk.metadata' : keys_in_metadata.remove('chunk') 
+                
+                new_fields=[]
+                for key in keys_in_metadata: 
+                    # we cant skip getting  key values for everything, even if meta=false. This is because we need to get the greatest of all confidence values , for this we must unpack them first..
+                    new_fields.append(new_field.replace('metadata',key))
 
-                logger.info('Renaming non exploded field  : nr=%s , name=%s to new_name=%s', i, field,new_field)
-                columns_for_select.append(new_field)
-            return ptmp, columns_for_select
+                    # These Pyspark UDF extracts from a list of maps all the map values for positive and negative confidence and also spell costs
+                    def extract_map_values_float(x): 
+                        return [float(sentence[key]) for sentence in x]
+
+                    def extract_map_values_str(x):
+                        return [str(sentence[key]) for sentence in x]
+
+
+                    #extract map values for list of maps 
+                    # Since ner is only component  wit string metadata, we have this simple conditional
+                    if field == 'ner_chunk.metadata' : array_map_values = udf(lambda z: extract_map_values_str(z), ArrayType(StringType()))
+                    else : array_map_values = udf(lambda z: extract_map_values_float(z), ArrayType(FloatType()))
+
+                    ptmp = ptmp.withColumn(new_fields[-1],array_map_values(field)) 
+                    # We apply Expr here because all resulting meta data is inside of a list and just a single element, which we can take out 
+                    if not  field == 'ner_chunk.metadata' : ptmp = ptmp.withColumn(new_fields[-1],expr(new_fields[-1]+'[0]'))
+                    logger.info('Created Meta Data for   : nr=%s , name=%s with new_name=%s and original', i, field,new_fields[-1])
+                    columns_for_select.append(new_fields[-1]) 
+
+
+                if meta == True : continue  #??
+                else : # We gotta get the max confidence column, remove all other cols for selection
+                    if field == 'ner_chunk.metadata' : continue
+                    cols_to_max = []
+                    prefix = field.split('.')[0]
+                    for key in keys_in_metadata: cols_to_max.append( prefix+'_'+key)
+
+                    #cast all the types to decimal, remove scientific notation
+                    for key in cols_to_max : ptmp = ptmp.withColumn(key, pyspark_col(key).cast('decimal(7,6)'))
+
+                    max_confidence_name  = field.split('.')[0] +'_confidence'
+                    if len(cols_to_max) > 1 : 
+                        ptmp = ptmp.withColumn(max_confidence_name , greatest(*cols_to_max))
+                        columns_for_select.append(max_confidence_name)
+                    else :
+                        ptmp = ptmp.withColumnRenamed( cols_to_max[0], max_confidence_name )
+                        columns_for_select.append(max_confidence_name)
+                        
+                    for f in new_fields:
+                        # we remove the new fields becasue they duplicate the infomration of max confidence field
+                        if f in columns_for_select: columns_for_select.remove(f)
+                    
+
+                continue # end of special meta data case 
+            
+            if field == 'ner_chunk_result' :
+                ptmp = ptmp.withColumn('ner_chunk_result', ptmp['ner_chunk.result'].cast(ArrayType(StringType())))  #
+            ptmp = ptmp.withColumn(new_field, ptmp[field])  # get the outputlevel results row by row
+            # ptmp = ptmp.withColumnRenamed(field,new_field)  # EXPERIMENTAL engine test, only works sometimes since it can break dataframe struct
+
+            logger.info('Renaming non exploded field  : nr=%s , name=%s to new_name=%s', i, field,new_field)
+            columns_for_select.append(new_field)
+        return ptmp, columns_for_select
 
 
 
@@ -533,9 +547,9 @@ class NLUPipeline(BasePipe):
 
         # explode the columns which are at the same output level..if there are maps at the different output level we will get array maps.  then we use some UDF functions to extract the resulting array maps 
       
-        ptmp,final_select_same_output_level =  self.rename_columns_and_extract_map_values(ptmp=ptmp, fields_to_rename=same_output_level_fields, same_output_level=True, stranger_features=stranger_features, meta=output_metadata)
+        ptmp,final_select_same_output_level =  self.rename_columns_and_extract_map_values_same_level(ptmp=ptmp, fields_to_rename=same_output_level_fields, same_output_level=True, stranger_features=stranger_features, meta=output_metadata)
         if get_different_level_output :
-            ptmp,final_select_not_at_same_output_level = self.rename_columns_and_extract_map_values(ptmp=ptmp, fields_to_rename=not_at_same_output_level_fields, same_output_level=False, meta=output_metadata)
+            ptmp,final_select_not_at_same_output_level = self.rename_columns_and_extract_map_values_different_level(ptmp=ptmp, fields_to_rename=not_at_same_output_level_fields, same_output_level=False, meta=output_metadata)
         
 
         if self.output_level != 'document':final_select_not_at_same_output_level+= stranger_features
