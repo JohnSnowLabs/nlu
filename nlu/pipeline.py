@@ -191,8 +191,10 @@ class NLUPipeline(BasePipe):
         logger.info('Parsing field types done, parsed=%s', field_types_dict)
         return field_types_dict
 
+    def rename_columns_and_extract_map_values_same_level(self,ptmp, fields_to_rename, same_output_level, stranger_features=[], meta=True):
 
-    def rename_columns_and_extract_map_values(self,ptmp, fields_to_rename, same_output_level, stranger_features=[], meta=True):
+
+    def rename_columns_and_extract_map_values_different_level(self,ptmp, fields_to_rename, same_output_level, stranger_features=[], meta=True):
         # This method takes in a Spark dataframe that is the result of an explosion or not after the spark Pipeline transformation .
         # It will peform the following transformations on the dataframe:
         # 1. Rename the exploded columns to something more meaningful
@@ -506,8 +508,7 @@ class NLUPipeline(BasePipe):
 
 
                 
-        if keep_stranger_features :
-            sdf = processed.select(['*']) 
+        if keep_stranger_features : sdf = processed.select(['*']) 
         else :
             features_to_keep = list(set(processed.columns) - set(stranger_features))
             sdf = processed.select(features_to_keep)
@@ -517,52 +518,7 @@ class NLUPipeline(BasePipe):
             sdf = sdf.withColumn(monotonically_increasing_id().alias('origin_index'))
 
         same_output_level_fields, not_at_same_output_level_fields = self.select_features_from_result(field_dict,processed, stranger_features, same_output_level_fields, not_at_same_output_level_fields )
-            
-        # # loop over all fields and decide which ones to keep and also if there are at the current output level or at a different one .
-        # # We sort the fields by output level. Thez are at the same as the current output level and will be exploded
-        # # Or they are at a different level, in which case they will be left as is and not zipped before explode
-        # for field in processed.schema.fieldNames():
-        #     if field in stranger_features : continue
-        #     if field == self.raw_text_column: continue
-        #     if field == self.output_level: continue
-        #     if 'label' in field and 'dependency' not in field: continue  # specal case for input labels
-        # 
-        #     f_type = field_dict[field]
-        #     logger.info('Selecting Columns for field=%s of type=%s', field, f_type)
-        #     if self.resolve_type_to_output_level(f_type, field) == self.output_level:
-        #         logger.info('Setting field for field=%s of type=%s to output level SAME LEVEL', field, f_type)
-        #         
-        #         if 'embeddings' not in field and 'embeddings' not in f_type : same_output_level_fields.append(field + '.result')  # result of embeddigns is just the word/sentence
-        #         if self.output_positions:
-        #             same_output_level_fields.append(field + '.begin')
-        #             same_output_level_fields.append(field + '.end')
-        #         if 'embeddings' in f_type:
-        #             same_output_level_fields.append(field + '.embeddings')
-        #         if 'ner_chunk' in field:
-        #             same_output_level_fields.append(field + '.metadata')
-        #         if 'category' in f_type  or 'spell' in f_type or 'sentiment' in f_type or 'class' in f_type or 'language' in f_type :
-        #             same_output_level_fields.append(field + '.metadata')
-        # 
-        #     else:
-        #         logger.info('Setting field for field=%s of type=%s to output level NOT SAME LEVEL', field, f_type)
-        # 
-        #         if 'embeddings' not in field and 'embeddings' not in f_type: not_at_same_output_level_fields.append(field + '.result')  # result of embeddigns is just the word/sentence
-        #         if self.output_positions:
-        #             not_at_same_output_level_fields.append(field + '.begin')
-        #             not_at_same_output_level_fields.append(field + '.end')
-        #         if 'embeddings' in f_type:
-        #             not_at_same_output_level_fields.append(field + '.embeddings')
-        #         if 'category' in f_type  or 'spell' in f_type or 'sentiment' in f_type or 'class' in f_type :
-        #             not_at_same_output_level_fields.append(field + '.metadata')
-        #         if 'ner_chunk' in field:
-        #             not_at_same_output_level_fields.append(field + '.metadata')
-        # 
-        #         
-        # if self.output_level == 'document':
-        #     #explode stranger features if output level is document
-        #     # same_output_level_fields =list(set( same_output_level_fields + stranger_features))
-        #     same_output_level_fields =list(set( same_output_level_fields))
-        #     # same_output_level_fields.remove('origin_index')
+   
 
         logger.info(' exploding=%s', same_output_level_fields)
         
@@ -585,8 +541,6 @@ class NLUPipeline(BasePipe):
         if self.output_level != 'document':final_select_not_at_same_output_level+= stranger_features
             
         
-        
-        # ptmp.toPandas()
         logger.info('Final cleanup select of same level =%s', final_select_same_output_level)
         logger.info('Final cleanup select of different level =%s', final_select_not_at_same_output_level)
         logger.info('Final ptmp columns = %s', ptmp.columns)
