@@ -32,7 +32,6 @@ class BasePipe(dict):
         
         self.pipe_components.append(component)
         
-        
         # Spark NLP model reference shortcut
         name = component.component_info.name.replace(' ','')
         if name not in self.keys() : self[name]=component.model 
@@ -209,13 +208,16 @@ class NLUPipeline(BasePipe):
         # second analogus edge case for positional fields (.begin and .end) and .result. We will put every rseult column into the end of the list and thus avoid the erronous case always
         for col in reorderd_fields_to_rename :
             if '.result' in col  : reorderd_fields_to_rename.append(reorderd_fields_to_rename.pop(reorderd_fields_to_rename.index(col)))
+            
+            
         # fields that are at the same output level have been exploded.
         # thus we ened to use the res.1 etc.. reference to get the map values and keys
         for i, field in enumerate(reorderd_fields_to_rename):
             if field in stranger_features : continue
             if self.raw_text_column in field: continue
             new_field = field.replace('.', '_').replace('_result','').replace('_embeddings_embeddings','_embeddings')
-
+            logger.info('Renaming Fields for old fieldname=%s and new fieldname=%s',field, new_field)
+            if new_field == 'embeddings_embeddings': new_field = 'embeddings'
             if 'metadata' in field :  # rename metadata to something more meaningful
                 logger.info('Getting Meta Data for   : nr=%s , name=%s with new_name=%s and original', i, field, new_field)
                 new_fields = []
@@ -223,17 +225,18 @@ class NLUPipeline(BasePipe):
                 keys_in_metadata = list(ptmp.select(field).take(1))
                 if len(keys_in_metadata) == 0 : continue # no resulting values for this column, we wont include it in the final output
                 keys_in_metadata = list(keys_in_metadata[0].asDict()['metadata'][0].keys()) #
-
-                if meta == True or 'ner_chunk' in field  :  # get all meta data
+                logger.info('Extracting Keys=%s for field%s=',keys_in_metadata, new_field)
+                if meta == True or 'entities' in field  :  # get all meta data
                     for key in keys_in_metadata:
+                        logger.info('Extracting key %s=', key)
                         #drop sentences keys from Lang detector, they seem irrelevant. same for NER chunk map keys
                         if key == 'sentence' and 'language' in field  : continue
-                        if key == 'chunk' and 'ner_chunk' in field  : continue
-                        if key == 'sentence' and 'ner_chunk' in field  : continue
+                        if key == 'chunk' and 'entities' in field  : continue
+                        if key == 'sentence' and 'entities' in field  : continue
 
                         new_fields.append(new_field.replace('metadata',key))
 
-
+                        # if new_fields[-1] =='entities_entity' : new_fields[-1] = 'entities' 
                         ptmp = ptmp.withColumn(new_fields[-1],pyspark_col(('res.' + str(fields_to_rename.index(field)) + '.'+key) ))
 
                         columns_for_select.append(new_fields[-1])
@@ -305,13 +308,15 @@ class NLUPipeline(BasePipe):
         for i, field in enumerate(reorderd_fields_to_rename):
             if self.raw_text_column in field: continue
             new_field = field.replace('.', '_').replace('_result','').replace('_embeddings_embeddings','_embeddings')
+            if new_field == 'embeddings_embeddings': new_field = 'embeddings'
+            logger.info('Renaming Fields for old fieldname=%s and new fieldname=%s',field, new_field)
             if 'metadata' in field :
                 # since the have a field with metadata, the values of the original data for which we have metadata for must exist in the dataframe as singular elements inside of a list
                 # by applying the expr method, we unpack the elements from the list 
                 unpack_name = field.split('.')[0]
                 
                 ## ONLY for NER we actually expect array type output for different output levels and must do proper casting. Otherwise we just get the first(?)
-                if field == 'ner_chunk.metadata' : pass # ner result wil be fatched later
+                if field == 'entities.metadata' : pass # ner result wil be fatched later
                 else  : ptmp = ptmp.withColumn(unpack_name+'_result', expr(unpack_name+'.result[0]'))
                 
                 reorderd_fields_to_rename[reorderd_fields_to_rename.index(unpack_name+'.result')] = unpack_name+'_result' 
@@ -321,10 +326,12 @@ class NLUPipeline(BasePipe):
                 if len(keys_in_metadata) == 0 : continue
                 keys_in_metadata = list(keys_in_metadata[0].asDict()['metadata'][0].keys()) #
                 if 'sentence' in keys_in_metadata : keys_in_metadata.remove('sentence') 
-                if 'chunk' in keys_in_metadata and field =='ner_chunk.metadata' : keys_in_metadata.remove('chunk') 
+                if 'chunk' in keys_in_metadata and field =='entities.metadata' : keys_in_metadata.remove('chunk')
+                logger.info('Has keys in metadata=%s',keys_in_metadata)
                 
                 new_fields=[]
-                for key in keys_in_metadata: 
+                for key in keys_in_metadata:
+                    logger.info('Extracting meta data for key =%s', key)
                     # we cant skip getting  key values for everything, even if meta=false. This is because we need to get the greatest of all confidence values , for this we must unpack them first..
                     new_fields.append(new_field.replace('metadata',key))
 
@@ -338,19 +345,19 @@ class NLUPipeline(BasePipe):
 
                     #extract map values for list of maps 
                     # Since ner is only component  wit string metadata, we have this simple conditional
-                    if field == 'ner_chunk.metadata' : array_map_values = udf(lambda z: extract_map_values_str(z), ArrayType(StringType()))
+                    if field == 'entities.metadata' : array_map_values = udf(lambda z: extract_map_values_str(z), ArrayType(StringType()))
                     else : array_map_values = udf(lambda z: extract_map_values_float(z), ArrayType(FloatType()))
 
                     ptmp = ptmp.withColumn(new_fields[-1],array_map_values(field)) 
                     # We apply Expr here because all resulting meta data is inside of a list and just a single element, which we can take out 
-                    if not  field == 'ner_chunk.metadata' : ptmp = ptmp.withColumn(new_fields[-1],expr(new_fields[-1]+'[0]'))
+                    if not  field == 'entities.metadata' : ptmp = ptmp.withColumn(new_fields[-1],expr(new_fields[-1]+'[0]'))
                     logger.info('Created Meta Data for   : nr=%s , name=%s with new_name=%s and original', i, field,new_fields[-1])
                     columns_for_select.append(new_fields[-1]) 
 
 
                 if meta == True : continue  #??
                 else : # We gotta get the max confidence column, remove all other cols for selection
-                    if field == 'ner_chunk.metadata' : continue
+                    if field == 'entities.metadata' : continue
                     cols_to_max = []
                     prefix = field.split('.')[0]
                     for key in keys_in_metadata: cols_to_max.append( prefix+'_'+key)
@@ -373,8 +380,8 @@ class NLUPipeline(BasePipe):
 
                 continue # end of special meta data case 
             
-            if field == 'ner_chunk_result' :
-                ptmp = ptmp.withColumn('ner_chunk_result', ptmp['ner_chunk.result'].cast(ArrayType(StringType())))  #
+            if field == 'entities_result' :
+                ptmp = ptmp.withColumn('entities_result', ptmp['entities.result'].cast(ArrayType(StringType())))  #
             ptmp = ptmp.withColumn(new_field, ptmp[field])  # get the outputlevel results row by row
             # ptmp = ptmp.withColumnRenamed(field,new_field)  # EXPERIMENTAL engine test, only works sometimes since it can break dataframe struct
 
@@ -453,7 +460,7 @@ class NLUPipeline(BasePipe):
                     same_output_level_fields.append(field + '.end')
                 if 'embeddings' in f_type:
                     same_output_level_fields.append(field + '.embeddings')
-                if 'ner_chunk' in field:
+                if 'entities' in field:
                     same_output_level_fields.append(field + '.metadata')
                 if 'category' in f_type  or 'spell' in f_type or 'sentiment' in f_type or 'class' in f_type or 'language' in f_type :
                     same_output_level_fields.append(field + '.metadata')
@@ -469,7 +476,7 @@ class NLUPipeline(BasePipe):
                     not_at_same_output_level_fields.append(field + '.embeddings')
                 if 'category' in f_type  or 'spell' in f_type or 'sentiment' in f_type or 'class' in f_type :
                     not_at_same_output_level_fields.append(field + '.metadata')
-                if 'ner_chunk' in field:
+                if 'entities' in field:
                     not_at_same_output_level_fields.append(field + '.metadata')
     
     
@@ -510,18 +517,14 @@ class NLUPipeline(BasePipe):
         field_dict = self.get_field_types_dict(processed, stranger_features) #map field to type of field
         not_at_same_output_level_fields = []
         
-        # if output level is chunk, we must check if we actually have a chunk column in the pipe. 
-        # I
-        
         if self.output_level == 'chunk':
+            # if output level is chunk, we must check if we actually have a chunk column in the pipe. So we search it
             chunk_col = self.get_chunk_col_name()
             same_output_level_fields = [chunk_col + '.result']
         else : same_output_level_fields = [self.output_level + '.result']
 
         logger.info('Setting Output level as : %s', self.output_level)
 
-
-                
         if keep_stranger_features : sdf = processed.select(['*']) 
         else :
             features_to_keep = list(set(processed.columns) - set(stranger_features))
@@ -532,27 +535,22 @@ class NLUPipeline(BasePipe):
             sdf = sdf.withColumn(monotonically_increasing_id().alias('origin_index'))
 
         same_output_level_fields, not_at_same_output_level_fields = self.select_features_from_result(field_dict,processed, stranger_features, same_output_level_fields, not_at_same_output_level_fields )
+
+
    
+        logger.info(' exploding at same level fields = %s', same_output_level_fields)
+        logger.info(' zipping not as same level fields = %s', same_output_level_fields)
 
-        logger.info(' exploding=%s', same_output_level_fields)
-        
-        #debug 2lins
-        # same_output_level_fields += ['pos.result','ner.result']
-        # not_at_same_output_level_fields.remove('pos.result')
-        # not_at_same_output_level_fields.remove('ner.result')
-
+        # explode the columns which are at the same output level..if there are maps at the different output level we will get array maps.  then we use UDF functions to extract the resulting array maps 
         ptmp = sdf.withColumn("tmp", arrays_zip(*same_output_level_fields)).withColumn("res", explode('tmp'))
         final_select_not_at_same_output_level = []
-        logger.info(' zipping %s', same_output_level_fields)
 
-        # explode the columns which are at the same output level..if there are maps at the different output level we will get array maps.  then we use some UDF functions to extract the resulting array maps 
-      
         ptmp,final_select_same_output_level =  self.rename_columns_and_extract_map_values_same_level(ptmp=ptmp, fields_to_rename=same_output_level_fields, same_output_level=True, stranger_features=stranger_features, meta=output_metadata)
         if get_different_level_output :
             ptmp,final_select_not_at_same_output_level = self.rename_columns_and_extract_map_values_different_level(ptmp=ptmp, fields_to_rename=not_at_same_output_level_fields, same_output_level=False, meta=output_metadata)
         
 
-        if self.output_level != 'document':final_select_not_at_same_output_level+= stranger_features
+        if self.output_level != 'document':final_select_not_at_same_output_level+= stranger_features# todo ?
             
         
         logger.info('Final cleanup select of same level =%s', final_select_same_output_level)
@@ -561,7 +559,8 @@ class NLUPipeline(BasePipe):
          
         final_cols = final_select_same_output_level + final_select_not_at_same_output_level + ['origin_index']
         if drop_irrelevant_cols : final_cols = self.drop_irrelevant_cols(final_cols)
-        
+        # ner columns is NER-IOB format, mostly useless for the users. If meta false, we drop it here. 
+        if output_metadata == False and 'ner' in final_cols : final_cols.remove('ner')
         final_df = ptmp.select(list(set(final_cols)))
         
         pandas_df = self.finalize_return_datatype(final_df)
@@ -669,7 +668,7 @@ class NLUPipeline(BasePipe):
                 if component.component_info.output_level =='chunk' : chunk_provided = True 
             if chunk_provided == False : 
                 self.pipe_components.append(nlu.get_default_component_of_type('chunk'))
-                # TODO THIS COULD BREAK DICT INDEXIGN!!
+                # this could break indexing..
                 self =  PipelineQueryVerifier.check_and_fix_nlu_pipeline(self)
         if not self.is_fitted: self.fit()
         self.configure_light_pipe_usage(len(data))
@@ -865,7 +864,7 @@ class PipelineQueryVerifier():
             return False
         else :
             for feature in component.component_info.inputs:
-                if 'embed' in feature and feature : return  True
+                if 'embed' in feature and feature : return  True # ??
         return False
 
     @staticmethod
@@ -1073,32 +1072,6 @@ class PipelineQueryVerifier():
         return pipe
 
 
-    @staticmethod
-    def check_and_fix_component_order_old(pipe: NLUPipeline):
-        '''
-        This method takes care that the order of components is the correct in such a way,
-        that the pipeline can be iteratively processed by spark NLP.
-        '''
-
-        # Get all components by order. Inefficent Double Loop. List size will be very small, so it will not be that dramatic.,
-        components_by_priority = {}  # Keys from level 0 to  max_level. Each value is a list of components of that priority level in the current pipe
-        for priority_level in range(nlu.PipelineQueryVerifier.amount_of_component_priority_levels + 1):
-            if not priority_level in components_by_priority.keys(): components_by_priority[priority_level] = []
-            for component in pipe.pipe_components:
-                component_priority_level = component.component_info.pipe_priorioty_slot  # nlu.PipelineQueryVerifier.component_priority_level_resolver(component.component_info.type, component.component_info.type)
-                if int(component_priority_level) == int(
-                        priority_level):  # semi bug under the hood, check typing in json files and info class
-                    components_by_priority[priority_level].append(component)
-
-        correct_order_component_pipeline = []
-        for priority_level in range(nlu.PipelineQueryVerifier.amount_of_component_priority_levels + 1):
-            correct_order_component_pipeline.append(components_by_priority[priority_level])
-
-        # flatten nested list
-        correct_order_component_pipeline = [e for esub in correct_order_component_pipeline for e in esub]
-
-        pipe.pipe_components = correct_order_component_pipeline
-        return pipe
 
     @staticmethod
     def check_and_fix_component_order(pipe: NLUPipeline):
