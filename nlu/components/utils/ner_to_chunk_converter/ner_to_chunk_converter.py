@@ -8,5 +8,6 @@ class NerToChunkConverter:
     def get_default_model():
         return NerConverter() \
             .setInputCols(["sentence", "token", "ner"]) \
-            .setOutputCol("ner_chunk")
+            .setOutputCol("entities") # unchangable name because getters/setters nlp bug
     
+ 

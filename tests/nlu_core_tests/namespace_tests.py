@@ -146,12 +146,48 @@ class TestNameSpace(unittest.TestCase):
         print(df)
 
     def test_ner_pipe(self):
-        df = nlu.load('en.ner').predict('What a wonderful day!')
 
-        print(df)
+        df = nlu.load('ner', verbose=True ).predict('Donald Trump from America and Angela Merkal from Germany dont share many oppinions.', output_level='chunk' )
+        print(df.columns) # TODO FIX EMBEDDNGS.EMBEDDINGS in pretraiend pipe
+        print(df[[]])
+        print(df[[ 'entities', 'ner_tag']])
 
-        df = nlu.load('ner').predict('What a wonderful day!')
-        print(df)
+
+        df = nlu.load('ner', verbose=True ).predict('Donald Trump from America and Angela Merkal from Germany dont share many oppinions.', output_level='document' )
+        print(df.columns) # TODO FIX EMBEDDNGS.EMBEDDINGS in pretraiend pipe
+        print(df[[ 'entities', 'ner_tag']])
+
+
+        df = nlu.load('ner', verbose=True ).predict('Donald Trump from America and Angela Merkal from Germany dont share many oppinions.', output_level='sentence' )
+        print(df.columns) # TODO FIX EMBEDDNGS.EMBEDDINGS in pretraiend pipe
+        print(df[[ 'entities', 'ner_tag']])
+
+
+        df = nlu.load('ner', verbose=True ).predict('Donald Trump from America and Angela Merkal from Germany dont share many oppinions.', output_level='token' )
+        print(df.columns) # TODO FIX EMBEDDNGS.EMBEDDINGS in pretraiend pipe
+        print(df[['entities', 'ner_tag']])
+
+        #xx
+        df = nlu.load('en.ner.onto.glove.6B_100d', verbose=True ).predict('Donald Trump from America and Angela Merkal from Germany dont share many oppinions.', output_level='chunk' )
+        print(df.columns) # TODO FIX EMBEDDNGS.EMBEDDINGS in pretraiend pipe
+        print(df[[ 'entities', 'ner_tag']])
+
+
+        df = nlu.load('en.ner.onto.glove.6B_100d', verbose=True ).predict('Donald Trump from America and Angela Merkal from Germany dont share many oppinions.', output_level='document' )
+        print(df.columns) # TODO FIX EMBEDDNGS.EMBEDDINGS in pretraiend pipe
+        print(df[[ 'entities', 'ner_tag']])
+
+
+        df = nlu.load('en.ner.onto.glove.6B_100d', verbose=True ).predict('Donald Trump from America and Angela Merkal from Germany dont share many oppinions.', output_level='sentence' )
+        print(df.columns) # TODO FIX EMBEDDNGS.EMBEDDINGS in pretraiend pipe
+        print(df[[ 'entities', 'ner_tag']])
+
+
+        df = nlu.load('en.ner.onto.glove.6B_100d', verbose=True ).predict('Donald Trump from America and Angela Merkal from Germany dont share many oppinions.', output_level='token' )
+        print(df.columns) # TODO FIX EMBEDDNGS.EMBEDDINGS in pretraiend pipe
+        print(df[[ 'entities', 'ner_tag']])
+
+        
 
     def test_ner_models(self):
         # THIS IS STILL A PIPE!

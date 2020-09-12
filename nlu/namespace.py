@@ -177,7 +177,7 @@ class NameSpace():
             'en.ner': 'recognize_entities_dl',  # default ner
             'en.ner.dl': 'recognize_entities_dl',
             'en.ner.bert': 'recognize_entities_bert',
-            'en.ner.onto': 'onto_recognize_entities_sm',  # default  ner.onto
+            # 'en.ner.onto': 'onto_recognize_entities_sm',  # default  ner.onto
             'en.ner.onto.sm': 'onto_recognize_entities_sm',
             'en.ner.onto.lg': 'onto_recognize_entities_lg',
             'en.match.datetime': 'match_datetime',

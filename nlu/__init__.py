@@ -33,6 +33,7 @@ from nlu.components.dependency_typeds.labeled_dependency_parser.labeled_dependen
 
 # 0 Base internal Spark NLP structure required for all JSL components
 from nlu.components.utils.document_assembler.spark_nlp_document_assembler import SparkNlpDocumentAssembler
+from nlu.components.utils.ner_to_chunk_converter.ner_to_chunk_converter import NerToChunkConverter
 
 # we cant call the embdding file "embeddings" because namespacing wont let us import the Embeddings class inside of it then
 from nlu.components.embedding import Embeddings
@@ -198,7 +199,9 @@ def get_default_component_of_type(missing_component_type):
         if missing_component_type == 'chunk_embeddings': return embeddings_chunker.EmbeddingsChunker()
         if missing_component_type == 'unlabeled_dependency': return UnlabledDepParser()
         if missing_component_type == 'labled_dependency': return LabledDepParser('dep')
-        if missing_component_type == 'date': return None
+        if missing_component_type == 'date': return nlu.Matcher('date')
+        if missing_component_type == 'ner_converter': return Util('ner_converter')
+
     else :
         #if there is an @ in the name, we must get some specific pretrained model from the sparknlp reference that should follow after the @
         missing_component_type, sparknlp_reference = missing_component_type.split('@')
@@ -366,38 +369,35 @@ def construct_component_from_pipe_identifier(language, sparknlp_reference):
     pipe = PretrainedPipeline(sparknlp_reference, lang=language)
     constructed_components = []
     for component in pipe.light_model.pipeline_model.stages:
-        logger.info("Extracting model from Spark NLP pipeline: %s", component)
+        logger.info("Extracting model from Spark NLP pipeline: %s and creating Component", component)
         parsed=''
         parsed = str(component).split('_')[0].lower()
         logger.info("Parsed Component for : %s", parsed)
-        if parsed == 'match': constructed_components.append(nlu.Matcher(model=component)) 
-        if parsed == 'document': constructed_components.append(nlu.Util(model=component)) 
-        if parsed == 'sentence': constructed_components.append(nlu.Util(component_name='sentence_detector',model=component)) # todo differentiate normal and deep detector
-        if parsed == 'regex': constructed_components.append(nlu.Matcher(component_name='regex', model=component))
-        if parsed == 'text': constructed_components.append(nlu.Matcher(model=component))
-
-        if parsed == 'spell': constructed_components.append(nlu.SpellChecker(model=component))
-        if parsed == 'lemmatizer': constructed_components.append(nlu.lemmatizer.Lemmatizer(model=component))
-        if parsed == 'normalizer': constructed_components.append(nlu.lemmatizer.Normalizer(model=component))
-        if parsed == 'stemmer': constructed_components.append(nlu.stemmer.Stemmer(model=component))
-        if parsed == 'pos' or parsed =='language': constructed_components.append(nlu.Classifier(model=component))
-        if parsed == 'word': constructed_components.append(nlu.Embeddings(model=component))
-        if parsed == 'nerdlmodel': constructed_components.append(nlu.Classifier(model=component))
-        if parsed == 'ner': constructed_components.append(nlu.Classifier(component_name='ner',model=component))
-        if parsed == 'dependency': constructed_components.append(nlu.Util(model=component))
-        if parsed == 'typed': constructed_components.append(nlu.Util(model=component)) # todo util abuse
-        if parsed == 'multi': constructed_components.append(nlu.Util(model=component)) # todo util abuse 
-        if parsed == 'sentimentdlmodel': constructed_components.append(nlu.Classifier(model=component))
-        # if parsed == 'universal' or parsed == 'bert' or parsed == 'albert' or parsed == 'elmo' or parsed == 'xlnet' or parsed == 'glove'\
-        if parsed in ['universal','bert','albert', 'elmo', 'xlnet', 'glove','electra','covidbert','small_bert','']  : constructed_components.append(nlu.Embeddings(model=component))
-        if parsed == 'vivekn': constructed_components.append(nlu.Classifier(component_name='vivekn', model=component))
-        if parsed == 'chunker': constructed_components.append(nlu.chunker.Chunker(model=component))
-        if parsed == 'ngram': constructed_components.append(nlu.chunker.Chunker(model=component))
-        if '2e2' in parsed: constructed_components.append(nlu.Embeddings(model=component))
-
-        if parsed == 'embeddings_chunk': constructed_components.append(embeddings_chunker.EmbeddingsChunker(model=component))
-
-        if parsed == 'stopwords': constructed_components.append(nlu.StopWordsCleaner(model=component))
+        
+        if 'NerConverter' in  component.name : constructed_components.append(Util(component_name='ner_converter', model=component)) 
+        elif parsed == 'match': constructed_components.append(nlu.Matcher(model=component)) 
+        elif parsed == 'document': constructed_components.append(nlu.Util(model=component)) 
+        elif parsed == 'sentence': constructed_components.append(nlu.Util(component_name='sentence_detector',model=component)) # todo differentiate normal and deep detector
+        elif parsed == 'regex': constructed_components.append(nlu.Matcher(component_name='regex', model=component))
+        elif parsed == 'text': constructed_components.append(nlu.Matcher(model=component))
+        elif parsed == 'spell': constructed_components.append(nlu.SpellChecker(model=component))
+        elif parsed == 'lemmatizer': constructed_components.append(nlu.lemmatizer.Lemmatizer(model=component))
+        elif parsed == 'normalizer': constructed_components.append(nlu.lemmatizer.Normalizer(model=component))
+        elif parsed == 'stemmer': constructed_components.append(nlu.stemmer.Stemmer(model=component))
+        elif parsed == 'pos' or parsed =='language': constructed_components.append(nlu.Classifier(model=component))
+        elif parsed == 'word': constructed_components.append(nlu.Embeddings(model=component))
+        elif parsed == 'ner' or  parsed == 'nerdlmodel': constructed_components.append(nlu.Classifier(component_name='ner',model=component))
+        elif parsed == 'dependency': constructed_components.append(nlu.Util(model=component))
+        elif parsed == 'typed': constructed_components.append(nlu.Util(model=component)) # todo util abuse
+        elif parsed == 'multi': constructed_components.append(nlu.Util(model=component)) # todo util abuse 
+        elif parsed == 'sentimentdlmodel': constructed_components.append(nlu.Classifier(model=component))
+        elif parsed in ['universal','bert','albert', 'elmo', 'xlnet', 'glove','electra','covidbert','small_bert','']  : constructed_components.append(nlu.Embeddings(model=component))
+        elif parsed == 'vivekn': constructed_components.append(nlu.Classifier(component_name='vivekn', model=component))
+        elif parsed == 'chunker': constructed_components.append(nlu.chunker.Chunker(model=component))
+        elif parsed == 'ngram': constructed_components.append(nlu.chunker.Chunker(model=component))
+        elif '2e2' in parsed: constructed_components.append(nlu.Embeddings(model=component))
+        elif parsed == 'embeddings_chunk': constructed_components.append(embeddings_chunker.EmbeddingsChunker(model=component))
+        elif parsed == 'stopwords': constructed_components.append(nlu.StopWordsCleaner(model=component))
         
         logger.info("Extracted into NLU Component type : %s", parsed)
         if None in constructed_components :

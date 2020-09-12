@@ -189,14 +189,16 @@ class NLUPipeline(BasePipe):
             logger.info('Parsed type=%s  for field=%s', a_type, field)
         logger.info('Parsing field types done, parsed=%s', field_types_dict)
         return field_types_dict
+    
+    def reorder_column_names(self, column_names):
+        pass
 
+    
+    
     def rename_columns_and_extract_map_values_same_level(self,ptmp, fields_to_rename, same_output_level, stranger_features=[], meta=True):
 
         logger.info('Renaming columns and extracting meta data for  outputlevel_same=%s and fields_to_rename=%s and get_meta=%s', same_output_level,fields_to_rename,meta)
         columns_for_select = []
-
-
-
         # edge case swap. We must rename .metadata fields before we get the .result fields or there will be errors because of column name overwrites.. So we swap position of them
         cols_to_swap = [field for field in fields_to_rename if '.metadata' in field]
         reorderd_fields_to_rename = fields_to_rename.copy()
@@ -216,7 +218,7 @@ class NLUPipeline(BasePipe):
             if field in stranger_features : continue
             if self.raw_text_column in field: continue
             new_field = field.replace('.', '_').replace('_result','').replace('_embeddings_embeddings','_embeddings')
-            logger.info('Renaming Fields for old fieldname=%s and new fieldname=%s',field, new_field)
+            logger.info('Renaming Fields for old name=%s and new name=%s',field, new_field)
             if new_field == 'embeddings_embeddings': new_field = 'embeddings'
             if 'metadata' in field :  # rename metadata to something more meaningful
                 logger.info('Getting Meta Data for   : nr=%s , name=%s with new_name=%s and original', i, field, new_field)
@@ -225,10 +227,10 @@ class NLUPipeline(BasePipe):
                 keys_in_metadata = list(ptmp.select(field).take(1))
                 if len(keys_in_metadata) == 0 : continue # no resulting values for this column, we wont include it in the final output
                 keys_in_metadata = list(keys_in_metadata[0].asDict()['metadata'][0].keys()) #
-                logger.info('Extracting Keys=%s for field%s=',keys_in_metadata, new_field)
+                logger.info('Extracting Keys=%s for field=%s',keys_in_metadata, new_field)
                 if meta == True or 'entities' in field  :  # get all meta data
                     for key in keys_in_metadata:
-                        logger.info('Extracting key %s=', key)
+                        logger.info('Extracting key=%s', key)
                         #drop sentences keys from Lang detector, they seem irrelevant. same for NER chunk map keys
                         if key == 'sentence' and 'language' in field  : continue
                         if key == 'chunk' and 'entities' in field  : continue
@@ -236,7 +238,7 @@ class NLUPipeline(BasePipe):
 
                         new_fields.append(new_field.replace('metadata',key))
 
-                        # if new_fields[-1] =='entities_entity' : new_fields[-1] = 'entities' 
+                        if new_fields[-1] =='entities_entity' : new_fields[-1] = 'ner_tag' 
                         ptmp = ptmp.withColumn(new_fields[-1],pyspark_col(('res.' + str(fields_to_rename.index(field)) + '.'+key) ))
 
                         columns_for_select.append(new_fields[-1])
@@ -263,7 +265,6 @@ class NLUPipeline(BasePipe):
                     else :
                         ptmp = ptmp.withColumnRenamed(renamed_cols_to_max[0], max_confidence_name  )
                         columns_for_select.append(max_confidence_name)
-
                 continue
 
 
@@ -309,7 +310,7 @@ class NLUPipeline(BasePipe):
             if self.raw_text_column in field: continue
             new_field = field.replace('.', '_').replace('_result','').replace('_embeddings_embeddings','_embeddings')
             if new_field == 'embeddings_embeddings': new_field = 'embeddings'
-            logger.info('Renaming Fields for old fieldname=%s and new fieldname=%s',field, new_field)
+            logger.info('Renaming Fields for old name=%s and new name=%s',field, new_field)
             if 'metadata' in field :
                 # since the have a field with metadata, the values of the original data for which we have metadata for must exist in the dataframe as singular elements inside of a list
                 # by applying the expr method, we unpack the elements from the list 
@@ -318,6 +319,7 @@ class NLUPipeline(BasePipe):
                 ## ONLY for NER we actually expect array type output for different output levels and must do proper casting. Otherwise we just get the first(?)
                 if field == 'entities.metadata' : pass # ner result wil be fatched later
                 else  : ptmp = ptmp.withColumn(unpack_name+'_result', expr(unpack_name+'.result[0]'))
+                
                 
                 reorderd_fields_to_rename[reorderd_fields_to_rename.index(unpack_name+'.result')] = unpack_name+'_result' 
                 logger.info('Getting Meta Data for   : nr=%s , name=%s with new_name=%s and original', i, field,new_field)
@@ -331,9 +333,11 @@ class NLUPipeline(BasePipe):
                 
                 new_fields=[]
                 for key in keys_in_metadata:
-                    logger.info('Extracting meta data for key =%s', key)
                     # we cant skip getting  key values for everything, even if meta=false. This is because we need to get the greatest of all confidence values , for this we must unpack them first..
                     new_fields.append(new_field.replace('metadata',key))
+                    # entities_entity
+                    if new_fields[-1] == 'entities_entity': new_fields[-1] = 'ner_tag'
+                    logger.info('Extracting meta data for key=%s and column name=%s', key,new_fields[-1])
 
                     # These Pyspark UDF extracts from a list of maps all the map values for positive and negative confidence and also spell costs
                     def extract_map_values_float(x): 

@@ -8,6 +8,21 @@ modify_date: "2020-06-12"
 
 NLU release notes
 
+### 2.6
+ - Added 100+ new models from Spark NLP 2.6
+    - New YAKE model
+    - New XYZ model
+    - ...
+ - Added examples for all new
+ - Improved outputs for Chunk level components 
+ - Integrated removal of IOB prefixes of NER tags
+ - Integrated light pipeline which yields 10x speed up for predictions 
+ - Easy and Copy pastable moel configs via pipe.print_info()
+ - N new Notebooks
+ - Recycling of Pandas indexes for predicting. No more ID columns, just pandas indexes.
+ - 
+
+
 ### 2.5.6
  - Better Defaults for spell checking
  - Lots of bug fixes

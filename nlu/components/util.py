@@ -4,6 +4,8 @@ class Util(SparkNLUComponent):
 
     def __init__(self,component_name='document_assembler', component_type='util', model = None):
         # super(Tokenizer,self).__init__(component_name = component_name, component_type = component_type)
+        if component_name == 'ner_converter':
+            component_name = 'ner_to_chunk_converter'
         SparkNLUComponent.__init__(self,component_name,component_type)
         if model != None : self.model = model
         else :
@@ -13,6 +15,6 @@ class Util(SparkNLUComponent):
             elif component_name == 'sentence_detector' :
                 from nlu import SparkNLPSentenceDetector
                 self.model =  SparkNLPSentenceDetector.get_default_model()
-            elif component_name == 'ner_converter' :
+            elif component_name == 'ner_to_chunk_converter' :
                 from nlu import NerToChunkConverter
                 self.model =  NerToChunkConverter.get_default_model()

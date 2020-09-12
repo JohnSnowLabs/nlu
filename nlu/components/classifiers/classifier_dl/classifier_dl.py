@@ -14,6 +14,7 @@ class ClassifierDl:
         return ClassifierDLModel.pretrained(name,language) \
             .setInputCols("sentence_embeddings") \
             .setOutputCol("category")
+    
 
 
 

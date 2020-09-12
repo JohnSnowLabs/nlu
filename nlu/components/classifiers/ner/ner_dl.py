@@ -7,13 +7,13 @@ class NERDL:
     def get_default_model():  # (name="ner_dl_bert") \
         return NerDLModel.pretrained(name='ner_dl_bert', lang='en') \
             .setInputCols(["sentence", "token", "word_embeddings"]) \
-            .setOutputCol("ner")
+            .setOutputCol("ner")  # unchangable name because getters/setters nlp bug 
 
     @staticmethod
     def get_pretrained_model(name, language):
         return NerDLModel.pretrained(name,language) \
             .setInputCols(["sentence", "token", "word_embeddings"]) \
-            .setOutputCol("ner")
+            .setOutputCol("ner")  # unchangable name because getters/setters nlp bug
 
     @staticmethod
     def get_default_trainable_model():
