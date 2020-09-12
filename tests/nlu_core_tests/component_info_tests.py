@@ -10,12 +10,6 @@ class TestComponentInfo(unittest.TestCase):
         a.list_all_components()
         a.DEBUG_list_all_components()
 
-    def test_list_all_names(self):
-        nlu.components()
-        nlu.print_all_nlu_components_for_lang(lang='de')
-
-        nlu.languages()
-
     def test_print_all_default_components_as_markdown(self):
         print(pd.DataFrame(nlu.NameSpace.default_pretrained_component_references).T.to_markdown())
 
@@ -54,7 +48,7 @@ class TestComponentInfo(unittest.TestCase):
   
 
     def test_get_language_count_for_every_component_type(self):
-        component_counts = {} # TODO 
+        component_counts = {}
         for lang in nlu.NameSpace.pretrained_models_references:
             for nlu_ref, nlp_ref in nlu.NameSpace.pretrained_models_references[lang].items():
                 c_type = nlu_ref.split('.')
