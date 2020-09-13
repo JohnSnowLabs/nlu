@@ -54,7 +54,7 @@ from nlu.components.embeddings.glove.glove import Glove
 # classifiers
 from nlu.components.classifiers.classifier_dl.classifier_dl import ClassifierDl
 from nlu.components.classifiers.multi_classifier_dl.multi_classifier_dl import MultiClassifierDl
-
+from nlu.components.classifiers.yake.yake import Yake
 from nlu.components.classifiers.language_detector.language_detector import LanguageDetector
 from nlu.components.classifiers.named_entity_recognizer_crf.ner_crf import NERDLCRF
 from nlu.components.classifiers.ner.ner_dl import NERDL
@@ -421,7 +421,9 @@ def construct_component_from_identifier(language, component_type, dataset, compo
     '''
     logger.info('Creating singular NLU component for type=%s sparknlp reference=%s , dataset=%s, language=%s ', component_type, sparknlp_reference, dataset, language)
     try : 
-        if 'bert' in dataset or component_type == 'embed' or 'albert' in component_type or 'bert' in component_type or 'xlnet' in component_type or 'use' in component_type or 'glove' in component_type or 'elmo' in component_type or 'tfhub_use' in sparknlp_reference\
+        if sparknlp_reference == 'yake':
+            return Classifier('yake')
+        elif 'bert' in dataset or component_type == 'embed' or 'albert' in component_type or 'bert' in component_type or 'xlnet' in component_type or 'use' in component_type or 'glove' in component_type or 'elmo' in component_type or 'tfhub_use' in sparknlp_reference\
                 or 'bert' in sparknlp_reference or 'labse' in sparknlp_reference:
             if component_type == 'embed' and dataset != '' :
                 return Embeddings(component_name=dataset, language=language, get_default=False,

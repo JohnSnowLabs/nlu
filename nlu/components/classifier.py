@@ -59,3 +59,6 @@ class Classifier(SparkNLUComponent):
                 from nlu import PartOfSpeechJsl
                 if get_default : self.model = PartOfSpeechJsl.get_default_model()
                 else : self.model = PartOfSpeechJsl.get_pretrained_model(sparknlp_reference,language)
+            elif 'yake' in component_name:
+                from nlu import Yake
+                self.model  = Yake.get_default_model()

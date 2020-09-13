@@ -14,6 +14,7 @@ class NameSpace():
         'classify.lang.20': ('detect_language_20','pipe'),  # multi lang detector default
         'classify.lang.7': ('detect_language_7','pipe'),
 
+
         # eng pipes
         'classify': ('analyze_sentiment','pipe'), #default classifier
         'explain': ('explain_document_ml','pipe'),  # default explain
@@ -142,6 +143,8 @@ class NameSpace():
         'embed.bert_multi_cased': ('bert_multi_cased','model'),
         'classify.wiki_7': ('ld_wiki_7','model'),
         'classify.wiki_20': ('ld_wiki_20','model'),
+        'yake': ('yake','model'),
+
     }
 
     # multi lang models
@@ -417,6 +420,7 @@ class NameSpace():
             'en.sentiment.imdb': 'sentimentdl_glove_imdb',  # Default sentiment imdb with embeddigns glvoe
         
             #2.6 Release models
+            'en.yake' :'yake',
 
             #2.6  embeds
             'en.embed.electra': 'electra_small_uncased',
