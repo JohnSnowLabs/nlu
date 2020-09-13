@@ -17,7 +17,7 @@
     "pos"
   ],
   "spark_output_column_names": [
-    "token"
+    "chunk"
   ],
   "critical_parameters": [],
   "tags": [
