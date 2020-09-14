@@ -66,6 +66,7 @@ class NLUPipeline(BasePipe):
 
 
     def fit(self, dataset=None):
+        # Creates Spark Pipeline and fits it
         if dataset == None:
             stages = []
             for component in self.pipe_components:
@@ -677,7 +678,10 @@ class NLUPipeline(BasePipe):
                 self.pipe_components.append(nlu.get_default_component_of_type('chunk'))
                 # this could break indexing..
                 self =  PipelineQueryVerifier.check_and_fix_nlu_pipeline(self)
-        if not self.is_fitted: self.fit()
+        # if not self.is_fitted: self.fit()
+
+        # currently have to always fit, otherwise parameter cnhages wont come in action
+        self.fit()
 
         self.configure_light_pipe_usage(len(data),multithread)
 
