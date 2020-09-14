@@ -570,7 +570,8 @@ class NLUPipeline(BasePipe):
         # ner columns is NER-IOB format, mostly useless for the users. If meta false, we drop it here. 
         if output_metadata == False and 'ner' in final_cols : final_cols.remove('ner')
         final_df = ptmp.select(list(set(final_cols)))
-        
+        # final_df = ptmp.coalesce(10).select(list(set(final_cols)))
+
         pandas_df = self.finalize_return_datatype(final_df)
         # i = pandas_df['origin_index'] 
         pandas_df.set_index('origin_index',inplace=True)
@@ -578,7 +579,7 @@ class NLUPipeline(BasePipe):
         # pandas_df.set_index(pandas_df['origin_index'],inplace=True)
         
         
-        return  pandas_df#.drop('origin_index')
+        return  pandas_df
 
     def finalize_return_datatype(self, sdf):
         '''
@@ -595,7 +596,6 @@ class NLUPipeline(BasePipe):
         elif self.output_datatype == 'modin' :
             import modin.pandas as mpd
             return mpd.DataFrame(sdf.toPandas())
-        # todo actual series and return String/array objects
         elif self.output_datatype == 'pandas_series' :
             return sdf.toPandas()
         elif self.output_datatype == 'modin_series' :
@@ -817,7 +817,7 @@ class NLUPipeline(BasePipe):
             component_outputs = []
             max_len = 0
             for key in p_map.keys():
-                if "outputCol" in key.name or "labelCol" in key.name or "inputCol" in key.name or "labelCol" in key.name : continue
+                if "outputCol" in key.name or "labelCol" in key.name or "inputCol" in key.name or "labelCol" in key.name  or 'lazyAnnotator' in key.name: continue
                 # print("pipe['"+ component_key +"'].set"+ str( key.name[0].capitalize())+ key.name[1:]+"("+str(p_map[key])+")" + " | Info: " + str(key.doc)+ " currently Configured as : "+str(p_map[key]) )
                 # print("Param Info: " + str(key.doc)+ " currently Configured as : "+str(p_map[key]) )
 
