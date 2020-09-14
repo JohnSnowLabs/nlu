@@ -7,7 +7,7 @@ from sparknlp.base import *
 import logging
 import nlu
 logger = logging.getLogger('nlu')
-
+import pyspark
 from sparknlp.base import LightPipeline
 from pyspark.sql.functions import flatten, explode, arrays_zip, map_keys, map_values, monotonically_increasing_id, greatest,expr
 from pyspark.sql.functions import col as pyspark_col
@@ -26,6 +26,8 @@ class BasePipe(dict):
         self.output_positions = False  # Wether to putput positions of Features in the final output. E.x. positions of tokens, entities, dependencies etc.. inside of the input document.
         self.output_level = ''  # either document, chunk, sentence, token
         self.output_different_levels = True
+        self.light_pipe_configured=False
+        self.spark_non_light_transformer_pipe = None
         self.pipe_components = []                                         # orderd list of nlu_component objects
         self.output_datatype = 'pandas' # What data type should be returned after predict either spark, pandas, modin, numpy, string or array 
     def add(self, component, component_name="auto_generate"):
@@ -64,8 +66,7 @@ class NLUPipeline(BasePipe):
 
 
     def fit(self, dataset=None):
-        if dataset == None:  # todo implement fitting on input datset
-            #todo somehow regex matcher does not see document column?????>>?>!@>!?>??!@
+        if dataset == None:
             stages = []
             for component in self.pipe_components:
                 stages.append(component.model)
@@ -316,8 +317,9 @@ class NLUPipeline(BasePipe):
                 # by applying the expr method, we unpack the elements from the list 
                 unpack_name = field.split('.')[0]
                 
-                ## ONLY for NER we actually expect array type output for different output levels and must do proper casting. Otherwise we just get the first(?)
-                if field == 'entities.metadata' : pass # ner result wil be fatched later
+                ## ONLY for NER or Keywordswe actually expect array type output for different output levels and must do proper casting
+                if field == 'entities.metadata'  : pass # ner result wil be fatched later
+                elif field == 'keywords.metadata' :  ptmp = ptmp.withColumn(unpack_name+'_result', ptmp[unpack_name+'.result'])
                 else  : ptmp = ptmp.withColumn(unpack_name+'_result', expr(unpack_name+'.result[0]'))
                 
                 
@@ -340,11 +342,9 @@ class NLUPipeline(BasePipe):
                     logger.info('Extracting meta data for key=%s and column name=%s', key,new_fields[-1])
 
                     # These Pyspark UDF extracts from a list of maps all the map values for positive and negative confidence and also spell costs
-                    def extract_map_values_float(x): 
-                        return [float(sentence[key]) for sentence in x]
+                    def extract_map_values_float(x): return [float(sentence[key]) for sentence in x]
 
-                    def extract_map_values_str(x):
-                        return [str(sentence[key]) for sentence in x]
+                    def extract_map_values_str(x): return [str(sentence[key]) for sentence in x]
 
 
                     #extract map values for list of maps 
@@ -353,15 +353,19 @@ class NLUPipeline(BasePipe):
                     else : array_map_values = udf(lambda z: extract_map_values_float(z), ArrayType(FloatType()))
 
                     ptmp = ptmp.withColumn(new_fields[-1],array_map_values(field)) 
-                    # We apply Expr here because all resulting meta data is inside of a list and just a single element, which we can take out 
-                    if not  field == 'entities.metadata' : ptmp = ptmp.withColumn(new_fields[-1],expr(new_fields[-1]+'[0]'))
+                    # We apply Expr here because all resulting meta data is inside of a list and just a single element, which we can take out
+                    # Exceptions to this rule are entities and metadata, this are scenarios wehre we want all elements from the predictions array ( since it could be multiple keywords/entities)
+                    if not  field == 'entities.metadata' and not field =='keywords.metadata': ptmp = ptmp.withColumn(new_fields[-1],expr(new_fields[-1]+'[0]'))
                     logger.info('Created Meta Data for   : nr=%s , name=%s with new_name=%s and original', i, field,new_fields[-1])
                     columns_for_select.append(new_fields[-1]) 
 
 
-                if meta == True : continue  #??
+                if meta == True : continue  # If we dont max, we will see the confidence for all other classes. by continuing here, we will leave all the confidences for the other classes in the DF.
                 else : # We gotta get the max confidence column, remove all other cols for selection
                     if field == 'entities.metadata' : continue
+                    if field == 'keywords.metadata' : continue # We dont want to max for multiple keywords. Also it will change the name from score to confidence of the final column
+
+                    # if field ==
                     cols_to_max = []
                     prefix = field.split('.')[0]
                     for key in keys_in_metadata: cols_to_max.append( prefix+'_'+key)
@@ -384,8 +388,8 @@ class NLUPipeline(BasePipe):
 
                 continue # end of special meta data case 
             
-            if field == 'entities_result' :
-                ptmp = ptmp.withColumn('entities_result', ptmp['entities.result'].cast(ArrayType(StringType())))  #
+            if field == 'entities_result' : ptmp = ptmp.withColumn('entities_result', ptmp['entities.result'].cast(ArrayType(StringType())))  #
+            #else?
             ptmp = ptmp.withColumn(new_field, ptmp[field])  # get the outputlevel results row by row
             # ptmp = ptmp.withColumnRenamed(field,new_field)  # EXPERIMENTAL engine test, only works sometimes since it can break dataframe struct
 
@@ -466,7 +470,7 @@ class NLUPipeline(BasePipe):
                     same_output_level_fields.append(field + '.embeddings')
                 if 'entities' in field:
                     same_output_level_fields.append(field + '.metadata')
-                if 'category' in f_type  or 'spell' in f_type or 'sentiment' in f_type or 'class' in f_type or 'language' in f_type :
+                if 'category' in f_type  or 'spell' in f_type or 'sentiment' in f_type or 'class' in f_type or 'language' in f_type  or 'keyword' in f_type:
                     same_output_level_fields.append(field + '.metadata')
     
             else:
@@ -478,9 +482,9 @@ class NLUPipeline(BasePipe):
                     not_at_same_output_level_fields.append(field + '.end')
                 if 'embeddings' in f_type:
                     not_at_same_output_level_fields.append(field + '.embeddings')
-                if 'category' in f_type  or 'spell' in f_type or 'sentiment' in f_type or 'class' in f_type :
+                if 'category' in f_type  or 'spell' in f_type or 'sentiment' in f_type or 'class' in f_type or 'keyword' in f_type:
                     not_at_same_output_level_fields.append(field + '.metadata')
-                if 'entities' in field:
+                if 'entities' in field :
                     not_at_same_output_level_fields.append(field + '.metadata')
     
     
@@ -634,17 +638,18 @@ class NLUPipeline(BasePipe):
             if 'sentence' in cols: cols.remove('sentence')
 
         return cols
-    def configure_light_pipe_usage(self, data_instances ):
+    def configure_light_pipe_usage(self, data_instances, use_multi=True ):
 
-        if data_instances > 50000 :
-            logger.info("Configuring Light Pipeline Usage")
+        logger.info("Configuring Light Pipeline Usage")
+        if data_instances > 50000  or use_multi==False:
             logger.info("Disabling light pipeline")
-            self.spark_transformer_pipe = self.spark_non_light_transformer_pipe 
+            self.fit()
             return
         else : 
-            logger.info("Enabling light pipeline")
-            self.spark_non_light_transformer_pipe = self.spark_transformer_pipe 
-            self.spark_transformer_pipe = LightPipeline(self.spark_transformer_pipe)            
+            if self.light_pipe_configured == False :
+                self.light_pipe_configured=True
+                logger.info("Enabling light pipeline")
+                self.spark_transformer_pipe = LightPipeline(self.spark_transformer_pipe)
         
     def predict(self, data, output_level='', positions=False, keep_stranger_features=True, metadata=False, multithread=True):
         '''
@@ -659,13 +664,11 @@ class NLUPipeline(BasePipe):
         :return: 
         '''
         
-        
-        
-        if output_level !='': 
-            self.output_level = output_level
+        if output_level !='': self.output_level = output_level
             
         self.output_positions= positions
-        if output_level=='chunk': 
+
+        if output_level=='chunk':
             # If no chunk output componten in pipe we must add it and run the query verifyier again 
             chunk_provided = False
             for component in self.pipe_components:
@@ -675,10 +678,10 @@ class NLUPipeline(BasePipe):
                 # this could break indexing..
                 self =  PipelineQueryVerifier.check_and_fix_nlu_pipeline(self)
         if not self.is_fitted: self.fit()
-        self.configure_light_pipe_usage(len(data))
+
+        self.configure_light_pipe_usage(len(data),multithread)
 
         sdf = None
-        import pyspark  
         stranger_features = []
         index_provided=False
 
@@ -802,42 +805,44 @@ class NLUPipeline(BasePipe):
         Print out information about every component currently loaded in the pipe and their configurable parameters
         :return: None
         '''
-        
+
         print('The following parameters are configurable for this NLU pipeline (You can copy paste the examples) :')
         # list of tuples, where first element is component name and second element is list of param tuples, all ready formatted for printing
         all_outputs = []
-    
+
         for i, component_key in enumerate(self.keys()) :
             s=">>> pipe['"+ component_key +"'] has settable params:"
             p_map = self[component_key].extractParamMap()
-            
+
             component_outputs = []
             max_len = 0
             for key in p_map.keys():
                 if "outputCol" in key.name or "labelCol" in key.name or "inputCol" in key.name or "labelCol" in key.name : continue
                 # print("pipe['"+ component_key +"'].set"+ str( key.name[0].capitalize())+ key.name[1:]+"("+str(p_map[key])+")" + " | Info: " + str(key.doc)+ " currently Configured as : "+str(p_map[key]) )
                 # print("Param Info: " + str(key.doc)+ " currently Configured as : "+str(p_map[key]) )
-                
+
                 if type(p_map[key]) == str :
                     s1 = "pipe['"+ component_key +"'].set"+ str( key.name[0].capitalize())+ key.name[1:]+"('"+str(p_map[key])+"') "
                 else :
                     s1 = "pipe['"+ component_key +"'].set"+ str( key.name[0].capitalize())+ key.name[1:]+"("+str(p_map[key])+") "
 
-                s2 =  " | Info: " + str(key.doc)+ " | Currently set to : "+str(p_map[key])  
+                s2 =  " | Info: " + str(key.doc)+ " | Currently set to : "+str(p_map[key])
                 if len(s1) > max_len : max_len = len(s1)
                 component_outputs.append((s1,s2))
 
             all_outputs.append((s,component_outputs))
-                
+
         # make strings aligned
         form = "{:<"+str(max_len) + "}"
-        for o in all_outputs : 
+        for o in all_outputs :
             print(o[0]) # component name
-            for o_parm in o[1] : 
-                if len(o_parm[0]) < max_len : 
+            for o_parm in o[1] :
+                if len(o_parm[0]) < max_len :
                     print(form.format(o_parm[0]) + o_parm[1])
                 else :
                     print(o_parm[0] + o_parm[1])
+
+
 
 
 
