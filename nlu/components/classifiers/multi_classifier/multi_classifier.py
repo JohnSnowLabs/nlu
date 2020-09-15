@@ -2,7 +2,7 @@ import nlu.pipe_components
 import sparknlp
 from sparknlp.annotator import *
 
-class MultiClassifierDl:
+class MultiClassifier:
     @staticmethod
     def get_default_model():
         return MultiClassifierDLModel.pretrained() \
@@ -20,7 +20,7 @@ class MultiClassifierDl:
 
     @staticmethod
     def get_default_trainable_model():
-        return MultiClassifierDLApproach() \
+        return ClassifierDLApproach() \
             .setInputCols("sentence_embeddings") \
             .setOutputCol("category") \
             .setLabelColumn("label") \

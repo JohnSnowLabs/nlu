@@ -105,12 +105,14 @@ class NameSpace():
         'embed.biobert_clinical_base_cased': ('biobert_clinical_base_cased', 'model'),
         'embed.biobert_discharge_base_cased': ('biobert_discharge_base_cased', 'model'),
         'elmo': ('elmo', 'model'),
+
         'embed.electra': ('electra_small_uncased','model'),
         'electra': ('electra_small_uncased','model'),
         'embed.elmo': ('elmo', 'model'),
         'embed_sentence': ('tfhub_use', 'model'),  # default use
         'embed_sentence.small_bert_L2_128': ('sent_small_bert_L2_128','model'),
         'embed_sentence.bert': ('sent_small_bert_L2_128','model'),
+        'embed_sentence.electra': ('sent_electra_small_uncased','model'),
 
         'embed_sentence.use': ('tfhub_use', 'model'),  # default use
         'use': ('tfhub_use', 'model'),  # alias
@@ -285,6 +287,10 @@ class NameSpace():
             'pt.ner.sm': 'entity_recognizer_sm',
             'pt.ner.md': 'entity_recognizer_md',
             'pt.ner.lg': 'entity_recognizer_lg',
+            'pt.bert': 'bert_portuguese_base_cased',
+            'pt.bert.cased': 'bert_portuguese_base_cased',
+            'pt.ner.large': 'bert_portuguese_large_cased',
+
         },
         'ru': {
             'ru.explain': 'explain_document_sm',  # default ru explain
@@ -466,9 +472,13 @@ class NameSpace():
             'en.embed.bert.small_L12_768': 'small_bert_L12_768',
             
             #2.6 sent embeddings
+            'en.embed_sentence.electra': 'sent_electra_small_uncased',
+
             'en.embed_sentence.electra_small_uncased': 'sent_electra_small_uncased',
             'en.embed_sentence.electra_base_uncased': 'sent_electra_base_uncased',
             'en.embed_sentence.electra_large_uncased': 'sent_electra_large_uncased',
+            'en.embed_sentence.bert': 'sent_bert_base_uncased',
+
             'en.embed_sentence.bert_base_uncased': 'sent_bert_base_uncased',
             'en.embed_sentence.bert_base_cased': 'sent_bert_base_cased',
             'en.embed_sentence.bert_large_uncased': 'sent_bert_large_uncased',

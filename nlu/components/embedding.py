@@ -3,8 +3,11 @@ from nlu.pipe_components import SparkNLUComponent
 class Embeddings(SparkNLUComponent):
 
     def __init__(self,component_name='glove', language ='en', component_type='embedding', get_default=True,model = None, sparknlp_reference =''):
-        if 'use' in component_name or 'embed_sentence' in component_name or 'tfhub_use' in sparknlp_reference: component_name = 'use'
+        if 'use' in component_name or 'tfhub_use' in sparknlp_reference: component_name = 'use'
         elif 'bert' in component_name and 'albert' not in component_name: component_name='bert'
+        elif 'bert' in sparknlp_reference and 'albert' not in sparknlp_reference and 'sent' in component_name : component_name='sentence_bert'
+        elif 'electra' in sparknlp_reference and 'albert' not in sparknlp_reference and 'sent' in component_name : component_name='sentence_bert'
+
         elif 'electra' in component_name : component_name: component_name='bert'
         elif 'labse' in component_name : component_name: component_name='bert'
 
@@ -20,6 +23,14 @@ class Embeddings(SparkNLUComponent):
                 from nlu import SparkNLPAlbert
                 if get_default: self.model =  SparkNLPAlbert.get_default_model()
                 else : self.model = SparkNLPAlbert.get_pretrained_model(sparknlp_reference,language)
+            elif 'bert' in component_name and 'sent' in component_name  :
+                from nlu import BertSentence
+                if get_default : self.model =  BertSentence.get_default_model()
+                else : self.model = BertSentence.get_pretrained_model(sparknlp_reference,language)
+            elif 'electra' in component_name and 'sent' in component_name  :
+                from nlu import BertSentence
+                if get_default : self.model =  BertSentence.get_default_model()
+                else : self.model = BertSentence.get_pretrained_model(sparknlp_reference,language)
             elif 'bert' in component_name or 'electra' in component_name  or 'lablse' in component_name:
                 from nlu import SparkNLPBert
                 if get_default : self.model =  SparkNLPBert.get_default_model()

@@ -1,8 +1,8 @@
 from nlu.pipe_components import SparkNLUComponent
 class Classifier(SparkNLUComponent):
     def __init__(self, component_name='sentiment_dl', language='en', component_type='classifier', get_default=True ,model = None,sparknlp_reference =''):
-        if 'e2e' in component_name :
-            component_name='multi_classifier_dl'
+        if 'e2e' in component_name or 'toxic' in component_name :
+            component_name='multi_classifier'
             SparkNLUComponent.__init__(self, component_name, component_type)
         elif 'classifierdl' in sparknlp_reference.split('_')[0] and get_default==False :
             component_name='classifier_dl'
@@ -62,3 +62,7 @@ class Classifier(SparkNLUComponent):
             elif 'yake' in component_name:
                 from nlu import Yake
                 self.model  = Yake.get_default_model()
+            elif 'e2e' in component_name or 'toxic' in component_name :
+                from nlu import MultiClassifier
+                if get_default : self.model = MultiClassifier.get_default_model()
+                else : self.model = MultiClassifier.get_pretrained_model(sparknlp_reference,language)

@@ -45,6 +45,8 @@ from nlu.components.sentence_detectors.pragmatic_sentence_detector.sentence_dete
 from nlu.components.sentence_detectors.deep_sentence_detector.deep_sentence_detector import SentenDetectorDeep
 # Embeddings
 from nlu.components.embeddings.albert.spark_nlp_albert import SparkNLPAlbert
+from nlu.components.embeddings.sentence_bert.BertSentenceEmbedding import BertSentence
+
 from nlu.components.embeddings.bert.spark_nlp_bert import SparkNLPBert
 from nlu.components.embeddings.elmo.spark_nlp_elmo import SparkNLPElmo
 from nlu.components.embeddings.xlnet.spark_nlp_xlnet import SparkNLPXlnet
@@ -53,7 +55,7 @@ from nlu.components.embeddings.glove.glove import Glove
 
 # classifiers
 from nlu.components.classifiers.classifier_dl.classifier_dl import ClassifierDl
-from nlu.components.classifiers.multi_classifier_dl.multi_classifier_dl import MultiClassifierDl
+from nlu.components.classifiers.multi_classifier.multi_classifier import MultiClassifier
 from nlu.components.classifiers.yake.yake import Yake
 from nlu.components.classifiers.language_detector.language_detector import LanguageDetector
 from nlu.components.classifiers.named_entity_recognizer_crf.ner_crf import NERDLCRF
@@ -269,9 +271,6 @@ def parse_component_data_from_name_query(request, detect_lang=False):
     # i.e. embed_sentence.bert  
     # fr.embed_sentence.bert will automatically select french bert thus no embed_sentence.en.bert or simmilar is required
     # embed_sentence.bert or en.embed_sentence.bert
-
-    # elif  len(infos) == 2 and component_type == 'embed_sentence' and dataset in nlu.namespace.NameSpace.default_pretrained_component_references :
-        
     # name does not start with a language
     # so query has format <class>.<dataset>
     elif len(infos) == 2:
@@ -424,7 +423,7 @@ def construct_component_from_identifier(language, component_type, dataset, compo
         if sparknlp_reference == 'yake':
             return Classifier('yake')
         elif 'bert' in dataset or component_type == 'embed' or 'albert' in component_type or 'bert' in component_type or 'xlnet' in component_type or 'use' in component_type or 'glove' in component_type or 'elmo' in component_type or 'tfhub_use' in sparknlp_reference\
-                or 'bert' in sparknlp_reference or 'labse' in sparknlp_reference:
+                or 'bert' in sparknlp_reference or 'labse' in sparknlp_reference or component_type =='embed_sentence':
             if component_type == 'embed' and dataset != '' :
                 return Embeddings(component_name=dataset, language=language, get_default=False,
                                   sparknlp_reference=sparknlp_reference)
@@ -583,7 +582,7 @@ def print_all_model_kinds_for_action(action):
                 if lang_printed==False :
                     print('For language <'+lang +'> NLU provides the following Models : ')
                     lang_printed=True
-                print("nlu.load('"+ nlu_reference+ "') returns Spark NLP model"+ nlp_reference)
+                print("nlu.load('"+ nlu_reference+ "') returns Spark NLP model "+ nlp_reference)
         
 
 def print_all_model_kinds_for_action_and_lang(lang, action):
@@ -603,35 +602,3 @@ class NLU_error():
         print('The NLU components could not be properly created. Please check previous print messages and Verbose mode for further info')
 
     def print_info(self): print("Sorry something went wrong when building the pipeline. Please check verbose mode and your NLU reference.")
-# 
-# def print_all_nlu_models_of_type_for_lang(type='classifier', lang='de'):
-#     '''
-#     
-#     :param type: 
-#     :param lang: 
-#     :return: 
-#     '''
-# 
-#     types = []
-#     for key, component in nlu.all_components_info.all_components.items() : 
-#         if component.type ==type:
-#             # We wound a component of correct type, now we must search the namespace for references for this model in the specific lang            
-#             
-#             if lang in nlu.NameSpace.pretrained_models_references.keys(): 
-#                 lang_candidates = nlu.NameSpace.pretrained_models_references[lang]
-#                 
-#                 for 
-# 
-#                 types.append(component.name)
-# 
-#             
-#             else: print('The requested language <',lang,'> has no avaiable NLU pretrained models. Check nlu.languages() function for supported languages')            
-# 
-#     types = set(types)
-#     print("Provided component types in this NLU version are : ")
-#     for i, type in enumerate(types):
-#         print(i, '. ', type)
-#     return
-
-
-
