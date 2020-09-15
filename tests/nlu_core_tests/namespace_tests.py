@@ -68,62 +68,35 @@ class TestNameSpace(unittest.TestCase):
         print(df)
 
     def test_sentiment(self):
-        df = nlu.load('en.sentiment.vivekn').predict('What a wonderful day!')
-
-        print(df)
-
-
         df = nlu.load('en.sentiment').predict('What a wonderful day!')
 
-
-        print(df)
-
-        df = nlu.load('sentiment').predict('What a wonderful day!')
-        print(df)
-        
 
     def test_emotion(self):
         df = nlu.load('en.classify.emotion').predict('What a wonderful day!')
         
-        print(df) #todo, add Alias for datasets? aka just'emotion'
-
+        print(df)
 
 
     def test_spell(self):
-
-        # df = nlu.load('en.spell').predict(get_sample_pdf())
-
-        # print(df)
 
         df = nlu.load('spell').predict('What a wonderful day!')
         print(df)
         
     #
-    def test_dependency(self): # IINFITIE LOOP RISKY
+    def test_dependency(self):
         df = nlu.load('dep', verbose=True).predict('What a wonderful day!')
-
         print(df)
 
-        # df = nlu.load('en.dep').predict('What a wonderful day!')
-        # print(df)
-
-    # 
-    def test_dependency_untyped(self): # IINFITIE LOOP RISKY
+    def test_dependency_untyped(self):
         df = nlu.load('dep.untyped', verbose=True).predict('What a wonderful day!')
 
         print(df)
-        # 
-    #     # df = nlu.load('en.dep.untyped').predict('What a wonderful day!')
-    #     # print(df)
 
-    # 
     def test_bert(self):
         df = nlu.load('bert').predict('What a wonderful day!')
 
         print(df)
 
-    #     df = nlu.load('en.bert').predict('What a wonderful day!')
-    #     print(df)
 
     def test_lang(self):
         df = nlu.load('lang', verbose=True).predict('What a wonderful day!')
@@ -285,49 +258,6 @@ class TestNameSpace(unittest.TestCase):
         print(res['sentiment'])
 
         print(res.dtypes)
-        
-    def test_pdf_column_prediction(self):
-        pdf = get_sample_pdf()
-        res = nlu.load('sentiment',verbose=True).predict(pdf['text'], output_level='sentence')
-        # res = nlu.load('bert',verbose=True).predict('@Your life is the sum of a remainder of an unbalanced equation inherent to the programming of the matrix. You are the eventuality of an anomaly, which despite my sincerest efforts I have been unable to eliminate from what is otherwise a harmony of mathematical precision. While it remains a burden assiduously avoided, it is not unexpected, and thus not beyond a measure of control. Which has led you, inexorably, here.', output_level='sentence')
-
-        print(res)
-        print(res['sentiment'])
-
-        print(res.dtypes)
-
-    def test_pdf_prediction_with_additional_cols(self):
-        # TODO case if input column names overlap with output column names not handeld!
-        pdf = get_sample_pdf_with_extra_cols()
-        res = nlu.load('pos',verbose=True).predict(pdf)
-        # res = nlu.load('bert',verbose=True).predict('@Your life is the sum of a remainder of an unbalanced equation inherent to the programming of the matrix. You are the eventuality of an anomaly, which despite my sincerest efforts I have been unable to eliminate from what is otherwise a harmony of mathematical precision. While it remains a burden assiduously avoided, it is not unexpected, and thus not beyond a measure of control. Which has led you, inexorably, here.', output_level='sentence')
-
-        print(res)
-        print(res['pos'])
-
-        print(res.dtypes)
-
-    def test_bad_data_input(self):
-        pdf = get_sample_pdf_with_no_text_col()
-        res = nlu.load('sentiment',verbose=True).predict(pdf, output_level='sentence')
-        # res = nlu.load('bert',verbose=True).predict('@Your life is the sum of a remainder of an unbalanced equation inherent to the programming of the matrix. You are the eventuality of an anomaly, which despite my sincerest efforts I have been unable to eliminate from what is otherwise a harmony of mathematical precision. While it remains a burden assiduously avoided, it is not unexpected, and thus not beyond a measure of control. Which has led you, inexorably, here.', output_level='sentence')
-
-        print(res)
-
-
-    def test_spark_dataframe_input(self):
-        sdf = get_sample_spark_dataframe()
-        res = nlu.load('sentiment',verbose=True).predict(sdf, output_level='sentence')
-        # res = nlu.load('bert',verbose=True).predict('@Your life is the sum of a remainder of an unbalanced equation inherent to the programming of the matrix. You are the eventuality of an anomaly, which despite my sincerest efforts I have been unable to eliminate from what is otherwise a harmony of mathematical precision. While it remains a burden assiduously avoided, it is not unexpected, and thus not beyond a measure of control. Which has led you, inexorably, here.', output_level='sentence')
-
-        print(res)
-
-    def test_bad_component_reference(self):
-        sdf = get_sample_spark_dataframe()
-        res = nlu.load('asdasj.asdas',verbose=True).predict(sdf, output_level='sentence')
-        # res = nlu.load('bert',verbose=True).predict('@Your life is the sum of a remainder of an unbalanced equation inherent to the programming of the matrix. You are the eventuality of an anomaly, which despite my sincerest efforts I have been unable to eliminate from what is otherwise a harmony of mathematical precision. While it remains a burden assiduously avoided, it is not unexpected, and thus not beyond a measure of control. Which has led you, inexorably, here.', output_level='sentence')
-
-        print(res)
 
     def test_stem(self):
         pdf = get_sample_pdf()
