@@ -108,6 +108,8 @@ class NameSpace():
 
         'embed.electra': ('electra_small_uncased','model'),
         'electra': ('electra_small_uncased','model'),
+        'en.e2e': ('multiclassifierdl_use_e2e','model'),
+
         'embed.elmo': ('elmo', 'model'),
         'embed_sentence': ('tfhub_use', 'model'),  # default use
         'embed_sentence.small_bert_L2_128': ('sent_small_bert_L2_128','model'),

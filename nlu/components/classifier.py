@@ -62,7 +62,7 @@ class Classifier(SparkNLUComponent):
             elif 'yake' in component_name:
                 from nlu import Yake
                 self.model  = Yake.get_default_model()
-            elif 'e2e' in component_name or 'toxic' in component_name :
+            elif 'multi_classifier' in component_name :
                 from nlu import MultiClassifier
                 if get_default : self.model = MultiClassifier.get_default_model()
                 else : self.model = MultiClassifier.get_pretrained_model(sparknlp_reference,language)
