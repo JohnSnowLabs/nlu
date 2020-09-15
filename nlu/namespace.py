@@ -86,7 +86,11 @@ class NameSpace():
         'glove': ('glove_100d', 'model'),  # default glove
         'embed.glove': ('glove_100d', 'model'),  # default glove en
         'embed.glove.100d': ('glove_100d', 'model'),
-        'bert': ('bert_base_uncased', 'model'),  # default bert
+        'bert': ('small_bert_L2_128', 'model'),  # default bert
+        'covidbert': ('covidbert_large_uncased','model'),
+
+        'en.toxic': ('multiclassifierdl_use_toxic','model'),
+        'en.e2e': ('multiclassifierdl_use_e2e','model'),
         'embed.bert': ('bert_base_uncased', 'model'),  # default bert
         'embed.bert_base_uncased': ('bert_base_uncased', 'model'),
         'embed.bert_base_cased': ('bert_base_cased', 'model'),
@@ -101,8 +105,13 @@ class NameSpace():
         'embed.biobert_clinical_base_cased': ('biobert_clinical_base_cased', 'model'),
         'embed.biobert_discharge_base_cased': ('biobert_discharge_base_cased', 'model'),
         'elmo': ('elmo', 'model'),
+        'embed.electra': ('electra_small_uncased','model'),
+        'electra': ('electra_small_uncased','model'),
         'embed.elmo': ('elmo', 'model'),
         'embed_sentence': ('tfhub_use', 'model'),  # default use
+        'embed_sentence.small_bert_L2_128': ('sent_small_bert_L2_128','model'),
+        'embed_sentence.bert': ('sent_small_bert_L2_128','model'),
+
         'embed_sentence.use': ('tfhub_use', 'model'),  # default use
         'use': ('tfhub_use', 'model'),  # alias
         'embed_sentence.tfhub_use': ('tfhub_use', 'model'),
@@ -498,6 +507,9 @@ class NameSpace():
             
             # 2.6 classifiers
             'en.classify.toxic': 'multiclassifierdl_use_toxic',
+            'en.toxic': 'multiclassifierdl_use_toxic',
+            'en.e2e': 'multiclassifierdl_use_e2e',
+
             'en.classify.toxic.sm': 'multiclassifierdl_use_toxic_sm',
             'en.classify.e2e': 'multiclassifierdl_use_e2e',
             
