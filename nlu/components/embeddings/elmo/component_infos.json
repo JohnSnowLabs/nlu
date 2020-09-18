@@ -1,0 +1,68 @@
+{
+  "name": "elmo",
+  "description": "todo",
+  "output_level" : "token",
+  "outputs": [
+    "word_embeddings"
+  ],
+  "inputs": [
+    "document",
+    "sentence",
+    "token"
+  ],
+  "type": "word_embeddings",
+  "file_dependencies": {},
+  "pipe_priorioty_slot": "5",
+  "spark_input_column_names": [
+    "sentence",
+    "token"
+  ],
+  "spark_output_column_names": [
+    "elmo"
+  ],
+  "critical_parameters": [],
+  "tags": [
+    "embeddings",
+    "transformer",
+    "deep learning"
+  ],
+  "categories": [
+    "embeddings",
+    "contextual embeddings"
+  ],
+  "metrics": [
+    "squad",
+    "etc.."
+  ],
+  "made_from_components": [],
+  "component_options": [],
+  "languages": [
+    "eng"
+  ],
+  "component_parameters_info": {
+    "set_embedding()": "Sets the output embedding for Bert. A, B,C and D are available"
+  },
+  "component_language_options": {
+    "english": [
+      "elmo"
+    ]
+  },
+  "meta_data": {
+    "model size": "(very big).Mb",
+    "more meta": "data"
+  },
+  "provider": "sparknlp",
+  "version": "1.0",
+  "support_version": "1.0",
+  "documentation_urls": [
+    "todo.com"
+  ],
+  "source_urls" : ["todo.com"],
+  "reference_urls" :["todo.com"],
+  "citations" :["todo.com"],
+  "license" : "open source",
+  "docs_author" : "todo" ,
+  "component_author" : "Google",
+  "nlu_author" : "todo",
+  "computation_context" : "spark",
+  "output_context" : "spark"}

@@ -1,0 +1,160 @@
+---
+layout: page
+type: article
+---
+<style>
+
+
+
+  table.steelBlueCols {
+  border: 1px solid #1C6EA4;
+  background-color: #EEEEEE;
+  text-align: left;
+  border-collapse: collapse;
+  overflow: auto;
+  max-width: max-content;
+  margin-left: auto;
+  margin-right: auto;
+}
+table.steelBlueCols td, table.steelBlueCols th {
+  border: 1px solid #AAAAAA;
+  padding: 3px 2px;
+
+}
+table.steelBlueCols tbody td {
+  font-size: 13px;
+  font-weight: bold;
+  color: #333333;
+  max-width: 100%;
+
+}
+table.steelBlueCols td:nth-child(even) {
+  background: #D0E4F5;
+  max-width: 100%;
+
+}
+table.steelBlueCols thead {
+  background: #1C6EA4;
+  border-bottom: 2px solid #444444;
+
+}
+table.steelBlueCols thead th {
+  font-size: 15px;
+  font-weight: bold;
+  color: #FFFFFF;
+  text-align: left;
+  border-left: 2px solid #D0E4F5;
+}
+table.steelBlueCols thead th:first-child {
+  border-left: none;
+}
+
+table.steelBlueCols tfoot td {
+  font-size: 14px;
+}
+table.steelBlueCols tfoot .links {
+  text-align: right;
+}
+table.steelBlueCols tfoot .links a{
+  display: inline-block;
+  background: #1C6EA4;
+  color: #FFFFFF;
+  padding: 2px 8px;
+  border-radius: 5px;
+}
+  
+</style>
+
+<!--
+Mains stytle below
+-->
+<!-- For non Mobile we can make the content go more to the right and thus larger and more readible -->
+
+<style>
+@media screen and (min-width: 800px)  { 
+body > div.root > div > div.page__viewport > div.grid.page__grid > div.page__main.js-page-main.has-aside.cell.cell--auto > div > div.page__content > div > div > div.col-main.cell.cell--auto
+ {
+     margin-left: -20%;
+ }
+}
+
+  <!--   center Tables-->
+  table  {
+  margin-left: auto;
+  margin-right: auto;
+  }
+  
+  table.paleBlueRows {
+  font-family: "Times New Roman", Times, serif;
+  border: 1px solid #FFFFFF;
+  height: 200px;
+  text-align: center;
+  border-collapse: collapse;
+  overflow: auto;
+  max-width: max-content;
+}
+table.paleBlueRows td, table.paleBlueRows th {
+  border: 1px solid #FFFFFF;
+<!--  padding: 3px 2px;-->
+}
+table.paleBlueRows tbody td {
+  font-size: 13px;
+}
+table.paleBlueRows tr:nth-child(even) {
+  background: #D0E4F5;
+}
+table.paleBlueRows thead {
+  background: #0B6FA4;
+  border-bottom: 5px solid #FFFFFF;
+}
+table.paleBlueRows thead th {
+  font-size: 17px;
+  font-weight: bold;
+  color: #FFFFFF;
+  text-align: center;
+  border-left: 2px solid #FFFFFF;
+}
+table.paleBlueRows thead th:first-child {
+  border-left: none;
+}
+
+table.paleBlueRows tfoot {
+  font-size: 14px;
+  font-weight: bold;
+  color: #333333;
+  background: #D0E4F5;
+  border-top: 3px solid #444444;
+}
+table.paleBlueRows tfoot td {
+  font-size: 14px;
+}
+ 
+
+</style>
+
+
+
+{%- include snippets/assign.html
+target = site.data.variables.default.page.sharing
+source0=layout.sharing source1=page.sharing -%}
+{%- assign _sharing = __return -%}
+
+<div class="layout--article">
+  {%- include article/top/custom.html -%}
+
+  <div class="article__content" itemprop="articleBody">{{ content }}</div>
+
+  {%- if _sharing -%}
+  <section class="article__sharing d-print-none">{%- include sharing.html -%}</section>
+  {%- endif -%}
+
+  <div class="d-print-none">
+    {%- include article-footer.html -%}
+    {%- include article-section-navigator.html -%}
+  </div>
+
+</div>
+
+<script>
+  {%- include scripts/article.js -%}
+</script>
