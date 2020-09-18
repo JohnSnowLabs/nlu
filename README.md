@@ -35,7 +35,8 @@ nlu.load('bert elmo albert xlnet glove use').predict('I love NLU! <3')
 
 ## What kind of models does NLU provide? 
 NLU provides everything a data scientist might want to wish for in one line of code!  
-- The 14+ of the latest NLP embeddings ( BERT, ELMO, ALBERT, XLNET, GLOVE, BIOBERT, USE) and different variations of them 
+- The 100+ of the latest NLP word embeddings ( BERT, ELMO, ALBERT, XLNET, GLOVE, BIOBERT, ELECTRA, COVIDBERT) and different variations of them 
+- The 10+ of the latest NLP sentence embeddings ( BERT, ELECTRA, USE) and different variations of them 
 - Generation of Sentence, Chunk and Document from these embeddings 
 - Language Classification of 20 languages 
 - 36 pretrained NER models 
@@ -55,21 +56,21 @@ NLU provides everything a data scientist might want to wish for in one line of c
 ## Classifiers trained on many different different datasets 
 Choose the right tool for the right task! Whether you analyze movies or twitter, NLU has the right model for you! 
 
-- trec6 classifier 
-- trec10 classifier 
-- spam classifier 
-- fake news classifier 
-- emotion classifier 
-- cyberbullying classifier 
-- sarcasm classifier 
-- sentiment classifier for movies 
-- IMDB Movie Sentiment classifier 
-- Twitter sentiment classifier 
+- 50 Class Questions Classifier
+- Spam Classifier 
+- Fake News Classifier 
+- Emotion Classifier 
+- Cyberbullying Classifier 
+- Sarcasm Classifier 
+- Toxic Classifer
+- E2E Classifier
+- Sentiment classifier pretrained on IMDB movie reviews
+- Sentiment classifier pretrained on twitter
 - NER pretrained on ONTO notes 
 - NER trainer on CONLL 
 - Language classifier for 20 languages on the wiki 20 lang dataset. 
 
-## Utilities for the Data Science NLU applications 
+## Data Pre-Processing and Text Cleaning 
 Working with text data can sometimes be quite a dirty Job. NLU helps you keep your hands clean by providing lots of components that take away data engineering intensive tasks. 
 
 - Datetime Matcher
