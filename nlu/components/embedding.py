@@ -35,6 +35,33 @@ class Embeddings(SparkNLUComponent):
                 from nlu import SparkNLPBert
                 if get_default : self.model =  SparkNLPBert.get_default_model()
                 else : self.model = SparkNLPBert.get_pretrained_model(sparknlp_reference,language)
+
+                if 'electra' in sparknlp_reference:
+                    self.model.setOutputCol("electra")
+                    self.component_info.spark_output_column_names.remove('bert')
+                    self.component_info.spark_output_column_names.append('electra')
+                    self.component_info.name ='electra'
+
+                if 'covidbert' in sparknlp_reference:
+                    self.model.setOutputCol("covidbert")
+                    self.component_info.spark_output_column_names.remove('bert')
+                    self.component_info.spark_output_column_names.append('covidbert')
+                    self.component_info.name ='covidbert'
+
+                if 'biobert' in sparknlp_reference:
+                    self.model.setOutputCol("biobert")
+                    self.component_info.spark_output_column_names.remove('bert')
+                    self.component_info.spark_output_column_names.append('biobert')
+                    self.component_info.name ='biobert'
+
+
+                if 'lablse' in sparknlp_reference:
+                    self.model.setOutputCol("lablse")
+                    self.component_info.spark_output_column_names.remove('bert')
+                    self.component_info.spark_output_column_names.append('lablse')
+                    self.component_info.name ='lablse'
+
+
             elif 'elmo' in component_name  :
                 from nlu import SparkNLPElmo
                 if get_default : self.model = SparkNLPElmo.get_default_model()

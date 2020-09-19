@@ -127,16 +127,16 @@ def load(request, verbose = False):
     try :         
         components_requested = request.split(' ')
         pipe = NLUPipeline()
-        for component in components_requested:
-            component.replace(' ','')
-            if len(component) <=1 : continue # white space
+        for nlu_reference in components_requested:
+            nlu_reference.replace(' ','')
+            if len(nlu_reference) <=1 : continue # white space
             # if component == ' ' : continue
-            nlu_component = parse_component_data_from_name_query(component)
+            nlu_component = parse_component_data_from_name_query(nlu_reference)
             if type(nlu_component) == type([]): # if we get a list of components, then the NLU reference is a pipeline, we do not need to check order
                 # lists are parsed down to multiple components
-                for c in nlu_component: pipe.add(c)
+                for c in nlu_component: pipe.add(c,nlu_reference)
             else:
-                pipe.add(nlu_component)
+                pipe.add(nlu_component,nlu_reference)
                 pipe = pipeline.PipelineQueryVerifier.check_and_fix_nlu_pipeline(pipe)
             
     except :

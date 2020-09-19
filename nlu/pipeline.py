@@ -30,14 +30,24 @@ class BasePipe(dict):
         self.spark_non_light_transformer_pipe = None
         self.pipe_components = []                                         # orderd list of nlu_component objects
         self.output_datatype = 'pandas' # What data type should be returned after predict either spark, pandas, modin, numpy, string or array 
-    def add(self, component, component_name="auto_generate"):
+    def add(self, component, nlu_reference="auto_generated"):
+        '''
+
+        :param component:
+        :param nlu_reference: NLU references, passed for components that are used specified and not automatically generate by NLU
+        :return:
+        '''
         
         self.pipe_components.append(component)
         
         # Spark NLP model reference shortcut
         name = component.component_info.name.replace(' ','')
-        if name not in self.keys() : self[name]=component.model 
-        else : self[name]=component.model
+        if name not in self.keys() :
+            component.nlu_reference=nlu_reference
+            self[name]=component.model
+        else :
+            component.nlu_reference=nlu_reference
+            self[name+'@'+nlu_reference]=component.model
         # self.component_execution_plan.update()
 
 class NLUPipeline(BasePipe):
