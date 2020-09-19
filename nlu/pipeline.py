@@ -46,8 +46,14 @@ class BasePipe(dict):
             component.nlu_reference=nlu_reference
             self[name]=component.model
         else :
+            # this case is when multiple bert models are loaded, should only happen for components with 1 output, or this can cause unexpected behaivour
+            new_output_column = name+'@'+nlu_reference
+            new_output_column = new_output_column.replace('.','_')
             component.nlu_reference=nlu_reference
-            self[name+'@'+nlu_reference]=component.model
+            component.model.setOutputCol(new_output_column)
+            component.component_info.spark_output_column_names = [new_output_column]
+            component.component_info.name = new_output_column
+            self[new_output_column]=component.model
         # self.component_execution_plan.update()
 
 class NLUPipeline(BasePipe):

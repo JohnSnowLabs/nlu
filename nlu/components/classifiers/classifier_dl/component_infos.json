@@ -1,1 +1,27 @@
-{"name": "classifier_dl", "output_level": "sentence", "description": "todo", "outputs": ["category"], "inputs": ["sentence_embeddings", "label"], "type": "classifier", "file_dependencies": {}, "spark_input_column_names": ["sentence_embeddings", "label"], "spark_output_column_names": ["category"], "provider": "sparknlp", "license": "open source", "computation_context": "spark", "output_context": "spark"}
+{
+  "name":"classifier_dl",
+  "output_level":"sentence",
+  "description":"todo",
+  "outputs":[
+    "category"
+  ],
+  "inputs":[
+    "sentence_embeddings",
+    "label"
+  ],
+  "type":"classifier",
+  "file_dependencies":{
+
+  },
+  "spark_input_column_names":[
+    "sentence_embeddings",
+    "label"
+  ],
+  "spark_output_column_names":[
+    "category"
+  ],
+  "provider":"sparknlp",
+  "license":"open source",
+  "computation_context":"spark",
+  "output_context":"spark"
+}

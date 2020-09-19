@@ -209,6 +209,8 @@ class NameSpace():
             'en.spell.dl': 'check_spelling_dl',
             'en.spell.context': 'check_spelling_dl',
             'en.sentiment': 'analyze_sentiment',
+            'en.classify.sentiment': 'analyze_sentiment',
+
             'en.sentiment.imdb': 'analyze_sentimentdl_use_imdb',
             'en.sentiment.imdb.use': 'analyze_sentimentdl_use_imdb',
             'en.sentiment.twitter.use': 'analyze_sentimentdl_use_twitter',
@@ -420,6 +422,7 @@ class NameSpace():
 
             'en.classify.trec6.use': 'classifierdl_use_trec6',
             'en.classify.trec50.use': 'classifierdl_use_trec50',
+            'en.classify.question': 'classifierdl_use_trec50',
             'en.classify.questions': 'classifierdl_use_trec50',
 
             'en.classify.spam.use': 'classifierdl_use_spam',

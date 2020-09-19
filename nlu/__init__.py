@@ -428,7 +428,7 @@ def construct_component_from_identifier(language, component_type, dataset, compo
             if component_type == 'embed' and dataset != '' :
                 return Embeddings(component_name=dataset, language=language, get_default=False,
                                   sparknlp_reference=sparknlp_reference)
-            elif component_type == 'embed' :  return Embeddings() #default
+            elif component_type == 'embed' :  return Embeddings(component_name=sparknlp_reference) #default
             else : return Embeddings(component_name=component_type, language=language, get_default=False,
                               sparknlp_reference=sparknlp_reference)
         elif component_type == 'classify' or  'e2e' in sparknlp_reference:
