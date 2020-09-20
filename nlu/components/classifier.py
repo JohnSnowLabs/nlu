@@ -44,6 +44,13 @@ class Classifier(SparkNLUComponent):
                 if get_default : self.model = MultiClassifier.get_default_model()
                 else : self.model = MultiClassifier.get_pretrained_model(sparknlp_reference,language)
 
+                if 'toxic' in sparknlp_reference:
+                    self.model.setOutputCol("toxic")
+                    self.component_info.spark_output_column_names.remove('category')
+                    self.component_info.spark_output_column_names.append('toxic')
+                    self.component_info.name ='toxic'
+
+
                 if 'e2e' in sparknlp_reference:
                     self.model.setOutputCol("e2e")
                     self.component_info.spark_output_column_names.remove('category')
@@ -56,11 +63,6 @@ class Classifier(SparkNLUComponent):
                 else : self.model = ClassifierDl.get_pretrained_model(sparknlp_reference,language)
 
 
-                if 'toxic' in sparknlp_reference:
-                    self.model.setOutputCol("toxic")
-                    self.component_info.spark_output_column_names.remove('category')
-                    self.component_info.spark_output_column_names.append('toxic')
-                    self.component_info.name ='toxic'
 
                 if 'emotion' in sparknlp_reference:
                     self.model.setOutputCol("emotion")
@@ -101,6 +103,11 @@ class Classifier(SparkNLUComponent):
                     self.component_info.spark_output_column_names.append('cyberbullying')
                     self.component_info.name ='cyberbullying'
 
+                if 'cyberbullying' in sparknlp_reference:
+                    self.model.setOutputCol("cyberbullying")
+                    self.component_info.spark_output_column_names.remove('category')
+                    self.component_info.spark_output_column_names.append('cyberbullying')
+                    self.component_info.name ='cyberbullying'
 
 
             elif 'language_detector' in component_name:
