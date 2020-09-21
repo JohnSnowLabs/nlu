@@ -51,55 +51,84 @@ data:
 
 
 
-## Named Entity Recognition (NER)
+
+## Named Entity Recognition (NER) 18 class
+[NER ONTO example](https://colab.research.google.com/drive/1_sgbJV3dYPZ_Q7acCgKWgqZkWcKAfg79?usp=sharing)
+
+
 ```python
 nlu.load('ner').predict('Angela Merkel from Germany and the American Donald Trump dont share many opinions')
 ```
 
+{:.steelBlueCols}
+|embeddings | 	ner_tag | 	entities |
+|-----------|------------|------------|
+|[[-0.563759982585907, 0.26958999037742615, 0.3...	| PER| 	Angela Merkel |
+|[[-0.563759982585907, 0.26958999037742615, 0.3...	| LOC| 	Germany |
+|[[-0.563759982585907, 0.26958999037742615, 0.3...	| MISC| 	American |
+|[[-0.563759982585907, 0.26958999037742615, 0.3...	| PER| 	Donald Trump |
+
+
+## Named Entity Recognition (NER) 5 Class
+[NER CONLL example](https://colab.research.google.com/drive/1CYzHfQyFCdvIOVO2Z5aggVI9c0hDEOrw?usp=sharing)
+
+
+```python
+nlu.load('ner.conll').predict('Angela Merkel from Germany and the American Donald Trump dont share many opinions')
+```
+
 
 {:.steelBlueCols}
-|word_embeddings |token |ner   |id    |entities|
-|--------------------|-------|-----|----|-------|
-|[-0.563759982585907, 0.26958999037742615, 0.35...]|   Angela|    B-PER| 1| [Angela Merkel, Germany, American, Donald Trump]|
-|[-1.000499963760376, 0.41997000575065613, 0.59...]|   Merkel|    I-PER| 1| [Angela Merkel, Germany, American, Donald Trump]|
-|[0.30730998516082764, 0.24737000465393066, 0.6...]|   from|  O| 1| [Angela Merkel, Germany, American, Donald Trump]|
-|[0.6208900213241577, 0.7105100154876709, 0.495...]|   Germany|   B-LOC|     1| [Angela Merkel, Germany, American, Donald Trump] |
-|[-0.07195299863815308, 0.23127000033855438, 0....]|   and|   O| 1| [Angela Merkel, Germany, American, Donald Trump]|
-|[-0.03819400072097778, -0.24487000703811646, 0...]|   the|   O| 1| [Angela Merkel, Germany, American, Donald Trump]|
-|[0.38666000962257385, 0.6482700109481812, 0.72...]|   American|  B-MISC|    1| [Angela Merkel, Germany, American, Donald Trump]|
-|[-0.5496799945831299, -0.488319993019104, 0.59...]|   Donald|    B-PER| 1| [Angela Merkel, Germany, American, Donald Trump]|
-|[-0.15730999410152435, -0.7550299763679504, 0....]|   Trump|     I-PER| 1| [Angela Merkel, Germany, American, Donald Trump]|
-|[0.0024119000881910324, 0.5014399886131287, 0....]|   dont|  O|     1| [Angela Merkel, Germany, American, Donald Trump]|
-|[0.5208799839019775, 0.761210024356842, 0.2608...]|   share|     O|     1| [Angela Merkel, Germany, American, Donald Trump]|
-|[-0.3291400074958801, 0.8288699984550476, -0.1...]|   many|  O|     1| [Angela Merkel, Germany, American, Donald Trump]|
-|[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, ...]|   opinions|     O| 1| [Angela Merkel, Germany, American, Donald Trump]|
+|embeddings| 	ner_tag| 	entities| 
+|----------|-----------|-------------|
+|[[-0.563759982585907, 0.26958999037742615, 0.3...	|PER |	Angela Merkel | 
+|[[-0.563759982585907, 0.26958999037742615, 0.3...	|LOC |	Germany | 
+|[[-0.563759982585907, 0.26958999037742615, 0.3...	|MISC |	American | 
+|[[-0.563759982585907, 0.26958999037742615, 0.3...	|PER |	Donald Trump | 
+
+
+
+
+
 
 ## Part of speech  (POS)
+POS Classifies each token with one of the following tags 
+
+[Part of Speech example](https://colab.research.google.com/drive/1tW833T3HS8F5Lvn6LgeDd5LW5226syKN?usp=sharing)
+
+
+
+
 ```python
 nlu.load('pos').predict('Part of speech assigns each token in a sentence a grammatical label')
 ```
 
 {:.steelBlueCols}
 
-|token |pos    | id|
-|------|-----|-----|
-|Part|         NN|     1|
-|of|           IN|     1|
-|speech|       NN|     1|
-|assigns|      NNS| 1|
-|each|         DT|     1|
-|token|            NN|     1|
-|in|           IN|     1|
-|a |           DT|     1|
-|sentence|     NN|     1|
-|a |           DT|     1|
-|grammatical|  JJ|     1|
-|label          |NN| 1|
+|token |pos    |
+|------|-----|
+|Part|         NN|     
+|of|           IN|     
+|speech|       NN|     
+|assigns|      NNS|    
+|each|         DT|     
+|token|            NN| 
+|in|           IN|     
+|a |           DT|     
+|sentence|     NN|     
+|a |           DT|     
+|grammatical|  JJ|     
+|label          |NN|   
 
 
 
 
 ## Emotion Classifier
+[Emotion Classifier example](https://colab.research.google.com/drive/1eBf3MN_O8uJnimK6GeweksXl6JHYKzOT?usp=sharing)         
+Classifies text as one of 4 categories (joy, fear, surprise, sadness)
+
+
+
 ```python
 nlu.load('emotion').predict('I love NLU!')
 ```
@@ -107,79 +136,82 @@ nlu.load('emotion').predict('I love NLU!')
 {:.steelBlueCols}
 
 
-|sentence_embeddings|  category_confidence|   sentence|  category|  id|
-|--------------------|---------------------|------------|------------|-----|
-|[0.027570432052016258, -0.052647676318883896, ...]    |0.976017  |I love NLU!   |joy   |1|
+|sentence_embeddings|  emotion_confidence|   sentence|  emotion|
+|--------------------|---------------------|------------|------------|
+|[0.027570432052016258, -0.052647676318883896, ...]    |0.976017  |I love NLU!   |joy   |
 
 ## Sentiment Classifier
+[Sentiment Classifier Example](https://colab.research.google.com/drive/1k5x1zxnG4bBkmYAc-bc63sMA4-oQ6-dP?usp=sharing)
+
+Classifies binary sentiment for every sentence, either positive or negative.      
+
 ```python
 nlu.load('sentiment').predict("I hate this guy Sami")
 ```
 
 {:.steelBlueCols}
-|sentiment_confidence  |SENTENCE  |sentiment |id    |checked |
-|-----------|----------------------|------------|---|---------|
-|0.5778 |  I hate this guy Sami   | negative |   1 |    [I, hate, this, guy, Sami] |
+|sentiment_confidence  |sentence  |sentiment |checked |
+|-----------|----------------------|---------|---------|
+|0.5778 |  I hate this guy Sami   | negative |    [I, hate, this, guy, Sami] |
 
 
-## Question Classifier 6 class
-
-```python
-nlu.load('en.classify.trec6').predict('Where is the next food store?')
-```
-
-{:.steelBlueCols}
-| sentence_embeddings|	category_confidence| 	sentence| 	category| 	id| 
-|-------------------|----------------------|------------|-----------|-----|
-|[-0.05699703469872475, 0.039651867002248764, -...]|	1.000000 | 	Where is the next food store? | 	LOC	|1|
 
 ## Question Classifier 50 class
+[50 Class Questions Classifier example](https://colab.research.google.com/drive/1OwlmLzwkcJKhuz__RUH74O9HqFZutxzS?usp=sharing)        
+
+Classify between 50 different types of questions trained on Trec50     
+When setting predict(meta=True) nlu will output the probabilities for all other 49 question classes.
 
 ```python
 nlu.load('en.classify.trec50').predict('How expensive is the Watch?')
 ```
 
 {:.steelBlueCols}
-|	sentence_embeddings| 	category_confidence| 	sentence| 	category| 	id|
-|----------------------|----------------------|-------------|----------|------|
-|[0.051809534430503845, 0.03128402680158615, -0...]|	0.919436 | 	How expensive is the watch?| 	NUM_count	|1|
+|	sentence_embeddings| 	question_confidence| 	sentence| 	question|
+|----------------------|----------------------|-------------|----------|
+|[0.051809534430503845, 0.03128402680158615, -0...]|	0.919436 | 	How expensive is the watch?| 	NUM_count	|
 
 
 ## Fake News Classifier
+[Fake News Classifier example](https://colab.research.google.com/drive/1k5x1zxnG4bBkmYAc-bc63sMA4-oQ6-dP?usp=sharing)
 
 ```python
 nlu.load('en.classify.fakenews').predict('Unicorns have been sighted on Mars!')
 ```
 
 {:.steelBlueCols}
-|sentence_embeddings|  category_confidence|   sentence|  category|  id|
-|------------------|-----------------------|------------|-----------|------|
-|[-0.01756167598068714, 0.015006818808615208, -...]    | 1.000000 | Unicorns have been sighted on Mars!  |FAKE  |1|
+|sentence_embeddings|  fake_confidence|   sentence|  fake|
+|------------------|-----------------------|------------|-----------|
+|[-0.01756167598068714, 0.015006818808615208, -...]    | 1.000000 | Unicorns have been sighted on Mars!  |FAKE  |
 
 
 ## Cyberbullying Classifier
+[Cyberbullying Classifier example](https://colab.research.google.com/drive/1OSkiXGEpKlm9HWDoVb42uLNQQgb7nqNZ?usp=sharing)
+
 Classifies sexism and racism
 ```python
 nlu.load('en.classify.cyberbullying').predict('Women belong in the kitchen.') # sorry we really don't mean it
 ```
 
 {:.steelBlueCols}
-|sentence_embeddings| 	category_confidence| 	sentence| 	category| 	id|
-|-------------------|----------------------|------------|-----------|------|
-|[-0.054944973438978195, -0.022223370149731636,...]|	0.999998 	| Women belong in the kitchen. | 	sexism| 	1  | 
+|sentence_embeddings| 	cyberbullying_confidence| 	sentence| 	cyberbullying|
+|-------------------|----------------------|------------|-----------|
+|[-0.054944973438978195, -0.022223370149731636,...]|	0.999998 	| Women belong in the kitchen. | 	sexism|
 
 ## Spam Classifier
+[Spam Classifier example](https://colab.research.google.com/drive/1u-8Fs3Etz07bFNx0CDV_le3Xz73VbK0z?usp=sharing)
 
 ```python
 nlu.load('en.classify.spam').predict('Please sign up for this FREE membership it costs $$NO MONEY$$ just your mobile number!')
 ```
 
 {:.steelBlueCols}
-|sentence_embeddings|  category_confidence|   sentence|  category |     id |
-|-------------------|----------------------|------------|-----------|-------|
-|[0.008322705514729023, 0.009957313537597656, 0...]    | 1.000000 | Please sign up for this FREE membership it cos...    |spam  |1 |
+|sentence_embeddings|  spam_confidence|   sentence| spam |
+|-------------------|----------------------|------------|-----------|
+|[0.008322705514729023, 0.009957313537597656, 0...]    | 1.000000 | Please sign up for this FREE membership it cos...    |spam  |
 
 ## Sarcasm Classifier
+[Sarcasm Classifier example](https://colab.research.google.com/drive/1XffsjlRp9wxZgxyYvEF9bG2CiX-pjBEw?usp=sharing)
 
 ```python
 nlu.load('en.classify.sarcasm').predict('gotta love the teachers who give exams on the day after halloween')
@@ -187,374 +219,491 @@ nlu.load('en.classify.sarcasm').predict('gotta love the teachers who give exams 
 
 
 {:.steelBlueCols}
-| sentence_embeddings |    category_confidence  |     sentence |     category  |    id|
-|---------------------|--------------------------|-----------|-----------|---------|
-|[-0.03146284446120262, 0.04071342945098877, 0....] | 0.999985 | gotta love the teachers who give exams on the...    | sarcasm  | 1 |
+| sentence_embeddings |    sarcasm_confidence  |     sentence |     sarcasm  |
+|---------------------|--------------------------|-----------|-----------|
+|[-0.03146284446120262, 0.04071342945098877, 0....] | 0.999985 | gotta love the teachers who give exams on the...    | sarcasm  |
 
 
 ## IMDB Movie Sentiment Classifier
+[Movie Review Sentiment Classifier example](https://colab.research.google.com/drive/1k5x1zxnG4bBkmYAc-bc63sMA4-oQ6-dP?usp=sharing)
+
 ```python
 nlu.load('en.sentiment.imdb').predict('The Matrix was a pretty good movie')
 ```
 
 {:.steelBlueCols}
-|document |    id |   sentence_embeddings|   sentiment_negative|    sentiment_negative|    sentiment_positive|    sentiment |
+|document |   sentence_embeddings|   sentiment_negative|    sentiment_negative|    sentiment_positive|    sentiment |
 |-------|-----|-------------------------|---------------------|----------------------|-------------------------|-------------|
-|The Matrix was a pretty good movie    |1 |   [[0.04629608988761902, -0.020867452025413513, ...  ]| [2.7235753918830596e-07]     | [2.7235753918830596e-07] |  [0.9999997615814209]|  [positive] |
+|The Matrix was a pretty good movie    | [[0.04629608988761902, -0.020867452025413513, ...  ]| [2.7235753918830596e-07]     | [2.7235753918830596e-07] |  [0.9999997615814209]|  [positive] |
 
 ## Twitter Sentiment Classifier
+[Twitter Sentiment Classifier Example](https://colab.research.google.com/drive/1H1Gekn2qzXzOf5rrT8LmHmmuoOGsiu8m?usp=sharing)
+
 ```python
 nlu.load('en.sentiment.twitter').predict('@elonmusk Tesla stock price is too high imo')
 ```
 
 {:.steelBlueCols}
-|document |    id |   sentence_embeddings |  sentiment_negative |   sentiment_negative|    sentiment_positive |   sentiment|
+|document |   sentence_embeddings |  sentiment_negative |   sentiment_negative|    sentiment_positive |   sentiment|
 |--------|---------|-----------------------|-----------------------|---------------------|-------------------------|-------------|
-| @elonmusk Tesla stock price is too high imo  | 1    | [[0.08604438602924347, 0.04703635722398758, -0...]|  [1.0] |    [1.0]  | [1.692714735043349e-36]  | [negative]|
+| @elonmusk Tesla stock price is too high imo  |  [[0.08604438602924347, 0.04703635722398758, -0...]|  [1.0] |    [1.0]  | [1.692714735043349e-36]  | [negative]|
 
 
 ## Language Classifier
+[Languages Classifier example](https://colab.research.google.com/drive/1CzMfRFJZsj4j1fhormDQdHOIV5IybC57?usp=sharing)         
+Classifies the following 20 languages :        
+ Bulgarian, Czech, German, Greek, English, Spanish, Finnish, French, Croatian, Hungarian, Italy, Norwegian, Polish, Portuguese, Romanian, Russian, Slovak, Swedish, Turkish, and Ukrainian
+
 ```python
 nlu.load('lang').predict(['NLU is an open-source text processing library for advanced natural language processing for the Python.','NLU est une bibliothèque de traitement de texte open source pour le traitement avancé du langage naturel pour les langages de programmation Python.'])
 ```
 
 {:.steelBlueCols}
+|language_confidence|  document|  language|
+|------------------|-----------|-------------|
+|0.985407  |NLU is an open-source text processing library ...]|   en|    
+|0.999822  |NLU est une bibliothèque de traitement de text...]|   fr|    
 
-|language_confidence|  document|  language|  id|
-|------------------|-----------|-------------|------|
-|0.985407  |NLU is an open-source text processing library ...]|   en|    0|
-|0.999822  |NLU est une bibliothèque de traitement de text...]|   fr|    1|
+## E2E Classifier
+[E2E Classifier example](https://colab.research.google.com/drive/1OSkiXGEpKlm9HWDoVb42uLNQQgb7nqNZ?usp=sharing)     
 
+This is a multi class classifier trained on the E2E [dataset for Natural language generation](http://www.macs.hw.ac.uk/InteractionLab/E2E/#)
+
+```python
+nlu.load('e2e').predict('E2E is a dataset for training generative models')
+```
+
+{:.steelBlueCols}
+|sentence_embeddings | 	e2e | 	e2e_confidence| 	sentence|
+|--------------------|------|-----------------|--------------|
+|[0.021445205435156822, -0.039284929633140564, ...,]|	customer rating[high]| 	0.703248 | 	E2E is a dataset for training generative models | 
+|None|	name[The Waterman]	| 0.703248	|None|
+|None|	eatType[restaurant]	| 0.703248	|None|
+|None|	priceRange[£20-25]	| 0.703248	|None|
+|None|	familyFriendly[no]	| 0.703248	|None|
+|None|	familyFriendly[yes]	| 0.703248	|None|
+
+##  Toxic Classifier
+[Toxic Text Classifier example](https://colab.research.google.com/drive/1QRG5ZtAvoJAMZ8ytFMfXj_W8ogdeRi9m?usp=sharing)
+```python
+nlu.load('en.classify.toxic').predict('You are to stupid')
+```
+
+{:.steelBlueCols}
+|	toxic_confidence | 	toxic | 	sentence_embeddings| 	document| 
+|-------------------|---------|------------------------|------------|
+| 0.978273 | 	[toxic,insult]	| [[-0.03398505970835686, 0.0007853527786210179,...,]	You are to stupid|
 
 
 ## Word Embeddings Bert
+[BERT Word Embeddings example](https://colab.research.google.com/drive/1Rg1vdSeq6sURc48RV8lpS47ja0bYwQmt?usp=sharing)
+
 ```python
 nlu.load('bert').predict('NLU offers the latest embeddings in one line ')
 ```
 
 {:.steelBlueCols}
-|token         |bert_embeddings                                         |id|
-|--------------|--------------------------------------------------------|----|
-|  NLU        |   [0.3253086805343628, -0.574441134929657, -0.08...] |1|
-|  offers     |   [-0.6660361886024475, -0.1494743824005127, -0...]  |1|
-|  the        |   [-0.6587662696838379, 0.3323703110218048, 0.16...] |1|
-|  latest     |   [0.7552685737609863, 0.17207926511764526, 1.35...] |1|
-|  embeddings |   [-0.09838500618934631, -1.1448147296905518, -1...] |1|
-|  in         |   [-0.4635896384716034, 0.38369956612586975, 0.0...] |1|
-|  one        |   [0.26821616291999817, 0.7025910019874573, 0.15...] |1|
-|  line       |   [-0.31930840015411377, -0.48271292448043823, 0...] |1|
+|token         |bert_embeddings                                         |
+|--------------|--------------------------------------------------------|
+|  NLU        |   [0.3253086805343628, -0.574441134929657, -0.08...] |
+|  offers     |   [-0.6660361886024475, -0.1494743824005127, -0...]  |
+|  the        |   [-0.6587662696838379, 0.3323703110218048, 0.16...] |
+|  latest     |   [0.7552685737609863, 0.17207926511764526, 1.35...] |
+|  embeddings |   [-0.09838500618934631, -1.1448147296905518, -1...] |
+|  in         |   [-0.4635896384716034, 0.38369956612586975, 0.0...] |
+|  one        |   [0.26821616291999817, 0.7025910019874573, 0.15...] |
+|  line       |   [-0.31930840015411377, -0.48271292448043823, 0...] |
 
-## Word Embeddings Biobert
+## Word Embeddings Biobert 
+[BIOBERT Word Embeddings example](https://colab.research.google.com/drive/1llANd-XGD8vkGNMcqTi_8Dr_Ys6cr83W?usp=sharing)         
+Bert model pretrained on Bio dataset
+
 ```python
 nlu.load('biobert').predict('Biobert was pretrained on a medical dataset')
 ```
 
 {:.steelBlueCols}
-|token         |bert_embeddings                                         |id|
-|--------------|--------------------------------------------------------|----|
-|  NLU        |   [0.3253086805343628, -0.574441134929657, -0.08...] |1|
-|  offers     |   [-0.6660361886024475, -0.1494743824005127, -0...]  |1|
-|  the        |   [-0.6587662696838379, 0.3323703110218048, 0.16...] |1|
-|  latest     |   [0.7552685737609863, 0.17207926511764526, 1.35...] |1|
-|  embeddings |   [-0.09838500618934631, -1.1448147296905518, -1...] |1|
-|  in         |   [-0.4635896384716034, 0.38369956612586975, 0.0...] |1|
-|  one        |   [0.26821616291999817, 0.7025910019874573, 0.15...] |1|
-|  line       |   [-0.31930840015411377, -0.48271292448043823, 0...] |1|
+|token         |biobert_embeddings                                         |
+|--------------|--------------------------------------------------------|
+|  NLU        |   [0.3253086805343628, -0.574441134929657, -0.08...] |
+|  offers     |   [-0.6660361886024475, -0.1494743824005127, -0...]  |
+|  the        |   [-0.6587662696838379, 0.3323703110218048, 0.16...] |
+|  latest     |   [0.7552685737609863, 0.17207926511764526, 1.35...] |
+|  embeddings |   [-0.09838500618934631, -1.1448147296905518, -1...] |
+|  in         |   [-0.4635896384716034, 0.38369956612586975, 0.0...] |
+|  one        |   [0.26821616291999817, 0.7025910019874573, 0.15...] |
+|  line       |   [-0.31930840015411377, -0.48271292448043823, 0...] |
+
+
+
+## Word Embeddings Covidbert
+[COVIDBERT Word Embeddings](https://colab.research.google.com/drive/1Yzc-GuNQyeWewJh5USTN7PbbcJvd-D7s?usp=sharing)          
+Bert model pretrained on COVID dataset
+
+```python
+nlu.load('covidbert').predict('Albert uses a collection of many berts to generate embeddings')
+```
+
+{:.steelBlueCols}
+|	token | 	covid_embeddings| 
+|---------|--------------------|
+|He| 	[-1.0551927089691162, -1.534174919128418, 1.29...,] | 
+|was| 	[-0.14796507358551025, -1.3928604125976562, 0....,] | 
+|suprised| 	[1.0647121667861938, -0.3664901852607727, 0.54...,] | 
+|by| 	[-0.15271103382110596, -0.6812090277671814, -0...,] | 
+|the| 	[-0.45744237303733826, -1.4266574382781982, -0...,] | 
+|diversity| 	[-0.05339818447828293, -0.5118572115898132, 0....,] | 
+|of| 	[-0.2971905767917633, -1.0936176776885986, -0....,] | 
+|NLU| 	[-0.9573594331741333, -0.18001675605773926, -1...,] | 
 
 
 
 ## Word Embeddings Albert
+[ALBERT Word Embeddings examle](https://colab.research.google.com/drive/18yd9pDoPkde79boTbAC8Xd03ROKisPsn?usp=sharing)
+
 ```python
 nlu.load('albert').predict('Albert uses a collection of many berts to generate embeddings')
 ```
 
 {:.steelBlueCols}
-|token |   albert_embeddings |    id|
-|-----|----------------------|---------|
-| Albert |         [-0.08257609605789185, -0.8017427325248718, 1...]   |1|
-| uses |       [0.8256351947784424, -1.5144840478897095, 0.90...]  |1|
-| a |          [-0.22089454531669617, -0.24295514822006226, 3...]  |1|
-| collection |     [-0.2136894017457962, -0.8225528597831726, -0...]   |1|
-| of |         [1.7623294591903687, -1.113651156425476, 0.800...]  |1|
-| many |       [0.6415284872055054, -0.04533941298723221, 1.9...]  |1|
-| berts |      [-0.5591965317726135, -1.1773797273635864, -0...]   |1|
-| to |             [1.0956681966781616, -1.4180747270584106, -0.2...]  |1|
-| generate |   [-0.6759272813796997, -1.3546931743621826, 1.6...]  |1|
-| embeddings |     [-0.0035803020000457764, -0.35928264260292053,...]  |1|
+|token |   albert_embeddings |
+|-----|----------------------|
+| Albert |         [-0.08257609605789185, -0.8017427325248718, 1...]   |
+| uses |       [0.8256351947784424, -1.5144840478897095, 0.90...]  |
+| a |          [-0.22089454531669617, -0.24295514822006226, 3...]  |
+| collection |     [-0.2136894017457962, -0.8225528597831726, -0...]   |
+| of |         [1.7623294591903687, -1.113651156425476, 0.800...]  |
+| many |       [0.6415284872055054, -0.04533941298723221, 1.9...]  |
+| berts |      [-0.5591965317726135, -1.1773797273635864, -0...]   |
+| to |             [1.0956681966781616, -1.4180747270584106, -0.2...]  |
+| generate |   [-0.6759272813796997, -1.3546931743621826, 1.6...]  |
+| embeddings |     [-0.0035803020000457764, -0.35928264260292053,...]  |
+
+## Electra Embeddings
+[ELECTRA Word Embeddings example](https://colab.research.google.com/drive/1FueGEaOj2JkbqHzdmxwKrNMHzgVt4baE?usp=sharing)
+
+```python
+nlu.load('electra').predict('He was suprised by the diversity of NLU')
+```
+
+
+{:.steelBlueCols}
+|token | 	electra_embeddings | 
+|------|---------------|
+|He | 	[0.29674115777015686, -0.21371933817863464, -0...,]|
+|was | 	[-0.4278327524662018, -0.5352768898010254, -0....,]|
+|suprised | 	[-0.3090559244155884, 0.8737565279006958, -1.0...,]|
+|by | 	[-0.07821277529001236, 0.13081523776054382, 0....,]|
+|the | 	[0.5462881922721863, 0.0683358758687973, -0.41...,]|
+|diversity | 	[0.1381239891052246, 0.2956242859363556, 0.250...,]|
+|of | 	[-0.5667567253112793, -0.3955455720424652, -0....,]|
+|NLU | 	[0.5597224831581116, -0.703249454498291, -1.08...,]|
 
 ## Word Embeddings Elmo
+[ELMO Word Embeddings example](https://colab.research.google.com/drive/1TtNYB9z0yH8d1ZjfxkH0TVxQ2O_iOYVV?usp=sharing)
+
 ```python
 nlu.load('elmo').predict('Elmo was trained on Left to right masked to learn its embeddings')
 ```
 
 {:.steelBlueCols}
-|token|    elmo_embeddings     | id|
-|------|-----------------|----|
-|Elmo |    [0.6083735227584839, 0.20089012384414673, 0.42...]  |1|
-|was | [0.2980785369873047, -0.07382500916719437, -0...]   |1|
-|trained | [-0.39923471212387085, 0.17155063152313232, 0...]   |1|
-|on |  [0.04337821900844574, 0.1392083466053009, -0.4...]  |1|
-|Left |    [0.4468783736228943, -0.623046875, 0.771505534...]  |1|
-|to |  [-0.18209676444530487, 0.03812692314386368, 0...]   |1|
-|right |   [0.23305709660053253, -0.6459438800811768, 0.5...]  |1|
-|masked |  [-0.7243442535400391, 0.10247116535902023, 0.1...]  |1|
-|to |  [-0.18209676444530487, 0.03812692314386368, 0...]   |1|
-|learn |   [1.2942464351654053, 0.7376189231872559, -0.58...]  |1|
-|its | [0.055951207876205444, 0.19218483567237854, -0...]  |1|
-|embeddings |  [-1.31377112865448, 0.7727609872817993, 0.6748...]  |1|
+|token|    elmo_embeddings     |
+|------|-----------------|
+|Elmo |    [0.6083735227584839, 0.20089012384414673, 0.42...]  |
+|was | [0.2980785369873047, -0.07382500916719437, -0...]   |
+|trained | [-0.39923471212387085, 0.17155063152313232, 0...]   |
+|on |  [0.04337821900844574, 0.1392083466053009, -0.4...]  |
+|Left |    [0.4468783736228943, -0.623046875, 0.771505534...]  |
+|to |  [-0.18209676444530487, 0.03812692314386368, 0...]   |
+|right |   [0.23305709660053253, -0.6459438800811768, 0.5...]  |
+|masked |  [-0.7243442535400391, 0.10247116535902023, 0.1...]  |
+|to |  [-0.18209676444530487, 0.03812692314386368, 0...]   |
+|learn |   [1.2942464351654053, 0.7376189231872559, -0.58...]  |
+|its | [0.055951207876205444, 0.19218483567237854, -0...]  |
+|embeddings |  [-1.31377112865448, 0.7727609872817993, 0.6748...]  |
 
 
 ## Word Embeddings Xlnet
+[XLNET Word Embeddings example](https://colab.research.google.com/drive/1C9T29QA00yjLuJ1yEMTbjUQMpUv35pHb?usp=sharing)
 ```python
 nlu.load('xlnet').predict('XLNET computes contextualized word representations using combination of Autoregressive Language Model and Permutation Language Model')
 ```
 
 {:.steelBlueCols}
-| token    | xlnet_embeddings |id|
-|------|--------------------|---|
-|XLNET |   [-0.02719488926231861, -1.7693557739257812, -0...] |1|
-|computes |    [-1.8262947797775269, 0.8455266356468201, 0.57...] |1|
-|contextualized |  [2.8446314334869385, -0.3564329445362091, -2.1...] |1|
-|word |    [-0.6143839359283447, -1.7368144989013672, -0...]  |1|
-|representations |     [-0.30445945262908936, -1.2129613161087036, 0...]  |1|
-|using |   [0.07423821836709976, -0.02561005763709545, -0...] |1|
-|combination |     [-0.5387097597122192, -1.1827564239501953, 0.5...] |1|
-|of |  [-1.403516411781311, 0.3108177185058594, -0.32...] |1|
-|Autoregressive |  [-1.0869172811508179, 0.7135171890258789, -0.2...] |1|
-|Language |    [-0.33215752243995667, -1.4108021259307861, -0...] |1|
-|Model |   [-1.6097160577774048, -0.2548254430294037, 0.0...] |1|
-|and |     [0.7884324789047241, -1.507911205291748, 0.677...] |1|
-|Permutation |     [0.6049966812133789, -0.157279372215271, -0.06...] |1|
-|Language |    [-0.33215752243995667, -1.4108021259307861, -0...] |1|
-|Model |   [-1.6097160577774048, -0.2548254430294037, 0.0...] |1|
+| token    | xlnet_embeddings |
+|------|--------------------|
+|XLNET |   [-0.02719488926231861, -1.7693557739257812, -0...] |
+|computes |    [-1.8262947797775269, 0.8455266356468201, 0.57...] |
+|contextualized |  [2.8446314334869385, -0.3564329445362091, -2.1...] |
+|word |    [-0.6143839359283447, -1.7368144989013672, -0...]  |
+|representations |     [-0.30445945262908936, -1.2129613161087036, 0...]  |
+|using |   [0.07423821836709976, -0.02561005763709545, -0...] |
+|combination |     [-0.5387097597122192, -1.1827564239501953, 0.5...] |
+|of |  [-1.403516411781311, 0.3108177185058594, -0.32...] |
+|Autoregressive |  [-1.0869172811508179, 0.7135171890258789, -0.2...] |
+|Language |    [-0.33215752243995667, -1.4108021259307861, -0...] |
+|Model |   [-1.6097160577774048, -0.2548254430294037, 0.0...] |
+|and |     [0.7884324789047241, -1.507911205291748, 0.677...] |
+|Permutation |     [0.6049966812133789, -0.157279372215271, -0.06...] |
+|Language |    [-0.33215752243995667, -1.4108021259307861, -0...] |
+|Model |   [-1.6097160577774048, -0.2548254430294037, 0.0...] |
 
 
-## Word Embeddings Glove
+## Word Embeddings Glove 
+[GLOVE Word Embeddings example](https://colab.research.google.com/drive/1IQxf4pJ_EnrIDyd0fAX-dv6u0YQWae2g?usp=sharing)
+
 ```python
 nlu.load('glove').predict('Glove embeddings are generated by aggregating global word-word co-occurrence matrix from a corpus')
 ```
 
 {:.steelBlueCols}
-|  token    |glove_embeddings    |id|
-|---------|------------------|-----|  
-|Glove |   [0.3677999973297119, 0.37073999643325806, 0.32...] |1|
-|embeddings |  [0.732479989528656, 0.3734700083732605, 0.0188...] |1|
-|are |     [-0.5153300166130066, 0.8318600058555603, 0.22...] |1|
-|generated |   [-0.35510000586509705, 0.6115900278091431, 0.4...] |1|
-|by |  [-0.20874999463558197, -0.11739999800920486, 0...] |1|
-|aggregating |     [-0.5133699774742126, 0.04489300027489662, 0.1...] |1|
-|global |  [0.24281999468803406, 0.6170300245285034, 0.66...] |1|
-|word-word |   [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, ...] |1|
-|co-occurrence  | [0.16384999454021454, -0.3178800046443939, 0.1...]  |1|
-|matrix |  [-0.2663800120353699, 0.4449099898338318, 0.32...] |1|
-|  from |     [0.30730998516082764, 0.24737000465393066, 0.6...] |1|
-|  a |    [-0.2708599865436554, 0.04400600120425224, -0...]  |1|
-|  corpus |   [0.39937999844551086, 0.15894000232219696, -0...]  |1|
+|  token    |glove_embeddings    |
+|---------|------------------|
+|Glove |   [0.3677999973297119, 0.37073999643325806, 0.32...] |
+|embeddings |  [0.732479989528656, 0.3734700083732605, 0.0188...] |
+|are |     [-0.5153300166130066, 0.8318600058555603, 0.22...] |
+|generated |   [-0.35510000586509705, 0.6115900278091431, 0.4...] |
+|by |  [-0.20874999463558197, -0.11739999800920486, 0...] |
+|aggregating |     [-0.5133699774742126, 0.04489300027489662, 0.1...] |
+|global |  [0.24281999468803406, 0.6170300245285034, 0.66...] |
+|word-word |   [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, ...] |
+|co-occurrence  | [0.16384999454021454, -0.3178800046443939, 0.1...]  |
+|matrix |  [-0.2663800120353699, 0.4449099898338318, 0.32...] |
+|  from |     [0.30730998516082764, 0.24737000465393066, 0.6...] |
+|  a |    [-0.2708599865436554, 0.04400600120425224, -0...]  |
+|  corpus |   [0.39937999844551086, 0.15894000232219696, -0...]  |
 
-## Multiple Token Embeddings at once
+## Multiple Token Embeddings at once 
+
+[Compare 6 Embeddings at once with NLU and T-SNE example](https://colab.research.google.com/drive/1DBk55f9iERI9BDA4kmZ8yO6J65jGmcEA?usp=sharing)
+
 ```python
-#watch out for your RAM, this could kill your machine
-nlu.load('bert elmo albert xlnet use glove').predict('Get all of them at once! Watch your RAM tough!')
+#This takes around 10GB RAM, watch out!
+nlu.load('bert albert electra elmo xlnet use glove').predict('Get all of them at once! Watch your RAM tough!')
 ```
 
 
 {:.steelBlueCols}
-|token |   glove_embeddings   |albert_embeddings |xlnet_embeddings   |  bert_embeddings    |elmo_embeddings   |use_embeddings    | id
-|------|-----------------------|-------------------|------------------|-------------------------------------|---|----------------------------------------------------------------------
-|Get       | [0.1443299949169159, 0.4395099878311157, 0.583...]       | [-0.41224443912506104, -0.4611411392688751, 1...]        | [-0.003953204490244389, -1.5821468830108643, -...]       | [-0.7420049905776978, -0.8647691011428833, 0.1...]       | [0.04002974182367325, -0.43536433577537537, -0...]   |  [[-0.0019260947592556477, 0.009215019643306732...]| 1 |
-|all       | [-0.2182299941778183, 0.6919900178909302, 0.70...]       | [1.1014549732208252, -0.43204769492149353, -0...]        | [0.31148090958595276, -1.0986182689666748, 0.3...]       | [-0.8933112025260925, 0.44822725653648376, -0...]        | [0.17885173857212067, 0.045830272138118744, -0...]   |  [[-0.0019260947592556477, 0.009215019643306732...]| 1 |
-|of            | [-0.15289999544620514, -0.24278999865055084, 0...]       | [1.1535910367965698, 0.28440719842910767, 0.60...]       | [-1.403516411781311, 0.3108177185058594, -0.32...]       | [-0.5550722479820251, 0.2702311873435974, 0.04...]       | [0.24783466756343842, -0.248960942029953, 0.02...]   |  [[-0.0019260947592556477, 0.009215019643306732...]| 1 |
-|them          | [-0.10130999982357025, 0.10941000282764435, 0...]    | [0.5475010871887207, 0.8660883903503418, 2.817...]   | [-0.7559828758239746, -0.4712887704372406, -1...]    | [-0.2922026813030243, -0.1301671266555786, -0...]    | [-0.24157099425792694, -0.8055092692375183, -0...]   |  [[-0.0019260947592556477, 0.009215019643306732...]| 1 |
-|at            | [0.17659999430179596, 0.0938510000705719, 0.24...]       | [-0.5005946159362793, -0.4600788354873657, 0.5...]       | [0.04092511534690857, -1.0951932668685913, -1...]        | [-0.5613634586334229, -0.00903533399105072, -0...]       | [-0.11999595910310745, 0.012994140386581421, -...]   |  [[-0.0019260947592556477, 0.009215019643306732...]| 1 |
-|once      | [-0.23837999999523163, 0.221670001745224, 0.35...]   | [-0.39100387692451477, -0.8297092914581299, 2...]    | [-0.46001458168029785, -1.2062749862670898, 0...]    | [0.2988640069961548, 0.3360409140586853, -0.37...]   | [0.6701997518539429, 1.1368376016616821, 0.244...]   |  [[-0.0019260947592556477, 0.009215019643306732...]| 1 |
-|!         | [0.38471999764442444, 0.49351000785827637, 0.4...]       | [0.007945209741592407, -0.27733859419822693, 0...]       | [-1.5816600322723389, -0.992130696773529, -0.1...]       | [0.7550013065338135, -0.5257778167724609, -0.4...]       | [-1.3351283073425293, 0.6296550035476685, -1.4...]   |  [[-0.0019260947592556477, 0.009215019643306732...]| 1 |
-|Watch     | [-0.38264000415802, -0.08968199789524078, 0.02...]   | [-0.10218311846256256, -0.4334276020526886, 0...]    | [-1.3921688795089722, 0.6997514963150024, -0.8...]   | [-0.24852752685546875, 1.222611427307129, -0.1...]   | [0.04002974182367325, -0.43536433577537537, -0...]   |  [[-0.0019260947592556477, 0.009215019643306732...]| 1 |
-|your      | [-0.5718399882316589, 0.046348001807928085, 0...]    | [-0.4086211323738098, 1.0755341053009033, 1.78...]   | [-0.8588163256645203, -2.3702170848846436, 0.0...]   | [-0.035358428955078125, 0.7711482048034668, 0...]    | [0.17885173857212067, 0.045830272138118744, -0...]   | [[-0.0019260947592556477, 0.009215019643306732...]| 1 |
-|RAM       | [-1.875599980354309, -0.40814998745918274, -0...]        | [-0.09772858023643494, 0.3632940351963043, -0...]        | [1.1277621984481812, -1.689896583557129, -0.19...]       | [0.4528151750564575, -0.36768051981925964, -0...]        | [0.24783466756343842, -0.248960942029953, 0.02...]   |  [[-0.0019260947592556477, 0.009215019643306732...]| 1 |
-|tough     | [-0.5099300146102905, -0.1428000032901764, 0.5...]   | [-0.22261293232440948, 0.21325691044330597, 0...]    | [-1.3547197580337524, 0.43423181772232056, -1...]    | [0.46073707938194275, 0.05694812536239624, 0.5...]   | [-0.24157099425792694, -0.8055092692375183, -0...]   |  [[-0.0019260947592556477, 0.009215019643306732...]| 1 |
-|!         | [0.38471999764442444, 0.49351000785827637, 0.4...]       | [0.21658605337142944, -0.04937351495027542, 0...]        | [-1.5816600322723389, -0.992130696773529, -0.1...]       | [0.6830563545227051, -0.5751053094863892, -0.6...]       | [-0.11999595910310745, 0.012994140386581421, -...]   |  [[-0.0019260947592556477, 0.009215019643306732...]| 1 |
+|xlnet_embeddings	| use_embeddings | 	elmo_embeddings 	| electra_embeddings | 	glove_embeddings | 	sentence| 	albert_embeddings| 	biobert_embeddings| 	bert_embeddings| 
+|-------------------|---------------|------------------------|-----------------|--------------------|----------|--------------------|---------------------|-------------------|
+[[-0.003953204490244389, -1.5821468830108643, ...,]|	[-0.019299551844596863, -0.04762779921293259, ...,]|	[[0.04002974182367325, -0.43536433577537537, -...,]|	[[0.19559216499328613, -0.46693214774131775, -...,]|	[[0.1443299949169159, 0.4395099878311157, 0.58...,]|	Get all of them at once, watch your RAM tough!| 	[[-0.4743960201740265, -0.581386387348175, 0.7...,]|	[[-0.00012563914060592651, -1.372296929359436,...,]|	[[-0.7687976360321045, 0.8489367961883545, -0....,]|
 
 
 
+##  Bert Sentence Embeddings
+[BERT Sentence Embeddings example](https://colab.research.google.com/drive/1FmREx0O4BDeogldyN74_7Lur5NeiOVye?usp=sharing)
 
+{:.steelBlueCols}
+| 	sentence | 	bert_sentence_embeddings| 
+|------------|-----------------------------|
+|He was  suprised by the diversity of NLU	| [-1.0726687908172607, 0.4481312036514282, -0.0...,] |
+
+## Electra Sentence Embeddings
+[ELECTRA Sentence Embeddings example](https://colab.research.google.com/drive/1VXHH0ltHF_hXdiRqRlrV_lymAO4ws5PO?usp=sharing)
+
+```python
+nlu.load('embed_sentence.electra').predict('He was suprised by the diversity of NLU')
+```
+
+{:.steelBlueCols}
+|	sentence | 	electra_sentence_embeddings | 
+|-----------|--------------------------------|
+|He was suprised by the diversity of NLU	| [0.005376118700951338, 0.18036000430583954, -0...,] |
 
 ## Sentence Embeddings Use
+[USE Sentence Embeddings example](https://colab.research.google.com/drive/1gZzOMiCovmrp7z8FIidzDTLS0nt8kPJT?usp=sharing)
+
 ```python
 nlu.load('use').predict('USE is designed to encode whole sentences and documents into vectors that can be used for text classification, semantic similarity, clustering or oder NLP tasks')
 ```
 
 {:.steelBlueCols}
-|sentence |    use_embeddings |   id |
-|---------|--------------------|--------|
-|USE  is designed to encode whole sentences and ...]   | [0.03302069380879402, -0.004255455918610096, -...]    | 1 |
+|sentence |    use_embeddings |
+|---------|--------------------|
+|USE  is designed to encode whole sentences and ...]   | [0.03302069380879402, -0.004255455918610096, -...]    |
 
 
 
 ## Spell Checking
+[Spell checking example](https://colab.research.google.com/drive/1bnRR8FygiiN3zJz3mRdbjPBUvFsx6IVB?usp=sharing)
+
 ```python
-nlu.load('spell').predict('I liek pentut butr and jelli')
+nlu.load('spell').predict('I liek pentut buttr ant jely')
 ```
 
 {:.steelBlueCols}
-|  token | checked    |id|
-|--------|--------|-----|
-|I|    I |    1|
-|liek| like | 1|
-|peantut|  peanut |   1|
-|buttr|    butter |   1|
-|and|  and |  1|
-|jelli|    jelly |    1|
+|  token | checked    |
+|--------|--------|
+|I|    I |    
+|liek| like | 
+|peantut|  pentut |   
+|buttr|    buttr |   
+|and|  and |  
+|jelli|    jely |    
 
 
 
 
 ## Dependency Parsing Unlabeled
+[Untyped Dependency Parsing example](https://colab.research.google.com/drive/1PC8ga_NFlOcTNeDVJY4x8Pl5oe0jVmue?usp=sharing)
+
+
 ```python
 nlu.load('dep.untyped').predict('Untyped Dependencies represent a grammatical tree structure')
 ```
 
 {:.steelBlueCols}
-|  token |    pos |  dependency |   id|
-|--------|---------|---------------|------|
-|Untyped|  NNP|   ROOT| 1 |
-|Dependencies| NNP|   represent| 1 |
-|represent|    VBD|   Untyped| 1 |
-|a|    DT|    structure| 1 |
-|grammatical|  JJ|    structure| 1 |
-|tree| NN|    structure| 1 |
-|structure|    NN|    represent| 1 |
+|  token |    pos |  dependency |   
+|--------|---------|---------------|
+|Untyped|  NNP|   ROOT| 
+|Dependencies| NNP|   represent| 
+|represent|    VBD|   Untyped| 
+|a|    DT|    structure| 
+|grammatical|  JJ|    structure| 
+|tree| NN|    structure| 
+|structure|    NN|    represent| 
 
 ## Dependency Parsing Labeled
+[Typed Dependency Parsing example](https://colab.research.google.com/drive/1KXUqcF8e-LU9cXnHE8ni8z758LuFPvY7?usp=sharing)
+
 ```python
 nlu.load('dep').predict('Typed Dependencies represent a grammatical tree structure where every edge has a label')
 ```
 
 {:.steelBlueCols}
-|token|    pos|   dependency|    labled_dependency | id|
-|----|-----|--------------|------------------|----|
-|Typed|    NNP |  ROOT|  root|  1 |
-|Dependencies| NNP |  represent|     nsubj|     1 |
-|represent|    VBD |  Typed|     parataxis|     1 |
-|a|    DT |   structure|     nsubj|     1 |
-|grammatical|  JJ |   structure|     amod|  1 |
-|tree| NN |   structure|     flat|  1 |
-|structure|    NN |   represent|     nsubj|     1 |
-|where|    WRB |  structure|     mark|  1 |
-|every|    DT |   edge|  nsubj|     1 |
-|edge| NN |   where|     nsubj|     1 |
-|has|  VBZ |  ROOT|  root|  1 |
-|a|    DT |   label|     nsubj|     1 |
-|label|    NN |   has|   nsubj|     1 |
+|token|    pos|   dependency|    labled_dependency | 
+|----|-----|--------------|------------------|
+|Typed|    NNP |  ROOT|  root|  
+|Dependencies| NNP |  represent|     nsubj|     
+|represent|    VBD |  Typed|     parataxis|     
+|a|    DT |   structure|     nsubj|     
+|grammatical|  JJ |   structure|     amod|  
+|tree| NN |   structure|     flat|  
+|structure|    NN |   represent|     nsubj|     
+|where|    WRB |  structure|     mark|  
+|every|    DT |   edge|  nsubj|     
+|edge| NN |   where|     nsubj|     
+|has|  VBZ |  ROOT|  root|  
+|a|    DT |   label|     nsubj|     
+|label|    NN |   has|   nsubj|     
 
 
 
 
 ## Tokenization
+[Tokenization example](https://colab.research.google.com/drive/13BC6k6gLj1w5RZ0SyHjKsT2EOwJwbYwb?usp=sharing)
+
 ```python
 nlu.load('tokenize').predict('Each word and symbol in a sentence will generate token.')
 ```
 
 {:.steelBlueCols}
-|token         |id|
-|--------------|----|
-|  Each        |1|
-|  word     |1|
-|     and     |1|
-|  symbol     |1|
-|   will |1|
-|     generate      |1|
-|         a  |1|
-|       token  |1|
-|       \.  |1|
+|token         |
+|--------------|
+|  Each        |
+|  word     |
+|     and     |
+|  symbol     |
+|   will |
+|     generate      |
+|         a  |
+|       token  |
+|       \.  |
 
 ## Stemmer
+[Stemmer example](https://colab.research.google.com/drive/1gKTJJmffR9wz13Ms3pDy64jhUI8ZHZYu?usp=sharing)
+
 ```python
 nlu.load('stemm').predict('NLU can get you the stem of a word')
 ```
 
 {:.steelBlueCols}
-|token|    stem|  id|
-|----|------|-----|
-|NLU | nlu |  1 |
-|can | can |  1 |
-|get | get |  1 |
-|you | you |  1 |
-|the | the |  1 |
-|stem |    stem | 1 |
-|of |  of |   1 |
-|a |   a |    1 |
-|word |    word | 1 |
+|token|    stem|  
+|----|------|
+|NLU | nlu |  
+|can | can |  
+|get | get |  
+|you | you |  
+|the | the |  
+|stem |    stem | 
+|of |  of |   
+|a |   a |    
+|word |    word | 
 
 
 ## Stopwords Removal
+[Stopwords Removal example](https://colab.research.google.com/drive/1nWob4u93t2EJYupcOIanuPBDfShtYjGT?usp=sharing)
 ```python
 nlu.load('stopwords').predict('I want you to remove stopwords from this sentence please')
 ```
 
 
 {:.steelBlueCols}
-|token|    cleanTokens|   id|
-|-----|------------|-------|
-|I|    remove |   1 |
-|want| stopewords |   1 |
-|you|  sentence | 1 |
-|to|   None | 1 |
-|remove|   None | 1 |
-|stopwords|    None | 1 |
-|from| None | 1 |
-|this| None | 1 |
-|sentence| None | 1 |
-|please|   None | 1 |
+|token|    cleanTokens|   
+|-----|------------|
+|I|    remove |   
+|want| stopewords |   
+|you|  sentence | 
+|to|   None | 
+|remove|   None | 
+|stopwords|    None | 
+|from| None | 
+|this| None | 
+|sentence| None | 
+|please|   None | 
 
 
 ## Lemmatization
+[Lemmatization example](https://colab.research.google.com/drive/1cBtx9cVCjavt-Oq5TG1lO-9JfUfqznnK?usp=sharing)
 ```python
 nlu.load('lemma').predict('Lemmatizing generates a less noisy version of the inputted tokens')
 ```
 
 
 {:.steelBlueCols}
-|token|    lemma| id|
-|------|------|-----|
-|Lemmatizing|  Lemmatizing|   1 |
-|generates|    generate|  1 |
-|a|    a| 1 |
-|less| less|  1 |
-|noisy|    noisy| 1 |
-|version|  version|   1 |
-|of|   of|    1 |
-|the|  the|   1 |
-|inputted| input| 1 |
-|tokens|   token| 1 |
+|token|    lemma| 
+|------|------|
+|Lemmatizing|  Lemmatizing|   
+|generates|    generate|  
+|a|    a| 
+|less| less|  
+|noisy|    noisy| 
+|version|  version|   
+|of|   of|    
+|the|  the|   
+|inputted| input| 
+|tokens|   token| 
 
 ## Normalizers
+[Normalizing example](https://colab.research.google.com/drive/1kfnnwkiQPQa465Jic6va9QXTRssU4mlX?usp=sharing)
 ```python
 nlu.load('norm').predict('@CKL_IT says that #normalizers are pretty useful to clean #structured_strings in #NLU like tweets')
 ```
 
 {:.steelBlueCols}
-|normalized     | token   | id|
-|------------|----------|----|
-|CKLIT|    @CKL_IT    |  1|
-|says| says|  1|
-|that| that|  1|
-|normalizers|  #normalizers|  1|
-|are|  are|   1|
-|pretty|   pretty|    1|
-|useful|   useful|    1|
-|to|   to|    1|
-|clean|    clean|     1|
-|structuredstrings|    #structured_strings|   1|
-|in|   in|    1|
-|NLU|  #NLU|  1|
-|like| like|  1|
-|tweets|   tweets|    1|
+|normalized     | token   | 
+|------------|----------|
+|CKLIT|    @CKL_IT    | 
+|says| says| 
+|that| that| 
+|normalizers|  #normalizers| 
+|are|  are|  
+|pretty|   pretty|   
+|useful|   useful|   
+|to|   to|   
+|clean|    clean|    
+|structuredstrings|    #structured_strings|  
+|in|   in|   
+|NLU|  #NLU| 
+|like| like| 
+|tweets|   tweets|   
 
 
 
 
 
 ## NGrams
+[NGrams example](https://colab.research.google.com/drive/1pgqoRJ6yGWbTLWdLnRvwG5DLSU3rxuMq?usp=sharing)
 
 
 ```python
@@ -562,58 +711,86 @@ nlu.load('ngram').predict('Wht a wondful day!')
 ```
 
 {:.steelBlueCols}
-|document |    id|    ngrams|    pos|
-|---------|-----|------|---------|
-|To be or not to be| 1 |   [To, be, or, not, to, be, To be, be or, or not...] |   [TO, VB, CC, RB, TO, VB] |
+|document |    ngrams|    pos|
+|---------|-----|---------|
+|To be or not to be|    [To, be, or, not, to, be, To be, be or, or not...] |   [TO, VB, CC, RB, TO, VB] |
 
 
 
 
 ## Date Matching
+[Date Matching example](https://colab.research.google.com/drive/1JrlfuV2jNGTdOXvaWIoHTSf6BscDMkN7?usp=sharing)
 ```python
 nlu.load('match.datetime').predict('In the years 2000/01/01 to 2010/01/01 a lot of things happened')
 ```
 
 {:.steelBlueCols}
-|document |    id |   date|
-|---------|--------|--------|
-|In the years 2000/01/01 to 2010/01/01 a lot of things happened | 1 | [2000/01/01, 2001/01/01] |
+|document |  date|
+|---------|--------|
+|In the years 2000/01/01 to 2010/01/01 a lot of things happened |  [2000/01/01, 2001/01/01] |
 
-## Chunking   
-Checkout https://www.ling.upenn.edu/courses/Fall_2003/ling001/penn_treebank_pos.html for all possible POS labels       
+## Entity Chunking    
+Checkout [see here](http://localhost:4000/docs/en/examples#part-of-speech--pos) for all possible POS labels or        
 Splits text into rows based on matched grammatical entities.     
+
+[Entity Chunking Example](https://colab.research.google.com/drive/1svpqtC3cY6JnRGeJngIPl2raqxdowpyi?usp=sharing)
+
 ```python
 # First we load the pipeline
 pipe = nlu.load('match.chunks')
 # Now we print the info to see at which index which com,ponent is and what parameters we can configure on them 
 pipe.print_info()
 # Lets set our Chunker to only match NN
-pipe.pipe_components[4].model.setRegexParsers(['<NN>+'])
+pipe['default_chunker'].setRegexParsers(['<NN>+', '<JJ>+'])
 # Now we can predict with the configured pipeline
-pipe.predict("Jim and Joe went to the market next to the town hall")
+pipe.predict("Jim and Joe went to the big blue market next to the town hall")
+```
+
+```bash
+# the outputs of pipe.print_info()
+The following parameters are configurable for this NLU pipeline (You can copy paste the examples) :
+>>> pipe['document_assembler'] has settable params:
+pipe['document_assembler'].setCleanupMode('disabled')         | Info: possible values: disabled, inplace, inplace_full, shrink, shrink_full, each, each_full, delete_full | Currently set to : disabled
+>>> pipe['sentence_detector'] has settable params:
+pipe['sentence_detector'].setCustomBounds([])                 | Info: characters used to explicitly mark sentence bounds | Currently set to : []
+pipe['sentence_detector'].setDetectLists(True)                | Info: whether detect lists during sentence detection | Currently set to : True
+pipe['sentence_detector'].setExplodeSentences(False)          | Info: whether to explode each sentence into a different row, for better parallelization. Defaults to false. | Currently set to : False
+pipe['sentence_detector'].setMaxLength(99999)                 | Info: Set the maximum allowed length for each sentence | Currently set to : 99999
+pipe['sentence_detector'].setMinLength(0)                     | Info: Set the minimum allowed length for each sentence. | Currently set to : 0
+pipe['sentence_detector'].setUseAbbreviations(True)           | Info: whether to apply abbreviations at sentence detection | Currently set to : True
+pipe['sentence_detector'].setUseCustomBoundsOnly(False)       | Info: Only utilize custom bounds in sentence detection | Currently set to : False
+>>> pipe['regex_matcher'] has settable params:
+pipe['regex_matcher'].setCaseSensitiveExceptions(True)        | Info: Whether to care for case sensitiveness in exceptions | Currently set to : True
+pipe['regex_matcher'].setTargetPattern('\S+')                 | Info: pattern to grab from text as token candidates. Defaults \S+ | Currently set to : \S+
+pipe['regex_matcher'].setMaxLength(99999)                     | Info: Set the maximum allowed length for each token | Currently set to : 99999
+pipe['regex_matcher'].setMinLength(0)                         | Info: Set the minimum allowed length for each token | Currently set to : 0
+>>> pipe['sentiment_dl'] has settable params:
+>>> pipe['default_chunker'] has settable params:
+pipe['default_chunker'].setRegexParsers(['<DT>?<JJ>*<NN>+'])  | Info: an array of grammar based chunk parsers | Currently set to : ['<DT>?<JJ>*<NN>+']```
 ```
 
 {:.steelBlueCols}
-| chunk| 	id| 	pos| 
-|-------|-----|--------|
-|market|	1| 	[NNP, CC, NNP, VBD, TO, DT, NN, JJ, TO, DT, NN... |
-|town | 	1	| [NNP, CC, NNP, VBD, TO, DT, NN, JJ, TO, DT, NN... |
-| hall| 	1	| [NNP, CC, NNP, VBD, TO, DT, NN, JJ, TO, DT, NN... |
+|	chunk | 	pos | 
+|-------|-----------|
+|market	    |[NNP, CC, NNP, VBD, TO, DT, JJ, JJ, NN, JJ, TO...|
+|town hall	|[NNP, CC, NNP, VBD, TO, DT, JJ, JJ, NN, JJ, TO...|
+|big blue	|[NNP, CC, NNP, VBD, TO, DT, JJ, JJ, NN, JJ, TO...|
+|next	    |[NNP, CC, NNP, VBD, TO, DT, JJ, JJ, NN, JJ, TO...|
 
 
+## Sentence Detection
+[Sentence Detection example](https://colab.research.google.com/drive/1CAXEdRk_q3U5qbMXsxoVyZRwvonKthhF?usp=sharing)
 
-
-## Sentence Detector
 ```python 
 nlu.load('sentence_detector').predict('NLU can detect things. Like beginning and endings of sentences. It can also do much more!', output_level ='sentence')  
 ```
 
 {:.steelBlueCols}
-|sentence|     id|    word_embeddings|   pos|   ner|
-|--------|----|---------------------|-------|------|
-|NLU can detect things.    | 1    | [[0.4970400035381317, -0.013454999774694443, 0...]|  [NNP, MD, VB, NNS, ., IN, VBG, CC, NNS, IN, NN...  ]|[O, O, O, O, O, B-sent, O, O, O, O, O, O, B-se...] |
-|Like beginning and endings of sentences.  |   1 | [[0.4970400035381317, -0.013454999774694443, 0...]|    [NNP, MD, VB, NNS, ., IN, VBG, CC, NNS, IN, NN...]|    [O, O, O, O, O, B-sent, O, O, O, O, O, O, B-se...] |
-|It can also do much more! | 1    |[[0.4970400035381317, -0.013454999774694443, 0...]|   [NNP, MD, VB, NNS, ., IN, VBG, CC, NNS, IN, NN...]|    [O, O, O, O, O, B-sent, O, O, O, O, O, O, B-se...] |
+|sentence|  word_embeddings|   pos|   ner|
+|--------|---------------------|-------|------|
+|NLU can detect things.    |  [[0.4970400035381317, -0.013454999774694443, 0...]|  [NNP, MD, VB, NNS, ., IN, VBG, CC, NNS, IN, NN...  ]|[O, O, O, O, O, B-sent, O, O, O, O, O, O, B-se...] |
+|Like beginning and endings of sentences.  |   [[0.4970400035381317, -0.013454999774694443, 0...]|    [NNP, MD, VB, NNS, ., IN, VBG, CC, NNS, IN, NN...]|    [O, O, O, O, O, B-sent, O, O, O, O, O, O, B-se...] |
+|It can also do much more! | [[0.4970400035381317, -0.013454999774694443, 0...]|   [NNP, MD, VB, NNS, ., IN, VBG, CC, NNS, IN, NN...]|    [O, O, O, O, O, B-sent, O, O, O, O, O, O, B-se...] |
 
 
 

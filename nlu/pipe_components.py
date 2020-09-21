@@ -15,26 +15,11 @@ class NLUComponent():
         self.component_info = nlu.ComponentInfo.from_directory(component_info_dir= self.component_path)
 
 
-    def set_param(self,key, value):
-        if key in self.accepted_parameter_keys: # instead of checking we could also just set the parameter and do a try/catch.
-            if value in self.accepted_parameter_values :
-                self.parameters[key] = value
-                self.set_parameter_on_model(key,value)
-            else : print("Invalid parameter value of type:", type(value), " . Please select parameter value from : ", self.accepted_parameter_values)
-        else : print("Invalid parameter name of type :", type(key), " . Please select parameter name from : ", self.accepted_parameter_keys)
-
-    def get_param(self,key):
-        if key in self.accepted_parameter_keys: return  self.parameters[key]
-        else : print("Invalid parameter name of type :", type(key), " . Please select parameter name from : ", self.accepted_parameter_keys)
-
     def set_parameter_on_model(self,key, value  ): pass # Implemented by child class which is extending from NLU_component
 
     def print_parameters_explanation(self): pass
     def print_parameters(self): pass
-    def info(self):
-        print(self.component_info['info'])
-        self.print_parameters_explanation()
-        self.print_parameters()
+    def info(self): pass
 
 
 
@@ -45,6 +30,7 @@ class SparkNLUComponent(NLUComponent):
         # super(SparkNLUComponent,self).__init__(component_name, component_type)
         NLUComponent.__init__(self, component_name, component_type)
         self.spark = nlu.sparknlp.start()
+        self.nlu_reference=''
         nlu.spark = self.spark
         nlu.spark_started = True
 

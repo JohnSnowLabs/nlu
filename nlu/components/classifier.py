@@ -39,14 +39,72 @@ class Classifier(SparkNLUComponent):
                 from nlu import NERDLCRF
                 if get_default : self.model = NERDLCRF.get_default_model()
                 else : self.model = NERDLCRF.get_pretrained_model(sparknlp_reference,language)
-            elif 'multi_classifier_dl' in component_name:
-                from nlu import MultiClassifierDl
-                if get_default : self.model = MultiClassifierDl.get_default_model()
-                else : self.model = MultiClassifierDl.get_pretrained_model(sparknlp_reference,language)
+            elif 'multi_classifier' in component_name:
+                from nlu import MultiClassifier
+                if get_default : self.model = MultiClassifier.get_default_model()
+                else : self.model = MultiClassifier.get_pretrained_model(sparknlp_reference,language)
+
+                if 'toxic' in sparknlp_reference:
+                    self.model.setOutputCol("toxic")
+                    self.component_info.spark_output_column_names.remove('category')
+                    self.component_info.spark_output_column_names.append('toxic')
+                    self.component_info.name ='toxic'
+
+
+                if 'e2e' in sparknlp_reference:
+                    self.model.setOutputCol("e2e")
+                    self.component_info.spark_output_column_names.remove('category')
+                    self.component_info.spark_output_column_names.append('e2e')
+                    self.component_info.name ='e2e'
+
             elif ('classifier_dl' in component_name or component_name=='toxic') and not 'multi' in component_name:
                 from nlu import ClassifierDl
                 if get_default : self.model = ClassifierDl.get_default_model()
                 else : self.model = ClassifierDl.get_pretrained_model(sparknlp_reference,language)
+
+
+
+                if 'emotion' in sparknlp_reference:
+                    self.model.setOutputCol("emotion")
+                    self.component_info.spark_output_column_names.remove('category')
+                    self.component_info.spark_output_column_names.append('emotion')
+                    self.component_info.name ='emotion'
+
+
+
+                if 'trec' in sparknlp_reference:
+                    self.model.setOutputCol("question")
+                    self.component_info.spark_output_column_names.remove('category')
+                    self.component_info.spark_output_column_names.append('question')
+                    self.component_info.name ='question'
+
+                if 'fakenews' in sparknlp_reference:
+                    self.model.setOutputCol("fake")
+                    self.component_info.spark_output_column_names.remove('category')
+                    self.component_info.spark_output_column_names.append('fake')
+                    self.component_info.name ='fake'
+
+
+                if 'sarcasm' in sparknlp_reference:
+                    self.model.setOutputCol("sarcasm")
+                    self.component_info.spark_output_column_names.remove('category')
+                    self.component_info.spark_output_column_names.append('sarcasm')
+                    self.component_info.name ='sarcasm'
+
+                if 'spam' in sparknlp_reference:
+                    self.model.setOutputCol("spam")
+                    self.component_info.spark_output_column_names.remove('category')
+                    self.component_info.spark_output_column_names.append('spam')
+                    self.component_info.name ='spam'
+
+                if 'cyberbullying' in sparknlp_reference:
+                    self.model.setOutputCol("cyberbullying")
+                    self.component_info.spark_output_column_names.remove('category')
+                    self.component_info.spark_output_column_names.append('cyberbullying')
+                    self.component_info.name ='cyberbullying'
+
+
+
             elif 'language_detector' in component_name:
                 from nlu import LanguageDetector
                 if get_default : self.model = LanguageDetector.get_default_model()
@@ -55,14 +113,6 @@ class Classifier(SparkNLUComponent):
                 from nlu import PartOfSpeechJsl
                 if get_default : self.model = PartOfSpeechJsl.get_default_model()
                 else : self.model = PartOfSpeechJsl.get_pretrained_model(sparknlp_reference,language)
-            elif 'pos' in component_name:
-                from nlu import PartOfSpeechJsl
-                if get_default : self.model = PartOfSpeechJsl.get_default_model()
-                else : self.model = PartOfSpeechJsl.get_pretrained_model(sparknlp_reference,language)
             elif 'yake' in component_name:
                 from nlu import Yake
                 self.model  = Yake.get_default_model()
-            elif 'multi_classifier' in component_name :
-                from nlu import MultiClassifier
-                if get_default : self.model = MultiClassifier.get_default_model()
-                else : self.model = MultiClassifier.get_pretrained_model(sparknlp_reference,language)

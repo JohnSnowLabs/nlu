@@ -5,6 +5,8 @@ key: predict-api
 permalink: /docs/en/predict_api
 modify_date: "2019-05-16"
 ---
+# The predict function
+NLU expects either a column named 'text' in the dataframe passed to it or alternatively it will assume the first column of the dataframe passed to it as the column it should predict for.
 
 # Predict method Parameters
 
@@ -36,8 +38,10 @@ Depending on what downstream tasks NLU will be used for the output level should 
 NLU will try to infer the most useful output level automatically if an output level is not specified.    
 The inferred output level will usually define the last element of the pipeline.     
 
+Take a look at the [NLU different output levels Demo](https://colab.research.google.com/drive/1C4N3wpC17YzZf9fXHDNAJ5JvSmfbq7zT?usp=sharing) which goes over all the output levels.
 
-#### Document output level example
+
+### Document output level example
 Every row in the input data frame will be mapped to **one row** in the output dataframe.
 
 ```python
@@ -52,7 +56,7 @@ nlu.load('sentiment').predict(['I love data science! It is so much fun! It can a
 |I love the city New-York  | 1 |  [I, love, the, city, New-York] |   [0.7342000007629395]    | [positive]
 
 
-#### Sentence output level example
+### Sentence output level example
 
 Every sentence in each row becomes a new row in the output dataframe.
 
@@ -71,7 +75,29 @@ nlu.load('sentiment').predict(['I love data science! It is so much fun! It can a
 |I love the city New-York                  |[0.7342]  | positive | 1    | [I, love, the, city, New-York] |
 
 
-#### Token output level example
+### Chunk output level example
+
+Every chunk in each input row becomes a new row in the output dataframe.
+This is useful for components like the Named Entity Resolver. 
+By setting output level to chunk, you will ensure ever Named Entity becomes one row in your datset.
+Named Entities are chunks.
+
+```python
+# 'New York' is a Chunk. A chunk is an object that consists of multiple tokens but it's not a sentence.
+nlu.load('ner').predict(['Angela Merkel and Donald Trump dont share many oppinions', "Ashley wants to visit the Brandenburger Tor in Berlin"], output_level='chunk',)
+```
+
+|entities | 	ner_tag | 	embeddings | 
+|--------|--------------|--------------|
+|Angela Merkel | 	PERSON | 	[[-0.563759982585907, 0.26958999037742615, 0.3...,]|
+|Donald Trump | 	PERSON	[[-0.563759982585907, 0.26958999037742615, 0.3...,]|
+|Ashley	| PERSON	[[0.24997000396251678, -0.12275999784469604, -...,]|
+|the Brandenburger Tor | 	FAC	[[0.24997000396251678, -0.12275999784469604, -...,]|
+|Berlin	| GPE	[[0.24997000396251678, -0.12275999784469604, -...,]|
+
+
+
+### Token output level example
 
 Every token in each input row becomes a new row in the output dataframe.
 
@@ -81,45 +107,33 @@ nlu.load('sentiment').predict(['I love data science! It is so much fun! It can a
 ```
 
 {:.steelBlueCols}
-|  token  | checked  | id   | sentiment_confidence |sentiment|
-|---------|------|------|-------------------|----------------|
-|I |   I |    0 |    [0.7540000081062317, 0.6121000051498413, 0.489...] |   [positive, positive, positive] |
-|love |    love |     0 |    [0.7540000081062317, 0.6121000051498413, 0.489...] |   [positive, positive, positive] |
-|data |    data |     0 |    [0.7540000081062317, 0.6121000051498413, 0.489...] |   [positive, positive, positive] |
-|science | science |  0 |    [0.7540000081062317, 0.6121000051498413, 0.489... ] |  [positive, positive, positive] |
-|! |   ! |    0 |    [0.7540000081062317, 0.6121000051498413, 0.489... ]|   [positive, positive, positive] |
-|It |  It |   0 |    [0.7540000081062317, 0.6121000051498413, 0.489... ]|   [positive, positive, positive] |
-|is |  is |   0 |    [0.7540000081062317, 0.6121000051498413, 0.489... ]|   [positive, positive, positive] |
-|so |  so |   0 |    [0.7540000081062317, 0.6121000051498413, 0.489... ]|   [positive, positive, positive] |
-|much |    much |     0 |    [0.7540000081062317, 0.6121000051498413, 0.489... ]|   [positive, positive, positive] |
-|fun | fun |  0 |    [0.7540000081062317, 0.6121000051498413, 0.489... ]|   [positive, positive, positive] |
-|! |   ! |    0 |    [0.7540000081062317, 0.6121000051498413, 0.489... ]|   [positive, positive, positive] |
-|It |  It |   0 |    [0.7540000081062317, 0.6121000051498413, 0.489... ]|   [positive, positive, positive] |
-|can | can |  0 |    [0.7540000081062317, 0.6121000051498413, 0.489... ]|   [positive, positive, positive] |
-|also |    also |     0 |    [0.7540000081062317, 0.6121000051498413, 0.489... ]|   [positive, positive, positive] |
-|be |  be |   0 |    [0.7540000081062317, 0.6121000051498413, 0.489... ]|   [positive, positive, positive] |
-|quite |   quite |    0 |    [0.7540000081062317, 0.6121000051498413, 0.489... ] |  [positive, positive, positive] |
-|helpful | helpful |  0 |    [0.7540000081062317, 0.6121000051498413, 0.489...] |   [positive, positive, positive] |
-|to |  to |   0 |    [0.7540000081062317, 0.6121000051498413, 0.489... ]|               [positive, positive, positive]|
-|people |  people |   0 |    [0.7540000081062317, 0.6121000051498413, 0.489... ]|       [positive, positive, positive] |
-|. |   . |    0 |    [0.7540000081062317, 0.6121000051498413, 0.489...]|        [positive, positive, positive] |
-|I |   I |    1 |    [0.7342000007629395]|  [positive] |
-|love |    love |     1 |    [0.7342000007629395]|  [positive]|
-|the | the |  1 |    [0.7342000007629395]|  [positive]|
-|city |    city |     1 |    [0.7342000007629395] | [positive]|
-|New-York  | New-York | 1    | [0.7342000007629395] |   [positive]|
-
-
-
-
-#### Chunk output level example
-
-Every chunk in each input row becomes a new row in the output dataframe
-
-```python
-# 'New York' is a Chunk. A chunk is an object that consists of multiple tokens but it's not a sentence.
-nlu.load('sentiment').predict(['I love data science! It is so much fun! It can also be quite helpful to people.', 'I love the city New-York'], output_level='chunk')
-```
+|  token  | checked   | sentiment_confidence |sentiment|
+|---------|------|-------------------|----------------|
+|I |   I |        [0.7540000081062317, 0.6121000051498413, 0.489...] |   [positive, positive, positive] |
+|love |    love |         [0.7540000081062317, 0.6121000051498413, 0.489...] |   [positive, positive, positive] |
+|data |    data |         [0.7540000081062317, 0.6121000051498413, 0.489...] |   [positive, positive, positive] |
+|science | science |      [0.7540000081062317, 0.6121000051498413, 0.489... ] |  [positive, positive, positive] |
+|! |   ! |        [0.7540000081062317, 0.6121000051498413, 0.489... ]|   [positive, positive, positive] |
+|It |  It |       [0.7540000081062317, 0.6121000051498413, 0.489... ]|   [positive, positive, positive] |
+|is |  is |       [0.7540000081062317, 0.6121000051498413, 0.489... ]|   [positive, positive, positive] |
+|so |  so |       [0.7540000081062317, 0.6121000051498413, 0.489... ]|   [positive, positive, positive] |
+|much |    much |         [0.7540000081062317, 0.6121000051498413, 0.489... ]|   [positive, positive, positive] |
+|fun | fun |      [0.7540000081062317, 0.6121000051498413, 0.489... ]|   [positive, positive, positive] |
+|! |   ! |        [0.7540000081062317, 0.6121000051498413, 0.489... ]|   [positive, positive, positive] |
+|It |  It |       [0.7540000081062317, 0.6121000051498413, 0.489... ]|   [positive, positive, positive] |
+|can | can |      [0.7540000081062317, 0.6121000051498413, 0.489... ]|   [positive, positive, positive] |
+|also |    also |        [0.7540000081062317, 0.6121000051498413, 0.489... ]|   [positive, positive, positive] |
+|be |  be |       [0.7540000081062317, 0.6121000051498413, 0.489... ]|   [positive, positive, positive] |
+|quite |   quite |        [0.7540000081062317, 0.6121000051498413, 0.489... ] |  [positive, positive, positive] |
+|helpful | helpful |      [0.7540000081062317, 0.6121000051498413, 0.489...] |   [positive, positive, positive] |
+|to |  to |       [0.7540000081062317, 0.6121000051498413, 0.489... ]|               [positive, positive, positive]|
+|people |  people |     [0.7540000081062317, 0.6121000051498413, 0.489... ]|       [positive, positive, positive] |
+|. |   . |        [0.7540000081062317, 0.6121000051498413, 0.489...]|        [positive, positive, positive] |
+|I |   I |        [0.7342000007629395]|  [positive] |
+|love |    love |       [0.7342000007629395]|  [positive]|
+|the | the |      [0.7342000007629395]|  [positive]|
+|city |    city |         [0.7342000007629395] | [positive]|
+|New-York  | New-York |  [0.7342000007629395] |   [positive]|
 
 
 
@@ -128,7 +142,7 @@ nlu.load('sentiment').predict(['I love data science! It is so much fun! It can a
 
 
 
-### Output positions parameter
+## Output positions parameter
 By setting *output_positions=True*, the Dataframe generated by NLU will contain additional columns which describe the beginning and end of each feature inside of the original document.
 These additional *_begining* and *_end* columns let you infer the piece of the original input string that has been used to generate the output.
 
@@ -155,16 +169,15 @@ nlu.load('sentiment').predict('I love data science!', output_level='token', outp
 
 
 ## Row origin inference for one to many mappings
-NLU will give every input row an ID.     
-The ID is useful if one row is mapped to many rows during prediction.     
-The new rows which are generated from the input row will all have the same ID as the original source row.    
-I.e. if one sentence row gets split into many token rows,  each token row will have the same id as the sentence row.
-<!---  In the future NLU will support user provided ID's or use pandas indexes.     -->
+NLU will recycle the Pandas index from the input Dataframe.     
+The index is useful if one row is mapped to many rows during prediction.     
+The new rows which are generated from the input row will all have the same index as the original source row.    
+I.e. if one sentence row gets split into many token rows,  each token row will have the same index as the sentence row.
 
 
 
 
-## NaN Handling
+## NLU NaN Handling
 - NLU will convert every NaN value to a Python None variable which is reflected in the final dataframe
 - If a column contains **only** NaN or None, NLU will drop these columns for the output df.
 
@@ -177,7 +190,7 @@ This saves memory and computation time and can be achieved like in the following
 import nlu
 import pandas as pd
 data = {
-   'text': ['@CKL-IT NLU ROCKS!', '@MaziyarPanahi NLU is pretty cool', '@JohnSnowLabs Try out NLU!'],
+   'tweet': ['@CKL-IT NLU ROCKS!', '@MaziyarPanahi NLU is pretty cool', '@JohnSnowLabs Try out NLU!'],
    'tweet_location': ['Berlin', 'Paris', 'United States'],
    'tweet_lattitude' : ['52.55035', '48.858093', '40.689247'],
    'tweet_longtitude' : ['13.39139', '2.294694','-74.044502']
@@ -185,7 +198,7 @@ data = {
 
   
 text_df = pd.DataFrame(data)
-nlu.load('sentiment').predict(text_df[['text','tweet_location']])
+nlu.load('sentiment').predict(text_df[['tweet','tweet_location']])
 ```
 
 
