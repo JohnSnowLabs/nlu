@@ -29,7 +29,7 @@ class BasePipe(dict):
         self.light_pipe_configured=False
         self.spark_non_light_transformer_pipe = None
         self.pipe_components = []                                         # orderd list of nlu_component objects
-        self.output_datatype = 'pandas' # What data type should be returned after predict either spark, pandas, modin, numpy, string or array 
+        self.output_datatype = 'pandas' # What data type should be returned after predict either spark, pandas, modin, numpy, string or array
     def add(self, component, nlu_reference="auto_generated"):
         '''
 
@@ -323,7 +323,7 @@ class NLUPipeline(BasePipe):
             if '.result' in col  : reorderd_fields_to_rename.append(reorderd_fields_to_rename.pop(reorderd_fields_to_rename.index(col)))
             
         
-            # This case works on the original Spark Columns which have beenn untouched sofar.
+        # This case works on the original Spark Columns which have beenn untouched sofar.
         for i, field in enumerate(reorderd_fields_to_rename):
             if self.raw_text_column in field: continue
             new_field = field.replace('.', '_').replace('_result','').replace('_embeddings_embeddings','_embeddings')
@@ -696,7 +696,7 @@ class NLUPipeline(BasePipe):
                 self =  PipelineQueryVerifier.check_and_fix_nlu_pipeline(self)
         # if not self.is_fitted: self.fit()
 
-        # currently have to always fit, otherwise parameter cnhages wont come in action
+        # currently have to always fit, otherwise parameter changes wont take effect
         self.fit()
 
         self.configure_light_pipe_usage(len(data),multithread)
@@ -704,6 +704,7 @@ class NLUPipeline(BasePipe):
         sdf = None
         stranger_features = []
         index_provided=False
+        infered_text_col = False
 
         try:
             if type(data) is  pyspark.sql.dataframe.DataFrame : # casting follows spark->pd
@@ -720,6 +721,10 @@ class NLUPipeline(BasePipe):
                     print('Could not find column named "text" in input Pandas Dataframe. Please ensure one column named such exists. Columns in DF are : ', data.columns)
             if type(data) is pd.DataFrame:  # casting follows pd->spark->pd
                 self.output_datatype = 'pandas'
+
+                # set first col as text column if there is none
+                if self.raw_text_column not in data.columns :
+                    data.rename(columns={data.columns[0]: 'text'},inplace=True)
                 data['origin_index']=data.index
                 index_provided=True
                 if self.raw_text_column in data.columns:
@@ -728,7 +733,8 @@ class NLUPipeline(BasePipe):
                         data = data.dropna(axis=1, how='all')
                         stranger_features = list( set(data.columns) - set(self.raw_text_column))
                     sdf = self.spark_transformer_pipe.transform(self.spark.createDataFrame(data ))
-                else : 
+
+                else :
                     print('Could not find column named "text" in input Pandas Dataframe. Please ensure one column named such exists. Columns in DF are : ', data.columns)
             elif type(data) is pd.Series:  # for df['text'] colum/series passing casting follows pseries->pdf->spark->pd
                 self.output_datatype='pandas_series'

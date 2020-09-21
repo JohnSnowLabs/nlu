@@ -103,11 +103,6 @@ class Classifier(SparkNLUComponent):
                     self.component_info.spark_output_column_names.append('cyberbullying')
                     self.component_info.name ='cyberbullying'
 
-                if 'cyberbullying' in sparknlp_reference:
-                    self.model.setOutputCol("cyberbullying")
-                    self.component_info.spark_output_column_names.remove('category')
-                    self.component_info.spark_output_column_names.append('cyberbullying')
-                    self.component_info.name ='cyberbullying'
 
 
             elif 'language_detector' in component_name:
