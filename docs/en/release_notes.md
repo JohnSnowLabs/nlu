@@ -6,27 +6,94 @@ key: docs-release-notes
 modify_date: "2020-06-12"
 ---
 
-NLU release notes
+# NLU release notes 0.1
 
-### 2.6
- - Added 100+ new models from Spark NLP 2.6
-    - New YAKE model
-    - New Multi Class Classifier model
- - Improved outputs for Chunk level components 
- - Integrated removal of IOB prefixes of NER tags
- - Integrated light pipeline which yields 10x speed up for predictions 
- - Easy and Copy pastable moel configs via pipe.print_info()
- - N new Notebooks
- - Recycling of Pandas indexes for predicting. No more ID columns, just pandas indexes.
- - Up to 10x Speed improvement with light pipeline leverage from Spark NLP
+## NLU: The Power of Spark NLP, the Simplicity of Python
+John Snow Labs' NLU is a Python library for applying state-of-the-art text mining, directly on any dataframe, with a single line of code.
+As a facade of the award-winning Spark NLP library, it comes with hundreds of pretrained models in tens of languages - all production-grade, scalable, and trainable.
 
-#### Lots of new Demos
-- Named Entity Recognition (NER)
-    -[NER pretrained on ONTO Notes](https://colab.research.google.com/drive/1_sgbJV3dYPZ_Q7acCgKWgqZkWcKAfg79?usp=sharing)
-    -[NER pretrained on CONLL](https://colab.research.google.com/drive/1CYzHfQyFCdvIOVO2Z5aggVI9c0hDEOrw?usp=sharing)
-- Part of speech (POS)
+## What kind of models does NLU provide? 
+NLU provides everything a data scientist might want to wish for in one line of code!  
+- The 100+ of the latest NLP word embeddings ( BERT, ELMO, ALBERT, XLNET, GLOVE, BIOBERT, ELECTRA, COVIDBERT) and different variations of them 
+- The 10+ of the latest NLP sentence embeddings ( BERT, ELECTRA, USE) and different variations of them 
+- Generation of Sentence, Chunk and Document from these embeddings 
+- Language Classification of 20 languages 
+- 36 pretrained NER models 
+- 34 Part of Speech (POS) models
+- 34 Lemmatizer models    
+- Emotion models for 5 categories 
+- Labeled and Unlabeled Dependency parsing 
+- Spell Checking 
+- Stopword removers for 41  languages 
+- Classifiers for 12 different problems 
+- **244 unique**  NLU components 
+- **176 unique** NLP models and algorithms 
+- **68 unique** NLP pipelines consisting of composed NLP models 
+
+
+
+## Classifiers trained on many different different datasets 
+Choose the right tool for the right task! Whether you analyze movies or twitter, NLU has the right model for you! 
+
+- 50 Class Questions Classifier
+- Spam Classifier 
+- Fake News Classifier 
+- Emotion Classifier 
+- Cyberbullying Classifier 
+- Sarcasm Classifier 
+- Toxic Classifer
+- E2E Classifier
+- Sentiment classifier pretrained on IMDB movie reviews
+- Sentiment classifier pretrained on twitter
+- NER pretrained on ONTO notes 
+- NER trainer on CONLL 
+- Language classifier for 20 languages on the wiki 20 lang dataset. 
+
+## Data Pre-Processing and Text Cleaning 
+Working with text data can sometimes be quite a dirty Job. NLU helps you keep your hands clean by providing lots of components that take away data engineering intensive tasks. 
+
+- Datetime Matcher
+- Pattern Matcher
+- Chunk Matcher
+- Phrases Matcher
+- Stopword Cleaners
+- Pattern Cleaners
+- Slang Cleaner 
+
+## Where can I see NLUs entire offer? 
+Checkout the [NLU Namespace](https://nlu.johnsnowlabs.com/docs/en/namespace) for everything that NLU has to offer! 
+
+
+
+## Supported Data Types
+- Pandas DataFrame and Series
+- Spark DataFrames
+- Modin with Ray backend
+- Modin with Dask backend
+- Numpy arrays
+- Strings and lists of strings 
+
+
+Checkout the following notebooks for examples on how to work with NLU.
+
+
+# NLU Demos on Datasets
+- [Kaggle Twitter Airline Sentiment Analysis NLU demo](https://www.kaggle.com/kasimchristianloan/nlu-sentiment-airline-demo)
+- [Kaggle Twitter Airline Emotion Analysis NLU demo](https://www.kaggle.com/kasimchristianloan/nlu-emotion-airline-demo)
+- [Kaggle Twitter COVID Sentiment Analysis NLU demo](https://www.kaggle.com/kasimchristianloan/nlu-covid-sentiment-showcase)
+- [Kaggle Twitter COVID Emotion Analysis nlu demo](https://www.kaggle.com/kasimchristianloan/nlu-covid-emotion-showcase)
+
+
+# NLU component examples
+
+The following are Collab examples which showcase each NLU component and some applications.
+
+- ### Named Entity Recognition (NER)
+    - [NER pretrained on ONTO Notes](https://colab.research.google.com/drive/1_sgbJV3dYPZ_Q7acCgKWgqZkWcKAfg79?usp=sharing)
+    - [NER pretrained on CONLL](https://colab.research.google.com/drive/1CYzHfQyFCdvIOVO2Z5aggVI9c0hDEOrw?usp=sharing)
+- ### Part of speech (POS)
     - [POS pretrained on ANC dataset](https://colab.research.google.com/drive/1tW833T3HS8F5Lvn6LgeDd5LW5226syKN?usp=sharing)
-- Classifiers
+- ###  Classifiers
     - [Unsupervised Keyword Extraction with YAKE](https://colab.research.google.com/drive/1BdomIc1nhrGxLFOpK5r82Zc4eFgnIgaO?usp=sharing)
     - [Toxic Text Classifier](https://colab.research.google.com/drive/1QRG5ZtAvoJAMZ8ytFMfXj_W8ogdeRi9m?usp=sharing)
     - [Twitter Sentiment Classifier](https://colab.research.google.com/drive/1H1Gekn2qzXzOf5rrT8LmHmmuoOGsiu8m?usp=sharing)
@@ -38,9 +105,8 @@ NLU release notes
     - [E2E Classifier](https://colab.research.google.com/drive/1OSkiXGEpKlm9HWDoVb42uLNQQgb7nqNZ?usp=sharing)
     - [Cyberbullying Classifier](https://colab.research.google.com/drive/1OSkiXGEpKlm9HWDoVb42uLNQQgb7nqNZ?usp=sharing)
     - [Spam Classifier](https://colab.research.google.com/drive/1u-8Fs3Etz07bFNx0CDV_le3Xz73VbK0z?usp=sharing)
-- Word and Sentence Embeddings 
+- ### Word Embeddings 
     - [BERT Word Embeddings and T-SNE plotting](https://colab.research.google.com/drive/1Rg1vdSeq6sURc48RV8lpS47ja0bYwQmt?usp=sharing)
-    - [BERT Sentence Embeddings and T-SNE plotting](https://colab.research.google.com/drive/1FmREx0O4BDeogldyN74_7Lur5NeiOVye?usp=sharing)
     - [ALBERT Word Embeddings and T-SNE plotting](https://colab.research.google.com/drive/18yd9pDoPkde79boTbAC8Xd03ROKisPsn?usp=sharing)
     - [ELMO Word Embeddings and T-SNE plotting](https://colab.research.google.com/drive/1TtNYB9z0yH8d1ZjfxkH0TVxQ2O_iOYVV?usp=sharing)
     - [XLNET Word Embeddings and T-SNE plotting](https://colab.research.google.com/drive/1C9T29QA00yjLuJ1yEMTbjUQMpUv35pHb?usp=sharing)
@@ -48,13 +114,16 @@ NLU release notes
     - [COVIDBERT Word Embeddings and T-SNE plotting](https://colab.research.google.com/drive/1Yzc-GuNQyeWewJh5USTN7PbbcJvd-D7s?usp=sharing)
     - [BIOBERT Word Embeddings and T-SNE plotting](https://colab.research.google.com/drive/1llANd-XGD8vkGNMcqTi_8Dr_Ys6cr83W?usp=sharing)
     - [GLOVE Word Embeddings and T-SNE plotting](https://colab.research.google.com/drive/1IQxf4pJ_EnrIDyd0fAX-dv6u0YQWae2g?usp=sharing)
+- ### Sentence Embeddings
+    - [BERT Sentence Embeddings and T-SNE plotting](https://colab.research.google.com/drive/1FmREx0O4BDeogldyN74_7Lur5NeiOVye?usp=sharing)
+    - [ELECTRA Sentence Embeddings and T-SNE plotting](https://colab.research.google.com/drive/1VXHH0ltHF_hXdiRqRlrV_lymAO4ws5PO?usp=sharing)
     - [USE Sentence Embeddings and T-SNE plotting](https://colab.research.google.com/drive/1gZzOMiCovmrp7z8FIidzDTLS0nt8kPJT?usp=sharing)
 
-- Depenency Parsing 
-    -[Untyped Dependency Parsing](https://colab.research.google.com/drive/1PC8ga_NFlOcTNeDVJY4x8Pl5oe0jVmue?usp=sharing)
-    -[Typed Dependency Parsing](https://colab.research.google.com/drive/1KXUqcF8e-LU9cXnHE8ni8z758LuFPvY7?usp=sharing)
+- ### Dependency Parsing 
+    - [Untyped Dependency Parsing](https://colab.research.google.com/drive/1PC8ga_NFlOcTNeDVJY4x8Pl5oe0jVmue?usp=sharing)
+    - [Typed Dependency Parsing](https://colab.research.google.com/drive/1KXUqcF8e-LU9cXnHE8ni8z758LuFPvY7?usp=sharing)
 
-- Text Pre Processing and Cleaning
+- ### Text Pre Processing and Cleaning
     - [Tokenization](https://colab.research.google.com/drive/13BC6k6gLj1w5RZ0SyHjKsT2EOwJwbYwb?usp=sharing)
     - [Stopwords removal](https://colab.research.google.com/drive/1nWob4u93t2EJYupcOIanuPBDfShtYjGT?usp=sharing)
     - [Stemming](https://colab.research.google.com/drive/1gKTJJmffR9wz13Ms3pDy64jhUI8ZHZYu?usp=sharing)
@@ -63,53 +132,16 @@ NLU release notes
     - [Spellchecking](https://colab.research.google.com/drive/1bnRR8FygiiN3zJz3mRdbjPBUvFsx6IVB?usp=sharing)
     - [Sentence Detecting](https://colab.research.google.com/drive/1CAXEdRk_q3U5qbMXsxoVyZRwvonKthhF?usp=sharing)
 
-- Chunkers
-    -[N Gram](https://colab.research.google.com/drive/1pgqoRJ6yGWbTLWdLnRvwG5DLSU3rxuMq?usp=sharing)
-    -[Entity Chunking](https://colab.research.google.com/drive/1svpqtC3cY6JnRGeJngIPl2raqxdowpyi?usp=sharing)
-- Matchers
-    -[Date Matcher](https://colab.research.google.com/drive/1JrlfuV2jNGTdOXvaWIoHTSf6BscDMkN7?usp=sharing)
+- ### Chunkers
+    - [N Gram](https://colab.research.google.com/drive/1pgqoRJ6yGWbTLWdLnRvwG5DLSU3rxuMq?usp=sharing)
+    - [Entity Chunking](https://colab.research.google.com/drive/1svpqtC3cY6JnRGeJngIPl2raqxdowpyi?usp=sharing)
+- ### Matchers
+    - [Date Matcher](https://colab.research.google.com/drive/1JrlfuV2jNGTdOXvaWIoHTSf6BscDMkN7?usp=sharing)
 
 
-### 2.5.6
- - Better Defaults for spell checking
- - Lots of bug fixes
- - Additional feature discovery via nlu.components()
- - Memory optimization
- - Refactoring
- - Docs and Examples updates
- 
-### 2.5.5
-- Confidence extraction bugfix
+# Need help? 
+- [Ping us on Slack](https://spark-nlp.slack.com/archives/C0196BQCDPY) 
+- [Post an issue on Github](https://github.com/JohnSnowLabs/nlu/issues)
 
-### 2.5.4
-- Fixed bug with bad conversion of datatypes
-
-
-### 2.5.3
-- metadata parameter for predict function, prettier outputs
-- Datatype consistency added for predictions
-
-### 2.5.2
-- Modin dependency bugfix
-
-### 2.5.1
-- Modin Support
-
-### 2.5.0
-
-- Support for Modin with Ray and Dask Backends
-- Consistent input and outputs for predict() . If you input Spark Dataframe , you get Spark Dataframe Back. If you input Modin dataframe, you get Modin back. Analogous for predictions on Numpy and Pandas objects
-
-
-
-### 2.5.0.rc1
-
-The birth of a new Machine Learning library      
-NLU provides out of the box
-
-- 200+ pretrained models and pipelines for most NLU tasks ( Sentiment, Language Detection, NER, POS, Spell Checking)
-- 60 languages
-- Latest and greatest embeddings in different flavors (Elmo, Bert, Albert, Xlnert, Glove, Use)
-- 13 Different types of NLU components
-
-
+# Simple NLU Demos
+- [NLU different output levels Demo](https://colab.research.google.com/drive/1C4N3wpC17YzZf9fXHDNAJ5JvSmfbq7zT?usp=sharing)
