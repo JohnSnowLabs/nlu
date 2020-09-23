@@ -223,7 +223,7 @@ nlu.load('sentiment').predict(['This is an array', ' Of strings!'])
 
 ### Pandas Dataframe
 
-One column must be named text and of object/string type
+One column must be named text and of object/string type  or the first column will be used instead if no column named 'text' exists
 **note** : Passing the entire dataframe with additional features to the predict() method is very memory intensive.           
 It  is recommended to only pass the columns required for further downstream tasks to the predict() method.     
 
@@ -251,7 +251,7 @@ nlu.load('sentiment').predict(text_df['text'])
 
 ###  Spark Dataframe
 
-One column must be named text and of string type
+One column must be named text and of string type or the first column will be used instead if no column named 'text' exists
 
 ```python
 import nlu
@@ -263,4 +263,17 @@ nlu.load('sentiment').predict(text_sdf)
 ```
 
 
+
+###  Modin Dataframe
+Supports Ray Dask backends       
+One column must be named text and of string type or the first column will be used instead if no column named 'text' exists
+
+```python
+import nlu
+import modin.pandas as mpd
+data = {"text": ['This day sucks', 'I love this day', 'I don't like Sami']}
+text_pdf = pd.DataFrame(data)
+text_sdf = nlu.spark.createDataFrame(text_pdf)
+nlu.load('sentiment').predict(text_sdf)
+```
 
