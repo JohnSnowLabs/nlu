@@ -28,9 +28,9 @@ class AllComponentsInfo:
         self.all_pretrained_model_languages = ['da','fr','de','it','nb','no','nn','pl','pt','ru','es','af','ar','hy','eu','bn','br','bg','ca','cs','eo','fi','gl','el','ha','he','hi','hu','id','ga','ja','la','lv','mr','fa','ro','sk','sl','so','st','sw','sv','th','tr','uk','yo','zu','xx',]
         self.all_languages = set(self.all_pretrained_pipe_languages).union(set(self.all_pretrained_model_languages))
 
-        # this maps a requsted token to a class
-        self.all_component_types = ['tokenize','pos','ner','embed','classify','sentiment','emotion','spell','dependency',
-                                    'labled_dependency','lemma', 'norm', 'select', 'pretrained_pipe','util']
+        # this maps a requested token to a class
+        self.all_nlu_actions = ['tokenize', 'pos', 'ner', 'embed', 'classify', 'sentiment', 'emotion', 'spell', 'dependency','dep','dep.untyped', 'match','sentence_detector', 'spell', 'stopwords'
+                                    'labled_dependency','lemma', 'norm', 'select', 'pretrained_pipe','util', 'embed_sentence','embed_chunk','ngram']
 
 
         all_component_paths_regex = nlu.nlu_package_location + 'components/*/*/'
@@ -85,36 +85,13 @@ class ComponentInfo:
     inputs: list  # this tells us which columns/input types the component is depending on
     type: str  # this tells us which kind of component this is
     file_dependencies: dict  # Dict, where keys are file name identifiers and value is a dict of attributes (Where to download file, whats the size, etc..) (( MAYBE EMBELISH IN A CLASS?)
-    pipe_priorioty_slot: int  # What is the position at which this component should occur? 0 for first like Document Assembler, 1 For Tokenizer, etc.. See pipe group ranked priorties
     output_level : str # document, sentence, token, chunk, input_dependent or model_dependent
     spark_input_column_names: list  # default expected name for input columns when forking with spark nlp annotators on spark DFs
     spark_output_column_names: list  # default expected name for output columns when forking with spark nlp annotators on spark DFs
-    critical_parameters: list  # List of parameters that MUST be specified by the user to run this component, like [bla,bla,bla]
-    tags: list  # list of string tags
-    categories: list  # list of categories this component belongs to
-    metrics: list  # list of string identifiers for metrics, whiech this component can solve
-    made_from_components: list  # list of component identifiers which are used to build a pr etrained pipeline. Just the name of the component in a list or can be left empty for non-pre-built pipelines
 
-    component_options : list # list of str for different versions of component. Only applicable to single language components (or multi lang) or when all languages have exactly the same parameters
-
-    languages : list # Languages in which this component is available
-    component_parameters_info : dict # Hyperparameters of the component. Key parameter name, value is param info
-    component_language_options : dict # Dict in which every key is a language and every value is a dictionary of valid options for selected the model. (This is requried, since each language for a pretraiend pipeline does not have the same parameter options)
-
-    meta_data : dict # additonal data about the component as a dict
 
     provider : str  # Who provides the implementation of this annotator, Spark-NLP for base. Would be
-    version : str # Version of the model
-    support_version : str # First version NLU in which this model is supported
-    documentation_urls : list # List of URLs relevant to this component
-    source_urls : list # List of URLs relevant to this component (Source code etc..)
-    reference_urls : list # List of URLs relevant to this component (Additional Docs or other library links(
-    citations : list # List of paper citations
     license : str # open source or private
-    docs_author : str # Who is responsible for this NLU component docs
-    component_author : str # Who built the model?
-    nlu_author : str # Who is responsible for this NLU component and built a wrapper around this so its available in NLU?
-
     computation_context : str # Will this component do its computation in Spark land (like all of Spark NLP annotators do) or does it require some other computation engine or library like Tensorflow, Numpy, HuggingFace, etc..
     output_context : str # Will this components final result
 
