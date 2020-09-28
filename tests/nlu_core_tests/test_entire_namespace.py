@@ -7,7 +7,7 @@ This can take very long
 '''
 all_default_references = []
 i=0
-for nlu_reference in nlu.NameSpace.default_pretrained_component_references.keys():
+for nlu_reference in nlu.NameSpace.component_alias_references.keys():
     print('Adding default namespace test ', nlu_reference)
     all_default_references.append((nlu_reference,i))
     i+=1
@@ -40,35 +40,50 @@ def teardown_module(module):
     import gc
     gc.collect()
 import gc
+del nlu
 
+@pytest.mark.forked
 @pytest.mark.parametrize("nlu_reference,id",all_default_references)
 def test_every_default_component(nlu_reference, id):
+    import nlu
+    nlu.active_pipes.clear()
     gc.collect()
+    from operator import itemgetter
 
+    from pympler import tracker
+    #TODO add temporary model cleanup in /tmp , then twe can ci/cd dis slut
+    mem = tracker.SummaryTracker()
+    print("MEMORY",sorted(mem.create_summary(), reverse=True, key=itemgetter(2))[:10])
     print( 'param =', nlu_reference)
     print('TESTING NLU REFERENCE : ', nlu_reference)
-    if id < skip_to_test : return
+    # if id < skip_to_test : return
     df = nlu.load(nlu_reference).predict('What a wonderful day!')
     print(df)
+    print(df.columns)
     print('TESTING DONE FOR NLU REFERENCE : ', nlu_reference)
 
-@pytest.mark.parametrize("nlu_reference,id",all_pipe_references)
-def test_every_default_component(nlu_reference,id):
-    gc.collect()
-    print( 'param =', nlu_reference)
-    print('TESTING NLU REFERENCE : ', nlu_reference)
-    if id < skip_to_test : return
-    df = nlu.load(nlu_reference).predict('What a wonderful day!')
-    print(df)
-    print('TESTING DONE FOR NLU REFERENCE : ', nlu_reference)
+# @pytest.mark.parametrize("nlu_reference,id",all_pipe_references)
+# def test_every_default_component(nlu_reference,id):
+#     import nlu
+#     gc.collect()
+#     print( 'param =', nlu_reference)
+#     print('TESTING NLU REFERENCE : ', nlu_reference)
+#     if id < skip_to_test : return
+#     df = nlu.load(nlu_reference).predict('What a wonderful day!')
+#     print(df)
+#     print(df.columns)
+#
+#     print('TESTING DONE FOR NLU REFERENCE : ', nlu_reference)
 
-@pytest.mark.parametrize("nlu_reference,id",all_model_references)
-def test_every_default_component(nlu_reference,id):
-    gc.collect()
-    print( 'param =', nlu_reference)
-    print('TESTING NLU REFERENCE : ', nlu_reference)
-    if id < skip_to_test : return
-    df = nlu.load(nlu_reference).predict('What a wonderful day!')
-    print(df)
-    print('TESTING DONE FOR NLU REFERENCE : ', nlu_reference)
+# @pytest.mark.parametrize("nlu_reference,id",all_model_references)
+# def test_every_default_component(nlu_reference,id):
+#     import nlu
+#     gc.collect()
+#     print( 'param =', nlu_reference)
+#     print('TESTING NLU REFERENCE : ', nlu_reference)
+#     if id < skip_to_test : return
+#     df = nlu.load(nlu_reference).predict('What a wonderful day!')
+#     print(df)
+#     print(df.columns)
+#     print('TESTING DONE FOR NLU REFERENCE : ', nlu_reference)
 
