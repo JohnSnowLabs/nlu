@@ -209,11 +209,11 @@ def get_default_component_of_type(missing_component_type):
         #if there is an @ in the name, we must get some specific pretrained model from the sparknlp reference that should follow after the @
         missing_component_type, sparknlp_reference = missing_component_type.split('@')
         if 'embed' in missing_component_type:
-            return construct_component_from_identifier(language='en', component_type=sparknlp_reference.split("_")[0], dataset='', component_embeddings='', full_request='',
-                                    sparknlp_reference=sparknlp_reference)
+            return construct_component_from_identifier(language='en', component_type=sparknlp_reference.split("_")[0], dataset='', component_embeddings='', nlu_reference='',
+                                                       sparknlp_reference=sparknlp_reference)
         if 'pos' in missing_component_type or 'ner' in missing_component_type:
-            return construct_component_from_identifier(language='en', component_type='classifier', dataset='', component_embeddings='', full_request='',
-                                                sparknlp_reference=sparknlp_reference)
+            return construct_component_from_identifier(language='en', component_type='classifier', dataset='', component_embeddings='', nlu_reference='',
+                                                       sparknlp_reference=sparknlp_reference)
         if 'chunk_embeddings' in missing_component_type: return embeddings_chunker.EmbeddingsChunker()
         if 'unlabeled_dependency' in missing_component_type or 'dep.untyped' in missing_component_type:
             return UnlabledDepParser('unlabeled_dependency_parser') 
@@ -343,22 +343,35 @@ def resolve_component_from_parsed_query_data(language, component_type, dataset, 
         logger.info('Found Spark NLP reference in language free aliases namespace')
         resolved = True
 
-    #3. ???? when dis hapn , tokenizer I guess??
+    #3. If reference is none of the Namespaces, it must be a component like tokenizer or YAKE or Chunker etc....
+    # If it is not, then it does not exist and will be caught later
     if resolved == False :
         resolved = True
         component_kind = 'component'
-        logger.info('Could not find reference in NLU namespace. Assuming it is a component.')
-        
+        logger.info('Could not find reference in NLU namespace. Assuming it is a component that is an ragmatic NLP annotator with NO model to download behind it.')
+
+    # Convert references into NLU Component object which embelishes NLP annotators
+    # TODO check for return non and raise execption and return NLUI error
+
     if component_kind == 'pipe':
-        logger.info('Inferred Spark reference for pipeline :  %s', sparknlp_reference)
+
         constructed_components = construct_component_from_pipe_identifier(language, sparknlp_reference)
-        return constructed_components
+        logger.info('Inferred Spark reference nlp_ref=%s and nlu_ref=%s  to NLP Annotator Class %s', sparknlp_reference, nlu_reference, constructed_components)
+
+        if constructed_components == None :
+            logger.exception('EXCEPTION : Could not create NLU component for nlp_ref=%s and nlu_ref=%s  to NLP Annotator Class %s', sparknlp_reference, nlu_reference, constructed_components)
+            return NLU_error
+        else : return constructed_components
     elif component_kind == 'model' or 'component':
         constructed_component = construct_component_from_identifier(language, component_type, dataset,
                                                                     component_embeddings, nlu_reference,
                                                                     sparknlp_reference)
-        logger.info('Inferred Spark reference for model :  %s', sparknlp_reference)
-        return constructed_component
+        logger.info('Inferred Spark reference nlp_ref=%s and nlu_ref=%s  to NLP Annotator Class %s', sparknlp_reference, nlu_reference, constructed_component.model.__class__.name)
+
+        if constructed_component == None :
+            logger.exception('EXCEPTION : Could not create NLU component for nlp_ref=%s and nlu_ref=%s  to NLP Annotator Class %s', sparknlp_reference, nlu_reference, constructed_components)
+            return NLU_error
+        else : return constructed_component
     else:
         logger.exception("EXCEPTION : Could not resolve query=%s for kind=%s and reference=%s in any of NLU's namespaces ", nlu_reference, component_kind,
                          sparknlp_reference)
@@ -398,27 +411,28 @@ def construct_component_from_pipe_identifier(language, sparknlp_reference):
         elif parsed == 'stemmer': constructed_components.append(nlu.stemmer.Stemmer(model=component))
         elif parsed == 'pos' or parsed =='language': constructed_components.append(nlu.Classifier(model=component))
         elif parsed == 'word': constructed_components.append(nlu.Embeddings(model=component))
-        elif parsed == 'ner' or  parsed == 'nerdlmodel': constructed_components.append(nlu.Classifier(component_name='ner',model=component))
+        elif parsed == 'ner' or  parsed == 'nerdlmodel': constructed_components.append(nlu.Classifier(
+            annotator_class='ner', model=component))
         elif parsed == 'dependency': constructed_components.append(nlu.Util(model=component))
         elif parsed == 'typed': constructed_components.append(nlu.Util(model=component)) # todo util abuse
         elif parsed == 'multi': constructed_components.append(nlu.Util(model=component)) # todo util abuse 
         elif parsed == 'sentimentdlmodel': constructed_components.append(nlu.Classifier(model=component))
         elif parsed in ['universal','bert','albert', 'elmo', 'xlnet', 'glove','electra','covidbert','small_bert','']  : constructed_components.append(nlu.Embeddings(model=component))
-        elif parsed == 'vivekn': constructed_components.append(nlu.Classifier(component_name='vivekn', model=component))
+        elif parsed == 'vivekn': constructed_components.append(nlu.Classifier(annotator_class='vivekn', model=component))
         elif parsed == 'chunker': constructed_components.append(nlu.chunker.Chunker(model=component))
         elif parsed == 'ngram': constructed_components.append(nlu.chunker.Chunker(model=component))
-        elif '2e2' in parsed: constructed_components.append(nlu.Embeddings(model=component))
+        elif '2e2' in parsed: constructed_components.append(nlu.Classifier(model=component))
         elif parsed == 'embeddings_chunk': constructed_components.append(embeddings_chunker.EmbeddingsChunker(model=component))
         elif parsed == 'stopwords': constructed_components.append(nlu.StopWordsCleaner(model=component))
         
         logger.info("Extracted into NLU Component type : %s", parsed)
         if None in constructed_components :
-            logger.exception("EXCEPTION: Could not infer component type for lang=%s and sparknlp_reference=%s during pipeline conversion,", language,sparknlp_reference)
+            logger.exception("EXCEPTION: Could not infer component type for lang=%s and nlp_ref=%s during pipeline conversion,", language,sparknlp_reference)
             return None
     return constructed_components
 
 
-def construct_component_from_identifier(language, component_type, dataset, component_embeddings, full_request,
+def construct_component_from_identifier(language, component_type, dataset, component_embeddings, nlu_reference,
                                         sparknlp_reference):
     '''
     Creates a NLU component from a pretrained SparkNLP model reference or Class reference.
@@ -427,44 +441,32 @@ def construct_component_from_identifier(language, component_type, dataset, compo
     :param component_type: Class which will be used to instantiate the model
     :param dataset: Dataset that the model was trained on
     :param component_embeddings: Embedded that the models was traiend on (if any)
-    :param full_request: Full user request
+    :param nlu_reference: Full user request
     :param sparknlp_reference: Full Spark NLP reference
     :return: Returns a NLU component which embelished the Spark NLP pretrained model and class for that model
     '''
-    logger.info('Creating singular NLU component for type=%s sparknlp reference=%s , dataset=%s, language=%s ', component_type, sparknlp_reference, dataset, language)
+    logger.info('Creating singular NLU component for type=%s sparknlp_ref=%s , dataset=%s, language=%s , nlu_ref=%s ', component_type, sparknlp_reference, dataset, language, nlu_reference)
     try : 
-        if sparknlp_reference == 'yake':
-            return Classifier('yake')
-        elif 'bert' in dataset or component_type == 'embed' or 'albert' in component_type or 'bert' in component_type or 'xlnet' in component_type \
-                or 'use' in component_type or 'glove' in component_type or 'elmo' in component_type or 'tfhub_use' in sparknlp_reference\
-                or 'bert' in sparknlp_reference or 'labse' in sparknlp_reference or component_type =='embed_sentence':
-            if component_type == 'embed' and dataset != '' :
-                return Embeddings(component_name=dataset, language=language, get_default=False,
-                                  sparknlp_reference=sparknlp_reference)
-            elif component_type == 'embed' :  return Embeddings() #default
-            else : return Embeddings(component_name=component_type, language=language, get_default=False,
-                              sparknlp_reference=sparknlp_reference)
-        elif component_type == 'classify' or  'e2e' in sparknlp_reference:
-            if component_type == 'classify' and dataset != '' :
-                return Classifier(component_name=dataset, language=language, get_default=False,
-                                  sparknlp_reference=sparknlp_reference)
-            else : return Classifier(component_name=component_type, language=language, get_default=False,
-                              sparknlp_reference=sparknlp_reference)
+        if sparknlp_reference == 'yake':return Classifier('yake')
+        elif any([component_type in NameSpace.word_embeddings,dataset in NameSpace.word_embeddings, nlu_reference in NameSpace.word_embeddings] ):
+            return Embeddings(get_default=False, nlp_ref= sparknlp_reference, nlu_ref= nlu_reference, language=language)
+        elif any([component_type in NameSpace.classifiers,dataset in NameSpace.classifiers, nlu_reference in NameSpace.classifiers] ):
+            return Classifier(get_default=False, nlp_ref= sparknlp_reference, nlu_ref= nlu_reference, language=language)
         elif component_type == 'tokenize':
             return nlu.tokenizer.Tokenizer(component_name=component_type, language=language, get_default=False,
                                            sparknlp_reference=sparknlp_reference)
         elif component_type == 'pos':
-            return Classifier(component_name=component_type, language=language, get_default=False,
-                              sparknlp_reference=sparknlp_reference)
+            return Classifier(annotator_class=component_type, language=language, get_default=False,
+                              nlp_ref=sparknlp_reference)
         elif component_type == 'ner' or 'ner_dl' in sparknlp_reference:
-            return Classifier(component_name='ner', language=language, get_default=False,
-                              sparknlp_reference=sparknlp_reference)
+            return Classifier(annotator_class='ner', language=language, get_default=False,
+                              nlp_ref=sparknlp_reference)
         elif component_type == 'sentiment':
-            return Classifier(component_name=component_type, language=language, get_default=False,
-                              sparknlp_reference=sparknlp_reference)
+            return Classifier(annotator_class=component_type, language=language, get_default=False,
+                              nlp_ref=sparknlp_reference)
         elif component_type == 'emotion':
-            return Classifier(component_name=component_type, language=language, get_default=False,
-                              sparknlp_reference=sparknlp_reference)
+            return Classifier(annotator_class=component_type, language=language, get_default=False,
+                              nlp_ref=sparknlp_reference)
         elif component_type == 'spell':
             return SpellChecker(component_name=component_type, language=language, get_default=False,
                                 sparknlp_reference=sparknlp_reference, dataset = dataset)
@@ -497,16 +499,105 @@ def construct_component_from_identifier(language, component_type, dataset, compo
         elif component_type == 'regex' or sparknlp_reference =='regex_matcher' : return nlu.Matcher(component_name='regex')
         elif component_type == 'text' or sparknlp_reference =='text_matcher'  : return nlu.Matcher(component_name='text')
 
-        logger.exception('EXCEPTION: Could not resolve singular Component for type=%s and sparknl reference=%s and nlu reference=%s',component_type, sparknlp_reference,full_request)
+        logger.exception('EXCEPTION: Could not resolve singular Component for type=%s and sparknl reference=%s and nlu reference=%s', component_type, sparknlp_reference, nlu_reference)
         return None  
     except : # if reference is not in namespace and not a component it will cause a unrecoverable crash
-        logger.exception('EXCEPTION: Could not resolve singular Component for type=%s and sparknl reference=%s and nlu reference=%s',component_type, sparknlp_reference,full_request)
+        logger.exception('EXCEPTION: Could not resolve singular Component for type=%s and sparknl reference=%s and nlu reference=%s', component_type, sparknlp_reference, nlu_reference)
         return None
-        
 
 
-
-
+#
+# def construct_component_from_identifier_OLD(language, component_type, dataset, component_embeddings, full_request,
+#                                         nlp_ref):
+#     '''
+#     Creates a NLU component from a pretrained SparkNLP model reference or Class reference.
+#     Class references will return default pretrained models
+#     :param language: Language of the sparknlp model reference
+#     :param component_type: Class which will be used to instantiate the model
+#     :param dataset: Dataset that the model was trained on
+#     :param component_embeddings: Embedded that the models was traiend on (if any)
+#     :param full_request: Full user request
+#     :param nlp_ref: Full Spark NLP reference
+#     :return: Returns a NLU component which embelished the Spark NLP pretrained model and class for that model
+#     '''
+#     logger.info('Creating singular NLU component for type=%s sparknlp reference=%s , dataset=%s, language=%s ', component_type, nlp_ref, dataset, language)
+#     try :
+#         if nlp_ref == 'yake':return Classifier('yake')
+#         elif any([component_type in NameSpace.word_embeddings,
+#                   dataset in NameSpace.word_embeddings,
+#                   ] ):
+#
+#
+#
+#         elif 'bert' in dataset or component_type == 'embed' or 'albert' in component_type or 'bert' in component_type or 'xlnet' in component_type \
+#                 or 'use' in component_type or 'glove' in component_type or 'elmo' in component_type or 'tfhub_use' in nlp_ref \
+#                 or 'bert' in nlp_ref or 'labse' in nlp_ref or component_type =='embed_sentence':
+#             if component_type == 'embed' and dataset != '' :
+#                 return Embeddings(annotator_class=dataset, language=language, get_default=False,
+#                                   nlp_ref=nlp_ref)
+#             elif component_type == 'embed' :  return Embeddings() #default
+#             else : return Embeddings(annotator_class=component_type, language=language, get_default=False,
+#                                      nlp_ref=nlp_ref)
+#         elif component_type == 'classify' or  'e2e' in nlp_ref:
+#             if component_type == 'classify' and dataset != '' :
+#                 return Classifier(annotator_class=dataset, language=language, get_default=False,
+#                                   nlp_ref=nlp_ref)
+#             else : return Classifier(annotator_class=component_type, language=language, get_default=False,
+#                                      nlp_ref=nlp_ref)
+#         elif component_type == 'tokenize':
+#             return nlu.tokenizer.Tokenizer(annotator_class=component_type, language=language, get_default=False,
+#                                            nlp_ref=nlp_ref)
+#         elif component_type == 'pos':
+#             return Classifier(annotator_class=component_type, language=language, get_default=False,
+#                               nlp_ref=nlp_ref)
+#         elif component_type == 'ner' or 'ner_dl' in nlp_ref:
+#             return Classifier(annotator_class='ner', language=language, get_default=False,
+#                               nlp_ref=nlp_ref)
+#         elif component_type == 'sentiment':
+#             return Classifier(annotator_class=component_type, language=language, get_default=False,
+#                               nlp_ref=nlp_ref)
+#         elif component_type == 'emotion':
+#             return Classifier(annotator_class=component_type, language=language, get_default=False,
+#                               nlp_ref=nlp_ref)
+#         elif component_type == 'spell':
+#             return SpellChecker(annotator_class=component_type, language=language, get_default=False,
+#                                 nlp_ref=nlp_ref, dataset = dataset)
+#         elif component_type == 'dep' and dataset!='untyped' :# There are no trainable dep parsers this gets only default dep
+#             return LabledDepParser(annotator_class='labeled_dependency_parser', language=language, get_default=True,
+#                                    nlp_ref=nlp_ref)
+#         elif component_type == 'dep.untyped' or  dataset =='untyped': # There are no trainable dep parsers this gets only default dep
+#             return UnlabledDepParser(annotator_class='unlabeled_dependency_parser', language=language, get_default=True,
+#                                      nlp_ref=nlp_ref)
+#         elif component_type == 'lemma':
+#             return nlu.lemmatizer.Lemmatizer(annotator_class=component_type, language=language, get_default=False,
+#                                              nlp_ref=nlp_ref)
+#         elif component_type == 'norm':
+#             return nlu.normalizer.Normalizer(annotator_class='normalizer', language=language, get_default=True,
+#                                              nlp_ref=nlp_ref)
+#         elif component_type == 'clean' or component_type == 'stopwords' :
+#             return nlu.StopWordsCleaner( language=language, get_default=False,
+#                                          nlp_ref=nlp_ref)
+#         elif component_type == 'sentence_detector':
+#             return NLUSentenceDetector(annotator_class=component_type, language=language, get_default=True,
+#                                        nlp_ref=nlp_ref)
+#         elif component_type == 'match':
+#             return Matcher(annotator_class=dataset, language=language, get_default=True,
+#                            nlp_ref=nlp_ref)
+#         elif component_type == 'stem' or  component_type == 'stemm' or nlp_ref == 'stemmer' :
+#             return Stemmer()
+#         elif component_type == 'chunk'  :return nlu.chunker.Chunker()
+#         elif component_type == 'ngram'  :return nlu.chunker.Chunker('ngram')
+#         elif component_type == 'embed_chunk': return embeddings_chunker.EmbeddingsChunker()
+#         elif component_type == 'regex' or nlp_ref =='regex_matcher' : return nlu.Matcher(annotator_class='regex')
+#         elif component_type == 'text' or nlp_ref =='text_matcher'  : return nlu.Matcher(annotator_class='text')
+#
+#         logger.exception('EXCEPTION: Could not resolve singular Component for type=%s and sparknl reference=%s and nlu reference=%s',component_type, nlp_ref,full_request)
+#         return None
+#     except : # if reference is not in namespace and not a component it will cause a unrecoverable crash
+#         logger.exception('EXCEPTION: Could not resolve singular Component for type=%s and sparknl reference=%s and nlu reference=%s',component_type, nlp_ref,full_request)
+#         return None
+#
+#
 
 # Functionality discovery methods
 def languages():
