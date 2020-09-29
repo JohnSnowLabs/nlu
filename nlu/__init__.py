@@ -94,6 +94,7 @@ from nlu.components.chunkers.ngram.ngram import NGram
 
 # sentence
 from nlu.components.utils.sentence_detector.sentence_detector import SparkNLPSentenceDetector
+from nlu.components.sentence_detector import NLUSentenceDetector
 
 from nlu.info import AllComponentsInfo
 global nlu_package_location
@@ -225,7 +226,7 @@ def get_default_component_of_type(missing_component_type):
         logger.exception("Could not resolve default component type for missing type=%s", missing_component_type)
 
 
-def parse_component_data_from_name_query(request, detect_lang=False):
+def parse_component_data_from_name_query(nlu_reference, detect_lang=False):
     '''
     This method implements the main namespace for all component names. It parses the input request and passes the data to a resolver method which searches the namespace for a Component for the input request
     It returns a list of NLU.component objects or just one NLU.component object alone if just one component was specified.
@@ -233,13 +234,18 @@ def parse_component_data_from_name_query(request, detect_lang=False):
     If no lang is provided, default language eng is assumed.
     General format  <lang>.<class>.<dataset>.<embeddings>
     For embedding format : <lang>.<class>.<variant>
-    :param request: User request (should be a NLU reference)
+    This method will parse <language>.<NLU_action>
+        Additional data about dataset and variant will be resolved by corrosponding action classes
+
+    :param nlu_reference: User request (should be a NLU reference)
     :param detect_lang: Wether to automatically  detect language
     :return: Pipeline or component for the NLU reference
     '''
 
-    infos = request.split('.')
-    if len(infos) < 0: print('ERROR INVALID COMPONENT NAME')
+    infos = nlu_reference.split('.')
+    if len(infos) < 0:
+        logger.exception("EXCEPTION: Could not create a component for nlu reference=%s", nlu_reference)
+        return NLU_error()
     language = ''
     component_type = ''
     dataset = ''
@@ -253,9 +259,10 @@ def parse_component_data_from_name_query(request, detect_lang=False):
         logger.exception("Split  on query is 0.")
     # Query of format <class>, no embeds,lang or dataset specified
     elif len(infos) == 1:
+        # if we only have 1 split result, it must a a NLU action reference or an alias
         logger.info('Setting default lang to english')
         language = 'en'
-        if infos[0] in all_components_info.all_components or all_components_info.all_component_types:
+        if infos[0] in all_components_info.all_components or all_components_info.all_nlu_actions:
             component_type = infos[0]
     #  check if it is any query of style #<lang>.<class>.<dataset>.<embeddings>
     elif infos[0] in all_components_info.all_languages:
@@ -268,7 +275,7 @@ def parse_component_data_from_name_query(request, detect_lang=False):
             component_embeddings = infos[3]
     
     # passing embed_sentence can have format embed_sentence.lang.embedding or embed_sentence.embedding
-    # i.e. embed_sentence.bert  
+    # i.e. embed_sentence.bert
     # fr.embed_sentence.bert will automatically select french bert thus no embed_sentence.en.bert or simmilar is required
     # embed_sentence.bert or en.embed_sentence.bert
     # name does not start with a language
@@ -288,19 +295,19 @@ def parse_component_data_from_name_query(request, detect_lang=False):
 
     logger.info(
         'For input query %s detected : \n lang: %s  , component type: %s , component dataset: %s , component embeddings  %s  ',
-        request, language, component_type, dataset, component_embeddings)
-    resolved_component = resolve_component_from_parsed_query_data(language, component_type, dataset, component_embeddings, request)
+        nlu_reference, language, component_type, dataset, component_embeddings)
+    resolved_component = resolve_component_from_parsed_query_data(language, component_type, dataset, component_embeddings, nlu_reference)
 
     if resolved_component == None :
-        logger.exception("EXCEPTION: Could not create a component for nlu reference=%s", request)
-        return None
+        logger.exception("EXCEPTION: Could not create a component for nlu reference=%s", nlu_reference)
+        return NLU_error()
     return resolved_component
 
 
-def resolve_component_from_parsed_query_data(language, component_type, dataset, component_embeddings, full_request):
+def resolve_component_from_parsed_query_data(language, component_type, dataset, component_embeddings, nlu_reference):
     '''
     Searches the NLU name spaces for a matching NLU reference. From that NLU reference, a SparkNLP reference will be aquired which resolved to a SparkNLP pretrained model or pipeline
-    :param full_request: Full request which was passed to nlu.load()
+    :param nlu_reference: Full request which was passed to nlu.load()
     :param language: parsed language, may never be  '' and should be default 'en'
     :param component_type: parsed component type. may never be ''
     :param dataset: parsed dataset, can be ''
@@ -311,26 +318,32 @@ def resolve_component_from_parsed_query_data(language, component_type, dataset, 
     sparknlp_reference = ''
     logger.info('Searching local Namespaces for SparkNLP reference.. ')
     resolved = False
+
+    #1. check if pipeline references for resolution
     if resolved == False and language in NameSpace.pretrained_pipe_references.keys():
-        if full_request in NameSpace.pretrained_pipe_references[language].keys():
+        if nlu_reference in NameSpace.pretrained_pipe_references[language].keys():
             component_kind = 'pipe'
-            sparknlp_reference = NameSpace.pretrained_pipe_references[language][full_request]
+            sparknlp_reference = NameSpace.pretrained_pipe_references[language][nlu_reference]
             logger.info('Found Spark NLP reference in pretrained pipelines namespace')
             resolved = True
 
+    #2. check if model references for resolution
     if resolved == False and language in NameSpace.pretrained_models_references.keys():
-        if full_request in NameSpace.pretrained_models_references[language].keys():
+        if nlu_reference in NameSpace.pretrained_models_references[language].keys():
             component_kind = 'model'
-            sparknlp_reference = NameSpace.pretrained_models_references[language][full_request]
+            sparknlp_reference = NameSpace.pretrained_models_references[language][nlu_reference]
             logger.info('Found Spark NLP reference in pretrained models namespace')
             resolved = True
 
-    if resolved == False and full_request in NameSpace.default_pretrained_component_references.keys():
-        sparknlp_data = NameSpace.default_pretrained_component_references[full_request]
+    #2. check if alias/default references for resolution
+    if resolved == False and nlu_reference in NameSpace.component_alias_references.keys():
+        sparknlp_data = NameSpace.component_alias_references[nlu_reference]
         component_kind = sparknlp_data[1]
         sparknlp_reference = sparknlp_data[0]
         logger.info('Found Spark NLP reference in language free aliases namespace')
         resolved = True
+
+    #3. ???? when dis hapn , tokenizer I guess??
     if resolved == False :
         resolved = True
         component_kind = 'component'
@@ -342,14 +355,14 @@ def resolve_component_from_parsed_query_data(language, component_type, dataset, 
         return constructed_components
     elif component_kind == 'model' or 'component':
         constructed_component = construct_component_from_identifier(language, component_type, dataset,
-                                                                    component_embeddings, full_request,
+                                                                    component_embeddings, nlu_reference,
                                                                     sparknlp_reference)
         logger.info('Inferred Spark reference for model :  %s', sparknlp_reference)
         return constructed_component
     else:
-        logger.exception("EXCEPTION : Could not resolve query=%s for kind=%s and reference=%s in any of NLU's namespaces ", full_request, component_kind,
+        logger.exception("EXCEPTION : Could not resolve query=%s for kind=%s and reference=%s in any of NLU's namespaces ", nlu_reference, component_kind,
                          sparknlp_reference)
-        return None
+        return NLU_error
 
 
 def construct_component_from_pipe_identifier(language, sparknlp_reference):
@@ -422,7 +435,8 @@ def construct_component_from_identifier(language, component_type, dataset, compo
     try : 
         if sparknlp_reference == 'yake':
             return Classifier('yake')
-        elif 'bert' in dataset or component_type == 'embed' or 'albert' in component_type or 'bert' in component_type or 'xlnet' in component_type or 'use' in component_type or 'glove' in component_type or 'elmo' in component_type or 'tfhub_use' in sparknlp_reference\
+        elif 'bert' in dataset or component_type == 'embed' or 'albert' in component_type or 'bert' in component_type or 'xlnet' in component_type \
+                or 'use' in component_type or 'glove' in component_type or 'elmo' in component_type or 'tfhub_use' in sparknlp_reference\
                 or 'bert' in sparknlp_reference or 'labse' in sparknlp_reference or component_type =='embed_sentence':
             if component_type == 'embed' and dataset != '' :
                 return Embeddings(component_name=dataset, language=language, get_default=False,
@@ -480,8 +494,8 @@ def construct_component_from_identifier(language, component_type, dataset, compo
         elif component_type == 'chunk'  :return nlu.chunker.Chunker()
         elif component_type == 'ngram'  :return nlu.chunker.Chunker('ngram')
         elif component_type == 'embed_chunk': return embeddings_chunker.EmbeddingsChunker()
-        elif component_type == 'regex' or sparknlp_reference =='regex_matcher' : return nlu.Matcher(component_name='regex',model=component)
-        elif component_type == 'text' or sparknlp_reference =='text_matcher'  : return nlu.Matcher(component_name='text',model=component)
+        elif component_type == 'regex' or sparknlp_reference =='regex_matcher' : return nlu.Matcher(component_name='regex')
+        elif component_type == 'text' or sparknlp_reference =='text_matcher'  : return nlu.Matcher(component_name='text')
 
         logger.exception('EXCEPTION: Could not resolve singular Component for type=%s and sparknl reference=%s and nlu reference=%s',component_type, sparknlp_reference,full_request)
         return None  
@@ -489,6 +503,9 @@ def construct_component_from_identifier(language, component_type, dataset, compo
         logger.exception('EXCEPTION: Could not resolve singular Component for type=%s and sparknl reference=%s and nlu reference=%s',component_type, sparknlp_reference,full_request)
         return None
         
+
+
+
 
 
 # Functionality discovery methods
@@ -545,9 +562,9 @@ def print_components(lang='', action='' ):
         return
 
     # Print entire Namespace below
-    for nlu_reference in nlu.NameSpace.default_pretrained_component_references.keys():
-        component_type =nlu.NameSpace.default_pretrained_component_references[nlu_reference][1][0],  # pipe or model
-        print("nlu.load('"+ nlu_reference + "') '  returns Spark NLP "+ str(component_type)+ ': '+nlu.NameSpace.default_pretrained_component_references[nlu_reference][0] )
+    for nlu_reference in nlu.NameSpace.component_alias_references.keys():
+        component_type =nlu.NameSpace.component_alias_references[nlu_reference][1][0],  # pipe or model
+        print("nlu.load('" + nlu_reference + "') '  returns Spark NLP " + str(component_type) + ': ' + nlu.NameSpace.component_alias_references[nlu_reference][0])
 
     for lang in nlu.NameSpace.pretrained_pipe_references.keys():
         for nlu_reference in nlu.NameSpace.pretrained_pipe_references[lang] :
