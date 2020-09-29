@@ -22,8 +22,8 @@
         {%- endif -%}
       </div>
       {%- if site.data.navigation.header -%}
-      <nav class="navigation">
-        <ul>
+      <nav class="navigation top_navigation">
+        <ul class="top-menu">
           {%- for _item in site.data.navigation.header -%}
             {%- include snippets/get-nav-url.html path=_item.url -%}
             {%- assign _nav_url = __return -%}
@@ -40,7 +40,11 @@
             <li><button class="button button--secondary button--circle search-button js-search-toggle"><i class="fas fa-search"></i></button></li>
           {%- endif -%}
         </ul>
-      </nav>
+      </nav>      
+      <a class="responsive_btn" href="#" id="responsive_menu">          
+        <i class="fas fa-bars"></i>
+        <i class="fas fa-times"></i>
+      </a>
       {%- endif -%}
     </div>
   </header>
