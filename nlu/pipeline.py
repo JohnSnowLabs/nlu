@@ -29,15 +29,31 @@ class BasePipe(dict):
         self.light_pipe_configured=False
         self.spark_non_light_transformer_pipe = None
         self.pipe_components = []                                         # orderd list of nlu_component objects
-        self.output_datatype = 'pandas' # What data type should be returned after predict either spark, pandas, modin, numpy, string or array 
-    def add(self, component, component_name="auto_generate"):
+        self.output_datatype = 'pandas' # What data type should be returned after predict either spark, pandas, modin, numpy, string or array
+    def add(self, component, nlu_reference="auto_generated"):
+        '''
+
+        :param component:
+        :param nlu_reference: NLU references, passed for components that are used specified and not automatically generate by NLU
+        :return:
+        '''
         
         self.pipe_components.append(component)
         
         # Spark NLP model reference shortcut
         name = component.component_info.name.replace(' ','')
-        if name not in self.keys() : self[name]=component.model 
-        else : self[name]=component.model
+        if name not in self.keys() :
+            component.nlu_reference=nlu_reference
+            self[name]=component.model
+        else :
+            # this case is when multiple bert models are loaded, should only happen for components with 1 output, or this can cause unexpected behaivour
+            new_output_column = name+'@'+nlu_reference
+            new_output_column = new_output_column.replace('.','_')
+            component.nlu_reference=nlu_reference
+            component.model.setOutputCol(new_output_column)
+            component.component_info.spark_output_column_names = [new_output_column]
+            component.component_info.name = new_output_column
+            self[new_output_column]=component.model
         # self.component_execution_plan.update()
 
 class NLUPipeline(BasePipe):
@@ -307,7 +323,7 @@ class NLUPipeline(BasePipe):
             if '.result' in col  : reorderd_fields_to_rename.append(reorderd_fields_to_rename.pop(reorderd_fields_to_rename.index(col)))
             
         
-            # This case works on the original Spark Columns which have beenn untouched sofar.
+        # This case works on the original Spark Columns which have beenn untouched sofar.
         for i, field in enumerate(reorderd_fields_to_rename):
             if self.raw_text_column in field: continue
             new_field = field.replace('.', '_').replace('_result','').replace('_embeddings_embeddings','_embeddings')
@@ -680,7 +696,7 @@ class NLUPipeline(BasePipe):
                 self =  PipelineQueryVerifier.check_and_fix_nlu_pipeline(self)
         # if not self.is_fitted: self.fit()
 
-        # currently have to always fit, otherwise parameter cnhages wont come in action
+        # currently have to always fit, otherwise parameter changes wont take effect
         self.fit()
 
         self.configure_light_pipe_usage(len(data),multithread)
@@ -688,6 +704,7 @@ class NLUPipeline(BasePipe):
         sdf = None
         stranger_features = []
         index_provided=False
+        infered_text_col = False
 
         try:
             if type(data) is  pyspark.sql.dataframe.DataFrame : # casting follows spark->pd
@@ -704,6 +721,10 @@ class NLUPipeline(BasePipe):
                     print('Could not find column named "text" in input Pandas Dataframe. Please ensure one column named such exists. Columns in DF are : ', data.columns)
             if type(data) is pd.DataFrame:  # casting follows pd->spark->pd
                 self.output_datatype = 'pandas'
+
+                # set first col as text column if there is none
+                if self.raw_text_column not in data.columns :
+                    data.rename(columns={data.columns[0]: 'text'},inplace=True)
                 data['origin_index']=data.index
                 index_provided=True
                 if self.raw_text_column in data.columns:
@@ -712,14 +733,19 @@ class NLUPipeline(BasePipe):
                         data = data.dropna(axis=1, how='all')
                         stranger_features = list( set(data.columns) - set(self.raw_text_column))
                     sdf = self.spark_transformer_pipe.transform(self.spark.createDataFrame(data ))
-                else : 
+
+                else :
                     print('Could not find column named "text" in input Pandas Dataframe. Please ensure one column named such exists. Columns in DF are : ', data.columns)
             elif type(data) is pd.Series:  # for df['text'] colum/series passing casting follows pseries->pdf->spark->pd
                 self.output_datatype='pandas_series'
                 data = pd.DataFrame(data).dropna(axis=1, how='all')
                 index_provided=True
                 # If series from a column is passed, its column name will be reused.
-                if 'text' not in data.columns and len(data.columns) == 1 :data['text'] = data[data.columns[0]]
+                if self.raw_text_column not in data.columns and len(data.columns) == 1 :data['text'] = data[data.columns[0]]
+                else :
+                    print('INFO: NLU will assume', data.columns[0],'as label column since default text column could not be find')
+                    data['text'] = data[data.columns[0]]
+
                 data['origin_index']=data.index
 
                 if self.raw_text_column in data.columns: sdf = self.spark_transformer_pipe.transform(self.spark.createDataFrame(data), )
@@ -823,7 +849,7 @@ class NLUPipeline(BasePipe):
             component_outputs = []
             max_len = 0
             for key in p_map.keys():
-                if "outputCol" in key.name or "labelCol" in key.name or "inputCol" in key.name or "labelCol" in key.name  or 'lazyAnnotator' in key.name: continue
+                if "outputCol" in key.name or "labelCol" in key.name or "inputCol" in key.name or "labelCol" in key.name  or 'lazyAnnotator' in key.name or 'storageref' in key.name: continue
                 # print("pipe['"+ component_key +"'].set"+ str( key.name[0].capitalize())+ key.name[1:]+"("+str(p_map[key])+")" + " | Info: " + str(key.doc)+ " currently Configured as : "+str(p_map[key]) )
                 # print("Param Info: " + str(key.doc)+ " currently Configured as : "+str(p_map[key]) )
 
@@ -1031,14 +1057,14 @@ class PipelineQueryVerifier():
 
         logger.info('Fixing column names')
         #  Validate naming of output columns is correct and no error will be thrown in spark
-        pipe = PipelineQueryVerifier.check_and_fix_component_output_column_names(pipe)
+        pipe = PipelineQueryVerifier.check_and_fix_component_output_column_name_satisfaction(pipe)
 
         # 4.  fix order
         logger.info('Optimizing pipe component order')
         pipe = PipelineQueryVerifier.check_and_fix_component_order(pipe)
 
 
-
+        # 5. Check if output column names overlap, if yes, fix
         
         # 6. Todo Download all file depenencies like train files or  dictionaries
         logger.info('Done with pipe optimizing')
@@ -1046,7 +1072,7 @@ class PipelineQueryVerifier():
         return pipe
 
     @staticmethod
-    def check_and_fix_component_output_column_names(pipe: NLUPipeline):
+    def check_and_fix_component_output_column_name_satisfaction(pipe: NLUPipeline):
         '''
         This function verifies that every input and output column name of a component is satisfied.
         If some output names are missing, it will be added by this methods.
@@ -1085,6 +1111,48 @@ class PipelineQueryVerifier():
                             other_component.model.setOutputCol(missing_column)
 
         return pipe
+
+    @staticmethod
+    def check_and_fix_component_output_column_name_overlap(pipe: NLUPipeline):
+        '''
+        This method enforces that every component has a unique output column name.
+        Especially for classifiers or bert_embeddings this issue might occur,
+
+
+        1. For each component we veryify that all input column names are satisfied  by checking all other components output names
+        2. When a input column is missing we do the following :
+        2.1 Figure out the type of the missing input column. The name of the missing column should be equal to the type
+        2.2 Check if there is already a component in the pipe, which provides this input (It should)
+        2.3. When the providing component is found, update its output name, or update the original coponents input name
+        :return: NLU pipeline where the output and input column names of the models have been adjusted to each other
+        '''
+
+        all_names_provided = False
+
+        for component_to_check in pipe.pipe_components:
+            all_names_provided_for_component = False
+            input_columns = set(component_to_check.component_info.spark_input_column_names)
+            logger.info('Checking for component %s wether input %s is satisfied by another component in the pipe ',component_to_check.component_info.name, input_columns)
+            for other_component in pipe.pipe_components:
+                if component_to_check.component_info.name == other_component.component_info.name: continue
+                output_columns = set(other_component.component_info.spark_output_column_names)
+                input_columns -= output_columns  # set substraction
+
+            input_columns = PipelineQueryVerifier.clean_irrelevant_features(input_columns)
+
+            if len(input_columns) != 0:  # fix missing column name
+                for missing_column in input_columns:
+                    for other_component in pipe.pipe_components:
+                        if component_to_check.component_info.name == other_component.component_info.name: continue
+                        if other_component.component_info.type == missing_column:
+                            # resolve which setter to use ...
+                            # We update the output name for the component which provides our feature
+                            other_component.component_info.spark_output_column_names = [missing_column]
+                            logger.info('Setting output columns for component %s to %s ', other_component.component_info.name, missing_column)
+                            other_component.model.setOutputCol(missing_column)
+
+        return pipe
+
 
 
 

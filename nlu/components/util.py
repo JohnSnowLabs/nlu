@@ -3,7 +3,7 @@ from nlu.pipe_components import SparkNLUComponent, NLUComponent
 class Util(SparkNLUComponent):
 
     def __init__(self,component_name='document_assembler', component_type='util', model = None):
-        # super(Tokenizer,self).__init__(component_name = component_name, component_type = component_type)
+        # super(Tokenizer,self).__init__(annotator_class = annotator_class, component_type = component_type)
         if component_name == 'ner_converter':
             component_name = 'ner_to_chunk_converter'
         SparkNLUComponent.__init__(self,component_name,component_type)

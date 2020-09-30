@@ -1,8 +1,22 @@
 class NameSpace():
+
+    # NLU model_base_names =
+    # These reference tell NLU to which component resolved to route a request to
+    word_embeddings = ['embed','bert','electra','albert','elmo','glove','xlnet','biobert','covidbert','tfhub_use',]
+    sentence_embeddings = ['embed_sentence','use', 'bert', 'electra', 'labse','tfhub_use']
+    classifiers = ['classify', 'e2e', 'emotion', 'sentiment', 'ner',
+                   'pos', 'trec6','trec50', 'questions',
+                   'sarcasm','emotion', 'spam','fakenews', 'cyberbullying',
+                   'wiki','wiki_7', 'wiki_20','yake','toxic'
+                   ]
+
+    #Reference to all datasets for which we have pretrained models
+    datasets = []
+    chunk_embeddings = ['embed_sentence']
     # The vocabulary of the nlu Namespace. Any of this references give you a model
     # keys inside a language dict are NLU references and value is the name in SparkNLP
 
-    default_pretrained_component_references = {  
+    component_alias_references = {
         # references for SparkNLPAnnotators without pretrained models.
         #  These are names for NLU components that can be created withouth a language prefix
 
@@ -46,6 +60,8 @@ class NameSpace():
         'sentiment.twitter.use': ('analyze_sentimentdl_use_twitter','pipe'),
         'sentiment.twitter': ('analyze_sentimentdl_use_twitter','pipe'),
         'dependency': ('dependency_parse','pipe'),
+        'dep': ('dependency_parse','pipe'),
+        'dep.untyped': ('dep.untyped','model'),
 
         # models
         'tokenize': ('spark_nlp_tokenizer', 'model'),  # tokenizer rule based model
@@ -213,7 +229,7 @@ class NameSpace():
             'en.sentiment.imdb.use': 'analyze_sentimentdl_use_imdb',
             'en.sentiment.twitter.use': 'analyze_sentimentdl_use_twitter',
             'en.sentiment.twitter': 'analyze_sentimentdl_use_twitter',
-            # 'en.dependency': 'dependency_parse',
+            'en.dependency': 'dependency_parse',
         },
 
 
@@ -291,9 +307,7 @@ class NameSpace():
             'pt.ner.sm': 'entity_recognizer_sm',
             'pt.ner.md': 'entity_recognizer_md',
             'pt.ner.lg': 'entity_recognizer_lg',
-            'pt.bert': 'bert_portuguese_base_cased',
-            'pt.bert.cased': 'bert_portuguese_base_cased',
-            'pt.ner.large': 'bert_portuguese_large_cased',
+
 
         },
         'ru': {
@@ -362,7 +376,7 @@ class NameSpace():
             'en.ner.onto.glove.6B_100d': 'onto_100',
             'en.ner.onto.glove.6B_300d': 'onto_300',  # this uses multi lang embeds!
             'en.ner.glove.100d': 'ner_dl_sentence',
-            # 'en.spell.symmetric': 'spellcheck_sd',
+            'en.spell.symmetric': 'spellcheck_sd',
             'en.spell.norvig': 'spellcheck_norvig',
             'en.sentiment.vivekn': 'sentiment_vivekn',
             'en.dep.untyped.conllu': 'dependency_conllu',
@@ -414,7 +428,7 @@ class NameSpace():
             'en.embed.xlnet': 'xlnet_base_cased',  # xlnet default en
             'en.xlnet': 'xlnet_base_cased',  # xlnet alias
             'en.embed.xlnet_base_cased': 'xlnet_base_cased',
-            # 'en.embed.xlnet_large_cased': 'xlnet_large_cased',
+            'en.embed.xlnet_large_cased': 'xlnet_large_cased',
 
             # classifiers and sentiment
 
@@ -539,6 +553,7 @@ class NameSpace():
             'fr.ner.wikiner': 'wikiner_840B_300',  # default nr embeds fr
             'fr.ner.wikiner.glove.840B_300': 'wikiner_840B_300',
             'fr.stopwords': 'stopwords_fr',
+            'fr.ner.wikiner.glove.6B_300': 'wikiner_6B_300',
 
         },
         'de': {
@@ -549,6 +564,7 @@ class NameSpace():
             'de.ner.wikiner': 'wikiner_840B_300',  # default ner embeds de
             'de.ner.wikiner.glove.840B_300': 'wikiner_840B_300',
             'de.stopwords': 'stopwords_de',
+            'de.ner.wikiner.glove.6B_300': 'wikiner_6B_300',
 
         },
         'it': {
@@ -559,9 +575,10 @@ class NameSpace():
             'it.pos': 'pos_ud_isdt',  # default pos it
             'it.pos.ud_isdt': 'pos_ud_isdt',
             'it.ner': 'wikiner_840B_300',  # default ner it
-            'it.ner.wikiner': 'wikiner_840B_300',  # default ner embeds it
-            'it.ner.wikiner.glove.840B_300': 'wikiner_840B_300',
+            'it.ner.wikiner.glove.6B_300': 'wikiner_6B_300',
             'it.stopwords': 'stopwords_it',
+
+
         },
         'nb': {
             'nb.lemma': 'lemma',
@@ -601,6 +618,9 @@ class NameSpace():
             'pt.ner.wikiner.glove.6B_300': 'wikiner_6B_300',
             'pt.ner.wikiner.glove.840B_300': 'wikiner_840B_300',
             'pt.stopwords': 'stopwords_pt',
+            'pt.bert': 'bert_portuguese_base_cased',
+            'pt.bert.cased': 'bert_portuguese_base_cased',
+            'pt.ner.large': 'bert_portuguese_large_cased',
         },
         'ru': {
             'ru.lemma': 'lemma',

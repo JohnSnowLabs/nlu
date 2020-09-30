@@ -41,8 +41,8 @@ class NLUComponent():
 
 class SparkNLUComponent(NLUComponent):
     def __init__(self, component_name, component_type):
-        # super().__init__(component_name, component_type)
-        # super(SparkNLUComponent,self).__init__(component_name, component_type)
+        # super().__init__(annotator_class, component_type)
+        # super(SparkNLUComponent,self).__init__(annotator_class, component_type)
         NLUComponent.__init__(self, component_name, component_type)
         self.spark = nlu.sparknlp.start()
         nlu.spark = self.spark
