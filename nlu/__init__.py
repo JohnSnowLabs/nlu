@@ -170,12 +170,12 @@ def get_default_component_of_type(missing_component_type):
         if missing_component_type == 'sentence': return Util('sentence_detector')
         if missing_component_type == 'sentence_embeddings': return Embeddings('use')
         if 'token' in missing_component_type: return nlu.components.tokenizer.Tokenizer("default_tokenizer")
-        if missing_component_type == 'word_embeddings': return Embeddings('bert')
-        if missing_component_type == 'pos':   return Classifier('pos')
-        if missing_component_type == 'ner':   return Classifier('named_entity_recognizer_crf')
+        if missing_component_type == 'word_embeddings': return Embeddings(nlu_ref='glove')
+        if missing_component_type == 'pos':   return Classifier(nlu_ref='pos')
+        if missing_component_type == 'ner':   return Classifier(nlu_ref='ner')
         if missing_component_type == 'ner_converter':   return Util('ner_converter')
         if missing_component_type == 'chunk': return nlu.chunker.Chunker()
-        if missing_component_type == 'ngram': return nlu.chunker.Chunker('ngram')
+        if missing_component_type == 'ngram': return nlu.chunker.Chunker(nlu_ref='ngram')
         if missing_component_type == 'chunk_embeddings': return embeddings_chunker.EmbeddingsChunker()
         if missing_component_type == 'unlabeled_dependency': return UnlabledDepParser()
         if missing_component_type == 'labled_dependency': return LabledDepParser('dep')
@@ -186,18 +186,16 @@ def get_default_component_of_type(missing_component_type):
         #if there is an @ in the name, we must get some specific pretrained model from the sparknlp reference that should follow after the @
         missing_component_type, sparknlp_reference = missing_component_type.split('@')
         if 'embed' in missing_component_type:
-            return construct_component_from_identifier(language='en', component_type=sparknlp_reference.split("_")[0], dataset='', component_embeddings='', nlu_ref='',
-                                                       nlp_ref=sparknlp_reference)
+            return construct_component_from_identifier(language='en', component_type='embed', nlp_ref=sparknlp_reference)
         if 'pos' in missing_component_type or 'ner' in missing_component_type:
-            return construct_component_from_identifier(language='en', component_type='classifier', dataset='', component_embeddings='', nlu_ref='',
-                                                       nlp_ref=sparknlp_reference)
-        if 'chunk_embeddings' in missing_component_type: return embeddings_chunker.EmbeddingsChunker()
+            return construct_component_from_identifier(language='en', component_type='classifier',nlp_ref=sparknlp_reference)
+        if 'chunk_embeddings' in missing_component_type:
+            return embeddings_chunker.EmbeddingsChunker()
         if 'unlabeled_dependency' in missing_component_type or 'dep.untyped' in missing_component_type:
-            return UnlabledDepParser('unlabeled_dependency_parser')
+            return UnlabledDepParser('dep.untyped')
         if 'labled_dependency' in missing_component_type or 'dep.typed' in missing_component_type :
-            return LabledDepParser('labeled_dependency_parser')
+            return LabledDepParser('dep.typed')
         if 'date' in missing_component_type:
-
             return None
 
         logger.exception("Could not resolve default component type for missing type=%s", missing_component_type)
@@ -231,7 +229,7 @@ def parse_component_data_from_name_query(nlu_reference, detect_lang=False):
     # 1. Check if either a default cmponent or one specific pretrained component or pipe  or alias of them is is requested without more sepcificatin about lang,dataset or embeding.
     # I.e. 'explain_ml' , 'explain; 'albert_xlarge_uncased' or ' tokenize'  or 'sentiment' s requested. in this case, every possible annotator must be checked.
     #format <class> or <nlu identifier>
-
+    #TODO type parsing via checking parts in nlu action
     if len(infos) == 0:
         logger.exception("Split  on query is 0.")
     # Query of format <class>, no embeds,lang or dataset specified
@@ -370,13 +368,14 @@ def construct_component_from_pipe_identifier(language, nlp_ref, nlu_ref):
         logger.info("Extracting model from Spark NLP pipeline: %s and creating Component", component)
         parsed = str(component).split('_')[0].lower()
         logger.info("Parsed Component for : %s", parsed)
-
-        if 'NerConverter' in  component.name : constructed_components.append(Util(component_name='ner_converter', model=component))
+        c_name = component.__class__.__name__
+        if  c_name == 'NerConverter'  : constructed_components.append(Util(annotator_class='ner_converter', model=component))
         elif parsed in NameSpace.word_embeddings +  NameSpace.sentence_embeddings  : constructed_components.append(nlu.Embeddings(model=component))
         elif parsed in NameSpace.classifiers : constructed_components.append(nlu.Classifier(model=component))
+        elif 'Token' in c_name :constructed_components.append(nlu.Tokenizer(model=component))
         elif parsed == 'match': constructed_components.append(nlu.Matcher(model=component))
         elif parsed == 'document': constructed_components.append(nlu.Util(model=component))
-        elif parsed == 'sentence': constructed_components.append(nlu.Util(model=component))
+        elif parsed == 'sentence': constructed_components.append(nlu.Util(annotator_class='sentence_detector',model=component))
         elif parsed == 'regex': constructed_components.append(nlu.Matcher(model=component, nlu_ref=parsed))
         elif parsed == 'date': constructed_components.append(nlu.Matcher(model=component, nlu_ref=parsed))
         elif parsed == 'text': constructed_components.append(nlu.Matcher(model=component, nlu_ref=parsed))
@@ -384,7 +383,9 @@ def construct_component_from_pipe_identifier(language, nlp_ref, nlu_ref):
         elif parsed == 'lemmatizer': constructed_components.append(nlu.lemmatizer.Lemmatizer(model=component))
         elif parsed == 'normalizer': constructed_components.append(nlu.normalizer.Normalizer(model=component))
         elif parsed == 'stemmer': constructed_components.append(nlu.stemmer.Stemmer(model=component))
-        elif parsed == 'pos' or parsed =='language': constructed_components.append(nlu.Classifier(model=component))
+        elif c_name == 'PerceptronModel' : constructed_components.append(nlu.Classifier(annotator_class='classifierdl',model=component))
+        elif c_name == 'ClassifierDLModel': constructed_components.append(nlu.Classifier(annotator_class='language_detector',model=component))
+
         elif parsed == 'word': constructed_components.append(nlu.Embeddings(model=component))
         elif parsed == 'ner' or  parsed == 'nerdlmodel': constructed_components.append(nlu.Classifier(model=component))
         elif parsed == 'dependency': constructed_components.append(nlu.Util(model=component))
@@ -396,6 +397,10 @@ def construct_component_from_pipe_identifier(language, nlp_ref, nlu_ref):
         elif parsed == 'ngram': constructed_components.append(nlu.chunker.Chunker(model=component))
         elif parsed == 'embeddings_chunk': constructed_components.append(embeddings_chunker.EmbeddingsChunker(model=component))
         elif parsed == 'stopwords': constructed_components.append(nlu.StopWordsCleaner(model=component))
+        else:
+            logger.exception("EXCEPTION: Could not infer component type for lang=%s and nlp_ref=%s during pipeline conversion,", language, nlp_ref)
+            logger.info("USING DEFAULT ANNOTATOR TYPE Lemmatizer to fix issue")
+            constructed_components.append(nlu.normalizer.Normalizer(model=component))
 
         logger.info("Extracted into NLU Component type : %s", parsed)
         if None in constructed_components :
@@ -404,8 +409,8 @@ def construct_component_from_pipe_identifier(language, nlp_ref, nlu_ref):
     return constructed_components
 
 
-def construct_component_from_identifier(language, component_type, dataset, component_embeddings, nlu_ref,
-                                        nlp_ref):
+def construct_component_from_identifier(language, component_type='', dataset='', component_embeddings='', nlu_ref='',
+                                        nlp_ref=''):
     '''
     Creates a NLU component from a pretrained SparkNLP model reference or Class reference.
     Class references will return default pretrained models
@@ -420,10 +425,15 @@ def construct_component_from_identifier(language, component_type, dataset, compo
     logger.info('Creating singular NLU component for type=%s sparknlp_ref=%s , dataset=%s, language=%s , nlu_ref=%s ', component_type, nlp_ref, dataset, language, nlu_ref)
     try :
 
-        if any([component_type in NameSpace.word_embeddings,dataset in NameSpace.word_embeddings, nlu_ref in NameSpace.word_embeddings]):
+        # if any([component_type in NameSpace.word_embeddings,dataset in NameSpace.word_embeddings, nlu_ref in NameSpace.word_embeddings, nlp_ref in NameSpace.word_embeddings]):
+        if any(x in NameSpace.word_embeddings and not x in NameSpace.classifiers for x in [nlp_ref, nlu_ref, dataset, component_type, ] + dataset.split('_') ):
             return Embeddings(get_default=False, nlp_ref= nlp_ref, nlu_ref= nlu_ref, language=language)
 
-        elif any([component_type in NameSpace.classifiers,dataset in NameSpace.classifiers, nlu_ref in NameSpace.classifiers]):
+        # elif any([component_type in NameSpace.sentence_embeddings,dataset in NameSpace.sentence_embeddings, nlu_ref in NameSpace.sentence_embeddings, nlp_ref in NameSpace.sentence_embeddings]):
+        if any(x in NameSpace.sentence_embeddings and not x in NameSpace.classifiers for x in [nlp_ref, nlu_ref, dataset, component_type, ] + dataset.split('_') ):
+            return Embeddings(get_default=False, nlp_ref= nlp_ref, nlu_ref= nlu_ref, language=language)
+
+        elif any(x in NameSpace.classifiers for x in [nlp_ref, nlu_ref, dataset, component_type, ] + dataset.split('_') ):
             return Classifier(get_default=False, nlp_ref= nlp_ref, nlu_ref= nlu_ref, language=language)
 
 
