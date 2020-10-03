@@ -1,5 +1,3 @@
-# BASE PIPELINE CLASS
-from sparknlp import pretrained
 import sparknlp
 import pandas as pd
 import numpy as np
@@ -30,7 +28,7 @@ class BasePipe(dict):
         self.spark_non_light_transformer_pipe = None
         self.pipe_components = []                                         # orderd list of nlu_component objects
         self.output_datatype = 'pandas' # What data type should be returned after predict either spark, pandas, modin, numpy, string or array
-    def add(self, component, nlu_reference="auto_generated"):
+    def add(self, component, nlu_reference="default_name"):
         '''
 
         :param component:
@@ -70,7 +68,7 @@ class NLUPipeline(BasePipe):
             'sentence': ['sentence', 'sentence_embeddings', ] + ['sentiment', 'classifer', 'category'],
             'chunk': ['chunk', 'embeddings_chunk', 'chunk_embeddings'],
             'document': ['document','language'],
-            'embedding_level': [] #['sentiment', 'classifer'] # todo, wait for Spark NLP Getter/Setter fixes to implement this properly
+            'embedding_level': [] #['sentiment', 'classifer'] # WIP, wait for Spark NLP Getter/Setter fixes to implement this properly
             # embedding level  annotators output levels depend on the level of the embeddings they are fed. If we have Doc/Chunk/Word/Sentence embeddings, those annotators output at the same level.
 
         }
@@ -117,7 +115,8 @@ class NLUPipeline(BasePipe):
             component_outputs = component.component_info.spark_output_column_names
             for input_name in component_outputs:
                 if target_output_component == input_name:
-                    # this is the component that feeds into the component we are trying to resolve the output  level for.  That is so, because the output of this component matches the input of the component we are resolving
+                    # this is the component that feeds into the component we are trying to resolve the output  level for.
+                    # That is so, because the output of this component matches the input of the component we are resolving
                     return self.resolve_type_to_output_level(component.component_info.type)
 
     def resolve_type_to_output_level(self, field_type, field_name):
@@ -575,7 +574,7 @@ class NLUPipeline(BasePipe):
             ptmp,final_select_not_at_same_output_level = self.rename_columns_and_extract_map_values_different_level(ptmp=ptmp, fields_to_rename=not_at_same_output_level_fields, same_output_level=False, meta=output_metadata)
         
 
-        if self.output_level != 'document':final_select_not_at_same_output_level+= stranger_features# todo ?
+        if self.output_level != 'document':final_select_not_at_same_output_level+= stranger_features# <>
             
         
         logger.info('Final cleanup select of same level =%s', final_select_same_output_level)
@@ -590,14 +589,23 @@ class NLUPipeline(BasePipe):
         # final_df = ptmp.coalesce(10).select(list(set(final_cols)))
 
         pandas_df = self.finalize_return_datatype(final_df)
-        # i = pandas_df['origin_index'] 
         pandas_df.set_index('origin_index',inplace=True)
-        # pandas_df.drop('origin_index')
-        # pandas_df.set_index(pandas_df['origin_index'],inplace=True)
-        
-        
+
+        pandas_df = self.convert_embeddings_to_np(pandas_df)
+
         return  pandas_df
 
+    def convert_embeddings_to_np(self, pdf):
+        '''
+        convert all the columns in a pandas df to numpy
+        :param pdf: Pandas Dataframe whose embedding column will be converted to numpy array objects
+        :return: 
+        '''
+
+        for col in pdf.columns:
+            if 'embed' in col:
+              pdf[col] =  pdf[col].apply(lambda x : np.array(x))
+        return pdf
     def finalize_return_datatype(self, sdf):
         '''
         Take in a Spark dataframe with only relevant columns remaining.
@@ -686,7 +694,7 @@ class NLUPipeline(BasePipe):
         self.output_positions= positions
 
         if output_level=='chunk':
-            # If no chunk output componten in pipe we must add it and run the query verifyier again 
+            # If no chunk output component in pipe we must add it and run the query PipelineQueryVerifier again
             chunk_provided = False
             for component in self.pipe_components:
                 if component.component_info.output_level =='chunk' : chunk_provided = True 
@@ -756,13 +764,13 @@ class NLUPipeline(BasePipe):
                 self.output_datatype='numpy_array'
                 if len(data.shape) != 1:
                     print("Exception : Input numpy array must be 1 Dimensional for prediction.. Input data shape is",data.shape)
-                    return '' #todo return error obj
+                    return nlu.NLU_error
                 sdf = self.spark_transformer_pipe.transform(self.spark.createDataFrame(pd.DataFrame({self.raw_text_column:data, 'origin_index':list(range(len(data)))})))
                 index_provided=True
 
             elif type(data) is np.matrix: # assumes default axis for raw texts
                 print('Predicting on np matrices currently not supported. Please input either a Pandas Dataframe with a string column named "text"  or a String or a list of strings. ' )
-                return ''#todo return error obj
+                return  nlu.NLU_error
             elif type(data) is str:  # inefficient, str->pd->spark->pd , we can could first pd
                 self.output_datatype='string'
                 sdf = self.spark_transformer_pipe.transform(self.spark.createDataFrame(
@@ -824,11 +832,16 @@ class NLUPipeline(BasePipe):
                 logger.warning("Multithreaded mode failed. trying to predict again with non multithreaded mode ")
                 return self.predict(data, output_level=output_level, positions=positions, keep_stranger_features=keep_stranger_features, metadata=metadata, multithread=False)
             e = sys.exc_info()
-            print(e[0])
-            print(e[1])
-
-            print("No accepted Data type or usable columns found. Does your Dataframe contain a column named text?")
-            print('Stacktrace was',e)
+            print("No accepted Data type or usable columns found or applying the NLU models failed. "
+                  "\n Make sure that the first column you pass to .predict() is the one that nlu should predict on /n "
+                  "OR rename the column you want to predict on to 'text' ")
+            print('Full Stacktrace was',e)
+            print('Additional info:')
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            import os
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            print(exc_type, fname, exc_tb.tb_lineno)
+            print('Stuck? Contact us on Slack! https://join.slack.com/t/spark-nlp/shared_invite/zt-7rd4kw03-7F44zohcrUo0RULCd8rYrw')
             return None
 
 
@@ -905,7 +918,7 @@ class PipelineQueryVerifier():
             return False
         else :
             for feature in component.component_info.inputs:
-                if 'embed' in feature and feature : return  True # ??
+                if 'embed' in feature  : return  True
         return False
 
     @staticmethod
@@ -1050,7 +1063,7 @@ class PipelineQueryVerifier():
                 pipe.add(new_component)
                 logger.info('adding %s=', new_component.component_info.name)
 
-            # 3 Add NER converter if NER component is in pipeline : (This is a bit ineficcent but it is more stable
+            # 3 Add NER converter if NER component is in pipeline : (This is a bit ineficcent but it is most stable)
             pipe = PipelineQueryVerifier.add_ner_converter_if_required(pipe)
 
 
@@ -1066,7 +1079,7 @@ class PipelineQueryVerifier():
 
         # 5. Check if output column names overlap, if yes, fix
         
-        # 6. Todo Download all file depenencies like train files or  dictionaries
+        # 6.  Download all file depenencies like train files or  dictionaries
         logger.info('Done with pipe optimizing')
 
         return pipe
