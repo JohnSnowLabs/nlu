@@ -1,10 +1,10 @@
 from sparknlp.annotator import *
 
-class DefaultTokenizer:
+class RegexTokenizer:
     @staticmethod
     def get_default_model():
         return Tokenizer()\
-            .setInputCols(["document"]) \
+            .setInputCols(["sentence"]) \
             .setOutputCol("token")
 
 

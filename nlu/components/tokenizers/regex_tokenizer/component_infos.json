@@ -1,17 +1,17 @@
 {
-  "name": "default_tokenizer",
+  "name": "regex_tokenizer",
   "description": "todo",
   "output_level": "token",
   "outputs": [
     "token"
   ],
   "inputs": [
-    "document"
+    "sentence"
   ],
   "type": "tokenizer",
   "file_dependencies": {},
   "spark_input_column_names": [
-    "document"
+    "sentence"
   ],
   "spark_output_column_names": [
     "token"
