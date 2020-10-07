@@ -1,12 +1,12 @@
 ---
 layout: article
-title: Spark NLP release notes
+title: NLU release notes
 permalink: /docs/en/release_notes
 key: docs-release-notes
 modify_date: "2020-06-12"
 ---
 
-NLU release notes
+
 
 
 # 1.0 Release Notes 
