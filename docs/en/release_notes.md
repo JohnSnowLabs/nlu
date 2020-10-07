@@ -11,7 +11,6 @@ NLU release notes
 
 # 1.0 Release Notes 
     - Automatic to Numpy conversion of embeddings
-    - A lot of new aliases for easier access to models like 'questions', 'sarcasm', '..?'
     - Added various testing classes
     - [New 6 embeddings at once notebook with t-SNE and Medium article](https://medium.com/spark-nlp/1-line-of-code-for-bert-albert-elmo-electra-xlnet-glove-part-of-speech-with-nlu-and-t-sne-9ebcd5379cd)
      <img src="https://miro.medium.com/max/1296/1*WI4AJ78hwPpT_2SqpRpolA.png" >
