@@ -19,7 +19,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 
 REQUIRED_PKGS = [
     'pyspark==2.4.4',
-    'spark-nlp==2.6.1',
+    'spark-nlp==2.6.2',
     'numpy',
     'pyarrow>=0.16.0',
     'pandas',
@@ -47,7 +47,7 @@ setup(
     # For a discussion on single-sourcing the version across setup.py and the
     # project code, see
     # https://packaging.python.org/en/latest/single_source_version.html
-    version='0.0.1',  # Required
+    version='1.0.0',  # Required
 
     # This is a one-line description or tagline of what your project does. This
     # corresponds to the "Summary" metadata field:
@@ -184,6 +184,8 @@ setup(
         ('', ['nlu/components/stemmers/stemmer/component_infos.json']),
         #tokenizer
         ('', ['nlu/components/tokenizers/default_tokenizer/component_infos.json']),
+        ('', ['nlu/components/tokenizers/regex_tokenizer/component_infos.json']),
+
         #stopwords
         ('', ['nlu/components/stopwordscleaners/stopwordcleaner/component_infos.json']),
 

@@ -5,8 +5,8 @@ class Embeddings(SparkNLUComponent):
     def __init__(self, annotator_class='glove', language ='en', component_type='embedding', get_default=True, model = None, nlp_ref ='', nlu_ref =''):
         if 'use' in nlu_ref or 'tfhub_use' in nlp_ref: annotator_class = 'use'
         # first check for sentence then token embeddings.
-        elif 'bert' in nlp_ref and 'albert' not in nlp_ref and 'sent' in annotator_class : annotator_class= 'sentence_bert'
-        elif 'bert' in nlu_ref and 'albert' not in nlu_ref and 'sent' in annotator_class : annotator_class= 'sentence_bert'
+        elif 'bert' in nlp_ref and 'albert' not in nlp_ref and 'sent' in nlp_ref : annotator_class= 'sentence_bert'
+        elif 'bert' in nlu_ref and 'albert' not in nlu_ref and 'sent' in nlu_ref : annotator_class= 'sentence_bert'
 
         elif 'elmo' in nlp_ref  : annotator_class= 'elmo'
         elif 'elmo' in nlu_ref  : annotator_class= 'elmo'
@@ -18,7 +18,7 @@ class Embeddings(SparkNLUComponent):
         elif 'bert' in nlu_ref and 'albert' not in nlu_ref: annotator_class= 'bert'
 
         elif 'electra' in nlu_ref or 'electra' in nlp_ref:  annotator_class= 'bert'
-        elif 'labse' in nlu_ref   or 'labse' in nlp_ref:  annotator_class= 'bert'
+        elif 'labse' in nlu_ref   or 'labse' in nlp_ref:  annotator_class= 'sentence_bert'
 
         elif 'tfhub' in nlu_ref or 'tfhub' in nlp_ref: annotator_class= 'use'
         elif 'glove' in nlu_ref or 'glove' in nlp_ref : annotator_class = 'glove'
@@ -44,7 +44,7 @@ class Embeddings(SparkNLUComponent):
                 from nlu import BertSentence
                 if get_default : self.model =  BertSentence.get_default_model()
                 else : self.model = BertSentence.get_pretrained_model(nlp_ref, language)
-            elif 'bert' in annotator_class or 'electra' in annotator_class  or 'lablse' in annotator_class:
+            elif 'bert' in annotator_class :
                 from nlu import SparkNLPBert
                 if get_default : self.model =  SparkNLPBert.get_default_model()
                 else : self.model = SparkNLPBert.get_pretrained_model(nlp_ref, language)

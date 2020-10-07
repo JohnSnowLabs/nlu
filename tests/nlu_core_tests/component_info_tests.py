@@ -11,7 +11,7 @@ class TestComponentInfo(unittest.TestCase):
         a.DEBUG_list_all_components()
 
     def test_print_all_default_components_as_markdown(self):
-        print(pd.DataFrame(nlu.NameSpace.default_pretrained_component_references).T.to_markdown())
+        print(pd.DataFrame(nlu.NameSpace.component_alias_references).T.to_markdown())
 
     def test_print_all_models_as_markdown(self):
         rows = []
@@ -68,7 +68,7 @@ class TestComponentInfo(unittest.TestCase):
         spark_nlp_references = []
 
         # # get refs from default        
-        # for key, value in nlu.NameSpace.default_pretrained_component_references.items():
+        # for key, value in nlu.NameSpace.component_alias_references.items():
         #     if value[0] not in spark_nlp_references : spark_nlp_references.append(value[0])
 
         # get refs from pipes
@@ -100,7 +100,7 @@ class TestComponentInfo(unittest.TestCase):
     def test_print_pipe_info(self):
         pipe = nlu.load('sentiment')
         
-        pipe.print_info()
+        pipe.generate_class_metadata_table()
         
     def test_print_all_components_for_lang(self):
         # Test printing of all components for one specific language

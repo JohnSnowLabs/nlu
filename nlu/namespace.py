@@ -2,8 +2,8 @@ class NameSpace():
 
     # NLU model_base_names =
     # These reference tell NLU to which component resolved to route a request to
-    word_embeddings = ['embed','bert','electra','albert','elmo','glove','xlnet','biobert','covidbert','tfhub_use',]
-    sentence_embeddings = ['embed_sentence','use', 'bert', 'electra', 'labse','tfhub_use']
+    word_embeddings = ['embed','bert','electra','albert','elmo','glove','xlnet','biobert','covidbert','tfhub_use']
+    sentence_embeddings = ['embed_sentence','use', 'bert', 'electra','tfhub_use']
     classifiers = ['classify', 'e2e', 'emotion', 'sentiment', 'ner',
                    'pos', 'trec6','trec50', 'questions',
                    'sarcasm','emotion', 'spam','fakenews', 'cyberbullying',
@@ -60,8 +60,6 @@ class NameSpace():
         'sentiment.twitter.use': ('analyze_sentimentdl_use_twitter','pipe'),
         'sentiment.twitter': ('analyze_sentimentdl_use_twitter','pipe'),
         'dependency': ('dependency_parse','pipe'),
-        'dep': ('dependency_parse','pipe'),
-        'dep.untyped': ('dep.untyped','model'),
 
         # models
         'tokenize': ('spark_nlp_tokenizer', 'model'),  # tokenizer rule based model
@@ -154,6 +152,7 @@ class NameSpace():
         'classify.trec6.use': ('classifierdl_use_trec6','model'),
         'classify.trec50.use': ('classifierdl_use_trec50','model'),
         'classify.questions': ('classifierdl_use_trec50','model'),
+        'questions': ('classifierdl_use_trec50','model'),
 
         'classify.spam.use': ('classifierdl_use_spam','model'),
         'classify.fakenews.use': ('classifierdl_use_fakenews','model'),
@@ -164,10 +163,17 @@ class NameSpace():
         'classify.trec6': ('classifierdl_use_trec6','model'),  # Alias withouth embedding
         'classify.trec50': ('classifierdl_use_trec50','model'),  # Alias withouth embedding
         'classify.spam': ('classifierdl_use_spam','model'),  # Alias withouth embedding
+        'spam': ('classifierdl_use_spam','model'),  # Alias withouth embedding
+        'toxic': 'multiclassifierdl_use_toxic',
+
         'classify.fakenews': ('classifierdl_use_fakenews','model'),  # Alias withouth embedding
         'classify.emotion': ('classifierdl_use_emotion','model'),  # Alias withouth embedding
         'classify.cyberbullying': ('classifierdl_use_cyberbullying','model'),  # Alias withouth embedding
+        'cyberbullying': ('classifierdl_use_cyberbullying','model'),  # Alias withouth embedding
+        'cyber': ('classifierdl_use_cyberbullying','model'),  # Alias withouth embedding
+
         'classify.sarcasm': ('classifierdl_use_sarcasm','model'),  # Alias withouth embedding
+        'sarcasm': ('classifierdl_use_sarcasm','model'),  # Alias withouth embedding
 
         'embed.glove.840B_300': ('glove_840B_300','model'),
         'embed.glove.6B_300': ('glove_6B_300','model'),
@@ -538,6 +544,7 @@ class NameSpace():
             # 2.6 classifiers
             'en.classify.toxic': 'multiclassifierdl_use_toxic',
             'en.toxic': 'multiclassifierdl_use_toxic',
+
             'en.e2e': 'multiclassifierdl_use_e2e',
 
             'en.classify.toxic.sm': 'multiclassifierdl_use_toxic_sm',

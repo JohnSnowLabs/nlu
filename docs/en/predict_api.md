@@ -218,7 +218,7 @@ It  is recommended to only pass the columns required for further downstream task
 ```python
 import nlu
 import pandas as pd
-data = {"text": ['This day sucks', 'I love this day', 'I don't like Sami']}
+data = {"text": ['This day sucks', 'I love this day', 'I dont like Sami']}
 text_df = pd.DataFrame(data)
 nlu.load('sentiment').predict(text_df)
 ```
@@ -231,7 +231,7 @@ One column must be named text and of object/string type
 ```python
 import nlu
 import pandas as pd
-data = {"text": ['This day sucks', 'I love this day', 'I don't like Sami']}
+data = {"text": ['This day sucks', 'I love this day', 'I dont like Sami']}
 text_df = pd.DataFrame(data)
 nlu.load('sentiment').predict(text_df['text'])
 ```
@@ -243,7 +243,7 @@ One column must be named text and of string type
 ```python
 import nlu
 import pandas as pd
-data = {"text": ['This day sucks', 'I love this day', 'I don't like Sami']}
+data = {"text": ['This day sucks', 'I love this day', 'I dont like Sami']}
 text_pdf = pd.DataFrame(data)
 text_sdf = nlu.spark.createDataFrame(text_pdf)
 nlu.load('sentiment').predict(text_sdf)

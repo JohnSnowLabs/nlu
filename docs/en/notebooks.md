@@ -9,6 +9,8 @@ modify_date: "2019-05-16"
 
 Checkout the following notebooks for examples on how to work with NLU.
 
+# NLU Applications Example
+- [6 Wordembeddings at in 1 line with T-SNE plotting](https://colab.research.google.com/drive/1DBk55f9iERI9BDA4kmZ8yO6J65jGmcEA?usp=sharing)
 
 # NLU Demos on Datasets
 - [Kaggle Twitter Airline Sentiment Analysis NLU demo](https://www.kaggle.com/kasimchristianloan/nlu-sentiment-airline-demo)
@@ -17,7 +19,7 @@ Checkout the following notebooks for examples on how to work with NLU.
 - [Kaggle Twitter COVID Emotion Analysis nlu demo](https://www.kaggle.com/kasimchristianloan/nlu-covid-emotion-showcase)
 
 
-# NLU component examples
+# NLU component By examples
 
 The following are Collab examples which showcase each NLU component and some applications.
 
@@ -39,18 +41,19 @@ The following are Collab examples which showcase each NLU component and some app
     - [Cyberbullying Classifier](https://colab.research.google.com/drive/1OSkiXGEpKlm9HWDoVb42uLNQQgb7nqNZ?usp=sharing)
     - [Spam Classifier](https://colab.research.google.com/drive/1u-8Fs3Etz07bFNx0CDV_le3Xz73VbK0z?usp=sharing)
 - ### Word Embeddings 
-    - [BERT Word Embeddings and T-SNE plotting](https://colab.research.google.com/drive/1Rg1vdSeq6sURc48RV8lpS47ja0bYwQmt?usp=sharing)
-    - [ALBERT Word Embeddings and T-SNE plotting](https://colab.research.google.com/drive/18yd9pDoPkde79boTbAC8Xd03ROKisPsn?usp=sharing)
-    - [ELMO Word Embeddings and T-SNE plotting](https://colab.research.google.com/drive/1TtNYB9z0yH8d1ZjfxkH0TVxQ2O_iOYVV?usp=sharing)
-    - [XLNET Word Embeddings and T-SNE plotting](https://colab.research.google.com/drive/1C9T29QA00yjLuJ1yEMTbjUQMpUv35pHb?usp=sharing)
-    - [ELECTRA Word Embeddings and T-SNE plotting](https://colab.research.google.com/drive/1FueGEaOj2JkbqHzdmxwKrNMHzgVt4baE?usp=sharing)
-    - [COVIDBERT Word Embeddings and T-SNE plotting](https://colab.research.google.com/drive/1Yzc-GuNQyeWewJh5USTN7PbbcJvd-D7s?usp=sharing)
-    - [BIOBERT Word Embeddings and T-SNE plotting](https://colab.research.google.com/drive/1llANd-XGD8vkGNMcqTi_8Dr_Ys6cr83W?usp=sharing)
-    - [GLOVE Word Embeddings and T-SNE plotting](https://colab.research.google.com/drive/1IQxf4pJ_EnrIDyd0fAX-dv6u0YQWae2g?usp=sharing)
+    - [BERT, ALBERT, ELMO, ELECTRA, XLNET, GLOVE and t-SNE plotting](https://colab.research.google.com/drive/1DBk55f9iERI9BDA4kmZ8yO6J65jGmcEA?usp=sharing)
+    - [BERT Word Embeddings and t-SNE plotting](https://colab.research.google.com/drive/1Rg1vdSeq6sURc48RV8lpS47ja0bYwQmt?usp=sharing)
+    - [ALBERT Word Embeddings and t-SNE plotting](https://colab.research.google.com/drive/18yd9pDoPkde79boTbAC8Xd03ROKisPsn?usp=sharing)
+    - [ELMO Word Embeddings and t-SNE plotting](https://colab.research.google.com/drive/1TtNYB9z0yH8d1ZjfxkH0TVxQ2O_iOYVV?usp=sharing)
+    - [XLNET Word Embeddings and t-SNE plotting](https://colab.research.google.com/drive/1C9T29QA00yjLuJ1yEMTbjUQMpUv35pHb?usp=sharing)
+    - [ELECTRA Word Embeddings and t-SNE plotting](https://colab.research.google.com/drive/1FueGEaOj2JkbqHzdmxwKrNMHzgVt4baE?usp=sharing)
+    - [COVIDBERT Word Embeddings and t-SNE plotting](https://colab.research.google.com/drive/1Yzc-GuNQyeWewJh5USTN7PbbcJvd-D7s?usp=sharing)
+    - [BIOBERT Word Embeddings and t-SNE plotting](https://colab.research.google.com/drive/1llANd-XGD8vkGNMcqTi_8Dr_Ys6cr83W?usp=sharing)
+    - [GLOVE Word Embeddings and t-SNE plotting](https://colab.research.google.com/drive/1IQxf4pJ_EnrIDyd0fAX-dv6u0YQWae2g?usp=sharing)
 - ### Sentence Embeddings
-    - [BERT Sentence Embeddings and T-SNE plotting](https://colab.research.google.com/drive/1FmREx0O4BDeogldyN74_7Lur5NeiOVye?usp=sharing)
-    - [ELECTRA Sentence Embeddings and T-SNE plotting](https://colab.research.google.com/drive/1VXHH0ltHF_hXdiRqRlrV_lymAO4ws5PO?usp=sharing)
-    - [USE Sentence Embeddings and T-SNE plotting](https://colab.research.google.com/drive/1gZzOMiCovmrp7z8FIidzDTLS0nt8kPJT?usp=sharing)
+    - [BERT Sentence Embeddings and t-SNE plotting](https://colab.research.google.com/drive/1FmREx0O4BDeogldyN74_7Lur5NeiOVye?usp=sharing)
+    - [ELECTRA Sentence Embeddings and t-SNE plotting](https://colab.research.google.com/drive/1VXHH0ltHF_hXdiRqRlrV_lymAO4ws5PO?usp=sharing)
+    - [USE Sentence Embeddings and t-SNE plotting](https://colab.research.google.com/drive/1gZzOMiCovmrp7z8FIidzDTLS0nt8kPJT?usp=sharing)
 
 - ### Dependency Parsing 
     - [Untyped Dependency Parsing](https://colab.research.google.com/drive/1PC8ga_NFlOcTNeDVJY4x8Pl5oe0jVmue?usp=sharing)

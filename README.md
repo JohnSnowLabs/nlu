@@ -35,21 +35,14 @@ nlu.load('bert elmo albert xlnet glove use').predict('I love NLU! <3')
 
 ## What kind of models does NLU provide? 
 NLU provides everything a data scientist might want to wish for in one line of code!  
-- The 14+ of the latest NLP embeddings ( BERT, ELMO, ALBERT, XLNET, GLOVE, BIOBERT, USE) and different variations of them 
-- Generation of Sentence, Chunk and Document from these embeddings 
-- Language Classification of 20 languages 
-- 36 pretrained NER models 
-- 34 Part of Speech (POS) models
-- 34 Lemmatizer models    
-- Emotion models for 5 categories 
-- Labeled and Unlabeled Dependency parsing 
-- Spell Checking 
-- Stopword removers for 41  languages 
-- Classifiers for 12 different problems 
-- **244 unique**  NLU components 
-- **176 unique** NLP models and algorithms 
-- **68 unique** NLP pipelines consisting of composed NLP models 
-
+ - NLU provides everything a data scientist might want to wish for in one line of code!
+ - 350 + pre-trained models
+ - 100+ of the latest NLP word embeddings ( BERT, ELMO, ALBERT, XLNET, GLOVE, BIOBERT, ELECTRA, COVIDBERT) and different variations of them
+ - 50+ of the latest NLP sentence embeddings ( BERT, ELECTRA, USE) and different variations of them
+ - 50+ Classifiers (NER, POS, Emotion, Sarcasm, Questions, Spam)
+ - 40+ Supported Languages
+ - Labeled and Unlabeled Dependency parsing
+ - Various Text Cleaning and Pre-Processing methods like Stemming, Lemmatizing, Normalizing, Filtering, Cleaning pipelines and more
 
 
 ## Classifiers trained on many different different datasets 

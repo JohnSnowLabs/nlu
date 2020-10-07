@@ -43,7 +43,7 @@ import gc
 del nlu
 
 @pytest.mark.forked
-@pytest.mark.parametrize("nlu_reference,id",all_default_references)
+@pytest.mark.parametrize("nlu_ref,id",all_default_references)
 def test_every_default_component(nlu_reference, id):
     import nlu
     nlu.active_pipes.clear()
@@ -62,28 +62,28 @@ def test_every_default_component(nlu_reference, id):
     print(df.columns)
     print('TESTING DONE FOR NLU REFERENCE : ', nlu_reference)
 
-# @pytest.mark.parametrize("nlu_reference,id",all_pipe_references)
-# def test_every_default_component(nlu_reference,id):
+# @pytest.mark.parametrize("nlu_ref,id",all_pipe_references)
+# def test_every_default_component(nlu_ref,id):
 #     import nlu
 #     gc.collect()
-#     print( 'param =', nlu_reference)
-#     print('TESTING NLU REFERENCE : ', nlu_reference)
+#     print( 'param =', nlu_ref)
+#     print('TESTING NLU REFERENCE : ', nlu_ref)
 #     if id < skip_to_test : return
-#     df = nlu.load(nlu_reference).predict('What a wonderful day!')
+#     df = nlu.load(nlu_ref).predict('What a wonderful day!')
 #     print(df)
 #     print(df.columns)
 #
-#     print('TESTING DONE FOR NLU REFERENCE : ', nlu_reference)
+#     print('TESTING DONE FOR NLU REFERENCE : ', nlu_ref)
 
-# @pytest.mark.parametrize("nlu_reference,id",all_model_references)
-# def test_every_default_component(nlu_reference,id):
+# @pytest.mark.parametrize("nlu_ref,id",all_model_references)
+# def test_every_default_component(nlu_ref,id):
 #     import nlu
 #     gc.collect()
-#     print( 'param =', nlu_reference)
-#     print('TESTING NLU REFERENCE : ', nlu_reference)
+#     print( 'param =', nlu_ref)
+#     print('TESTING NLU REFERENCE : ', nlu_ref)
 #     if id < skip_to_test : return
-#     df = nlu.load(nlu_reference).predict('What a wonderful day!')
+#     df = nlu.load(nlu_ref).predict('What a wonderful day!')
 #     print(df)
 #     print(df.columns)
-#     print('TESTING DONE FOR NLU REFERENCE : ', nlu_reference)
+#     print('TESTING DONE FOR NLU REFERENCE : ', nlu_ref)
 

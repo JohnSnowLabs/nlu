@@ -15,8 +15,11 @@ class Classifier(SparkNLUComponent):
         elif 'vivekn' in nlp_ref or 'vivekn' in nlp_ref : annotator_class= 'vivekn_sentiment'
 
         elif 'wiki_' in nlu_ref or 'wiki_' in nlp_ref : annotator_class= 'language_detector'
+        elif 'pos' in nlu_ref: annotator_class= 'pos'
+        elif 'pos' in nlp_ref: annotator_class= 'pos'
 
-
+        elif 'ner' in nlu_ref: annotator_class= 'ner'
+        elif 'ner' in nlp_ref: annotator_class= 'ner'
         SparkNLUComponent.__init__(self, annotator_class, component_type)
 
         
@@ -50,10 +53,6 @@ class Classifier(SparkNLUComponent):
                 from nlu import LanguageDetector
                 if get_default : self.model = LanguageDetector.get_default_model()
                 else: self.model = LanguageDetector.get_pretrained_model(nlp_ref, language)
-            elif 'pos' in annotator_class:
-                from nlu import PartOfSpeechJsl
-                if get_default : self.model = PartOfSpeechJsl.get_default_model()
-                else : self.model = PartOfSpeechJsl.get_pretrained_model(nlp_ref, language)
             elif 'pos' in annotator_class:
                 from nlu import PartOfSpeechJsl
                 if get_default : self.model = PartOfSpeechJsl.get_default_model()

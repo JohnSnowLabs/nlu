@@ -586,7 +586,7 @@ Splits text into rows based on matched grammatical entities.
 # First we load the pipeline
 pipe = nlu.load('match.chunks')
 # Now we print the info to see at which index which com,ponent is and what parameters we can configure on them 
-pipe.print_info()
+pipe.generate_class_metadata_table()
 # Lets set our Chunker to only match NN
 pipe.pipe_components[4].model.setRegexParsers(['<NN>+'])
 # Now we can predict with the configured pipeline

@@ -8,19 +8,42 @@ modify_date: "2020-06-12"
 
 NLU release notes
 
-### 2.6
- - Added 100+ new models from Spark NLP 2.6
-    - New YAKE model
-    - New Multi Class Classifier model
- - Improved outputs for Chunk level components 
- - Integrated removal of IOB prefixes of NER tags
- - Integrated light pipeline which yields 10x speed up for predictions 
- - Easy and Copy pastable moel configs via pipe.print_info()
- - N new Notebooks
- - Recycling of Pandas indexes for predicting. No more ID columns, just pandas indexes.
- - Up to 10x Speed improvement with light pipeline leverage from Spark NLP
 
-#### Lots of new Demos
+# 1.0 Release Notes 
+    - Automatic to Numpy conversion of embeddings
+    - A lot of new aliases for easier access to models like 'questions', 'sarcasm', '..?'
+    - Added various testing classes
+    - [New 6 embeddings at once notebook with t-SNE and Medium article](https://medium.com/spark-nlp/1-line-of-code-for-bert-albert-elmo-electra-xlnet-glove-part-of-speech-with-nlu-and-t-sne-9ebcd5379cd)
+     <img src="https://miro.medium.com/max/1296/1*WI4AJ78hwPpT_2SqpRpolA.png" >
+    - Integration of Spark NLP 2.6.2 enhancements and bugfixes https://github.com/JohnSnowLabs/spark-nlp/releases/tag/2.6.2
+    - Updated old T-SNE notebooks with more elegant and simpler generation of t-SNE embeddings 
+
+# 0.2.1 Release Notes 
+    - Various bugfixes
+    - Improved output column names when using multiple classifirs at once
+
+# 0.2 Release Notes 
+    -   Improved output column names  classifiers
+    
+# 0.1 Release Notes
+We are glad to announce that NLU 0.0.1 has been released!
+NLU makes the 350+ models and annotators in Spark NLPs arsenal available in just 1 line of python code and it works with Pandas dataframes!
+A picture says more than a 1000 words, so here is a demo clip of the 12 coolest features in NLU, all just in 1 line!
+
+## NLU in action 
+<img src="http://ckl-it.de/wp-content/uploads/2020/08/My-Video6.gif" width="1800" height="500"/>
+
+# What does NLU 0.1 include?
+ - NLU provides everything a data scientist might want to wish for in one line of code!
+ - 350 + pre-trained models
+ - 100+ of the latest NLP word embeddings ( BERT, ELMO, ALBERT, XLNET, GLOVE, BIOBERT, ELECTRA, COVIDBERT) and different variations of them
+ - 50+ of the latest NLP sentence embeddings ( BERT, ELECTRA, USE) and different variations of them
+ - 50+ Classifiers (NER, POS, Emotion, Sarcasm, Questions, Spam)
+ - 40+ Supported Languages
+ - Labeled and Unlabeled Dependency parsing
+ - Various Text Cleaning and Pre-Processing methods like Stemming, Lemmatizing, Normalizing, Filtering, Cleaning pipelines and more
+# NLU 0.1 Features Google Collab Notebook Demos
+
 - Named Entity Recognition (NER)
     -[NER pretrained on ONTO Notes](https://colab.research.google.com/drive/1_sgbJV3dYPZ_Q7acCgKWgqZkWcKAfg79?usp=sharing)
     -[NER pretrained on CONLL](https://colab.research.google.com/drive/1CYzHfQyFCdvIOVO2Z5aggVI9c0hDEOrw?usp=sharing)
@@ -70,46 +93,16 @@ NLU release notes
     -[Date Matcher](https://colab.research.google.com/drive/1JrlfuV2jNGTdOXvaWIoHTSf6BscDMkN7?usp=sharing)
 
 
-### 2.5.6
- - Better Defaults for spell checking
- - Lots of bug fixes
- - Additional feature discovery via nlu.components()
- - Memory optimization
- - Refactoring
- - Docs and Examples updates
- 
-### 2.5.5
-- Confidence extraction bugfix
 
-### 2.5.4
-- Fixed bug with bad conversion of datatypes
-
-
-### 2.5.3
-- metadata parameter for predict function, prettier outputs
-- Datatype consistency added for predictions
-
-### 2.5.2
-- Modin dependency bugfix
-
-### 2.5.1
-- Modin Support
-
-### 2.5.0
-
-- Support for Modin with Ray and Dask Backends
-- Consistent input and outputs for predict() . If you input Spark Dataframe , you get Spark Dataframe Back. If you input Modin dataframe, you get Modin back. Analogous for predictions on Numpy and Pandas objects
-
-
-
-### 2.5.0.rc1
-
-The birth of a new Machine Learning library      
-NLU provides out of the box
-
-- 200+ pretrained models and pipelines for most NLU tasks ( Sentiment, Language Detection, NER, POS, Spell Checking)
-- 60 languages
-- Latest and greatest embeddings in different flavors (Elmo, Bert, Albert, Xlnert, Glove, Use)
-- 13 Different types of NLU components
+NLU on Medium :
+Introduction to NLU
+One line BERT Word Embeddings and t-SNE plotting with NLU
+BERT, ALBERT, ELECTRA, ELMO, XLNET, GLOVE Word Embeddings in one line and plotting with t-SNE
+NLU Documentation
+NLU website
+NLU Github
+NLU Documentation
+Overview of all NLU example notebooks
+Having questions or want to share an idea? Join the new NLU slack channel! 
 
 

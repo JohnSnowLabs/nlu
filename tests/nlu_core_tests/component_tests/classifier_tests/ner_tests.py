@@ -5,7 +5,6 @@ from nlu import *
 class TestNer(unittest.TestCase):
 
     def test_ner_pipe(self):
-        print("MY TEST")
         df = nlu.load('ner', verbose=True ).predict('Donald Trump from America and Angela Merkal from Germany dont share many oppinions.', output_level='chunk' )
         print(df.columns)
         print(df[[]])

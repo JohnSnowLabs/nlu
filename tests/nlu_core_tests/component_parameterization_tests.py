@@ -10,7 +10,7 @@ class TestParameterization(unittest.TestCase):
 
         pipe =  nlu.load('sentiment')
         print(pipe.keys())    
-        pipe.print_info()
+        pipe.generate_class_metadata_table()
     
 if __name__ == '__main__':
     TestParameterization().test_entities_config()
