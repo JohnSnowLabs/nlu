@@ -10,19 +10,19 @@ NLU release notes
 
 
 # 1.0 Release Notes 
-    - Automatic to Numpy conversion of embeddings
-    - Added various testing classes
-    - [New 6 embeddings at once notebook with t-SNE and Medium article](https://medium.com/spark-nlp/1-line-of-code-for-bert-albert-elmo-electra-xlnet-glove-part-of-speech-with-nlu-and-t-sne-9ebcd5379cd)
-     <img src="https://miro.medium.com/max/1296/1*WI4AJ78hwPpT_2SqpRpolA.png" >
-    - Integration of Spark NLP 2.6.2 enhancements and bugfixes https://github.com/JohnSnowLabs/spark-nlp/releases/tag/2.6.2
-    - Updated old T-SNE notebooks with more elegant and simpler generation of t-SNE embeddings 
+- Automatic to Numpy conversion of embeddings
+- Added various testing classes
+- [New 6 embeddings at once notebook with t-SNE and Medium article](https://medium.com/spark-nlp/1-line-of-code-for-bert-albert-elmo-electra-xlnet-glove-part-of-speech-with-nlu-and-t-sne-9ebcd5379cd)
+ <img src="https://miro.medium.com/max/1296/1*WI4AJ78hwPpT_2SqpRpolA.png" >
+- Integration of Spark NLP 2.6.2 enhancements and bugfixes https://github.com/JohnSnowLabs/spark-nlp/releases/tag/2.6.2
+- Updated old T-SNE notebooks with more elegant and simpler generation of t-SNE embeddings 
 
 # 0.2.1 Release Notes 
-    - Various bugfixes
-    - Improved output column names when using multiple classifirs at once
+- Various bugfixes
+- Improved output column names when using multiple classifirs at once
 
 # 0.2 Release Notes 
-    -   Improved output column names  classifiers
+-   Improved output column names  classifiers
     
 # 0.1 Release Notes
 We are glad to announce that NLU 0.0.1 has been released!
