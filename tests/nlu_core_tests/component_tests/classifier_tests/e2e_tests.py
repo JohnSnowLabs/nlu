@@ -12,13 +12,13 @@ class TestE2E(unittest.TestCase):
         # df = nlu.load('en.classify.sarcasm',verbose=True).predict(sarcasm_df['text'])
 
         print(df.columns)
-        print(df['sentence'], df[['category','category_confidence']])
+        print(df['sentence'], df[['e2e','e2e_confidence']])
 
         df = nlu.load('e2e',verbose=True).predict('You are so stupid')
         # df = nlu.load('en.classify.sarcasm',verbose=True).predict(sarcasm_df['text'])
 
         print(df.columns)
-        print(df['sentence'], df[['category','category_confidence']])
+        print(df['sentence'], df[['e2e','e2e_confidence']])
 
 if __name__ == '__main__':
     unittest.main()

@@ -26,7 +26,7 @@ emotion_df['sentiment'].value_counts().plot.bar()
 
 ```python
 emotion_df = nlu.load('emotion').predict(df)
-emotion_df['category'].value_counts().plot.bar()
+emotion_df['emotion'].value_counts().plot.bar()
 ```
 ![Category counts](/assets/images/nlu/VizExamples/category_counts.png)
 
@@ -44,7 +44,7 @@ sentiment_df.groupby('source')['sentiment'].value_counts().plot.bar(figsize=(20,
 
 ```python
 nlu_emotion_df = nlu.load('emotion').predict(df)
-nlu_emotion_df.groupby('airline')['category'].value_counts().plot.bar(figsize=(20,8))
+nlu_emotion_df.groupby('airline')['emotion'].value_counts().plot.bar(figsize=(20,8))
 ```
 
 ![Sentiment Groupy ](/assets/images/nlu/VizExamples/emotion_groupy.png)

@@ -7,19 +7,22 @@ from nlu import *
 
 class TestBertTokenEmbeddings(unittest.TestCase):
 
-    def test_sarcasm_model(self):
+    def test_bert_model(self):
         df = nlu.load('bert',verbose=True).predict('Am I the muppet or are you the muppet?')
         # df = nlu.load('en.classify.sarcasm',verbose=True).predict(sarcasm_df['text'])
         print(df.columns)
         print(df)
         print(df['bert_embeddings'])
 
-        df = nlu.load('en.embed.bert.small_L4_128', verbose=True).predict("No you are the muppet!")
+
+
+
+    def test_multiple_bert_models(self):
+        df = nlu.load('en.embed.bert.small_L4_128 en.embed.bert.small_L2_256', verbose=True).predict("No you are the muppet!")
         print(df.columns)
         print(df)
         print(df['bert_embeddings'])
-
-
+        print(df['bert@en_embed_bert_small_L2_256_embeddings'])
 
 
 if __name__ == '__main__':

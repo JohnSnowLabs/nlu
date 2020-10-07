@@ -21,17 +21,17 @@ docs-en:
     children:
       - title:  Quick Start
         url:    /docs/en/install
+      - title:  General Concepts
+        url:    /docs/en/concepts
       - title:  Simple Examples
         url:    /docs/en/examples
-      - title:  Visualization Examples
-        url:    /docs/en/viz_examples
       - title:  Notebooks
         url:    /docs/en/notebooks
+      - title:  Visualization Examples
+        url:    /docs/en/viz_examples
 
   - title:      Documentation
     children:
-      - title:  General Concepts
-        url:    /docs/en/concepts
       - title:  NLU Load Function
         url:    /docs/en/load_api
       - title:  NLU Predict Function

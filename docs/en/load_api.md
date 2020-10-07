@@ -61,15 +61,11 @@ This will print
 -------------------------------------At pipe.pipe_components[0].model  : document_assembler with configurable parameters: --------------------------------------
 Param Name [ cleanupMode ] :  Param Info : possible values: disabled, inplace, inplace_full, shrink, shrink_full, each, each_full, delete_full  currently Configured as :  disabled
 --------------------------------------------At pipe.pipe_components[1].model  : glove with configurable parameters: --------------------------------------------
-Param Name [ lazyAnnotator ] :  Param Info : Whether this AnnotatorModel acts as lazy in RecursivePipelines  currently Configured as :  False
 Param Name [ dimension ] :  Param Info : Number of embedding dimensions  currently Configured as :  512
-Param Name [ storageRef ] :  Param Info : unique reference name for identification  currently Configured as :  tfhub_use
 ----------------------------------------At pipe.pipe_components[2].model  : sentiment_dl  with configurable parameters: ----------------------------------------
-Param Name [ lazyAnnotator ] :  Param Info : Whether this AnnotatorModel acts as lazy in RecursivePipelines  currently Configured as :  False
 Param Name [ threshold ] :  Param Info : The minimum threshold for the final result otherwise it will be neutral  currently Configured as :  0.6
 Param Name [ thresholdLabel ] :  Param Info : In case the score is less than threshold, what should be the label. Default is neutral.  currently Configured as :  neutral
 Param Name [ classes ] :  Param Info : get the tags used to trained this NerDLModel  currently Configured as :  ['positive', 'negative']
-Param Name [ storageRef ] :  Param Info : unique reference name for identification  currently Configured as :  tfhub_use
 ```
 
 
