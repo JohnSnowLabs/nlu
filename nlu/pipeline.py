@@ -268,6 +268,7 @@ class NLUPipeline(BasePipe):
                 keys_in_metadata = list(ptmp.select(field).take(1))
                 if len(
                     keys_in_metadata) == 0: continue  # no resulting values for this column, we wont include it in the final output
+                if len(keys_in_metadata[0].asDict()['metadata']) == 0: continue
                 keys_in_metadata = list(keys_in_metadata[0].asDict()['metadata'][0].keys())  #
                 logger.info('Extracting Keys=%s for field=%s', keys_in_metadata, new_field)
                 if meta == True or 'entities' in field:  # get all meta data
@@ -379,7 +380,8 @@ class NLUPipeline(BasePipe):
                             new_field)
                 # we iterate over the keys in the metadata and use them as new column names. The values will become the values in the columns.
                 keys_in_metadata = list(ptmp.select(field).take(1))
-                if len(keys_in_metadata) == 0: continue
+                if len(keys_in_metadata) == 0 : continue
+                if len (keys_in_metadata[0].asDict()['metadata']) == 0 : continue
                 keys_in_metadata = list(keys_in_metadata[0].asDict()['metadata'][0].keys())  #
                 if 'sentence' in keys_in_metadata: keys_in_metadata.remove('sentence')
                 if 'chunk' in keys_in_metadata and field == 'entities.metadata': keys_in_metadata.remove('chunk')
