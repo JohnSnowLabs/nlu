@@ -59,7 +59,7 @@ java -version
 ```
 
 # 1.1 Get Windows Specific Prerequisites (winutils.exe)
-Download https://dzone.com/articles/working-on-apache-spark-on-windows 
+This is only required for Windows usesr.
 1. Download [winutils.exe](https://github.com/steveloughran/winutils/blob/master/hadoop-2.7.1/bin/winutils.exe)
 2. Create folder C:\winutils\bin
 3. Copy winutils.exe inside C:\winutils\bin
@@ -76,8 +76,8 @@ pip install nlu
 
 
 # 3. Verify that NLU is working properly
-Launch a Python shell an run a simple script. 
-On **Windows you need to launch your shell as admim**
+Launch a Python shell an run a simple script.         
+**On Windows you need to launch your shell as admim**
 
 ```python
 import nlu
@@ -88,8 +88,8 @@ nlu.load('sentiment').predict('Why is NLU is awesome? Because of the sauce!')
 
 ##  Supported data types
 NLU supports currently the following data formats :
-- Pandas Dataframes  (one column ***must be named text*** and be of object/string type
-- Spark Dataframes  (one column ***must be named text*** and be of string type
+- Pandas Dataframes 
+- Spark Dataframes 
 - Modin with Dask backend
 - Modin with Ray backend
 - 1-D Numpy arrays of Strings
