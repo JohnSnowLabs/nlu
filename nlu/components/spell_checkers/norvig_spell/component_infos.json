@@ -1,1 +1,25 @@
-{"name": "norvig_spell", "output_level": "token", "description": "todo", "outputs": ["token"], "inputs": ["token"], "type": "spell_checker", "file_dependencies": {"dictionary": "path_to_dict"}, "spark_input_column_names": ["token"], "spark_output_column_names": ["checked"], "provider": "sparknlp", "license": "open source", "computation_context": "spark", "output_context": "spark"}
+{
+  "name": "norvig_spell",
+  "output_level": "token",
+  "description": "todo",
+  "outputs": [
+    "token"
+  ],
+  "inputs": [
+    "token"
+  ],
+  "type": "spell_checker",
+  "file_dependencies": {
+    "dictionary": "path_to_dict"
+  },
+  "spark_input_column_names": [
+    "token"
+  ],
+  "spark_output_column_names": [
+    "checked"
+  ],
+  "provider": "sparknlp",
+  "license": "open source",
+  "computation_context": "spark",
+  "output_context": "spark"
+}
