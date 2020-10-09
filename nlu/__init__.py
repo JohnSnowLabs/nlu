@@ -1,8 +1,13 @@
-version ='1.0.0'
+__version__ ='1.0.2'
+import sys
+if  float(sys.version[:3]) >= 3.8 :
+    print ("Please use a Python version with version number SMALLER than 3.8")
+    print ("Python versions equal or higher 3.8 is currently NOT SUPPORTED by NLU")
+    exit()
+
 import nlu
 import logging
 from nlu.namespace import NameSpace
-from sys import exit
 import warnings
 
 warnings.filterwarnings("ignore")
@@ -100,14 +105,12 @@ from nlu.components.utils.sentence_detector.sentence_detector import SparkNLPSen
 from nlu.components.sentence_detector import NLUSentenceDetector
 from nlu.info import AllComponentsInfo
 
-global nlu_package_location
-nlu_package_location = nlu.__file__[:-11]
 
-global all_components_info
+global spark_started, spark,active_pipes, all_components_info,nlu_package_location
+
+nlu_package_location = nlu.__file__[:-11]
 all_components_info = nlu.AllComponentsInfo()
-global active_pipes
 active_pipes = []
-global spark_started, spark
 spark_started = False
 spark = None
 
