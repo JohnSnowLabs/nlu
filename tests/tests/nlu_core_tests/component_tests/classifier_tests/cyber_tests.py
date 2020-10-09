@@ -1,0 +1,24 @@
+
+
+
+import unittest
+from nlu import *
+
+class TestCyber(unittest.TestCase):
+
+    def test_cyber_model(self):
+        import nlu
+        import gc
+        nlu.active_pipes.clear()
+        gc.collect()
+        df = nlu.load('classify.cyberbullying',verbose=True).predict('Women belong in the kitchen') # sorry we dont mean it
+        # df = nlu.load('en.classify.sarcasm',verbose=True).predict(sarcasm_df['text'])
+
+        print(df.columns)
+        print(df['sentence'], df[['category','category_confidence']])
+
+
+
+if __name__ == '__main__':
+    unittest.main()
+

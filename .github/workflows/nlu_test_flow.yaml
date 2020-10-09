@@ -1,0 +1,108 @@
+name: NLU Tests
+
+on: [push]
+
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.7]
+    steps:
+      - uses: actions/setup-java@v1
+        with:
+          java-version: '1.8.0' # The JDK version to make available on the path.
+          java-package: jdk # (jre, jdk, or jdk+fx) - defaults to jd
+      - uses: actions/checkout@v2
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pypandoc
+          pip install pypandoc wheel nlu  pytest modin[ray]
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+      - name: NLU Basic Component tests
+        if: always()
+        run: |
+          python -m unittest  discover   -s './tests/nlu_core_tests/component_tests/basic_component_tests' -p '*tests.py'
+      - name: NLU Chunker Component tests
+        if: always()
+        run: |
+          python -m unittest  discover   -s './tests/nlu_core_tests/component_tests/chunker_tests' -p '*tests.py'
+      - name: NLU Classifier Cyber tests -
+        if: always()
+        run: |
+          python -m unittest  'tests/nlu_core_tests/component_tests/classifier_tests/cyber_tests.py'
+      - name: NLU Classifier E2E tests -
+        if: always()
+        run: |
+          python -m unittest  'tests/nlu_core_tests/component_tests/classifier_tests/e2e_tests.py'
+      - name: NLU Classifier Emotion tests -
+        if: always()
+        run: |
+          python -m unittest  'tests/nlu_core_tests/component_tests/classifier_tests/emotion_tests.py'
+      - name: NLU Classifier Language tests -
+        if: always()
+        run: |
+          python -m unittest  'tests/nlu_core_tests/component_tests/classifier_tests/language_tests.py'
+      - name: NLU Classifier NER tests -
+        if: always()
+        run: |
+          python -m unittest  'tests/nlu_core_tests/component_tests/classifier_tests/ner_tests.py'
+      - name: NLU Classifier POS tests -
+        if: always()
+        run: |
+          python -m unittest  'tests/nlu_core_tests/component_tests/classifier_tests/pos_tests.py'
+      - name: NLU Classifier Question tests -
+        if: always()
+        run: |
+          python -m unittest  'tests/nlu_core_tests/component_tests/classifier_tests/question_tests.py'
+      - name: NLU Classifier Sarcasm tests -
+        if: always()
+        run: |
+          python -m unittest  'tests/nlu_core_tests/component_tests/classifier_tests/sarcasm_tests.py'
+      - name: NLU Classifier Sentiment tests -
+        if: always()
+        run: |
+          python -m unittest  'tests/nlu_core_tests/component_tests/classifier_tests/sentiment_tests.py'
+      - name: NLU Classifier Spam tests -
+        if: always()
+        run: |
+          python -m unittest  'tests/nlu_core_tests/component_tests/classifier_tests/spam_tests.py'
+      - name: NLU Classifier Toxic tests -
+        if: always()
+        run: |
+          python -m unittest  'tests/nlu_core_tests/component_tests/classifier_tests/toxic_tests.py'
+      - name: NLU Classifier YAKE tests -
+        if: always()
+        run: |
+          python -m unittest  'tests/nlu_core_tests/component_tests/classifier_tests/yake_tests.py'
+      - name: NLU Embed Component tests
+        if: always()
+        run: |
+          python -m unittest  discover   -s './tests/nlu_core_tests/component_tests/embed_tests' -p '*tests.py'
+      - name: NLU Text Cleaner Component tests -
+        if: always()
+        run: |
+          python -m unittest  discover   -s './tests/nlu_core_tests/component_tests/text_cleaner_tests' -p '*tests.py'
+      - name: NLU Typed Dependency Component tests -
+        if: always()
+        run: |
+          python -m unittest  discover   -s './tests/nlu_core_tests/component_tests/typed_dependency_tests' -p '*tests.py'
+      - name: NLU Untyped Dependency Component tests -
+        if: always()
+        run: |
+          python -m unittest  discover   -s './tests/nlu_core_tests/component_tests/untyped_dependency_tests' -p '*tests.py'
+      - name: NLU Pipe tests
+        if: always()
+        run: |
+          python -m unittest  discover   -s './tests/nlu_core_tests/pipeline_tests' -p '*tests.py'
+      - name: NLU Modin tests
+        if: always()
+        run: |
+          python -m unittest  discover   -s './tests/modin' -p '*tests.py'
+
