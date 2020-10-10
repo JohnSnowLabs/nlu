@@ -183,9 +183,9 @@ layout: base
         {%- endif -%}
             <div class="grid grid--reverse">
 
-              <div class="col-aside d-print-none js-col-aside">
+              <div class="col-aside d-print-none js-col-aside" style="margin-left:100%; width=280px;">
                 {%- if page.aside -%}
-                  <aside class="page__aside js-page-aside">
+                  <aside class="page__aside js-page-aside" style="white-space: normal !important;">
                     {%- include aside/toc.html -%}
                   </aside>
                 {%- endif -%}
@@ -268,3 +268,4 @@ layout: base
 
 {%- include markdown-enhancements.html -%}
 {%- include pageview.html -%}
+

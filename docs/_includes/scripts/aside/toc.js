@@ -1,3 +1,4 @@
+// https://github.com/nghuuphuoc/tocjs
 (function() {
   var SOURCES = window.TEXT_VARIABLES.sources;
   var TOC_SELECTOR = window.TEXT_VARIABLES.site.toc.selectors;
