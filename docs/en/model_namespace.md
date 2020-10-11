@@ -9,8 +9,14 @@ modify_date: "2020-05-08"
 
 # Default Component References 
 
-See [the John Snow Labs Model Repository](https://github.com/JohnSnowLabs/spark-nlp-models#english---models\) information about the models and pipelines.   
+See  and also
+ [the John Snow Labs Modelhub](https://nlp.johnsnowlabs.com/models)
+  and also [the John Snow Labs Model Repository](https://github.com/JohnSnowLabs/spark-nlp-models#english---models\) 
+  for fruther information about the models and pipelines.   
 
+
+Each String in the NLU reference column can be passed to nlu.load() to get the corresponding model
+wrapped inside of a NLU Pipeline.
 
 {:.steelBlueCols}
 | NLU reference                      | Spark NLP Reference   | Component Type     |
