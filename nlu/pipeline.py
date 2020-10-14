@@ -230,6 +230,15 @@ class NLUPipeline(BasePipe):
 
     def rename_columns_and_extract_map_values_same_level(self, ptmp, fields_to_rename, same_output_level,
                                                          stranger_features=[], meta=True):
+        '''
+        Extract features of Spark DF after they where exploded it was exploded
+        :param ptmp: The dataframe which contains the columns wto be renamed
+        :param fields_to_rename: A list of field names that will be renamed in the dataframe.
+        :param same_output_level: Wether the fields that are going to be renamed are at the same output level as the pipe or at a different one.
+        :param stranger_features:
+        :param meta: Wether  to get meta data like prediction confidence or not
+        :return: Returns tuple (list, SparkDataFrame), where the first element is a list with all the new names and the second element is a new Spark Dataframe which contains all the renamed and also old columns
+        '''
 
         logger.info(
             'Renaming columns and extracting meta data for  outputlevel_same=%s and fields_to_rename=%s and get_meta=%s',
@@ -322,16 +331,19 @@ class NLUPipeline(BasePipe):
 
     def rename_columns_and_extract_map_values_different_level(self, ptmp, fields_to_rename, same_output_level,
                                                               stranger_features=[], meta=True):
-        # This method takes in a Spark dataframe that is the result of an explosion or not after the spark Pipeline transformation .
-        # It will peform the following transformations on the dataframe:
-        # 1. Rename the exploded columns to something more meaningful
-        # 2. Extract Meta data values of columns that contain maps if the data is relevant
-        # 3. Store the new names
-        # @ param ptmp The dataframe which contains the columns wto be renamed
-        # @ param fields_to_nreame : A list of field names that will be renamed in the dataframe.
-        # @ param same_output_level : Wether the fields that are going to be renamed are at the same output level as the pipe or at a different one.
-        # @ param meta: wether  to get meta data like prediction confidence or not
-        # @ return : Returns tuple (list, SparkDataFrame), where the first element is a list with all the new names and the second element is a new Spark Dataframe which contains all the renamed and also old columns
+        '''
+        This method takes in a Spark dataframe that is the result not exploded on, after applying a Spark NLP pipeline to it.
+        It will peform the following transformations on the dataframe:
+        1. Rename the exploded columns to something more meaningful
+        2. Extract Meta data values of columns that contain maps if the data is relevant
+        3. Store the new names
+        :param ptmp: The dataframe which contains the columns wto be renamed
+        :param fields_to_rename: A list of field names that will be renamed in the dataframe.
+        :param same_output_level: Wether the fields that are going to be renamed are at the same output level as the pipe or at a different one.
+        :param stranger_features:
+        :param meta: Wether  to get meta data like prediction confidence or not
+        :return: Returns tuple (list, SparkDataFrame), where the first element is a list with all the new names and the second element is a new Spark Dataframe which contains all the renamed and also old columns
+        '''
 
         logger.info(
             'Renaming columns and extracting meta data for  outputlevel_same=%s and fields_to_rename=%s and get_meta=%s',
