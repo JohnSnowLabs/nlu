@@ -72,6 +72,8 @@ See [the NLU components namespace](https://nlu.johnsnowlabs.com/docs/en/namespac
 
 </div><div class="h3-box" markdown="1">
 
+## Specicifiny language for an action
+
 ### Print all supported languages
 Any of these are partial NLU references which can be prefixed to a request to specify a language
 ```python
