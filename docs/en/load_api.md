@@ -1,10 +1,15 @@
 ---
-layout: article
+layout: docs
+header: true
 title: The NLU Load function
 permalink: /docs/en/load_api
 key: docs-developers
 modify_date: "2020-05-08"
 ---
+
+<div class="main-docs" markdown="1">
+
+<div class="h3-box" markdown="1">
 
 The nlu.load() method takes in one or multiple NLU pipeline, model or component references separated by whitespaces.     
 See [the NLU namespace]( /docs/en/namespace) for an overview of all possible NLU references.     
@@ -34,14 +39,16 @@ import nlu
 nlu.load(sentiment).predict("I love this Documentation! It's so good!")
 ``` 
 
+</div><div class="h3-box" markdown="1">
 
-# Load Parameter
+## Load Parameter
 The load method provides for now just one parameter **verbose**.
 Setting nlu.load(nlu_reference, verbose=True) will generate log outputs that can be helpful for troubleshooting.   
 If you encounter any errors, please run Verbose mode and post your output on our Github Issues page.    
 
+</div><div class="h3-box" markdown="1">
 
-# Configuring loaded models
+## Configuring loaded models
 To configure your model or pipeline, first load a NLU component and use the print_components() function.   
 The print outputs tell you at which index of the pipe_components attribute which NLU component is located.   
 Via  setters which are named according to the parameter values a model can be configured
@@ -68,7 +75,7 @@ Param Name [ thresholdLabel ] :  Param Info : In case the score is less than thr
 Param Name [ classes ] :  Param Info : get the tags used to trained this NerDLModel  currently Configured as :  ['positive', 'negative']
 ```
 
-
+</div><div class="h3-box" markdown="1">
 
 ## Component Namespace
 The NLU name space describes the collection of all models, pipelines and components available in NLU and supported by the nlu.load() method.       
@@ -76,4 +83,4 @@ You can view it on the [Name Space page](https://nlu.johnsnowlabs.com/docs/en/lo
 
 NLU also provides a few handy functions to gain insight into the NLU namespace.
 
-
+</div></div>

@@ -426,9 +426,11 @@ conda install -c johnsnowlabs nlu
 {%- include pageview.html -%}
 <div class="layout--page js-page-root">
 
+{%- if page.sidebar -%}
 <div class="page__sidebar d-print-none">
   {%- include sidebar/toc.html -%}
 </div>
+{%- endif -%}
 
 </div>
 
