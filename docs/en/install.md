@@ -11,11 +11,33 @@ header: true
 
 <div class="h3-box" markdown="1">
 
-## 1. Get Prerequisites
+## 0. Super Quickstart on Google Collab or Kaggle
 
-You only need to configure Java 8 on your machine and are good to go!
+If you work on a fresh Notebook on Kaggle or Google collab, you can just copy paste the following commands into your first cell which 
+will automatically setup Java, nlu and import nlu, so you are good to go right way!
 
-{:.list3}
+```bash
+import os
+! apt-get update -qq > /dev/null   
+# Install java
+! apt-get install -y openjdk-8-jdk-headless -qq > /dev/null
+os.environ["JAVA_HOME"] = "/usr/lib/jvm/java-8-openjdk-amd64"
+os.environ["PATH"] = os.environ["JAVA_HOME"] + "/bin:" + os.environ["PATH"]
+! pip install nlu
+import nlu
+```
+You can test it out right away with :
+```python
+nlu.load('emotion').predict('wow that was easy')
+```
+
+</div><div class="h3-box" markdown="1">
+
+## 1. Get Prerequisites (Java 8)
+
+You only need to configure Java 8 on your machine and are good to go! 
+Unless you are on Windows, which requires 1 additional step.
+
 - [Setup Java 8 on Windows](https://access.redhat.com/documentation/en-us/openjdk/8/html/openjdk_8_for_windows_getting_started_guide/getting_started_with_openjdk_for_windows)
 - [Setup Java 8 on Linux](https://openjdk.java.net/install/)
 - [Setup Java 8 on Mac](https://docs.oracle.com/javase/8/docs/technotes/guides/install/mac_jdk.html)
@@ -36,11 +58,20 @@ os.environ["PATH"] = os.environ["JAVA_HOME"] + "/bin:" + os.environ["PATH"]
 
 </div><div class="h3-box" markdown="1">
 
-### Verify Java 8 works
+## Verify Java 8 works
 ```bash
 # should be Java 8 (Oracle or OpenJDK)
 java -version
 ```
+
+</div><div class="h3-box" markdown="1">
+
+## 1.1 Get Windows Specific Prerequisites (winutils.exe)
+This is only required for Windows usesr.
+1. Download [winutils.exe](https://github.com/steveloughran/winutils/blob/master/hadoop-2.7.1/bin/winutils.exe)
+2. Create folder C:\winutils\bin
+3. Copy winutils.exe inside C:\winutils\bin
+4. Set environment variable HADOOP_HOME to C:\winutils
 
 </div><div class="h3-box" markdown="1">
 
@@ -54,17 +85,20 @@ pip install nlu
 </div><div class="h3-box" markdown="1">
 
 ## 3. Verify that NLU is working properly
+Launch a Python shell an run a simple script.         
+**On Windows you need to launch your shell as admim**
+
 ```python
 import nlu
-nlu.load('sentiment').predict('Why is NLU is awesome? It's because of the sauce!')
+nlu.load('sentiment').predict('Why is NLU is awesome? Because of the sauce!')
 ```
 
 </div><div class="h3-box" markdown="1">
 
-###  Supported data types
+## Supported data types
 NLU supports currently the following data formats :
-- Pandas Dataframes  (one column ***must be named text*** and be of object/string type
-- Spark Dataframes  (one column ***must be named text*** and be of string type
+- Pandas Dataframes 
+- Spark Dataframes 
 - Modin with Dask backend
 - Modin with Ray backend
 - 1-D Numpy arrays of Strings
@@ -99,6 +133,5 @@ Detailed information about NLU APIs, concepts, components and more can be found 
 - [The NLU components namespace](https://nlu.johnsnowlabs.com/docs/en/namespace)
 - [NLU Notebooks](notebooks)
 - [NLU starter Collab notebook](https://colab.research.google.com/drive/1hJ6BiYXxfeDfDjsZu0ZI2TnOa9nrIxfI?usp=sharing)
-
 
 </div></div>
