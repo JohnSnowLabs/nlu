@@ -29,7 +29,6 @@ class Embeddings(SparkNLUComponent):
         elif 'embed_sentence' in nlu_ref : annotator_class = 'glove'
         elif 'embed' in nlu_ref          : annotator_class = 'glove'
 
-        SparkNLUComponent.__init__(self, annotator_class, component_type)
         if model != None : self.model = model
         else :
             if 'albert' in annotator_class :
@@ -72,3 +71,4 @@ class Embeddings(SparkNLUComponent):
                             self.model = Glove.get_pretrained_model(nlp_ref, language)
                         else :
                             self.model = Glove.get_pretrained_model(nlp_ref, language)
+        SparkNLUComponent.__init__(self, annotator_class, component_type)

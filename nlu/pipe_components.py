@@ -1,6 +1,4 @@
 from nlu import *
-
-
 class NLUComponent():
     '''
         This class loads all the components in the components folder.
@@ -10,32 +8,11 @@ class NLUComponent():
      '''
 
     def __init__(self, component_name, component_type):
-
-        self.model = None  # Either Spark NLP model or some 3rd party custom model. Reference to a model
+        # because we ae using the input/output/label fix, we run supers init AFTER model was created, so the next statement would overwrite it
+        # when NLU might support 3rd party models we should rework this
+        # self.model = None  # Either Spark NLP model or some 3rd party custom model. Reference to a model
         self.component_path = nlu.nlu_package_location + 'components/' + component_type + 's/' + component_name + '/'
         self.component_info = nlu.ComponentInfo.from_directory(component_info_dir=self.component_path)
-
-    def set_param(self, key, value):
-        if key in self.accepted_parameter_keys:  # instead of checking we could also just set the parameter and do a try/catch.
-            if value in self.accepted_parameter_values:
-                self.parameters[key] = value
-                self.set_parameter_on_model(key, value)
-            else:
-                print("Invalid parameter value of type:", type(value), " . Please select parameter value from : ",
-                      self.accepted_parameter_values)
-        else:
-            print("Invalid parameter name of type :", type(key), " . Please select parameter name from : ",
-                  self.accepted_parameter_keys)
-
-    def get_param(self, key):
-        if key in self.accepted_parameter_keys:
-            return self.parameters[key]
-        else:
-            print("Invalid parameter name of type :", type(key), " . Please select parameter name from : ",
-                  self.accepted_parameter_keys)
-
-    def set_parameter_on_model(self, key, value):
-        pass  # Implemented by child class which is extending from NLU_component
 
     def print_parameters_explanation(self):
         pass
@@ -58,19 +35,16 @@ class SparkNLUComponent(NLUComponent):
         nlu.spark = self.spark
         nlu.spark_started = True
 
+    # def __postinit__(self):
 
-class Component():
-    # returns a component for a given name
-    @staticmethod
-    def __call__(name):
-        component_info = nlu.AllComponentsInfo.get_component_info_by_name(name)
-
-        if component_info.type == 'tokenizer': return Tokenizer(name)
-        if component_info.type == 'embedding': return Embeddings(name)
-        if component_info.type == 'classifier': return Classifier(name)
-        if component_info.type == 'labeled_dependency_parser': return LabledDepParser(name)
-        if component_info.type == 'unlabeled_dependency_parser': return UnlabledDepParser(name)
-        if component_info.type == 'lemmatizer': return Lemmatizer(name)
-        if component_info.type == 'normalizer': return Normalizer(name)
-        if component_info.type == 'spell_checker': return SpellChecker(name)
-        if component_info.type == 'util': return Util(name)
+    def __set_missing_model_attributes__(m):
+        '''
+        For a given Spark NLP model this model will extract the poarameter map and search for input/output/label columns and set them on the model.
+        This is a workaround to undefined behaviour when getting input/output/label columns
+        :param : The model for which the attributes should be set
+        :return: model with attributes properly set
+        '''
+        for k in m.extractParamMap() :
+            if "inputCol" in str(k): print(k)
+            if "outputCol" in str(k): print(k)
+            if "labelCol" in str(k): print(k)
