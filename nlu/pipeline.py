@@ -13,7 +13,7 @@ from pyspark.sql.functions import flatten, explode, arrays_zip, map_keys, map_va
 from pyspark.sql.functions import col as pyspark_col
 from pyspark.sql.functions import udf
 from pyspark.sql.types import ArrayType, FloatType, StringType, DoubleType
-
+from sparknlp.annotator import *
 
 class BasePipe(dict):
     # we inherhit from dict so the pipe is indexable and we have a nice shortcut for accessing the spark nlp model
@@ -31,6 +31,44 @@ class BasePipe(dict):
         self.pipe_components = []  # orderd list of nlu_component objects
         self.output_datatype = 'pandas'  # What data type should be returned after predict either spark, pandas, modin, numpy, string or array
 
+    def isInstanceOfNlpClassifer(self,model):
+        '''
+        Check for a given Spark NLP model if it is an instance of a classifier , either approach or already fitted transformer will return true
+        This is used to configured the input/output columns based on the inputs
+        :param model: the model to check
+        :return: True if it is one of the following classes : (ClassifierDLModel,ClassifierDLModel,MultiClassifierDLModel,MultiClassifierDLApproach,SentimentDLModel,SentimentDLApproach) )
+        '''
+        return isinstance(model,(ClassifierDLModel,ClassifierDLModel,MultiClassifierDLModel,MultiClassifierDLApproach,SentimentDLModel,SentimentDLApproach) )
+
+    def configure_outputs(self,component, nlu_reference):
+        '''
+        Configure output column names of classifiers from category to something more meaningful
+        Name should be Name of classifier, based on NLU reference.
+        Duplicate names will be resolved by appending suffix "_i" to column name, based on how often we encounterd duplicate errors
+        This updates component infos accordingly
+        :param component: classifier component for which the output columns to  configured
+        :param nlu_reference: nlu reference from which is component stemmed
+        :return: None
+        '''
+
+        model_meta = nlu.extract_classifier_metadata_from_nlu_ref(nlu_reference)
+        can_use_name = False
+        new_output_name=''
+        i = 0
+        while can_use_name == False:
+            can_use_name = True
+            new_output_name = model_meta[0]
+            for c in self.pipe_components:
+                if new_output_name in c.component_info.spark_input_column_names + c.component_info.spark_output_column_names  :
+                    can_use_name = False
+            if can_use_name == False :
+                new_output_name= new_output_name+'_'+str(i)
+                i+=1
+        #classifiers always have just 1 output col
+        component.model.setOutputCol(new_output_name)
+        component.component_info.spark_output_column_names = [new_output_name]
+
+
     def add(self, component, nlu_reference="default_name", pretrained_pipe_component = False):
         '''
 
@@ -38,11 +76,15 @@ class BasePipe(dict):
         :param nlu_reference: NLU references, passed for components that are used specified and not automatically generate by NLU
         :return:
         '''
-
+        self.nlu_reference = nlu_reference
         self.pipe_components.append(component)
         # Spark NLP model reference shortcut
         name = component.component_info.name.replace(' ', '')
-        # name based on nlu ref applied
+
+        #Configure output column names of classifiers from category to something more meaningful
+        if self.isInstanceOfNlpClassifer(component.model) : self.configure_outputs(component, nlu_reference)
+
+        # Add Component as self.index and in attributes
         if 'embed' in component.component_info.type and nlu_reference not in self.keys() and not pretrained_pipe_component:
             new_output_column = nlu_reference
             new_output_column = new_output_column.replace('.', '_')
@@ -422,7 +464,7 @@ class NLUPipeline(BasePipe):
                         array_map_values = udf(lambda z: extract_map_values_float(z), ArrayType(FloatType()))
 
                     ptmp = ptmp.withColumn(new_fields[-1], array_map_values(field))
-                    # We apply Expr here because all resulting meta data is inside of a list and just a single element, which we can take out
+                    # We apply Expr here because all result ing meta data is inside of a list and just a single element, which we can take out
                     # Exceptions to this rule are entities and metadata, this are scenarios wehre we want all elements from the predictions array ( since it could be multiple keywords/entities)
                     if not field == 'entities.metadata' and not field == 'keywords.metadata': ptmp = ptmp.withColumn(
                         new_fields[-1], expr(new_fields[-1] + '[0]'))
@@ -580,7 +622,7 @@ class NLUPipeline(BasePipe):
                 2. Select columns to keep
                 3. Rename columns
                 4. Create Pandas Dataframe object
-                
+
         
         :param processed: Spark dataframe which an NLU pipeline has transformed
         :param output_level: The output level at which returned pandas Dataframe should be
