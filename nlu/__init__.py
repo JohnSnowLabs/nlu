@@ -378,6 +378,7 @@ def construct_component_from_pipe_identifier(language, nlp_ref, nlu_ref):
     :param nlp_ref: Reference to a spark nlp petrained pipeline
     :return: Each element of the SaprkNLP pipeline wrapped as a NLU componed inside of a list
     '''
+    # TODO is instance basec type checking
     logger.info("Starting Spark NLP to NLU pipeline conversion process")
     from sparknlp.pretrained import PretrainedPipeline
     if 'language' in nlp_ref: language = 'xx'  # special edge case for lang detectors
@@ -538,6 +539,22 @@ def construct_component_from_identifier(language, component_type='', dataset='',
         logger.exception('EXCEPTION: Could not resolve singular Component for type=%s and nlp_ref=%s and nlu_ref=%s',
                          component_type, nlp_ref, nlu_ref)
         return None
+
+
+
+def extract_classifier_metadata_from_nlu_ref(nlu_ref):
+    '''
+    Extract classifier and metadataname from nlu reference which is handy for deciding what output column names should be
+    Strips lang and action from nlu_ref and returns a list of remaining identifiers, i.e [<classifier_name>,<classifier_dataset>, <additional_classifier_meta>
+    :param nlu_ref: nlu reference from which to extra model meta data
+    :return: [<modelname>, <dataset>, <more_meta>,]  . For pure actions this will return []
+    '''
+    model_infos =[]
+    for e in nlu_ref.split('.'):
+        if e in nlu.all_components_info.all_languages or e in nlu.namespace.NameSpace.actions: continue
+        model_infos.append(e)
+    return model_infos
+
 
 
 # Functionality discovery methods

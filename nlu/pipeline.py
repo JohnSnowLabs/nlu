@@ -65,6 +65,7 @@ class BasePipe(dict):
                 new_output_name= new_output_name+'_'+str(i)
                 i+=1
         #classifiers always have just 1 output col
+        logger.info(f"Configured output columns name to {new_output_name} for classifier in {nlu_reference}")
         component.model.setOutputCol(new_output_name)
         component.component_info.spark_output_column_names = [new_output_name]
 
@@ -528,7 +529,7 @@ class NLUPipeline(BasePipe):
         else:
             self.output_level = new_output_level
             # soemtimes in piplines cleaners will remove the sentence columns, thus we must check if it is early here if the level is there
-        if not self.output_level in sdf.columns:
+        if  self.output_level not in sdf.columns:
             if 'document' in sdf.columns:
                 self.output_level = 'document'
             elif 'sentence' in sdf.columns:

@@ -11,7 +11,7 @@ class TestSpam(unittest.TestCase):
         # df = nlu.load('en.classify.sarcasm',verbose=True).predict(sarcasm_df['text'])
 
         print(df.columns)
-        print(df['sentence'], df[['category','category_confidence']])
+        print(df['sentence'], df[['spam','spam_confidence']])
 
 
 
