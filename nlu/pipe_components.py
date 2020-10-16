@@ -34,17 +34,20 @@ class SparkNLUComponent(NLUComponent):
         self.spark = nlu.sparknlp.start()
         nlu.spark = self.spark
         nlu.spark_started = True
-
+        self.__set_missing_model_attributes__()
     # def __postinit__(self):
 
-    def __set_missing_model_attributes__(m):
+    def __set_missing_model_attributes__(self):
         '''
         For a given Spark NLP model this model will extract the poarameter map and search for input/output/label columns and set them on the model.
         This is a workaround to undefined behaviour when getting input/output/label columns
         :param : The model for which the attributes should be set
         :return: model with attributes properly set
         '''
-        for k in m.extractParamMap() :
-            if "inputCol" in str(k): print(k)
-            if "outputCol" in str(k): print(k)
-            if "labelCol" in str(k): print(k)
+        for k in self.model.extractParamMap() :
+            if "inputCol" in str(k):
+                self.component_info.spark_input_column_names =  self.model.extractParamMap()[k]
+            if "outputCol" in str(k):
+                self.component_info.spark_output_column_names =  self.model.extractParamMap()[k]
+            if "labelCol" in str(k):
+                self.component_info['spark_label_column_names'] =  self.model.extractParamMap()[k]
