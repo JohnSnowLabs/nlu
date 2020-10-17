@@ -424,15 +424,15 @@ class NLUPipeline(BasePipe):
                 ## ONLY for NER or Keywordswe actually expect array type output for different output levels and must do proper casting
                 if field == 'entities.metadata':
                     pass  # ner result wil be fatched later
-                elif field == 'keywords.metadata':
-                    ptmp = ptmp.withColumn(unpack_name + '_result', ptmp[unpack_name + '.result'])
-                else:
-                    ptmp = ptmp.withColumn(unpack_name + '_result', expr(unpack_name + '.result[0]'))
+                ptmp = ptmp.withColumn(unpack_name + '_result', ptmp[unpack_name + '.result'])
 
-                reorderd_fields_to_rename[
-                    reorderd_fields_to_rename.index(unpack_name + '.result')] = unpack_name + '_result'
-                logger.info('Getting Meta Data for   : nr=%s , name=%s with new_name=%s and original', i, field,
-                            new_field)
+                # elif field == 'keywords.metadata': # old
+                #     ptmp = ptmp.withColumn(unpack_name + '_result', ptmp[unpack_name + '.result'])
+                # else:
+                #     ptmp = ptmp.withColumn(unpack_name + '_result', expr(unpack_name + '.result[0]'))
+
+                reorderd_fields_to_rename[reorderd_fields_to_rename.index(unpack_name + '.result')] = unpack_name + '_result'
+                logger.info(f'Getting Meta Data for   : nr={i} , original_name={field} with new_name={new_field} and original')
                 # we iterate over the keys in the metadata and use them as new column names. The values will become the values in the columns.
                 keys_in_metadata = list(ptmp.select(field).take(1))
                 if len(keys_in_metadata) == 0 : continue
@@ -440,15 +440,15 @@ class NLUPipeline(BasePipe):
                 keys_in_metadata = list(keys_in_metadata[0].asDict()['metadata'][0].keys())  #
                 if 'sentence' in keys_in_metadata: keys_in_metadata.remove('sentence')
                 if 'chunk' in keys_in_metadata and field == 'entities.metadata': keys_in_metadata.remove('chunk')
-                logger.info('Has keys in metadata=%s', keys_in_metadata)
+                logger.info(f'Has keys in metadata={keys_in_metadata}')
 
                 new_fields = []
                 for key in keys_in_metadata:
                     # we cant skip getting  key values for everything, even if meta=false. This is because we need to get the greatest of all confidence values , for this we must unpack them first..
-                    new_fields.append(new_field.replace('metadata', key))
+                    new_fields.append(new_field.replace('metadata', key.strip(' ')+'_confidence'))
                     # entities_entity
                     if new_fields[-1] == 'entities_entity': new_fields[-1] = 'ner_tag'
-                    logger.info('Extracting meta data for key=%s and column name=%s', key, new_fields[-1])
+                    logger.info(f'Extracting meta data for key={key} and column name={new_fields[-1]}')
 
                     # These Pyspark UDF extracts from a list of maps all the map values for positive and negative confidence and also spell costs
                     def extract_map_values_float(x):
@@ -467,15 +467,16 @@ class NLUPipeline(BasePipe):
                     ptmp = ptmp.withColumn(new_fields[-1], array_map_values(field))
                     # We apply Expr here because all result ing meta data is inside of a list and just a single element, which we can take out
                     # Exceptions to this rule are entities and metadata, this are scenarios wehre we want all elements from the predictions array ( since it could be multiple keywords/entities)
-                    if not field == 'entities.metadata' and not field == 'keywords.metadata': ptmp = ptmp.withColumn(
-                        new_fields[-1], expr(new_fields[-1] + '[0]'))
-                    logger.info('Created Meta Data for   : nr=%s , name=%s with new_name=%s and original', i, field,
-                                new_fields[-1])
+                    # if not field == 'entities.metadata' and not field == 'keywords.metadata':
+                    #     ptmp = ptmp.withColumn(new_fields[-1], expr(new_fields[-1] + '[0]'))
+                    logger.info(f'Created Meta Data for   : nr={i} , original_name={field} with new_name={new_fields[-1]}')
                     columns_for_select.append(new_fields[-1])
 
                 if meta == True:
                     continue  # If we dont max, we will see the confidence for all other classes. by continuing here, we will leave all the confidences for the other classes in the DF.
-                else:  # We gotta get the max confidence column, remove all other cols for selection
+                else:
+                    # If meta == false we need to find the meta data col umn with the HIGHEST confidence and only keep that!
+                    # We gotta get the max confidence column, remove all other cols for selection
                     if field == 'entities.metadata': continue
                     if field == 'keywords.metadata': continue  # We dont want to max for multiple keywords. Also it will change the name from score to confidence of the final column
 
@@ -501,13 +502,11 @@ class NLUPipeline(BasePipe):
 
                 continue  # end of special meta data case
 
-            if field == 'entities_result': ptmp = ptmp.withColumn('entities_result', ptmp['entities.result'].cast(
-                ArrayType(StringType())))  #
-            # else?
+            if field == 'entities_result':
+                ptmp = ptmp.withColumn('entities_result', ptmp['entities.result'].cast(ArrayType(StringType())))  #
             ptmp = ptmp.withColumn(new_field, ptmp[field])  # get the outputlevel results row by row
             # ptmp = ptmp.withColumnRenamed(field,new_field)  # EXPERIMENTAL engine test, only works sometimes since it can break dataframe struct
-
-            logger.info('Renaming non exploded field  : nr=%s , name=%s to new_name=%s', i, field, new_field)
+            logger.info(f'Renaming non exploded field  : nr={i} , original_name={field} to new_name={new_field}')
             columns_for_select.append(new_field)
         return ptmp, columns_for_select
 
@@ -788,7 +787,7 @@ class NLUPipeline(BasePipe):
                 self.spark_transformer_pipe = LightPipeline(self.spark_transformer_pipe)
 
     def predict(self, data, output_level='', positions=False, keep_stranger_features=True, metadata=False,
-                multithread=True):
+                multithread=True, drop_irrelevant_cols=True):
         '''
         Annotates a Pandas Dataframe/Pandas Series/Numpy Array/Spark DataFrame/Python List strings /Python String
         
@@ -798,7 +797,8 @@ class NLUPipeline(BasePipe):
         :param keep_stranger_features: 
         :param metadata:weather to keep additonal metadata in final df or not 
         :param multithread: Whether to use multithreading based lightpipeline. In some cases, this may cause errors.  
-        :return: 
+        :param drop_irellevant_cols: Wether to drop cols of different output levels, i.e. when predicting token level and dro_irrelevant_cols = True then chunk, sentence and Doc will be dropped
+        :return:
         '''
 
         if output_level != '': self.output_level = output_level
@@ -961,7 +961,9 @@ class NLUPipeline(BasePipe):
             return self.pythonify_spark_dataframe(sdf, self.output_different_levels,
                                                   keep_stranger_features=keep_stranger_features,
                                                   stranger_features=stranger_features, output_metadata=metadata,
-                                                  index_provided=index_provided)
+                                                  index_provided=index_provided,
+                                                  drop_irrelevant_cols= drop_irrelevant_cols
+                                                  )
         except:
             import sys
             if multithread == True:
