@@ -18,7 +18,7 @@ When building a NLU programm you will usually go through the following steps :
 
 1. Pick a model/pipeline/component you want to create from the [NLU namespace](/docs/en/namespace)
 2. Call the nlu.load(component) method which returns a NLU model pipeline object
-3. call model.predict() on some String input
+3. Call model.predict() on some String input
 
 These 3 steps have been boiled down to **just 1 line**
 ```python
@@ -34,7 +34,7 @@ Inside of this NLU universe, arbitrary machine learning pipelines can be constru
 
 NLU currently defines **18 components types** in its universe.    
 Each component type embelishes one of many **component kinds**.  
-Each component kind embelished one of many **NLU algorithms**        
+Each component kind embelished one of many **NLU algorithms**.        
 NLU algorithms are represented by pretrained models or pipelines.     
 A **pretrained model** could be a Deep Neural Network or a simple word matcher.   
 A **pipeline** consists of a stack of pretrained models.    
@@ -72,7 +72,7 @@ See [the NLU components namespace](https://nlu.johnsnowlabs.com/docs/en/namespac
 
 </div><div class="h3-box" markdown="1">
 
-## Specicifiny language for an action
+## Specifying language for an action
 
 ### Print all supported languages
 Any of these are partial NLU references which can be prefixed to a request to specify a language

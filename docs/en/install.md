@@ -11,10 +11,10 @@ header: true
 
 <div class="h3-box" markdown="1">
 
-## 0. Super Quickstart on Google Collab or Kaggle
+## 0. Super Quickstart on Google Colab or Kaggle
 
-If you work on a fresh Notebook on Kaggle or Google collab, you can just copy paste the following commands into your first cell which 
-will automatically setup Java, nlu and import nlu, so you are good to go right way!
+If you work on a fresh Notebook on Kaggle or Google colab, you can just copy paste the following commands into your first cell which 
+will automatically setup Java, nlu and import nlu, so you are good to go right away!
 
 ```bash
 import os
@@ -90,7 +90,7 @@ Launch a Python shell an run a simple script.
 
 ```python
 import nlu
-nlu.load('sentiment').predict('Why is NLU is awesome? Because of the sauce!')
+nlu.load('sentiment').predict('Why is NLU so awesome? Because of the sauce!')
 ```
 
 </div><div class="h3-box" markdown="1">
