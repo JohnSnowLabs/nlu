@@ -1,18 +1,23 @@
 ---
-layout: article
+layout: docs
+header: true
 title: Developers
 permalink: /docs/en/namespace
 key: docs-namespace
 modify_date: "2020-05-08"
 ---
 
+<div class="main-docs" markdown="1">
 
-# Default Component References 
+<div class="h3-box" markdown="1">
+
+## Default Component References 
 
 See [the John Snow Labs Model Repository](https://github.com/JohnSnowLabs/spark-nlp-models#english---models\) information about the models and pipelines.   
 
+<div class="table-wrapper"><div class="table-inner" markdown="1">
 
-{:.steelBlueCols}
+{:.table-model-big.mb0}
 | NLU reference                      | Spark NLP Reference   | Component Type     |
 |:------------------------------------|:--------------------------------|:----------------------------|
 | lang                                | detect_language_20              | pipe                        |
@@ -146,11 +151,13 @@ See [the John Snow Labs Model Repository](https://github.com/JohnSnowLabs/spark-
 | classify.wiki_20                    | ld_wiki_20                      | model                       |
 | yake                                | yake                            | model                       |
 
+</div></div></div><div class="h3-box" markdown="1">
 
-# Model references
+## Model references
 
+<div class="table-wrapper"><div class="table-inner" markdown="1">
 
-{:.steelBlueCols}
+{:.table-model-big.mb0}
 |Language   | NLU Model Reference | Spark NLP Model reference                              |
 |:----|:------------------------------------------------|:-----------------------------------|
 | nl  | nl.lemma                                        | lemma                              |
@@ -516,10 +523,13 @@ See [the John Snow Labs Model Repository](https://github.com/JohnSnowLabs/spark-
 | xx  | xx.embed_sentence.bert.cased                    | sent_bert_multi_cased              |
 | xx  | xx.embed_sentence.labse                         | labse                              |
 
-# Pipeline references
+</div></div></div><div class="h3-box" markdown="1">
 
+## Pipeline references
 
-{:.steelBlueCols}
+<div class="table-wrapper"><div class="table-inner" markdown="1">
+
+{:.table-model-big.mb0}
 | Language   | NLU pipeline reference | Spark NLP pipeline reference |
 |:----|:-------------------------|:--------------------------------|
 | da  | da.explain               | explain_document_sm             |
@@ -643,3 +653,5 @@ See [the John Snow Labs Model Repository](https://github.com/JohnSnowLabs/spark-
 | xx  | xx.classify.lang         | detect_language_20              |
 | xx  | xx.classify.lang.20      | detect_language_20              |
 | xx  | xx.classify.lang.7       | detect_language_7               |
+
+</div></div></div></div>

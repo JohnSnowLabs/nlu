@@ -7,6 +7,10 @@
 {%- endif -%}
     <div class="main">
       <div class="header__title">
+        <a class="responsive_btn" href="#" id="responsive_menu">          
+        <i class="fas fa-bars"></i>
+        <i class="fas fa-times"></i>
+        </a>
         <div class="header__brand">
           <a title="{%- if site.description -%}{{ site.description }}{%- endif -%}" href="https://www.johnsnowlabs.com" target="_blank">
             {%- include svg/logo.svg -%}
@@ -33,18 +37,20 @@
             {%- if _nav_url == _page_url or page.nav_key and _item.key and page.nav_key == _item.key -%}
               <li class="navigation__item navigation__item--active"><a href="{{ _nav_url }}">{%- if _item.title -%}{{ _item.title }}{%- else -%}{{ __return }}{%- endif -%}</a></li>
             {%- else -%}
-              <li class="navigation__item"><a href="{{ _nav_url }}">{%- if _item.title -%}{{ _item.title }}{%- else -%}{{ __return }}{%- endif -%}</a></li>
+              <li class="navigation__item {{ article_header.uniq_class }}"><a href="{{ _nav_url }}">{%- if _item.title -%}{{ _item.title }}{%- else -%}{{ __return }}{%- endif -%}</a></li>
             {%- endif -%}
           {%- endfor -%}
           {%- if site.search.provider -%}
             <li><button class="button button--secondary button--circle search-button js-search-toggle"><i class="fas fa-search"></i></button></li>
           {%- endif -%}
         </ul>
-      </nav>      
-      <a class="responsive_btn" href="#" id="responsive_menu">          
-        <i class="fas fa-bars"></i>
-        <i class="fas fa-times"></i>
-      </a>
-      {%- endif -%}
+      </nav>
+      {%- endif -%}   
+      {%- if page.aside -%} 
+        <a class="responsive_btn" href="#" id="aside_menu">          
+          <i class="fas fa-bars"></i>
+          <i class="fas fa-times"></i>
+        </a>
+      {%- endif -%}  
     </div>
   </header>
