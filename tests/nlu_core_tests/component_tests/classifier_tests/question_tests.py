@@ -8,11 +8,11 @@ from nlu import *
 class TestQuestions(unittest.TestCase):
 
     def test_question_model(self):
-        df = nlu.load('en.classify.question',verbose=True).predict('You are so stupid')
+        df = nlu.load('en.classify.question',verbose=True).predict('Where is the next doner store?')
         # df = nlu.load('en.classify.sarcasm',verbose=True).predict(sarcasm_df['text'])
 
         print(df.columns)
-        print( df[['question','question_confidence']])
+        print( df[['category','question_confidence']])
 
 
 

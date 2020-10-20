@@ -1,8 +1,22 @@
 class NameSpace():
+
+    # NLU model_base_names =
+    # These reference tell NLU to which component resolved to route a request to
+    word_embeddings = ['embed','bert','electra','albert','elmo','glove','xlnet','biobert','covidbert','tfhub_use']
+    sentence_embeddings = ['embed_sentence','use', 'bert', 'electra','tfhub_use']
+    classifiers = ['classify', 'e2e', 'emotion', 'sentiment', 'ner',
+                   'pos', 'trec6','trec50', 'questions',
+                   'sarcasm','emotion', 'spam','fakenews', 'cyberbullying',
+                   'wiki','wiki_7', 'wiki_20','yake','toxic'
+                   ]
+
+    #Reference to all datasets for which we have pretrained models
+    datasets = []
+    chunk_embeddings = ['embed_sentence']
     # The vocabulary of the nlu Namespace. Any of this references give you a model
     # keys inside a language dict are NLU references and value is the name in SparkNLP
 
-    default_pretrained_component_references = {  
+    component_alias_references = {
         # references for SparkNLPAnnotators without pretrained models.
         #  These are names for NLU components that can be created withouth a language prefix
 
@@ -139,6 +153,7 @@ class NameSpace():
         'classify.trec6.use': ('classifierdl_use_trec6','model'),
         'classify.trec50.use': ('classifierdl_use_trec50','model'),
         'classify.questions': ('classifierdl_use_trec50','model'),
+        'questions': ('classifierdl_use_trec50','model'),
 
         'classify.spam.use': ('classifierdl_use_spam','model'),
         'classify.fakenews.use': ('classifierdl_use_fakenews','model'),
@@ -149,10 +164,17 @@ class NameSpace():
         'classify.trec6': ('classifierdl_use_trec6','model'),  # Alias withouth embedding
         'classify.trec50': ('classifierdl_use_trec50','model'),  # Alias withouth embedding
         'classify.spam': ('classifierdl_use_spam','model'),  # Alias withouth embedding
+        'spam': ('classifierdl_use_spam','model'),  # Alias withouth embedding
+        'toxic': 'multiclassifierdl_use_toxic',
+
         'classify.fakenews': ('classifierdl_use_fakenews','model'),  # Alias withouth embedding
         'classify.emotion': ('classifierdl_use_emotion','model'),  # Alias withouth embedding
         'classify.cyberbullying': ('classifierdl_use_cyberbullying','model'),  # Alias withouth embedding
+        'cyberbullying': ('classifierdl_use_cyberbullying','model'),  # Alias withouth embedding
+        'cyber': ('classifierdl_use_cyberbullying','model'),  # Alias withouth embedding
+
         'classify.sarcasm': ('classifierdl_use_sarcasm','model'),  # Alias withouth embedding
+        'sarcasm': ('classifierdl_use_sarcasm','model'),  # Alias withouth embedding
 
         'embed.glove.840B_300': ('glove_840B_300','model'),
         'embed.glove.6B_300': ('glove_6B_300','model'),
@@ -218,7 +240,7 @@ class NameSpace():
             'en.sentiment.imdb.use': 'analyze_sentimentdl_use_imdb',
             'en.sentiment.twitter.use': 'analyze_sentimentdl_use_twitter',
             'en.sentiment.twitter': 'analyze_sentimentdl_use_twitter',
-            # 'en.dependency': 'dependency_parse',
+            'en.dependency': 'dependency_parse',
         },
 
 
@@ -296,9 +318,7 @@ class NameSpace():
             'pt.ner.sm': 'entity_recognizer_sm',
             'pt.ner.md': 'entity_recognizer_md',
             'pt.ner.lg': 'entity_recognizer_lg',
-            'pt.bert': 'bert_portuguese_base_cased',
-            'pt.bert.cased': 'bert_portuguese_base_cased',
-            'pt.ner.large': 'bert_portuguese_large_cased',
+
 
         },
         'ru': {
@@ -367,7 +387,7 @@ class NameSpace():
             'en.ner.onto.glove.6B_100d': 'onto_100',
             'en.ner.onto.glove.6B_300d': 'onto_300',  # this uses multi lang embeds!
             'en.ner.glove.100d': 'ner_dl_sentence',
-            # 'en.spell.symmetric': 'spellcheck_sd',
+            'en.spell.symmetric': 'spellcheck_sd',
             'en.spell.norvig': 'spellcheck_norvig',
             'en.sentiment.vivekn': 'sentiment_vivekn',
             'en.dep.untyped.conllu': 'dependency_conllu',
@@ -419,7 +439,7 @@ class NameSpace():
             'en.embed.xlnet': 'xlnet_base_cased',  # xlnet default en
             'en.xlnet': 'xlnet_base_cased',  # xlnet alias
             'en.embed.xlnet_base_cased': 'xlnet_base_cased',
-            # 'en.embed.xlnet_large_cased': 'xlnet_large_cased',
+            'en.embed.xlnet_large_cased': 'xlnet_large_cased',
 
             # classifiers and sentiment
 
@@ -530,6 +550,7 @@ class NameSpace():
             # 2.6 classifiers
             'en.classify.toxic': 'multiclassifierdl_use_toxic',
             'en.toxic': 'multiclassifierdl_use_toxic',
+
             'en.e2e': 'multiclassifierdl_use_e2e',
 
             'en.classify.toxic.sm': 'multiclassifierdl_use_toxic_sm',
@@ -545,6 +566,7 @@ class NameSpace():
             'fr.ner.wikiner': 'wikiner_840B_300',  # default nr embeds fr
             'fr.ner.wikiner.glove.840B_300': 'wikiner_840B_300',
             'fr.stopwords': 'stopwords_fr',
+            'fr.ner.wikiner.glove.6B_300': 'wikiner_6B_300',
 
         },
         'de': {
@@ -555,6 +577,7 @@ class NameSpace():
             'de.ner.wikiner': 'wikiner_840B_300',  # default ner embeds de
             'de.ner.wikiner.glove.840B_300': 'wikiner_840B_300',
             'de.stopwords': 'stopwords_de',
+            'de.ner.wikiner.glove.6B_300': 'wikiner_6B_300',
 
         },
         'it': {
@@ -565,9 +588,10 @@ class NameSpace():
             'it.pos': 'pos_ud_isdt',  # default pos it
             'it.pos.ud_isdt': 'pos_ud_isdt',
             'it.ner': 'wikiner_840B_300',  # default ner it
-            'it.ner.wikiner': 'wikiner_840B_300',  # default ner embeds it
-            'it.ner.wikiner.glove.840B_300': 'wikiner_840B_300',
+            'it.ner.wikiner.glove.6B_300': 'wikiner_6B_300',
             'it.stopwords': 'stopwords_it',
+
+
         },
         'nb': {
             'nb.lemma': 'lemma',
@@ -607,6 +631,9 @@ class NameSpace():
             'pt.ner.wikiner.glove.6B_300': 'wikiner_6B_300',
             'pt.ner.wikiner.glove.840B_300': 'wikiner_840B_300',
             'pt.stopwords': 'stopwords_pt',
+            'pt.bert': 'bert_portuguese_base_cased',
+            'pt.bert.cased': 'bert_portuguese_base_cased',
+            'pt.ner.large': 'bert_portuguese_large_cased',
         },
         'ru': {
             'ru.lemma': 'lemma',

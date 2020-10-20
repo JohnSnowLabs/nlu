@@ -3,7 +3,19 @@ layout: page
 type: article
 ---
 <style>
+<!-- Make navbar/TOC not overlap with Middel content and also sticky on Doc page-->
 
+
+<!--body > div.root > div > div.page__viewport > div.grid.page__grid > div.page__main.js-page-main.has-aside.cell.cell&#45;&#45;auto > div > div.page__content > div > div > div.col-aside.d-print-none.js-col-aside {-->
+body > div.root > div > div.page__viewport > div.grid.page__grid > div.page__main.js-page-main.has-aside.cell.cell--auto > div > div.page__content > div > div > div.col-aside.d-print-none.js-col-aside > aside {
+<!--  position: fixed;-->
+<!--  top: 0;-->
+   margin-left : 100%;
+}
+li {
+   white-space: normal !important;
+
+}
 
   table.standard {
   border: 1px solid ;
@@ -169,3 +181,17 @@ source0=layout.sharing source1=page.sharing -%}
 <script>
   {%- include scripts/article.js -%}
 </script>
+
+
+
+
+<style>
+<!--TOC ASIDE STYLES  HERE
+-->
+
+<!--Cause linebreaks in TOC li so they dont overflow out of vision-->
+  li {
+  white-space: normal !important;
+  }
+
+</style>

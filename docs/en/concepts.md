@@ -43,7 +43,7 @@ A **pipeline** consists of a stack of pretrained models.
 
 ### NLU component types
 
-Any of these component types can be passed as a string to nlu.load() and will return you the default model for that component type. 
+Any of the actions for the component types can be passed as a string to nlu.load() and will return you the default model for that component type for the English language. 
 You can further specify your model selection by placing a '.' behind your component selection.        
 After the '.' you can specify the model you want via specifying a dataset or model version.   
 See [the NLU components namespace](https://nlu.johnsnowlabs.com/docs/en/namespace) and [The load function](https://nlu.johnsnowlabs.com/docs/en/load_api)
@@ -68,9 +68,12 @@ See [the NLU components namespace](https://nlu.johnsnowlabs.com/docs/en/namespac
 |Stemmers|stem |
 |Stopwords cleaners| stopwords |
 |Cleaner| clean |
+|N-Grams| ngram |
 |Tokenizers| tokenize |
 
 </div><div class="h3-box" markdown="1">
+
+## Specicifiny language for an action
 
 ## Specifying language for an action
 

@@ -5,6 +5,10 @@ from nlu import *
 class TestYake(unittest.TestCase):
 
     def test_yake_model(self):
+        import nlu
+        import gc
+        nlu.active_pipes.clear()
+        gc.collect()
         #setting meta to true will output scores for keywords. Lower scores are better
         df = nlu.load('yake',verbose=True).predict('What a wonderful day! Arnold schwanenegger is the Terminator and he wants to get to the American chopper', metadata=True)
         print(df.columns)

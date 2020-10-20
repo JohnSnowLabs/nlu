@@ -57,7 +57,7 @@ Via  setters which are named according to the parameter values a model can be co
 ```python
 #example for configuring the first element in the pipe
 pipe = nlu.load('en.sentiment.twitter')
-pipe.print_info()
+pipe.generate_class_metadata_table()
 document_assembler_model = pipe.pipe_components[0].model
 document_assembler_model.setCleanupMode('inplace')
 ```

@@ -9,7 +9,7 @@ Take a look at our official Spark NLU page: [https://nlu.johnsnowlabs.com/](http
 
 
 ## NLU in action 
-<img src="http://ckl-it.de/wp-content/uploads/2020/09/git_final.gif" width="1800" height="500"/>
+<img src="http://ckl-it.de/wp-content/uploads/2020/08/My-Video6.gif" width="1800" height="500"/>
 
 
 
@@ -35,43 +35,34 @@ nlu.load('bert elmo albert xlnet glove use').predict('I love NLU! <3')
 
 ## What kind of models does NLU provide? 
 NLU provides everything a data scientist might want to wish for in one line of code!  
-- The 100+ of the latest NLP word embeddings ( BERT, ELMO, ALBERT, XLNET, GLOVE, BIOBERT, ELECTRA, COVIDBERT) and different variations of them 
-- The 45+ of the latest NLP sentence embeddings ( BERT, ELECTRA, USE) and different variations of them 
-- 50 + Classifiers
-- Generation of Sentence, Chunk and Document from these embeddings 
-- Language Classification of 20 languages 
-- 36 pretrained NER models 
-- 34 Part of Speech (POS) models
-- 34 Lemmatizer models    
-- Emotion (joy, fear, suprise, sadness) 
-- Labeled and Unlabeled Dependency parsing 
-- Spell Checking 
-- Stopword removers for 41  languages 
-- Classifiers for 12 different problems 
-- **244 unique**  NLU components 
-- **176 unique** NLP models and algorithms 
-- **68 unique** NLP pipelines consisting of composed NLP models 
-
+ - NLU provides everything a data scientist might want to wish for in one line of code!
+ - 350 + pre-trained models
+ - 100+ of the latest NLP word embeddings ( BERT, ELMO, ALBERT, XLNET, GLOVE, BIOBERT, ELECTRA, COVIDBERT) and different variations of them
+ - 50+ of the latest NLP sentence embeddings ( BERT, ELECTRA, USE) and different variations of them
+ - 50+ Classifiers (NER, POS, Emotion, Sarcasm, Questions, Spam)
+ - 40+ Supported Languages
+ - Labeled and Unlabeled Dependency parsing
+ - Various Text Cleaning and Pre-Processing methods like Stemming, Lemmatizing, Normalizing, Filtering, Cleaning pipelines and more
 
 
 ## Classifiers trained on many different different datasets 
 Choose the right tool for the right task! Whether you analyze movies or twitter, NLU has the right model for you! 
 
-- 50 Class Questions Classifier
-- Spam Classifier 
-- Fake News Classifier 
-- Emotion Classifier 
-- Cyberbullying Classifier 
-- Sarcasm Classifier 
-- Toxic Classifer
-- E2E Classifier
-- Sentiment classifier pretrained on IMDB movie reviews
-- Sentiment classifier pretrained on twitter
+- trec6 classifier 
+- trec10 classifier 
+- spam classifier 
+- fake news classifier 
+- emotion classifier 
+- cyberbullying classifier 
+- sarcasm classifier 
+- sentiment classifier for movies 
+- IMDB Movie Sentiment classifier 
+- Twitter sentiment classifier 
 - NER pretrained on ONTO notes 
 - NER trainer on CONLL 
 - Language classifier for 20 languages on the wiki 20 lang dataset. 
 
-## Data Pre-Processing and Text Cleaning 
+## Utilities for the Data Science NLU applications 
 Working with text data can sometimes be quite a dirty Job. NLU helps you keep your hands clean by providing lots of components that take away data engineering intensive tasks. 
 
 - Datetime Matcher
@@ -81,7 +72,7 @@ Working with text data can sometimes be quite a dirty Job. NLU helps you keep yo
 - Stopword Cleaners
 - Pattern Cleaners
 - Slang Cleaner 
-- Tokenization 
+
 ## Where can I see NLUs entire offer? 
 Checkout the [NLU Namespace](https://nlu.johnsnowlabs.com/docs/en/namespace) for everything that NLU has to offer! 
 
@@ -167,9 +158,3 @@ The following are Collab examples which showcase each NLU component and some app
 
 # Simple NLU Demos
 - [NLU different output levels Demo](https://colab.research.google.com/drive/1C4N3wpC17YzZf9fXHDNAJ5JvSmfbq7zT?usp=sharing)
-
-
-# NLU on Medium
-- [Introduction to NLU](https://medium.com/@christian.kasim.loan/1-line-of-code-350-nlp-models-with-john-snow-labs-nlu-in-python-2f1c55bba619?sk=1379426a00ca970a6e101a8f74f66bd2)
-- [One line BERT Word Embeddings and t-SNE plotting with NLU](https://medium.com/@christian.kasim.loan/1-line-to-bert-word-embeddings-with-nlu-f50d2b08cddc?sk=ec38a4ee6c87984f2b3cc4328b27135a)
-- [BERT, ALBERT, ELECTRA, ELMO, XLNET, GLOVE Word Embeddings in one line and plotting with t-SNE](https://medium.com/@christian.kasim.loan/1-line-of-code-for-bert-albert-elmo-electra-xlnet-glove-part-of-speech-with-nlu-and-t-sne-9ebcd5379cd?sk=58137630075d8f8b23b66b17c3aaa72d)

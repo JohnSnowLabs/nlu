@@ -1,1 +1,23 @@
-{"name": "sentence_detector", "output_level": "sentence", "description": "todo", "outputs": ["sentence"], "inputs": ["document", "token"], "type": "util", "file_dependencies": {}, "spark_input_column_names": ["document"], "spark_output_column_names": ["sentence"], "provider": "sparknlp", "license": "open source", "computation_context": "spark", "output_context": "spark"}
+{
+  "name": "sentence_detector",
+  "output_level": "sentence",
+  "description": "todo",
+  "outputs": [
+    "sentence"
+  ],
+  "inputs": [
+    "document"
+  ],
+  "type": "util",
+  "file_dependencies": {},
+  "spark_input_column_names": [
+    "document"
+  ],
+  "spark_output_column_names": [
+    "sentence"
+  ],
+  "provider": "sparknlp",
+  "license": "open source",
+  "computation_context": "spark",
+  "output_context": "spark"
+}

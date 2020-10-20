@@ -28,9 +28,9 @@ class AllComponentsInfo:
         self.all_pretrained_model_languages = ['da','fr','de','it','nb','no','nn','pl','pt','ru','es','af','ar','hy','eu','bn','br','bg','ca','cs','eo','fi','gl','el','ha','he','hi','hu','id','ga','ja','la','lv','mr','fa','ro','sk','sl','so','st','sw','sv','th','tr','uk','yo','zu','xx',]
         self.all_languages = set(self.all_pretrained_pipe_languages).union(set(self.all_pretrained_model_languages))
 
-        # this maps a requsted token to a class
-        self.all_component_types = ['tokenize','pos','ner','embed','classify','sentiment','emotion','spell','dependency',
-                                    'labled_dependency','lemma', 'norm', 'select', 'pretrained_pipe','util']
+        # this maps a requested token to a class
+        self.all_nlu_actions = ['tokenize', 'pos', 'ner', 'embed', 'classify', 'sentiment', 'emotion', 'spell', 'dependency','dep','dep.untyped', 'match','sentence_detector', 'spell', 'stopwords'
+                                    'labled_dependency','lemma', 'norm', 'select', 'pretrained_pipe','util', 'embed_sentence','embed_chunk','ngram']
 
 
         all_component_paths_regex = nlu.nlu_package_location + 'components/*/*/'
@@ -88,6 +88,8 @@ class ComponentInfo:
     output_level : str # document, sentence, token, chunk, input_dependent or model_dependent
     spark_input_column_names: list  # default expected name for input columns when forking with spark nlp annotators on spark DFs
     spark_output_column_names: list  # default expected name for output columns when forking with spark nlp annotators on spark DFs
+
+
     provider : str  # Who provides the implementation of this annotator, Spark-NLP for base. Would be
     license : str # open source or private
     computation_context : str # Will this component do its computation in Spark land (like all of Spark NLP annotators do) or does it require some other computation engine or library like Tensorflow, Numpy, HuggingFace, etc..

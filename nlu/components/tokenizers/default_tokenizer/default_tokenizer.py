@@ -1,4 +1,3 @@
-import nlu.pipe_components
 from sparknlp.annotator import *
 
 class DefaultTokenizer:
@@ -8,7 +7,4 @@ class DefaultTokenizer:
             .setInputCols(["document"]) \
             .setOutputCol("token")
 
-    @staticmethod
-    def get_pretrained_model(name, language):
-        return Tokenizer.pre
 
