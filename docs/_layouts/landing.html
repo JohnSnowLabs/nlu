@@ -82,20 +82,20 @@ conda install -c johnsnowlabs nlu
                 <div class="benchmark-inner">
                   <h4 class="h4_title blue">Training NER</h4>
                   <ul class="list1">
-                    <li> - State-of-the-art <strong>Deep Learning</strong> algorithms</li>
-                    <li> - Achieve high accuracy with a <strong>one line of code</strong></li>
-                    <li> - <strong>350 +</strong> NLP Models</li>
-                    <li> - <strong>176 +</strong> unique NLP models and algorithms</li>
-                    <li> - <strong>68 +</strong> unique NLP pipelines consisting of composed NLU components</li>
-                    <li> - <strong>50 +</strong> languages supported</li>
-                    <li> - <strong>14 +</strong>  embeddings  <strong> BERT, ELMO, ALBERT, XLNET, GLOVE, USE, ELECTRA </strong></li>
-                    <li> - <strong>50 +</strong>  Pre-trained Classifiers : <strong> Emotion, Sarcasm, Language, Question, E2E, Toxic</strong> </li>
-                    <li> - <strong>36 +</strong>  Pre-Trained  <strong> NER (Named Entity Recognition)  </strong> models </li>
-                    <li> - <strong>34 +</strong>  Pre-Trained  <strong> POS (Part of Speech)  </strong> models </li>
-                    <li> - <strong>3 +</strong>  Pre-Trained  <strong> Lemmatizer  </strong> models </li>
-                    <li> - Dependency parsing untyped and typed</li>
-                    <li> - Spell Checking</li>
-                    <li> - Multi-lingual NER models in <strong>Dutch, English, French, German, Italian, Norwegian, Polish, Portuguese, Russian, Spanish</strong></li>
+                    <li> State-of-the-art <strong>Deep Learning</strong> algorithms</li>
+                    <li> Achieve high accuracy with <strong>one line of code</strong></li>
+                    <li> <strong>350 +</strong> NLP Models</li>
+                    <li> <strong>176 +</strong> unique NLP models and algorithms</li>
+                    <li> <strong>68 +</strong> unique NLP pipelines consisting of different NLU components</li>
+                    <li> <strong>50 +</strong> languages supported</li>
+                    <li> <strong>14 +</strong>  embeddings  <strong> BERT, ELMO, ALBERT, XLNET, GLOVE, USE, ELECTRA </strong></li>
+                    <li> <strong>50 +</strong>  Pre-trained Classifiers : <strong> Emotion, Sarcasm, Language, Question, E2E, Toxic</strong> </li>
+                    <li> <strong>36 +</strong>  Pre-Trained  <strong> NER (Named Entity Recognition)  </strong> models </li>
+                    <li> <strong>34 +</strong>  Pre-Trained  <strong> POS (Part of Speech)  </strong> models </li>
+                    <li> <strong>3 +</strong>  Pre-Trained  <strong> Lemmatizer  </strong> models </li>
+                    <li> Dependency parsing untyped and typed</li>
+                    <li> Spell Checking</li>
+                    <li> Multi-lingual NER models in <strong>Dutch, English, French, German, Italian, Norwegian, Polish, Portuguese, Russian, Spanish</strong></li>
                   </ul>
                 </div>
               </div>
@@ -426,9 +426,11 @@ conda install -c johnsnowlabs nlu
 {%- include pageview.html -%}
 <div class="layout--page js-page-root">
 
+{%- if page.sidebar -%}
 <div class="page__sidebar d-print-none">
   {%- include sidebar/toc.html -%}
 </div>
+{%- endif -%}
 
 </div>
 
