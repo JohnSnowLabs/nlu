@@ -8,11 +8,15 @@ from nlu import *
 class TestToxic(unittest.TestCase):
 
     def test_toxic_model(self):
-        df = nlu.load('en.classify.toxic',verbose=True).predict('You are so stupid')
-        # df = nlu.load('en.classify.sarcasm',verbose=True).predict(sarcasm_df['text'])
-
+        pipe = nlu.load('toxic',verbose=True)
+        df = pipe.predict(['I love pancaces. I hate Mondays', 'I love Fridays'], output_level='sentence')
         print(df.columns)
         print(df['sentence'], df[['toxic','toxic_confidence']])
+        df = pipe.predict(['I love pancaces. I hate Mondays', 'I love Fridays'], output_level='document')
+        self.assertIsInstance(df.iloc[0]['toxic'],str )
+        print(df.columns)
+        print(df['document'], df[['toxic','toxic_confidence']])
+        self.assertIsInstance(df.iloc[0]['toxic'], str)
 
 
 

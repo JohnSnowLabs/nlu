@@ -6,8 +6,19 @@ from tests.test_utils import get_sample_pdf_with_labels, get_sample_pdf, get_sam
 from nlu import *
 
 class TestSarcasm(unittest.TestCase):
-
     def test_sarcasm_model(self):
+        pipe = nlu.load('sarcasm',verbose=True)
+        df = pipe.predict(['I love pancaces. I hate Mondays', 'I love Fridays'], output_level='sentence')
+        print(df.columns)
+        print(df['sentence'], df[['sarcasm','sarcasm_confidence']])
+        df = pipe.predict(['I love pancaces. I hate Mondays', 'I love Fridays'], output_level='document')
+        self.assertIsInstance(df.iloc[0]['sarcasm'],str )
+        print(df.columns)
+        print(df['document'], df[['sarcasm','sarcasm_confidence']])
+        self.assertIsInstance(df.iloc[0]['sarcasm'], str)
+    
+
+    def test_sarcasm_model_bench(self):
         # Get dataset "
         # todo test light pipe for 50k+
         # ! wget -N https://s3.amazonaws.com/auxdata.johnsnowlabs.com/public/resources/en/sarcasm/train-balanced-sarcasm.csv

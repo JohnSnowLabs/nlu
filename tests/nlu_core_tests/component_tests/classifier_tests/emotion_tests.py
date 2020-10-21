@@ -7,12 +7,15 @@ from nlu import *
 class TestEmotion(unittest.TestCase):
 
     def test_emotion_model(self):
-        df = nlu.load('emotion',verbose=True).predict('Women belong in the kitchen') # sorry we dont mean it
-        # df = nlu.load('en.classify.sarcasm',verbose=True).predict(sarcasm_df['text'])
-
+        pipe = nlu.load('emotion',verbose=True)
+        df = pipe.predict(['I love pancaces. I hate Mondays', 'I love Fridays'], output_level='sentence')
         print(df.columns)
         print(df['sentence'], df[['emotion','emotion_confidence']])
-
+        df = pipe.predict(['I love pancaces. I hate Mondays', 'I love Fridays'], output_level='document')
+        self.assertIsInstance(df.iloc[0]['emotion'],str )
+        print(df.columns)
+        print(df['document'], df[['emotion','emotion_confidence']])
+        self.assertIsInstance(df.iloc[0]['emotion'], str)
 
 
 if __name__ == '__main__':
