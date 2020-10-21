@@ -145,7 +145,7 @@ class NLUPipeline(BasePipe):
             'token': [ NerCrfApproach, NerDLApproach,
                       PerceptronApproach,
                       Stemmer,
-                      NorvigSweetingApproach, ContextSpellCheckerApproach,
+                       ContextSpellCheckerApproach,
 
                       Lemmatizer, TypedDependencyParserApproach, DependencyParserApproach,
                       Tokenizer, RegexTokenizer, RecursiveTokenizer],
@@ -155,7 +155,7 @@ class NLUPipeline(BasePipe):
             # these can be document or sentence
             'input_dependent': [ViveknSentimentApproach, SentimentDLApproach, ClassifierDLApproach,
                                  LanguageDetectorDL,
-                                MultiClassifierDLApproach,  SentenceEmbeddings
+                                MultiClassifierDLApproach,  SentenceEmbeddings, NorvigSweetingApproach,
                                 ],
 
             # 'unclassified': []
@@ -562,17 +562,15 @@ class NLUPipeline(BasePipe):
         '''
         # (1.) A classifier, which is using sentence/document. We just check input cols
 
-        if 'document' in component.component_info.spark_output_column_names :  return 'document'
-        if 'sentence' in component.component_info.spark_output_column_names :  return 'sentence'
+        if 'document' in component.component_info.spark_input_column_names :  return 'document'
+        if 'sentence' in component.component_info.spark_input_column_names :  return 'sentence'
 
-        # (2.) A classifier, which is using sentence/doc embeddings. We iterate over the pipe and check which Emed component is feeding the classifier and what the input of the embed col is (sent/doc)
+        # (2.) A classifier, which is using sentence/doc embeddings. We iterate over the pipe and check which Embed component is feeding the classifier and what the input of the embed col is (sent/doc)
         for c in self.pipe_components:
             # check if c is of sentence embedding class  which is always input dependent
             if any ( isinstance(c.model, e ) for e in self.all_embeddings['input_dependent']  ) :
                 if 'document' in c.component_info.spark_output_column_names :  return 'document'
                 if 'sentence' in c.component_info.spark_output_column_names :  return 'sentence'
-
-
 
 
 
@@ -645,6 +643,19 @@ class NLUPipeline(BasePipe):
                 logger.info("Detected %s as chunk output column for later zipping", component.component_info.name)
                 return component.component_info.spark_output_column_names[0]
 
+    def resolve_field_to_output_level(self, field,f_type):
+        '''
+        For a given field from resulting datafarme, search find the component that generated that field and returns it's output level
+        :param field: The field to find the output_level for
+        :param f_type: The type of the field to fint the output level for
+        :return: The output level of the field
+        '''
+        target = field.split('.')[0]
+        for c in self.pipe_components:
+            if target in c.component_info.spark_output_column_names:
+                return self.resolve_component_to_output_level(c)
+
+
 
     def select_features_from_result(self, field_dict, processed, stranger_features, same_output_level_fields,
                                     not_at_same_output_level_fields):
@@ -668,9 +679,9 @@ class NLUPipeline(BasePipe):
 
             f_type = field_dict[field]
             logger.info('Selecting Columns for field=%s of type=%s', field, f_type)
-            if self.resolve_type_to_output_level(f_type, field) == self.output_level:
-                logger.info('Setting field for field=%s of type=%s to output level SAME LEVEL', field, f_type)
-
+            inferred_output_level = self.resolve_field_to_output_level( field,f_type)
+            if inferred_output_level == self.output_level:
+                logger.info(f'Setting field for field={field} of type={f_type} to output level={inferred_output_level} which is SAME LEVEL')
                 if 'embeddings' not in field and 'embeddings' not in f_type: same_output_level_fields.append(
                     field + '.result')  # result of embeddigns is just the word/sentence
                 if self.output_positions:
@@ -682,9 +693,8 @@ class NLUPipeline(BasePipe):
                     same_output_level_fields.append(field + '.metadata')
                 if 'category' in f_type or 'spell' in f_type or 'sentiment' in f_type or 'class' in f_type or 'language' in f_type or 'keyword' in f_type:
                     same_output_level_fields.append(field + '.metadata')
-
             else:
-                logger.info('Setting field for field=%s of type=%s to output level NOT SAME LEVEL', field, f_type)
+                logger.info(f'Setting field for field={field} of type={f_type} to output level={inferred_output_level} which is NOT SAME LEVEL')
 
                 if 'embeddings' not in field and 'embeddings' not in f_type: not_at_same_output_level_fields.append(
                     field + '.result')  # result of embeddigns is just the word/sentence
@@ -744,6 +754,7 @@ class NLUPipeline(BasePipe):
         else:
             same_output_level_fields = [self.output_level + '.result']
 
+        ## todo verify here or before that we really have the provider of current output_level, i.e. Chunker/Sentence is in pipe
         logger.info('Setting Output level as : %s', self.output_level)
 
         if keep_stranger_features:
@@ -753,7 +764,7 @@ class NLUPipeline(BasePipe):
             sdf = processed.select(features_to_keep)
 
         if index_provided == False:
-            logger.info("Generating origin Index via Spark. May contain non monotonically increasing index values.")
+            logger.info("Generating origin Index via Spark. May contain irregular distributed index values.")
             sdf = sdf.withColumn(monotonically_increasing_id().alias('origin_index'))
 
         same_output_level_fields, not_at_same_output_level_fields = self.select_features_from_result(field_dict,
