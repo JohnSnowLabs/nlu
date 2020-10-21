@@ -817,7 +817,11 @@ class NLUPipeline(BasePipe):
         # if not self.is_fitted: self.fit()
 
         # currently have to always fit, otherwise parameter changes wont take effect
+        if output_level == 'sentence' or output_level == 'document':
+            self = PipelineQueryVerifier.configure_component_output_levels(self)
         self.fit()
+
+
 
         # self.configure_light_pipe_usage(len(data), multithread)
 
@@ -1326,13 +1330,12 @@ class PipelineQueryVerifier():
         correct_order_component_pipeline = []
         all_components_orderd = False
         all_components = pipe.pipe_components
-        document_provided = False
         provided_features = []
         while all_components_orderd == False:
             for component in all_components:
                 logger.info("Optimizing order for component %s", component.component_info.name)
                 input_columns = PipelineQueryVerifier.clean_irrelevant_features(component.component_info.inputs)
-                if set(input_columns).issubset(provided_features):  # component not in correct_order_component_pipeline:
+                if set(input_columns).issubset(provided_features):
                     correct_order_component_pipeline.append(component)
                     if component in all_components: all_components.remove(component)
                     for feature in component.component_info.outputs: provided_features.append(feature)
@@ -1352,8 +1355,8 @@ class PipelineQueryVerifier():
         If output_level == sentence, then sentence embeddings will be fed on sentence col and classifiers recieve sentence_embeds/sentence_raw column, depending on if the classifier works with or withouth embeddings. IF sentence detector is missing, one will be added.
 
         '''
-        if pipe.output_level  == 'sentence' : PipelineQueryVerifier.configure_component_output_levels_to_sentence(pipe)
-        elif pipe.output_level  == 'document' : PipelineQueryVerifier.configure_component_output_levels_to_document(pipe)
+        if pipe.output_level  == 'sentence' : return PipelineQueryVerifier.configure_component_output_levels_to_sentence(pipe)
+        elif pipe.output_level  == 'document' : return PipelineQueryVerifier.configure_component_output_levels_to_document(pipe)
 
 
     @staticmethod
@@ -1363,15 +1366,16 @@ class PipelineQueryVerifier():
         :param pipe: pipe to be configured
         :return: configured pipe
         '''
-
-        #1. Loop , if we have sentence embeddings configure the input of it to sentence
-
-        #2. Loop, if we have document or sentence level classifier and they dont take embeddings, set input to sentence
-
-        #3. Loop, if we have document or sentence level classifier that takes embeddings, dont do anything?
-        # for c in pipe.pipe_components:
-
-        pass
+        # Todo this assumese any time an annotator uses Doc column, it could also use sentence colm.
+        # todo verify!
+        for c in pipe.pipe_components:
+            if 'document' in c.component_info.inputs and 'sentence' not in c.component_info.inputs  :
+                c.component_info.inputs.remove('document')
+                c.component_info.inputs.append('sentence')
+                c.component_info.spark_input_column_names.remove('document')
+                c.component_info.spark_input_column_names.append('sentence')
+                c.model.set_input_cols(c.component_info.spark_input_column_names)
+        return pipe
 
 
     @staticmethod
@@ -1381,13 +1385,22 @@ class PipelineQueryVerifier():
         :param pipe: pipe to be configured
         :return: configured pipe
         '''
-        pass
-        #1. Loop , if we have sentence embeddings configure the input of it to document
-        # and change 'sentence' to 'document' in output col name
+        #todo actually test, can every classifier that works on raw sentences also work on Document col?
+        # Every sentenceEmbedding can work on Dcument col
+        # This works on the assuption that EVERY annotator that works on sentence col, can also work on document col. Douple Tripple verify later
 
-        #2. Loop, if we have document or sentence level classifier and they dont take embeddings, set input to sentence
+        #here we could change the col name to doc_embedding potentially
 
-        #3. Loop, if we have document or sentence level classifier that takes embeddings, dont do anything?
+        #1. Configure every Annotator/Classifier that works on sentences to take in Document instead of sentence
+        #  Note: This takes care of changing Sentence_embeddings to Document embeddings, since embedder runs on doc then.
+        for c in pipe.pipe_components:
+            if 'sentence' in c.component_info.inputs and 'document' not in c.component_info.inputs  :
+                c.component_info.inputs.remove('sentence')
+                c.component_info.inputs.append('document')
+                c.component_info.spark_input_column_names.remove('sentence')
+                c.component_info.spark_input_column_names.append('document')
+                c.model.set_input_cols(c.component_info.spark_input_column_names)
+        return pipe
 
 
     @staticmethod
@@ -1400,3 +1413,30 @@ class PipelineQueryVerifier():
         :return:
         '''
         pass
+
+
+    @staticmethod
+    def has_sentence_emebddings_col(component):
+        '''
+        Check for a given component if it uses sentence embedding col
+        :param component: component to check
+        :return: True if uses raw sentences, False if not
+        '''
+        for inp in component.component_info.inputs :
+            if inp =='sentence_embeddings' : return True
+        return False
+
+    @staticmethod
+    def is_using_token_level_inputs(component):
+        '''
+        Check for a given component if it uses Token level input
+        I.e. Lemma/stem/token/ and return the col name if so
+        :param component: component to check
+        :return: True if uses raw sentences, False if not
+        '''
+        token_inputs = ['token','lemma','stem','spell','']
+        for inp in component.component_info.inputs :
+            if inp =='sentence_embeddings' : return True
+        return False
+
+
