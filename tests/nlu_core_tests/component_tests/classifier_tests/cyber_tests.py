@@ -3,7 +3,6 @@
 
 import unittest
 from nlu import *
-cyberbullying
 class TestCyber(unittest.TestCase):
 
     def test_cyber_model(self):
