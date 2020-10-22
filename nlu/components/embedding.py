@@ -65,7 +65,7 @@ class Embeddings(SparkNLUComponent):
                 else :
                     if get_default : self.model = Glove.get_default_model()
                     else :
-                        if nlp_ref== 'glove_840B_300' or  nlp_ref== 'glove_6B_300':
+                        if nlp_ref == 'glove_840B_300' or  nlp_ref== 'glove_6B_300':
                             # if language=='en' and nlp_ref=='glove_6B_300': #special case
                             language = 'xx' # For these particular Glove embeddings, anyreference to them is actually the reference to the multilingual onces
                             self.model = Glove.get_pretrained_model(nlp_ref, language)

@@ -1,1 +1,25 @@
-{"name": "use", "description": "todo", "output_level": "sentence", "outputs": ["sentence_embeddings"], "inputs": ["document", "sentence"], "type": "sentence_embeddings", "file_dependencies": {}, "spark_input_column_names": ["sentence", "token"], "spark_output_column_names": ["use_embeddings"], "provider": "sparknlp", "license": "open source", "computation_context": "spark", "output_context": "spark"}
+{
+  "name": "use",
+  "description": "todo",
+  "output_level": "sentence",
+  "outputs": [
+    "sentence_embeddings"
+  ],
+  "inputs": [
+    "token",
+    "sentence"
+  ],
+  "type": "sentence_embeddings",
+  "file_dependencies": {},
+  "spark_input_column_names": [
+    "sentence",
+    "token"
+  ],
+  "spark_output_column_names": [
+    "use_embeddings"
+  ],
+  "provider": "sparknlp",
+  "license": "open source",
+  "computation_context": "spark",
+  "output_context": "spark"
+}

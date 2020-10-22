@@ -10,7 +10,7 @@ class Classifier(SparkNLUComponent):
         elif 'yake' in nlu_ref: annotator_class= 'yake'
         elif 'yake' in nlp_ref: annotator_class= 'yake'
 
-        elif 'sentimentdl' in nlp_ref : annotator_class= 'sentiment'
+        elif 'sentimentdl' in nlp_ref : annotator_class= 'sentiment_dl'
 
         elif 'vivekn' in nlp_ref or 'vivekn' in nlp_ref : annotator_class= 'vivekn_sentiment'
 

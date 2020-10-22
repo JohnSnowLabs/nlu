@@ -4,16 +4,16 @@ from sparknlp.annotator import *
 
 class NERDL:
     @staticmethod
-    def get_default_model():  # (name="ner_dl_bert") \
+    def get_default_model():  \
         return NerDLModel.pretrained(name='ner_dl_bert', lang='en') \
             .setInputCols(["sentence", "token", "word_embeddings"]) \
-            .setOutputCol("ner")  # unchangable name because getters/setters nlp bug 
+            .setOutputCol("ner")
 
     @staticmethod
     def get_pretrained_model(name, language):
         return NerDLModel.pretrained(name,language) \
             .setInputCols(["sentence", "token", "word_embeddings"]) \
-            .setOutputCol("ner")  # unchangable name because getters/setters nlp bug
+            .setOutputCol("ner")
 
     @staticmethod
     def get_default_trainable_model():
