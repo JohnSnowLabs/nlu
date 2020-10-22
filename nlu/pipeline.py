@@ -175,7 +175,7 @@ class NLUPipeline(BasePipe):
                       ],
             'sub_token': [TextMatcherModel, BigTextMatcherModel, RegexMatcherModel, ],
             'input_dependent': [BertSentenceEmbeddings, UniversalSentenceEncoder, ViveknSentimentModel,
-                                SentimentDLModel, MultiClassifierDLModel, MultiClassifierDLModel,
+                                SentimentDLModel, MultiClassifierDLModel, MultiClassifierDLModel, ClassifierDLModel
 
                                 ],
         }
@@ -358,8 +358,8 @@ class NLUPipeline(BasePipe):
                 new_fields = []
                 # we iterate over the keys in the metadata and use them as new column names. The values will become the values in the columns.
                 keys_in_metadata = list(ptmp.select(field).take(1))
-                if len(
-                        keys_in_metadata) == 0: continue  # no resulting values for this column, we wont include it in the final output
+                # no resulting values for this column, we wont include it in the final output
+                if len( keys_in_metadata) == 0: continue
                 if len(keys_in_metadata[0].asDict()['metadata']) == 0: continue
                 keys_in_metadata = list(keys_in_metadata[0].asDict()['metadata'][0].keys())  #
                 logger.info('Extracting Keys=%s for field=%s', keys_in_metadata, new_field)
@@ -372,10 +372,8 @@ class NLUPipeline(BasePipe):
                         if key == 'sentence' and 'entities' in field: continue
 
                         new_fields.append(new_field.replace('metadata', key + '_confidence'))
-
                         if new_fields[-1] == 'entities_entity': new_fields[-1] = 'ner_tag'
-                        ptmp = ptmp.withColumn(new_fields[-1],
-                                               pyspark_col(('res.' + str(fields_to_rename.index(field)) + '.' + key)))
+                        ptmp = ptmp.withColumn(new_fields[-1],pyspark_col(('res.' + str(fields_to_rename.index(field)) + '.' + key)))
 
                         columns_for_select.append(new_fields[-1])
 
@@ -565,12 +563,13 @@ class NLUPipeline(BasePipe):
         if 'document' in component.component_info.spark_input_column_names :  return 'document'
         if 'sentence' in component.component_info.spark_input_column_names :  return 'sentence'
 
-        # (2.) A classifier, which is using sentence/doc embeddings. We iterate over the pipe and check which Embed component is feeding the classifier and what the input of the embed col is (sent/doc)
+        # (2.) A classifier, which is using sentence/doc embeddings.
+        # We iterate over the pipe and check which Embed component is feeding the classifier and what the input that embed annotator is (sent or doc)
         for c in self.pipe_components:
             # check if c is of sentence embedding class  which is always input dependent
             if any ( isinstance(c.model, e ) for e in self.all_embeddings['input_dependent']  ) :
-                if 'document' in c.component_info.spark_output_column_names :  return 'document'
-                if 'sentence' in c.component_info.spark_output_column_names :  return 'sentence'
+                if 'document' in c.component_info.spark_input_column_names :  return 'document'
+                if 'sentence' in c.component_info.spark_input_column_names :  return 'sentence'
 
 
 
@@ -721,7 +720,7 @@ class NLUPipeline(BasePipe):
                                   index_provided=False):
         '''
         This functions takes in a spark dataframe with Spark NLP annotations in it and transforms it into a Pandas Dataframe with common feature types for further NLP/NLU downstream tasks.
-        It will recylce Indexes from Pandas DataFrames and Series if they exist, otherwise a custom id column will be created
+        It will recylce Indexes from Pandas DataFrames and Series if they exist, otherwise a custom id column will be created which is used as inex later on
             It does this by performing the following consecutive steps :
                 1. Select columns to explode
                 2. Select columns to keep
@@ -893,6 +892,37 @@ class NLUPipeline(BasePipe):
                 logger.info("Enabling light pipeline")
                 self.spark_transformer_pipe = LightPipeline(self.spark_transformer_pipe)
 
+    def check_if_sentence_level_requirements_met(self):
+        '''
+        Check if the pipeline currently has an annotator that generate sentence col as output. If not, return False
+        :return:
+        '''
+
+        for c in self.pipe_components:
+            if 'sentence' in c.component_info.spark_output_column_names : return True
+        return False
+
+    def add_missing_sentence_component(self):
+        '''
+        Add Sentence Detector to pipeline and Run it thorugh the Query Verifiyer again.
+        :return: None
+        '''
+
+
+
+    def add_missing_component_if_missing_for_output_level(self):
+        '''
+        Check that for currently configured self.output_level one annotator for that level exists, i.e a Sentence Detetor for outpul tevel sentence, Tokenizer for level token etc..
+
+        :return: None
+        '''
+
+        if self.output_level =='sentence':
+            if self.check_if_sentence_level_requirements_met(): return
+            else :
+                logger.info('Adding missing sentence Dependency because it is missing for outputlevel=Sentence')
+                self.add_missing_sentence_component()
+
 
     def predict(self, data, output_level='', positions=False, keep_stranger_features=True, metadata=False,
                 multithread=True, drop_irrelevant_cols=True):
@@ -927,6 +957,7 @@ class NLUPipeline(BasePipe):
         # currently have to always fit, otherwise parameter changes wont take effect
         if output_level == 'sentence' or output_level == 'document':
             self = PipelineQueryVerifier.configure_component_output_levels(self)
+            self = PipelineQueryVerifier.check_and_fix_nlu_pipeline(self)
         self.fit()
 
         # self.configure_light_pipe_usage(len(data), multithread)
@@ -1244,7 +1275,7 @@ class PipelineQueryVerifier():
             else:
                 pipe_requirements.append(component.component_info.inputs)
 
-        # 3. Some components have "word_embeddings" als input configured, but no actual wordembedding has "word_embedding" as output configured. 
+        # 3. Some components have "word_embeddings" als input configured, but no actual wordembedding has "word_embedding" as output configured.
         # Thus we must check in a different way here first if embeddings are provided and if they are there we have to remove them form the requirements list
 
         # 4. get missing requirements, by substracting provided from requirements
@@ -1434,7 +1465,7 @@ class PipelineQueryVerifier():
         that the pipeline can be iteratively processed by spark NLP.
         If output_level == Document, then sentence embeddings will be fed on Document col and classifiers recieve doc_embeds/doc_raw column, depending on if the classifier works with or withouth embeddings
         If output_level == sentence, then sentence embeddings will be fed on sentence col and classifiers recieve sentence_embeds/sentence_raw column, depending on if the classifier works with or withouth embeddings. IF sentence detector is missing, one will be added.
-        
+
         '''
         logger.info("Starting to optimize component order ")
         correct_order_component_pipeline = []
@@ -1476,10 +1507,8 @@ class PipelineQueryVerifier():
         :param pipe: pipe to be configured
         :return: configured pipe
         '''
-        # Todo this assumese any time an annotator uses Doc column, it could also use sentence colm.
-        # todo verify!
-        # JK DONT do this for sentence detectors!
         for c in pipe.pipe_components:
+            if 'token' in c.component_info.spark_output_column_names: continue
             # if 'document' in c.component_info.inputs and 'sentence' not in c.component_info.inputs  :
             if 'document' in c.component_info.inputs and 'sentence' not in c.component_info.inputs and 'sentence' not in c.component_info.outputs:
                 c.component_info.inputs.remove('document')
@@ -1496,15 +1525,13 @@ class PipelineQueryVerifier():
         :param pipe: pipe to be configured
         :return: configured pipe
         '''
-        # todo actually test, can every classifier that works on raw sentences also work on Document col?
         # Every sentenceEmbedding can work on Dcument col
         # This works on the assuption that EVERY annotator that works on sentence col, can also work on document col. Douple Tripple verify later
-
         # here we could change the col name to doc_embedding potentially
-
         # 1. Configure every Annotator/Classifier that works on sentences to take in Document instead of sentence
         #  Note: This takes care of changing Sentence_embeddings to Document embeddings, since embedder runs on doc then.
         for c in pipe.pipe_components:
+            if 'token' in c.component_info.spark_output_column_names: continue
             if 'sentence' in c.component_info.inputs and 'document' not in c.component_info.inputs:
                 c.component_info.inputs.remove('sentence')
                 c.component_info.inputs.append('document')
