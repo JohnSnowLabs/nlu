@@ -182,7 +182,7 @@ class NLUPipeline(BasePipe):
 
         self.all_embeddings = {
         'token' : [AlbertEmbeddings, BertEmbeddings, ElmoEmbeddings, WordEmbeddings,
-                   XlnetEmbeddings,],
+                   XlnetEmbeddings,WordEmbeddingsModel],
         'input_dependent' : [SentenceEmbeddings, UniversalSentenceEncoder]
 
         }
@@ -370,8 +370,8 @@ class NLUPipeline(BasePipe):
                         if key == 'sentence' and 'language' in field: continue
                         if key == 'chunk' and 'entities' in field: continue
                         if key == 'sentence' and 'entities' in field: continue
-
-                        new_fields.append(new_field.replace('metadata', key + '_confidence'))
+                        if field == 'entities.metadata' : new_fields.append(new_field.replace('metadata','confidence'))
+                        else : new_fields.append(new_field.replace('metadata', key + '_confidence'))
                         if new_fields[-1] == 'entities_entity': new_fields[-1] = 'ner_tag'
                         ptmp = ptmp.withColumn(new_fields[-1],pyspark_col(('res.' + str(fields_to_rename.index(field)) + '.' + key)))
 
@@ -466,14 +466,10 @@ class NLUPipeline(BasePipe):
                 elif field == 'keywords.metadata':  # old
                     ptmp = ptmp.withColumn(unpack_name + '_result', ptmp[unpack_name + '.result'])
                 else:
-                    # Optimze! This case is abd!! Will drop label if row contains multiple labls. Fixed when proper sentence/document level outputs supported
                     ptmp = ptmp.withColumn(unpack_name + '_result', expr(unpack_name + '.result[0]'))
-                # ptmp = ptmp.withColumn(unpack_name + '_result', ptmp[unpack_name + '.result'])
 
-                reorderd_fields_to_rename[
-                    reorderd_fields_to_rename.index(unpack_name + '.result')] = unpack_name + '_result'
-                logger.info(
-                    f'Getting Meta Data for   : nr={i} , original_name={field} with new_name={new_field} and original')
+                reorderd_fields_to_rename[reorderd_fields_to_rename.index(unpack_name + '.result')] = unpack_name + '_result'
+                logger.info(f'Getting Meta Data for   : nr={i} , original_name={field} with new_name={new_field} and original')
                 # we iterate over the keys in the metadata and use them as new column names. The values will become the values in the columns.
                 keys_in_metadata = list(ptmp.select(field).take(1))
                 if len(keys_in_metadata) == 0: continue
@@ -486,7 +482,9 @@ class NLUPipeline(BasePipe):
                 new_fields = []
                 for key in keys_in_metadata:
                     # we cant skip getting  key values for everything, even if meta=false. This is because we need to get the greatest of all confidence values , for this we must unpack them first..
-                    new_fields.append(new_field.replace('metadata', key.strip(' ') + '_confidence'))
+                    if field == 'entities.metadata' : new_fields.append(new_field.replace('metadata','confidence'))
+                    else : new_fields.append(new_field.replace('metadata', key + '_confidence'))
+
                     # entities_entity
                     if new_fields[-1] == 'entities_entity': new_fields[-1] = 'ner_tag'
                     logger.info(f'Extracting meta data for key={key} and column name={new_fields[-1]}')
@@ -607,27 +605,6 @@ class NLUPipeline(BasePipe):
         # new_output_level = self.pipe_components[-1].component_info.output_level
         self.output_level = self.resolve_component_to_output_level(self.pipe_components[-1])
         logger.info('Inferred and set output level of pipeline to %s', self.output_level)
-
-        # if new_output_level == 'input_dependent':
-        #     reversed_pipe = self.pipe_components.copy()
-        #     reversed_pipe.reverse()
-        #     for i, component in enumerate(reversed_pipe):
-        #         if i == 0: continue  # first element is always input dependent in this case
-        #         if component.component_info.output_level == 'input_dependent': continue
-        #         self.output_level = component.component_info.component_info.output_level
-        # else:
-        #     self.output_level = new_output_level
-        #     # soemtimes in piplines cleaners will remove the sentence columns, thus we must check if it is early here if the level is there
-        # if self.output_level not in sdf.columns:
-        #     if 'document' in sdf.columns:
-        #         self.output_level = 'document'
-        #     elif 'sentence' in sdf.columns:
-        #         self.output_level = 'sentence'
-        #     elif 'chunk' in sdf.columns:
-        #         self.output_level = 'chunk'
-        #     elif 'token' in sdf.columns:
-        #         self.output_level = 'token'
-
 
     def get_chunk_col_name(self):
         '''
@@ -753,7 +730,6 @@ class NLUPipeline(BasePipe):
         else:
             same_output_level_fields = [self.output_level + '.result']
 
-        ## todo verify here or before that we really have the provider of current output_level, i.e. Chunker/Sentence is in pipe
         logger.info('Setting Output level as : %s', self.output_level)
 
         if keep_stranger_features:
@@ -1511,6 +1487,7 @@ class PipelineQueryVerifier():
             if 'token' in c.component_info.spark_output_column_names: continue
             # if 'document' in c.component_info.inputs and 'sentence' not in c.component_info.inputs  :
             if 'document' in c.component_info.inputs and 'sentence' not in c.component_info.inputs and 'sentence' not in c.component_info.outputs:
+                logger.info(f"Configuring C={c.component_info.name}  of Type={type(c.model)}")
                 c.component_info.inputs.remove('document')
                 c.component_info.inputs.append('sentence')
                 c.component_info.spark_input_column_names.remove('document')
@@ -1533,6 +1510,7 @@ class PipelineQueryVerifier():
         for c in pipe.pipe_components:
             if 'token' in c.component_info.spark_output_column_names: continue
             if 'sentence' in c.component_info.inputs and 'document' not in c.component_info.inputs:
+                logger.info(f"Configuring C={c.component_info.name}  of Type={type(c.model)}")
                 c.component_info.inputs.remove('sentence')
                 c.component_info.inputs.append('document')
                 c.component_info.spark_input_column_names.remove('sentence')
