@@ -1317,7 +1317,7 @@ class PipelineQueryVerifier():
 
         for component in pipe.pipe_components:
             if 'ner' in component.component_info.outputs: ner_exists = True
-            if 'ner_merged' in component.component_info.outputs: ner_converter_exists = True
+            if 'entities' in component.component_info.outputs: ner_converter_exists = True
 
         if ner_converter_exists == True:
             logger.info('NER converter already in pipeline')
