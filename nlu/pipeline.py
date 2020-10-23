@@ -141,7 +141,7 @@ class NLUPipeline(BasePipe):
                          ],
             'sentence': [SentenceDetector, SentenceDetectorDLApproach, ],
             'chunk': [Chunker, ChunkEmbeddings,  ChunkTokenizer, Token2Chunk, TokenAssembler,
-                      NerConverter, Doc2Chunk],
+                      NerConverter, Doc2Chunk,NGramGenerator],
             'token': [ NerCrfApproach, NerDLApproach,
                       PerceptronApproach,
                       Stemmer,
@@ -158,7 +158,7 @@ class NLUPipeline(BasePipe):
                                 MultiClassifierDLApproach,  SentenceEmbeddings, NorvigSweetingApproach,
                                 ],
 
-            # 'unclassified': []
+            # 'unclassified': [Yake, Ngram]
         }
 
 
