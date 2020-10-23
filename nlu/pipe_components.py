@@ -44,7 +44,7 @@ class SparkNLUComponent(NLUComponent):
         :param : The model for which the attributes should be set
         :return: model with attributes properly set
         '''
-        for k in self.model.extractParamMap() :
+        for k in self.model.extractParamMap():
             if "inputCol" in str(k):
                 if isinstance(self.model.extractParamMap()[k], str) :
                     self.component_info.spark_input_column_names =  [self.model.extractParamMap()[k]]

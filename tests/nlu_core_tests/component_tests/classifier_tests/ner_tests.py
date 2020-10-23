@@ -17,7 +17,6 @@ class TestNer(unittest.TestCase):
         print(df[[]])
         print(df[[ 'entities', 'ner_tag']])
 
-
         df = nlu.load('ner', verbose=True ).predict('Donald Trump from America and Angela Merkal from Germany dont share many oppinions.', output_level='document' )
         print(df.columns)
         print(df[[ 'entities', 'ner_tag']])
