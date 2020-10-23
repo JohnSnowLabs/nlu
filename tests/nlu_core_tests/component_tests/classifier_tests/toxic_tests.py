@@ -8,6 +8,7 @@ from nlu import *
 class TestToxic(unittest.TestCase):
 
     def test_toxic_model(self):
+
         pipe = nlu.load('toxic',verbose=True)
         df = pipe.predict(['I love pancaces. I hate Mondays', 'I love Fridays'], output_level='sentence')
         print(df.columns)
