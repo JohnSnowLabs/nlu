@@ -605,7 +605,7 @@ class NLUPipeline(BasePipe):
         param sdf : Spark dataframe after transformations
         '''
         # new_output_level = self.pipe_components[-1].component_info.output_level
-        self.resolve_component_to_output_level(self.pipe_components[-1])
+        self.output_level = self.resolve_component_to_output_level(self.pipe_components[-1])
         logger.info('Inferred and set output level of pipeline to %s', self.output_level)
 
         # if new_output_level == 'input_dependent':
