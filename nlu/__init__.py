@@ -424,8 +424,10 @@ def construct_component_from_pipe_identifier(language, nlp_ref, nlu_ref):
             constructed_components.append(nlu.Tokenizer(model=component, annotator_class='regex_tokenizer'))
         elif isinstance(component, DocumentAssembler):
             constructed_components.append(nlu.Util(model=component))
-        elif isinstance(component, (SentenceDetectorDLModel, SentenceDetector)):
+        elif isinstance(component, SentenceDetectorDLModel):
             constructed_components.append(NLUSentenceDetector(annotator_class='deep_sentence_detector', model=component))
+        elif isinstance(component, (SentenceDetectorDLModel, SentenceDetector)):
+            constructed_components.append(NLUSentenceDetector(annotator_class='pragmatic_sentence_detector', model=component))
         elif isinstance(component, RegexMatcherModel) or parsed == 'match':
             constructed_components.append(nlu.Matcher(model=component, annotator_class='regex'))
         elif isinstance(component, TextMatcherModel):

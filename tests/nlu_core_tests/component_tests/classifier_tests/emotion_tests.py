@@ -15,11 +15,11 @@ class TestEmotion(unittest.TestCase):
         df = pipe.predict(['I love pancaces. I hate Mondays', 'I love Fridays'], output_level='sentence')
         print(df.columns)
         print(df['sentence'], df[['emotion','emotion_confidence']])
-        # df = pipe.predict(['I love pancaces. I hate Mondays', 'I love Fridays'], output_level='document')
-        # self.assertIsInstance(df.iloc[0]['emotion'],str )
-        # print(df.columns)
-        # print(df['document'], df[['emotion','emotion_confidence']])
-        # self.assertIsInstance(df.iloc[0]['emotion'], str)
+        df = pipe.predict(['I love pancaces. I hate Mondays', 'I love Fridays'], output_level='document')
+        self.assertIsInstance(df.iloc[0]['emotion'],str )
+        print(df.columns)
+        print(df['document'], df[['emotion','emotion_confidence']])
+        self.assertIsInstance(df.iloc[0]['emotion'], str)
 
 
 if __name__ == '__main__':

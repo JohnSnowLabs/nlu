@@ -176,7 +176,7 @@ class NameSpace():
         'classify.trec50': ('classifierdl_use_trec50','model'),  # Alias withouth embedding
         'classify.spam': ('classifierdl_use_spam','model'),  # Alias withouth embedding
         'spam': ('classifierdl_use_spam','model'),  # Alias withouth embedding
-        'toxic': 'multiclassifierdl_use_toxic',
+        'toxic': ('multiclassifierdl_use_toxic','model'),
 
         'classify.fakenews': ('classifierdl_use_fakenews','model'),  # Alias withouth embedding
         'classify.emotion': ('classifierdl_use_emotion','model'),  # Alias withouth embedding
