@@ -272,7 +272,6 @@ class NLUPipeline(BasePipe):
             return self.get_output_level_of_embeddings_provider(field_type, field_name)  # recursive resolution
 
 
-#todo rework
     def get_field_types_dict(self, sdf, stranger_features):
         """
         @ param sdf: Spark Dataframe which a NLU/SparkNLP pipeline has transformed.
@@ -604,6 +603,7 @@ class NLUPipeline(BasePipe):
         '''
         # new_output_level = self.pipe_components[-1].component_info.output_level
         self.output_level = self.resolve_component_to_output_level(self.pipe_components[-1])
+        if self.output_level == None : self.output_level = 'document' # Voodo Normalizer bug that does not happen in debugger bugfix
         logger.info('Inferred and set output level of pipeline to %s', self.output_level)
 
     def get_chunk_col_name(self):
