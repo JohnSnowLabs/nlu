@@ -7,8 +7,8 @@ import nlu
 import sparknlp
 import pyspark
 
-class MyTestCase(unittest.TestCase):
-    def test_print_pipe_info(self):
+class ModinTests(unittest.TestCase):
+    def test_modin(self):
         # ## works with RAY and DASK backends
         data = {"text": ['This day sucks but tomorrow will be better ! ', 'I love this day', 'I dont like Sami']}
         mdf = mpd.DataFrame(data)
@@ -16,7 +16,9 @@ class MyTestCase(unittest.TestCase):
 
         print(res)
         self.assertTrue(type(res) == mpd.DataFrame)
+        print(data)
         pdf = pd.DataFrame(data)
+        print(pdf)
         res = nlu.load('sentiment').predict(pdf)
         print(res)
         self.assertTrue(type(res) == pd.DataFrame)
@@ -29,4 +31,4 @@ class MyTestCase(unittest.TestCase):
     
         res.show()
 if __name__ == '__main__':
-    MyTestCase().test_entities_config()
+    ModinTests().test_entities_config()
