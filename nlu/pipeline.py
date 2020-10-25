@@ -779,9 +779,11 @@ class NLUPipeline(BasePipe):
         # final_df = ptmp.coalesce(10).select(list(set(final_cols)))
 
         pandas_df = self.finalize_return_datatype(final_df)
-        pandas_df.set_index('origin_index', inplace=True)
-
-        return self.convert_embeddings_to_np(pandas_df)
+        if isinstance(pandas_df,pyspark.sql.dataframe.DataFrame):
+            return pandas_df # is actually spark df
+        else:
+            pandas_df.set_index('origin_index', inplace=True)
+            return self.convert_embeddings_to_np(pandas_df)
 
 
     def convert_embeddings_to_np(self, pdf):
@@ -946,7 +948,7 @@ class NLUPipeline(BasePipe):
         try:
             if type(data) is pyspark.sql.dataframe.DataFrame:  # casting follows spark->pd
                 self.output_datatype = 'spark'
-                data = data.withColumn(monotonically_increasing_id().alias('origin_index'))
+                data = data.withColumn('origin_index',monotonically_increasing_id().alias('origin_index'))
                 index_provided = True
 
                 if self.raw_text_column in data.columns:
