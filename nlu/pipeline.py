@@ -445,10 +445,9 @@ class NLUPipeline(BasePipe):
 
         # second analogus edge case for positional fields (.begin and .end) and .result. We will put every rseult column into the end of the list and thus avoid the erronous case always
         for col in reorderd_fields_to_rename:
-            if '.result' in col: reorderd_fields_to_rename.append(
-                reorderd_fields_to_rename.pop(reorderd_fields_to_rename.index(col)))
+            if '.result' in col: reorderd_fields_to_rename.append(reorderd_fields_to_rename.pop(reorderd_fields_to_rename.index(col)))
 
-        # This case works on the original Spark Columns which have beenn untouched sofar.
+        # This case works on the original Spark Columns which have been untouched sofar.
         for i, field in enumerate(reorderd_fields_to_rename):
             if self.raw_text_column in field: continue
             new_field = field.replace('.', '_').replace('_result', '').replace('_embeddings_embeddings', '_embeddings')
@@ -462,7 +461,7 @@ class NLUPipeline(BasePipe):
                 ## ONLY for NER or Keywordswe actually expect array type output for different output levels and must do proper casting
                 if field == 'entities.metadata':
                     pass  # ner result wil be fatched later
-                elif field == 'keywords.metadata':  # old
+                elif field == 'keywords.metadata':
                     ptmp = ptmp.withColumn(unpack_name + '_result', ptmp[unpack_name + '.result'])
                 else:
                     ptmp = ptmp.withColumn(unpack_name + '_result', expr(unpack_name + '.result[0]'))
@@ -481,7 +480,7 @@ class NLUPipeline(BasePipe):
                 new_fields = []
                 for key in keys_in_metadata:
                     # we cant skip getting  key values for everything, even if meta=false. This is because we need to get the greatest of all confidence values , for this we must unpack them first..
-                    if field == 'entities.metadata' : new_fields.append(new_field.replace('metadata','confidence'))
+                    if field == 'entities.metadata' or field == 'sentiment.metadata'   : new_fields.append(new_field.replace('metadata','confidence'))
                     else : new_fields.append(new_field.replace('metadata', key + '_confidence'))
 
                     # entities_entity
@@ -499,14 +498,18 @@ class NLUPipeline(BasePipe):
                     # Since ner is only component  wit string metadata, we have this simple conditional
                     if field == 'entities.metadata':
                         array_map_values = udf(lambda z: extract_map_values_str(z), ArrayType(StringType()))
+                        ptmp.withColumn(new_fields[-1], array_map_values(field)).select(expr(f'{new_fields[-1]}[0]'))
+                        ptmp = ptmp.withColumn(new_fields[-1], array_map_values(field))
                     else:
+                        # EXPERIMENTAL Extration, should work for all FloatTypes?
+                        # We apply Expr here because all result ing meta data is inside of a list and just a single element, which we can take out
+                        # Exceptions to this rule are entities and metadata, this are scenarios wehre we want all elements from the predictions array ( since it could be multiple keywords/entities)
                         array_map_values = udf(lambda z: extract_map_values_float(z), ArrayType(FloatType()))
+                        ptmp.withColumn(new_fields[-1], array_map_values(field)).select(expr(f'{new_fields[-1]}[0]'))
+                        ptmp = ptmp.withColumn(new_fields[-1], array_map_values(field))
+                        ptmp = ptmp.withColumn(new_fields[-1], expr(new_fields[-1] + '[0]'))
 
-                    ptmp = ptmp.withColumn(new_fields[-1], array_map_values(field))
-                    # We apply Expr here because all result ing meta data is inside of a list and just a single element, which we can take out
-                    # Exceptions to this rule are entities and metadata, this are scenarios wehre we want all elements from the predictions array ( since it could be multiple keywords/entities)
-                    # if not field == 'entities.metadata' and not field == 'keywords.metadata':
-                    #     ptmp = ptmp.withColumn(new_fields[-1], expr(new_fields[-1] + '[0]'))
+
                     logger.info(f'Created Meta Data for   : nr={i} , original_name={field} with new_name={new_fields[-1]}')
                     columns_for_select.append(new_fields[-1])
 
@@ -522,7 +525,7 @@ class NLUPipeline(BasePipe):
                     # if field ==
                     cols_to_max = []
                     prefix = field.split('.')[0]
-                    for key in keys_in_metadata: cols_to_max.append(prefix + '_' + key)
+                    for key in keys_in_metadata: cols_to_max.append(prefix + '_' + key +'_confidence')
 
                     # cast all the types to decimal, remove scientific notation
                     for key in new_fields: ptmp = ptmp.withColumn(key, pyspark_col(key).cast('decimal(7,6)'))
