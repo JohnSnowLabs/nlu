@@ -35,7 +35,7 @@ class ComponentStackigntests(unittest.TestCase):
 
         print(df)
         print(df.columns)
-        print(df['sentiment'])
+        print(df['emotion'])
 
 
     def test_sarcasm_stack(self):
@@ -46,7 +46,7 @@ class ComponentStackigntests(unittest.TestCase):
 
         print(df)
         print(df.columns)
-        print(df['sentiment'])
+        print(df['sarcasm'])
 
     #
     # def test_component_stack(self):
