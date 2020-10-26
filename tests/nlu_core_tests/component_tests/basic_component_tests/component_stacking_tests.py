@@ -3,7 +3,7 @@ import nlu
 import pandas as pd
 import numpy as np
 
-class TestComponentInfo(unittest.TestCase):
+class ComponentStackigntests(unittest.TestCase):
     def test_bad_r(self):
         r1 = 'en.ner.onto.sm'
         r2 = 'en.ner.dl.bert'
@@ -15,6 +15,39 @@ class TestComponentInfo(unittest.TestCase):
         nlu.load(r2).predict('Hello world')
         print(df)
         print(df.columns)
+
+    def test_sentiment_stack(self):
+        # df = nlu.load('sentiment elmo',verbose=True).predict('Hello world', output_level='document')
+        # df = nlu.load('sentiment elmo',verbose=True).predict('Hello world', output_level='sentence')
+
+        df = nlu.load('sentiment elmo',verbose=True).predict('Hello world', output_level='token')
+
+        print(df)
+        print(df.columns)
+        print(df['sentiment'])
+
+
+    def test_emotion_stack(self):
+        # df = nlu.load('sentiment elmo',verbose=True).predict('Hello world', output_level='document')
+        # df = nlu.load('sentiment elmo',verbose=True).predict('Hello world', output_level='sentence')
+
+        df = nlu.load('emotion elmo',verbose=True).predict('Hello world', output_level='token')
+
+        print(df)
+        print(df.columns)
+        print(df['sentiment'])
+
+
+    def test_sarcasm_stack(self):
+        # df = nlu.load('sentiment elmo',verbose=True).predict('Hello world', output_level='document')
+        # df = nlu.load('sentiment elmo',verbose=True).predict('Hello world', output_level='sentence')
+
+        df = nlu.load('sarcasm elmo',verbose=True).predict('Hello world', output_level='token')
+
+        print(df)
+        print(df.columns)
+        print(df['sentiment'])
+
     #
     # def test_component_stack(self):
     #     # pos
