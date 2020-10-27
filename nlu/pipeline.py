@@ -148,10 +148,12 @@ class NLUPipeline(BasePipe):
                        ContextSpellCheckerApproach,
 
                       Lemmatizer, TypedDependencyParserApproach, DependencyParserApproach,
-                      Tokenizer, RegexTokenizer, RecursiveTokenizer],
+                      Tokenizer, RegexTokenizer, RecursiveTokenizer
+                       ,StopWordsCleaner, DateMatcher, TextMatcher, BigTextMatcher, MultiDateMatcher
+                       ],
             # sub token is when annotator is token based but some tokens may be missing since dropped/cleanes
             # are matchers chunk or sub token?
-            'sub_token': [StopWordsCleaner, DateMatcher, TextMatcher, BigTextMatcher, MultiDateMatcher],
+            # 'sub_token': [StopWordsCleaner, DateMatcher, TextMatcher, BigTextMatcher, MultiDateMatcher],
             # these can be document or sentence
             'input_dependent': [ViveknSentimentApproach, SentimentDLApproach, ClassifierDLApproach,
                                  LanguageDetectorDL,
