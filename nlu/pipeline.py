@@ -169,7 +169,7 @@ class NLUPipeline(BasePipe):
             'sentence': [SentenceDetectorDLModel, ],
             'chunk': [ChunkTokenizerModel, ChunkTokenizerModel, ],
             'token': [ContextSpellCheckerModel, AlbertEmbeddings, BertEmbeddings, ElmoEmbeddings, WordEmbeddings,
-                      XlnetEmbeddings,
+                      XlnetEmbeddings, WordEmbeddingsModel,
                       NerDLModel, NerCrfModel, PerceptronModel, SymmetricDeleteModel, NorvigSweetingModel,
                       ContextSpellCheckerModel,
                       TypedDependencyParserModel, DependencyParserModel,
