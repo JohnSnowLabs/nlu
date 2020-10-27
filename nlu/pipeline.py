@@ -174,8 +174,9 @@ class NLUPipeline(BasePipe):
                       ContextSpellCheckerModel,
                       TypedDependencyParserModel, DependencyParserModel,
                       RecursiveTokenizerModel,
+                      TextMatcherModel, BigTextMatcherModel, RegexMatcherModel,
                       ],
-            'sub_token': [TextMatcherModel, BigTextMatcherModel, RegexMatcherModel, ],
+            # 'sub_token': [TextMatcherModel, BigTextMatcherModel, RegexMatcherModel, ],
             'input_dependent': [BertSentenceEmbeddings, UniversalSentenceEncoder, ViveknSentimentModel,
                                 SentimentDLModel, MultiClassifierDLModel, MultiClassifierDLModel, ClassifierDLModel
 

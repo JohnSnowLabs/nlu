@@ -469,7 +469,7 @@ def construct_component_from_pipe_identifier(language, nlp_ref, nlu_ref):
             constructed_components.append(embeddings_chunker.EmbeddingsChunker(model=component))
         elif isinstance(component, StopWordsCleaner):
             constructed_components.append(nlu.StopWordsCleaner(model=component))
-        elif isinstance(component, (TextMatcherModel, RegexMatcherModel, DateMatcher)) or parsed == 'match':
+        elif isinstance(component, (TextMatcherModel, RegexMatcherModel, DateMatcher,MultiDateMatcher)) or parsed == 'match':
             constructed_components.append(nlu.Matcher(model=component))
 
         else:

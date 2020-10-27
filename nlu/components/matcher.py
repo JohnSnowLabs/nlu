@@ -6,6 +6,7 @@ class Matcher(SparkNLUComponent):
         if 'date' in nlp_ref or 'date' in nlu_ref : annotator_class= 'date_matcher'
         elif 'regex' in nlp_ref or 'regex' in nlu_ref : annotator_class= 'regex_matcher'
         elif 'text' in nlp_ref or 'text' in nlu_ref : annotator_class= 'text_matcher'
+        elif '_matcher' not in annotator_class: annotator_class= annotator_class  + '_matcher'
 
 
 
