@@ -18,8 +18,8 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 REQUIRED_PKGS = [
-    'pyspark==2.4.4',
-    'spark-nlp==2.6.2',
+    'pyspark>=2.4.0,<2.5',
+    'spark-nlp>=2.6.2,<2.7',
     'numpy',
     'pyarrow>=0.16.0',
     'pandas',
@@ -47,7 +47,7 @@ setup(
     # For a discussion on single-sourcing the version across setup.py and the
     # project code, see
     # https://packaging.python.org/en/latest/single_source_version.html
-    version='1.0.1',  # Required
+    version='1.0.2',  # Required
 
     # This is a one-line description or tagline of what your project does. This
     # corresponds to the "Summary" metadata field:

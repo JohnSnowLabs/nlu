@@ -1,1 +1,27 @@
-{"name": "NerToChunkConverter", "description": "todo", "output_level": "chunk", "outputs": ["entities"], "inputs": ["sentence", "token", "ner"], "type": "util", "file_dependencies": {}, "spark_input_column_names": ["sentence", "token", "ner"], "spark_output_column_names": ["entities"], "provider": "sparknlp", "license": "open source", "computation_context": "spark", "output_context": "spark"}
+{
+  "name": "NerToChunkConverter",
+  "description": "todo",
+  "output_level": "chunk",
+  "outputs": [
+    "entities"
+  ],
+  "inputs": [
+    "sentence",
+    "token",
+    "ner"
+  ],
+  "type": "util",
+  "file_dependencies": {},
+  "spark_input_column_names": [
+    "sentence",
+    "token",
+    "ner"
+  ],
+  "spark_output_column_names": [
+    "entities"
+  ],
+  "provider": "sparknlp",
+  "license": "open source",
+  "computation_context": "spark",
+  "output_context": "spark"
+}

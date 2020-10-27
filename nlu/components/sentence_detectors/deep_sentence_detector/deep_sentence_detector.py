@@ -11,4 +11,3 @@ class SentenDetectorDeep:
             .setOutputCol("sentence") \
             .setIncludePragmaticSegmenter(True) \
             .setEndPunctuation([".", "?"])
-# --conf spark.app.name =Spark NLP

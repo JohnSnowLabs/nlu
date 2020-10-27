@@ -21,8 +21,8 @@ class TestBertTokenEmbeddings(unittest.TestCase):
         df = nlu.load('en.embed.bert.small_L4_128 en.embed.bert.small_L2_256', verbose=True).predict("No you are the muppet!")
         print(df.columns)
         print(df)
-        print(df['bert_embeddings'])
-        print(df['bert@en_embed_bert_small_L2_256_embeddings'])
+        print(df['en_embed_bert_small_L2_256_embeddings'])
+        print(df['en_embed_bert_small_L4_128_embeddings'])
 
 
 if __name__ == '__main__':

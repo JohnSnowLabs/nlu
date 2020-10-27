@@ -1,17 +1,24 @@
 ---
-layout: article
+layout: docs
+header: true
 title: The NLU predict function
 key: predict-api
 permalink: /docs/en/predict_api
 modify_date: "2019-05-16"
 ---
-# The predict function
+
+<div class="main-docs" markdown="1">
+
+<div class="h3-box" markdown="1">
+
+## The predict function
 NLU expects either a column named 'text' in the dataframe passed to it or alternatively it will assume the first column of the dataframe passed to it as the column it should predict for.
 
-# Predict method Parameters
+</div><div class="h3-box" markdown="1">
 
+## Predict method Parameters
 
-## Output metadata
+### Output metadata
 The NLU predict method has a boolean metadata parameter.    
 When it is set to True, NLU will output the confidence and additional metadata for each prediction.
 Its default value is False.
@@ -20,14 +27,12 @@ Its default value is False.
 nlu.load('lang').predict('What a wonderful day!')
 ```
 
+</div><div class="h3-box" markdown="1">
 
-
-
-## Output Level parameter
+### Output Level parameter
 NLU defines 4 output levels for the generated predictions.    
 The output levels define how granular the predictions and outputs of NLU will be.    
 Depending on what downstream tasks NLU will be used for the output level should be adjusted.     
-
 
 
 1. Token level: Outputs one row for every token in the input. **One to many mapping.**
@@ -40,6 +45,7 @@ The inferred output level will usually define the last element of the pipeline.
 
 Take a look at the [NLU different output levels Demo](https://colab.research.google.com/drive/1C4N3wpC17YzZf9fXHDNAJ5JvSmfbq7zT?usp=sharing) which goes over all the output levels.
 
+</div><div class="h3-box" markdown="1">
 
 ### Document output level example
 Every row in the input data frame will be mapped to **one row** in the output dataframe.
@@ -49,12 +55,15 @@ Every row in the input data frame will be mapped to **one row** in the output da
 nlu.load('sentiment').predict(['I love data science! It is so much fun! It can also be quite helpful to people.', 'I love the city New-York'], output_level='document')
 ```
 
-{:.steelBlueCols}
+<div class="table-wrapper"><div class="table-inner" markdown="1">
+
+{:.table-model-big}
 |document |    id |   checked |  sentiment_confidence |     sentiment |
 |---------|-----|-----------|------------------------|------------|
 |I love data science! It is so much fun! It can...  | 0 |     [I, love, data, science, !, It, is, so, much, ... ] |  [0.7540000081062317, 0.6121000051498413, 0.489... ] |  [positive, positive, positive]
 |I love the city New-York  | 1 |  [I, love, the, city, New-York] |   [0.7342000007629395]    | [positive]
 
+</div></div></div><div class="h3-box" markdown="1">
 
 ### Sentence output level example
 
@@ -66,7 +75,9 @@ import nlu
 nlu.load('sentiment').predict(['I love data science! It is so much fun! It can also be quite helpful to people.', 'I love the city New-York'], output_level='sentence')
 ```
 
-{:.steelBlueCols}
+<div class="table-wrapper"><div class="table-inner" markdown="1">
+
+{:.table-model-big}
 |sentence |    sentiment_confidence |     sentiment |    id |   checked |
 |---------|-----|-----------|------------------------|------------|
 |I love data science!                      | [0.7540] | positive |0 | [I, love, data, science, !, It, is, so, much, ...]|
@@ -74,6 +85,7 @@ nlu.load('sentiment').predict(['I love data science! It is so much fun! It can a
 |It can also be quite helpful to people.   | [0.4895] | positive |0 | [I, love, data, science, !, It, is, so, much, ...] |
 |I love the city New-York                  |[0.7342]  | positive | 1    | [I, love, the, city, New-York] |
 
+</div></div></div><div class="h3-box" markdown="1">
 
 ### Chunk output level example
 
@@ -87,6 +99,9 @@ Named Entities are chunks.
 nlu.load('ner').predict(['Angela Merkel and Donald Trump dont share many oppinions', "Ashley wants to visit the Brandenburger Tor in Berlin"], output_level='chunk',)
 ```
 
+<div class="table-wrapper"><div class="table-inner" markdown="1">
+
+{:.table-model-big}
 |entities | 	ner_tag | 	embeddings | 
 |--------|--------------|--------------|
 |Angela Merkel | 	PERSON | 	[[-0.563759982585907, 0.26958999037742615, 0.3...,]|
@@ -95,7 +110,7 @@ nlu.load('ner').predict(['Angela Merkel and Donald Trump dont share many oppinio
 |the Brandenburger Tor | 	FAC	[[0.24997000396251678, -0.12275999784469604, -...,]|
 |Berlin	| GPE	[[0.24997000396251678, -0.12275999784469604, -...,]|
 
-
+</div></div></div><div class="h3-box" markdown="1">
 
 ### Token output level example
 
@@ -106,7 +121,9 @@ Every token in each input row becomes a new row in the output dataframe.
 nlu.load('sentiment').predict(['I love data science! It is so much fun! It can also be quite helpful to people.', 'I love the city New-York'], output_level='token')
 ```
 
-{:.steelBlueCols}
+<div class="table-wrapper"><div class="table-inner" markdown="1">
+
+{:.table-model-big}
 |  token  | checked   | sentiment_confidence |sentiment|
 |---------|------|-------------------|----------------|
 |I |   I |        [0.7540000081062317, 0.6121000051498413, 0.489...] |   [positive, positive, positive] |
@@ -135,12 +152,7 @@ nlu.load('sentiment').predict(['I love data science! It is so much fun! It can a
 |city |    city |         [0.7342000007629395] | [positive]|
 |New-York  | New-York |  [0.7342000007629395] |   [positive]|
 
-
-
-
-
-
-
+</div></div></div><div class="h3-box" markdown="1">
 
 ## Output positions parameter
 By setting *output_positions=True*, the Dataframe generated by NLU will contain additional columns which describe the beginning and end of each feature inside of the original document.
@@ -157,7 +169,9 @@ These additional *_begining* and *_end* columns let you infer the piece of the o
 nlu.load('sentiment').predict('I love data science!', output_level='token', output_positions=True)
 ```
 
-{:.steelBlueCols}
+<div class="table-wrapper"><div class="table-inner" markdown="1">
+
+{:.table-model-big}
 |checked |     checked_begin |    checked_end |  token |    id |   document_begin |   document_end |     sentence_begin |   sentence_end | sentiment_confidence |     sentiment_begin|   sentiment_end |    sentiment |
 |-------|-----------------|-----------------|---------|---------|------------------|-----------------|-----------------|-----------------|------------------------|-----------------|
 |I|            0| 0| I |            0|             [0] |  [78] |     [0, 21, 40]    |[19, 38, 78] |    [0.7540000081062317, 0.6121000051498413, 0.489...] |   [0, 21, 40] |  [19, 38, 78] |     [positive, positive, positive]  |
@@ -166,7 +180,7 @@ nlu.load('sentiment').predict('I love data science!', output_level='token', outp
 |science|  12|    18|    science |  0|             [0] |  [78] |     [0, 21, 40]    |[19, 38, 78] |    [0.7540000081062317, 0.6121000051498413, 0.489...] |   [0, 21, 40] |  [19, 38, 78] |     [positive, positive, positive]  |
 |!|            19|    19|    ! |            0|             [0] |  [78] |     [0, 21, 40]    |[19, 38, 78] |    [0.7540000081062317, 0.6121000051498413, 0.489...] |   [0, 21, 40] |  [19, 38, 78] |     [positive, positive, positive]  |
 
-
+</div></div></div><div class="h3-box" markdown="1">
 
 ## Row origin inference for one to many mappings
 NLU will recycle the Pandas index from the input Dataframe.     
@@ -174,13 +188,13 @@ The index is useful if one row is mapped to many rows during prediction.
 The new rows which are generated from the input row will all have the same index as the original source row.    
 I.e. if one sentence row gets split into many token rows,  each token row will have the same index as the sentence row.
 
-
-
+</div><div class="h3-box" markdown="1">
 
 ## NLU NaN Handling
 - NLU will convert every NaN value to a Python None variable which is reflected in the final dataframe
 - If a column contains **only** NaN or None, NLU will drop these columns for the output df.
 
+</div><div class="h3-box" markdown="1">
 
 ## Memory optimization recommendations
 Instead of passing your entire Pandas Dataframe to NLU you can pass only the columns which you need for later tasks.       
@@ -201,12 +215,12 @@ text_df = pd.DataFrame(data)
 nlu.load('sentiment').predict(text_df[['tweet','tweet_location']])
 ```
 
-
-
-
+</div><div class="h3-box" markdown="1">
 
 ## Supported data types
 NLU supports all of the common Python data types and formats
+
+</div><div class="h3-box" markdown="1">
 
 ### Single strings
 ```python
@@ -214,12 +228,15 @@ import nlu
 nlu.load('sentiment').predict('This is just one string')
 ```
 
+</div><div class="h3-box" markdown="1">
+
 ### Lists of strings
 ```python
 import nlu
 nlu.load('sentiment').predict(['This is an array', ' Of strings!'])
 ```
 
+</div><div class="h3-box" markdown="1">
 
 ### Pandas Dataframe
 
@@ -236,6 +253,8 @@ text_df = pd.DataFrame(data)
 nlu.load('sentiment').predict(text_df)
 ```
 
+</div><div class="h3-box" markdown="1">
+
 ### Pandas Series
 
 One column must be named text and of object/string type     
@@ -248,6 +267,8 @@ data = {"text": ['This day sucks', 'I love this day', 'I dont like Sami']}
 text_df = pd.DataFrame(data)
 nlu.load('sentiment').predict(text_df['text'])
 ```
+
+</div><div class="h3-box" markdown="1">
 
 ###  Spark Dataframe
 
@@ -262,7 +283,7 @@ text_sdf = nlu.spark.createDataFrame(text_pdf)
 nlu.load('sentiment').predict(text_sdf)
 ```
 
-
+</div><div class="h3-box" markdown="1">
 
 ###  Modin Dataframe
 Supports Ray Dask backends       
@@ -276,3 +297,4 @@ text_pdf = pd.DataFrame(data)
 nlu.load('sentiment').predict(text_pdf)
 ```
 
+</div></div>
