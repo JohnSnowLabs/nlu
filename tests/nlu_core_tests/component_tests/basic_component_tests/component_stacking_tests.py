@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 
 class ComponentStackigntests(unittest.TestCase):
-    def test_bad_r(self):
+    def test_bad_ref(self):
         r1 = 'en.ner.onto.sm'
         r2 = 'en.ner.dl.bert'
         df = nlu.load(r1).predict('Hello world')
