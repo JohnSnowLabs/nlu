@@ -334,6 +334,20 @@ nlu.load('en.classify.toxic').predict('You are to stupid')
 | 0.978273 | 	[toxic,insult]	| [[-0.03398505970835686, 0.0007853527786210179,...,]	You are to stupid|
 
 
+## YAKE Unsupervised Keyword Extractor
+
+[YAKE Keyword Extraction Example](https://colab.research.google.com/drive/1BdomIc1nhrGxLFOpK5r82Zc4eFgnIgaO?usp=sharing)
+
+```python
+nlu.load('yake').predict("NLU is a Python Library for beginners and experts in NLP")
+```
+
+
+{:.steelBlueCols}
+|keywords_score_confidence | 	keywords | 	sentence | 
+|--------------------------|-------------|------------|
+| 0.454232	| [nlu, nlp, python library] | 	NLU is a Python Library for beginners and expe... | 
+
 ## Word Embeddings Bert
 [BERT Word Embeddings example](https://colab.research.google.com/drive/1Rg1vdSeq6sURc48RV8lpS47ja0bYwQmt?usp=sharing)
 
