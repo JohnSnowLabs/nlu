@@ -198,8 +198,100 @@ nlu.load('sentiment').predict("I hate this guy Sami")
 ## Question Classifier 50 class
 [50 Class Questions Classifier example](https://colab.research.google.com/drive/1OwlmLzwkcJKhuz__RUH74O9HqFZutxzS?usp=sharing)        
 
-Classify between 50 different types of questions trained on Trec50     
+Classifies between 50 different types of questions trained on the Trec50 dataset
 When setting predict(meta=True) nlu will output the probabilities for all other 49 question classes.
+The classes are the following :
+
+
+**Abbreviation question classes:**
+
+{:.steelBlueCols}
+|Class| 	Definition |
+|------|---------------|
+|  abb| 	abbreviation |
+|  exp| 	expression abbreviated |
+
+**Entities question classes:**
+
+{:.steelBlueCols}
+|Class| 	Definition |
+|------|---------------|
+| animal | 	animals |
+| body | 	organs of body |
+| color | 	colors |
+| creative | 	inventions, books and other creative pieces |
+| currency | 	currency names |
+| dis | .med.	diseases and medicine |
+| event | 	events |
+| food | 	food |
+| instrument | 	musical instrument |
+| lang | 	languages |
+| letter | 	letters like a-z |
+| other | 	other entities |
+| plant | 	plants |
+| product | 	products |
+| religion | 	religions |
+| sport | 	sports |
+| substance | 	elements and substances |
+| symbol | 	symbols and signs |
+| technique | 	techniques and methods |
+| term | 	equivalent terms |
+| vehicle | 	vehicles |
+| word | 	words with a special property |
+
+
+**Description and abstract concepts question classes:**
+
+{:.steelBlueCols}
+|Class| 	Definition |
+|------|---------------|
+| definition | 	definition of sth. |
+| description | 	description of sth. |
+| manner | 	manner of an action |
+| reason | 	reasons |
+
+
+**Human being question classes:**
+
+{:.steelBlueCols}
+|Class| 	Definition |
+|------|---------------|
+| group | 	a group or organization of persons |
+| ind | 	an individual |
+| title | 	title of a person |
+| description | 	description of a person |
+
+
+**Location question classes:**
+
+{:.steelBlueCols}
+|Class| 	Definition |
+|------|---------------|
+| city | 	cities |
+| country | 	countries |
+| mountain | 	mountains |
+| other | 	other locations |
+| state | 	states |
+
+**Numeric question classes:**
+
+{:.steelBlueCols}
+|Class| 	Definition |
+|------|---------------|
+| code | 	postcodes or other codes |
+| count | 	number of sth. |
+| date | 	dates |
+| distance | 	linear measures |
+| money | 	prices |
+| order | 	ranks |
+| other | 	other numbers |
+| period | 	the lasting time of sth. |
+| percent | 	fractions |
+| speed | 	speed |
+| temp | 	temperature |
+| size | 	size, area and volume |
+| weight | 	weight |
+
 
 ```python
 nlu.load('en.classify.trec50').predict('How expensive is the Watch?')
