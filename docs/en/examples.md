@@ -206,8 +206,100 @@ nlu.load('sentiment').predict("I hate this guy Sami")
 ## Question Classifier 50 class
 [50 Class Questions Classifier example](https://colab.research.google.com/drive/1OwlmLzwkcJKhuz__RUH74O9HqFZutxzS?usp=sharing)        
 
-Classify between 50 different types of questions trained on Trec50     
+Classifies between 50 different types of questions trained on the Trec50 dataset
 When setting predict(meta=True) nlu will output the probabilities for all other 49 question classes.
+The classes are the following :
+
+
+**Abbreviation question classes:**
+
+{:.steelBlueCols}
+|Class| 	Definition |
+|------|---------------|
+|  abb| 	abbreviation |
+|  exp| 	expression abbreviated |
+
+**Entities question classes:**
+
+{:.steelBlueCols}
+|Class| 	Definition |
+|------|---------------|
+| animal | 	animals |
+| body | 	organs of body |
+| color | 	colors |
+| creative | 	inventions, books and other creative pieces |
+| currency | 	currency names |
+| dis | .med.	diseases and medicine |
+| event | 	events |
+| food | 	food |
+| instrument | 	musical instrument |
+| lang | 	languages |
+| letter | 	letters like a-z |
+| other | 	other entities |
+| plant | 	plants |
+| product | 	products |
+| religion | 	religions |
+| sport | 	sports |
+| substance | 	elements and substances |
+| symbol | 	symbols and signs |
+| technique | 	techniques and methods |
+| term | 	equivalent terms |
+| vehicle | 	vehicles |
+| word | 	words with a special property |
+
+
+**Description and abstract concepts question classes:**
+
+{:.steelBlueCols}
+|Class| 	Definition |
+|------|---------------|
+| definition | 	definition of sth. |
+| description | 	description of sth. |
+| manner | 	manner of an action |
+| reason | 	reasons |
+
+
+**Human being question classes:**
+
+{:.steelBlueCols}
+|Class| 	Definition |
+|------|---------------|
+| group | 	a group or organization of persons |
+| ind | 	an individual |
+| title | 	title of a person |
+| description | 	description of a person |
+
+
+**Location question classes:**
+
+{:.steelBlueCols}
+|Class| 	Definition |
+|------|---------------|
+| city | 	cities |
+| country | 	countries |
+| mountain | 	mountains |
+| other | 	other locations |
+| state | 	states |
+
+**Numeric question classes:**
+
+{:.steelBlueCols}
+|Class| 	Definition |
+|------|---------------|
+| code | 	postcodes or other codes |
+| count | 	number of sth. |
+| date | 	dates |
+| distance | 	linear measures |
+| money | 	prices |
+| order | 	ranks |
+| other | 	other numbers |
+| period | 	the lasting time of sth. |
+| percent | 	fractions |
+| speed | 	speed |
+| temp | 	temperature |
+| size | 	size, area and volume |
+| weight | 	weight |
+
 
 ```python
 nlu.load('en.classify.trec50').predict('How expensive is the Watch?')
@@ -375,6 +467,20 @@ nlu.load('en.classify.toxic').predict('You are to stupid')
 | 0.978273 | 	[toxic,insult]	| [[-0.03398505970835686, 0.0007853527786210179,...,]	You are to stupid|
 
 </div></div></div><div class="h3-box" markdown="1">
+
+## YAKE Unsupervised Keyword Extractor
+
+[YAKE Keyword Extraction Example](https://colab.research.google.com/drive/1BdomIc1nhrGxLFOpK5r82Zc4eFgnIgaO?usp=sharing)
+
+```python
+nlu.load('yake').predict("NLU is a Python Library for beginners and experts in NLP")
+```
+
+
+{:.steelBlueCols}
+|keywords_score_confidence | 	keywords | 	sentence | 
+|--------------------------|-------------|------------|
+| 0.454232	| [nlu, nlp, python library] | 	NLU is a Python Library for beginners and expe... | 
 
 ## Word Embeddings Bert
 [BERT Word Embeddings example](https://colab.research.google.com/drive/1Rg1vdSeq6sURc48RV8lpS47ja0bYwQmt?usp=sharing)
