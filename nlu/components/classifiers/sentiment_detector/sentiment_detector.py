@@ -3,16 +3,17 @@ import sparknlp
 from sparknlp.annotator import *
 
 
-class SentimentDl:
+class Sentiment:
     @staticmethod
-    def get_default_model():  # TODO cannot runw ithouth a dictionary!
+    def get_default_model():
         return SentimentDetectorModel() \
             .setInputCols("lemma", "sentence_embeddings") \
             .setOutputCol("sentiment") \
- \
+
+
     @staticmethod
     def get_default_trainable_model():
         return SentimentDetector() \
             .setInputCols("lemma", "sentence_embeddings") \
             .setOutputCol("sentiment") \
-            .setDictionary("dcit_TODO???")
+            .setDictionary("dict_todo???")

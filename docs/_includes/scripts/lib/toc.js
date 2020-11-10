@@ -1,3 +1,4 @@
+// https://github.com/nghuuphuoc/tocjs/blob/master/src/js/toc.js
 (function() {
   var SOURCES = window.TEXT_VARIABLES.sources;
   window.Lazyload.js(SOURCES.jquery, function() {
@@ -46,7 +47,8 @@
           $root.append($tocUl);
           $headings.each(function() {
             var $this = $(this);
-            $tocUl.append($('<li></li>').addClass('toc-' + $this.prop('tagName').toLowerCase())
+            $tocUl.append($('<li style="white-space: normal !important;" ></li>').addClass('toc-' + $this.prop('tagName').toLowerCase())
+            .css("white-space", "normal !important")
               .append($('<a></a>').text($this.text()).attr('href', '#' + $this.prop('id'))));
           });
           $tocLi = $tocUl.children('li');

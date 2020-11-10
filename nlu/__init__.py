@@ -1,8 +1,15 @@
-version ='1.0.0'
+__version__ = '1.0.2'
+
+import sys
+
+if float(sys.version[:3]) >= 3.8:
+    print("Please use a Python version with version number SMALLER than 3.8")
+    print("Python versions equal or higher 3.8 is currently NOT SUPPORTED by NLU")
+    exit()
+
 import nlu
 import logging
 from nlu.namespace import NameSpace
-from sys import exit
 import warnings
 
 warnings.filterwarnings("ignore")
@@ -100,25 +107,27 @@ from nlu.components.utils.sentence_detector.sentence_detector import SparkNLPSen
 from nlu.components.sentence_detector import NLUSentenceDetector
 from nlu.info import AllComponentsInfo
 
-global nlu_package_location
-nlu_package_location = nlu.__file__[:-11]
+global spark_started, spark, active_pipes, all_components_info, nlu_package_location
 
-global all_components_info
+nlu_package_location = nlu.__file__[:-11]
 all_components_info = nlu.AllComponentsInfo()
-global active_pipes
 active_pipes = []
-global spark_started, spark
 spark_started = False
 spark = None
+
 
 def load(request, verbose=False):
     '''
     Load either a prebuild pipeline or a set of components identified by a whitespace seperated list of components
+    :param verbose:
     :param request: A NLU model/pipeline/component reference
     :return: returns a fitted nlu pipeline object
     '''
     gc.collect()
+
     spark = sparknlp.start()
+    spark.catalog.clearCache()
+    # spark.conf.set("spark.sql.execution.arrow.enabled", "true")
     spark_started = True
     if verbose:
         logger.setLevel(logging.INFO)
@@ -129,17 +138,17 @@ def load(request, verbose=False):
     try:
         components_requested = request.split(' ')
         pipe = NLUPipeline()
-        for component in components_requested:
-            component.replace(' ', '')
+        for nlu_ref in components_requested:
+            nlu_ref.replace(' ', '')
             # component = component.lower()
-            if component == '': continue
-            nlu_component = parse_component_data_from_name_query(component)
+            if nlu_ref == '': continue
+            nlu_component = parse_component_data_from_name_query(nlu_ref)
             # if we get a list of components, then the NLU reference is a pipeline, we do not need to check order
             if type(nlu_component) == type([]):
                 # lists are parsed down to multiple components
-                for c in nlu_component: pipe.add(c, component, pretrained_pipe_component = True)
+                for c in nlu_component: pipe.add(c, nlu_ref, pretrained_pipe_component=True)
             else:
-                pipe.add(nlu_component,component)
+                pipe.add(nlu_component, nlu_ref)
                 pipe = pipeline.PipelineQueryVerifier.check_and_fix_nlu_pipeline(pipe)
 
     except:
@@ -151,7 +160,7 @@ def load(request, verbose=False):
         print(
             "Something went wrong during loading and fitting the pipe. Check the other prints for more information and also verbose mode. Did you use a correct model reference?")
 
-        return NLU_error()
+        return NluError()
     # active_pipes.append(pipe)
     return pipe
 
@@ -209,7 +218,7 @@ def parse_component_data_from_name_query(nlu_reference, detect_lang=False):
     '''
     This method implements the main namespace for all component names. It parses the input request and passes the data to a resolver method which searches the namespace for a Component for the input request
     It returns a list of NLU.component objects or just one NLU.component object alone if just one component was specified.
-    It maps a correctly namespaced name to a corrosponding component for pipeline
+    It maps a correctly namespaced name to a corresponding component for pipeline
     If no lang is provided, default language eng is assumed.
     General format  <lang>.<class>.<dataset>.<embeddings>
     For embedding format : <lang>.<class>.<variant>
@@ -224,7 +233,7 @@ def parse_component_data_from_name_query(nlu_reference, detect_lang=False):
     infos = nlu_reference.split('.')
     if len(infos) < 0:
         logger.exception("EXCEPTION: Could not create a component for nlu reference=%s", nlu_reference)
-        return NLU_error()
+        return NluError()
     language = ''
     component_type = ''
     dataset = ''
@@ -278,9 +287,9 @@ def parse_component_data_from_name_query(nlu_reference, detect_lang=False):
     resolved_component = resolve_component_from_parsed_query_data(language, component_type, dataset,
                                                                   component_embeddings, nlu_reference)
 
-    if resolved_component == None:
+    if resolved_component is None:
         logger.exception("EXCEPTION: Could not create a component for nlu reference=%s", nlu_reference)
-        return NLU_error()
+        return NluError()
     return resolved_component
 
 
@@ -325,36 +334,31 @@ def resolve_component_from_parsed_query_data(language, component_type, dataset, 
 
     # 3. If reference is none of the Namespaces, it must be a component like tokenizer or YAKE or Chunker etc....
     # If it is not, then it does not exist and will be caught later
-    if resolved == False:
+    if not resolved:
         resolved = True
         component_kind = 'component'
-        logger.info(
-            'Could not find reference in NLU namespace. Assuming it is a component that is an ragmatic NLP annotator with NO model to download behind it.')
+        logger.info('Could not find reference in NLU namespace. Assuming it is a component that is an ragmatic NLP annotator with NO model to download behind it.')
 
     # Convert references into NLU Component object which embelishes NLP annotators
     if component_kind == 'pipe':
         constructed_components = construct_component_from_pipe_identifier(language, nlp_ref, nlu_ref)
-        logger.info('Inferred Spark reference nlp_ref=%s and nlu_ref=%s  to NLP Annotator Class %s', nlp_ref, nlu_ref,
-                    constructed_components)
-        if constructed_components == None:
+        logger.info(f'Inferred Spark reference nlp_ref={nlp_ref} and nlu_ref={nlu_ref}  to NLP Annotator Class {constructed_components}')
+        if constructed_components is None:
             logger.exception(
-                'EXCEPTION : Could not create NLU component for nlp_ref=%s and nlu_ref=%s  to NLP Annotator Class %s',
-                nlp_ref, nlu_ref, constructed_components)
-            return NLU_error
+                f'EXCEPTION : Could not create NLU component for nlp_ref={nlp_ref} and nlu_ref={nlu_ref}  to NLP Annotator Classes {constructed_components}')
+            return NluError
         else:
             return constructed_components
     elif component_kind == 'model' or 'component':
         constructed_component = construct_component_from_identifier(language, component_type, dataset,
                                                                     component_embeddings, nlu_ref,
                                                                     nlp_ref)
-        logger.info('Inferred Spark reference nlp_ref=%s and nlu_ref=%s  to NLP Annotator Class %s', nlp_ref, nlu_ref,
-                    constructed_component.model.__class__.name)
 
-        if constructed_component == None:
-            logger.exception(
-                'EXCEPTION : Could not create NLU component for nlp_ref=%s and nlu_ref=%s  to NLP Annotator Class %s',
-                nlp_ref, nlu_ref)
-            return NLU_error
+        logger.info(f'Inferred Spark reference nlp_ref={nlp_ref} and nlu_ref={nlu_ref}  to NLP Annotator Class {constructed_component}')
+
+        if constructed_component is None:
+            logger.exception(f'EXCEPTION : Could not create NLU component for nlp_ref={nlp_ref} and nlu_ref={nlu_ref}')
+            return NluError
         else:
             return constructed_component
     else:
@@ -362,7 +366,7 @@ def resolve_component_from_parsed_query_data(language, component_type, dataset, 
             "EXCEPTION : Could not resolve query=%s for kind=%s and reference=%s in any of NLU's namespaces ", nlu_ref,
             component_kind,
             nlp_ref)
-        return NLU_error
+        return NluError
 
 
 def construct_component_from_pipe_identifier(language, nlp_ref, nlu_ref):
@@ -371,6 +375,7 @@ def construct_component_from_pipe_identifier(language, nlp_ref, nlu_ref):
     # 1. download pipeline
     # 2. unpack pipeline to annotators and create list of nlu components
     # 3. return list of nlu components
+    :param nlu_ref:
     :param language: language of the pipeline
     :param nlp_ref: Reference to a spark nlp petrained pipeline
     :return: Each element of the SaprkNLP pipeline wrapped as a NLU componed inside of a list
@@ -385,74 +390,98 @@ def construct_component_from_pipe_identifier(language, nlp_ref, nlu_ref):
         parsed = str(component).split('_')[0].lower()
         logger.info("Parsed Component for : %s", parsed)
         c_name = component.__class__.__name__
-        if c_name == 'NerConverter':
+        if isinstance(component, NerConverter):
             constructed_components.append(Util(annotator_class='ner_converter', model=component))
         elif parsed in NameSpace.word_embeddings + NameSpace.sentence_embeddings:
             constructed_components.append(nlu.Embeddings(model=component))
         elif parsed in NameSpace.classifiers:
             constructed_components.append(nlu.Classifier(model=component))
-        elif c_name == 'TokenizerModel' and parsed !='regex':
+        elif isinstance(component, MultiClassifierDLModel):
+            constructed_components.append(nlu.Classifier(model=component, nlp_ref='multiclassifierdl'))
+        elif isinstance(component, PerceptronModel):
+            constructed_components.append(nlu.Classifier(nlp_ref='classifierdl', model=component))
+        elif isinstance(component, ClassifierDl):
+            constructed_components.append(nlu.Classifier(nlp_ref='classifierdl', model=component))
+        elif isinstance(component, UniversalSentenceEncoder):
+            constructed_components.append(nlu.Embeddings(model=component, nlp_ref='use'))
+        elif isinstance(component, BertEmbeddings):
+            constructed_components.append(nlu.Embeddings(model=component, nlp_ref='bert'))
+        elif isinstance(component, AlbertEmbeddings):
+            constructed_components.append(nlu.Embeddings(model=component, nlp_ref='albert'))
+        elif isinstance(component, XlnetEmbeddings):
+            constructed_components.append(nlu.Embeddings(model=component, nlp_ref='xlnet'))
+        elif isinstance(component, WordEmbeddingsModel):
+            constructed_components.append(nlu.Embeddings(model=component, nlp_ref='glove'))
+        elif isinstance(component, ElmoEmbeddings):
+            constructed_components.append(nlu.Embeddings(model=component, nlp_ref='elmo'))
+        elif isinstance(component, BertSentenceEmbeddings):
+            constructed_components.append(nlu.Embeddings(model=component, nlp_ref='bert_sentence'))
+        elif isinstance(component, UniversalSentenceEncoder):
+            constructed_components.append(nlu.Embeddings(model=component, nlu_ref='use'))
+        elif isinstance(component, TokenizerModel) and parsed != 'regex':
             constructed_components.append(nlu.Tokenizer(model=component))
-        elif c_name == 'TokenizerModel':
-            constructed_components.append(nlu.Tokenizer(model=component,annotator_class='regex_tokenizer'))
-        elif parsed == 'match':
-            constructed_components.append(nlu.Matcher(model=component))
-        elif parsed == 'document':
+        elif isinstance(component, TokenizerModel) and parsed == 'regex' :
+            constructed_components.append(nlu.Tokenizer(model=component, annotator_class='regex_tokenizer'))
+        elif isinstance(component, DocumentAssembler):
             constructed_components.append(nlu.Util(model=component))
-        elif parsed == 'sentence':
-            constructed_components.append(nlu.Util(annotator_class='sentence_detector', model=component))
-        elif parsed == 'regex':
-            constructed_components.append(nlu.Matcher(model=component, nlu_ref=parsed))
-        elif parsed == 'date':
-            constructed_components.append(nlu.Matcher(model=component, nlu_ref=parsed))
-        elif parsed == 'text':
-            constructed_components.append(nlu.Matcher(model=component, nlu_ref=parsed))
-        elif parsed == 'spell':
-            constructed_components.append(nlu.SpellChecker(model=component))
-        elif parsed == 'lemmatizer':
+        elif isinstance(component, SentenceDetectorDLModel):
+            constructed_components.append(NLUSentenceDetector(annotator_class='deep_sentence_detector', model=component))
+        elif isinstance(component, (SentenceDetectorDLModel, SentenceDetector)):
+            constructed_components.append(NLUSentenceDetector(annotator_class='pragmatic_sentence_detector', model=component))
+        elif isinstance(component, RegexMatcherModel) or parsed == 'match':
+            constructed_components.append(nlu.Matcher(model=component, annotator_class='regex'))
+        elif isinstance(component, TextMatcherModel):
+            constructed_components.append(nlu.Matcher(model=component, annotator_class='text'))
+        elif isinstance(component, DateMatcher):
+            constructed_components.append(nlu.Matcher(model=component, annotator_class='date'))
+        elif isinstance(component, ContextSpellCheckerModel):
+            constructed_components.append(nlu.SpellChecker(model=component, annotator_class='context'))
+        elif isinstance(component, SymmetricDeleteModel):
+            constructed_components.append(nlu.SpellChecker(model=component, annotator_class='symmetric'))
+        elif isinstance(component, NorvigSweetingModel):
+            constructed_components.append(nlu.SpellChecker(model=component, annotator_class='norvig'))
+        elif isinstance(component, LemmatizerModel):
             constructed_components.append(nlu.lemmatizer.Lemmatizer(model=component))
-        elif parsed == 'normalizer':
+        elif isinstance(component, NormalizerModel):
             constructed_components.append(nlu.normalizer.Normalizer(model=component))
-        elif parsed == 'stemmer':
+        elif isinstance(component, Stemmer):
             constructed_components.append(nlu.stemmer.Stemmer(model=component))
-        elif c_name == 'PerceptronModel':
-            constructed_components.append(nlu.Classifier(annotator_class='classifierdl', model=component))
-        elif c_name == 'ClassifierDLModel':
-            constructed_components.append(nlu.Classifier(annotator_class='language_detector', model=component))
+        elif isinstance(component, (NerDLModel, NerCrfModel)):
+            constructed_components.append(nlu.Classifier(model=component, annotator_class='ner'))
+        elif isinstance(component, LanguageDetectorDL):
+            constructed_components.append(nlu.Classifier(model=component, annotator_class='language_detector'))
 
-        elif parsed == 'word':
-            constructed_components.append(nlu.Embeddings(model=component))
-        elif parsed == 'ner' or parsed == 'nerdlmodel':
-            constructed_components.append(nlu.Classifier(model=component))
-        elif parsed == 'dependency':
-            constructed_components.append(nlu.Util(model=component))
-        elif parsed == 'typed':
-            constructed_components.append(nlu.UnlabledDepParser(model=component))
-        elif parsed == 'multi':
-            constructed_components.append(nlu.Classifier(model=component))
-        elif parsed == 'sentimentdlmodel':
-            constructed_components.append(nlu.Classifier(model=component))
-
-        elif parsed == 'chunker':
+        elif isinstance(component, DependencyParserModel):
+            constructed_components.append(UnlabledDepParser(model=component))
+        elif isinstance(component, TypedDependencyParserModel):
+            constructed_components.append(LabledDepParser(model=component))
+        elif isinstance(component, MultiClassifierDLModel):
+            constructed_components.append(nlu.Classifier(model=component, nlp_ref='multiclassifierdl'))
+        elif isinstance(component, (SentimentDetectorModel,SentimentDLModel)):
+            constructed_components.append(nlu.Classifier(model=component, nlp_ref='sentimentdl'))
+        elif isinstance(component, (SentimentDetectorModel,ViveknSentimentModel)):
+            constructed_components.append(nlu.Classifier(model=component, nlp_ref='vivekn'))
+        elif isinstance(component, Chunker):
             constructed_components.append(nlu.chunker.Chunker(model=component))
-        elif parsed == 'ngram':
+        elif isinstance(component, NGram):
             constructed_components.append(nlu.chunker.Chunker(model=component))
-        elif parsed == 'embeddings_chunk':
+        elif isinstance(component, ChunkEmbeddings):
             constructed_components.append(embeddings_chunker.EmbeddingsChunker(model=component))
-        elif parsed == 'stopwords':
+        elif isinstance(component, StopWordsCleaner):
             constructed_components.append(nlu.StopWordsCleaner(model=component))
+        elif isinstance(component, (TextMatcherModel, RegexMatcherModel, DateMatcher,MultiDateMatcher)) or parsed == 'match':
+            constructed_components.append(nlu.Matcher(model=component))
+
         else:
             logger.exception(
-                "EXCEPTION: Could not infer component type for lang=%s and nlp_ref=%s during pipeline conversion,",
-                language, nlp_ref)
+                f"EXCEPTION: Could not infer component type for lang={language} and nlp_ref={nlp_ref} and model {component} during pipeline conversion,")
             logger.info("USING DEFAULT ANNOTATOR TYPE Lemmatizer to fix issue")
             constructed_components.append(nlu.normalizer.Normalizer(model=component))
 
-        logger.info("Extracted into NLU Component type : %s", parsed)
+        logger.info(f"Extracted into NLU Component type : {parsed}", )
         if None in constructed_components:
             logger.exception(
-                "EXCEPTION: Could not infer component type for lang=%s and nlp_ref=%s during pipeline conversion,",
-                language, nlp_ref)
+                f"EXCEPTION: Could not infer component type for lang={language} and nlp_ref={nlp_ref} during pipeline conversion,")
             return None
     return constructed_components
 
@@ -535,6 +564,20 @@ def construct_component_from_identifier(language, component_type='', dataset='',
         logger.exception('EXCEPTION: Could not resolve singular Component for type=%s and nlp_ref=%s and nlu_ref=%s',
                          component_type, nlp_ref, nlu_ref)
         return None
+
+
+def extract_classifier_metadata_from_nlu_ref(nlu_ref):
+    '''
+    Extract classifier and metadataname from nlu reference which is handy for deciding what output column names should be
+    Strips lang and action from nlu_ref and returns a list of remaining identifiers, i.e [<classifier_name>,<classifier_dataset>, <additional_classifier_meta>
+    :param nlu_ref: nlu reference from which to extra model meta data
+    :return: [<modelname>, <dataset>, <more_meta>,]  . For pure actions this will return []
+    '''
+    model_infos = []
+    for e in nlu_ref.split('.'):
+        if e in nlu.all_components_info.all_languages or e in nlu.namespace.NameSpace.actions: continue
+        model_infos.append(e)
+    return model_infos
 
 
 # Functionality discovery methods
@@ -636,7 +679,7 @@ def print_all_model_kinds_for_action(action):
                 ref_action = ref_action[1]
 
             if ref_action == action:
-                if lang_printed == False:
+                if not lang_printed:
                     print('For language <' + lang + '> NLU provides the following Models : ')
                     lang_printed = True
                 print("nlu.load('" + nlu_reference + "') returns Spark NLP model " + nlp_reference)
@@ -652,13 +695,16 @@ def print_all_model_kinds_for_action_and_lang(lang, action):
             print("nlu.load('" + nlu_reference + "') returns Spark NLP model " + nlp_reference)
 
 
-class NLU_error():
+class NluError:
     def __init__(self):
         pass
 
-    def predict(self, text, output_level='error', positions='error', metadata='error'):
+    @staticmethod
+    def predict(text, output_level='error', positions='error', metadata='error', drop_irrelevant_cols=False):
         print(
             'The NLU components could not be properly created. Please check previous print messages and Verbose mode for further info')
 
-    def print_info(self): print(
+    @staticmethod
+    def print_info(): print(
         "Sorry something went wrong when building the pipeline. Please check verbose mode and your NLU reference.")
+
