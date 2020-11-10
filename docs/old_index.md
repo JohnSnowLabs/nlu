@@ -1,5 +1,5 @@
 ---
-layout: landing3
+layout: landing
 title: 'NLU: State of the Art  <br /> Text Mining in Python'
 excerpt: >
    <br> The Simplicity of Python, the Power of Spark NLP

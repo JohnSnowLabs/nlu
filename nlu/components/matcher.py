@@ -6,9 +6,9 @@ class Matcher(SparkNLUComponent):
         if 'date' in nlp_ref or 'date' in nlu_ref : annotator_class= 'date_matcher'
         elif 'regex' in nlp_ref or 'regex' in nlu_ref : annotator_class= 'regex_matcher'
         elif 'text' in nlp_ref or 'text' in nlu_ref : annotator_class= 'text_matcher'
+        elif '_matcher' not in annotator_class: annotator_class= annotator_class  + '_matcher'
 
 
-        SparkNLUComponent.__init__(self, annotator_class, component_type)
 
         if model != None : self.model = model
         else :
@@ -24,3 +24,4 @@ class Matcher(SparkNLUComponent):
                 if get_default : self.model = RegexMatcher.get_default_model()
                 else : self.model = RegexMatcher.get_pretrained_model(nlu_ref, language)
 
+        SparkNLUComponent.__init__(self, annotator_class, component_type)

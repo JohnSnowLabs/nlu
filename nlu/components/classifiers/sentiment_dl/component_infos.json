@@ -6,7 +6,6 @@
     "category"
   ],
   "inputs": [
-    "sentence",
     "label",
     "sentence_embeddings"
   ],

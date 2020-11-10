@@ -10,7 +10,7 @@ class Classifier(SparkNLUComponent):
         elif 'yake' in nlu_ref: annotator_class= 'yake'
         elif 'yake' in nlp_ref: annotator_class= 'yake'
 
-        elif 'sentimentdl' in nlp_ref : annotator_class= 'sentiment'
+        elif 'sentimentdl' in nlp_ref : annotator_class= 'sentiment_dl'
 
         elif 'vivekn' in nlp_ref or 'vivekn' in nlp_ref : annotator_class= 'vivekn_sentiment'
 
@@ -20,7 +20,6 @@ class Classifier(SparkNLUComponent):
 
         elif 'ner' in nlu_ref: annotator_class= 'ner'
         elif 'ner' in nlp_ref: annotator_class= 'ner'
-        SparkNLUComponent.__init__(self, annotator_class, component_type)
 
         
         if model != None : self.model = model
@@ -64,3 +63,4 @@ class Classifier(SparkNLUComponent):
                 from nlu import MultiClassifier
                 if get_default : self.model = MultiClassifier.get_default_model()
                 else : self.model = MultiClassifier.get_pretrained_model(nlp_ref, language)
+        SparkNLUComponent.__init__(self, annotator_class, component_type)

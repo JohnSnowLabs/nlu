@@ -1,7 +1,7 @@
 class NameSpace():
 
     # NLU model_base_names =
-    # These reference tell NLU to which component resolved to route a request to
+    # These reference tell NLU to which component resolved to route a request, they help NLU map a NLP reference to the correct class
     word_embeddings = ['embed','bert','electra','albert','elmo','glove','xlnet','biobert','covidbert','tfhub_use']
     sentence_embeddings = ['embed_sentence','use', 'bert', 'electra','tfhub_use']
     classifiers = ['classify', 'e2e', 'emotion', 'sentiment', 'ner',
@@ -9,6 +9,17 @@ class NameSpace():
                    'sarcasm','emotion', 'spam','fakenews', 'cyberbullying',
                    'wiki','wiki_7', 'wiki_20','yake','toxic'
                    ]
+    actions = ['tokenize', 'sentence', 'embed', 'embed_sentence', 'embed_chunk','classify', 'chunk', 'pos', 'ner',
+               'dep', 'dep.untyped', 'lemma', 'match', 'norm', 'spell','stem', 'stopwords','clean','ngram',
+               ]
+
+
+
+
+    '''
+    NLU REFERENCE FORMATS : 
+    <lang>.<action>.<
+    '''
 
     #Reference to all datasets for which we have pretrained models
     datasets = []
@@ -165,7 +176,7 @@ class NameSpace():
         'classify.trec50': ('classifierdl_use_trec50','model'),  # Alias withouth embedding
         'classify.spam': ('classifierdl_use_spam','model'),  # Alias withouth embedding
         'spam': ('classifierdl_use_spam','model'),  # Alias withouth embedding
-        'toxic': 'multiclassifierdl_use_toxic',
+        'toxic': ('multiclassifierdl_use_toxic','model'),
 
         'classify.fakenews': ('classifierdl_use_fakenews','model'),  # Alias withouth embedding
         'classify.emotion': ('classifierdl_use_emotion','model'),  # Alias withouth embedding

@@ -2,17 +2,30 @@
 
 
 import unittest
-from tests.test_utils import get_sample_pdf_with_labels, get_sample_pdf, get_sample_sdf, get_sample_pdf_with_extra_cols, get_sample_pdf_with_no_text_col ,get_sample_spark_dataframe
 from nlu import *
 
 class TestQuestions(unittest.TestCase):
 
-    def test_question_model(self):
-        df = nlu.load('en.classify.question',verbose=True).predict('You are so stupid')
-        # df = nlu.load('en.classify.sarcasm',verbose=True).predict(sarcasm_df['text'])
-
+    def test_questions_model(self):
+        pipe = nlu.load('questions',verbose=True)
+        df = pipe.predict(['I love pancaces. I hate Mondays', 'I love Fridays'], output_level='sentence')
         print(df.columns)
-        print( df[['question','question_confidence']])
+        print(df['sentence'], df[['questions','questions_confidence']])
+        df = pipe.predict(['I love pancaces. I hate Mondays', 'I love Fridays'], output_level='document')
+        self.assertIsInstance(df.iloc[0]['questions'],str )
+        print(df.columns)
+        print(df['document'], df[['questions','questions_confidence']])
+        self.assertIsInstance(df.iloc[0]['questions'], str)
+
+        # pipe = nlu.load('questions',verbose=True)
+        # df = pipe.predict(['I love pancaces. I hate Mondays', 'I love Fridays'], output_level='token')
+        # print(df.columns)
+        # print(df['sentence'], df[['questions','questions_confidence']])
+        # df = pipe.predict(['I love pancaces. I hate Mondays', 'I love Fridays'], output_level='chunk')
+        # self.assertIsInstance(df.iloc[0]['questions'],str )
+        # print(df.columns)
+        # print(df['document'], df[['questions','questions_confidence']])
+        # self.assertIsInstance(df.iloc[0]['questions'], str)
 
 
 
