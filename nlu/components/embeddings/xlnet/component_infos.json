@@ -2,6 +2,7 @@
   "name": "xlnet",
   "output_level": "token",
   "description": "todo",
+  "trainable": false,
   "outputs": [
     "word_embeddings"
   ],

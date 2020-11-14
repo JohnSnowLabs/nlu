@@ -1,1 +1,28 @@
-{"name": "labeled_dependency_parser", "description": "todo", "output_level": "token", "outputs": ["labled_dependency"], "inputs": ["unlabeled_dependency", "pos", "token"], "type": "labeled_dependency", "file_dependencies": {}, "spark_input_column_names": ["dependency", "pos", "token"], "spark_output_column_names": ["labled_dependency"], "provider": "sparknlp", "license": "open source", "computation_context": "spark", "output_context": "spark"}
+{
+  "name": "labeled_dependency_parser",
+  "description": "todo",
+  "output_level": "token",
+  "trainable": true,
+  "outputs": [
+    "labled_dependency"
+  ],
+  "inputs": [
+    "unlabeled_dependency",
+    "pos",
+    "token"
+  ],
+  "type": "labeled_dependency",
+  "file_dependencies": {},
+  "spark_input_column_names": [
+    "dependency",
+    "pos",
+    "token"
+  ],
+  "spark_output_column_names": [
+    "labled_dependency"
+  ],
+  "provider": "sparknlp",
+  "license": "open source",
+  "computation_context": "spark",
+  "output_context": "spark"
+}

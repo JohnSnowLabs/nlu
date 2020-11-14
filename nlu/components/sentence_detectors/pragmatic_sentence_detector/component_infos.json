@@ -2,6 +2,7 @@
   "name": "sentence_detector",
   "output_level": "sentence",
   "description": "todo",
+  "trainable": false,
   "outputs": [
     "sentence"
   ],

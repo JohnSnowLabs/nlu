@@ -15,8 +15,4 @@ class NLUStopWordcleaner:
             .setInputCols(["token"]) \
             .setOutputCol("cleanTokens")
 
-    @staticmethod
-    def get_default_trainable_model():
-        return StopWordsCleaner \
-            .setInputCols(["token"]) \
-            .setOutputCol("cleanTokens")
+

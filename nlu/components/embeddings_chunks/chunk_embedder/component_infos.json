@@ -1,1 +1,26 @@
-{"name": "chunk_embedder", "output_level": "chunk", "description": "todo", "outputs": ["chunk_embeddings"], "inputs": ["chunk", "word_embeddings"], "type": "chunk_embeddings", "file_dependencies": {}, "spark_input_column_names": ["chunk", "glove_embeddings"], "spark_output_column_names": ["chunk_embeddings"], "provider": "sparknlp", "license": "open source", "computation_context": "spark", "output_context": "spark"}
+{
+  "name": "chunk_embedder",
+  "output_level": "chunk",
+  "description": "todo",
+  "trainable": false,
+  "outputs": [
+    "chunk_embeddings"
+  ],
+  "inputs": [
+    "chunk",
+    "word_embeddings"
+  ],
+  "type": "chunk_embeddings",
+  "file_dependencies": {},
+  "spark_input_column_names": [
+    "chunk",
+    "glove_embeddings"
+  ],
+  "spark_output_column_names": [
+    "chunk_embeddings"
+  ],
+  "provider": "sparknlp",
+  "license": "open source",
+  "computation_context": "spark",
+  "output_context": "spark"
+}
