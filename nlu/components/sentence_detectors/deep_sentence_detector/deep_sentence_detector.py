@@ -6,6 +6,8 @@ from sparknlp.annotator import *
 class SentenDetectorDeep:
     @staticmethod
     def get_default_model():
-        return SentenceDetectorDLModel()\
+        return SentenceDetectorDLModel\
+            .pretrained()\
             .setInputCols(["document"]) \
-            .setOutputCol("sentence")
+            .setOutputCol("sentence") \
+
