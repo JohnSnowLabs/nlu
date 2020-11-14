@@ -6,7 +6,6 @@ class Util(SparkNLUComponent):
         # super(Tokenizer,self).__init__(annotator_class = annotator_class, component_type = component_type)
         if annotator_class == 'ner_converter':
             annotator_class = 'ner_to_chunk_converter'
-        SparkNLUComponent.__init__(self, annotator_class, component_type)
         if model != None : self.model = model
         else :
             if annotator_class == 'document_assembler':
@@ -21,3 +20,4 @@ class Util(SparkNLUComponent):
             elif annotator_class == 'ner_to_chunk_converter' :
                 from nlu import NerToChunkConverter
                 self.model =  NerToChunkConverter.get_default_model()
+        SparkNLUComponent.__init__(self, annotator_class, component_type)

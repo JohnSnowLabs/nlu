@@ -1,10 +1,8 @@
-import nlu.pipe_components
-import sparknlp
 from sparknlp.annotator import *
 
 class Yake:
     @staticmethod
-    def get_default_model():  # (name="ner_dl_bert") \
+    def get_default_model():
         return YakeModel() \
                    .setInputCols("token") \
                    .setOutputCol("keywords") \

@@ -17,17 +17,25 @@ class TestNGram(unittest.TestCase):
                      "Locations consiting of multiple tokens like Los Angeles",
                      "Anything else made up of multiple tokens like Super Nintendo",]
 
+
+        print('OUTPUT LEVEL TOKEN')
         n_df = nlu.load('ngram').predict(example_text, output_level='token')
         print(n_df.columns)
         print(n_df)
 
-        n_df = nlu.load('ngram').predict(example_text, output_level='chunk')
+        print('OUTPUT LEVEL CHUNK')
+        n_df = nlu.load('ngram',verbose=True).predict(example_text, output_level='chunk')
         print(n_df.columns)
         print(n_df)
-        n_df = nlu.load('ngram').predict(example_text, output_level='sentence')
+
+        print('OUTPUT LEVEL SENTENCE')
+        n_df = nlu.load('ngram',verbose=True).predict(example_text, output_level='sentence')
         print(n_df.columns)
         print(n_df)
-        n_df = nlu.load('ngram').predict(example_text, output_level='document')
+
+
+        print('OUTPUT LEVEL DOCUMENT')
+        n_df = nlu.load('ngram',verbose=True).predict(example_text, output_level='document')
         print(n_df.columns)
         print(n_df)
 

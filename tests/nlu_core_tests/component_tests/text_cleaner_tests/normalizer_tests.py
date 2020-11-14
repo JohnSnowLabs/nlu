@@ -6,13 +6,12 @@ class TesNormalize(unittest.TestCase):
 
     def test_norm_pipe(self):
         pipe = nlu.load('norm', verbose=True )
-
-        df = pipe.predict('HELLO WORLD! How are YOU')
+        df = pipe.predict('HELLO WORLD! How are YOU!?!@')
         print(df['normalized'])
 
         pipe['normalizer'].setLowercase(True)
 
-        df = pipe.predict('HELLO WORLD! How are YOU')
+        df = pipe.predict('HELLO WORLD! How are YOU!@>?!@')
         print(df['normalized'])
 
 if __name__ == '__main__':

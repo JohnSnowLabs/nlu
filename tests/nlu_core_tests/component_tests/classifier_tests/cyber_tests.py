@@ -3,17 +3,18 @@
 
 import unittest
 from nlu import *
-
 class TestCyber(unittest.TestCase):
 
     def test_cyber_model(self):
-        df = nlu.load('classify.cyberbullying',verbose=True).predict('Women belong in the kitchen') # sorry we dont mean it
-        # df = nlu.load('en.classify.sarcasm',verbose=True).predict(sarcasm_df['text'])
-
+        pipe = nlu.load('cyberbullying',verbose=True)
+        df = pipe.predict(['I love pancaces. I hate Mondays', 'I love Fridays'], output_level='sentence')
         print(df.columns)
-        print(df['sentence'], df[['category','category_confidence']])
-
-
+        print(df['sentence'], df[['cyberbullying','cyberbullying_confidence']])
+        df = pipe.predict(['I love pancaces. I hate Mondays', 'I love Fridays'], output_level='document')
+        self.assertIsInstance(df.iloc[0]['cyberbullying'],str )
+        print(df.columns)
+        print(df['document'], df[['cyberbullying','cyberbullying_confidence']])
+        self.assertIsInstance(df.iloc[0]['cyberbullying'], str)
 
 if __name__ == '__main__':
     unittest.main()

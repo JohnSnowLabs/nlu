@@ -12,13 +12,13 @@ class TestElectraSentenceEmbeddings(unittest.TestCase):
         # df = nlu.load('en.classify.sarcasm',verbose=True).predict(sarcasm_df['text'])
         print(df.columns)
         print(df)
-        print(df['bert_sentence_embeddings'])
+        print(df['embed_sentence_electra_embeddings'])
 
         df = nlu.load('en.embed_sentence.electra',verbose=True).predict('Am I the muppet or are you the muppet?')
         # df = nlu.load('en.classify.sarcasm',verbose=True).predict(sarcasm_df['text'])
         print(df.columns)
         print(df)
-        print(df['bert_sentence_embeddings'])
+        print(df['en_embed_sentence_electra_embeddings'])
 
 
         # df = nlu.load('en.embed.bert.small_L4_128', verbose=True).predict("No you are the muppet!")

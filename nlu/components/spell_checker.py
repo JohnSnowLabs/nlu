@@ -5,7 +5,6 @@ class SpellChecker(SparkNLUComponent):
         if annotator_class == 'context' or annotator_class == 'norvig' or annotator_class == 'symmetric':
             annotator_class = annotator_class + '_spell'
         if dataset != '':annotator_class = dataset + '_spell'
-        SparkNLUComponent.__init__(self, annotator_class, component_type)
 
 
         if model != None : self.model = model
@@ -23,3 +22,4 @@ class SpellChecker(SparkNLUComponent):
                 if get_default : self.model = SymmetricSpellChecker.get_default_model()
                 else : self.model = SymmetricSpellChecker.get_pretrained_model(nlp_ref, language)
 
+        SparkNLUComponent.__init__(self, annotator_class, component_type)

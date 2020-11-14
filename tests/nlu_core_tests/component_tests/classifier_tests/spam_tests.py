@@ -7,11 +7,15 @@ from nlu import *
 class TestSpam(unittest.TestCase):
 
     def test_spam_model(self):
-        df = nlu.load('spam',verbose=True).predict('Women belong in the kitchen') # sorry we dont mean it
-        # df = nlu.load('en.classify.sarcasm',verbose=True).predict(sarcasm_df['text'])
-
+        pipe = nlu.load('spam',verbose=True)
+        df = pipe.predict(['I love pancaces. I hate Mondays', 'I love Fridays'], output_level='sentence')
         print(df.columns)
-        print(df['sentence'], df[['category','category_confidence']])
+        print(df['sentence'], df[['spam','spam_confidence']])
+        df = pipe.predict(['I love pancaces. I hate Mondays', 'I love Fridays'], output_level='document')
+        self.assertIsInstance(df.iloc[0]['spam'],str )
+        print(df.columns)
+        print(df['document'], df[['spam','spam_confidence']])
+        self.assertIsInstance(df.iloc[0]['spam'], str)
 
 
 

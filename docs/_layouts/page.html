@@ -31,7 +31,7 @@ layout: base
 {%- assign _article_header_excerpt_truncate = include.excerpt_truncate | default: 200 -%}
 
 {%- if page.sidebar -%}
-<div class="layout--page layout--page--sidebar clearfix js-page-root">
+<div class="layout--page layout--page--sidebar clearfix js-page-root {%- if page.aside -%}&nbsp; layout--page--aside{%- endif -%}">
   <div class="page__mask d-print-none js-page-mask js-sidebar-hide"></div>
   <div class="page__viewport">
     <div class="page__actions d-print-none">
@@ -47,7 +47,7 @@ layout: base
       </div>
 
 {%- else -%}
-<div class="layout--page js-page-root">
+<div class="layout--page js-page-root {%- if page.aside -%}&nbsp; layout--page--aside{%- endif -%}">
 {%- endif -%}
 
     {%- assign _page_main_class = 'page__main js-page-main' -%}
@@ -183,9 +183,9 @@ layout: base
         {%- endif -%}
             <div class="grid grid--reverse">
 
-              <div class="col-aside d-print-none js-col-aside">
+              <div class="col-aside d-print-none js-col-aside" style="margin-left:100%; width=280px;">
                 {%- if page.aside -%}
-                  <aside class="page__aside js-page-aside">
+                  <aside class="page__aside js-page-aside" style="white-space: normal !important;">
                     {%- include aside/toc.html -%}
                   </aside>
                 {%- endif -%}
@@ -268,3 +268,4 @@ layout: base
 
 {%- include markdown-enhancements.html -%}
 {%- include pageview.html -%}
+

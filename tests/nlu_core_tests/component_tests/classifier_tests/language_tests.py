@@ -7,13 +7,15 @@ from nlu import *
 class TestLanguage(unittest.TestCase):
 
     def test_language_model(self):
-        df = nlu.load('classifiy.language',verbose=True).predict('I love peanutbutter and jelly')
-        # df = nlu.load('en.classify.sarcasm',verbose=True).predict(sarcasm_df['text'])
-
+        pipe = nlu.load('lang',verbose=True)
+        df = pipe.predict(['I love pancaces. I hate Mondays', 'I love Fridays'], output_level='sentence')
         print(df.columns)
-        print(df['sentence'], df[['category','category_confidence']])
-
-
+        print(df['sentence'], df[['language','language_confidence']])
+        self.assertIsInstance(df.iloc[0]['language'],str )
+        df = pipe.predict(['I love pancaces. I hate Mondays', 'I love Fridays'], output_level='document')
+        print(df.columns)
+        print(df['document'], df[['language','language_confidence']])
+        self.assertIsInstance(df.iloc[0]['language'], str)
 
 if __name__ == '__main__':
     unittest.main()
