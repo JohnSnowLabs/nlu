@@ -1,7 +1,6 @@
 import nlu.pipe_components
 import sparknlp
 from sparknlp.annotator import *
-
 class ClassifierDl:
     @staticmethod
     def get_default_model():

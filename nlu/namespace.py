@@ -12,7 +12,7 @@ class NameSpace():
     actions = ['tokenize', 'sentence', 'embed', 'embed_sentence', 'embed_chunk','classify', 'chunk', 'pos', 'ner',
                'dep', 'dep.untyped', 'lemma', 'match', 'norm', 'spell','stem', 'stopwords','clean','ngram',
                ]
-
+    trainable_model_references = ['classifier_dl']
 
 
 
@@ -20,6 +20,27 @@ class NameSpace():
     NLU REFERENCE FORMATS : 
     <lang>.<action>.<
     '''
+    trainable_models = {
+        # map NLU references to NLP approaches
+    'train.deep_sentence_detector' : '' ,
+    'train.sentence_detector' : '' , # deep sentence detector alias
+    'train.symmetric_spell' : '' ,
+    'train.context_spell' : '' ,
+    'train.spell' : '' , ## context spell alias
+    'train.norvig_spell' : '' ,
+    'train.unlabeled_dependency_parser' : '' ,
+    'train.labeled_dependency_parser' : '' ,
+    'train.classifier_dl' : '' ,
+    'train.classifier' : '' , #classifier DL alias
+    'train.named_entity_recognizer_dl' : '' ,
+    'train.ner' : '' , # ner DL alias
+    'train.vivekn_sentiment' : '' ,
+    'train.sentiment_dl' : '' ,
+    'train.sentiment' : '' , #sent DL alias
+    'train.pos' : '' ,
+    'train.multi_classifier' : '' ,
+
+    }
 
     #Reference to all datasets for which we have pretrained models
     datasets = []
