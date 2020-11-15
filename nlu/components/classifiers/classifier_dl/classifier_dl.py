@@ -18,12 +18,12 @@ class ClassifierDl:
 
 
     @staticmethod
-    def get_default_trainable_model():
+    def get_trainable_model():
         return ClassifierDLApproach() \
             .setInputCols("sentence_embeddings") \
             .setOutputCol("category") \
             .setLabelColumn("label") \
-            .setBatchSize(64) \
-            .setMaxEpochs(20) \
-            .setLr(0.5) \
-            .setDropout(0.5)
+            # .setBatchSize(64) \
+            # .setMaxEpochs(20) \
+            # .setLr(0.5) \
+            # .setDropout(0.5)

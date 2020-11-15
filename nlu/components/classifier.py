@@ -1,6 +1,6 @@
 from nlu.pipe_components import SparkNLUComponent
 class Classifier(SparkNLUComponent):
-    def __init__(self, annotator_class='sentiment_dl', language='en', component_type='classifier', get_default=True, model = None, nlp_ref ='', nlu_ref=''):
+    def __init__(self, annotator_class='sentiment_dl', language='en', component_type='classifier', get_default=True, model = None, nlp_ref ='', nlu_ref='',trainable=False):
         if 'e2e' in nlu_ref or 'toxic' in nlu_ref : annotator_class= 'multi_classifier'
         elif 'e2e' in nlp_ref or 'toxic' in nlp_ref : annotator_class= 'multi_classifier'
 
@@ -46,7 +46,8 @@ class Classifier(SparkNLUComponent):
                 else : self.model = MultiClassifierDl.get_pretrained_model(nlp_ref, language)
             elif ('classifier_dl' in annotator_class or annotator_class == 'toxic') and not 'multi' in annotator_class:
                 from nlu import ClassifierDl
-                if get_default : self.model = ClassifierDl.get_default_model()
+                if trainable: self.model = ClassifierDl.get_trainable_model()
+                elif get_default : self.model = ClassifierDl.get_default_model()
                 else : self.model = ClassifierDl.get_pretrained_model(nlp_ref, language)
             elif 'language_detector' in annotator_class:
                 from nlu import LanguageDetector
