@@ -13,7 +13,7 @@ class ClassifierDl:
         return ClassifierDLModel.pretrained(name,language) \
             .setInputCols("sentence_embeddings") \
             .setOutputCol("category")
-    
+
 
 
 
@@ -23,7 +23,8 @@ class ClassifierDl:
             .setInputCols("sentence_embeddings") \
             .setOutputCol("category") \
             .setLabelColumn("label") \
-            # .setBatchSize(64) \
+           .setEnableOutputLogs(True)
+        # .setBatchSize(64) \
             # .setMaxEpochs(20) \
             # .setLr(0.5) \
             # .setDropout(0.5)

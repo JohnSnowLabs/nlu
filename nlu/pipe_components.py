@@ -55,8 +55,8 @@ class SparkNLUComponent(NLUComponent):
                     self.component_info.spark_output_column_names =  [self.model.extractParamMap()[k]]
                 else :
                     self.component_info.spark_output_column_names =  self.model.extractParamMap()[k]
-            if "labelCol" in str(k):
-                if isinstance(self.model.extractParamMap()[k], str) :
-                    self.component_info['spark_label_column_names'] =  [self.model.extractParamMap()[k]]
-                else :
-                    self.component_info['spark_label_column_names'] =  self.model.extractParamMap()[k]
+            # if "labelCol" in str(k):
+            #     if isinstance(self.model.extractParamMap()[k], str) :
+            #         self.component_info['spark_label_column_names'] =  [self.model.extractParamMap()[k]]
+            #     else :
+            #         self.component_info['spark_label_column_names'] =  self.model.extractParamMap()[k]

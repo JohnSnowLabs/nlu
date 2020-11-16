@@ -94,7 +94,7 @@ class ComponentInfo:
     license : str # open source or private
     computation_context : str # Will this component do its computation in Spark land (like all of Spark NLP annotators do) or does it require some other computation engine or library like Tensorflow, Numpy, HuggingFace, etc..
     output_context : str # Will this components final result
-
+    trainable : bool
 
     @classmethod
     def from_directory(cls, component_info_dir):

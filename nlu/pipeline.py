@@ -4,6 +4,7 @@ import numpy as np
 from sparknlp.base import *
 import logging
 import nlu
+import inspect
 
 logger = logging.getLogger('nlu')
 import pyspark
@@ -197,16 +198,20 @@ class NLUPipeline(BasePipe):
 
 
     def fit(self, dataset=None):
-        # Creates Spark Pipeline and fits it
-        if dataset == None:
-            stages = []
-            for component in self.pipe_components:
-                stages.append(component.model)
-            self.is_fitted = True
-            self.spark_estimator_pipe = Pipeline(stages=stages)
+    # Creates Spark Pipeline and fits it
+        stages = []
+        for component in self.pipe_components:
+            stages.append(component.model)
+        self.is_fitted = True
+        self.spark_estimator_pipe = Pipeline(stages=stages)
+
+        if isinstance(dataset,pd.DataFrame) :
+            self.spark_transformer_pipe = self.spark_estimator_pipe.fit(self.convert_pd_dataframe_to_spark(dataset))
+        else :
             self.spark_transformer_pipe = self.spark_estimator_pipe.fit(self.get_sample_spark_dataframe())
 
-
+    def convert_pd_dataframe_to_spark(self, data):
+        return nlu.spark.createDataFrame(data)
 #todo rm
     def get_output_level_of_embeddings_provider(self, field_type, field_name):
         '''
@@ -285,6 +290,7 @@ class NLUPipeline(BasePipe):
         field_types_dict = {}
 
         for field in sdf.schema.fieldNames():
+            logger.info(f'Parsing field for {field}')
             if field in stranger_features: continue
             if field == 'origin_index':
                 field_types_dict[field] = 'document'
@@ -942,8 +948,12 @@ class NLUPipeline(BasePipe):
         if output_level == 'sentence' or output_level == 'document':
             self = PipelineQueryVerifier.configure_component_output_levels(self)
             self = PipelineQueryVerifier.check_and_fix_nlu_pipeline(self)
-        self.fit()
 
+
+        if not self.is_fitted :
+            if self.has_trainable_components :
+                self.fit(data)
+            else : self.fit()
         # self.configure_light_pipe_usage(len(data), multithread)
 
         sdf = None
@@ -1171,7 +1181,16 @@ class PipelineQueryVerifier():
         3. Check Feature naems in the output
         4. Check wether pipeline needs to be fitted
     '''
-
+    @staticmethod
+    def is_untrained_model(component):
+        '''
+        Check for a given component if it is an embelishment of an traianble model.
+        In this case we will ignore embeddings requirements further down the logic pipeline
+        :param component: Component to check
+        :return: True if it is trainable, False if not
+        '''
+        if 'is_untrained' in dict(inspect.getmembers(component.component_info)).keys() : return True
+        return False
     @staticmethod
     def has_embeddings_requirement(component):
         '''
@@ -1180,6 +1199,7 @@ class PipelineQueryVerifier():
         :param component:  The component to check
         :return: True if the component needs some specifc embedding (i.e.glove, bert, elmo etc..). Otherwise returns False
         '''
+
 
         if type(component) == list or type(component) == set:
             for feature in component:
@@ -1231,17 +1251,18 @@ class PipelineQueryVerifier():
         pipe_requirements = [['sentence',
                               'token']]  # default requirements so we can support all output levels. minimal extra comoputation effort. If we add CHUNK here, we will aalwayshave POS default
         pipe_provided_features = []
+        pipe.has_trainable_components = False
         # pipe_types = [] # list of string identifiers
         for component in pipe.pipe_components:
-
+            trainable = PipelineQueryVerifier.is_untrained_model(component)
+            if trainable : pipe.has_trainable_components = True
             # 1. Get all feature provisions from the pipeline
             logger.info("Getting Missing Feature for component =%s", component.component_info.name)
             if not component.component_info.inputs == component.component_info.outputs:
                 pipe_provided_features.append(
                     component.component_info.outputs)  # edge case for components that provide token and require token and similar cases.
-
             # 2. get all feature requirements for pipeline
-            if PipelineQueryVerifier.has_embeddings_requirement(component):
+            if PipelineQueryVerifier.has_embeddings_requirement(component) and not trainable:
                 # special case for models with embedding requirements. we will modify the output string which then will be resolved by the default component resolver (which will get the correct embedding )
                 if component.component_info.type == 'chunk_embeddings':
                     # there is no ref for Chunk embeddings, so we have a special case here and need to define a default value that will always be used for chunkers
@@ -1275,7 +1296,7 @@ class PipelineQueryVerifier():
         logger.info("Provided columns flat =%s", flat_provisions)
         logger.info("Missing columns no ref flat =%s", missing_components)
         # since embeds are missing, we add embed with reference back
-        if PipelineQueryVerifier.has_embeddings_requirement(missing_components):
+        if PipelineQueryVerifier.has_embeddings_requirement(missing_components) and not trainable:
             missing_components = PipelineQueryVerifier.clean_irrelevant_features(flat_requirements - flat_provisions)
 
         if len(missing_components) == 0:

@@ -53,7 +53,7 @@ from nlu.components.utils.ner_to_chunk_converter import ner_to_chunk_converter
 
 # sentence
 from nlu.components.sentence_detectors.pragmatic_sentence_detector.sentence_detector import PragmaticSentenceDetector
-from nlu.components.sentence_detectors.deep_sentence_detector.deep_sentence_detector import SentenDetectorDeep
+from nlu.components.sentence_detectors.deep_sentence_detector.deep_sentence_detector import SentenceDetectorDeep
 # Embeddings
 from nlu.components.embeddings.albert.spark_nlp_albert import SparkNLPAlbert
 from nlu.components.embeddings.sentence_bert.BertSentenceEmbedding import BertSentence
@@ -225,9 +225,10 @@ def parse_component_data_from_name_query(nlu_reference, detect_lang=False):
     This method will parse <language>.<NLU_action>
         Additional data about dataset and variant will be resolved by corrosponding action classes
 
+    If train prefix is part of the nlu_reference ,the trainable namespace will e searched
     :param nlu_reference: User request (should be a NLU reference)
     :param detect_lang: Wether to automatically  detect language
-    :return: Pipeline or component for the NLU reference
+    :return: Pipeline or component for the NLU reference.
     '''
 
     infos = nlu_reference.split('.')
@@ -238,7 +239,8 @@ def parse_component_data_from_name_query(nlu_reference, detect_lang=False):
     component_type = ''
     dataset = ''
     component_embeddings = ''
-    component_pipe = []
+    trainable = False
+    resolved_component = None
     # 1. Check if either a default cmponent or one specific pretrained component or pipe  or alias of them is is requested without more sepcificatin about lang,dataset or embeding.
     # I.e. 'explain_ml' , 'explain; 'albert_xlarge_uncased' or ' tokenize'  or 'sentiment' s requested. in this case, every possible annotator must be checked.
     # format <class> or <nlu identifier>
@@ -246,6 +248,9 @@ def parse_component_data_from_name_query(nlu_reference, detect_lang=False):
     if len(infos) == 0:
         logger.exception("Split  on query is 0.")
     # Query of format <class>, no embeds,lang or dataset specified
+    elif 'train' in infos :
+        trainable = True
+        component_type = infos[1]
     elif len(infos) == 1:
         # if we only have 1 split result, it must a a NLU action reference or an alias
         logger.info('Setting default lang to english')
@@ -256,7 +261,7 @@ def parse_component_data_from_name_query(nlu_reference, detect_lang=False):
     elif infos[0] in all_components_info.all_languages:
         language = infos[0]
         component_type = infos[1]
-
+        logger.info(f"Got request for trainable model {component_type}")
         if len(infos) == 3:  # dataset specified
             dataset = infos[2]
         if len(infos) == 4:  # embeddings specified
@@ -284,16 +289,14 @@ def parse_component_data_from_name_query(nlu_reference, detect_lang=False):
     logger.info(
         'For input nlu_ref %s detected : \n lang: %s  , component type: %s , component dataset: %s , component embeddings  %s  ',
         nlu_reference, language, component_type, dataset, component_embeddings)
-    resolved_component = resolve_component_from_parsed_query_data(language, component_type, dataset,
-                                                                  component_embeddings, nlu_reference)
-
+    resolved_component = resolve_component_from_parsed_query_data(language, component_type, dataset,component_embeddings, nlu_reference, trainable)
     if resolved_component is None:
         logger.exception("EXCEPTION: Could not create a component for nlu reference=%s", nlu_reference)
         return NluError()
     return resolved_component
 
 
-def resolve_component_from_parsed_query_data(language, component_type, dataset, component_embeddings, nlu_ref):
+def resolve_component_from_parsed_query_data(language, component_type, dataset, component_embeddings, nlu_ref,trainable=False):
     '''
     Searches the NLU name spaces for a matching NLU reference. From that NLU reference, a SparkNLP reference will be aquired which resolved to a SparkNLP pretrained model or pipeline
     :param nlu_ref: Full request which was passed to nlu.load()
@@ -308,12 +311,20 @@ def resolve_component_from_parsed_query_data(language, component_type, dataset, 
     logger.info('Searching local Namespaces for SparkNLP reference.. ')
     resolved = False
 
+    # 0. check trainable references
+    if trainable == True :
+        if nlu_ref in NameSpace.trainable_models.keys():
+            component_kind = 'trainable_model'
+            nlp_ref = NameSpace.trainable_models[nlu_ref]
+            logger.info(f'Found Spark NLP reference in trainable models namespace = {nlp_ref}')
+            resolved = True
+
     # 1. check if pipeline references for resolution
     if resolved == False and language in NameSpace.pretrained_pipe_references.keys():
         if nlu_ref in NameSpace.pretrained_pipe_references[language].keys():
             component_kind = 'pipe'
             nlp_ref = NameSpace.pretrained_pipe_references[language][nlu_ref]
-            logger.info('Found Spark NLP reference in pretrained pipelines namespace')
+            logger.info(f'Found Spark NLP reference in pretrained pipelines namespace = {nlp_ref}')
             resolved = True
 
     # 2. check if model references for resolution
@@ -321,7 +332,7 @@ def resolve_component_from_parsed_query_data(language, component_type, dataset, 
         if nlu_ref in NameSpace.pretrained_models_references[language].keys():
             component_kind = 'model'
             nlp_ref = NameSpace.pretrained_models_references[language][nlu_ref]
-            logger.info('Found Spark NLP reference in pretrained models namespace')
+            logger.info(f'Found Spark NLP reference in pretrained models namespace = {nlp_ref}')
             resolved = True
 
     # 2. check if alias/default references for resolution
@@ -349,7 +360,7 @@ def resolve_component_from_parsed_query_data(language, component_type, dataset, 
             return NluError
         else:
             return constructed_components
-    elif component_kind == 'model' or 'component':
+    elif component_kind in ['model', 'component']:
         constructed_component = construct_component_from_identifier(language, component_type, dataset,
                                                                     component_embeddings, nlu_ref,
                                                                     nlp_ref)
@@ -361,6 +372,14 @@ def resolve_component_from_parsed_query_data(language, component_type, dataset, 
             return NluError
         else:
             return constructed_component
+    elif component_kind == 'trainable_model':
+        constructed_component = construct_trainable_component_from_identifier(nlu_ref,nlp_ref)
+        if constructed_component is None:
+            logger.exception(f'EXCEPTION : Could not create NLU component for nlp_ref={nlp_ref} and nlu_ref={nlu_ref}')
+            return NluError
+        else:
+            constructed_component.component_info.is_untrained = True
+            return constructed_component
     else:
         logger.exception(
             "EXCEPTION : Could not resolve query=%s for kind=%s and reference=%s in any of NLU's namespaces ", nlu_ref,
@@ -368,6 +387,50 @@ def resolve_component_from_parsed_query_data(language, component_type, dataset, 
             nlp_ref)
         return NluError
 
+
+def construct_trainable_component_from_identifier(nlu_ref,nlp_ref):
+    '''
+    This method returns a Spark NLP annotator Approach class embelished by a NLU component
+    :param nlu_ref: nlu ref to the trainable model
+    :param nlp_ref: nlp ref to the trainable model
+    :return: trainable model as a NLU component
+    '''
+
+    logger.info(f'Creating trainable NLU component for nlu_ref = {nlu_ref} and nlp_ref = {nlp_ref}')
+    try:
+
+        if nlu_ref in ['train.deep_sentence_detector','train.sentence_detector']:
+            #no label col but trainable?
+            return  nlu.NLUSentenceDetector(annotator_class = 'deep_sentence_detector', trainable='True')
+        if nlu_ref in ['train.context_spell','train.spell'] :
+            pass
+        if nlu_ref in ['train.symmetric_spell'] :
+            pass
+        if nlu_ref in ['train.norvig_spell'] :
+            pass
+        if nlu_ref in ['train.unlabeled_dependency_parser'] :
+            pass
+        if nlu_ref in ['train.labeled_dependency_parser'] :
+            pass
+        if nlu_ref in ['train.classifier_dl','train.classifier'] :
+            return nlu.Classifier(annotator_class = 'classifier_dl', trainable='True')
+
+        if nlu_ref in ['train.ner','train.named_entity_recognizer_dl'] :
+            pass
+        if nlu_ref in ['train.sentiment_dl','train.sentiment'] :
+            pass
+        if nlu_ref in ['train.vivekn_sentiment'] :
+            pass
+        if nlu_ref in ['train.pos'] :
+            pass
+        if nlu_ref in ['train.multi_classifier'] :
+            pass
+
+
+
+    except:  # if reference is not in namespace and not a component it will cause a unrecoverable crash
+        logger.exception(f'EXCEPTION: Could not create trainable NLU component for nlu_ref = {nlu_ref} and nlp_ref = {nlp_ref}')
+        return None
 
 def construct_component_from_pipe_identifier(language, nlp_ref, nlu_ref):
     '''
@@ -693,6 +756,19 @@ def print_all_model_kinds_for_action_and_lang(lang, action):
         if len(ref_action) > 1: ref_action = ref_action[1]
         if ref_action == action:
             print("nlu.load('" + nlu_reference + "') returns Spark NLP model " + nlp_reference)
+
+def print_trainable_components():
+    '''
+    Print every trainable Algorithm/Model
+    :return: None
+    '''
+    i = 1
+    print('The following models can be trained with a dataset that provides a label column and matching dataset')
+    for name, infos in nlu.all_components_info.all_components.items() :
+        if infos.trainable == True :
+            print(f' {i}. {name}')
+            i+=1
+
 
 
 class NluError:
