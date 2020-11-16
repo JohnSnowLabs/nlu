@@ -280,7 +280,7 @@ class NLUPipeline(BasePipe):
             return self.get_output_level_of_embeddings_provider(field_type, field_name)  # recursive resolution
 
 
-    def get_field_types_dict(self, sdf, stranger_features):
+    def get_field_types_dict(self, sdf, stranger_features, keep_stranger_features=True):
         """
         @ param sdf: Spark Dataframe which a NLU/SparkNLP pipeline has transformed.
         This function returns a dictionary that maps column names to their spark annotator types.
@@ -291,13 +291,18 @@ class NLUPipeline(BasePipe):
 
         for field in sdf.schema.fieldNames():
             logger.info(f'Parsing field for {field}')
-            if field in stranger_features: continue
+
+            if not keep_stranger_features and field in stranger_features: continue
+            else :
+                field_types_dict[field] = 'document'
+                continue
             if field == 'origin_index':
                 field_types_dict[field] = 'document'
                 continue
 
             if field == self.raw_text_column: continue
-            if 'label' in field: continue  # speciel case for input lables
+            # todo label output level inference
+            # if 'label' in field: continue  # speciel case for input lables
             # print(field)
             # For empty DF this will crash
             a_row = sdf.select(field + '.annotatorType').take(1)[0]['annotatorType']
@@ -663,7 +668,7 @@ class NLUPipeline(BasePipe):
             if field in stranger_features: continue
             if field == self.raw_text_column: continue
             if field == self.output_level: continue
-            if 'label' in field and 'dependency' not in field: continue  # specal case for input labels
+            # if 'label' in field and 'dependency' not in field: continue  # specal case for input labels
 
             f_type = field_dict[field]
             logger.info('Selecting Columns for field=%s of type=%s', field, f_type)
@@ -732,7 +737,7 @@ class NLUPipeline(BasePipe):
 
         if self.output_level == '': self.infer_and_set_output_level()
 
-        field_dict = self.get_field_types_dict(processed, stranger_features)  # map field to type of field
+        field_dict = self.get_field_types_dict(processed, stranger_features,keep_stranger_features)  # map field to type of field
         not_at_same_output_level_fields = []
 
         if self.output_level == 'chunk':
@@ -777,7 +782,7 @@ class NLUPipeline(BasePipe):
                 ptmp=ptmp, fields_to_rename=not_at_same_output_level_fields, same_output_level=False,
                 meta=output_metadata)
 
-        if self.output_level != 'document': final_select_not_at_same_output_level += stranger_features  # <>
+        if keep_stranger_features: final_select_not_at_same_output_level += stranger_features  #
 
         logger.info('Final cleanup select of same level =%s', final_select_same_output_level)
         logger.info('Final cleanup select of different level =%s', final_select_not_at_same_output_level)
