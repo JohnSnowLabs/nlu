@@ -774,7 +774,7 @@ def print_trainable_components():
 class NluError:
     def __init__(self):
         pass
-
+        self.has_trainable_components = False
     @staticmethod
     def predict(text, output_level='error', positions='error', metadata='error', drop_irrelevant_cols=False):
         print(

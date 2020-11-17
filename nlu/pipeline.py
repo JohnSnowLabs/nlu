@@ -24,6 +24,7 @@ class BasePipe(dict):
         self.raw_text_column = 'text'
         self.raw_text_matrix_slice = 1  # place holder for getting text from matrix
         self.spark_nlp_pipe = None
+        self.has_trainable_components = False
         self.needs_fitting = True
         self.is_fitted = False
         self.output_positions = False  # Wether to putput positions of Features in the final output. E.x. positions of tokens, entities, dependencies etc.. inside of the input document.

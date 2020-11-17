@@ -54,11 +54,7 @@ class ComponentStackigntests(unittest.TestCase):
     #
     #     pipe = nlu.load('sentiment bert', verbose = True ) #  bert
     #     preds = pipe.predict('Helo world!')
-    #
-    #     # sentim ent + bert bad
-    #     # bert + sentim OK!>!>?!?!?
-    #     # pos + sentiment OK!?
-    #     #  sentiment+ pos NOT OK!!?!?!?!?
+
     #     # pos bert sent OK but whenevers ent not last we have troublz
     #     # pipe = nlu.load('sentiment emotion') #  bert
     #     # preds = pipe.predict('Helo world!')
