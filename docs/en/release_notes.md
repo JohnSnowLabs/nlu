@@ -12,6 +12,38 @@ modify_date: "2020-06-12"
 
 <div class="h3-box" markdown="1">
 
+## 1.0.3 Release Notes 
+
+
+## 1.0.2 Release Notes 
+
+We are glad to announce nlu 1.0.2 is released!
+
+### NLU 1.0.2  Enhancements
+- More semantically concise output levels sentence and document enforced : 
+  - If a pipe is set to output_level='document' : 
+    -  Every Sentence Embedding will generate 1 Embedding per Document/row in the input Dataframe, instead of 1 embedding per sentence. 
+    - Every  Classifier will classify an entire Document/row 
+    - Each row in the output DF is a 1 to 1 mapping of the original input DF. 1 to 1 mapping from input to output.
+  - If a pipe is set to output_level='sentence' : 
+    -  Every Sentence Embedding will generate 1 Embedding per Sentence, 
+    - Every  Classifier will classify exactly one sentence
+    - Each row in the output DF can is mapped to one row in the input DF, but one row in the input DF can have multiple corresponding rows in the output DF. 1 to N mapping from input to output.
+- Improved generation of column names for classifiers. based on input nlu reference
+- Improved generation of column names for embeddings, based on input nlu reference
+- Improved automatic output level inference
+- Various test updates
+- Integration of CI pipeline with Github Actions 
+
+### New  Documentation is out!
+Check it out here :  http://nlu.johnsnowlabs.com/
+
+
+## 1.0.1 Release Notes 
+
+### NLU 1.0.1 Bugfixes
+- Fixed bug that caused NER pipelines to crash in NLU when input string caused the NER model to predict without additional metadata
+
 ## 1.0 Release Notes 
 - Automatic to Numpy conversion of embeddings
 - Added various testing classes
