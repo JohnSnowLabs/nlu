@@ -5,9 +5,9 @@ from nlu import *
 class TestSentenceDetector(unittest.TestCase):
 
     def test_sentence_detector(self):
-        pipe = nlu.load('sentence_detector', verbose=True )
-        pipe.print_info()
-        df = pipe.predict('HELLO WORLD! How are YOU. This is a lot of sentencessz.')
+        pipe = nlu.load('sentence_detector', verbose=True , )
+        df = pipe.predict('I like my sentences detected. Some like their sentences warm. Warm is also good.', output_level='sentence')
+        print(df.columns)
         print(df['sentence'])
 
 

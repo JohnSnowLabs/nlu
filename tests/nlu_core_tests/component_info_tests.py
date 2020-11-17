@@ -124,6 +124,8 @@ class TestComponentInfo(unittest.TestCase):
 
     def test_print_all_components(self):
         nlu.print_components()
+    def test_print_all_trainable_components(self):
+        nlu.print_trainable_components()
 
 
 
