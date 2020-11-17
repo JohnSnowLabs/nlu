@@ -13,6 +13,11 @@ modify_date: "2020-06-12"
 <div class="h3-box" markdown="1">
 
 ## 1.0.3 Release Notes 
+- NLU offline mode
+- Sentence Detector bugfix
+- New sentence similarity Notebook and tutorial
+- New Workshop video
+- 
 
 
 ## 1.0.2 Release Notes 
