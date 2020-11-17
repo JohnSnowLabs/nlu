@@ -92,7 +92,7 @@ jobs:
       - name: NLU Matcher Component tests
         if: always()
         run: |
-          python -m unittest  discover   -s 'tests/nlu_core_tests/component_tests/text_matcher_tests' -p '*tests.py'
+          python -m unittest  discover   -s 'tests/nlu_core_tests/component_tests/matcher_tests' -p '*tests.py'
       - name: NLU Typed Dependency Component tests -
         if: always()
         run: |
@@ -105,8 +105,8 @@ jobs:
         if: always()
         run: |
           python -m unittest  discover   -s './tests/nlu_core_tests/pipeline_tests' -p '*tests.py'
-      - name: NLU Modin tests
-        if: always()
-        run: |
-          python -m unittest  discover   -s './tests/modin' -p '*tests.py'
+#      - name: NLU Modin tests
+#        if: always()
+#        run: |
+#          python -m unittest  discover   -s './tests/modin' -p '*tests.py'
 
