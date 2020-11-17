@@ -88,7 +88,7 @@ jobs:
       - name: NLU Text Cleaner Component tests -
         if: always()
         run: |
-          python -m unittest  discover   -s './tests/nlu_core_tests/component_tests/text_cleaner_tests' -p '*tests.py'
+          python -m unittest  discover   -s './tests/nlu_core_tests/component_tests/pre_processing_tests' -p '*tests.py'
       - name: NLU Matcher Component tests
         if: always()
         run: |
