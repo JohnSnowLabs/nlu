@@ -197,9 +197,16 @@ class NLUPipeline(BasePipe):
         text_df = pd.DataFrame(data)
         return sparknlp.start().createDataFrame(data=text_df)
 
+    def verify_all_labels_exist(self,dataset):
+        return True
+        # pass
 
     def fit(self, dataset=None):
-    # Creates Spark Pipeline and fits it
+        '''
+        Converts the input Pandas Dataframe into a Spark Dataframe and trains a model on it.
+        :param dataset: The dataset to train on, should have a y column
+        :return: A nlu pipeline with models fitted.
+        '''
         stages = []
         for component in self.pipe_components:
             stages.append(component.model)
@@ -207,10 +214,15 @@ class NLUPipeline(BasePipe):
         self.spark_estimator_pipe = Pipeline(stages=stages)
 
         if isinstance(dataset,pd.DataFrame) :
+            if not self.verify_all_labels_exist(dataset) : return nlu.NluError()
             self.spark_transformer_pipe = self.spark_estimator_pipe.fit(self.convert_pd_dataframe_to_spark(dataset))
+
         else :
+            # fit on empty dataframe since no data provided
             self.spark_transformer_pipe = self.spark_estimator_pipe.fit(self.get_sample_spark_dataframe())
 
+
+        return self
     def convert_pd_dataframe_to_spark(self, data):
         return nlu.spark.createDataFrame(data)
 #todo rm
@@ -918,8 +930,23 @@ class NLUPipeline(BasePipe):
             else :
                 logger.info('Adding missing sentence Dependency because it is missing for outputlevel=Sentence')
                 self.add_missing_sentence_component()
+    def save(self, path, component='entire_pipeline', overwrite=False):
+        if overwrite:
+            import shutil
+            shutil.rmtree(path,ignore_errors=True)
 
+        if not self.is_fitted and not self.has_trainable_components:
+            self.fit()
+            if component == 'entire_pipeline':
+                self.spark_transformer_pipe.save(path)
+            else:
+                if component in self.keys():
+                    self[component].save(path)
+                # else :
+                #     print(f"Error during saving,{component} does not exist in the pipeline.\nPlease use pipe.print_info() to see the references you need to pass save()")
 
+            print('Stored m')
+        else : print('Please fit untrained pipeline first or predict on a String to save it')
     def predict(self, data, output_level='', positions=False, keep_stranger_features=True, metadata=False,
                 multithread=True, drop_irrelevant_cols=True):
         '''
