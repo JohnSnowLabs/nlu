@@ -10,6 +10,7 @@ class NLUSentenceDetector(SparkNLUComponent):
                 from nlu import SentenceDetectorDeep
                 if trainable : self.model = SentenceDetectorDeep.get_trainable_model()
                 elif get_default : self.model =  SentenceDetectorDeep.get_default_model()
+                else : self.model = SentenceDetectorDeep.get_pretrained_model(nlp_ref,language)
             elif annotator_class == 'pragmatic_sentence_detector' :
                 from nlu import PragmaticSentenceDetector
                 if get_default : self.model =  PragmaticSentenceDetector.get_default_model()

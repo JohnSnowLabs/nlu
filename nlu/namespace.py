@@ -116,9 +116,11 @@ class NameSpace():
         'ner.dl.bert': ('ner_dl_bert', 'model'),  # points ner bert
         'ner.onto.glove.6B_100d': ('onto_100', 'model'),
         'ner.onto.glove.6B_300d': ('onto_300', 'model'),  # this uses multi lang embeds!
-        'sentence_detector': ('ner_dl_sentence', 'model'),
-        'sentence_detector.deep': ('ner_dl_sentence', 'model'), #ALIAS
-        # 'sentence_detector.pragmatic': ('ner_dl_sentence', 'model'), # todo
+        'sentence_detector': ('sentence_detector_dl', 'model'),
+        'sentence_detector.deep': ('sentence_detector_dl', 'model'), #ALIAS
+
+
+        'sentence_detector.pragmatic': ('pragmatic_sentence_detector', 'model'), # todo
 
         # 'spell.symmetric': ('spellcheck_sd', 'model'), # TODO erronous
         'spell.norivg': ('spellcheck_norvig', 'model'),
@@ -922,7 +924,8 @@ class NameSpace():
             'xx.embed_sentence': 'sent_bert_multi_cased',
             'xx.embed_sentence.bert': 'sent_bert_multi_cased',
             'xx.embed_sentence.bert.cased': 'sent_bert_multi_cased',
-            'xx.embed_sentence.labse': 'labse'
+            'xx.embed_sentence.labse': 'labse',
+            'xx.sentence_detector' : 'sentence_detector_dl'
 
         },
 
