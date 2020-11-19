@@ -22,7 +22,7 @@ class ClassifierDl:
         return ClassifierDLApproach() \
             .setInputCols("sentence_embeddings") \
             .setOutputCol("category") \
-            .setLabelColumn("label") \
+            .setLabelColumn("y") \
            .setEnableOutputLogs(True)
 
     @staticmethod
