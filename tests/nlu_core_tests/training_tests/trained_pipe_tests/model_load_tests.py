@@ -1,9 +1,9 @@
 
 import unittest
 from nlu import *
-class PipelineSavingTests(unittest.TestCase):
+class PipelineLoadingTests(unittest.TestCase):
 
-    def test_pipeline_save(self):
+    def test_pipeline_load(self):
         # Just put in one of the many special 'trainable' references, to load
         # trainable components into the pipe
         # nlu.load('ner classifier_dl bert') will only give trainable classifier dl
@@ -11,25 +11,31 @@ class PipelineSavingTests(unittest.TestCase):
         store_path = '/home/loan/Documents/freelancework/jsl/nlu/4realnlugit/tmp/models'
         store_path = store_path + '_model'
         nlu.load('emotion').save(store_path,overwrite=True)
+        loaded_pipe = nlu.load(path=store_path)
+        loaded_pipe.predict('I Love offline mode!')
 
-
-
-    def test_saving_component(self):
+    def test_loading_model(self):
         # Just put in one of the many special 'trainable' references, to load
         # trainable components into the pipe
         # nlu.load('ner classifier_dl bert') will only give trainable classifier dl
         #
         store_path = '/home/loan/Documents/freelancework/jsl/nlu/4realnlugit/tmp/models'
         store_path = store_path + '_model'
-        pipe = nlu.load('emotion')
+        pipe = nlu.load('sentiment')
         pipe.print_info()
-        pipe.save(store_path, component='classifier_dl', overwrite=True)
+        # pipe.save(store_path, overwrite=True)
+
+        # loaded_pipe = PipelineModel.load(path=store_path)
+        loaded_pipe = nlu.load(path=store_path)
+        df = loaded_pipe.predict("I love loading models from hdd")
+        print('huzza!')
+        print(df)
 
         # nlu.load('emotion').save(store_path)
         #
         # nlu.load('emotion').save(store_path,overwrite=True)
 
-    def test_saving_trained_model(self):
+    def test_loading_trained_model(self):
         # Just put in one of the many special 'trainable' references, to load
         # trainable components into the pipe
         # nlu.load('ner classifier_dl bert') will only give trainable classifier dl
@@ -40,8 +46,10 @@ class PipelineSavingTests(unittest.TestCase):
         train_df = pd.read_csv(test_path)
         train_df.columns = ['label','text']
         pipe = nlu.load('train.classifier emotion',verbose=True,)
-        fitted_pipe = pipe.fit(train_df)
-        fitted_pipe.save(store_path, overwrite=True)
+        pipe = pipe.fit(train_df)
+        pipe.save(store_path, overwrite=True)
+        loaded_pipe = nlu.load('emotion', store_path)
+        loaded_pipe.predict('I Love offline mode!')
 
 if __name__ == '__main__':
     unittest.main()

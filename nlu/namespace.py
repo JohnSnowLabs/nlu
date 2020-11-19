@@ -21,6 +21,9 @@ class NameSpace():
     <lang>.<action>.<
     '''
     trainable_models = {
+# 1 clasifier wraps iuip multiple algos (multi class/class/sentiment)
+# Columns should be X and y, ML style
+        #
         # map NLU references to NLP approaches
     'train.deep_sentence_detector' : '' ,
     'train.sentence_detector' : '' , # deep sentence detector alias

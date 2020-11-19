@@ -207,6 +207,7 @@ class NLUPipeline(BasePipe):
         :param dataset: The dataset to train on, should have a y column
         :return: A nlu pipeline with models fitted.
         '''
+        self.is_fitted = True
         stages = []
         for component in self.pipe_components:
             stages.append(component.model)
@@ -916,7 +917,41 @@ class NLUPipeline(BasePipe):
         :return: None
         '''
 
+    def write_nlu_pipe_info(self,path):
+        '''
+        Writes all information required to load a NLU pipeline from disk to path
+        :param path: path where to store the nlu_info.json
+        :return: True if success, False if failure
+        '''
 
+        #1. Write all primitive pipe attributes to dict
+        pipe_data = {
+            'has_trainable_components': self.has_trainable_components,
+            'is_fitted' : self.is_fitted,
+            'light_pipe_configured' : self.light_pipe_configured,
+            'needs_fitting':self.needs_fitting,
+            'nlu_reference':self.nlu_reference,
+            'output_datatype':self.output_datatype,
+            'output_different_levels':self.output_different_levels,
+            'output_level': self.output_level,
+            'output_positions': self.output_positions,
+            'pipe_componments': {},
+            'pipe_ready':self.pipe_ready,
+            'provider': self.provider,
+            'raw_text_column': self.raw_text_column,
+            'raw_text_matrix_slice': self.raw_text_matrix_slice,
+            'spark_nlp_pipe': self.spark_nlp_pipe,
+            'spark_non_light_transformer_pipe': self.spark_non_light_transformer_pipe,
+            'component_count': len(self)
+
+        }
+
+        #2. Write all component/component_info to dict
+        for c in self.pipe_components:
+            pipe_data['pipe_componments'][c.ma,e]
+        #3. Any additional stuff
+
+        return True
 
     def add_missing_component_if_missing_for_output_level(self):
         '''
@@ -935,18 +970,20 @@ class NLUPipeline(BasePipe):
             import shutil
             shutil.rmtree(path,ignore_errors=True)
 
-        if not self.is_fitted and not self.has_trainable_components:
+        if not self.is_fitted and self.has_trainable_components:
             self.fit()
-            if component == 'entire_pipeline':
-                self.spark_transformer_pipe.save(path)
-            else:
-                if component in self.keys():
-                    self[component].save(path)
-                # else :
-                #     print(f"Error during saving,{component} does not exist in the pipeline.\nPlease use pipe.print_info() to see the references you need to pass save()")
+            self.is_fitted = True
+        if component == 'entire_pipeline':
+            self.spark_transformer_pipe.save(path)
+            # self.write_nlu_pipe_info(path)
+        else:
+            if component in self.keys():
+                self[component].save(path)
+            # else :
+            #     print(f"Error during saving,{component} does not exist in the pipeline.\nPlease use pipe.print_info() to see the references you need to pass save()")
 
-            print('Stored m')
-        else : print('Please fit untrained pipeline first or predict on a String to save it')
+        print('Stored m')
+        # else : print('Please fit untrained pipeline first or predict on a String to save it')
     def predict(self, data, output_level='', positions=False, keep_stranger_features=True, metadata=False,
                 multithread=True, drop_irrelevant_cols=True):
         '''

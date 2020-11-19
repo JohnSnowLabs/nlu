@@ -21,10 +21,11 @@ class ClassifierDlTests(unittest.TestCase):
         test_df.columns = ['label','text']
         pipe = nlu.load('train.classifier',verbose=True,)
         pipe['classifier_dl'].setMaxEpochs(2)
-        df = pipe.predict(train_df)
+        fitted_model = pipe.fit(train_df)
+        df = fitted_model.predict(train_df)
         print(df[['category','label']])
 
-        df = pipe.predict(test_df)
+        df = fitted_model.predict(test_df)
         print(df.columns)
         print(df[['category','label']])
         print (classification_report(df['label'], df['category']))
@@ -63,17 +64,31 @@ class ClassifierDlTests(unittest.TestCase):
         # trainable components into the pipe
         # nlu.load('ner classifier_dl bert') will only give trainable classifier dl
         #
+        # ONLY TRAIN 1 MODEL AT 1 TIME! No support multi model train
+        # pipe = nlu.load('train.classifier train.pos',verbose=True,)
 
+        # todo next NER
         test_path = '/home/loan/Documents/freelancework/jsl/nlu/4realnlugit/tests/datasets/news_category_test.csv'
 
         # train_path = '/home/loan/Documents/freelancework/jsl/nlu/4realnlugit/tests/datasets/news_category_train.csv'
         test_df = pd.read_csv(test_path)
         train_df = pd.read_csv(test_path)
+
         train_df.columns = ['label','text']
         test_df.columns = ['label','text']
+
         pipe = nlu.load('train.classifier emotion pos',verbose=True,)
         pipe['classifier_dl'].setMaxEpochs(2)
-        df = pipe.predict(train_df,output_level='document')
+
+        #rather use pipe.fit()
+        # trained_pipe = pipe.fit(data_with_label).save(path)
+        # preds = trained_pipe.predict(data)
+        #
+        pipe.fit(train_df,output_level='document')
+
+        df = pipe.fit_predict(train_df,output_level='document')
+
+
         print(df.columns)
         print(df[['category']])
         print (classification_report(df['label'], df['category']))
