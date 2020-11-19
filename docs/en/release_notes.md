@@ -13,14 +13,29 @@ modify_date: "2020-06-12"
 <div class="h3-box" markdown="1">
 
 ## 1.0.3 Release Notes 
-- NLU offline mode
-- Sentence Detector bugfix
+We are happy to announce NLU 1.0.3 comes with a lot new features, training classifiers, saving them and loading them offline, enabling running NLU with no internet connection!
+
+
+### NLU 1.0.3 New Features
+- Train a Deep Learning classifier in 1 line! The popular [ClassifierDL](https://nlp.johnsnowlabs.com/docs/en/annotators#classifierdl-multi-class-text-classification)
+which can achieve State of the Art results on any multi class text classification problem is now trainable!
+All it takes is just nlu.load('train.classifier).fit(dataset) . Your dataset can be a Pandas/Spark/Modin/Ray/Dask dataframe and needs to have a column named x for text data and a column named y for labels
+- Saving pipelines to HDD is now possible with nlu.save(path)
+- Loading pipelines from diskis now possible with nlu.load(path=path). 
+- NLU offline mode: Loading from disk makes running NLU offline now possible, since you can load pipelines/models from your local hard drive instead of John Snow Labs AWS servers.
+
+### NLU 1.0.3 New Notebooks and Tutorials
+- New collab notebook showcasing nlu training, saving and loading from disk
 - New sentence similarity Notebook and tutorial
 - New Workshop video
+
+
+### NLU 1.0.3 Bug fixes
+- Sentence Detector bugfix 
 - 
 
 
-## 1.0.2 Release Notes 
+## NLU 1.0.2 Release Notes 
 
 We are glad to announce nlu 1.0.2 is released!
 
@@ -44,7 +59,7 @@ We are glad to announce nlu 1.0.2 is released!
 Check it out here :  http://nlu.johnsnowlabs.com/
 
 
-## 1.0.1 Release Notes 
+## NLU 1.0.1 Release Notes 
 
 ### NLU 1.0.1 Bugfixes
 - Fixed bug that caused NER pipelines to crash in NLU when input string caused the NER model to predict without additional metadata

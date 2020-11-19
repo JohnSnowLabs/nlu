@@ -18,7 +18,7 @@ class TestSentenceDetector(unittest.TestCase):
         print(df['sentence'])
 
     def test_sentence_detector_pragmatic(self):
-        pipe = nlu.load('.sentence_detector.pragmatic', verbose=True , )
+        pipe = nlu.load('sentence_detector.pragmatic', verbose=True , )
         df = pipe.predict('I like my sentences detected. Some like their sentences warm. Warm is also good.', output_level='sentence')
         print(df.columns)
         print(df['sentence'])

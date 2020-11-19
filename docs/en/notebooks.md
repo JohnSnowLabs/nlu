@@ -15,7 +15,7 @@ Checkout the following notebooks for examples on how to work with NLU.
 
 ## NLU Applications Example
 - [Sentence Similarity with Multiple Sentence Embeddings](https://colab.research.google.com/drive/1LtOdtXtRJ3_N8kYywPd5k2AJMCGcgAdN?usp=sharing)
-- [6 Wordembeddings at in 1 line with T-SNE plotting](https://colab.research.google.com/drive/1DBk55f9iERI9BDA4kmZ8yO6J65jGmcEA?usp=sharing)
+- [6 Wordembeddings in 1 line with T-SNE plotting](https://colab.research.google.com/drive/1DBk55f9iERI9BDA4kmZ8yO6J65jGmcEA?usp=sharing)
 
 </div><div class="h3-box" markdown="1">
 

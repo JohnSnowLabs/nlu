@@ -38,8 +38,11 @@ class TestNer(unittest.TestCase):
 
         print(df[[ 'entities', 'entities_confidence']])
 
-
-
+    def test_ner_pipe_confidences(self):
+        df = nlu.load('en.ner.onto.glove.6B_100d', verbose=True ).predict('Donald Trump from America and Angela Merkal from Germany dont share many oppinions.', output_level='token' )
+        print(df)
+        print(df.columns)
+        print(df[[ 'entities', 'entities_confidence']])
 
 if __name__ == '__main__':
     unittest.main()
