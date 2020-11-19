@@ -923,28 +923,31 @@ class NLUPipeline(BasePipe):
         :param path: path where to store the nlu_info.json
         :return: True if success, False if failure
         '''
-
+        import os
+        f = open(os.path.join(path,'nlu_info.txt'), "w")
+        f.write(self.nlu_reference)
+        f.close()
         #1. Write all primitive pipe attributes to dict
-        pipe_data = {
-            'has_trainable_components': self.has_trainable_components,
-            'is_fitted' : self.is_fitted,
-            'light_pipe_configured' : self.light_pipe_configured,
-            'needs_fitting':self.needs_fitting,
-            'nlu_reference':self.nlu_reference,
-            'output_datatype':self.output_datatype,
-            'output_different_levels':self.output_different_levels,
-            'output_level': self.output_level,
-            'output_positions': self.output_positions,
-            'pipe_componments': {},
-            'pipe_ready':self.pipe_ready,
-            'provider': self.provider,
-            'raw_text_column': self.raw_text_column,
-            'raw_text_matrix_slice': self.raw_text_matrix_slice,
-            'spark_nlp_pipe': self.spark_nlp_pipe,
-            'spark_non_light_transformer_pipe': self.spark_non_light_transformer_pipe,
-            'component_count': len(self)
-
-        }
+        # pipe_data = {
+        #     'has_trainable_components': self.has_trainable_components,
+        #     'is_fitted' : self.is_fitted,
+        #     'light_pipe_configured' : self.light_pipe_configured,
+        #     'needs_fitting':self.needs_fitting,
+        #     'nlu_reference':self.nlu_reference,
+        #     'output_datatype':self.output_datatype,
+        #     'output_different_levels':self.output_different_levels,
+        #     'output_level': self.output_level,
+        #     'output_positions': self.output_positions,
+        #     'pipe_componments': {},
+        #     'pipe_ready':self.pipe_ready,
+        #     'provider': self.provider,
+        #     'raw_text_column': self.raw_text_column,
+        #     'raw_text_matrix_slice': self.raw_text_matrix_slice,
+        #     'spark_nlp_pipe': self.spark_nlp_pipe,
+        #     'spark_non_light_transformer_pipe': self.spark_non_light_transformer_pipe,
+        #     'component_count': len(self)
+        #
+        # }
 
         #2. Write all component/component_info to dict
         for c in self.pipe_components:
@@ -975,14 +978,14 @@ class NLUPipeline(BasePipe):
             self.is_fitted = True
         if component == 'entire_pipeline':
             self.spark_transformer_pipe.save(path)
-            # self.write_nlu_pipe_info(path)
+            self.write_nlu_pipe_info(path)
         else:
             if component in self.keys():
                 self[component].save(path)
             # else :
             #     print(f"Error during saving,{component} does not exist in the pipeline.\nPlease use pipe.print_info() to see the references you need to pass save()")
 
-        print('Stored m')
+        print(f'Stored model in {path}')
         # else : print('Please fit untrained pipeline first or predict on a String to save it')
     def predict(self, data, output_level='', positions=False, keep_stranger_features=True, metadata=False,
                 multithread=True, drop_irrelevant_cols=True):

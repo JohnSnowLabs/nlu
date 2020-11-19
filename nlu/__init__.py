@@ -115,16 +115,23 @@ active_pipes = []
 spark_started = False
 spark = None
 
+import os
+
+def read_nlu_info(path):
+    f = open(os.path.join(path,'nlu_info.txt'), "r")
+    nlu_ref = f.readline()
+    f.close()
+    return nlu_ref
+
 
 
 def load_nlu_pipe_from_hdd(pipe_path):
-    import os
     info_path = os.path.join(pipe_path,'nlu_metadata.json')
     pipe = NLUPipeline()
-    nlu_ref ='hdd'
+    nlu_ref = read_nlu_info(pipe_path)
     if os.path.exists(pipe_path):
         # if os.path.exists(info_path):
-        pipe_components = construct_component_from_pipe_identifier('hdd','hdd','hdd',path=pipe_path)
+        pipe_components = construct_component_from_pipe_identifier('nlu_ref','nlu_ref','hdd',path=pipe_path)
         for c in pipe_components: pipe.add(c, nlu_ref, pretrained_pipe_component=True)
 
         return pipe
@@ -474,7 +481,6 @@ def construct_component_from_pipe_identifier(language, nlp_ref, nlu_ref,path=Non
     logger.info("Starting Spark NLP to NLU pipeline conversion process")
     from sparknlp.pretrained import PretrainedPipeline, LightPipeline
     if 'language' in nlp_ref: language = 'xx'  # special edge case for lang detectors
-
     if path == None :
         pipe = PretrainedPipeline(nlp_ref, lang=language)
         iterable_stagles = pipe.light_model.pipeline_model.stages
