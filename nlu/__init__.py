@@ -116,19 +116,40 @@ spark_started = False
 spark = None
 
 
-def load(request, verbose=False):
+
+def load_nlu_pipe_from_hdd(pipe_path):
+    import os
+    info_path = os.path.join(pipe_path,'nlu_metadata.json')
+    pipe = NLUPipeline()
+    nlu_ref ='hdd'
+    if os.path.exists(pipe_path):
+        # if os.path.exists(info_path):
+        pipe_components = construct_component_from_pipe_identifier('hdd','hdd','hdd',path=pipe_path)
+        for c in pipe_components: pipe.add(c, nlu_ref, pretrained_pipe_component=True)
+
+        return pipe
+            # todo load nlu_metadata.json
+        # else:
+        #     print(f'Could not find nlu_info.json file in  {pipe_path}')
+        #     return NluError
+    else :
+        print(f'Could not find nlu pipe folder in {pipe_path}')
+        return NluError
+
+def load(request ='from_disk', path=None,verbose=False,):
     '''
     Load either a prebuild pipeline or a set of components identified by a whitespace seperated list of components
     :param verbose:
+    :param path: If path is not None, the model/pipe for the NLU reference will be loaded from the path. Useful for offline mode. Currently only loading entire NLU pipelines is supported, but not loading singular pipes
     :param request: A NLU model/pipeline/component reference
-    :return: returns a fitted nlu pipeline object
+    :return: returns a non fitted nlu pipeline object
     '''
     gc.collect()
 
     spark = sparknlp.start()
     spark.catalog.clearCache()
-    # spark.conf.set("spark.sql.execution.arrow.enabled", "true")
     spark_started = True
+
     if verbose:
         logger.setLevel(logging.INFO)
         ch = logging.StreamHandler()
@@ -136,6 +157,12 @@ def load(request, verbose=False):
         logger.addHandler(ch)
 
     try:
+
+        if path != None :
+            logger.info(f'Trying to load nlu pipeline from local hard drive, located at {path}')
+            pipe = load_nlu_pipe_from_hdd(path)
+            #todo none ahandkling
+            return pipe
         components_requested = request.split(' ')
         pipe = NLUPipeline()
         for nlu_ref in components_requested:
@@ -214,7 +241,7 @@ def get_default_component_of_type(missing_component_type):
         logger.exception("Could not resolve default component type for missing type=%s", missing_component_type)
 
 
-def parse_component_data_from_name_query(nlu_reference, detect_lang=False):
+def parse_component_data_from_name_query(nlu_reference, detect_lang=False, path=None):
     '''
     This method implements the main namespace for all component names. It parses the input request and passes the data to a resolver method which searches the namespace for a Component for the input request
     It returns a list of NLU.component objects or just one NLU.component object alone if just one component was specified.
@@ -296,7 +323,7 @@ def parse_component_data_from_name_query(nlu_reference, detect_lang=False):
     return resolved_component
 
 
-def resolve_component_from_parsed_query_data(language, component_type, dataset, component_embeddings, nlu_ref,trainable=False):
+def resolve_component_from_parsed_query_data(language, component_type, dataset, component_embeddings, nlu_ref,trainable=False,path=None):
     '''
     Searches the NLU name spaces for a matching NLU reference. From that NLU reference, a SparkNLP reference will be aquired which resolved to a SparkNLP pretrained model or pipeline
     :param nlu_ref: Full request which was passed to nlu.load()
@@ -432,7 +459,7 @@ def construct_trainable_component_from_identifier(nlu_ref,nlp_ref):
         logger.exception(f'EXCEPTION: Could not create trainable NLU component for nlu_ref = {nlu_ref} and nlp_ref = {nlp_ref}')
         return None
 
-def construct_component_from_pipe_identifier(language, nlp_ref, nlu_ref):
+def construct_component_from_pipe_identifier(language, nlp_ref, nlu_ref,path=None):
     '''
     # creates a list of components from a Spark NLP Pipeline reference
     # 1. download pipeline
@@ -441,14 +468,24 @@ def construct_component_from_pipe_identifier(language, nlp_ref, nlu_ref):
     :param nlu_ref:
     :param language: language of the pipeline
     :param nlp_ref: Reference to a spark nlp petrained pipeline
+    :param path: Load pipe from HDD
     :return: Each element of the SaprkNLP pipeline wrapped as a NLU componed inside of a list
     '''
     logger.info("Starting Spark NLP to NLU pipeline conversion process")
-    from sparknlp.pretrained import PretrainedPipeline
+    from sparknlp.pretrained import PretrainedPipeline, LightPipeline
     if 'language' in nlp_ref: language = 'xx'  # special edge case for lang detectors
-    pipe = PretrainedPipeline(nlp_ref, lang=language)
+
+    if path == None :
+        pipe = PretrainedPipeline(nlp_ref, lang=language)
+        iterable_stagles = pipe.light_model.pipeline_model.stages
+    else :
+        pipe = LightPipeline(PipelineModel.load(path=path))
+        iterable_stages = pipe.pipeline_model.stages
     constructed_components = []
-    for component in pipe.light_model.pipeline_model.stages:
+
+    # for component in pipe.light_model.pipeline_model.stages:
+    for component in iterable_stages:
+
         logger.info("Extracting model from Spark NLP pipeline: %s and creating Component", component)
         parsed = str(component).split('_')[0].lower()
         logger.info("Parsed Component for : %s", parsed)
