@@ -950,8 +950,8 @@ class NLUPipeline(BasePipe):
         # }
 
         #2. Write all component/component_info to dict
-        for c in self.pipe_components:
-            pipe_data['pipe_componments'][c.ma,e]
+        # for c in self.pipe_components:
+        #     pipe_data['pipe_componments'][c.ma,e]
         #3. Any additional stuff
 
         return True
