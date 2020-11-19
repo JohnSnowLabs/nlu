@@ -483,7 +483,7 @@ def construct_component_from_pipe_identifier(language, nlp_ref, nlu_ref,path=Non
     if 'language' in nlp_ref: language = 'xx'  # special edge case for lang detectors
     if path == None :
         pipe = PretrainedPipeline(nlp_ref, lang=language)
-        iterable_stagles = pipe.light_model.pipeline_model.stages
+        iterable_stages = pipe.light_model.pipeline_model.stages
     else :
         pipe = LightPipeline(PipelineModel.load(path=path))
         iterable_stages = pipe.pipeline_model.stages
