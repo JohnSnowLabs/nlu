@@ -142,6 +142,11 @@ def load_nlu_pipe_from_hdd(pipe_path):
     else :
         print(f'Could not find nlu pipe folder in {pipe_path}')
         return NluError
+def enable_verbose():
+    logger.setLevel(logging.INFO)
+    ch = logging.StreamHandler()
+    ch.setLevel(logging.INFO)
+    logger.addHandler(ch)
 
 def load(request ='from_disk', path=None,verbose=False,):
     '''
@@ -158,10 +163,7 @@ def load(request ='from_disk', path=None,verbose=False,):
     spark_started = True
 
     if verbose:
-        logger.setLevel(logging.INFO)
-        ch = logging.StreamHandler()
-        ch.setLevel(logging.INFO)
-        logger.addHandler(ch)
+        enable_verbose()
 
     try:
 
@@ -506,7 +508,7 @@ def construct_component_from_pipe_identifier(language, nlp_ref, nlu_ref,path=Non
             constructed_components.append(nlu.Classifier(model=component, nlp_ref='multiclassifierdl'))
         elif isinstance(component, PerceptronModel):
             constructed_components.append(nlu.Classifier(nlp_ref='classifierdl', model=component))
-        elif isinstance(component, ClassifierDl):
+        elif isinstance(component, (ClassifierDl,ClassifierDLModel)):
             constructed_components.append(nlu.Classifier(nlp_ref='classifierdl', model=component))
         elif isinstance(component, UniversalSentenceEncoder):
             constructed_components.append(nlu.Embeddings(model=component, nlp_ref='use'))
@@ -643,7 +645,7 @@ def construct_component_from_identifier(language, component_type='', dataset='',
         elif any('clean' in x or 'stopword' in x for x in [nlp_ref, nlu_ref, dataset, component_type]):
             return nlu.StopWordsCleaner(language=language, get_default=False, nlp_ref=nlp_ref)
         elif any('sentence_detector' in x for x in [nlp_ref, nlu_ref, dataset, component_type]):
-            return NLUSentenceDetector(nlu_ref=nlu_ref, nlp_ref=nlp_ref)
+            return NLUSentenceDetector(nlu_ref=nlu_ref, nlp_ref=nlp_ref, language=language)
 
         elif any('match' in x for x in [nlp_ref, nlu_ref, dataset, component_type]):
             return Matcher(nlu_ref=nlu_ref, nlp_ref=nlp_ref)

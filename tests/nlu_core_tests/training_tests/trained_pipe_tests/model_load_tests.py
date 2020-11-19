@@ -20,16 +20,18 @@ class PipelineLoadingTests(unittest.TestCase):
         # nlu.load('ner classifier_dl bert') will only give trainable classifier dl
         #
         store_path = '/home/loan/Documents/freelancework/jsl/nlu/4realnlugit/tmp/models'
-        store_path = store_path + '_model'
-        pipe = nlu.load('sentiment')
-        pipe.print_info()
+        # store_path = store_path + '_model'
+        # pipe = nlu.load('sentiment')
+        # pipe.predict('You gotta predict to make a pipe fitted')
+        # pipe.print_info()
         # pipe.save(store_path, overwrite=True)
 
         # loaded_pipe = PipelineModel.load(path=store_path)
-        loaded_pipe = nlu.load(path=store_path)
-        df = loaded_pipe.predict("I love loading models from hdd")
+        pipe = nlu.load(path=store_path,verbose=True)
+        df = pipe.predict("I love loading models from hdd")
         print('huzza!')
         print(df)
+        print(df.columns)
 
         # nlu.load('emotion').save(store_path)
         #

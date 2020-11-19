@@ -56,7 +56,7 @@ class BasePipe(dict):
         :param nlu_reference: nlu reference from which is component stemmed
         :return: None
         '''
-
+        if nlu_reference == 'default_name' : return
         model_meta = nlu.extract_classifier_metadata_from_nlu_ref(nlu_reference)
         can_use_name = False
         new_output_name = model_meta[0]

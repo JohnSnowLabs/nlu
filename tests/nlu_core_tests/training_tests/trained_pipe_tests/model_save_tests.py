@@ -38,8 +38,8 @@ class PipelineSavingTests(unittest.TestCase):
 
         test_path = '/home/loan/Documents/freelancework/jsl/nlu/4realnlugit/tests/datasets/news_category_test.csv'
         train_df = pd.read_csv(test_path)
-        train_df.columns = ['y','x']
-        pipe = nlu.load('train.classifier emotion',verbose=True,)
+        train_df.columns = ['y','text']
+        pipe = nlu.load('train.classifier',verbose=True,)
         fitted_pipe = pipe.fit(train_df)
         fitted_pipe.save(store_path, overwrite=True)
 

@@ -17,8 +17,8 @@ class ClassifierDlTests(unittest.TestCase):
         # train_path = '/home/loan/Documents/freelancework/jsl/nlu/4realnlugit/tests/datasets/news_category_train.csv'
         test_df = pd.read_csv(test_path)
         train_df = pd.read_csv(test_path)
-        train_df.columns = ['y','x']
-        test_df.columns = ['y','x']
+        train_df.columns = ['y','text']
+        test_df.columns = ['y','text']
         pipe = nlu.load('train.classifier',verbose=True,)
         pipe['classifier_dl'].setMaxEpochs(2)
         fitted_model = pipe.fit(train_df)
