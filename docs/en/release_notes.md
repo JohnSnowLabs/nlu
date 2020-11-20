@@ -13,26 +13,29 @@ modify_date: "2020-06-12"
 <div class="h3-box" markdown="1">
 
 ## 1.0.3 Release Notes 
-We are happy to announce NLU 1.0.3 comes with a lot new features, training classifiers, saving them and loading them offline, enabling running NLU with no internet connection!
-
+We are happy to announce NLU 1.0.3 comes with a lot new features, training classifiers, saving them and loading them offline, enabling running NLU with no internet connection, new notebooks and articles!
 
 ### NLU 1.0.3 New Features
 - Train a Deep Learning classifier in 1 line! The popular [ClassifierDL](https://nlp.johnsnowlabs.com/docs/en/annotators#classifierdl-multi-class-text-classification)
-which can achieve State of the Art results on any multi class text classification problem is now trainable!
+which can achieve state of the art results on any multi class text classification problem is now trainable!
 All it takes is just nlu.load('train.classifier).fit(dataset) . Your dataset can be a Pandas/Spark/Modin/Ray/Dask dataframe and needs to have a column named x for text data and a column named y for labels
 - Saving pipelines to HDD is now possible with nlu.save(path)
-- Loading pipelines from diskis now possible with nlu.load(path=path). 
+- Loading pipelines from disk now possible with nlu.load(path=path). 
 - NLU offline mode: Loading from disk makes running NLU offline now possible, since you can load pipelines/models from your local hard drive instead of John Snow Labs AWS servers.
 
 ### NLU 1.0.3 New Notebooks and Tutorials
-- New collab notebook showcasing nlu training, saving and loading from disk
-- New sentence similarity Notebook and tutorial
-- New Workshop video
+- New colab notebook showcasing nlu training, saving and loading from disk
+- [Sentence Similarity with BERT, Electra and Universal Sentence Encoder Medium Tutorial]()
+- [Sentence Similarity with BERT, Electra and Universal Sentence Encoder](https://colab.research.google.com/drive/1LtOdtXtRJ3_N8kYywPd5k2AJMCGcgAdN?usp=sharing)
+- [Train a Deep Learning Classifier ](https://colab.research.google.com/drive/12FA2TVvvRWw4pRhxDnK32WAzl9dbF6Qw?usp=sharing)
+- [Sentence Detector Notebook Updated](https://colab.research.google.com/drive/1CAXEdRk_q3U5qbMXsxoVyZRwvonKthhF?usp=sharing)
+- [New Workshop video](https://events.johnsnowlabs.com/cs/c/?cta_guid=8b2b188b-92a3-48ba-ad7e-073b384425b0&signature=AAH58kFAHrVT-HfvWFxdTg_lm8reKUdTBw&pageId=25538044150&placement_guid=c659363c-2188-4c86-945f-5cfb7b42fcfc&click=8cd42d22-2f03-4358-a9e8-0d8f9aa33139&hsutk=c7a000001cda197314f90175e307161f&canon=https%3A%2F%2Fevents.johnsnowlabs.com%2Fwebinars&utm_referrer=https%3A%2F%2Fwww.johnsnowlabs.com%2F&portal_id=1794529&redirect_url=APefjpGh4Q9Hy0Mg9Ezy0_kJOOLC3l5QYyJsCSfZc1Lf61qrn2Bk6OQIJj65atZ9zzzrNrxuDPk5EHt94G0ZcIJaP_QMuD_E7fnMeJs4bQrEdLl7HE2MC4WNHGB6t1cqABfjZntS_TYSaj02yJNDf6p7Zaj9OYy0qQCmM8bbeuVgxUe6s5946UqHDsVHrpY0Oa2Fs7DJXIahZsB08hGkVj3qSHIM5vpjsA)
 
 
 ### NLU 1.0.3 Bug fixes
 - Sentence Detector bugfix 
-- 
+
+
 
 
 ## NLU 1.0.2 Release Notes 
