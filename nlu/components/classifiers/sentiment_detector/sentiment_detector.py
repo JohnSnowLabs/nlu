@@ -1,7 +1,7 @@
 import nlu.pipe_components
 import sparknlp
 from sparknlp.annotator import *
-
+SentimentDetectorModel
 
 class Sentiment:
     @staticmethod

@@ -4,6 +4,7 @@ import numpy as np
 from sparknlp.base import *
 import logging
 import nlu
+import inspect
 
 logger = logging.getLogger('nlu')
 import pyspark
@@ -23,6 +24,7 @@ class BasePipe(dict):
         self.raw_text_column = 'text'
         self.raw_text_matrix_slice = 1  # place holder for getting text from matrix
         self.spark_nlp_pipe = None
+        self.has_trainable_components = False
         self.needs_fitting = True
         self.is_fitted = False
         self.output_positions = False  # Wether to putput positions of Features in the final output. E.x. positions of tokens, entities, dependencies etc.. inside of the input document.
@@ -54,7 +56,7 @@ class BasePipe(dict):
         :param nlu_reference: nlu reference from which is component stemmed
         :return: None
         '''
-
+        if nlu_reference == 'default_name' : return
         model_meta = nlu.extract_classifier_metadata_from_nlu_ref(nlu_reference)
         can_use_name = False
         new_output_name = model_meta[0]
@@ -195,18 +197,35 @@ class NLUPipeline(BasePipe):
         text_df = pd.DataFrame(data)
         return sparknlp.start().createDataFrame(data=text_df)
 
+    def verify_all_labels_exist(self,dataset):
+        return True
+        # pass
 
     def fit(self, dataset=None):
-        # Creates Spark Pipeline and fits it
-        if dataset == None:
-            stages = []
-            for component in self.pipe_components:
-                stages.append(component.model)
-            self.is_fitted = True
-            self.spark_estimator_pipe = Pipeline(stages=stages)
+        '''
+        Converts the input Pandas Dataframe into a Spark Dataframe and trains a model on it.
+        :param dataset: The dataset to train on, should have a y column
+        :return: A nlu pipeline with models fitted.
+        '''
+        self.is_fitted = True
+        stages = []
+        for component in self.pipe_components:
+            stages.append(component.model)
+        self.is_fitted = True
+        self.spark_estimator_pipe = Pipeline(stages=stages)
+
+        if isinstance(dataset,pd.DataFrame) :
+            if not self.verify_all_labels_exist(dataset) : return nlu.NluError()
+            self.spark_transformer_pipe = self.spark_estimator_pipe.fit(self.convert_pd_dataframe_to_spark(dataset))
+
+        else :
+            # fit on empty dataframe since no data provided
             self.spark_transformer_pipe = self.spark_estimator_pipe.fit(self.get_sample_spark_dataframe())
 
 
+        return self
+    def convert_pd_dataframe_to_spark(self, data):
+        return nlu.spark.createDataFrame(data)
 #todo rm
     def get_output_level_of_embeddings_provider(self, field_type, field_name):
         '''
@@ -275,7 +294,7 @@ class NLUPipeline(BasePipe):
             return self.get_output_level_of_embeddings_provider(field_type, field_name)  # recursive resolution
 
 
-    def get_field_types_dict(self, sdf, stranger_features):
+    def get_field_types_dict(self, sdf, stranger_features, keep_stranger_features=True):
         """
         @ param sdf: Spark Dataframe which a NLU/SparkNLP pipeline has transformed.
         This function returns a dictionary that maps column names to their spark annotator types.
@@ -285,13 +304,19 @@ class NLUPipeline(BasePipe):
         field_types_dict = {}
 
         for field in sdf.schema.fieldNames():
-            if field in stranger_features: continue
+            logger.info(f'Parsing field for {field}')
+
+            if not keep_stranger_features and field in stranger_features: continue
+            elif field in stranger_features :
+                field_types_dict[field] = 'document'
+                continue
             if field == 'origin_index':
                 field_types_dict[field] = 'document'
                 continue
 
             if field == self.raw_text_column: continue
-            if 'label' in field: continue  # speciel case for input lables
+            # todo label output level inference. fpr mpw , for now label column is always treated as a document level
+            # if 'label' in field: continue  # speciel case for input lables
             # print(field)
             # For empty DF this will crash
             a_row = sdf.select(field + '.annotatorType').take(1)[0]['annotatorType']
@@ -314,7 +339,7 @@ class NLUPipeline(BasePipe):
 
 
     def rename_columns_and_extract_map_values_same_level(self, ptmp, fields_to_rename, same_output_level,
-                                                         stranger_features=[], meta=True):
+                                                         stranger_features=[], meta=False):
         '''
         Extract features of Spark DF after they where exploded it was exploded
         :param ptmp: The dataframe which contains the columns wto be renamed
@@ -657,7 +682,7 @@ class NLUPipeline(BasePipe):
             if field in stranger_features: continue
             if field == self.raw_text_column: continue
             if field == self.output_level: continue
-            if 'label' in field and 'dependency' not in field: continue  # specal case for input labels
+            # if 'label' in field and 'dependency' not in field: continue  # specal case for input labels
 
             f_type = field_dict[field]
             logger.info('Selecting Columns for field=%s of type=%s', field, f_type)
@@ -726,7 +751,7 @@ class NLUPipeline(BasePipe):
 
         if self.output_level == '': self.infer_and_set_output_level()
 
-        field_dict = self.get_field_types_dict(processed, stranger_features)  # map field to type of field
+        field_dict = self.get_field_types_dict(processed, stranger_features,keep_stranger_features)  # map field to type of field
         not_at_same_output_level_fields = []
 
         if self.output_level == 'chunk':
@@ -771,7 +796,7 @@ class NLUPipeline(BasePipe):
                 ptmp=ptmp, fields_to_rename=not_at_same_output_level_fields, same_output_level=False,
                 meta=output_metadata)
 
-        if self.output_level != 'document': final_select_not_at_same_output_level += stranger_features  # <>
+        if keep_stranger_features: final_select_not_at_same_output_level += stranger_features  #
 
         logger.info('Final cleanup select of same level =%s', final_select_same_output_level)
         logger.info('Final cleanup select of different level =%s', final_select_not_at_same_output_level)
@@ -892,7 +917,44 @@ class NLUPipeline(BasePipe):
         :return: None
         '''
 
+    def write_nlu_pipe_info(self,path):
+        '''
+        Writes all information required to load a NLU pipeline from disk to path
+        :param path: path where to store the nlu_info.json
+        :return: True if success, False if failure
+        '''
+        import os
+        f = open(os.path.join(path,'nlu_info.txt'), "w")
+        f.write(self.nlu_reference)
+        f.close()
+        #1. Write all primitive pipe attributes to dict
+        # pipe_data = {
+        #     'has_trainable_components': self.has_trainable_components,
+        #     'is_fitted' : self.is_fitted,
+        #     'light_pipe_configured' : self.light_pipe_configured,
+        #     'needs_fitting':self.needs_fitting,
+        #     'nlu_reference':self.nlu_reference,
+        #     'output_datatype':self.output_datatype,
+        #     'output_different_levels':self.output_different_levels,
+        #     'output_level': self.output_level,
+        #     'output_positions': self.output_positions,
+        #     'pipe_componments': {},
+        #     'pipe_ready':self.pipe_ready,
+        #     'provider': self.provider,
+        #     'raw_text_column': self.raw_text_column,
+        #     'raw_text_matrix_slice': self.raw_text_matrix_slice,
+        #     'spark_nlp_pipe': self.spark_nlp_pipe,
+        #     'spark_non_light_transformer_pipe': self.spark_non_light_transformer_pipe,
+        #     'component_count': len(self)
+        #
+        # }
 
+        #2. Write all component/component_info to dict
+        # for c in self.pipe_components:
+        #     pipe_data['pipe_componments'][c.ma,e]
+        #3. Any additional stuff
+
+        return True
 
     def add_missing_component_if_missing_for_output_level(self):
         '''
@@ -906,18 +968,35 @@ class NLUPipeline(BasePipe):
             else :
                 logger.info('Adding missing sentence Dependency because it is missing for outputlevel=Sentence')
                 self.add_missing_sentence_component()
+    def save(self, path, component='entire_pipeline', overwrite=False):
+        if overwrite:
+            import shutil
+            shutil.rmtree(path,ignore_errors=True)
 
+        if not self.is_fitted and self.has_trainable_components:
+            self.fit()
+            self.is_fitted = True
+        if component == 'entire_pipeline':
+            self.spark_transformer_pipe.save(path)
+            self.write_nlu_pipe_info(path)
+        else:
+            if component in self.keys():
+                self[component].save(path)
+            # else :
+            #     print(f"Error during saving,{component} does not exist in the pipeline.\nPlease use pipe.print_info() to see the references you need to pass save()")
 
+        print(f'Stored model in {path}')
+        # else : print('Please fit untrained pipeline first or predict on a String to save it')
     def predict(self, data, output_level='', positions=False, keep_stranger_features=True, metadata=False,
                 multithread=True, drop_irrelevant_cols=True):
         '''
         Annotates a Pandas Dataframe/Pandas Series/Numpy Array/Spark DataFrame/Python List strings /Python String
 
-        :param data:
-        :param output_level:
-        :param positions:
-        :param keep_stranger_features:
-        :param metadata:weather to keep additonal metadata in final df or not
+        :param data: Data to predict on
+        :param output_level: output level, either document/sentence/chunk/token
+        :param positions: wether to output indexes that map predictions back to position in origin string
+        :param keep_stranger_features: wether to keep columns in the dataframe that are not generated by pandas. I.e. when you s a dataframe with 10 columns and only one of them is named text, the returned dataframe will only contain the text column when set to false
+        :param metadata: wether to keep additonal metadata in final df or not like confidiences of every possible class for preidctions.
         :param multithread: Whether to use multithreading based lightpipeline. In some cases, this may cause errors.
         :param drop_irellevant_cols: Wether to drop cols of different output levels, i.e. when predicting token level and dro_irrelevant_cols = True then chunk, sentence and Doc will be dropped
         :return:
@@ -942,8 +1021,12 @@ class NLUPipeline(BasePipe):
         if output_level == 'sentence' or output_level == 'document':
             self = PipelineQueryVerifier.configure_component_output_levels(self)
             self = PipelineQueryVerifier.check_and_fix_nlu_pipeline(self)
-        self.fit()
 
+
+        if not self.is_fitted :
+            if self.has_trainable_components :
+                self.fit(data)
+            else : self.fit()
         # self.configure_light_pipe_usage(len(data), multithread)
 
         sdf = None
@@ -1111,7 +1194,7 @@ class NLUPipeline(BasePipe):
             fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
             print(exc_type, fname, exc_tb.tb_lineno)
             print(
-                'Stuck? Contact us on Slack! https://join.slack.com/t/spark-nlp/shared_invite/zt-7rd4kw03-7F44zohcrUo0RULCd8rYrw')
+                'Stuck? Contact us on Slack! https://join.slack.com/t/spark-nlp/shared_invite/zt-j5ttxh0z-Fn3lQSG1Z0KpOs_SRxjdyw')
             return None
 
 
@@ -1171,7 +1254,16 @@ class PipelineQueryVerifier():
         3. Check Feature naems in the output
         4. Check wether pipeline needs to be fitted
     '''
-
+    @staticmethod
+    def is_untrained_model(component):
+        '''
+        Check for a given component if it is an embelishment of an traianble model.
+        In this case we will ignore embeddings requirements further down the logic pipeline
+        :param component: Component to check
+        :return: True if it is trainable, False if not
+        '''
+        if 'is_untrained' in dict(inspect.getmembers(component.component_info)).keys() : return True
+        return False
     @staticmethod
     def has_embeddings_requirement(component):
         '''
@@ -1180,6 +1272,7 @@ class PipelineQueryVerifier():
         :param component:  The component to check
         :return: True if the component needs some specifc embedding (i.e.glove, bert, elmo etc..). Otherwise returns False
         '''
+
 
         if type(component) == list or type(component) == set:
             for feature in component:
@@ -1231,17 +1324,18 @@ class PipelineQueryVerifier():
         pipe_requirements = [['sentence',
                               'token']]  # default requirements so we can support all output levels. minimal extra comoputation effort. If we add CHUNK here, we will aalwayshave POS default
         pipe_provided_features = []
+        pipe.has_trainable_components = False
         # pipe_types = [] # list of string identifiers
         for component in pipe.pipe_components:
-
+            trainable = PipelineQueryVerifier.is_untrained_model(component)
+            if trainable : pipe.has_trainable_components = True
             # 1. Get all feature provisions from the pipeline
             logger.info("Getting Missing Feature for component =%s", component.component_info.name)
             if not component.component_info.inputs == component.component_info.outputs:
                 pipe_provided_features.append(
                     component.component_info.outputs)  # edge case for components that provide token and require token and similar cases.
-
             # 2. get all feature requirements for pipeline
-            if PipelineQueryVerifier.has_embeddings_requirement(component):
+            if PipelineQueryVerifier.has_embeddings_requirement(component) and not trainable:
                 # special case for models with embedding requirements. we will modify the output string which then will be resolved by the default component resolver (which will get the correct embedding )
                 if component.component_info.type == 'chunk_embeddings':
                     # there is no ref for Chunk embeddings, so we have a special case here and need to define a default value that will always be used for chunkers
@@ -1275,7 +1369,7 @@ class PipelineQueryVerifier():
         logger.info("Provided columns flat =%s", flat_provisions)
         logger.info("Missing columns no ref flat =%s", missing_components)
         # since embeds are missing, we add embed with reference back
-        if PipelineQueryVerifier.has_embeddings_requirement(missing_components):
+        if PipelineQueryVerifier.has_embeddings_requirement(missing_components) and not trainable:
             missing_components = PipelineQueryVerifier.clean_irrelevant_features(flat_requirements - flat_provisions)
 
         if len(missing_components) == 0:

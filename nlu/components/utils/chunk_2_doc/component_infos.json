@@ -1,1 +1,24 @@
-{"name": "chunk2doc", "description": "todo", "output_level": "document", "outputs": ["new_document"], "inputs": ["chunk_output"], "type": "util", "file_dependencies": {}, "spark_input_column_names": ["chunk_output"], "spark_output_column_names": ["new_document"], "provider": "sparknlp", "license": "open source", "computation_context": "spark", "output_context": "spark"}
+{
+  "name": "chunk2doc",
+  "description": "todo",
+  "trainable": false,
+  "output_level": "document",
+  "outputs": [
+    "new_document"
+  ],
+  "inputs": [
+    "chunk_output"
+  ],
+  "type": "util",
+  "file_dependencies": {},
+  "spark_input_column_names": [
+    "chunk_output"
+  ],
+  "spark_output_column_names": [
+    "new_document"
+  ],
+  "provider": "sparknlp",
+  "license": "open source",
+  "computation_context": "spark",
+  "output_context": "spark"
+}

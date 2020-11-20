@@ -3,11 +3,25 @@ import sparknlp
 from sparknlp.base import *
 from sparknlp.annotator import *
 
-class SentenDetectorDeep:
+class SentenceDetectorDeep:
     @staticmethod
     def get_default_model():
-        return DeepSentenceDetector() \
-            .setInputCols(["document", "token", "ner_chunk"]) \
+        return SentenceDetectorDLModel\
+            .pretrained()\
+            .setInputCols(["document"]) \
             .setOutputCol("sentence") \
-            .setIncludePragmaticSegmenter(True) \
-            .setEndPunctuation([".", "?"])
+
+
+    @staticmethod
+    def get_pretrained_model(name,lang):
+        return SentenceDetectorDLModel.pretrained(name,lang) \
+            .pretrained() \
+            .setInputCols(["document"]) \
+            .setOutputCol("sentence") \
+
+
+    @staticmethod
+    def get_trainable_model():
+        return SentenceDetectorDLApproach \
+            .setInputCol("document") \
+            .setOutputCol("sentence") \

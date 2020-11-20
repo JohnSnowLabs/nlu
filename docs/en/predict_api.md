@@ -105,10 +105,10 @@ nlu.load('ner').predict(['Angela Merkel and Donald Trump dont share many oppinio
 |entities | 	ner_tag | 	embeddings | 
 |--------|--------------|--------------|
 |Angela Merkel | 	PERSON | 	[[-0.563759982585907, 0.26958999037742615, 0.3...,]|
-|Donald Trump | 	PERSON	[[-0.563759982585907, 0.26958999037742615, 0.3...,]|
-|Ashley	| PERSON	[[0.24997000396251678, -0.12275999784469604, -...,]|
-|the Brandenburger Tor | 	FAC	[[0.24997000396251678, -0.12275999784469604, -...,]|
-|Berlin	| GPE	[[0.24997000396251678, -0.12275999784469604, -...,]|
+|Donald Trump | 	PERSON	| [[-0.563759982585907, 0.26958999037742615, 0.3...,]|
+|Ashley	| PERSON	| [[0.24997000396251678, -0.12275999784469604, -...,]|
+|the Brandenburger Tor | 	FAC	| [[0.24997000396251678, -0.12275999784469604, -...,]|
+|Berlin	| GPE	 |[[0.24997000396251678, -0.12275999784469604, -...,]|
 
 </div></div></div><div class="h3-box" markdown="1">
 

@@ -1,5 +1,4 @@
 import sparknlp
-
 class TextMatcher:
     @staticmethod
     def get_default_model():

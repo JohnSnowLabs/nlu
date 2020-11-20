@@ -2,6 +2,7 @@
   "name": "norvig_spell",
   "output_level": "token",
   "description": "todo",
+  "trainable": true,
   "outputs": [
     "token"
   ],

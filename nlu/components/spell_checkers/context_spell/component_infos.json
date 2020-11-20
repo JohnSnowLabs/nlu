@@ -1,1 +1,24 @@
-{"name": "context_spell", "description": "todo", "output_level": "token", "outputs": ["spell"], "inputs": ["token"], "type": "spell_checker", "file_dependencies": {}, "spark_input_column_names": ["token"], "spark_output_column_names": ["spell"], "provider": "sparknlp", "license": "open source", "computation_context": "spark", "output_context": "spark"}
+{
+  "name": "context_spell",
+  "description": "todo",
+  "output_level": "token",
+  "trainable": true,
+  "outputs": [
+    "spell"
+  ],
+  "inputs": [
+    "token"
+  ],
+  "type": "spell_checker",
+  "file_dependencies": {},
+  "spark_input_column_names": [
+    "token"
+  ],
+  "spark_output_column_names": [
+    "spell"
+  ],
+  "provider": "sparknlp",
+  "license": "open source",
+  "computation_context": "spark",
+  "output_context": "spark"
+}

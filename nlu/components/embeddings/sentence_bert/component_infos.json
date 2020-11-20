@@ -2,6 +2,7 @@
   "name": "bert_sentence",
   "description": "todo",
   "output_level": "token",
+  "trainable": false,
   "outputs": [
     "sentence_embeddings"
   ],

@@ -12,7 +12,7 @@ class NameSpace():
     actions = ['tokenize', 'sentence', 'embed', 'embed_sentence', 'embed_chunk','classify', 'chunk', 'pos', 'ner',
                'dep', 'dep.untyped', 'lemma', 'match', 'norm', 'spell','stem', 'stopwords','clean','ngram',
                ]
-
+    trainable_model_references = ['classifier_dl']
 
 
 
@@ -20,6 +20,30 @@ class NameSpace():
     NLU REFERENCE FORMATS : 
     <lang>.<action>.<
     '''
+    trainable_models = {
+# 1 clasifier wraps iuip multiple algos (multi class/class/sentiment)
+# Columns should be X and y, ML style
+        #
+        # map NLU references to NLP approaches
+    'train.deep_sentence_detector' : '' ,
+    'train.sentence_detector' : '' , # deep sentence detector alias
+    'train.symmetric_spell' : '' ,
+    'train.context_spell' : '' ,
+    'train.spell' : '' , ## context spell alias
+    'train.norvig_spell' : '' ,
+    'train.unlabeled_dependency_parser' : '' ,
+    'train.labeled_dependency_parser' : '' ,
+    'train.classifier_dl' : '' ,
+    'train.classifier' : '' , #classifier DL alias
+    'train.named_entity_recognizer_dl' : '' ,
+    'train.ner' : '' , # ner DL alias
+    'train.vivekn_sentiment' : '' ,
+    'train.sentiment_dl' : '' ,
+    'train.sentiment' : '' , #sent DL alias
+    'train.pos' : '' ,
+    'train.multi_classifier' : '' ,
+
+    }
 
     #Reference to all datasets for which we have pretrained models
     datasets = []
@@ -92,9 +116,11 @@ class NameSpace():
         'ner.dl.bert': ('ner_dl_bert', 'model'),  # points ner bert
         'ner.onto.glove.6B_100d': ('onto_100', 'model'),
         'ner.onto.glove.6B_300d': ('onto_300', 'model'),  # this uses multi lang embeds!
-        'sentence_detector': ('ner_dl_sentence', 'model'),
-        'sentence_detector.deep': ('ner_dl_sentence', 'model'), #ALIAS
-        # 'sentence_detector.pragmatic': ('ner_dl_sentence', 'model'), # todo
+        'sentence_detector': ('sentence_detector_dl', 'model'),
+        'sentence_detector.deep': ('sentence_detector_dl', 'model'), #ALIAS
+
+
+        'sentence_detector.pragmatic': ('pragmatic_sentence_detector', 'model'), # todo
 
         # 'spell.symmetric': ('spellcheck_sd', 'model'), # TODO erronous
         'spell.norivg': ('spellcheck_norvig', 'model'),
@@ -898,7 +924,8 @@ class NameSpace():
             'xx.embed_sentence': 'sent_bert_multi_cased',
             'xx.embed_sentence.bert': 'sent_bert_multi_cased',
             'xx.embed_sentence.bert.cased': 'sent_bert_multi_cased',
-            'xx.embed_sentence.labse': 'labse'
+            'xx.embed_sentence.labse': 'labse',
+            'xx.sentence_detector' : 'sentence_detector_dl'
 
         },
 
