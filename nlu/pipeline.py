@@ -201,10 +201,13 @@ class NLUPipeline(BasePipe):
         return True
         # pass
 
-    def fit(self, dataset=None):
+    def fit(self, dataset=None, dataset_path=None):
+        # TODO typecheck the param, if dataset is PD.DATAFRAME it is classifier
+        # if dataset is  string with '/' in it, its dataset path!
         '''
         Converts the input Pandas Dataframe into a Spark Dataframe and trains a model on it.
-        :param dataset: The dataset to train on, should have a y column
+        :param dataset: The pandas dataset to train on, should have a y column for label and 'text' column for text features
+        :param dataset_path: Path to a CONLL2013 format dataset. It will be read for NER and POS training.
         :return: A nlu pipeline with models fitted.
         '''
         self.is_fitted = True
@@ -214,7 +217,13 @@ class NLUPipeline(BasePipe):
         self.is_fitted = True
         self.spark_estimator_pipe = Pipeline(stages=stages)
 
-        if isinstance(dataset,pd.DataFrame) :
+        if dataset_path != None :
+            from sparknlp.training import CoNLL
+
+            s_df = CoNLL().readDataset(self.spark,path=dataset_path)
+            self.spark_transformer_pipe = self.spark_estimator_pipe.fit(s_df)
+
+        elif isinstance(dataset,pd.DataFrame) :
             if not self.verify_all_labels_exist(dataset) : return nlu.NluError()
             self.spark_transformer_pipe = self.spark_estimator_pipe.fit(self.convert_pd_dataframe_to_spark(dataset))
 
