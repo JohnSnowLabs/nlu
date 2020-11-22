@@ -454,7 +454,8 @@ def construct_trainable_component_from_identifier(nlu_ref,nlp_ref):
         if nlu_ref in ['train.ner','train.named_entity_recognizer_dl'] :
             return nlu.Classifier(annotator_class = 'ner', trainable=True)
         if nlu_ref in ['train.sentiment_dl','train.sentiment'] :
-            pass
+            return nlu.Classifier(annotator_class = 'sentiment_dl', trainable=True)
+
         if nlu_ref in ['train.vivekn_sentiment'] :
             pass
         if nlu_ref in ['train.pos'] :

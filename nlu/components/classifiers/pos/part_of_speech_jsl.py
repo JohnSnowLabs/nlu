@@ -21,5 +21,5 @@ class PartOfSpeechJsl:
         return PerceptronApproach() \
             .setInputCols(["token", "sentence"]) \
             .setOutputCol("pos") \
-            .setPosCol("pos_train") \
+            .setPosCol("y") \
             .setNIterations(2)

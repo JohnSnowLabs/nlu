@@ -217,11 +217,16 @@ class NLUPipeline(BasePipe):
         self.is_fitted = True
         self.spark_estimator_pipe = Pipeline(stages=stages)
 
-        if dataset_path != None :
+        if dataset_path != None and 'ner' in self.nlu_ref:
             from sparknlp.training import CoNLL
 
             s_df = CoNLL().readDataset(self.spark,path=dataset_path)
-            self.spark_transformer_pipe = self.spark_estimator_pipe.fit(s_df)
+            self.spark_transformer_pipe = self.spark_estimator_pipe.fit(s_df.withColumnRenamed('label','y'))
+
+        elif dataset_path != None and 'pos' in self.nlu_ref:
+            from sparknlp.training import POS
+            s_df = POS().readDataset(self.spark,path=dataset_path)
+            self.spark_transformer_pipe = self.spark_estimator_pipe.fit(s_df.withColumnRenamed('label','y'))
 
         elif isinstance(dataset,pd.DataFrame) :
             if not self.verify_all_labels_exist(dataset) : return nlu.NluError()

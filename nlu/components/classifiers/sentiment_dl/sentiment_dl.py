@@ -22,8 +22,8 @@ class SentimentDl:
         return SentimentDLApproach() \
             .setInputCols("sentence_embeddings") \
             .setOutputCol("category") \
-            .setLabelColumn("label") \
-            .setBatchSize(64) \
-            .setMaxEpochs(20) \
+            .setLabelColumn("y") \
+            .setBatchSize(2) \
+            .setMaxEpochs(2) \
             .setLr(0.5) \
             .setDropout(0.5)
