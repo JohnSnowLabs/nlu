@@ -411,7 +411,7 @@ class NLUPipeline(BasePipe):
                         if key == 'sentence' and 'language' in field: continue
                         if key == 'chunk' and 'entities' in field: continue
                         if key == 'sentence' and 'entities' in field: continue
-                        if field == 'entities.metadata' : new_fields.append(new_field.replace('metadata','confidence'))
+                        if field == 'entities.metadata' or field =='ner.metadata': new_fields.append(new_field.replace('metadata','confidence'))
                         else : new_fields.append(new_field.replace('metadata', key + '_confidence'))
                         if new_fields[-1] == 'entities_entity': new_fields[-1] = 'ner_tag'
                         ptmp = ptmp.withColumn(new_fields[-1],pyspark_col(('res.' + str(fields_to_rename.index(field)) + '.' + key)))
@@ -712,6 +712,8 @@ class NLUPipeline(BasePipe):
                     same_output_level_fields.append(field + '.embeddings')
                 if 'entities' in field:
                     same_output_level_fields.append(field + '.metadata')
+                if 'ner' in field:
+                    same_output_level_fields.append(field + '.metadata')
                 if 'category' in f_type or 'spell' in f_type or 'sentiment' in f_type or 'class' in f_type or 'language' in f_type or 'keyword' in f_type:
                     same_output_level_fields.append(field + '.metadata')
             else:
@@ -728,7 +730,8 @@ class NLUPipeline(BasePipe):
                     not_at_same_output_level_fields.append(field + '.metadata')
                 if 'entities' in field:
                     not_at_same_output_level_fields.append(field + '.metadata')
-
+                if 'ner' in field:
+                    not_at_same_output_level_fields.append(field + '.metadata')
         if self.output_level == 'document':
             # explode stranger features if output level is document
             # same_output_level_fields =list(set( same_output_level_fields + stranger_features))
