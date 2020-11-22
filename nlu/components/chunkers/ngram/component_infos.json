@@ -1,1 +1,25 @@
-{"name": "ngram", "description": "todo", "output_level": "chunk", "outputs": ["ngrams"], "inputs": ["token", "pos"], "type": "chunker", "file_dependencies": {}, "spark_input_column_names": ["token"], "spark_output_column_names": ["ngrams"], "provider": "sparknlp", "license": "open source", "computation_context": "spark", "output_context": "spark"}
+{
+  "name": "ngram",
+  "description": "todo",
+  "output_level": "chunk",
+  "trainable": false,
+  "outputs": [
+    "ngrams"
+  ],
+  "inputs": [
+    "token",
+    "pos"
+  ],
+  "type": "chunker",
+  "file_dependencies": {},
+  "spark_input_column_names": [
+    "token"
+  ],
+  "spark_output_column_names": [
+    "ngrams"
+  ],
+  "provider": "sparknlp",
+  "license": "open source",
+  "computation_context": "spark",
+  "output_context": "spark"
+}

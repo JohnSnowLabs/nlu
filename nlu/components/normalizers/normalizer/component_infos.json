@@ -1,1 +1,24 @@
-{"name": "normalizer", "description": "todo", "output_level": "token", "outputs": ["normalized"], "inputs": ["token"], "type": "normalizer", "file_dependencies": {}, "spark_input_column_names": ["token"], "spark_output_column_names": ["normalized"], "provider": "sparknlp", "license": "open source", "computation_context": "spark", "output_context": "spark"}
+{
+  "name": "normalizer",
+  "description": "todo",
+  "output_level": "token",
+  "trainable": false,
+  "outputs": [
+    "normalized"
+  ],
+  "inputs": [
+    "token"
+  ],
+  "type": "normalizer",
+  "file_dependencies": {},
+  "spark_input_column_names": [
+    "token"
+  ],
+  "spark_output_column_names": [
+    "normalized"
+  ],
+  "provider": "sparknlp",
+  "license": "open source",
+  "computation_context": "spark",
+  "output_context": "spark"
+}

@@ -2,6 +2,7 @@
   "name": "vivekn_sentiment",
   "output_level": "sentence",
   "description": "todo",
+  "trainable": true,
   "outputs": [
     "sentiment"
   ],

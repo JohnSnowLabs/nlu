@@ -2,6 +2,7 @@
   "name": "language_detector",
   "output_level": "document",
   "description": "todo",
+  "trainable": false,
   "outputs": [
     "language"
   ],

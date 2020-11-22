@@ -1,1 +1,26 @@
-{"name": "glove", "description": "todo", "output_level": "token", "outputs": ["word_embeddings"], "inputs": ["document", "token"], "type": "word_embeddings", "file_dependencies": {}, "spark_input_column_names": ["document", "token"], "spark_output_column_names": ["glove_embeddings"], "provider": "sparknlp", "license": "open source", "computation_context": "spark", "output_context": "spark"}
+{
+  "name": "glove",
+  "description": "todo",
+  "output_level": "token",
+  "trainable": false,
+  "outputs": [
+    "word_embeddings"
+  ],
+  "inputs": [
+    "document",
+    "token"
+  ],
+  "type": "word_embeddings",
+  "file_dependencies": {},
+  "spark_input_column_names": [
+    "document",
+    "token"
+  ],
+  "spark_output_column_names": [
+    "glove_embeddings"
+  ],
+  "provider": "sparknlp",
+  "license": "open source",
+  "computation_context": "spark",
+  "output_context": "spark"
+}

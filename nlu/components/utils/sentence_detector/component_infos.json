@@ -1,6 +1,7 @@
 {
   "name": "sentence_detector",
   "output_level": "sentence",
+  "trainable": false,
   "description": "todo",
   "outputs": [
     "sentence"

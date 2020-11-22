@@ -14,13 +14,12 @@ modify_date: "2019-05-16"
 Checkout the following notebooks for examples on how to work with NLU.
 
 ## NLU Applications Example
-
-- [6 Wordembeddings at in 1 line with T-SNE plotting](https://colab.research.google.com/drive/1DBk55f9iERI9BDA4kmZ8yO6J65jGmcEA?usp=sharing)
-
+- [Sentence Similarity with Multiple Sentence Embeddings](https://colab.research.google.com/drive/1LtOdtXtRJ3_N8kYywPd5k2AJMCGcgAdN?usp=sharing)
+- [Train a Deep Learning Classifier ](https://colab.research.google.com/drive/12FA2TVvvRWw4pRhxDnK32WAzl9dbF6Qw?usp=sharing)
+- [6 Wordembeddings in 1 line with T-SNE plotting](https://colab.research.google.com/drive/1DBk55f9iERI9BDA4kmZ8yO6J65jGmcEA?usp=sharing)
 </div><div class="h3-box" markdown="1">
 
 ## NLU Demos on Datasets
-# NLU Applications Example
 - [6 Wordembeddings at in 1 line with T-SNE plotting](https://colab.research.google.com/drive/1DBk55f9iERI9BDA4kmZ8yO6J65jGmcEA?usp=sharing)
 
 - [Kaggle Twitter Airline Sentiment Analysis NLU demo](https://www.kaggle.com/kasimchristianloan/nlu-sentiment-airline-demo)

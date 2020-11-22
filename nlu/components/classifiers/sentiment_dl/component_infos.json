@@ -2,6 +2,7 @@
   "name": "sentiment_dl",
   "output_level": "sentence",
   "description": "todo",
+  "trainable": true,
   "outputs": [
     "category"
   ],

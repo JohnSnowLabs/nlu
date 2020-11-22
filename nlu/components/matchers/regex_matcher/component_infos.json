@@ -1,1 +1,28 @@
-{"name": "regex_matcher", "description": "todo", "output_level": "token", "outputs": ["regex_entity"], "inputs": ["document", "token"], "type": "selector", "file_dependencies": {"regex_rules.txt": "path_to_regex_rules"}, "spark_input_column_names": ["document", "token"], "spark_output_column_names": ["regex_entity"], "provider": "sparknlp", "license": "open source", "computation_context": "spark", "output_context": "spark"}
+{
+  "name": "regex_matcher",
+  "description": "todo",
+  "output_level": "token",
+  "trainable": false,
+  "outputs": [
+    "regex_entity"
+  ],
+  "inputs": [
+    "document",
+    "token"
+  ],
+  "type": "selector",
+  "file_dependencies": {
+    "regex_rules.txt": "path_to_regex_rules"
+  },
+  "spark_input_column_names": [
+    "document",
+    "token"
+  ],
+  "spark_output_column_names": [
+    "regex_entity"
+  ],
+  "provider": "sparknlp",
+  "license": "open source",
+  "computation_context": "spark",
+  "output_context": "spark"
+}

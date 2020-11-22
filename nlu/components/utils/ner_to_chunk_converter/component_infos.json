@@ -1,6 +1,7 @@
 {
   "name": "NerToChunkConverter",
   "description": "todo",
+  "trainable": false,
   "output_level": "chunk",
   "outputs": [
     "entities"

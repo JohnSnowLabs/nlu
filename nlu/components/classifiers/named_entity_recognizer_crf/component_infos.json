@@ -1,1 +1,32 @@
-{"name": "named_entity_recognizer_crf", "description": "todo", "output_level": "token", "outputs": ["ner"], "inputs": ["sentence", "token", "pos", "label", "word_embeddings"], "type": "classifier", "file_dependencies": {}, "spark_input_column_names": ["sentence", "token", "pos", "label", "word_embeddings"], "spark_output_column_names": ["ner"], "provider": "sparknlp", "license": "open source", "computation_context": "spark", "output_context": "spark"}
+{
+  "name": "named_entity_recognizer_crf",
+  "description": "todo",
+  "output_level": "token",
+  "trainable": false,
+  "outputs": [
+    "ner"
+  ],
+  "inputs": [
+    "sentence",
+    "token",
+    "pos",
+    "label",
+    "word_embeddings"
+  ],
+  "type": "classifier",
+  "file_dependencies": {},
+  "spark_input_column_names": [
+    "sentence",
+    "token",
+    "pos",
+    "label",
+    "word_embeddings"
+  ],
+  "spark_output_column_names": [
+    "ner"
+  ],
+  "provider": "sparknlp",
+  "license": "open source",
+  "computation_context": "spark",
+  "output_context": "spark"
+}

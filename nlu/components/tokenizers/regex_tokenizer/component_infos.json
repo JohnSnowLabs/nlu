@@ -1,6 +1,7 @@
 {
   "name": "regex_tokenizer",
   "description": "todo",
+  "trainable": false,
   "output_level": "token",
   "outputs": [
     "token"

@@ -1,1 +1,26 @@
-{"name": "yake", "output_level": "token", "description": "todo", "outputs": ["keywords"], "inputs": ["token"], "type": "classifier", "file_dependencies": {"ner-corpus": " aws.com/123"}, "spark_input_column_names": ["token"], "spark_output_column_names": ["keywords"], "provider": "sparknlp", "license": "open source", "computation_context": "spark", "output_context": "spark"}
+{
+  "name": "yake",
+  "output_level": "token",
+  "description": "todo",
+  "trainable": false,
+  "outputs": [
+    "keywords"
+  ],
+  "inputs": [
+    "token"
+  ],
+  "type": "classifier",
+  "file_dependencies": {
+    "ner-corpus": " aws.com/123"
+  },
+  "spark_input_column_names": [
+    "token"
+  ],
+  "spark_output_column_names": [
+    "keywords"
+  ],
+  "provider": "sparknlp",
+  "license": "open source",
+  "computation_context": "spark",
+  "output_context": "spark"
+}

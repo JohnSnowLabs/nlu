@@ -1,1 +1,28 @@
-{"name": "deep_sentence_detector", "description": "todo", "output_level": "sentence", "outputs": ["sentence"], "inputs": ["document", "token", "ner_con"], "type": "util", "file_dependencies": {}, "spark_input_column_names": ["document", "token", "ner_con"], "spark_output_column_names": ["sentence"], "provider": "sparknlp", "license": "open source", "computation_context": "spark", "output_context": "spark"}
+{
+  "name": "deep_sentence_detector",
+  "description": "todo",
+  "trainable": true,
+  "output_level": "sentence",
+  "outputs": [
+    "sentence"
+  ],
+  "inputs": [
+    "document",
+    "token",
+    "ner_con"
+  ],
+  "type": "util",
+  "file_dependencies": {},
+  "spark_input_column_names": [
+    "document",
+    "token",
+    "ner_con"
+  ],
+  "spark_output_column_names": [
+    "sentence"
+  ],
+  "provider": "sparknlp",
+  "license": "open source",
+  "computation_context": "spark",
+  "output_context": "spark"
+}
