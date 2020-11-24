@@ -523,7 +523,9 @@ class NLUPipeline(BasePipe):
                 for key in keys_in_metadata:
                     # we cant skip getting  key values for everything, even if meta=false. This is because we need to get the greatest of all confidence values , for this we must unpack them first..
                     if key =='word' and field =='ner.metadata' : continue # irrelevant metadata in the for the word key
-                    if field == 'entities.metadata' or field == 'sentiment.metadata'   : new_fields.append(new_field.replace('metadata','confidence'))
+                    if field == 'entities.metadata' or field == 'sentiment.metadata' or field =='ner.metadata':
+
+                        new_fields.append(new_field.replace('metadata','confidence'))
                     else : new_fields.append(new_field.replace('metadata', key + '_confidence'))
 
                     # entities_entity
