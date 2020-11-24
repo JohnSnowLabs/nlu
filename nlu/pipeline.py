@@ -562,6 +562,8 @@ class NLUPipeline(BasePipe):
                     # Assuming we have only 1 confidence value per Column. If here are Multiple then...(?)
                     # We gotta get the max confidence column, remove all other cols for selection
                     if field == 'entities.metadata': continue
+                    if field == 'ner.metadata': continue
+
                     if field == 'keywords.metadata': continue  # We dont want to max for multiple keywords. Also it will change the name from score to confidence of the final column
 
                     # if field ==
@@ -588,6 +590,9 @@ class NLUPipeline(BasePipe):
 
             if field == 'entities_result':
                 ptmp = ptmp.withColumn('entities_result', ptmp['entities.result'].cast(ArrayType(StringType())))  #
+
+
+
             ptmp = ptmp.withColumn(new_field, ptmp[field])  # get the outputlevel results row by row
             # ptmp = ptmp.withColumnRenamed(field,new_field)  # EXPERIMENTAL engine test, only works sometimes since it can break dataframe struct
             logger.info(f'Renaming non exploded field  : nr={i} , original_name={field} to new_name={new_field}')
@@ -803,6 +808,8 @@ class NLUPipeline(BasePipe):
         ptmp = sdf.withColumn("tmp", arrays_zip(*same_output_level_fields)).withColumn("res", explode('tmp'))
         final_select_not_at_same_output_level = []
 
+
+        # TODO THIS METHOD DESTROYS ner.metadata!!! and confidenzzz goneee!
         ptmp, final_select_same_output_level = self.rename_columns_and_extract_map_values_same_level(ptmp=ptmp,
                                                                                                      fields_to_rename=same_output_level_fields,
                                                                                                      same_output_level=True,
