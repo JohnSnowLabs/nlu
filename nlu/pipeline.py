@@ -522,6 +522,7 @@ class NLUPipeline(BasePipe):
                 new_fields = []
                 for key in keys_in_metadata:
                     # we cant skip getting  key values for everything, even if meta=false. This is because we need to get the greatest of all confidence values , for this we must unpack them first..
+                    if key =='word' and field =='ner.metadata' : continue # irrelevant metadata in the for the word key
                     if field == 'entities.metadata' or field == 'sentiment.metadata'   : new_fields.append(new_field.replace('metadata','confidence'))
                     else : new_fields.append(new_field.replace('metadata', key + '_confidence'))
 
@@ -542,16 +543,19 @@ class NLUPipeline(BasePipe):
                         array_map_values = udf(lambda z: extract_map_values_str(z), ArrayType(StringType()))
                         ptmp.withColumn(new_fields[-1], array_map_values(field)).select(expr(f'{new_fields[-1]}[0]'))
                         ptmp = ptmp.withColumn(new_fields[-1], array_map_values(field))
-                    else:
-                        # EXPERIMENTAL Extration, should work for all FloatTypes?
+                    elif field == 'ner.metadata' and key =='confidence' :
+                        array_map_values = udf(lambda z: extract_map_values_float(z), ArrayType(FloatType()))
+                        ptmp.withColumn(new_fields[-1], array_map_values(field)).select(f'{new_fields[-1]}')
+                        ptmp = ptmp.withColumn(new_fields[-1], array_map_values(field))
+                        # ptmp = ptmp.withColumn(new_fields[-1], expr(new_fields[-1] + '[0]'))
+                    else :
+                        # EXPERIMENTAL extraction, should work for all FloatTypes?
                         # We apply Expr here because all result ing meta data is inside of a list and just a single element, which we can take out
                         # Exceptions to this rule are entities and metadata, this are scenarios wehre we want all elements from the predictions array ( since it could be multiple keywords/entities)
                         array_map_values = udf(lambda z: extract_map_values_float(z), ArrayType(FloatType()))
                         ptmp.withColumn(new_fields[-1], array_map_values(field)).select(expr(f'{new_fields[-1]}[0]'))
                         ptmp = ptmp.withColumn(new_fields[-1], array_map_values(field))
                         ptmp = ptmp.withColumn(new_fields[-1], expr(new_fields[-1] + '[0]'))
-
-
                     logger.info(f'Created Meta Data for   : nr={i} , original_name={field} with new_name={new_fields[-1]}')
                     columns_for_select.append(new_fields[-1])
 
