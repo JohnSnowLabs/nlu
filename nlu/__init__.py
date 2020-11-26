@@ -135,20 +135,19 @@ def load_nlu_pipe_from_hdd(pipe_path):
     info_path = os.path.join(pipe_path,'nlu_metadata.json')
     pipe = NLUPipeline()
 
-    if is_running_in_databricks():
-        print('Detected Databricks runtime enviroment, ')
-        # if DBFS is in path, keep it but remove it for spark NLP
-        # If DBFS is not in path, add it for NLU but keep as is for spark NLP
-        if pipe_path.startswith('/dbfs/') or pipe_path.startswith('dbfs/'):
-            nlu_path = pipe_path
-            if pipe_path.startswith('/dbfs/'):
-                nlp_path =  pipe_path.replace('/dbfs/','')
+
+    if nlu.is_running_in_databricks() :
+        if path.startswith('/dbfs/') or path.startswith('dbfs/'):
+            nlu_path = path
+            if path.startswith('/dbfs/'):
+                nlp_path =  path.replace('/dbfs','')
             else :
-                nlp_path =  pipe_path.replace('dbfs/','')
+                nlp_path =  path.replace('dbfs','')
 
         else :
-            nlu_path = 'dbfs/' + pipe_path
-            nlp_path = pipe_path
+            nlu_path = 'dbfs/' + path
+            if path.startswith('/') : nlp_path = path
+            else : nlp_path = '/' + path
 
         nlu_ref = read_nlu_info(nlu_path)
         if os.path.exists(pipe_path):
@@ -208,7 +207,6 @@ def load(request ='from_disk', path=None,verbose=False,):
         if path != None :
             logger.info(f'Trying to load nlu pipeline from local hard drive, located at {path}')
             pipe = load_nlu_pipe_from_hdd(path)
-            #todo none ahandkling
             return pipe
         components_requested = request.split(' ')
         pipe = NLUPipeline()

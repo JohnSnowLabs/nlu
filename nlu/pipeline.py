@@ -1004,14 +1004,14 @@ class NLUPipeline(BasePipe):
             if path.startswith('/dbfs/') or path.startswith('dbfs/'):
                 nlu_path = path
                 if path.startswith('/dbfs/'):
-                    nlp_path =  path.replace('/dbfs/','')
+                    nlp_path =  path.replace('/dbfs','')
                 else :
-                    nlp_path =  path.replace('dbfs/','')
+                    nlp_path =  path.replace('dbfs','')
 
             else :
                 nlu_path = 'dbfs/' + path
-                nlp_path = path
-
+                if path.startswith('/') : nlp_path = path
+                else : nlp_path = '/' + path
 
             if not self.is_fitted and self.has_trainable_components:
                 self.fit()
