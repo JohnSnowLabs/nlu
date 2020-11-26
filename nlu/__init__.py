@@ -124,18 +124,56 @@ def read_nlu_info(path):
     return nlu_ref
 
 
-
+def is_running_in_databricks():
+    #Check if the currently running Python Process is running in Databricks or not
+    # If any Enviroment Variable name contains 'DATABRICKS' this will return True, otherwise False
+    for k in os.environ.keys() :
+        if 'DATABRICKS' in k :
+            return True
+    return False
 def load_nlu_pipe_from_hdd(pipe_path):
     info_path = os.path.join(pipe_path,'nlu_metadata.json')
     pipe = NLUPipeline()
+
+    if is_running_in_databricks():
+        print('Detected Databricks runtime enviroment, ')
+        # if DBFS is in path, keep it but remove it for spark NLP
+        # If DBFS is not in path, add it for NLU but keep as is for spark NLP
+        if pipe_path.startswith('/dbfs/') or pipe_path.startswith('dbfs/'):
+            nlu_path = pipe_path
+            if pipe_path.startswith('/dbfs/'):
+                nlp_path =  pipe_path.replace('/dbfs/','')
+            else :
+                nlp_path =  pipe_path.replace('dbfs/','')
+
+        else :
+            nlu_path = 'dbfs/' + pipe_path
+            nlp_path = pipe_path
+
+        nlu_ref = read_nlu_info(nlu_path)
+        if os.path.exists(pipe_path):
+            # if os.path.exists(info_path):
+            pipe_components = construct_component_from_pipe_identifier(nlu_ref,'nlu_ref','hdd',path=nlp_path)
+            # pipe_components = construct_component_from_pipe_identifier('nlu_ref','nlu_ref','hdd',path=pipe_path)
+
+            for c in pipe_components: pipe.add(c, nlu_ref, pretrained_pipe_component=True)
+
+            return pipe
+            # else:
+            #     print(f'Could not find nlu_info.json file in  {pipe_path}')
+            #     return NluError
+        else :
+            print(f'Could not find nlu pipe folder in {pipe_path}')
+            return NluError
+
+
     nlu_ref = read_nlu_info(pipe_path)
     if os.path.exists(pipe_path):
         # if os.path.exists(info_path):
-        pipe_components = construct_component_from_pipe_identifier('nlu_ref','nlu_ref','hdd',path=pipe_path)
+        pipe_components = construct_component_from_pipe_identifier(nlu_ref,'nlu_ref','hdd',path=pipe_path)
         for c in pipe_components: pipe.add(c, nlu_ref, pretrained_pipe_component=True)
 
         return pipe
-            # todo load nlu_metadata.json
         # else:
         #     print(f'Could not find nlu_info.json file in  {pipe_path}')
         #     return NluError

@@ -8,7 +8,7 @@ class PipelineLoadingTests(unittest.TestCase):
         # trainable components into the pipe
         # nlu.load('ner classifier_dl bert') will only give trainable classifier dl
         #
-        store_path = '/home/loan/Documents/freelancework/jsl/nlu/4realnlugit/tmp/models'
+        store_path = '/home/loan/Documents/freelancework/jsl/nlu/4realnlugit/tmp/models1'
         store_path = store_path + '_model'
         nlu.load('emotion').save(store_path,overwrite=True)
         loaded_pipe = nlu.load(path=store_path)

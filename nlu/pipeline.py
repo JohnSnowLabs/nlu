@@ -999,11 +999,34 @@ class NLUPipeline(BasePipe):
                 logger.info('Adding missing sentence Dependency because it is missing for outputlevel=Sentence')
                 self.add_missing_sentence_component()
     def save(self, path, component='entire_pipeline', overwrite=False):
-        if overwrite:
+
+        if nlu.is_running_in_databricks() :
+            if path.startswith('/dbfs/') or path.startswith('dbfs/'):
+                nlu_path = path
+                if path.startswith('/dbfs/'):
+                    nlp_path =  path.replace('/dbfs/','')
+                else :
+                    nlp_path =  path.replace('dbfs/','')
+
+            else :
+                nlu_path = 'dbfs/' + path
+                nlp_path = path
+
+
+            if not self.is_fitted and self.has_trainable_components:
+                self.fit()
+                self.is_fitted = True
+            if component == 'entire_pipeline':
+                self.spark_transformer_pipe.save(nlp_path)
+                self.write_nlu_pipe_info(nlu_path)
+
+
+        if overwrite and not nlu.is_running_in_databricks():
             import shutil
             shutil.rmtree(path,ignore_errors=True)
 
-        if not self.is_fitted and self.has_trainable_components:
+
+        if not self.is_fitted :
             self.fit()
             self.is_fitted = True
         if component == 'entire_pipeline':
