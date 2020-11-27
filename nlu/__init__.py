@@ -137,17 +137,17 @@ def load_nlu_pipe_from_hdd(pipe_path):
 
 
     if nlu.is_running_in_databricks() :
-        if path.startswith('/dbfs/') or path.startswith('dbfs/'):
-            nlu_path = path
-            if path.startswith('/dbfs/'):
-                nlp_path =  path.replace('/dbfs','')
+        if pipe_path.startswith('/dbfs/') or pipe_path.startswith('dbfs/'):
+            nlu_path = pipe_path
+            if pipe_path.startswith('/dbfs/'):
+                nlp_path =  pipe_path.replace('/dbfs','')
             else :
-                nlp_path =  path.replace('dbfs','')
+                nlp_path =  pipe_path.replace('dbfs','')
 
         else :
-            nlu_path = 'dbfs/' + path
-            if path.startswith('/') : nlp_path = path
-            else : nlp_path = '/' + path
+            nlu_path = 'dbfs/' + pipe_path
+            if pipe_path.startswith('/') : nlp_path = pipe_path
+            else : nlp_path = '/' + pipe_path
 
         nlu_ref = read_nlu_info(nlu_path)
         if os.path.exists(pipe_path):
@@ -210,6 +210,7 @@ def load(request ='from_disk', path=None,verbose=False,):
             return pipe
         components_requested = request.split(' ')
         pipe = NLUPipeline()
+        pipe.nlu_ref = request
         for nlu_ref in components_requested:
             nlu_ref.replace(' ', '')
             # component = component.lower()
