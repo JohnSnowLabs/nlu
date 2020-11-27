@@ -86,7 +86,7 @@ class BasePipe(dict):
         # ensure that input/output cols are properly set
         component.__set_missing_model_attributes__()
         # Spark NLP model reference shortcut
-        name = component.component_info.name.replace(' ', '')
+        name = component.component_info.name.replace(' ', '').replace('train.','')
         logger.info(f"Adding {name} to internal pipe")
 
         # Configure output column names of classifiers from category to something more meaningful
