@@ -636,7 +636,6 @@ class NLUPipeline(BasePipe):
         :param component:  to resolve
         :return: resolve component
         '''
-# TODO OUTPUT LEVEL INFERENCE WRONG FOR TRAINED SENTIMENT DL, INPUT DEPENDEND!!!
         for level in self.annotator_levels_model_based.keys():
             for t in self.annotator_levels_model_based[level]:
                 if isinstance(component.model,t) :
