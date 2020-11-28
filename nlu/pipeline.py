@@ -57,6 +57,7 @@ class BasePipe(dict):
         :return: None
         '''
         if nlu_reference == 'default_name' : return
+        nlu_reference = nlu_reference.replace('train.', '')
         model_meta = nlu.extract_classifier_metadata_from_nlu_ref(nlu_reference)
         can_use_name = False
         new_output_name = model_meta[0]
@@ -188,7 +189,7 @@ class NLUPipeline(BasePipe):
         self.all_embeddings = {
         'token' : [AlbertEmbeddings, BertEmbeddings, ElmoEmbeddings, WordEmbeddings,
                    XlnetEmbeddings,WordEmbeddingsModel],
-        'input_dependent' : [SentenceEmbeddings, UniversalSentenceEncoder]
+        'input_dependent' : [SentenceEmbeddings, UniversalSentenceEncoder,BertSentenceEmbeddings]
 
         }
 
@@ -635,7 +636,7 @@ class NLUPipeline(BasePipe):
         :param component:  to resolve
         :return: resolve component
         '''
-
+# TODO OUTPUT LEVEL INFERENCE WRONG FOR TRAINED SENTIMENT DL, INPUT DEPENDEND!!!
         for level in self.annotator_levels_model_based.keys():
             for t in self.annotator_levels_model_based[level]:
                 if isinstance(component.model,t) :
@@ -1517,31 +1518,46 @@ class PipelineQueryVerifier():
         :return: NLU pipeline where the output and input column names of the models have been adjusted to each other
         '''
 
-        all_names_provided = False
 
         for component_to_check in pipe.pipe_components:
-            all_names_provided_for_component = False
             input_columns = set(component_to_check.component_info.spark_input_column_names)
-            logger.info('Checking for component %s wether input %s is satisfied by another component in the pipe ',
-                        component_to_check.component_info.name, input_columns)
+            logger.info(f'Checking for component {component_to_check.component_info.name} wether inputs {input_columns} is satisfied by another component in the pipe ',)
             for other_component in pipe.pipe_components:
                 if component_to_check.component_info.name == other_component.component_info.name: continue
                 output_columns = set(other_component.component_info.spark_output_column_names)
-                input_columns -= output_columns  # set substraction
+                input_columns -= output_columns
 
             input_columns = PipelineQueryVerifier.clean_irrelevant_features(input_columns)
 
-            if len(input_columns) != 0:  # fix missing column name
+            if len(input_columns) != 0 and not pipe.has_trainable_components:  # fix missing column name
                 for missing_column in input_columns:
                     for other_component in pipe.pipe_components:
                         if component_to_check.component_info.name == other_component.component_info.name: continue
                         if other_component.component_info.type == missing_column:
-                            # resolve which setter to use ...
                             # We update the output name for the component which provides our feature
                             other_component.component_info.spark_output_column_names = [missing_column]
                             logger.info('Setting output columns for component %s to %s ',
                                         other_component.component_info.name, missing_column)
                             other_component.model.setOutputCol(missing_column)
+
+            elif len(input_columns) != 0 and  pipe.has_trainable_components:  # fix missing column name
+            # for trainable components, we change their input columns and leave other components outputs unchanged
+                for missing_column in input_columns:
+                    for other_component in pipe.pipe_components:
+                        if component_to_check.component_info.name == other_component.component_info.name: continue
+                        if other_component.component_info.type == missing_column:
+                            # We update the input col name for the componenet that has missing cols
+                            component_to_check.component_info.spark_input_column_names.remove(missing_column)
+                            # component_to_check.component_info.inputs.remove(missing_column)
+                            # component_to_check.component_info.inputs.remove(missing_column)
+                            # component_to_check.component_info.inputs.append(other_component.component_info.spark_output_column_names[0])
+
+                            component_to_check.component_info.spark_input_column_names.append(other_component.component_info.spark_output_column_names[0])
+                            component_to_check.model.setInputCols(component_to_check.component_info.spark_input_column_names)
+
+                            logger.info(f'Setting input col columns for component {component_to_check.component_info.name} to {other_component.component_info.spark_output_column_names[0]} ')
+
+
 
         return pipe
 
@@ -1645,9 +1661,16 @@ class PipelineQueryVerifier():
                 logger.info(f"Configuring C={c.component_info.name}  of Type={type(c.model)}")
                 c.component_info.inputs.remove('document')
                 c.component_info.inputs.append('sentence')
+                # c.component_info.spark_input_column_names.remove('document')
+                # c.component_info.spark_input_column_names.append('sentence')
+                c.model.setInputCols(c.component_info.spark_input_column_names)
+
+            if 'document' in c.component_info.spark_input_column_names and 'sentence' not in c.component_info.spark_input_column_names and 'sentence' not in c.component_info.spark_output_column_names:
                 c.component_info.spark_input_column_names.remove('document')
                 c.component_info.spark_input_column_names.append('sentence')
-                c.model.setInputCols(c.component_info.spark_input_column_names)
+                if c.component_info.type =='sentence_embeddings' :
+                    c.component_info.output_level='sentence'
+
         return pipe
 
     @staticmethod
@@ -1668,9 +1691,16 @@ class PipelineQueryVerifier():
                 logger.info(f"Configuring C={c.component_info.name}  of Type={type(c.model)}")
                 c.component_info.inputs.remove('sentence')
                 c.component_info.inputs.append('document')
+                c.model.setInputCols(c.component_info.spark_input_column_names)
+
+        if 'sentence' in c.component_info.spark_input_column_names and 'document' not in c.component_info.spark_input_column_names:
+                # if 'sentence' in c.component_info.spark_input_column_names : c.component_info.spark_input_column_names.remove('sentence')
                 c.component_info.spark_input_column_names.remove('sentence')
                 c.component_info.spark_input_column_names.append('document')
-                c.model.setInputCols(c.component_info.spark_input_column_names)
+
+                if c.component_info.type =='sentence_embeddings' : #convert sentence embeds to doc
+                    c.component_info.output_level='document'
+
         return pipe
 
     @staticmethod
