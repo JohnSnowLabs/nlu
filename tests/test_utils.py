@@ -62,6 +62,7 @@ def download_dataset(data_url,output_file_name,output_folder,data_dir,):
 def create_path_if_not_exist(path):
     #Check if dir exists, if not create it
     import os
+    print('CWD is', os.getcwd())
     if not os.path.exists(path):
         print('Creating dir',path)
         os.mkdir(path)
