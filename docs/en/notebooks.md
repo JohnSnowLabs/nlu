@@ -13,9 +13,15 @@ modify_date: "2019-05-16"
 
 Checkout the following notebooks for examples on how to work with NLU.
 
+
+## NLU Training Examples
+- [NER training demo](https://colab.research.google.com/drive/1_GwhdXULq45GZkw3157fAOx4Wqo-fmFV?usp=sharing)        
+- [Multi Class Text Classifier Training Demo](https://colab.research.google.com/drive/12FA2TVvvRWw4pRhxDnK32WAzl9dbF6Qw?usp=sharing)         
+- [Sentiment Classification Training Demo](https://colab.research.google.com/drive/1f-EORjO3IpvwRAktuL4EvZPqPr2IZ_g8?usp=sharing)         
+
+
 ## NLU Applications Example
 - [Sentence Similarity with Multiple Sentence Embeddings](https://colab.research.google.com/drive/1LtOdtXtRJ3_N8kYywPd5k2AJMCGcgAdN?usp=sharing)
-- [Train a Deep Learning Classifier ](https://colab.research.google.com/drive/12FA2TVvvRWw4pRhxDnK32WAzl9dbF6Qw?usp=sharing)
 - [6 Wordembeddings in 1 line with T-SNE plotting](https://colab.research.google.com/drive/1DBk55f9iERI9BDA4kmZ8yO6J65jGmcEA?usp=sharing)
 </div><div class="h3-box" markdown="1">
 
