@@ -13,18 +13,49 @@ modify_date: "2020-06-12"
 <div class="h3-box" markdown="1">
 
 ## 1.0.4 Release Notes 
+### Trainable NER and Sentiment Classifier, SOTA in 1 line of code and easy scaling to 100's of Spark nodes
+We are glad to announce NLU 1.0.4 releases the State of the Art breaking Neural Network architecture for NER, Char CNNs - BiLSTM - CRF, with it you can state-of-the-art in most NER datasets, of course in just 1 line of Python code. It is using Spark NLP's very popular [NER DL](https://nlp.johnsnowlabs.com/docs/en/annotators#ner-dl-named-entity-recognition-deep-learning-annotator) under the hood.     
+
+```python
+#fit and predict in 1 line!
+nlu.load('train.ner').fit(dataset).predict(dataset)
+
+
+#fit and predict in 1 line with BERT!
+nlu.load('bert train.ner').fit(dataset).predict(dataset)
+
+
+#fit and predict in 1 line with ALBERT!
+nlu.load('albert train.ner').fit(dataset).predict(dataset)
+
+
+#fit and predict in 1 line with ALBERT!
+nlu.load('albert train.ner').fit(dataset).predict(dataset)
+
+```
+
+
+
+Any NLU pipeline stored can now be loaded as pyspark ML pipeline
+```python
+# Ready for big Data with Spark distributed computing
+import pyspark
+nlu_pipe.save(path)
+pyspark_pipe = pyspark.ml.PipelineModel.load(stored_model_path)
+pyspark_pipe.transform(spark_df)
+```
+
 
 ### NLU 1.0.4 New Features
-- Trainable NER
-- Trainable Sentiment_DL
-- Saved NLU pipeline loadable as Spark pipelines
+- Trainable  [Named Entity Recognizer](https://nlp.johnsnowlabs.com/docs/en/annotators#ner-dl-named-entity-recognition-deep-learning-annotator)
+- NLU pipeline loadable as Spark pipelines
 
 ### NLU 1.0.4 New Notebooks,Tutorials and Docs
-- Trainable NER notebook
-- Trainable Sentiment DL notebook
-- Updated Multi Class Text Classifer Notebook to showcase usage of custom embeddings
-- New NLU Trainable Doc Page
+- [NER training demo](https://colab.research.google.com/drive/1_GwhdXULq45GZkw3157fAOx4Wqo-fmFV?usp=sharing)        
+- [Multi Class Text Classifier Training Demo updated to showcase usage of different Embeddings](https://colab.research.google.com/drive/12FA2TVvvRWw4pRhxDnK32WAzl9dbF6Qw?usp=sharing)         
+- [New Documentation Page on how to train Models with NLU](https://nlu.johnsnowlabs.com/docs/en/training)
 - Databricks Notebook showcasing Scaling with NLU
+
 
 ## NLU 1.0.4 Bug Fixes
 - Fixed a bug that NER token confidences do not appear. They now appear when nlu.load('ner').predict(df, meta=True) is called.
@@ -45,7 +76,7 @@ All it takes is just nlu.load('train.classifier).fit(dataset) . Your dataset can
 
 ### NLU 1.0.3 New Notebooks and Tutorials
 - New colab notebook showcasing nlu training, saving and loading from disk
-- [Sentence Similarity with BERT, Electra and Universal Sentence Encoder Medium Tutorial]()
+- [Sentence Similarity with BERT, Electra and Universal Sentence Encoder Medium Tutorial](https://medium.com/spark-nlp/easy-sentence-similarity-with-bert-sentence-embeddings-using-john-snow-labs-nlu-ea078deb6ebf)
 - [Sentence Similarity with BERT, Electra and Universal Sentence Encoder](https://colab.research.google.com/drive/1LtOdtXtRJ3_N8kYywPd5k2AJMCGcgAdN?usp=sharing)
 - [Train a Deep Learning Classifier ](https://colab.research.google.com/drive/12FA2TVvvRWw4pRhxDnK32WAzl9dbF6Qw?usp=sharing)
 - [Sentence Detector Notebook Updated](https://colab.research.google.com/drive/1CAXEdRk_q3U5qbMXsxoVyZRwvonKthhF?usp=sharing)

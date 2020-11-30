@@ -13,7 +13,7 @@ modify_date: "2020-05-08"
 
 You can fit load a trainable NLU pipeline via nlu.load('train.<model>') you can 
 
-# NER Training
+# Named Entity Recognizer Training. Training
 [NER training demo](https://colab.research.google.com/drive/1_GwhdXULq45GZkw3157fAOx4Wqo-fmFV?usp=sharing)        
 You can train your own custom NER model with an [CoNLL 20003 IOB](https://www.aclweb.org/anthology/W03-0419.pdf) formatted dataset.      
 By default *Glove 100d Token Embeddings* are used as features for the classifier.
@@ -38,27 +38,6 @@ By default *Universal Sentence Encoder Embeddings (USE)* are used as sentence em
 
 ```python
 fitted_pipe = nlu.load('train.classifier').fit(train_df)
-preds = fitted_pipe.predict(train_df)
-```
-
-If you add a nlu sentence embeddings reference, before the train reference, NLU will use that Sentence embeddings instead of the default USE.
-
-```python
-#Train on BERT sentence emebddings
-fitted_pipe = nlu.load('embed_sentence.bert train.classifier').fit(train_df)
-preds = fitted_pipe.predict(train_df)
-```
-
-
-# Sentiment Classifier Training
-[Sentiment Classification Training Demo](https://colab.research.google.com/drive/1f-EORjO3IpvwRAktuL4EvZPqPr2IZ_g8?usp=sharing)         
-
-To train the Binary Sentiment classifier model, you must pass a dataframe with a 'text' column and a 'y' column for the label.
-
-By default *Universal Sentence Encoder Embeddings (USE)* are used as sentence embeddings. 
-
-```python
-fitted_pipe = nlu.load('train.sentiment').fit(train_df)
 preds = fitted_pipe.predict(train_df)
 ```
 
