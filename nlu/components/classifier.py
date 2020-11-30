@@ -27,7 +27,7 @@ class Classifier(SparkNLUComponent):
             if 'sentiment' in annotator_class and 'vivekn' not in annotator_class:
                 from nlu import SentimentDl
                 if trainable : self.model = SentimentDl.get_default_trainable_model()
-                if get_default : self.model = SentimentDl.get_default_model()
+                elif get_default : self.model = SentimentDl.get_default_model()
                 else : self.model = SentimentDl.get_pretrained_model(nlp_ref, language)
             elif 'vivekn' in annotator_class:
                 from nlu import ViveknSentiment

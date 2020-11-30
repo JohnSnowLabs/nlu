@@ -40,7 +40,9 @@ def get_sample_spark_dataframe():
 
 
 
+from os.path import expanduser
 
+import os
 
 def download_dataset(data_url,output_file_name,output_folder,data_dir,):
     import urllib.request
@@ -59,10 +61,19 @@ def download_dataset(data_url,output_file_name,output_folder,data_dir,):
     print('Downloaded dataset to ',download_path)
     return download_path
 
+
+def create_dataset_dir_if_not_exist_and_get_path():
+    root = expanduser('~')
+    dataset_path = root + '/nlu_test_datasets/'
+    if not os.path.exists(dataset_path):
+        print('Creating dir',dataset_path)
+        os.mkdir(dataset_path)
+    return dataset_path
+
+
 def create_path_if_not_exist(path):
     #Check if dir exists, if not create it
     import os
-    print('CWD is', os.getcwd())
     if not os.path.exists(path):
         print('Creating dir',path)
         os.mkdir(path)

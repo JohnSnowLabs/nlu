@@ -1,18 +1,18 @@
 {
   "name": "bert_sentence",
   "description": "todo",
-  "output_level": "token",
+  "output_level": "sentence",
   "trainable": false,
   "outputs": [
     "sentence_embeddings"
   ],
   "inputs": [
-    "document"
+    "sentence"
   ],
-  "type": "word_embeddings",
+  "type": "sentence_embeddings",
   "file_dependencies": {},
   "spark_input_column_names": [
-    "document"
+    "sentence"
   ],
   "spark_output_column_names": [
     "bert_sentence"

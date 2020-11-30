@@ -19,12 +19,18 @@ modify_date: "2020-06-12"
 - Trainable Sentiment_DL
 - Saved NLU pipeline loadable as Spark pipelines
 
-### NLU 1.0.4 New Notebooks and Tutorials
+### NLU 1.0.4 New Notebooks,Tutorials and Docs
 - Trainable NER notebook
 - Trainable Sentiment DL notebook
+- Updated Multi Class Text Classifer Notebook to showcase usage of custom embeddings
+- New NLU Trainable Doc Page
+- Databricks Notebook showcasing Scaling with NLU
 
 ## NLU 1.0.4 Bug Fixes
 - Fixed a bug that NER token confidences do not appear. They now appear when nlu.load('ner').predict(df, meta=True) is called.
+- Fixed a bug that caused some Spark NLP models to not be loaded properly in offline mode
+
+
 
 ## 1.0.3 Release Notes 
 We are happy to announce NLU 1.0.3 comes with a lot new features, training classifiers, saving them and loading them offline, enabling running NLU with no internet connection, new notebooks and articles!

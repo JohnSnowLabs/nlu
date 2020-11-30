@@ -26,4 +26,5 @@ class SentimentDl:
             .setBatchSize(2) \
             .setMaxEpochs(2) \
             .setLr(0.5) \
-            .setDropout(0.5)
+            .setDropout(0.5)\
+            .setEnableOutputLogs(True)

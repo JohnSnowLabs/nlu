@@ -1692,13 +1692,13 @@ class PipelineQueryVerifier():
                 c.component_info.inputs.append('document')
                 c.model.setInputCols(c.component_info.spark_input_column_names)
 
-        if 'sentence' in c.component_info.spark_input_column_names and 'document' not in c.component_info.spark_input_column_names:
-                # if 'sentence' in c.component_info.spark_input_column_names : c.component_info.spark_input_column_names.remove('sentence')
-                c.component_info.spark_input_column_names.remove('sentence')
-                c.component_info.spark_input_column_names.append('document')
+            if 'sentence' in c.component_info.spark_input_column_names and 'document' not in c.component_info.spark_input_column_names:
+                    # if 'sentence' in c.component_info.spark_input_column_names : c.component_info.spark_input_column_names.remove('sentence')
+                    c.component_info.spark_input_column_names.remove('sentence')
+                    c.component_info.spark_input_column_names.append('document')
 
-                if c.component_info.type =='sentence_embeddings' : #convert sentence embeds to doc
-                    c.component_info.output_level='document'
+                    if c.component_info.type =='sentence_embeddings' : #convert sentence embeds to doc
+                        c.component_info.output_level='document'
 
         return pipe
 

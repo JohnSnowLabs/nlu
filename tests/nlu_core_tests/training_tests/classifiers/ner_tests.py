@@ -51,6 +51,8 @@ class NerTrainingTests(unittest.TestCase):
         output_file_name = 'ner_eng.train'
         output_folder = 'ner/'
         data_dir = '../../../datasets/'
+        data_dir = t.create_dataset_dir_if_not_exist_and_get_path()
+        t.create_path_if_not_exist(data_dir + output_file_name)
         conll_data_url = "https://github.com/patverga/torch-ner-nlp-from-scratch/raw/master/data/conll2003/eng.train"
         return t.download_dataset(conll_data_url,output_file_name,output_folder,data_dir)
 
