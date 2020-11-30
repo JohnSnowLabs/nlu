@@ -12,9 +12,9 @@ modify_date: "2020-06-12"
 
 <div class="h3-box" markdown="1">
 
-## 1.0.4 Release Notes 
-### Trainable NER and Sentiment Classifier, SOTA in 1 line of code and easy scaling to 100's of Spark nodes
-We are glad to announce NLU 1.0.4 releases the State of the Art breaking Neural Network architecture for NER, Char CNNs - BiLSTM - CRF, with it you can state-of-the-art in most NER datasets, of course in just 1 line of Python code. It is using Spark NLP's very popular [NER DL](https://nlp.johnsnowlabs.com/docs/en/annotators#ner-dl-named-entity-recognition-deep-learning-annotator) under the hood.     
+## NLU  1.0.4 Release Notes 
+##  John Snow Labs NLU 1.0.4 : Trainable Named Entity Recognizer (NER) , achieve SOTA in 1 line of code and easy scaling to 100's of Spark nodes
+We are glad to announce NLU 1.0.4 releases the State of the Art breaking Neural Network architecture for NER, Char CNNs - BiLSTM - CRF!
 
 ```python
 #fit and predict in 1 line!
@@ -29,8 +29,8 @@ nlu.load('bert train.ner').fit(dataset).predict(dataset)
 nlu.load('albert train.ner').fit(dataset).predict(dataset)
 
 
-#fit and predict in 1 line with ALBERT!
-nlu.load('albert train.ner').fit(dataset).predict(dataset)
+#fit and predict in 1 line with ELMO!
+nlu.load('elmo train.ner').fit(dataset).predict(dataset)
 
 ```
 
