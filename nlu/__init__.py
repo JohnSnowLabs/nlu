@@ -1,4 +1,4 @@
-__version__ = '1.0.2'
+__version__ = '1.0.4'
 
 import sys
 
@@ -124,18 +124,55 @@ def read_nlu_info(path):
     return nlu_ref
 
 
-
+def is_running_in_databricks():
+    #Check if the currently running Python Process is running in Databricks or not
+    # If any Enviroment Variable name contains 'DATABRICKS' this will return True, otherwise False
+    for k in os.environ.keys() :
+        if 'DATABRICKS' in k :
+            return True
+    return False
 def load_nlu_pipe_from_hdd(pipe_path):
     info_path = os.path.join(pipe_path,'nlu_metadata.json')
     pipe = NLUPipeline()
+
+
+    if nlu.is_running_in_databricks() :
+        if pipe_path.startswith('/dbfs/') or pipe_path.startswith('dbfs/'):
+            nlu_path = pipe_path
+            if pipe_path.startswith('/dbfs/'):
+                nlp_path =  pipe_path.replace('/dbfs','')
+            else :
+                nlp_path =  pipe_path.replace('dbfs','')
+
+        else :
+            nlu_path = 'dbfs/' + pipe_path
+            if pipe_path.startswith('/') : nlp_path = pipe_path
+            else : nlp_path = '/' + pipe_path
+
+        nlu_ref = read_nlu_info(nlu_path)
+        if os.path.exists(pipe_path):
+            # if os.path.exists(info_path):
+            pipe_components = construct_component_from_pipe_identifier(nlu_ref,'nlu_ref','hdd',path=nlp_path)
+            # pipe_components = construct_component_from_pipe_identifier('nlu_ref','nlu_ref','hdd',path=pipe_path)
+
+            for c in pipe_components: pipe.add(c, nlu_ref, pretrained_pipe_component=True)
+
+            return pipe
+            # else:
+            #     print(f'Could not find nlu_info.json file in  {pipe_path}')
+            #     return NluError
+        else :
+            print(f'Could not find nlu pipe folder in {pipe_path}')
+            return NluError
+
+
     nlu_ref = read_nlu_info(pipe_path)
     if os.path.exists(pipe_path):
         # if os.path.exists(info_path):
-        pipe_components = construct_component_from_pipe_identifier('nlu_ref','nlu_ref','hdd',path=pipe_path)
+        pipe_components = construct_component_from_pipe_identifier(nlu_ref,'nlu_ref','hdd',path=pipe_path)
         for c in pipe_components: pipe.add(c, nlu_ref, pretrained_pipe_component=True)
 
         return pipe
-            # todo load nlu_metadata.json
         # else:
         #     print(f'Could not find nlu_info.json file in  {pipe_path}')
         #     return NluError
@@ -170,10 +207,10 @@ def load(request ='from_disk', path=None,verbose=False,):
         if path != None :
             logger.info(f'Trying to load nlu pipeline from local hard drive, located at {path}')
             pipe = load_nlu_pipe_from_hdd(path)
-            #todo none ahandkling
             return pipe
         components_requested = request.split(' ')
         pipe = NLUPipeline()
+        pipe.nlu_ref = request
         for nlu_ref in components_requested:
             nlu_ref.replace(' ', '')
             # component = component.lower()
@@ -449,12 +486,13 @@ def construct_trainable_component_from_identifier(nlu_ref,nlp_ref):
         if nlu_ref in ['train.labeled_dependency_parser'] :
             pass
         if nlu_ref in ['train.classifier_dl','train.classifier'] :
-            return nlu.Classifier(annotator_class = 'classifier_dl', trainable='True')
+            return nlu.Classifier(annotator_class = 'classifier_dl', trainable=True)
 
         if nlu_ref in ['train.ner','train.named_entity_recognizer_dl'] :
-            pass
+            return nlu.Classifier(annotator_class = 'ner', trainable=True)
         if nlu_ref in ['train.sentiment_dl','train.sentiment'] :
-            pass
+            return nlu.Classifier(annotator_class = 'sentiment_dl', trainable=True)
+
         if nlu_ref in ['train.vivekn_sentiment'] :
             pass
         if nlu_ref in ['train.pos'] :

@@ -1,8 +1,8 @@
 ---
 layout: docs
 header: true
-title: The NLU Load function
-permalink: /docs/en/load_api
+title: Training Models with NLU
+permalink: /docs/en/training
 key: docs-developers
 modify_date: "2020-05-08"
 ---
@@ -11,76 +11,77 @@ modify_date: "2020-05-08"
 
 <div class="h3-box" markdown="1">
 
-The nlu.load() method takes in one or multiple NLU pipeline, model or component references separated by whitespaces.     
-See [the NLU namespace]( /docs/en/namespace) for an overview of all possible NLU references.     
+You can fit load a trainable NLU pipeline via nlu.load('train.<model>') you can 
 
-NLU  will induce the following reference format for any query to the load method:       
-**language.component_type.dataset.embeddings** i.e.: en.sentiment.twitter.use     
-      
-It is possible to omit many parts of the query and NLU will provide the best possible defaults, like embeddings for choosing a dataset.
-
-The NLU namespace also provides a few aliases which make referencing a model even easier!       
-This makes it possible to get predictions by only referencing the component name       
-Examples for aliases are nlu.load('bert') or nlu.load('sentiment')   
-
-It is possible to omit the language prefix and start the query with :
-**component_type.dataset.embeddings** NLU will automatically set the language to english in this case.
-
-
-**The nlu.load() method returns a NLU pipeline object which provides predictions** :
-```python
-import nlu
-pipeline = nlu.load('sentiment')
-pipeline.predict("I love this Documentation! It's so good!")
-``` 
-**This is equal to:**
-```python
-import nlu
-nlu.load(sentiment).predict("I love this Documentation! It's so good!")
-``` 
-
-</div><div class="h3-box" markdown="1">
-
-## Load Parameter
-The load method provides for now just one parameter **verbose**.
-Setting nlu.load(nlu_reference, verbose=True) will generate log outputs that can be helpful for troubleshooting.   
-If you encounter any errors, please run Verbose mode and post your output on our Github Issues page.    
-
-</div><div class="h3-box" markdown="1">
-
-## Configuring loaded models
-To configure your model or pipeline, first load a NLU component and use the print_components() function.   
-The print outputs tell you at which index of the pipe_components attribute which NLU component is located.   
-Via  setters which are named according to the parameter values a model can be configured
-
+# Named Entity Recognizer Training. Training
+[NER training demo](https://colab.research.google.com/drive/1_GwhdXULq45GZkw3157fAOx4Wqo-fmFV?usp=sharing)        
+You can train your own custom NER model with an [CoNLL 20003 IOB](https://www.aclweb.org/anthology/W03-0419.pdf) formatted dataset.      
+By default *Glove 100d Token Embeddings* are used as features for the classifier.
 
 ```python
-#example for configuring the first element in the pipe
-pipe = nlu.load('en.sentiment.twitter')
-pipe.generate_class_metadata_table()
-document_assembler_model = pipe.pipe_components[0].model
-document_assembler_model.setCleanupMode('inplace')
+train_path = '/content/eng.train'
+fitted_pipe = nlu.load('train.ner').fit(dataset_path=train_path)
 ```
 
-This will print
+If a NLU reference to a Token Embeddings model is added before the train reference, that Token Embedding will be used when training the NER model.
 
-```python 
--------------------------------------At pipe.pipe_components[0].model  : document_assembler with configurable parameters: --------------------------------------
-Param Name [ cleanupMode ] :  Param Info : possible values: disabled, inplace, inplace_full, shrink, shrink_full, each, each_full, delete_full  currently Configured as :  disabled
---------------------------------------------At pipe.pipe_components[1].model  : glove with configurable parameters: --------------------------------------------
-Param Name [ dimension ] :  Param Info : Number of embedding dimensions  currently Configured as :  512
-----------------------------------------At pipe.pipe_components[2].model  : sentiment_dl  with configurable parameters: ----------------------------------------
-Param Name [ threshold ] :  Param Info : The minimum threshold for the final result otherwise it will be neutral  currently Configured as :  0.6
-Param Name [ thresholdLabel ] :  Param Info : In case the score is less than threshold, what should be the label. Default is neutral.  currently Configured as :  neutral
-Param Name [ classes ] :  Param Info : get the tags used to trained this NerDLModel  currently Configured as :  ['positive', 'negative']
+```python
+# Train on BERT embeddigns
+train_path = '/content/eng.train'
+fitted_pipe = nlu.load('bert train.ner').fit(dataset_path=train_path)
 ```
 
-</div><div class="h3-box" markdown="1">
+# Multi Class Text Classifier Training
+[Multi Class Text Classifier Training Demo](https://colab.research.google.com/drive/12FA2TVvvRWw4pRhxDnK32WAzl9dbF6Qw?usp=sharing)         
+To train the Multi Class text classifier model, you must pass a dataframe with a 'text' column and a 'y' column for the label.
+By default *Universal Sentence Encoder Embeddings (USE)* are used as sentence embeddings. 
 
-## Component Namespace
-The NLU name space describes the collection of all models, pipelines and components available in NLU and supported by the nlu.load() method.       
-You can view it on the [Name Space page](https://nlu.johnsnowlabs.com/docs/en/load_api)
+```python
+fitted_pipe = nlu.load('train.classifier').fit(train_df)
+preds = fitted_pipe.predict(train_df)
+```
 
-NLU also provides a few handy functions to gain insight into the NLU namespace.
+If you add a nlu sentence embeddings reference, before the train reference, NLU will use that Sentence embeddings instead of the default USE.
+
+```python
+#Train on BERT sentence emebddings
+fitted_pipe = nlu.load('embed_sentence.bert train.classifier').fit(train_df)
+preds = fitted_pipe.predict(train_df)
+```
+
+
+
+## Saving a NLU pipelien to disk
+
+```python
+train_path = '/content/eng.train'
+fitted_pipe = nlu.load('train.ner').fit(dataset_path=train_path)
+stored_model_path = './models/classifier_dl_trained' 
+fitted_pipe.save(stored_model_path)
+
+```
+
+## Loading a NLU pipeline from disk
+
+```python
+train_path = '/content/eng.train'
+fitted_pipe = nlu.load('train.ner').fit(dataset_path=train_path)
+stored_model_path = './models/classifier_dl_trained' 
+fitted_pipe.save(stored_model_path)
+hdd_pipe = nlu.load(path=stored_model_path)
+```
+
+
+
+## Loading a NLU pipeline as pyspark.ml.PipelineModel
+```python
+import pyspark
+# load the NLU pipeline as pyspark pipeline
+pyspark_pipe = pyspark.ml.PipelineModel.load(stored_model_path)
+# Generate spark Df and transform it with the pyspark Pipeline
+s_df = spark.createDataFrame(df)
+pyspark_pipe.transform(s_df).show()
+```
+
 
 </div></div>

@@ -57,6 +57,7 @@ class BasePipe(dict):
         :return: None
         '''
         if nlu_reference == 'default_name' : return
+        nlu_reference = nlu_reference.replace('train.', '')
         model_meta = nlu.extract_classifier_metadata_from_nlu_ref(nlu_reference)
         can_use_name = False
         new_output_name = model_meta[0]
@@ -86,7 +87,7 @@ class BasePipe(dict):
         # ensure that input/output cols are properly set
         component.__set_missing_model_attributes__()
         # Spark NLP model reference shortcut
-        name = component.component_info.name.replace(' ', '')
+        name = component.component_info.name.replace(' ', '').replace('train.','')
         logger.info(f"Adding {name} to internal pipe")
 
         # Configure output column names of classifiers from category to something more meaningful
@@ -188,7 +189,7 @@ class NLUPipeline(BasePipe):
         self.all_embeddings = {
         'token' : [AlbertEmbeddings, BertEmbeddings, ElmoEmbeddings, WordEmbeddings,
                    XlnetEmbeddings,WordEmbeddingsModel],
-        'input_dependent' : [SentenceEmbeddings, UniversalSentenceEncoder]
+        'input_dependent' : [SentenceEmbeddings, UniversalSentenceEncoder,BertSentenceEmbeddings]
 
         }
 
@@ -201,10 +202,13 @@ class NLUPipeline(BasePipe):
         return True
         # pass
 
-    def fit(self, dataset=None):
+    def fit(self, dataset=None, dataset_path=None):
+        # TODO typecheck the param, if dataset is PD.DATAFRAME it is classifier
+        # if dataset is  string with '/' in it, its dataset path!
         '''
         Converts the input Pandas Dataframe into a Spark Dataframe and trains a model on it.
-        :param dataset: The dataset to train on, should have a y column
+        :param dataset: The pandas dataset to train on, should have a y column for label and 'text' column for text features
+        :param dataset_path: Path to a CONLL2013 format dataset. It will be read for NER and POS training.
         :return: A nlu pipeline with models fitted.
         '''
         self.is_fitted = True
@@ -214,7 +218,18 @@ class NLUPipeline(BasePipe):
         self.is_fitted = True
         self.spark_estimator_pipe = Pipeline(stages=stages)
 
-        if isinstance(dataset,pd.DataFrame) :
+        if dataset_path != None and 'ner' in self.nlu_ref:
+            from sparknlp.training import CoNLL
+
+            s_df = CoNLL().readDataset(self.spark,path=dataset_path)
+            self.spark_transformer_pipe = self.spark_estimator_pipe.fit(s_df.withColumnRenamed('label','y'))
+
+        elif dataset_path != None and 'pos' in self.nlu_ref:
+            from sparknlp.training import POS
+            s_df = POS().readDataset(self.spark,path=dataset_path)
+            self.spark_transformer_pipe = self.spark_estimator_pipe.fit(s_df.withColumnRenamed('label','y'))
+
+        elif isinstance(dataset,pd.DataFrame) :
             if not self.verify_all_labels_exist(dataset) : return nlu.NluError()
             self.spark_transformer_pipe = self.spark_estimator_pipe.fit(self.convert_pd_dataframe_to_spark(dataset))
 
@@ -397,7 +412,7 @@ class NLUPipeline(BasePipe):
                         if key == 'sentence' and 'language' in field: continue
                         if key == 'chunk' and 'entities' in field: continue
                         if key == 'sentence' and 'entities' in field: continue
-                        if field == 'entities.metadata' : new_fields.append(new_field.replace('metadata','confidence'))
+                        if field == 'entities.metadata' or field =='ner.metadata': new_fields.append(new_field.replace('metadata','confidence'))
                         else : new_fields.append(new_field.replace('metadata', key + '_confidence'))
                         if new_fields[-1] == 'entities_entity': new_fields[-1] = 'ner_tag'
                         ptmp = ptmp.withColumn(new_fields[-1],pyspark_col(('res.' + str(fields_to_rename.index(field)) + '.' + key)))
@@ -508,7 +523,10 @@ class NLUPipeline(BasePipe):
                 new_fields = []
                 for key in keys_in_metadata:
                     # we cant skip getting  key values for everything, even if meta=false. This is because we need to get the greatest of all confidence values , for this we must unpack them first..
-                    if field == 'entities.metadata' or field == 'sentiment.metadata'   : new_fields.append(new_field.replace('metadata','confidence'))
+                    if key =='word' and field =='ner.metadata' : continue # irrelevant metadata in the for the word key
+                    if field == 'entities.metadata' or field == 'sentiment.metadata' or field =='ner.metadata':
+
+                        new_fields.append(new_field.replace('metadata','confidence'))
                     else : new_fields.append(new_field.replace('metadata', key + '_confidence'))
 
                     # entities_entity
@@ -528,16 +546,19 @@ class NLUPipeline(BasePipe):
                         array_map_values = udf(lambda z: extract_map_values_str(z), ArrayType(StringType()))
                         ptmp.withColumn(new_fields[-1], array_map_values(field)).select(expr(f'{new_fields[-1]}[0]'))
                         ptmp = ptmp.withColumn(new_fields[-1], array_map_values(field))
-                    else:
-                        # EXPERIMENTAL Extration, should work for all FloatTypes?
+                    elif field == 'ner.metadata' and key =='confidence' :
+                        array_map_values = udf(lambda z: extract_map_values_float(z), ArrayType(FloatType()))
+                        ptmp.withColumn(new_fields[-1], array_map_values(field)).select(f'{new_fields[-1]}')
+                        ptmp = ptmp.withColumn(new_fields[-1], array_map_values(field))
+                        # ptmp = ptmp.withColumn(new_fields[-1], expr(new_fields[-1] + '[0]'))
+                    else :
+                        # EXPERIMENTAL extraction, should work for all FloatTypes?
                         # We apply Expr here because all result ing meta data is inside of a list and just a single element, which we can take out
                         # Exceptions to this rule are entities and metadata, this are scenarios wehre we want all elements from the predictions array ( since it could be multiple keywords/entities)
                         array_map_values = udf(lambda z: extract_map_values_float(z), ArrayType(FloatType()))
                         ptmp.withColumn(new_fields[-1], array_map_values(field)).select(expr(f'{new_fields[-1]}[0]'))
                         ptmp = ptmp.withColumn(new_fields[-1], array_map_values(field))
                         ptmp = ptmp.withColumn(new_fields[-1], expr(new_fields[-1] + '[0]'))
-
-
                     logger.info(f'Created Meta Data for   : nr={i} , original_name={field} with new_name={new_fields[-1]}')
                     columns_for_select.append(new_fields[-1])
 
@@ -548,6 +569,8 @@ class NLUPipeline(BasePipe):
                     # Assuming we have only 1 confidence value per Column. If here are Multiple then...(?)
                     # We gotta get the max confidence column, remove all other cols for selection
                     if field == 'entities.metadata': continue
+                    if field == 'ner.metadata': continue
+
                     if field == 'keywords.metadata': continue  # We dont want to max for multiple keywords. Also it will change the name from score to confidence of the final column
 
                     # if field ==
@@ -574,6 +597,9 @@ class NLUPipeline(BasePipe):
 
             if field == 'entities_result':
                 ptmp = ptmp.withColumn('entities_result', ptmp['entities.result'].cast(ArrayType(StringType())))  #
+
+
+
             ptmp = ptmp.withColumn(new_field, ptmp[field])  # get the outputlevel results row by row
             # ptmp = ptmp.withColumnRenamed(field,new_field)  # EXPERIMENTAL engine test, only works sometimes since it can break dataframe struct
             logger.info(f'Renaming non exploded field  : nr={i} , original_name={field} to new_name={new_field}')
@@ -610,7 +636,6 @@ class NLUPipeline(BasePipe):
         :param component:  to resolve
         :return: resolve component
         '''
-
         for level in self.annotator_levels_model_based.keys():
             for t in self.annotator_levels_model_based[level]:
                 if isinstance(component.model,t) :
@@ -698,6 +723,8 @@ class NLUPipeline(BasePipe):
                     same_output_level_fields.append(field + '.embeddings')
                 if 'entities' in field:
                     same_output_level_fields.append(field + '.metadata')
+                if 'ner' in field:
+                    same_output_level_fields.append(field + '.metadata')
                 if 'category' in f_type or 'spell' in f_type or 'sentiment' in f_type or 'class' in f_type or 'language' in f_type or 'keyword' in f_type:
                     same_output_level_fields.append(field + '.metadata')
             else:
@@ -714,7 +741,8 @@ class NLUPipeline(BasePipe):
                     not_at_same_output_level_fields.append(field + '.metadata')
                 if 'entities' in field:
                     not_at_same_output_level_fields.append(field + '.metadata')
-
+                if 'ner' in field:
+                    not_at_same_output_level_fields.append(field + '.metadata')
         if self.output_level == 'document':
             # explode stranger features if output level is document
             # same_output_level_fields =list(set( same_output_level_fields + stranger_features))
@@ -786,6 +814,8 @@ class NLUPipeline(BasePipe):
         ptmp = sdf.withColumn("tmp", arrays_zip(*same_output_level_fields)).withColumn("res", explode('tmp'))
         final_select_not_at_same_output_level = []
 
+
+        # TODO THIS METHOD DESTROYS ner.metadata!!! and confidenzzz goneee!
         ptmp, final_select_same_output_level = self.rename_columns_and_extract_map_values_same_level(ptmp=ptmp,
                                                                                                      fields_to_rename=same_output_level_fields,
                                                                                                      same_output_level=True,
@@ -969,11 +999,34 @@ class NLUPipeline(BasePipe):
                 logger.info('Adding missing sentence Dependency because it is missing for outputlevel=Sentence')
                 self.add_missing_sentence_component()
     def save(self, path, component='entire_pipeline', overwrite=False):
-        if overwrite:
+
+        if nlu.is_running_in_databricks() :
+            if path.startswith('/dbfs/') or path.startswith('dbfs/'):
+                nlu_path = path
+                if path.startswith('/dbfs/'):
+                    nlp_path =  path.replace('/dbfs','')
+                else :
+                    nlp_path =  path.replace('dbfs','')
+
+            else :
+                nlu_path = 'dbfs/' + path
+                if path.startswith('/') : nlp_path = path
+                else : nlp_path = '/' + path
+
+            if not self.is_fitted and self.has_trainable_components:
+                self.fit()
+                self.is_fitted = True
+            if component == 'entire_pipeline':
+                self.spark_transformer_pipe.save(nlp_path)
+                self.write_nlu_pipe_info(nlu_path)
+
+
+        if overwrite and not nlu.is_running_in_databricks():
             import shutil
             shutil.rmtree(path,ignore_errors=True)
 
-        if not self.is_fitted and self.has_trainable_components:
+
+        if not self.is_fitted :
             self.fit()
             self.is_fitted = True
         if component == 'entire_pipeline':
@@ -1194,7 +1247,7 @@ class NLUPipeline(BasePipe):
             fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
             print(exc_type, fname, exc_tb.tb_lineno)
             print(
-                'Stuck? Contact us on Slack! https://join.slack.com/t/spark-nlp/shared_invite/zt-j5ttxh0z-Fn3lQSG1Z0KpOs_SRxjdyw')
+                'Stuck? Contact us on Slack! https://join.slack.com/t/spark-nlp/shared_invite/zt-j5ttxh0z-Fn3lQSG1Z0KpOs_SRxjdyw0196BQCDPY')
             return None
 
 
@@ -1464,31 +1517,46 @@ class PipelineQueryVerifier():
         :return: NLU pipeline where the output and input column names of the models have been adjusted to each other
         '''
 
-        all_names_provided = False
 
         for component_to_check in pipe.pipe_components:
-            all_names_provided_for_component = False
             input_columns = set(component_to_check.component_info.spark_input_column_names)
-            logger.info('Checking for component %s wether input %s is satisfied by another component in the pipe ',
-                        component_to_check.component_info.name, input_columns)
+            logger.info(f'Checking for component {component_to_check.component_info.name} wether inputs {input_columns} is satisfied by another component in the pipe ',)
             for other_component in pipe.pipe_components:
                 if component_to_check.component_info.name == other_component.component_info.name: continue
                 output_columns = set(other_component.component_info.spark_output_column_names)
-                input_columns -= output_columns  # set substraction
+                input_columns -= output_columns
 
             input_columns = PipelineQueryVerifier.clean_irrelevant_features(input_columns)
 
-            if len(input_columns) != 0:  # fix missing column name
+            if len(input_columns) != 0 and not pipe.has_trainable_components:  # fix missing column name
                 for missing_column in input_columns:
                     for other_component in pipe.pipe_components:
                         if component_to_check.component_info.name == other_component.component_info.name: continue
                         if other_component.component_info.type == missing_column:
-                            # resolve which setter to use ...
                             # We update the output name for the component which provides our feature
                             other_component.component_info.spark_output_column_names = [missing_column]
                             logger.info('Setting output columns for component %s to %s ',
                                         other_component.component_info.name, missing_column)
                             other_component.model.setOutputCol(missing_column)
+
+            elif len(input_columns) != 0 and  pipe.has_trainable_components:  # fix missing column name
+            # for trainable components, we change their input columns and leave other components outputs unchanged
+                for missing_column in input_columns:
+                    for other_component in pipe.pipe_components:
+                        if component_to_check.component_info.name == other_component.component_info.name: continue
+                        if other_component.component_info.type == missing_column:
+                            # We update the input col name for the componenet that has missing cols
+                            component_to_check.component_info.spark_input_column_names.remove(missing_column)
+                            # component_to_check.component_info.inputs.remove(missing_column)
+                            # component_to_check.component_info.inputs.remove(missing_column)
+                            # component_to_check.component_info.inputs.append(other_component.component_info.spark_output_column_names[0])
+
+                            component_to_check.component_info.spark_input_column_names.append(other_component.component_info.spark_output_column_names[0])
+                            component_to_check.model.setInputCols(component_to_check.component_info.spark_input_column_names)
+
+                            logger.info(f'Setting input col columns for component {component_to_check.component_info.name} to {other_component.component_info.spark_output_column_names[0]} ')
+
+
 
         return pipe
 
@@ -1592,9 +1660,16 @@ class PipelineQueryVerifier():
                 logger.info(f"Configuring C={c.component_info.name}  of Type={type(c.model)}")
                 c.component_info.inputs.remove('document')
                 c.component_info.inputs.append('sentence')
+                # c.component_info.spark_input_column_names.remove('document')
+                # c.component_info.spark_input_column_names.append('sentence')
+                c.model.setInputCols(c.component_info.spark_input_column_names)
+
+            if 'document' in c.component_info.spark_input_column_names and 'sentence' not in c.component_info.spark_input_column_names and 'sentence' not in c.component_info.spark_output_column_names:
                 c.component_info.spark_input_column_names.remove('document')
                 c.component_info.spark_input_column_names.append('sentence')
-                c.model.setInputCols(c.component_info.spark_input_column_names)
+                if c.component_info.type =='sentence_embeddings' :
+                    c.component_info.output_level='sentence'
+
         return pipe
 
     @staticmethod
@@ -1615,9 +1690,16 @@ class PipelineQueryVerifier():
                 logger.info(f"Configuring C={c.component_info.name}  of Type={type(c.model)}")
                 c.component_info.inputs.remove('sentence')
                 c.component_info.inputs.append('document')
-                c.component_info.spark_input_column_names.remove('sentence')
-                c.component_info.spark_input_column_names.append('document')
                 c.model.setInputCols(c.component_info.spark_input_column_names)
+
+            if 'sentence' in c.component_info.spark_input_column_names and 'document' not in c.component_info.spark_input_column_names:
+                    # if 'sentence' in c.component_info.spark_input_column_names : c.component_info.spark_input_column_names.remove('sentence')
+                    c.component_info.spark_input_column_names.remove('sentence')
+                    c.component_info.spark_input_column_names.append('document')
+
+                    if c.component_info.type =='sentence_embeddings' : #convert sentence embeds to doc
+                        c.component_info.output_level='document'
+
         return pipe
 
     @staticmethod

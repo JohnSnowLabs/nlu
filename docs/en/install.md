@@ -33,32 +33,6 @@ nlu.load('emotion').predict('wow that was easy')
 
 </div><div class="h3-box" markdown="1">
 
-## 1. Get Prerequisites (Java 8)
-
-You only need to configure Java 8 on your machine and are good to go! 
-Unless you are on Windows, which requires 1 additional step.
-
-# 0. Super Quickstart on Google Collab or Kaggle
-
-If you work on a fresh Notebook on Kaggle or Google collab, you can just copy paste the following commands into your first cell which 
-will automatically setup Java, nlu and import nlu, so you are good to go right way!
-
-```bash
-import os
-! apt-get update -qq > /dev/null   
-# Install java
-! apt-get install -y openjdk-8-jdk-headless -qq > /dev/null
-os.environ["JAVA_HOME"] = "/usr/lib/jvm/java-8-openjdk-amd64"
-os.environ["PATH"] = os.environ["JAVA_HOME"] + "/bin:" + os.environ["PATH"]
-! pip install nlu
-import nlu
-```
-You can test it out right away with :
-```python
-nlu.load('emotion').predict('wow that was easy')
-```
-
-
 # 1. Get Prerequisites (Java 8)
 
 You only need to configure Java 8 on your machine and are good to go! 
@@ -134,7 +108,6 @@ nlu.load('sentiment').predict('Why is NLU is awesome? Because of the sauce!')
 
 ## Supported data types
 
-##  Supported data types
 NLU supports currently the following data formats :
 - Pandas Dataframes 
 - Spark Dataframes 

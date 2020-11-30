@@ -213,15 +213,21 @@ The classes are the following :
 
 **Abbreviation question classes:**
 
-{:.steelBlueCols}
+<div class="table-wrapper"><div class="table-inner" markdown="1">
+
+
+{:.table-model-big}
 |Class| 	Definition |
 |------|---------------|
 |  abb| 	abbreviation |
 |  exp| 	expression abbreviated |
 
+</div></div>
+
+
 **Entities question classes:**
 
-{:.steelBlueCols}
+{:.table-model-big.mb0}
 |Class| 	Definition |
 |------|---------------|
 | animal | 	animals |
@@ -250,7 +256,9 @@ The classes are the following :
 
 **Description and abstract concepts question classes:**
 
-{:.steelBlueCols}
+
+
+{:.table-model-big.mb0}
 |Class| 	Definition |
 |------|---------------|
 | definition | 	definition of sth. |
@@ -259,9 +267,10 @@ The classes are the following :
 | reason | 	reasons |
 
 
+
 **Human being question classes:**
 
-{:.steelBlueCols}
+{:.table-model-big.mb0}
 |Class| 	Definition |
 |------|---------------|
 | group | 	a group or organization of persons |
@@ -272,7 +281,7 @@ The classes are the following :
 
 **Location question classes:**
 
-{:.steelBlueCols}
+{:.table-model-big.mb0}
 |Class| 	Definition |
 |------|---------------|
 | city | 	cities |
@@ -283,7 +292,7 @@ The classes are the following :
 
 **Numeric question classes:**
 
-{:.steelBlueCols}
+{:.table-model-big.mb0}
 |Class| 	Definition |
 |------|---------------|
 | code | 	postcodes or other codes |
@@ -477,7 +486,7 @@ nlu.load('yake').predict("NLU is a Python Library for beginners and experts in N
 ```
 
 
-{:.steelBlueCols}
+{:.table-model-big.mb0}
 |keywords_score_confidence | 	keywords | 	sentence | 
 |--------------------------|-------------|------------|
 | 0.454232	| [nlu, nlp, python library] | 	NLU is a Python Library for beginners and expe... | 

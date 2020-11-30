@@ -918,6 +918,8 @@ class NameSpace():
             'xx.embed.glove.840B_300': 'glove_840B_300',
             'xx.embed.glove.6B_300': 'glove_6B_300',
             'xx.embed.bert_multi_cased': 'bert_multi_cased',
+            'xx.embed.bert': 'bert_multi_cased',
+
             'xx.classify.wiki_7': 'ld_wiki_7',
             'xx.classify.wiki_20': 'ld_wiki_20',
 

@@ -8,4 +8,4 @@ class NerToChunkConverter:
     def get_default_model():
         return NerConverter() \
             .setInputCols(["sentence", "token", "ner"]) \
-            .setOutputCol("entities")
+            .setOutputCol("entities") \

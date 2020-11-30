@@ -7,20 +7,23 @@ class NERDL:
     def get_default_model():  \
         return NerDLModel.pretrained(name='ner_dl_bert', lang='en') \
             .setInputCols(["sentence", "token", "word_embeddings"]) \
-            .setOutputCol("ner")
+            .setOutputCol("ner") \
+            .setIncludeConfidence(True)
+
 
     @staticmethod
     def get_pretrained_model(name, language):
         return NerDLModel.pretrained(name,language) \
             .setInputCols(["sentence", "token", "word_embeddings"]) \
-            .setOutputCol("ner")
+            .setOutputCol("ner") \
+            .setIncludeConfidence(True)
 
     @staticmethod
     def get_default_trainable_model():
         return NerDLApproach() \
-            .setInputCols(["sentence", "token", "embeddings"]) \
-            .setLabelColumn("label") \
+            .setInputCols(["sentence", "token", "word_embeddings"]) \
+            .setLabelColumn("y") \
             .setOutputCol("ner") \
-            .setMaxEpochs(10) \
-            .setRandomSeed(0) \
-            .setVerbose(2)
+            .setMaxEpochs(2) \
+            .setVerbose(0) \
+            .setIncludeConfidence(True)

@@ -12,6 +12,57 @@ modify_date: "2020-06-12"
 
 <div class="h3-box" markdown="1">
 
+## NLU  1.0.4 Release Notes 
+##  John Snow Labs NLU 1.0.4 : Trainable Named Entity Recognizer (NER) , achieve SOTA in 1 line of code and easy scaling to 100's of Spark nodes
+We are glad to announce NLU 1.0.4 releases the State of the Art breaking Neural Network architecture for NER, Char CNNs - BiLSTM - CRF!
+
+```python
+#fit and predict in 1 line!
+nlu.load('train.ner').fit(dataset).predict(dataset)
+
+
+#fit and predict in 1 line with BERT!
+nlu.load('bert train.ner').fit(dataset).predict(dataset)
+
+
+#fit and predict in 1 line with ALBERT!
+nlu.load('albert train.ner').fit(dataset).predict(dataset)
+
+
+#fit and predict in 1 line with ELMO!
+nlu.load('elmo train.ner').fit(dataset).predict(dataset)
+
+```
+
+
+
+Any NLU pipeline stored can now be loaded as pyspark ML pipeline
+```python
+# Ready for big Data with Spark distributed computing
+import pyspark
+nlu_pipe.save(path)
+pyspark_pipe = pyspark.ml.PipelineModel.load(stored_model_path)
+pyspark_pipe.transform(spark_df)
+```
+
+
+### NLU 1.0.4 New Features
+- Trainable  [Named Entity Recognizer](https://nlp.johnsnowlabs.com/docs/en/annotators#ner-dl-named-entity-recognition-deep-learning-annotator)
+- NLU pipeline loadable as Spark pipelines
+
+### NLU 1.0.4 New Notebooks,Tutorials and Docs
+- [NER training demo](https://colab.research.google.com/drive/1_GwhdXULq45GZkw3157fAOx4Wqo-fmFV?usp=sharing)        
+- [Multi Class Text Classifier Training Demo updated to showcase usage of different Embeddings](https://colab.research.google.com/drive/12FA2TVvvRWw4pRhxDnK32WAzl9dbF6Qw?usp=sharing)         
+- [New Documentation Page on how to train Models with NLU](https://nlu.johnsnowlabs.com/docs/en/training)
+- Databricks Notebook showcasing Scaling with NLU
+
+
+## NLU 1.0.4 Bug Fixes
+- Fixed a bug that NER token confidences do not appear. They now appear when nlu.load('ner').predict(df, meta=True) is called.
+- Fixed a bug that caused some Spark NLP models to not be loaded properly in offline mode
+
+
+
 ## 1.0.3 Release Notes 
 We are happy to announce NLU 1.0.3 comes with a lot new features, training classifiers, saving them and loading them offline, enabling running NLU with no internet connection, new notebooks and articles!
 
@@ -25,7 +76,7 @@ All it takes is just nlu.load('train.classifier).fit(dataset) . Your dataset can
 
 ### NLU 1.0.3 New Notebooks and Tutorials
 - New colab notebook showcasing nlu training, saving and loading from disk
-- [Sentence Similarity with BERT, Electra and Universal Sentence Encoder Medium Tutorial]()
+- [Sentence Similarity with BERT, Electra and Universal Sentence Encoder Medium Tutorial](https://medium.com/spark-nlp/easy-sentence-similarity-with-bert-sentence-embeddings-using-john-snow-labs-nlu-ea078deb6ebf)
 - [Sentence Similarity with BERT, Electra and Universal Sentence Encoder](https://colab.research.google.com/drive/1LtOdtXtRJ3_N8kYywPd5k2AJMCGcgAdN?usp=sharing)
 - [Train a Deep Learning Classifier ](https://colab.research.google.com/drive/12FA2TVvvRWw4pRhxDnK32WAzl9dbF6Qw?usp=sharing)
 - [Sentence Detector Notebook Updated](https://colab.research.google.com/drive/1CAXEdRk_q3U5qbMXsxoVyZRwvonKthhF?usp=sharing)
@@ -216,16 +267,6 @@ A picture says more than a 1000 words, so here is a demo clip of the 12 coolest 
 
 </div><div class="h3-box" markdown="1">
 
-### NLU on Medium :
-- Introduction to NLU
-- One line BERT Word Embeddings and t-SNE plotting with NLU
-- BERT, ALBERT, ELECTRA, ELMO, XLNET, GLOVE Word Embeddings in one line and plotting with t-SNE
-- NLU Documentation
-- NLU website
-- NLU Github
-- NLU Documentation
-- Overview of all NLU example notebooks
-- Having questions or want to share an idea? Join the new NLU slack channel! 
 
 </div></div>
 - Chunkers
@@ -235,16 +276,5 @@ A picture says more than a 1000 words, so here is a demo clip of the 12 coolest 
     -[Date Matcher](https://colab.research.google.com/drive/1JrlfuV2jNGTdOXvaWIoHTSf6BscDMkN7?usp=sharing)
 
 
-
-NLU on Medium :
-Introduction to NLU
-One line BERT Word Embeddings and t-SNE plotting with NLU
-BERT, ALBERT, ELECTRA, ELMO, XLNET, GLOVE Word Embeddings in one line and plotting with t-SNE
-NLU Documentation
-NLU website
-NLU Github
-NLU Documentation
-Overview of all NLU example notebooks
-Having questions or want to share an idea? Join the new NLU slack channel! 
 
 

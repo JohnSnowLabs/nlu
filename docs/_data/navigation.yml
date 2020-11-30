@@ -25,6 +25,8 @@ docs-en:
         url:    /docs/en/concepts
       - title:  Simple Examples
         url:    /docs/en/examples
+      - title:  Training Models
+        url:    /docs/en/training
       - title:  Notebooks
         url:    /docs/en/notebooks
       - title:  Visualization Examples

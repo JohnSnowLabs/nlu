@@ -37,3 +37,43 @@ def get_sample_spark_dataframe():
     data = {"text": ['This day sucks', 'I love this day', 'I dont like Sami'], "random_feature1": [1, 1, 0], "random_feature2": ['d','a' , '3']}
     text_df = pd.DataFrame(data)
     return text_df
+
+
+
+from os.path import expanduser
+
+import os
+
+def download_dataset(data_url,output_file_name,output_folder,data_dir,):
+    import urllib.request
+    import os
+    download_path = data_dir + output_folder + output_file_name
+
+    #Check if dir exists, if not create it
+    create_path_if_not_exist(data_dir + output_folder)
+
+
+    from pathlib import Path
+    #Check if file exists, if not download it
+    if not Path(download_path).is_file():
+        urllib.request.urlretrieve(data_url, download_path )
+
+    print('Downloaded dataset to ',download_path)
+    return download_path
+
+
+def create_dataset_dir_if_not_exist_and_get_path():
+    root = expanduser('~')
+    dataset_path = root + '/nlu_test_datasets/'
+    if not os.path.exists(dataset_path):
+        print('Creating dir',dataset_path)
+        os.mkdir(dataset_path)
+    return dataset_path
+
+
+def create_path_if_not_exist(path):
+    #Check if dir exists, if not create it
+    import os
+    if not os.path.exists(path):
+        print('Creating dir',path)
+        os.mkdir(path)

@@ -26,7 +26,8 @@ class Classifier(SparkNLUComponent):
         else :
             if 'sentiment' in annotator_class and 'vivekn' not in annotator_class:
                 from nlu import SentimentDl
-                if get_default : self.model = SentimentDl.get_default_model()
+                if trainable : self.model = SentimentDl.get_default_trainable_model()
+                elif get_default : self.model = SentimentDl.get_default_model()
                 else : self.model = SentimentDl.get_pretrained_model(nlp_ref, language)
             elif 'vivekn' in annotator_class:
                 from nlu import ViveknSentiment
@@ -34,7 +35,8 @@ class Classifier(SparkNLUComponent):
                 else : self.model = ViveknSentiment.get_pretrained_model(nlp_ref, language)
             elif 'ner' in annotator_class or 'ner.dl' in annotator_class:
                 from nlu import NERDL
-                if get_default : self.model = NERDL.get_default_model()
+                if trainable : self.model = NERDL.get_default_trainable_model()
+                elif get_default : self.model = NERDL.get_default_model()
                 else : self.model = NERDL.get_pretrained_model(nlp_ref, language)
             elif 'ner.crf' in annotator_class:
                 from nlu import NERDLCRF
