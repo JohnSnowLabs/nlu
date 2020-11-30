@@ -33,7 +33,3 @@ class ClassifierDl:
             .setLabelColumn("label") \
             .setEnableOutputLogs(True)
 
-        # .setBatchSize(64) \
-            # .setMaxEpochs(20) \
-            # .setLr(0.5) \
-            # .setDropout(0.5)

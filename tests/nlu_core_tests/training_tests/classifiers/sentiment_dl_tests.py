@@ -33,32 +33,6 @@ class SentimentTrainingTests(unittest.TestCase):
 
 
 
-    def test_sentiment_training2(self):
-
-        #sentiment datase
-        test_path = self.load_sentiment_dl_dataset()#'/home/loan/Documents/freelancework/jsl/nlu/4realnlugit/tests/datasets/sentiment_dl/AllProductReviews.csv'
-        df_train = pd.read_csv(test_path,error_bad_lines=False)
-        print(df_train.columns)
-
-        #convert int to str labels so our model predicts strings not numbers
-        # the text data to use for classification should be in a column named 'text'
-        df_train['text'] = df_train['text_data']
-        # the label column must have name 'y' name be of type str
-        df_train['y'] = df_train['Sentiment'].astype(str)
-
-        pipe = nlu.load('train.sentiment',verbose=True)
-        fitted_pipe = pipe.fit(df_train.iloc[0:50])
-
-        df = fitted_pipe.predict(df_train.iloc[0:200],output_level='document')
-        print(df)
-        print(df.columns)
-        print(df)
-        print(df.columns)
-        print(df[['sentiment','sentiment_confidence']])
-        print(df.sentiment.value_counts())
-        print(df.sentiment_confidence.value_counts())
-
-
 
 
 
