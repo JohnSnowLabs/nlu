@@ -55,9 +55,9 @@ class SentimentTrainingTests(unittest.TestCase):
         df_train['y'] = df_train['Sentiment'].astype(str)
         df_train.y = df_train.y.str.replace('-1','negative')
         df_train.y = df_train.y.str.replace('1','positive')
-        df_train=df_train.iloc[0:4000]
-        pipe = nlu.load('embed_sentence.bert train.sentiment',verbose=True, )
-        fitted_pipe = pipe.fit(df_train.iloc[0:50])
+        # df_train=df_train.iloc[0:4000]
+        pipe = nlu.load('use train.sentiment',verbose=True, )
+        fitted_pipe = pipe.fit(df_train)
         # df = fitted_pipe.predict(' I love NLU!')
 
         df = fitted_pipe.predict(df_train.iloc[0:500],output_level='document')
@@ -80,10 +80,10 @@ class SentimentTrainingTests(unittest.TestCase):
         df_train['y'] = df_train['Sentiment'].astype(str)
         df_train.y = df_train.y.str.replace('-1','negative')
         df_train.y = df_train.y.str.replace('1','positive')
-        df_train=df_train.iloc[0:4000]
+        # df_train=df_train.iloc[0:4000]
 
         pipe = nlu.load('embed_sentence.electra train.sentiment',verbose=True, )
-        fitted_pipe = pipe.fit(df_train.iloc[0:50])
+        fitted_pipe = pipe.fit(df_train)
         # df = fitted_pipe.predict(' I love NLU!')
 
         df = fitted_pipe.predict(df_train.iloc[0:50],output_level='sentence')
