@@ -23,8 +23,5 @@ class SentimentDl:
             .setInputCols("sentence_embeddings") \
             .setOutputCol("category") \
             .setLabelColumn("y") \
-            .setBatchSize(2) \
             .setMaxEpochs(2) \
-            .setLr(0.5) \
-            .setDropout(0.5)\
             .setEnableOutputLogs(True)
