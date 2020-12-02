@@ -235,11 +235,13 @@ class NLUPipeline(BasePipe):
 
         else :
             # fit on empty dataframe since no data provided
+            print('Fitting on empty Dataframe, could not infer correct training method!')
             self.spark_transformer_pipe = self.spark_estimator_pipe.fit(self.get_sample_spark_dataframe())
 
 
         return self
     def convert_pd_dataframe_to_spark(self, data):
+        #optimize
         return nlu.spark.createDataFrame(data)
 #todo rm
     def get_output_level_of_embeddings_provider(self, field_type, field_name):
