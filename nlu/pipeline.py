@@ -431,9 +431,15 @@ class NLUPipeline(BasePipe):
                     for key in keys_in_metadata: cols_to_max.append(
                         'res.' + str(fields_to_rename.index(field)) + '.' + key)
 
+                    # For Sentiment the sentence.result contains irrelevant Metadata and is not part of the confidence we want. So we remove it here
+                    if 'sentence.result' in cols_to_max and field == 'sentiment.metadata': cols_to_max.remove('sentence.result')
+
                     # sadly because the Spark SQL method 'greatest()' does not work properly on scientific notation, we must cast our metadata to decimal with limited precision
                     # scientific notation starts after 6 decimal places, so we can have at most exactly 6
-                    # since greatest() breaks the dataframe Schema, we must rename the columns first or run into issues with Pysark Struct queriying
+                    # since greatest() breaks the dataframe Schema, we must rename the columns first or run into issues with PySpark Struct queriying
+
+
+
                     for key in cols_to_max: ptmp = ptmp.withColumn(key.replace('.', '_'),
                                                                    pyspark_col(key).cast('decimal(7,6)'))
                     # casted = ptmp.select(*(pyspark_col(c).cast("decimal(6,6)").alias(c.replace('.','_')) for c in cols_to_max))
