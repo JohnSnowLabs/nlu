@@ -428,11 +428,12 @@ class NLUPipeline(BasePipe):
                     # Get only meta data with greatest value (highest prob)
 
                     cols_to_max = []
-                    for key in keys_in_metadata: cols_to_max.append(
-                        'res.' + str(fields_to_rename.index(field)) + '.' + key)
+                    for key in keys_in_metadata:
+                        if 'sentence' == key and field == 'sentiment.metadata':continue
+
+                        cols_to_max.append('res.' + str(fields_to_rename.index(field)) + '.' + key)
 
                     # For Sentiment the sentence.result contains irrelevant Metadata and is not part of the confidence we want. So we remove it here
-                    if 'sentence.result' in cols_to_max and field == 'sentiment.metadata': cols_to_max.remove('sentence.result')
 
                     # sadly because the Spark SQL method 'greatest()' does not work properly on scientific notation, we must cast our metadata to decimal with limited precision
                     # scientific notation starts after 6 decimal places, so we can have at most exactly 6
