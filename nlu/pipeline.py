@@ -226,8 +226,10 @@ class NLUPipeline(BasePipe):
 
         elif dataset_path != None and 'pos' in self.nlu_ref:
             from sparknlp.training import POS
-            s_df = POS().readDataset(self.spark,path=dataset_path)
-            self.spark_transformer_pipe = self.spark_estimator_pipe.fit(s_df.withColumnRenamed('label','y'))
+            s_df = POS().readDataset(self.spark,path=dataset_path,delimiter="_",outputPosCol="y",outputDocumentCol="document",outputTextCol="text")
+
+
+            self.spark_transformer_pipe = self.spark_estimator_pipe.fit(s_df)
 
         elif isinstance(dataset,pd.DataFrame) :
             if not self.verify_all_labels_exist(dataset) : return nlu.NluError()
