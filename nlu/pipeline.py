@@ -457,7 +457,7 @@ class NLUPipeline(BasePipe):
                         ptmp = ptmp.withColumnRenamed(renamed_cols_to_max[0], max_confidence_name)
                         columns_for_select.append(max_confidence_name)
                 continue
-            # get the outputlevel results row by row (could be parallelized via mapping for each annotator)
+            # get th e outputlevel results row by row (could be parallelized via mapping for each annotator)
             ptmp = ptmp.withColumn(new_field, ptmp['res.' + str(fields_to_rename.index(field))])
             columns_for_select.append(new_field)
             logger.info('Renaming exploded field  : nr=%s , name=%s to new_name=%s', i, field, new_field)
