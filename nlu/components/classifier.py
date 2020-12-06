@@ -43,9 +43,10 @@ class Classifier(SparkNLUComponent):
                 if get_default : self.model = NERDLCRF.get_default_model()
                 else : self.model = NERDLCRF.get_pretrained_model(nlp_ref, language)
             elif 'multi_classifier_dl' in annotator_class:
-                from nlu import MultiClassifierDl
-                if get_default : self.model = MultiClassifierDl.get_default_model()
-                else : self.model = MultiClassifierDl.get_pretrained_model(nlp_ref, language)
+                from nlu import MultiClassifier
+                if trainable : self.model = MultiClassifier.get_default_trainable_model()
+                elif get_default : self.model = MultiClassifier.get_default_model()
+                else : self.model = MultiClassifier.get_pretrained_model(nlp_ref, language)
             elif ('classifier_dl' in annotator_class or annotator_class == 'toxic') and not 'multi' in annotator_class:
                 from nlu import ClassifierDl
                 if trainable: self.model = ClassifierDl.get_trainable_model()
@@ -57,7 +58,8 @@ class Classifier(SparkNLUComponent):
                 else: self.model = LanguageDetector.get_pretrained_model(nlp_ref, language)
             elif 'pos' in annotator_class:
                 from nlu import PartOfSpeechJsl
-                if get_default : self.model = PartOfSpeechJsl.get_default_model()
+                if trainable : self.model = PartOfSpeechJsl.get_default_trainable_model()
+                elif get_default : self.model = PartOfSpeechJsl.get_default_model()
                 else : self.model = PartOfSpeechJsl.get_pretrained_model(nlp_ref, language)
             elif 'yake' in annotator_class:
                 from nlu import Yake
