@@ -5,6 +5,9 @@ from sparknlp.base import *
 import logging
 import nlu
 import inspect
+import pyspark
+from pyspark.sql import SparkSession
+from pyspark.sql.types import StructType,StructField, StringType, IntegerType
 
 logger = logging.getLogger('nlu')
 import pyspark
@@ -21,6 +24,7 @@ from sparknlp.annotator import *
 class BasePipe(dict):
     # we inherhit from dict so the pipe is indexable and we have a nice shortcut for accessing the spark nlp model
     def __init__(self):
+        self.nlu_ref=''
         self.raw_text_column = 'text'
         self.raw_text_matrix_slice = 1  # place holder for getting text from matrix
         self.spark_nlp_pipe = None
@@ -199,6 +203,7 @@ class NLUPipeline(BasePipe):
         return sparknlp.start().createDataFrame(data=text_df)
 
     def verify_all_labels_exist(self,dataset):
+        #todo
         return True
         # pass
 
@@ -230,6 +235,15 @@ class NLUPipeline(BasePipe):
 
 
             self.spark_transformer_pipe = self.spark_estimator_pipe.fit(s_df)
+        elif isinstance(dataset,pd.DataFrame) and 'multi' not in self.nlu_ref:
+            schema = StructType([
+                StructField("y", ArrayType(), True), \
+                StructField("text", StringType(), True) \
+                ])
+            self.spark_transformer_pipe = self.spark_estimator_pipe.fit(self.convert_pd_dataframe_to_spark(data=dataset, schema=schema))
+
+            if not self.verify_all_labels_exist(dataset) : return nlu.NluError()
+            self.spark_transformer_pipe = self.spark_estimator_pipe.fit(self.convert_pd_dataframe_to_spark(dataset))
 
         elif isinstance(dataset,pd.DataFrame) :
             if not self.verify_all_labels_exist(dataset) : return nlu.NluError()
