@@ -232,16 +232,18 @@ class NLUPipeline(BasePipe):
         elif dataset_path != None and 'pos' in self.nlu_ref:
             from sparknlp.training import POS
             s_df = POS().readDataset(self.spark,path=dataset_path,delimiter="_",outputPosCol="y",outputDocumentCol="document",outputTextCol="text")
-
-
             self.spark_transformer_pipe = self.spark_estimator_pipe.fit(s_df)
-        elif isinstance(dataset,pd.DataFrame) and 'multi' not in self.nlu_ref:
+        elif isinstance(dataset,pd.DataFrame) and 'multi' in  self.nlu_ref:
             schema = StructType([
-                StructField("y", ArrayType(), True), \
+                StructField("y", StringType(), True), \
                 StructField("text", StringType(), True) \
                 ])
-            self.spark_transformer_pipe = self.spark_estimator_pipe.fit(self.convert_pd_dataframe_to_spark(data=dataset, schema=schema))
+            label_seperator = ','
+            from pyspark.sql import functions as F
+            df = self.spark.createDataFrame(data=dataset, schema=schema).withColumn('y',F.split('y',label_seperator))
+            self.spark_transformer_pipe = self.spark_estimator_pipe.fit(df)
 
+        elif isinstance(dataset,pd.DataFrame):
             if not self.verify_all_labels_exist(dataset) : return nlu.NluError()
             self.spark_transformer_pipe = self.spark_estimator_pipe.fit(self.convert_pd_dataframe_to_spark(dataset))
 
