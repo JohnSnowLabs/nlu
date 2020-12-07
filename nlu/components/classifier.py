@@ -67,6 +67,6 @@ class Classifier(SparkNLUComponent):
             elif 'multi_classifier' in annotator_class :
                 from nlu import MultiClassifier
                 if trainable : self.model = MultiClassifier.get_default_trainable_model()
-                if get_default : self.model = MultiClassifier.get_default_model()
+                elif get_default : self.model = MultiClassifier.get_default_model()
                 else : self.model = MultiClassifier.get_pretrained_model(nlp_ref, language)
         SparkNLUComponent.__init__(self, annotator_class, component_type)

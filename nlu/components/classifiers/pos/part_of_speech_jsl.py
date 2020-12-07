@@ -23,3 +23,4 @@ class PartOfSpeechJsl:
             .setOutputCol("pos") \
             .setPosCol("y") \
             .setNIterations(2)
+

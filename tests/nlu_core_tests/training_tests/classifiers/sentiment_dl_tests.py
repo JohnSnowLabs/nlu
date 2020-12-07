@@ -66,7 +66,7 @@ class SentimentTrainingTests(unittest.TestCase):
         print(df[['sentiment','sentiment_confidence']])
         print(df.sentiment.value_counts())
         print(df.sentiment_confidence.value_counts())
-
+# TODO test if bad performance persists in Spark NLP with non USE sentence eebddigns
     def test_sentiment_training_with_custom_embeds_sentence_level(self):
 
         #sentiment datase
@@ -82,7 +82,10 @@ class SentimentTrainingTests(unittest.TestCase):
         df_train.y = df_train.y.str.replace('1','positive')
         # df_train=df_train.iloc[0:4000]
 
-        pipe = nlu.load('embed_sentence.electra train.sentiment',verbose=True, )
+        # pipe = nlu.load('en.embed_sentence.bert_large_cased train.sentiment',verbose=True, )
+        pipe = nlu.load('en.embed_sentence.electra_large_uncased train.sentiment',verbose=True, )
+        pipe.print_info()
+        pipe['sentiment_dl'].setMaxEpochs(6)
         fitted_pipe = pipe.fit(df_train)
         # df = fitted_pipe.predict(' I love NLU!')
 

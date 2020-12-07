@@ -20,11 +20,9 @@ class MultiClassifier:
 
     @staticmethod
     def get_default_trainable_model():
-        return ClassifierDLApproach() \
+        return MultiClassifierDLApproach() \
             .setInputCols("sentence_embeddings") \
             .setOutputCol("category") \
-            .setLabelColumn("label") \
-            .setBatchSize(64) \
-            .setMaxEpochs(20) \
-            .setLr(0.5) \
-            .setDropout(0.5)
+            .setLabelColumn("y") \
+            .setEnableOutputLogs(True) \
+            .setMaxEpochs(2) \

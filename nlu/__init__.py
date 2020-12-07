@@ -460,7 +460,8 @@ def resolve_component_from_parsed_query_data(language, component_type, dataset, 
             nlp_ref)
         return NluError
 
-
+import sparknlp
+sparknlp.start()
 def construct_trainable_component_from_identifier(nlu_ref,nlp_ref):
     '''
     This method returns a Spark NLP annotator Approach class embelished by a NLU component
@@ -496,9 +497,11 @@ def construct_trainable_component_from_identifier(nlu_ref,nlp_ref):
         if nlu_ref in ['train.vivekn_sentiment'] :
             pass
         if nlu_ref in ['train.pos'] :
-            pass
+            return nlu.Classifier(annotator_class = 'pos', trainable=True)
+
+
         if nlu_ref in ['train.multi_classifier'] :
-            pass
+            return nlu.Classifier(annotator_class = 'multi_classifier', trainable=True)
 
 
 
