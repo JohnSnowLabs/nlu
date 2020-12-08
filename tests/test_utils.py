@@ -50,6 +50,7 @@ def download_dataset(data_url,output_file_name,output_folder,data_dir,):
     download_path = data_dir + output_folder + output_file_name
 
     #Check if dir exists, if not create it
+    create_path_if_not_exist(data_dir )
     create_path_if_not_exist(data_dir + output_folder)
 
 
