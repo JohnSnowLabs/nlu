@@ -44,7 +44,7 @@ from os.path import expanduser
 
 import os
 
-def download_dataset(data_url,output_file_name,output_folder,data_dir,):
+def download_dataset(data_url,output_file_name,output_folder,):
     import urllib.request
     import os
     download_path = create_dataset_dir_if_not_exist_and_get_path() + output_folder + output_file_name
