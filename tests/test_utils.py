@@ -47,11 +47,11 @@ import os
 def download_dataset(data_url,output_file_name,output_folder,data_dir,):
     import urllib.request
     import os
-    download_path = data_dir + output_folder + output_file_name
+    download_path = create_dataset_dir_if_not_exist_and_get_path() + output_folder + output_file_name
 
     #Check if dir exists, if not create it
-    create_path_if_not_exist(data_dir )
-    create_path_if_not_exist(data_dir + output_folder)
+    # create_path_if_not_exist(data_dir )
+    create_path_if_not_exist(create_dataset_dir_if_not_exist_and_get_path() + output_folder)
 
 
     from pathlib import Path
@@ -66,6 +66,14 @@ def download_dataset(data_url,output_file_name,output_folder,data_dir,):
 def create_dataset_dir_if_not_exist_and_get_path():
     root = expanduser('~')
     dataset_path = root + '/nlu_test_datasets/'
+    if not os.path.exists(dataset_path):
+        print('Creating dir',dataset_path)
+        os.mkdir(dataset_path)
+    return dataset_path
+
+def create_model_dir_if_not_exist_and_get_path():
+    root = expanduser('~')
+    dataset_path = root + '/nlu_test_models/'
     if not os.path.exists(dataset_path):
         print('Creating dir',dataset_path)
         os.mkdir(dataset_path)

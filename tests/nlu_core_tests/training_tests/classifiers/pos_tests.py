@@ -15,18 +15,17 @@ class posTrainingTests(unittest.TestCase):
 
         #pos datase
         train_path = '/home/loan/Documents/freelancework/jsl/nlu/4realnlugit/tests/datasets/pos/UD_French-GSD_2.3.txt'
-        df_train = pd.read_csv(train_path,error_bad_lines=False)
+        # df_train = pd.read_csv(train_path,error_bad_lines=False)
         #convert int to str labels so our model predicts strings not numbers
+        # df_train.dropna(inplace=True)
 
-        df_train.dropna(inplace=True)
         pipe = nlu.load('train.pos',verbose=True)
         fitted_pipe = pipe.fit(dataset_path=train_path)
         # df = fitted_pipe.predict(' I love NLU!')
 
         df = fitted_pipe.predict('I love to go to the super market when there are great offers!')
-        print(df)
         print(df.columns)
-
+        print(df.pos)
 
     def load_classifier_dl_dataset(self):
         # catual url kagge
