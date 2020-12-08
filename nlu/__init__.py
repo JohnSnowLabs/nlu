@@ -131,11 +131,9 @@ def is_running_in_databricks():
         if 'DATABRICKS' in k :
             return True
     return False
+
 def load_nlu_pipe_from_hdd(pipe_path):
-    info_path = os.path.join(pipe_path,'nlu_metadata.json')
     pipe = NLUPipeline()
-
-
     if nlu.is_running_in_databricks() :
         if pipe_path.startswith('/dbfs/') or pipe_path.startswith('dbfs/'):
             nlu_path = pipe_path
