@@ -150,7 +150,7 @@ def load_nlu_pipe_from_hdd(pipe_path):
         nlu_ref = read_nlu_info(nlu_path)
         if os.path.exists(pipe_path):
             # if os.path.exists(info_path):
-            pipe_components = construct_component_from_pipe_identifier(nlu_ref,'nlu_ref','hdd',path=nlp_path)
+            pipe_components = construct_component_from_pipe_identifier(nlu_ref,nlu_ref,'hdd',path=nlp_path)
             # pipe_components = construct_component_from_pipe_identifier('nlu_ref','nlu_ref','hdd',path=pipe_path)
 
             for c in pipe_components: pipe.add(c, nlu_ref, pretrained_pipe_component=True)
