@@ -20,9 +20,8 @@ class PipelineLoadingTests(unittest.TestCase):
         #relative from tests/nlu_core_tests/training_tests/trained_pipe_tests
         output_file_name = 'news_category_test.csv'
         output_folder = 'classifier_dl/'
-        data_dir = '~/datasets/'
         data_url = "https://s3.amazonaws.com/auxdata.johnsnowlabs.com/public/resources/en/classifier-dl/news_Category/news_category_train.csv"
-        return pd.DataFrame(t.download_dataset(data_url,output_file_name,output_folder,data_dir))
+        return pd.read_csv(t.download_dataset(data_url,output_file_name,output_folder))
     #
     # def get_model_dir(self,suffix):
     #     #relative from tests/nlu_core_tests/training_tests/trained_pipe_tests
