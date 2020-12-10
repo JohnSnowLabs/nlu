@@ -23,7 +23,7 @@ class ClassifierDl:
             .setInputCols("sentence_embeddings") \
             .setOutputCol("category") \
             .setLabelColumn("y") \
-            .setMaxEpochs(5) \
+            .setMaxEpochs(3) \
            .setEnableOutputLogs(True)
 
     @staticmethod

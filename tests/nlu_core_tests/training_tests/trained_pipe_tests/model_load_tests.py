@@ -20,7 +20,7 @@ class PipelineLoadingTests(unittest.TestCase):
         output_folder = 'classifier_dl/'
         data_url = "https://s3.amazonaws.com/auxdata.johnsnowlabs.com/public/resources/en/classifier-dl/news_Category/news_category_test.csv"
 
-        return pd.read_csv(t.download_dataset(data_url,output_file_name,output_folder))
+        return pd.read_csv(t.download_dataset(data_url,output_file_name,output_folder)).iloc[0:100]
 
 
 

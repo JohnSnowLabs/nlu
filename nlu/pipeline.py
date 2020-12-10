@@ -841,7 +841,6 @@ class NLUPipeline(BasePipe):
         final_select_not_at_same_output_level = []
 
 
-        # TODO THIS METHOD DESTROYS ner.metadata!!! and confidenzzz goneee!
         ptmp, final_select_same_output_level = self.rename_columns_and_extract_map_values_same_level(ptmp=ptmp,
                                                                                                      fields_to_rename=same_output_level_fields,
                                                                                                      same_output_level=True,
