@@ -20,7 +20,7 @@ class PipelineSavingTests(unittest.TestCase):
     def test_saving_trained_model(self):
 
         store_path = t.create_model_dir_if_not_exist_and_get_path()
-        train_df = self.load_classifier_dl_dataset()
+        train_df = self.load_classifier_dl_dataset().iloc[0:100]
 
         # test_path = '/home/loan/Documents/freelancework/jsl/nlu/4realnlugit/tests/datasets/news_category_test.csv'
         # store_path = '/home/loan/Documents/freelancework/jsl/nlu/4realnlugit/tmp/models'
