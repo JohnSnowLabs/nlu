@@ -83,7 +83,7 @@ class SentimentTrainingTests(unittest.TestCase):
         # df_train=df_train.iloc[0:4000]
 
         # pipe = nlu.load('en.embed_sentence.bert_large_cased train.sentiment',verbose=True, )
-        pipe = nlu.load('en.embed_sentence.electra_large_uncased train.sentiment',verbose=True, )
+        pipe = nlu.load('en.embed_sentence.electra train.sentiment',verbose=True, )
         pipe.print_info()
         pipe['sentiment_dl'].setMaxEpochs(6)
         fitted_pipe = pipe.fit(df_train)
