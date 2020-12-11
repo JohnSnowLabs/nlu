@@ -9,12 +9,12 @@ class PipelineSavingTests(unittest.TestCase):
 
 
 
-    def test_saving_component(self):
-        # store_path = '/home/loan/Documents/freelancework/jsl/nlu/4realnlugit/tmp/models'
-        store_path = t.create_model_dir_if_not_exist_and_get_path()
-        pipe = nlu.load('emotion')
-        pipe.print_info()
-        pipe.save(store_path, component='classifier_dl', overwrite=True)
+    # def test_saving_component(self):
+    #     # store_path = '/home/loan/Documents/freelancework/jsl/nlu/4realnlugit/tmp/models'
+    #     store_path = t.create_model_dir_if_not_exist_and_get_path()
+    #     pipe = nlu.load('emotion')
+    #     pipe.print_info()
+    #     pipe.save(store_path, component='classifier_dl', overwrite=True)
 
 
     def test_saving_trained_model(self):
