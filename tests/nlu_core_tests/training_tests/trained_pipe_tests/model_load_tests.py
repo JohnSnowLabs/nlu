@@ -8,11 +8,11 @@ class PipelineLoadingTests(unittest.TestCase):
         train_df = self.load_classifier_dl_dataset()
         train_df.columns = ['y','text']
         pipe = nlu.load('train.classifier',verbose=True,)
-        fitted_pipe = pipe.fit(train_df)
+        pipe = pipe.fit(train_df)
         store_path = t.create_model_dir_if_not_exist_and_get_path()
-        fitted_pipe.save(store_path, overwrite=True)
-        loaded_pipe = nlu.load(path=store_path)
-        print(loaded_pipe.predict('I Love offline mode!'))
+        pipe.save(store_path, overwrite=True)
+        pipe = nlu.load(path=store_path)
+        print(pipe.predict('I Love offline mode!'))
 
     def load_classifier_dl_dataset(self):
         #relative from tests/nlu_core_tests/training_tests/trained_pipe_tests
