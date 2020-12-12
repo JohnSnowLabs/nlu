@@ -89,11 +89,10 @@ class ClassifierDlTests(unittest.TestCase):
         print (classification_report(df['y'], df['category']))
 
     def load_classifier_dl_dataset(self):
-        #relative from tests/nlu_core_tests/training_tests/classifiers
         output_file_name = 'news_category_test.csv'
         output_folder = 'classifier_dl/'
         data_url = "https://s3.amazonaws.com/auxdata.johnsnowlabs.com/public/resources/en/classifier-dl/news_Category/news_category_test.csv"
-        return pd.read_csv(t.download_dataset(data_url,output_file_name,output_folder))
+        return pd.read_csv(t.download_dataset(data_url,output_file_name,output_folder)).iloc[0:100]
 
 if __name__ == '__main__':
     unittest.main()

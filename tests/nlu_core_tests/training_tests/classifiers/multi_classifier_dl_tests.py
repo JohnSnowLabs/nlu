@@ -31,13 +31,13 @@ class MultiClassifierDlTests(unittest.TestCase):
 
         # pipe['multi_classifier_dl'].setMaxEpochs(2)
         pipe.print_info()
-        fitted_model = pipe.fit(train_df)
-        df = fitted_model.predict(train_df)
+        pipe = pipe.fit(train_df)
+        df = pipe.predict(train_df)
         print(df.columns)
         print(df[['multi_classifier','y']])
         print(df[['multi_classifier_confidence','y']])
 
-        df = fitted_model.predict(test_df)
+        df = pipe.predict(test_df)
         print(df.columns)
         print(df[['multi_classifier','y']])
         print(df[['multi_classifier_confidence','y']])
@@ -50,10 +50,7 @@ class MultiClassifierDlTests(unittest.TestCase):
         # test_df.columns = ['y_str','text']
         test_df.columns = ['y','text']
 
-        # test_df['y'] = test_df.y_str.str.split(',')
 
-        # test_df.y = test_df.y.astype('stringArray')#pd.arrays.
-        # test_df.y = test_df.y.astype(list[str])#pd.arrays.
 
         print(test_df.y)
         print(test_df)
@@ -67,12 +64,12 @@ class MultiClassifierDlTests(unittest.TestCase):
 
         # pipe['multi_classifier_dl'].setMaxEpochs(2)
         pipe.print_info()
-        fitted_model = pipe.fit(train_df)
-        df = fitted_model.predict(train_df)
+        pipe = pipe.fit(train_df)
+        df = pipe.predict(train_df)
         print(df.columns)
         print(df[['multi_classifier','y']])
         print(df[['multi_classifier_confidence','y']])
-        df = fitted_model.predict(test_df)
+        df = pipe.predict(test_df)
         print(df.columns)
         print(df[['multi_classifier','y']])
         print(df[['multi_classifier_confidence','y']])
@@ -87,11 +84,11 @@ class MultiClassifierDlTests(unittest.TestCase):
         test_df.columns = ['y','text']
         pipe = nlu.load('embed_sentence.bert train.multi_classifier',verbose=True,)
         pipe['multi_classifier_dl'].setMaxEpochs(2)
-        fitted_model = pipe.fit(train_df)
-        df = fitted_model.predict(train_df, output_level='sentence')
+        pipe = pipe.fit(train_df)
+        df = pipe.predict(train_df, output_level='sentence')
         print(df.columns)
         print(df[['category','y']])
-        df = fitted_model.predict(test_df, output_level='sentence')
+        df = pipe.predict(test_df, output_level='sentence')
         print(df.columns)
         print(df[['category','y']])
         # Eval results
@@ -107,11 +104,11 @@ class MultiClassifierDlTests(unittest.TestCase):
         test_df.columns = ['y','text']
         pipe = nlu.load('embed_sentence.bert train.multi_classifier',verbose=True,)
         pipe['multi_classifier_dl'].setMaxEpochs(2)
-        fitted_model = pipe.fit(train_df)
-        df = fitted_model.predict(train_df)
+        pipe = pipe.fit(train_df)
+        df = pipe.predict(train_df)
         print(df.columns)
         print(df[['category','y']])
-        df = fitted_model.predict(test_df)
+        df = pipe.predict(test_df)
         print(df.columns)
         print(df[['category','y']])
         # Eval results
