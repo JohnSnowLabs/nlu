@@ -72,7 +72,6 @@ class MultiClassifierDlTests(unittest.TestCase):
         print(df.columns)
         print(df[['multi_classifier','y']])
         print(df[['multi_classifier_confidence','y']])
-
         df = fitted_model.predict(test_df)
         print(df.columns)
         print(df[['multi_classifier','y']])
@@ -90,16 +89,13 @@ class MultiClassifierDlTests(unittest.TestCase):
         pipe['multi_classifier_dl'].setMaxEpochs(2)
         fitted_model = pipe.fit(train_df)
         df = fitted_model.predict(train_df, output_level='sentence')
-
         print(df.columns)
         print(df[['category','y']])
         df = fitted_model.predict(test_df, output_level='sentence')
         print(df.columns)
         print(df[['category','y']])
-
         # Eval results
         from sklearn.metrics import classification_report
-
         print (classification_report(df['y'], df['category']))
 
 
@@ -118,17 +114,22 @@ class MultiClassifierDlTests(unittest.TestCase):
         df = fitted_model.predict(test_df)
         print(df.columns)
         print(df[['category','y']])
-
         # Eval results
         from sklearn.metrics import classification_report
-
         print (classification_report(df['y'], df['category']))
 
 
+    # def load_multi_classifier_dl_dataset(self):
+    #     #relative from tests/nlu_core_tests/training_tests/classifiers
+    #     p = '/home/loan/Documents/freelancework/jsl/nlu/4realnlugit/tests/datasets/multi_classifier_dl/e2e-dataset/testset_w_refs.csv'
+    #     return pd.read_csv(p)
+
     def load_multi_classifier_dl_dataset(self):
-        #relative from tests/nlu_core_tests/training_tests/classifiers
-        p = '/home/loan/Documents/freelancework/jsl/nlu/4realnlugit/tests/datasets/multi_classifier_dl/e2e-dataset/testset_w_refs.csv'
-        return pd.read_csv(p)
+        output_file_name = 'e2e_test.csv'
+        output_folder = 'multi_classifier_dl/'
+        data_url = "http://ckl-it.de/wp-content/uploads/2020/12/testset_w_refs.csv"
+        return pd.read_csv(t.download_dataset(data_url,output_file_name,output_folder)).iloc[0:100]
+
         # output_file_name = 'news_category_test.csv'
         # output_folder = 'multi_classifier_dl/'
         # data_dir = '../../../datasets/'
