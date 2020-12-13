@@ -108,11 +108,11 @@ jobs:
       - name: NLU Training Classifiers tests
         if: always()
         run: |
-          python -m unittest  discover   -s './tests/nlu_core_tests/training_tests/classifiers' -p '*tests.py'
-      - name: NLU Saving and Loading tests
-        if: always()
-        run: |
-          python -m unittest  discover   -s './tests/nlu_core_tests/training_tests/trained_pipe_tests' -p '*tests.py'
+          python -m unittest  discover   -s './tests/nlu_core_tests/training_tests/classifiers' -p '*sentiment_dl*.py'
+#      - name: NLU Saving and Loading tests
+#        if: always()
+#        run: |
+#          python -m unittest  discover   -s './tests/nlu_core_tests/training_tests/trained_pipe_tests' -p '*tests.py'
 
 
 
