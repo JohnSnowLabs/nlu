@@ -1,6 +1,7 @@
 
 
 from sklearn.metrics import classification_report
+import tests.test_utils as t
 
 import unittest
 from nlu import *
@@ -14,24 +15,24 @@ class posTrainingTests(unittest.TestCase):
 
 
         #pos datase
-        train_path = '/home/loan/Documents/freelancework/jsl/nlu/4realnlugit/tests/datasets/pos/UD_French-GSD_2.3.txt'
+        train_path = self.load_pos_train_dataset_and_get_path()
         # df_train = pd.read_csv(train_path,error_bad_lines=False)
         #convert int to str labels so our model predicts strings not numbers
         # df_train.dropna(inplace=True)
 
         pipe = nlu.load('train.pos',verbose=True)
         fitted_pipe = pipe.fit(dataset_path=train_path)
-        # df = fitted_pipe.predict(' I love NLU!')
 
         df = fitted_pipe.predict('I love to go to the super market when there are great offers!')
         print(df.columns)
         print(df.pos)
 
-    def load_classifier_dl_dataset(self):
-        # catual url kagge
-        train_url = 'https://s3.amazonaws.com/auxdata.johnsnowlabs.com/public/resources/fr/pos/UD_French/UD_French-GSD_2.3.txt '
-        path = None
 
+    def load_pos_train_dataset_and_get_path(self):
+        output_file_name = 'ud_french.txt'
+        output_folder = 'pos/'
+        data_url = 'https://s3.amazonaws.com/auxdata.johnsnowlabs.com/public/resources/fr/pos/UD_French/UD_French-GSD_2.3.txt '
+        return t.download_dataset(data_url,output_file_name,output_folder)
 
 
         return pd.DataFrame(path)
