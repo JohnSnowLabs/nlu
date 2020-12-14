@@ -26,9 +26,11 @@ def check_python_version():
         print("Please use a Python version with version number SMALLER than 3.8")
         print("Python versions equal or higher 3.8 are currently NOT SUPPORTED by NLU")
         return False
+    return True
+
 
 if not check_pyspark_install(): raise Exception()
-if not check_pyspark_install(): raise Exception()
+if not check_python_version(): raise Exception()
 
 
 
