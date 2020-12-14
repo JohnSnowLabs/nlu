@@ -105,10 +105,28 @@ jobs:
 #        if: always()
 #        run: |
 #          python -m unittest  discover   -s './tests/nlu_core_tests/pipeline_tests' -p '*tests.py'
-      - name: NLU Training Classifiers tests
+      - name: NLU Training sentiment tests
         if: always()
         run: |
           python -m unittest  discover   -s './tests/nlu_core_tests/training_tests/classifiers' -p '*sentiment_dl*.py'
+      - name: NLU Training classifier tests
+        if: always()
+        run: |
+          python -m unittest  discover   -s './tests/nlu_core_tests/training_tests/classifiers' -p '*classifier_dl*.py'
+      - name: NLU Training multi classifier tests
+        if: always()
+        run: |
+          python -m unittest  discover   -s './tests/nlu_core_tests/training_tests/classifiers' -p '*multi*.py'
+      - name: NLU Training NER tests
+        if: always()
+        run: |
+          python -m unittest  discover   -s './tests/nlu_core_tests/training_tests/classifiers' -p '*ner*.py'
+      - name: NLU Training POS tests
+        if: always()
+        run: |
+          python -m unittest  discover   -s './tests/nlu_core_tests/training_tests/classifiers' -p '*pos*.py'
+
+
 #      - name: NLU Saving and Loading tests
 #        if: always()
 #        run: |
