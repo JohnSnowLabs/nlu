@@ -11,24 +11,26 @@ def check_pyspark_install():
             v = sparknlp.start().version
             spark_major = int(v.split('.')[0])
             if spark_major >= 3 :
-                raise RuntimeError from exc
+                raise Exception()
         except :
             print(f"Detected pyspark version={v} Which is >=3.X\nPlease run '!pip install pyspark==2.4.7' orr install any pyspark>=2.4.0 and pyspark<3")
             print(f"Or set nlu.load(version_checks=False). We disadvise from doing so, until Pyspark >=3 is officially supported in 2021.")
-            return nlu.NluError()
+            return False
     except :
         print("No Pyspark installed!\nPlease run '!pip install pyspark==2.4.7' or install any pyspark>=2.4.0 with pyspark<3")
-        return nlu.NluError()
+        return False
     return True
 
+def check_python_version():
+    if float(sys.version[:3]) >= 3.8:
+        print("Please use a Python version with version number SMALLER than 3.8")
+        print("Python versions equal or higher 3.8 are currently NOT SUPPORTED by NLU")
+        return False
 
-check_pyspark_install()
+if not check_pyspark_install(): raise Exception()
+if not check_pyspark_install(): raise Exception()
 
 
-if float(sys.version[:3]) >= 3.8:
-    print("Please use a Python version with version number SMALLER than 3.8")
-    print("Python versions equal or higher 3.8 are currently NOT SUPPORTED by NLU")
-    exit()
 
 import nlu
 import logging
