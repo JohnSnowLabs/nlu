@@ -23,7 +23,7 @@ import os
 ! apt-get install -y openjdk-8-jdk-headless -qq > /dev/null
 os.environ["JAVA_HOME"] = "/usr/lib/jvm/java-8-openjdk-amd64"
 os.environ["PATH"] = os.environ["JAVA_HOME"] + "/bin:" + os.environ["PATH"]
-! pip install nlu
+! pip install nlu pyspark==2.4.7
 import nlu
 ```
 You can test it out right away with :
@@ -82,7 +82,7 @@ This is only required for Windows usesr.
 
 ```bash
 # Install Spark NLU from PyPI
-pip install nlu
+pip install nlu pyspark==2.4.7
 ```
 
 </div><div class="h3-box" markdown="1">

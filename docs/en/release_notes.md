@@ -12,6 +12,70 @@ modify_date: "2020-06-12"
 
 <div class="h3-box" markdown="1">
 
+##  NLU 1.0.5 Release Notes
+
+
+### NLU 1.0.5 New Features
+- Trainable Sentiment DL classifier
+- Trainable POS
+
+
+### NLU 1.0.5 New Notebooks and Tutorials 
+- [Sentiment Classification Training Demo](https://colab.research.google.com/drive/1f-EORjO3IpvwRAktuL4EvZPqPr2IZ_g8?usp=sharing)
+- [Part Of Speech Tagger Training demo](https://colab.research.google.com/drive/1CZqHQmrxkDf7y3rQHVjO-97tCnpUXu_3?usp=sharing)
+
+### Sentiment Classifier Training
+[Sentiment Classification Training Demo](https://colab.research.google.com/drive/1f-EORjO3IpvwRAktuL4EvZPqPr2IZ_g8?usp=sharing)
+
+To train the Binary Sentiment classifier model, you must pass a dataframe with a 'text' column and a 'y' column for the label.
+
+By default *Universal Sentence Encoder Embeddings (USE)* are used as sentence embeddings.
+
+```python
+fitted_pipe = nlu.load('train.sentiment').fit(train_df)
+preds = fitted_pipe.predict(train_df)
+```
+
+If you add a nlu sentence embeddings reference, before the train reference, NLU will use that Sentence embeddings instead of the default USE.
+
+```python
+#Train NER on BERT sentence emebddings
+fitted_pipe = nlu.load('embed_sentence.bert train.classifier').fit(train_df)
+preds = fitted_pipe.predict(train_df)
+```
+
+
+###Part Of Speech Tagger Training 
+[Part Of Speech Tagger Training demo](https://colab.research.google.com/drive/1CZqHQmrxkDf7y3rQHVjO-97tCnpUXu_3?usp=sharing)
+
+```python
+fitted_pipe = nlu.load('train.pos').fit(train_df)
+preds = fitted_pipe.predict(train_df)
+```
+
+If you add a nlu sentence embeddings reference, before the train reference, NLU will use that Sentence embeddings instead of the default USE.
+```python
+#Train POS on BERT sentence emebddings
+fitted_pipe = nlu.load('embed_sentence.bert train.pos').fit(train_df)
+preds = fitted_pipe.predict(train_df)
+```
+
+
+### NLU 1.0.5 Installation changes
+Starting from version 1.0.5 NLU will not automatically install pyspark for users anymore.      
+This enables easier customizing the Pyspark version which makes it easier to use in various cluster enviroments.
+
+Please run
+```bash
+pip install pyspark==2.4.7
+```
+or install any pyspark>=2.4.0 with pyspark<3
+
+
+
+
+
+
 ## NLU  1.0.4 Release Notes 
 ##  John Snow Labs NLU 1.0.4 : Trainable Named Entity Recognizer (NER) , achieve SOTA in 1 line of code and easy scaling to 100's of Spark nodes
 We are glad to announce NLU 1.0.4 releases the State of the Art breaking Neural Network architecture for NER, Char CNNs - BiLSTM - CRF!
