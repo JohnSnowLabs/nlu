@@ -96,9 +96,9 @@ class SentimentTrainingTests(unittest.TestCase):
 
 
     def load_sentiment_dl_dataset(self):
-        output_file_name = 'e2e_test.csv'
-        output_folder = 'multi_classifier_dl/'
-        data_url = 'http://ckl-it.de/wp-content/uploads/2020/11/AllProductReviews-1.csv'
+        output_file_name = 'stock.csv'
+        output_folder = 'sentiment/'
+        data_url = 'http://ckl-it.de/wp-content/uploads/2020/12/stock_data.csv'
         return pd.read_csv(t.download_dataset(data_url,output_file_name,output_folder),error_bad_lines=False).iloc[0:100]
 
 
