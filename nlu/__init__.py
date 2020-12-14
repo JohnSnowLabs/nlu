@@ -183,16 +183,38 @@ def enable_verbose():
     ch.setLevel(logging.INFO)
     logger.addHandler(ch)
 
-def load(request ='from_disk', path=None,verbose=False,):
+
+
+def check_pyspark_install():
+    try :
+        from pyspark.sql import SparkSession
+        try :
+            import sparknlp
+            v = sparknlp.start().version
+            spark_major = int(v.split('.')[0])
+            if spark_major >= 3 :
+                raise RuntimeError from exc
+        except :
+            print(f"Detected pyspark version={v} Which is >=3.X\nPlease run '!pip install pyspark==2.4.7' orr install any pyspark>=2.4.0 and pyspark<3")
+            print(f"Or set nlu.load(version_checks=False). We disadvise from doing so, until Pyspark >=3 is officially supported in 2021.")
+            return nlu.NluError()
+    except :
+        print("No Pyspark installed!\nPlease run '!pip install pyspark==2.4.7' or install any pyspark>=2.4.0 with pyspark<3")
+        return nlu.NluError()
+    return True
+check_pyspark_install()
+check_pyspark_install()
+def load(request ='from_disk', path=None,verbose=False,version_checks=True):
     '''
     Load either a prebuild pipeline or a set of components identified by a whitespace seperated list of components
     :param verbose:
     :param path: If path is not None, the model/pipe for the NLU reference will be loaded from the path. Useful for offline mode. Currently only loading entire NLU pipelines is supported, but not loading singular pipes
     :param request: A NLU model/pipeline/component reference
+    :param version_checks: Wether to check if Pyspark is properly installed and if the Pyspark version is correct for the NLU version. If set to False, these tests will be skipped
     :return: returns a non fitted nlu pipeline object
     '''
     gc.collect()
-
+    if version_checks : check_pyspark_install()
     spark = sparknlp.start()
     spark.catalog.clearCache()
     spark_started = True
