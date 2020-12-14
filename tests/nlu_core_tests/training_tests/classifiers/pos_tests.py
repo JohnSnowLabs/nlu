@@ -21,9 +21,9 @@ class posTrainingTests(unittest.TestCase):
         # df_train.dropna(inplace=True)
 
         pipe = nlu.load('train.pos',verbose=True)
-        fitted_pipe = pipe.fit(dataset_path=train_path)
+        pipe = pipe.fit(dataset_path=train_path)
 
-        df = fitted_pipe.predict('I love to go to the super market when there are great offers!')
+        df = pipe.predict('I love to go to the super market when there are great offers!')
         print(df.columns)
         print(df.pos)
 

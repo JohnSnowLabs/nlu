@@ -16,11 +16,11 @@ class ClassifierDlTests(unittest.TestCase):
         test_df.columns = ['y','text']
         pipe = nlu.load('train.classifier',verbose=True,)
         pipe['classifier_dl'].setMaxEpochs(2)
-        fitted_model = pipe.fit(train_df)
-        df = fitted_model.predict(train_df)
+        pipe = pipe.fit(train_df)
+        df = pipe.predict(train_df)
         print(df[['category','y']])
 
-        df = fitted_model.predict(test_df)
+        df = pipe.predict(test_df)
         print(df.columns)
         print(df[['category','y']])
         print (classification_report(df['y'], df['category']))

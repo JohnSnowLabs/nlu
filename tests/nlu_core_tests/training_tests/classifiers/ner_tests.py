@@ -11,8 +11,8 @@ class NerTrainingTests(unittest.TestCase):
         #CONLL data
         train_path = self.load_ner_train_dataset_and_get_path()
         pipe = nlu.load('train.ner',verbose=True)
-        fitted_pipe = pipe.fit(dataset_path=train_path)
-        df = fitted_pipe.predict(' Hello Donald Trump and Hello Angela Merkel')
+        pipe = pipe.fit(dataset_path=train_path)
+        df = pipe.predict(' Hello Donald Trump and Hello Angela Merkel')
         print(df)
         print(df.columns)
     # Too heavy running on github actions
