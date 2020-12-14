@@ -2,9 +2,32 @@ __version__ = '1.0.5'
 
 import sys
 
+
+def check_pyspark_install():
+    try :
+        from pyspark.sql import SparkSession
+        try :
+            import sparknlp
+            v = sparknlp.start().version
+            spark_major = int(v.split('.')[0])
+            if spark_major >= 3 :
+                raise RuntimeError from exc
+        except :
+            print(f"Detected pyspark version={v} Which is >=3.X\nPlease run '!pip install pyspark==2.4.7' orr install any pyspark>=2.4.0 and pyspark<3")
+            print(f"Or set nlu.load(version_checks=False). We disadvise from doing so, until Pyspark >=3 is officially supported in 2021.")
+            return nlu.NluError()
+    except :
+        print("No Pyspark installed!\nPlease run '!pip install pyspark==2.4.7' or install any pyspark>=2.4.0 with pyspark<3")
+        return nlu.NluError()
+    return True
+
+
+check_pyspark_install()
+
+
 if float(sys.version[:3]) >= 3.8:
     print("Please use a Python version with version number SMALLER than 3.8")
-    print("Python versions equal or higher 3.8 is currently NOT SUPPORTED by NLU")
+    print("Python versions equal or higher 3.8 are currently NOT SUPPORTED by NLU")
     exit()
 
 import nlu
@@ -185,25 +208,6 @@ def enable_verbose():
 
 
 
-def check_pyspark_install():
-    try :
-        from pyspark.sql import SparkSession
-        try :
-            import sparknlp
-            v = sparknlp.start().version
-            spark_major = int(v.split('.')[0])
-            if spark_major >= 3 :
-                raise RuntimeError from exc
-        except :
-            print(f"Detected pyspark version={v} Which is >=3.X\nPlease run '!pip install pyspark==2.4.7' orr install any pyspark>=2.4.0 and pyspark<3")
-            print(f"Or set nlu.load(version_checks=False). We disadvise from doing so, until Pyspark >=3 is officially supported in 2021.")
-            return nlu.NluError()
-    except :
-        print("No Pyspark installed!\nPlease run '!pip install pyspark==2.4.7' or install any pyspark>=2.4.0 with pyspark<3")
-        return nlu.NluError()
-    return True
-check_pyspark_install()
-check_pyspark_install()
 def load(request ='from_disk', path=None,verbose=False,version_checks=True):
     '''
     Load either a prebuild pipeline or a set of components identified by a whitespace seperated list of components
@@ -214,7 +218,7 @@ def load(request ='from_disk', path=None,verbose=False,version_checks=True):
     :return: returns a non fitted nlu pipeline object
     '''
     gc.collect()
-    if version_checks : check_pyspark_install()
+    # if version_checks : check_pyspark_install()
     spark = sparknlp.start()
     spark.catalog.clearCache()
     spark_started = True
