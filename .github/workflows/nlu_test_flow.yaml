@@ -109,10 +109,11 @@ jobs:
         if: always()
         run: |
           python -m unittest  discover   -s './tests/nlu_core_tests/training_tests/classifiers' -p '*sentiment_dl*.py'
-      - name: NLU Training classifier tests
-        if: always()
-        run: |
-          python -m unittest  discover   -s './tests/nlu_core_tests/training_tests/classifiers' -p '*classifier_dl*.py'
+# Too hevy for Github actions
+#      - name: NLU Training classifier tests
+#        if: always()
+#        run: |
+#          python -m unittest  discover   -s './tests/nlu_core_tests/training_tests/classifiers' -p '*classifier_dl*.py'
       - name: NLU Training multi classifier tests
         if: always()
         run: |
