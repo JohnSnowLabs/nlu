@@ -5,6 +5,9 @@ from sparknlp.base import *
 import logging
 import nlu
 import inspect
+import pyspark
+from pyspark.sql import SparkSession
+from pyspark.sql.types import StructType,StructField, StringType, IntegerType
 
 logger = logging.getLogger('nlu')
 import pyspark
@@ -21,6 +24,7 @@ from sparknlp.annotator import *
 class BasePipe(dict):
     # we inherhit from dict so the pipe is indexable and we have a nice shortcut for accessing the spark nlp model
     def __init__(self):
+        self.nlu_ref=''
         self.raw_text_column = 'text'
         self.raw_text_matrix_slice = 1  # place holder for getting text from matrix
         self.spark_nlp_pipe = None
@@ -199,6 +203,7 @@ class NLUPipeline(BasePipe):
         return sparknlp.start().createDataFrame(data=text_df)
 
     def verify_all_labels_exist(self,dataset):
+        #todo
         return True
         # pass
 
@@ -226,8 +231,21 @@ class NLUPipeline(BasePipe):
 
         elif dataset_path != None and 'pos' in self.nlu_ref:
             from sparknlp.training import POS
-            s_df = POS().readDataset(self.spark,path=dataset_path)
-            self.spark_transformer_pipe = self.spark_estimator_pipe.fit(s_df.withColumnRenamed('label','y'))
+            s_df = POS().readDataset(self.spark,path=dataset_path,delimiter="_",outputPosCol="y",outputDocumentCol="document",outputTextCol="text")
+            self.spark_transformer_pipe = self.spark_estimator_pipe.fit(s_df)
+        elif isinstance(dataset,pd.DataFrame) and 'multi' in  self.nlu_ref:
+            schema = StructType([
+                StructField("y", StringType(), True), \
+                StructField("text", StringType(), True) \
+                ])
+            label_seperator = ','
+            from pyspark.sql import functions as F
+            df = self.spark.createDataFrame(data=dataset, schema=schema).withColumn('y',F.split('y',label_seperator))
+            self.spark_transformer_pipe = self.spark_estimator_pipe.fit(df)
+
+        elif isinstance(dataset,pd.DataFrame):
+            if not self.verify_all_labels_exist(dataset) : return nlu.NluError()
+            self.spark_transformer_pipe = self.spark_estimator_pipe.fit(self.convert_pd_dataframe_to_spark(dataset))
 
         elif isinstance(dataset,pd.DataFrame) :
             if not self.verify_all_labels_exist(dataset) : return nlu.NluError()
@@ -235,11 +253,13 @@ class NLUPipeline(BasePipe):
 
         else :
             # fit on empty dataframe since no data provided
+            print('Fitting on empty Dataframe, could not infer correct training method!')
             self.spark_transformer_pipe = self.spark_estimator_pipe.fit(self.get_sample_spark_dataframe())
 
 
         return self
     def convert_pd_dataframe_to_spark(self, data):
+        #optimize
         return nlu.spark.createDataFrame(data)
 #todo rm
     def get_output_level_of_embeddings_provider(self, field_type, field_name):
@@ -426,12 +446,19 @@ class NLUPipeline(BasePipe):
                     # Get only meta data with greatest value (highest prob)
 
                     cols_to_max = []
-                    for key in keys_in_metadata: cols_to_max.append(
-                        'res.' + str(fields_to_rename.index(field)) + '.' + key)
+                    for key in keys_in_metadata:
+                        if 'sentence' == key and field == 'sentiment.metadata':continue
+
+                        cols_to_max.append('res.' + str(fields_to_rename.index(field)) + '.' + key)
+
+                    # For Sentiment the sentence.result contains irrelevant Metadata and is not part of the confidence we want. So we remove it here
 
                     # sadly because the Spark SQL method 'greatest()' does not work properly on scientific notation, we must cast our metadata to decimal with limited precision
                     # scientific notation starts after 6 decimal places, so we can have at most exactly 6
-                    # since greatest() breaks the dataframe Schema, we must rename the columns first or run into issues with Pysark Struct queriying
+                    # since greatest() breaks the dataframe Schema, we must rename the columns first or run into issues with PySpark Struct queriying
+
+
+
                     for key in cols_to_max: ptmp = ptmp.withColumn(key.replace('.', '_'),
                                                                    pyspark_col(key).cast('decimal(7,6)'))
                     # casted = ptmp.select(*(pyspark_col(c).cast("decimal(6,6)").alias(c.replace('.','_')) for c in cols_to_max))
@@ -446,9 +473,8 @@ class NLUPipeline(BasePipe):
                         ptmp = ptmp.withColumnRenamed(renamed_cols_to_max[0], max_confidence_name)
                         columns_for_select.append(max_confidence_name)
                 continue
-
-            ptmp = ptmp.withColumn(new_field, ptmp[
-                'res.' + str(fields_to_rename.index(field))])  # get the outputlevel results row by row
+            # get th e outputlevel results row by row (could be parallelized via mapping for each annotator)
+            ptmp = ptmp.withColumn(new_field, ptmp['res.' + str(fields_to_rename.index(field))])
             columns_for_select.append(new_field)
             logger.info('Renaming exploded field  : nr=%s , name=%s to new_name=%s', i, field, new_field)
         return ptmp, columns_for_select
@@ -815,7 +841,6 @@ class NLUPipeline(BasePipe):
         final_select_not_at_same_output_level = []
 
 
-        # TODO THIS METHOD DESTROYS ner.metadata!!! and confidenzzz goneee!
         ptmp, final_select_same_output_level = self.rename_columns_and_extract_map_values_same_level(ptmp=ptmp,
                                                                                                      fields_to_rename=same_output_level_fields,
                                                                                                      same_output_level=True,

@@ -1,11 +1,38 @@
-__version__ = '1.0.4'
+__version__ = '1.0.5'
 
 import sys
 
-if float(sys.version[:3]) >= 3.8:
-    print("Please use a Python version with version number SMALLER than 3.8")
-    print("Python versions equal or higher 3.8 is currently NOT SUPPORTED by NLU")
-    exit()
+
+def check_pyspark_install():
+    try :
+        from pyspark.sql import SparkSession
+        try :
+            import sparknlp
+            v = sparknlp.start().version
+            spark_major = int(v.split('.')[0])
+            if spark_major >= 3 :
+                raise Exception()
+        except :
+            print(f"Detected pyspark version={v} Which is >=3.X\nPlease run '!pip install pyspark==2.4.7' orr install any pyspark>=2.4.0 and pyspark<3")
+            print(f"Or set nlu.load(version_checks=False). We disadvise from doing so, until Pyspark >=3 is officially supported in 2021.")
+            return False
+    except :
+        print("No Pyspark installed!\nPlease run '!pip install pyspark==2.4.7' or install any pyspark>=2.4.0 with pyspark<3")
+        return False
+    return True
+
+def check_python_version():
+    if float(sys.version[:3]) >= 3.8:
+        print("Please use a Python version with version number SMALLER than 3.8")
+        print("Python versions equal or higher 3.8 are currently NOT SUPPORTED by NLU")
+        return False
+    return True
+
+
+if not check_pyspark_install(): raise Exception()
+if not check_python_version(): raise Exception()
+
+
 
 import nlu
 import logging
@@ -131,11 +158,9 @@ def is_running_in_databricks():
         if 'DATABRICKS' in k :
             return True
     return False
+
 def load_nlu_pipe_from_hdd(pipe_path):
-    info_path = os.path.join(pipe_path,'nlu_metadata.json')
     pipe = NLUPipeline()
-
-
     if nlu.is_running_in_databricks() :
         if pipe_path.startswith('/dbfs/') or pipe_path.startswith('dbfs/'):
             nlu_path = pipe_path
@@ -152,7 +177,7 @@ def load_nlu_pipe_from_hdd(pipe_path):
         nlu_ref = read_nlu_info(nlu_path)
         if os.path.exists(pipe_path):
             # if os.path.exists(info_path):
-            pipe_components = construct_component_from_pipe_identifier(nlu_ref,'nlu_ref','hdd',path=nlp_path)
+            pipe_components = construct_component_from_pipe_identifier(nlu_ref,nlu_ref,'hdd',path=nlp_path)
             # pipe_components = construct_component_from_pipe_identifier('nlu_ref','nlu_ref','hdd',path=pipe_path)
 
             for c in pipe_components: pipe.add(c, nlu_ref, pretrained_pipe_component=True)
@@ -185,16 +210,19 @@ def enable_verbose():
     ch.setLevel(logging.INFO)
     logger.addHandler(ch)
 
-def load(request ='from_disk', path=None,verbose=False,):
+
+
+def load(request ='from_disk', path=None,verbose=False,version_checks=True):
     '''
     Load either a prebuild pipeline or a set of components identified by a whitespace seperated list of components
     :param verbose:
     :param path: If path is not None, the model/pipe for the NLU reference will be loaded from the path. Useful for offline mode. Currently only loading entire NLU pipelines is supported, but not loading singular pipes
     :param request: A NLU model/pipeline/component reference
+    :param version_checks: Wether to check if Pyspark is properly installed and if the Pyspark version is correct for the NLU version. If set to False, these tests will be skipped
     :return: returns a non fitted nlu pipeline object
     '''
     gc.collect()
-
+    # if version_checks : check_pyspark_install()
     spark = sparknlp.start()
     spark.catalog.clearCache()
     spark_started = True
@@ -460,7 +488,8 @@ def resolve_component_from_parsed_query_data(language, component_type, dataset, 
             nlp_ref)
         return NluError
 
-
+import sparknlp
+sparknlp.start()
 def construct_trainable_component_from_identifier(nlu_ref,nlp_ref):
     '''
     This method returns a Spark NLP annotator Approach class embelished by a NLU component
@@ -496,9 +525,11 @@ def construct_trainable_component_from_identifier(nlu_ref,nlp_ref):
         if nlu_ref in ['train.vivekn_sentiment'] :
             pass
         if nlu_ref in ['train.pos'] :
-            pass
+            return nlu.Classifier(annotator_class = 'pos', trainable=True)
+
+
         if nlu_ref in ['train.multi_classifier'] :
-            pass
+            return nlu.Classifier(annotator_class = 'multi_classifier', trainable=True)
 
 
 

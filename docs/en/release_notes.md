@@ -10,7 +10,77 @@ modify_date: "2020-06-12"
 
 <div class="main-docs" markdown="1">
 
+
 <div class="h3-box" markdown="1">
+
+##  NLU 1.0.5 Release Notes 
+
+### Trainable Part of Speech Tagger (POS), Sentiment Classifier with BERT/USE/ELECTRA sentence embeddings in 1 Line of code! Latest NLU Release 1.0.5
+We are glad to announce NLU 1.0.5 has been released!       
+This release comes with a **trainable Sentiment classifier** and a **Trainable Part of Speech (POS)** models!       
+These Neural Network Architectures achieve the state of the art (SOTA) on most **binary Sentiment analysis** and **Part of Speech Tagging** tasks!       
+You can train the Sentiment Model on any of the **100+ Sentence Embeddings** which include **BERT, ELECTRA, USE, Multi Lingual BERT Sentence Embeddings** and many more!       
+Leverage this and achieve the state of the art in any of your datasets, all of this in **just 1 line of Python code**
+
+### NLU 1.0.5 New Features
+- Trainable Sentiment DL classifier
+- Trainable POS
+
+### NLU 1.0.5 New Notebooks and Tutorials 
+- [Sentiment Classification Training Demo](https://colab.research.google.com/drive/1f-EORjO3IpvwRAktuL4EvZPqPr2IZ_g8?usp=sharing)
+- [Part Of Speech Tagger Training demo](https://colab.research.google.com/drive/1CZqHQmrxkDf7y3rQHVjO-97tCnpUXu_3?usp=sharing)
+
+### Sentiment Classifier Training
+[Sentiment Classification Training Demo](https://colab.research.google.com/drive/1f-EORjO3IpvwRAktuL4EvZPqPr2IZ_g8?usp=sharing)
+
+To train the Binary Sentiment classifier model, you must pass a dataframe with a 'text' column and a 'y' column for the label.
+
+By default *Universal Sentence Encoder Embeddings (USE)* are used as sentence embeddings.
+
+```python
+fitted_pipe = nlu.load('train.sentiment').fit(train_df)
+preds = fitted_pipe.predict(train_df)
+```
+
+If you add a nlu sentence embeddings reference, before the train reference, NLU will use that Sentence embeddings instead of the default USE.
+
+```python
+#Train NER on BERT sentence embeddings
+fitted_pipe = nlu.load('embed_sentence.bert train.classifier').fit(train_df)
+preds = fitted_pipe.predict(train_df)
+```
+
+```python
+#Train NER on ELECTRA sentence embeddings
+fitted_pipe = nlu.load('embed_sentence.electra train.classifier').fit(train_df)
+preds = fitted_pipe.predict(train_df)
+```
+
+### Part Of Speech Tagger Training 
+[Part Of Speech Tagger Training demo](https://colab.research.google.com/drive/1CZqHQmrxkDf7y3rQHVjO-97tCnpUXu_3?usp=sharing)
+
+```python
+fitted_pipe = nlu.load('train.pos').fit(train_df)
+preds = fitted_pipe.predict(train_df)
+```
+
+
+
+### NLU 1.0.5 Installation changes
+Starting from version 1.0.5 NLU will not automatically install pyspark for users anymore.      
+This enables easier customizing the Pyspark version which makes it easier to use in various cluster enviroments.
+
+To install NLU from now on, please run
+```bash
+pip install nlu pyspark==2.4.7 
+```
+or install any pyspark>=2.4.0 with pyspark<3
+
+### NLU 1.0.5 Improvements
+- Improved Databricks path handling for loading and storing models.
+
+
+
 
 ## NLU  1.0.4 Release Notes 
 ##  John Snow Labs NLU 1.0.4 : Trainable Named Entity Recognizer (NER) , achieve SOTA in 1 line of code and easy scaling to 100's of Spark nodes
