@@ -140,3 +140,4 @@ jobs:
 #        run: |
 #          python -m unittest  discover   -s './tests/modin' -p '*tests.py'
 
+# anaconda upload /tmp/conda/noarch/nlu-1.0.5-py37_0.tar.bz2
