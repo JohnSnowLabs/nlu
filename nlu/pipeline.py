@@ -253,7 +253,7 @@ class NLUPipeline(BasePipe):
 
         else :
             # fit on empty dataframe since no data provided
-            print('Fitting on empty Dataframe, could not infer correct training method!')
+            logger.info('Fitting on empty Dataframe, could not infer correct training method! This is intended for non-trainable pipelines.')
             self.spark_transformer_pipe = self.spark_estimator_pipe.fit(self.get_sample_spark_dataframe())
 
 
