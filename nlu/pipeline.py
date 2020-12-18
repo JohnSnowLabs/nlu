@@ -1066,7 +1066,7 @@ class NLUPipeline(BasePipe):
         print(f'Stored model in {path}')
         # else : print('Please fit untrained pipeline first or predict on a String to save it')
     def predict(self, data, output_level='', positions=False, keep_stranger_features=True, metadata=False,
-                multithread=True, drop_irrelevant_cols=True):
+                multithread=True, drop_irrelevant_cols=True, verbose=False):
         '''
         Annotates a Pandas Dataframe/Pandas Series/Numpy Array/Spark DataFrame/Python List strings /Python String
 
@@ -1250,12 +1250,13 @@ class NLUPipeline(BasePipe):
                                                   index_provided=index_provided,
                                                   drop_irrelevant_cols=drop_irrelevant_cols
                                                   )
-        except:
+        except Exception as err :
             import sys
             if multithread == True:
                 logger.warning("Multithreaded mode failed. trying to predict again with non multithreaded mode ")
                 return self.predict(data, output_level=output_level, positions=positions,
-                                    keep_stranger_features=keep_stranger_features, metadata=metadata, multithread=False)
+                                        keep_stranger_features=keep_stranger_features, metadata=metadata, multithread=False)
+            logger.exception('Exception occured')
             e = sys.exc_info()
             print("No accepted Data type or usable columns found or applying the NLU models failed. ")
             print(
@@ -1273,6 +1274,9 @@ class NLUPipeline(BasePipe):
             print(exc_type, fname, exc_tb.tb_lineno)
             print(
                 'Stuck? Contact us on Slack! https://join.slack.com/t/spark-nlp/shared_invite/zt-j5ttxh0z-Fn3lQSG1Z0KpOs_SRxjdyw0196BQCDPY')
+            if verbose :
+                err = sys.exc_info()[1]
+                print(str(err))
             return None
 
 

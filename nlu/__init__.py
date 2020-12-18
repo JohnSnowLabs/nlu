@@ -211,7 +211,6 @@ def enable_verbose():
     logger.addHandler(ch)
 
 
-
 def load(request ='from_disk', path=None,verbose=False,version_checks=True):
     '''
     Load either a prebuild pipeline or a set of components identified by a whitespace seperated list of components
@@ -226,7 +225,6 @@ def load(request ='from_disk', path=None,verbose=False,version_checks=True):
     spark = sparknlp.start()
     spark.catalog.clearCache()
     spark_started = True
-
     if verbose:
         enable_verbose()
 
