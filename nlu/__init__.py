@@ -13,8 +13,8 @@ def check_pyspark_install():
             if spark_major >= 3 :
                 raise Exception()
         except :
-            print(f"Detected pyspark version={v} Which is >=3.X\nPlease run '!pip install pyspark==2.4.7' orr install any pyspark>=2.4.0 and pyspark<3")
-            print(f"Or set nlu.load(version_checks=False). We disadvise from doing so, until Pyspark >=3 is officially supported in 2021.")
+            print(f"Detected pyspark version={v} Which is >=3.X\nPlease run '!pip install pyspark==2.4.7' or install any pyspark>=2.4.0 and pyspark<3")
+            # print(f"Or set nlu.load(version_checks=False). We disadvise from doing so, until Pyspark >=3 is officially supported in 2021.")
             return False
     except :
         print("No Pyspark installed!\nPlease run '!pip install pyspark==2.4.7' or install any pyspark>=2.4.0 with pyspark<3")
@@ -29,7 +29,7 @@ def check_python_version():
     return True
 
 
-if not check_pyspark_install(): raise Exception()
+# if not check_pyspark_install(): raise Exception()
 if not check_python_version(): raise Exception()
 
 
