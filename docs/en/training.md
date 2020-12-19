@@ -11,9 +11,47 @@ modify_date: "2020-05-08"
 
 <div class="h3-box" markdown="1">
 
-You can fit load a trainable NLU pipeline via nlu.load('train.<model>') you can 
+You can fit load a trainable NLU pipeline via nlu.load('train.<model>') 
 
-# Named Entity Recognizer Training. Training
+#Sentiment Classifier Training
+[Sentiment classification training demo](https://colab.research.google.com/drive/1f-EORjO3IpvwRAktuL4EvZPqPr2IZ_g8?usp=sharing)        
+To train the Binary Sentiment classifier model, you must pass a dataframe with a 'text' column and a 'y' column for the label.
+
+By default *Universal Sentence Encoder Embeddings (USE)* are used as sentence embeddings.
+
+```python
+fitted_pipe = nlu.load('train.sentiment').fit(train_df)
+preds = fitted_pipe.predict(train_df)
+```
+If you add a nlu sentence embeddings reference, before the train reference, NLU will use that Sentence embeddings instead of the default USE.
+
+```python
+#Train NER on BERT sentence embeddings
+fitted_pipe = nlu.load('embed_sentence.bert train.classifier').fit(train_df)
+preds = fitted_pipe.predict(train_df)
+```
+
+```python
+#Train NER on ELECTRA sentence embeddings
+fitted_pipe = nlu.load('embed_sentence.electra train.classifier').fit(train_df)
+preds = fitted_pipe.predict(train_df)
+```
+
+
+#Part of Speech (POS) Training
+Your dataset must be in the form of universal dependencies [Universal Dependencies](https://universaldependencies.org/).
+You must configure the dataset_path in the ```fit()``` method to point to the universal dependencies you wish to train on.       
+You can configure the delimiter via the ```label_seperator``` parameter      
+[POS training demo]](https://colab.research.google.com/drive/1CZqHQmrxkDf7y3rQHVjO-97tCnpUXu_3?usp=sharing)
+
+```python
+fitted_pipe = nlu.load('train.pos').fit(dataset_path=train_path, label_seperator=',')
+preds = fitted_pipe.predict(train_df)
+```
+
+
+
+# Named Entity Recognizer (NER) Training
 [NER training demo](https://colab.research.google.com/drive/1_GwhdXULq45GZkw3157fAOx4Wqo-fmFV?usp=sharing)        
 You can train your own custom NER model with an [CoNLL 20003 IOB](https://www.aclweb.org/anthology/W03-0419.pdf) formatted dataset.      
 By default *Glove 100d Token Embeddings* are used as features for the classifier.
@@ -51,7 +89,7 @@ preds = fitted_pipe.predict(train_df)
 
 
 
-## Saving a NLU pipelien to disk
+## Saving a NLU pipeline to disk
 
 ```python
 train_path = '/content/eng.train'
