@@ -207,13 +207,13 @@ class NLUPipeline(BasePipe):
         return True
         # pass
 
-    def fit(self, dataset=None, dataset_path=None):
-        # TODO typecheck the param, if dataset is PD.DATAFRAME it is classifier
+    def fit(self, dataset=None, dataset_path=None, label_seperator=','):
         # if dataset is  string with '/' in it, its dataset path!
         '''
         Converts the input Pandas Dataframe into a Spark Dataframe and trains a model on it.
         :param dataset: The pandas dataset to train on, should have a y column for label and 'text' column for text features
         :param dataset_path: Path to a CONLL2013 format dataset. It will be read for NER and POS training.
+        :param label_seperator: If multi_classifier is trained, this seperator is used to split the elements into an Array column for Pyspark
         :return: A nlu pipeline with models fitted.
         '''
         self.is_fitted = True
@@ -238,7 +238,6 @@ class NLUPipeline(BasePipe):
                 StructField("y", StringType(), True), \
                 StructField("text", StringType(), True) \
                 ])
-            label_seperator = ','
             from pyspark.sql import functions as F
             df = self.spark.createDataFrame(data=dataset, schema=schema).withColumn('y',F.split('y',label_seperator))
             self.spark_transformer_pipe = self.spark_estimator_pipe.fit(df)
