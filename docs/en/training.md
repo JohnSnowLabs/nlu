@@ -45,7 +45,7 @@ You can configure the delimiter via the ```label_seperator``` parameter
 [POS training demo]](https://colab.research.google.com/drive/1CZqHQmrxkDf7y3rQHVjO-97tCnpUXu_3?usp=sharing)
 
 ```python
-fitted_pipe = nlu.load('train.pos').fit(dataset_path=train_path, label_seperator=',')
+fitted_pipe = nlu.load('train.pos').fit(dataset_path=train_path, label_seperator='_')
 preds = fitted_pipe.predict(train_df)
 ```
 

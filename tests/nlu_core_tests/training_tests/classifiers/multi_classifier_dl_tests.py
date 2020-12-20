@@ -10,6 +10,7 @@ import tests.test_utils as t
 class MultiClassifierDlTests(unittest.TestCase):
 
     def test_multi_classifier_dl_training(self):
+        # The y column must be a string seperated with ```,``` . Custom seperators can be configured by passing
         test_df = self.load_multi_classifier_dl_dataset()
         # test_df.columns = ['y_str','text']
         test_df.columns = ['y','text']
