@@ -1112,7 +1112,7 @@ class NLUPipeline(BasePipe):
         infered_text_col = False
 
         try:
-            if type(data) is pyspark.sql.dataframe.DataFrame:  # casting follows spark->pd
+            if isinstance(data,pyspark.sql.dataframe.DataFrame):  # casting follows spark->pd
                 self.output_datatype = 'spark'
                 data = data.withColumn('origin_index',monotonically_increasing_id().alias('origin_index'))
                 index_provided = True
@@ -1126,7 +1126,7 @@ class NLUPipeline(BasePipe):
                     print(
                         'Could not find column named "text" in input Pandas Dataframe. Please ensure one column named such exists. Columns in DF are : ',
                         data.columns)
-            if type(data) is pd.DataFrame:  # casting follows pd->spark->pd
+            if isinstance(data,pd.DataFrame):  # casting follows pd->spark->pd
                 self.output_datatype = 'pandas'
 
                 # set first col as text column if there is none
@@ -1145,7 +1145,7 @@ class NLUPipeline(BasePipe):
                     print(
                         'Could not find column named "text" in input Pandas Dataframe. Please ensure one column named such exists. Columns in DF are : ',
                         data.columns)
-            elif type(data) is pd.Series:  # for df['text'] colum/series passing casting follows pseries->pdf->spark->pd
+            elif isinstance(data,pd.Series):  # for df['text'] colum/series passing casting follows pseries->pdf->spark->pd
                 self.output_datatype = 'pandas_series'
                 data = pd.DataFrame(data).dropna(axis=1, how='all')
                 index_provided = True
@@ -1167,7 +1167,7 @@ class NLUPipeline(BasePipe):
                         'Could not find column named "text" in  Pandas Dataframe generated from input  Pandas Series. Please ensure one column named such exists. Columns in DF are : ',
                         data.columns)
 
-            elif type(data) is np.ndarray:
+            elif isinstance(data,np.ndarray):
                 # This is a bit inefficient. Casting follow  np->pd->spark->pd. We could cut out the first pd step
                 self.output_datatype = 'numpy_array'
                 if len(data.shape) != 1:
@@ -1178,17 +1178,17 @@ class NLUPipeline(BasePipe):
                     pd.DataFrame({self.raw_text_column: data, 'origin_index': list(range(len(data)))})))
                 index_provided = True
 
-            elif type(data) is np.matrix:  # assumes default axis for raw texts
+            elif isinstance(data,np.matrix):  # assumes default axis for raw texts
                 print(
                     'Predicting on np matrices currently not supported. Please input either a Pandas Dataframe with a string column named "text"  or a String or a list of strings. ')
                 return nlu.NluError
-            elif type(data) is str:  # inefficient, str->pd->spark->pd , we can could first pd
+            elif isinstance(data,str):  # inefficient, str->pd->spark->pd , we can could first pd
                 self.output_datatype = 'string'
                 sdf = self.spark_transformer_pipe.transform(self.spark.createDataFrame(
                     pd.DataFrame({self.raw_text_column: data, 'origin_index': [0]}, index=[0])))
                 index_provided = True
 
-            elif type(data) is list:  # inefficient, list->pd->spark->pd , we can could first pd
+            elif isinstance(data,list):  # inefficient, list->pd->spark->pd , we can could first pd
                 self.output_datatype = 'string_list'
                 if all(type(elem) == str for elem in data):
                     sdf = self.spark_transformer_pipe.transform(self.spark.createDataFrame(pd.DataFrame(
@@ -1197,14 +1197,14 @@ class NLUPipeline(BasePipe):
 
                 else:
                     print("Exception: Not all elements in input list are of type string.")
-            elif type(data) is dict():  # Assumes values should be predicted
+            elif isinstance(data,dict):  # Assumes values should be predicted
                 print(
                     'Predicting on dictionaries currently not supported. Please input either a Pandas Dataframe with a string column named "text"  or a String or a list of strings. ')
                 return ''
             else:  # Modin tests, This could crash if Modin not installed
                 try:
                     import modin.pandas as mpd
-                    if type(data) is mpd.DataFrame:
+                    if isinstance(data, mpd.DataFrame):
                         data = pd.DataFrame(data.to_dict())  # create pandas to support type inference
                         self.output_datatype = 'modin'
                         data['origin_index'] = data.index
@@ -1223,7 +1223,7 @@ class NLUPipeline(BasePipe):
                             'Could not find column named "text" in input Pandas Dataframe. Please ensure one column named such exists. Columns in DF are : ',
                             data.columns)
 
-                    if type(data) is mpd.Series:
+                    if isinstance(data, mpd.Series):
                         self.output_datatype = 'modin_series'
                         data = pd.Series(data.to_dict())  # create pandas to support type inference
                         data = pd.DataFrame(data).dropna(axis=1, how='all')
