@@ -47,8 +47,8 @@ class BasePipe(dict):
         :return: True if it is one of the following classes : (ClassifierDLModel,ClassifierDLModel,MultiClassifierDLModel,MultiClassifierDLApproach,SentimentDLModel,SentimentDLApproach) )
         '''
         return isinstance(model, (
-        ClassifierDLModel, ClassifierDLModel, MultiClassifierDLModel, MultiClassifierDLApproach, SentimentDLModel,
-        SentimentDLApproach))
+            ClassifierDLModel, ClassifierDLModel, MultiClassifierDLModel, MultiClassifierDLApproach, SentimentDLModel,
+            SentimentDLApproach))
 
     def configure_outputs(self, component, nlu_reference):
         '''
@@ -144,26 +144,26 @@ class NLUPipeline(BasePipe):
 
         self.annotator_levels_approach_based = {
             'document': [DocumentAssembler, Chunk2Doc,
-                          YakeModel,
+                         YakeModel,
                          ],
             'sentence': [SentenceDetector, SentenceDetectorDLApproach, ],
             'chunk': [Chunker, ChunkEmbeddings,  ChunkTokenizer, Token2Chunk, TokenAssembler,
                       NerConverter, Doc2Chunk,NGramGenerator],
             'token': [ NerCrfApproach, NerDLApproach,
-                      PerceptronApproach,
-                      Stemmer,
+                       PerceptronApproach,
+                       Stemmer,
                        ContextSpellCheckerApproach,
 
-                      Lemmatizer, TypedDependencyParserApproach, DependencyParserApproach,
-                      Tokenizer, RegexTokenizer, RecursiveTokenizer
-                       ,StopWordsCleaner, DateMatcher, TextMatcher, BigTextMatcher, MultiDateMatcher
+                       Lemmatizer, TypedDependencyParserApproach, DependencyParserApproach,
+                       Tokenizer, RegexTokenizer, RecursiveTokenizer
+                ,StopWordsCleaner, DateMatcher, TextMatcher, BigTextMatcher, MultiDateMatcher
                        ],
             # sub token is when annotator is token based but some tokens may be missing since dropped/cleanes
             # are matchers chunk or sub token?
             # 'sub_token': [StopWordsCleaner, DateMatcher, TextMatcher, BigTextMatcher, MultiDateMatcher],
             # these can be document or sentence
             'input_dependent': [ViveknSentimentApproach, SentimentDLApproach, ClassifierDLApproach,
-                                 LanguageDetectorDL,
+                                LanguageDetectorDL,
                                 MultiClassifierDLApproach,  SentenceEmbeddings, NorvigSweetingApproach,
                                 ],
 
@@ -191,9 +191,9 @@ class NLUPipeline(BasePipe):
         }
 
         self.all_embeddings = {
-        'token' : [AlbertEmbeddings, BertEmbeddings, ElmoEmbeddings, WordEmbeddings,
-                   XlnetEmbeddings,WordEmbeddingsModel],
-        'input_dependent' : [SentenceEmbeddings, UniversalSentenceEncoder,BertSentenceEmbeddings]
+            'token' : [AlbertEmbeddings, BertEmbeddings, ElmoEmbeddings, WordEmbeddings,
+                       XlnetEmbeddings,WordEmbeddingsModel],
+            'input_dependent' : [SentenceEmbeddings, UniversalSentenceEncoder,BertSentenceEmbeddings]
 
         }
 
@@ -260,7 +260,7 @@ class NLUPipeline(BasePipe):
     def convert_pd_dataframe_to_spark(self, data):
         #optimize
         return nlu.spark.createDataFrame(data)
-#todo rm
+    #todo rm
     def get_output_level_of_embeddings_provider(self, field_type, field_name):
         '''
         This function will go through all components to find the component which  generate @component_output_column_name.
@@ -292,7 +292,7 @@ class NLUPipeline(BasePipe):
                     return self.resolve_type_to_output_level(component.component_info.type)
 
 
-#todo rm
+    #todo rm
     def resolve_type_to_output_level(self, field_type, field_name):
         '''
         This checks the levels dict for what the output level is for the input annotator type.
@@ -367,7 +367,7 @@ class NLUPipeline(BasePipe):
         return field_types_dict
 
 
-#todo integrate to rename_col methods
+    #todo integrate to rename_col methods
     def reorder_column_names(self, column_names):
         pass
 
@@ -664,14 +664,14 @@ class NLUPipeline(BasePipe):
         for level in self.annotator_levels_model_based.keys():
             for t in self.annotator_levels_model_based[level]:
                 if isinstance(component.model,t) :
-                        if level == 'input_dependent' : return self.resolve_input_dependent_component_to_output_level(component)
-                        else : return level
+                    if level == 'input_dependent' : return self.resolve_input_dependent_component_to_output_level(component)
+                    else : return level
 
         for level in self.annotator_levels_approach_based.keys():
             for t in self.annotator_levels_approach_based[level]:
                 if isinstance(component.model,t) :
-                        if level == 'input_dependent' : return self.resolve_input_dependent_component_to_output_level(component)
-                        else : return level
+                    if level == 'input_dependent' : return self.resolve_input_dependent_component_to_output_level(component)
+                    else : return level
 
 
 
@@ -1126,7 +1126,7 @@ class NLUPipeline(BasePipe):
                     print(
                         'Could not find column named "text" in input Pandas Dataframe. Please ensure one column named such exists. Columns in DF are : ',
                         data.columns)
-            if isinstance(data,pd.DataFrame):  # casting follows pd->spark->pd
+            elif isinstance(data,pd.DataFrame):  # casting follows pd->spark->pd
                 self.output_datatype = 'pandas'
 
                 # set first col as text column if there is none
@@ -1254,7 +1254,7 @@ class NLUPipeline(BasePipe):
             if multithread == True:
                 logger.warning("Multithreaded mode failed. trying to predict again with non multithreaded mode ")
                 return self.predict(data, output_level=output_level, positions=positions,
-                                        keep_stranger_features=keep_stranger_features, metadata=metadata, multithread=False)
+                                    keep_stranger_features=keep_stranger_features, metadata=metadata, multithread=False)
             logger.exception('Exception occured')
             e = sys.exc_info()
             print("No accepted Data type or usable columns found or applying the NLU models failed. ")
@@ -1568,7 +1568,7 @@ class PipelineQueryVerifier():
                             other_component.model.setOutputCol(missing_column)
 
             elif len(input_columns) != 0 and  pipe.has_trainable_components:  # fix missing column name
-            # for trainable components, we change their input columns and leave other components outputs unchanged
+                # for trainable components, we change their input columns and leave other components outputs unchanged
                 for missing_column in input_columns:
                     for other_component in pipe.pipe_components:
                         if component_to_check.component_info.name == other_component.component_info.name: continue
@@ -1721,12 +1721,12 @@ class PipelineQueryVerifier():
                 c.model.setInputCols(c.component_info.spark_input_column_names)
 
             if 'sentence' in c.component_info.spark_input_column_names and 'document' not in c.component_info.spark_input_column_names:
-                    # if 'sentence' in c.component_info.spark_input_column_names : c.component_info.spark_input_column_names.remove('sentence')
-                    c.component_info.spark_input_column_names.remove('sentence')
-                    c.component_info.spark_input_column_names.append('document')
+                # if 'sentence' in c.component_info.spark_input_column_names : c.component_info.spark_input_column_names.remove('sentence')
+                c.component_info.spark_input_column_names.remove('sentence')
+                c.component_info.spark_input_column_names.append('document')
 
-                    if c.component_info.type =='sentence_embeddings' : #convert sentence embeds to doc
-                        c.component_info.output_level='document'
+                if c.component_info.type =='sentence_embeddings' : #convert sentence embeds to doc
+                    c.component_info.output_level='document'
 
         return pipe
 
