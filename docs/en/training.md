@@ -11,11 +11,11 @@ modify_date: "2020-05-08"
 
 <div class="h3-box" markdown="1">
 
-You can fit load a trainable NLU pipeline via nlu.load('train.<model>') 
+You can fit load a trainable NLU pipeline via ```nlu.load('train.<model>')``` 
 
 #Sentiment Classifier Training
 [Sentiment classification training demo](https://colab.research.google.com/drive/1f-EORjO3IpvwRAktuL4EvZPqPr2IZ_g8?usp=sharing)        
-To train the Binary Sentiment classifier model, you must pass a dataframe with a 'text' column and a 'y' column for the label.
+To train the Binary Sentiment classifier model, you must pass a dataframe with a ```text``` column and a ```y``` column for the label.
 
 By default *Universal Sentence Encoder Embeddings (USE)* are used as sentence embeddings.
 
@@ -71,7 +71,7 @@ fitted_pipe = nlu.load('bert train.ner').fit(dataset_path=train_path)
 
 # Multi Class Text Classifier Training
 [Multi Class Text Classifier Training Demo](https://colab.research.google.com/drive/12FA2TVvvRWw4pRhxDnK32WAzl9dbF6Qw?usp=sharing)         
-To train the Multi Class text classifier model, you must pass a dataframe with a 'text' column and a 'y' column for the label.
+To train the Multi Class text classifier model, you must pass a dataframe with a ```text``` column and a ```y``` column for the label.
 By default *Universal Sentence Encoder Embeddings (USE)* are used as sentence embeddings. 
 
 ```python
@@ -87,9 +87,39 @@ fitted_pipe = nlu.load('embed_sentence.bert train.classifier').fit(train_df)
 preds = fitted_pipe.predict(train_df)
 ```
 
+# Multi Class Text Classifier for sentences with multiple classes Training
+[Multi Class Text Classifier Training for multi class sentences Demo](https://colab.research.google.com/drive/15ZqfNUqliRKP4UgaFcRg5KOSTkqrtDXy?usp=sharing)         
+This model can predict multiple classes for one sentence.
+To train the Multi Class text classifier model, you must pass a dataframe with a ```text``` column and a ```y``` column for the label.   
+The ```y``` label must be a string column where each label is seperated with a seperator.     
+By default, ```,``` is assumed as line seperator.      
+If your dataset is using a different label seperator, you must configure the ```label_seperator``` parameter while calling the ```fit()``` method.    
+
+By default *Universal Sentence Encoder Embeddings (USE)* are used as sentence embeddings for training.
+
+```python
+fitted_pipe = nlu.load('train.multi_classifier').fit(train_df)
+preds = fitted_pipe.predict(train_df)
+```
+
+If you add a nlu sentence embeddings reference, before the train reference, NLU will use that Sentence embeddings instead of the default USE.
+```python
+#Train on BERT sentence emebddings
+fitted_pipe = nlu.load('embed_sentence.bert train.multi_classifier').fit(train_df)
+preds = fitted_pipe.predict(train_df)
+```
+
+Configure a custom line seperator
+```python
+#Use ; as label seperator
+fitted_pipe = nlu.load('embed_sentence.bert train.multi_classifier').fit(train_df, label_seperator=';')
+preds = fitted_pipe.predict(train_df)
+```
 
 
-## Saving a NLU pipeline to disk
+
+
+# Saving a NLU pipeline to disk
 
 ```python
 train_path = '/content/eng.train'
@@ -99,7 +129,7 @@ fitted_pipe.save(stored_model_path)
 
 ```
 
-## Loading a NLU pipeline from disk
+# Loading a NLU pipeline from disk
 
 ```python
 train_path = '/content/eng.train'
@@ -111,7 +141,7 @@ hdd_pipe = nlu.load(path=stored_model_path)
 
 
 
-## Loading a NLU pipeline as pyspark.ml.PipelineModel
+# Loading a NLU pipeline as pyspark.ml.PipelineModel
 ```python
 import pyspark
 # load the NLU pipeline as pyspark pipeline
