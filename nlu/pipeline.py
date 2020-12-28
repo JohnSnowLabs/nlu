@@ -675,14 +675,12 @@ class NLUPipeline(BasePipe):
                     confidence_field_names = []
                     for key in keys_in_metadata :
                         #create one col per confidence and only get those
+                        if key =='sentence':continue
                         new_confidence_field_name = base_field_name + '_' +key +'_confidence'
-                        ptmp = ptmp.withColumn(new_confidence_field_name, expr(f'{field}[0]{key}'))
+                        ptmp = ptmp.withColumn(new_confidence_field_name, expr(f'{field}[0]["{key}"]'))
                         confidence_field_names.append(new_confidence_field_name)
                     columns_for_select += confidence_field_names
 
-            # else :
-            #     ptmp = ptmp.withColumnRenamed(field, class_field_name)
-            #     columns_for_select += [confidence_field_name, class_field_name]
 
 
         return ptmp, columns_for_select
