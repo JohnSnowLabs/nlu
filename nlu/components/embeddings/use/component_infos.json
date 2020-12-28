@@ -7,14 +7,12 @@
     "sentence_embeddings"
   ],
   "inputs": [
-    "token",
     "sentence"
   ],
   "type": "sentence_embeddings",
   "file_dependencies": {},
   "spark_input_column_names": [
-    "sentence",
-    "token"
+    "sentence"
   ],
   "spark_output_column_names": [
     "use_embeddings"
