@@ -20,6 +20,7 @@ from pyspark.sql.types import ArrayType, FloatType, StringType, DoubleType
 import nlu.pipe_components
 import sparknlp
 from sparknlp.annotator import *
+from  typing import List
 
 class BasePipe(dict):
     # we inherhit from dict so the pipe is indexable and we have a nice shortcut for accessing the spark nlp model
@@ -364,8 +365,7 @@ class NLUPipeline(BasePipe):
         logger.info('Parsing field types done, parsed=%s', field_types_dict)
         return field_types_dict
 
-
-    def reorder_column_names(self, fields_to_rename):
+    def reorder_column_names(self, fields_to_rename:List[str]) -> List[str]:
         '''
         Edge case swap. We must rename .metadata fields before we get the .result fields or there will be errors because of column name overwrites.. So we swap position of them
         and second analogus edge case for positional fields (.begin and .end) and .result. We will put every rseult column into the end of the list and thus avoid the erronous case always
@@ -389,7 +389,7 @@ class NLUPipeline(BasePipe):
             if '.result' in col: reorderd_fields_to_rename.append(
                 reorderd_fields_to_rename.pop(reorderd_fields_to_rename.index(col)))
 
-
+        return reorderd_fields_to_rename
     def rename_columns_and_extract_map_values_same_level(self, ptmp, fields_to_rename, same_output_level,
                                                          stranger_features=[], meta=False):
         '''
@@ -495,7 +495,7 @@ class NLUPipeline(BasePipe):
 
 
     def rename_columns_and_extract_map_values_different_level(self, ptmp, fields_to_rename, same_output_level,
-                                                              stranger_features=[], meta=True, multi_level_fields=[]):
+                                                              stranger_features=[], meta=True):
         '''
         This method takes in a Spark dataframe that is the result not exploded on, after applying a Spark NLP pipeline to it.
         It will peform the following transformations on the dataframe:
@@ -537,7 +537,6 @@ class NLUPipeline(BasePipe):
                 reorderd_fields_to_rename[reorderd_fields_to_rename.index(unpack_name + '.result')] = unpack_name + '_result'
                 logger.info(f'Getting Meta Data for   : nr={i} , original_name={field} with new_name={new_field} and original')
                 # we iterate over the keys in the metadata and use them as new column names. The values will become the values in the columns.
-
                 keys_in_metadata = self.extract_keys_in_metadata(ptmp,field)
                 if len(keys_in_metadata) == 0: continue
 
@@ -591,7 +590,7 @@ class NLUPipeline(BasePipe):
                     if field == 'entities.metadata': continue
                     if field == 'ner.metadata': continue
                     if field == 'keywords.metadata': continue  # We dont want to max for multiple keywords. Also it will change the name from score to confidence of the final column
-                    if field in multi_level_fields : continue # multi_classifier_dl, YAKE
+                    # if field in multi_level_fields : continue # multi_classifier_dl, YAKE
                     # if field ==
                     cols_to_max = []
                     prefix = field.split('.')[0]
@@ -625,25 +624,68 @@ class NLUPipeline(BasePipe):
             columns_for_select.append(new_field)
         return ptmp, columns_for_select
 
-    def extract_multi_level_outputs(self,ptmp:pyspark.sql.DataFrame, multi_level_col_names:list[str],meta:bool) -> (pyspark.sql.DataFrame,list[str]):
+    def extract_multi_level_outputs(self,ptmp:pyspark.sql.DataFrame, multi_level_col_names:List[str],meta:bool) -> (pyspark.sql.DataFrame,List[str]):
         '''
-        Extract the columns for toPandas conversion from a Pyspark dataframe. Applicable to outputs of MultiClassifierDL or other MultiLevel Output level NLU components
-
+        Extract the columns for toPandas conversion from a Pyspark dataframe. Applicable to outputs of MultiClassifierDL/Yake or other MultiLevel Output level NLU components
+        for field.result we can just extract the raw column and rename it to smth nice
+        for field.metadata  there are 2 cases
+        1. if metadata==true then we want one column per key in metadata. Each column has the corrosponding confidence. In adition, we have a result column for field with conf<0.5 (except key==sentence)
+        2. if metadata==false then we want just one column with the confidences which are above 0.5
         :param ptmp: spark dataframe with the output columns of a Multi-Outputlevel Annotator
         :param multi_level_col_names: The columns which are outputs of the multi_level component
         :param meta: Wether to return all additional metadata or not ( i.e. return probabilities for all classes, even if their probability is below classification threshold which is usually 0.5.
         :return: Spark Dataframe with new columns ready for toPandas conversion and also a list with all column names which should be used for Pandas conversion.
         '''
+        columns_for_select = []
+        def extract_classnames_and_confidences(x,keys_in_metadata, threshold=0.5):
+            ## UDF for extracting confidences and their class names as struct types if the confidence is larger than threshold
+            confidences = []
+            classes = []
+            for key in keys_in_metadata :
+                if key =='sentence' : continue     # irrelevant metadata
+                if float(x[key]) >= threshold :
+                    confidences.append(float(x[key]))
+                    classes.append(key)
+            return [confidences, classes]
+
+        schema = StructType([
+            StructField("confidences", ArrayType(DoubleType()), False),
+            StructField("classes", ArrayType(StringType()), False)
+        ])
+
+            # we dont care about .result col, we get all from metadarta
         for field in multi_level_col_names:
+            base_field_name = field.split('.')[0]
+            confidence_field_name = base_field_name+'_confidences'
+            class_field_name = base_field_name+'_classes'
 
-            keys_in_metadata = self.extract_keys_in_metadata(ptmp,field)
-            if len(keys_in_metadata) == 0: continue
+            if 'metadata' in field :
+                keys_in_metadata = self.extract_keys_in_metadata(ptmp,field)
+                if len(keys_in_metadata) == 0: continue
+                if not meta:
+                    # create a confidence and class column which both contain a list of predicted classes/confidences
+                    # we apply the  UDF only to the first element because metadata is duplicated for multi classifier dl and all relevent info is in the first element of the metadata col list
+                    extract_classnames_and_confidences_udf = udf(lambda z: extract_classnames_and_confidences(z, keys_in_metadata), schema)
+                    ptmp = ptmp.withColumn('multi_level_extract_result', extract_classnames_and_confidences_udf(expr(f'{field}[0]')))
+                    ptmp = ptmp.withColumnRenamed('multi_level_extract_result.confidences',confidence_field_name )
+                    ptmp = ptmp.withColumnRenamed('multi_level_extract_result.classes', class_field_name)
+                    columns_for_select += [confidence_field_name, class_field_name]
+
+                else :
+                    confidence_field_names = []
+                    for key in keys_in_metadata :
+                        #create one col per confidence and only get those
+                        new_confidence_field_name = base_field_name + '_' +key +'_confidence'
+                        ptmp = ptmp.withColumn(new_confidence_field_name, expr(f'{field}[0]{key}'))
+                        confidence_field_names.append(new_confidence_field_name)
+                    columns_for_select += confidence_field_names
+
+            # else :
+            #     ptmp = ptmp.withColumnRenamed(field, class_field_name)
+            #     columns_for_select += [confidence_field_name, class_field_name]
 
 
-
-
-
-
+        return ptmp, columns_for_select
 
     def resolve_input_dependent_component_to_output_level(self, component):
         '''
@@ -752,9 +794,14 @@ class NLUPipeline(BasePipe):
             logger.info('Selecting Columns for field=%s of type=%s', field, f_type)
             inferred_output_level = self.resolve_field_to_output_level( field,f_type)
 
-            if inferred_output_level == 'multi_level' : multi_level_fields.append(field)
+            if inferred_output_level == 'multi_level' :
+                if self.output_positions:
+                    multi_level_fields.append(field + '.begin')
+                    multi_level_fields.append(field + '.end')
+                multi_level_fields.append(field + '.metadata')
+                multi_level_fields.append(field + '.result')
 
-            if inferred_output_level == self.output_level:
+            elif inferred_output_level == self.output_level:
                 logger.info(f'Setting field for field={field} of type={f_type} to output level={inferred_output_level} which is SAME LEVEL')
                 if 'embeddings' not in field and 'embeddings' not in f_type: same_output_level_fields.append(
                     field + '.result')  # result of embeddigns is just the word/sentence
@@ -865,20 +912,25 @@ class NLUPipeline(BasePipe):
         if get_different_level_output:
             ptmp, final_select_not_at_same_output_level = self.rename_columns_and_extract_map_values_different_level(
                 ptmp=ptmp, fields_to_rename=not_at_same_output_level_fields, same_output_level=False,
-                meta=output_metadata, multi_level_fields=multi_level_fields)
+                meta=output_metadata, )
 
-        if keep_stranger_features: final_select_not_at_same_output_level += stranger_features  #
+        ptmp,final_select_multi_output_level = self.extract_multi_level_outputs(ptmp, multi_level_fields, output_metadata)
+        if keep_stranger_features: final_select_not_at_same_output_level += stranger_features
+
+
+
 
         logger.info('Final cleanup select of same level =%s', final_select_same_output_level)
         logger.info('Final cleanup select of different level =%s', final_select_not_at_same_output_level)
+        logger.info('Final cleanup select of multi level =%s', final_select_multi_output_level)
+
         logger.info('Final ptmp columns = %s', ptmp.columns)
 
-        final_cols = final_select_same_output_level + final_select_not_at_same_output_level + ['origin_index']
+        final_cols = final_select_same_output_level + final_select_not_at_same_output_level + final_select_multi_output_level + ['origin_index']
         if drop_irrelevant_cols: final_cols = self.drop_irrelevant_cols(final_cols)
         # ner columns is NER-IOB format, mostly useless for the users. If meta false, we drop it here.
         if output_metadata == False and 'ner' in final_cols: final_cols.remove('ner')
         final_df = ptmp.select(list(set(final_cols)))
-        # final_df = ptmp.coalesce(10).select(list(set(final_cols)))
 
         pandas_df = self.finalize_return_datatype(final_df)
         if isinstance(pandas_df,pyspark.sql.dataframe.DataFrame):
