@@ -667,8 +667,8 @@ class NLUPipeline(BasePipe):
                     # we apply the  UDF only to the first element because metadata is duplicated for multi classifier dl and all relevent info is in the first element of the metadata col list
                     extract_classnames_and_confidences_udf = udf(lambda z: extract_classnames_and_confidences(z, keys_in_metadata), schema)
                     ptmp = ptmp.withColumn('multi_level_extract_result', extract_classnames_and_confidences_udf(expr(f'{field}[0]')))
-                    ptmp = ptmp.withColumnRenamed('multi_level_extract_result.confidences',confidence_field_name )
-                    ptmp = ptmp.withColumnRenamed('multi_level_extract_result.classes', class_field_name)
+                    ptmp = ptmp.withColumn(confidence_field_name , ptmp['multi_level_extract_result.confidences'])
+                    ptmp = ptmp.withColumn(class_field_name, ptmp['multi_level_extract_result.classes'])
                     columns_for_select += [confidence_field_name, class_field_name]
 
                 else :
