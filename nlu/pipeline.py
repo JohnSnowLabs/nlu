@@ -487,10 +487,20 @@ class NLUPipeline(BasePipe):
         :return: Str list of keys in the metadata for the given field
         '''
         keys_in_metadata = list(ptmp.select(field).take(1))
-        if len(keys_in_metadata) == 0: return []
-        if len(keys_in_metadata[0].asDict()['metadata']) == 0: return []
+        try_filter = False
+        if len(keys_in_metadata) == 0: try_filter = True # return []
+        if len(keys_in_metadata[0].asDict()['metadata']) == 0:  try_filter = True # return []
+        if try_filter:
+            # Filter for first with list bigger 0 to get metadata
+            slen = udf(lambda s: len(s), IntegerType())
+            t = ptmp.withColumn('lens', slen(ptmp[field]))
+            keys_in_metadata = list(t.filter(t.lens > 0 ).select(field).take(1))
+            if len(keys_in_metadata) == 0: return []
+            if len(keys_in_metadata[0].asDict()['metadata']) == 0: return []
+
         keys_in_metadata = list(keys_in_metadata[0].asDict()['metadata'][0].keys())
         logger.info(f'Field={field} has keys in metadata={keys_in_metadata}')
+
         return keys_in_metadata
 
 
@@ -641,6 +651,8 @@ class NLUPipeline(BasePipe):
             ## UDF for extracting confidences and their class names as struct types if the confidence is larger than threshold
             confidences = []
             classes = []
+
+            if not isinstance(x,dict) : return [[],[]]#[[0.0],['No Classes Detected']]
             for key in keys_in_metadata :
                 if key =='sentence' : continue     # irrelevant metadata
                 if float(x[key]) >= threshold :
@@ -854,7 +866,7 @@ class NLUPipeline(BasePipe):
         :param processed: Spark dataframe which an NLU pipeline has transformed
         :param output_level: The output level at which returned pandas Dataframe should be
         :param get_different_level_output:  Wheter to get features from different levels
-        :param keep_stranger_features : Wheter to keep additional features from the input DF when generating the output DF or if they should be discarded for the final output DF
+        :param keep_stranger_features : Wether to keep additional features from the input DF when generating the output DF or if they should be discarded for the final output DF
         :param stranger_features: A list of features which are not known to NLU and inside of the input DF.
                                     Basically all columns, which are not named 'text' in the input.
                                     If keep_stranger_features== True, then these features will be exploded, if output_level == DOCUMENt, otherwise they will not be exploded
@@ -1209,7 +1221,7 @@ class NLUPipeline(BasePipe):
                     sdf = self.spark_transformer_pipe.transform(self.spark.createDataFrame(data))
 
                 else:
-                    print(
+                    logger.info(
                         'Could not find column named "text" in input Pandas Dataframe. Please ensure one column named such exists. Columns in DF are : ',
                         data.columns)
             elif isinstance(data,pd.Series):  # for df['text'] colum/series passing casting follows pseries->pdf->spark->pd
@@ -1220,7 +1232,7 @@ class NLUPipeline(BasePipe):
                 if self.raw_text_column not in data.columns and len(data.columns) == 1:
                     data['text'] = data[data.columns[0]]
                 else:
-                    print('INFO: NLU will assume', data.columns[0],
+                    logger.info('INFO: NLU will assume', data.columns[0],
                           'as label column since default text column could not be find')
                     data['text'] = data[data.columns[0]]
 
