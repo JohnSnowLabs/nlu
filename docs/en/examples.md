@@ -473,7 +473,7 @@ nlu.load('en.classify.toxic').predict('You are to stupid')
 {:.table-model-big.mb0}
 |	toxic_confidence | 	toxic | 	sentence_embeddings| 	document| 
 |-------------------|---------|------------------------|------------|
-| 0.978273 | 	[toxic,insult]	| [[-0.03398505970835686, 0.0007853527786210179,...,]	You are to stupid|
+| 0.978273 | 	[toxic,insult]	| [[-0.03398505970835686, 0.0007853527786210179,...,] |	You are to stupid|
 
 </div></div></div><div class="h3-box" markdown="1">
 

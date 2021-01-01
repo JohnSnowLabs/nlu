@@ -13,6 +13,66 @@ modify_date: "2020-06-12"
 
 <div class="h3-box" markdown="1">
 
+##  NLU 1.0.6 Release Notes
+### Trainable Multi Label Classifiers, predict Stackoverflow Tags and much more in 1 Line of with NLU 1.0.6
+We are glad to announce NLU 1.0.6 has been released!
+NLU 1.0.6 comes with the Multi Label classifier, it can learn to map strings to multiple labels.
+The Multi Label Classifier is using Bidirectional GRU and CNNs inside TensorFlow and supports up to 100 classes.
+
+### NLU 1.0.6 New Features
+- Multi Label Classifier
+   - The Multi Label Classifier learns a 1 to many mapping between text and labels. This means it can predict multiple labels at the same time for a given input string. This is very helpful for tasks similar to content tag prediction (HashTags/RedditTags/YoutubeTags/Toxic/E2e etc..)
+   - Support up to 100 classes
+   - Pre-trained Multi Label Classifiers are already avaiable as [Toxic](https://nlu.johnsnowlabs.com/docs/en/examples#toxic-classifier) and [E2E](https://nlu.johnsnowlabs.com/docs/en/examples#e2e-classifier) classifiers
+
+####  Multi Label Classifier
+- [ Train Multi Label Classifier on E2E dataset Demo](https://colab.research.google.com/drive/15ZqfNUqliRKP4UgaFcRg5KOSTkqrtDXy?usp=sharing)
+- [Train Multi Label  Classifier on Stack Overflow Question Tags dataset Demo](https://colab.research.google.com/drive/1Y0pYdUMKSs1ZP0NDcKgVECqkKD9ShIdc?usp=sharing)       
+  This model can predict multiple labels for one sentence.
+  To train the Multi Class text classifier model, you must pass a dataframe with a ```text``` column and a ```y``` column for the label.   
+  The ```y``` label must be a string column where each label is seperated with a seperator.     
+  By default, ```,``` is assumed as line seperator.      
+  If your dataset is using a different label seperator, you must configure the ```label_seperator``` parameter while calling the ```fit()``` method.
+
+By default *Universal Sentence Encoder Embeddings (USE)* are used as sentence embeddings for training.
+
+```python
+fitted_pipe = nlu.load('train.multi_classifier').fit(train_df)
+preds = fitted_pipe.predict(train_df)
+```
+
+If you add a nlu sentence embeddings reference, before the train reference, NLU will use that Sentence embeddings instead of the default USE.
+```python
+#Train on BERT sentence emebddings
+fitted_pipe = nlu.load('embed_sentence.bert train.multi_classifier').fit(train_df)
+preds = fitted_pipe.predict(train_df)
+```
+
+Configure a custom line seperator
+```python
+#Use ; as label seperator
+fitted_pipe = nlu.load('embed_sentence.electra train.multi_classifier').fit(train_df, label_seperator=';')
+preds = fitted_pipe.predict(train_df)
+```
+
+
+### NLU 1.0.6 Enhancements
+- Improved outputs for Toxic and E2E Classifier.
+  - by default, all predicted classes and their confidences which are above the threshold will be returned inside of a list in the Pandas dataframe
+  - by configuring meta=True, the confidences for all classes will be returned.
+
+
+### NLU 1.0.6 New Notebooks and Tutorials
+
+- [ Train Multi Label Classifier on E2E dataset](https://colab.research.google.com/drive/15ZqfNUqliRKP4UgaFcRg5KOSTkqrtDXy?usp=sharing)
+- [Train Multi Label  Classifier on Stack Overflow Question Tags dataset](https://colab.research.google.com/drive/1Y0pYdUMKSs1ZP0NDcKgVECqkKD9ShIdc?usp=sharing)
+
+### NLU 1.0.6 Bug-fixes
+- Fixed a bug that caused ```en.ner.dl.bert``` to be inaccessible
+- Fixed a bug that caused ```pt.ner.large``` to be inaccessible
+- Fixed a bug that caused USE embeddings not properly beeing configured to document level output when using multiple embeddings at the same time
+
+
 ##  NLU 1.0.5 Release Notes 
 
 ### Trainable Part of Speech Tagger (POS), Sentiment Classifier with BERT/USE/ELECTRA sentence embeddings in 1 Line of code! Latest NLU Release 1.0.5
@@ -45,13 +105,13 @@ preds = fitted_pipe.predict(train_df)
 If you add a nlu sentence embeddings reference, before the train reference, NLU will use that Sentence embeddings instead of the default USE.
 
 ```python
-#Train NER on BERT sentence embeddings
+#Train Classifier on BERT sentence embeddings
 fitted_pipe = nlu.load('embed_sentence.bert train.classifier').fit(train_df)
 preds = fitted_pipe.predict(train_df)
 ```
 
 ```python
-#Train NER on ELECTRA sentence embeddings
+#Train Classifier on ELECTRA sentence embeddings
 fitted_pipe = nlu.load('embed_sentence.electra train.classifier').fit(train_df)
 preds = fitted_pipe.predict(train_df)
 ```

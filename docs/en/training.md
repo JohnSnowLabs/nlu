@@ -13,10 +13,10 @@ modify_date: "2020-05-08"
 
 You can fit load a trainable NLU pipeline via ```nlu.load('train.<model>')``` 
 
-#Sentiment Classifier Training
+# Binary Text Classifier Training
 [Sentiment classification training demo](https://colab.research.google.com/drive/1f-EORjO3IpvwRAktuL4EvZPqPr2IZ_g8?usp=sharing)        
-To train the Binary Sentiment classifier model, you must pass a dataframe with a ```text``` column and a ```y``` column for the label.
-
+To train the a Sentiment classifier model, you must pass a dataframe with a ```text``` column and a ```y``` column for the label.
+Uses a Deep Neural Network built in Tensorflow.       
 By default *Universal Sentence Encoder Embeddings (USE)* are used as sentence embeddings.
 
 ```python
@@ -26,16 +26,66 @@ preds = fitted_pipe.predict(train_df)
 If you add a nlu sentence embeddings reference, before the train reference, NLU will use that Sentence embeddings instead of the default USE.
 
 ```python
-#Train NER on BERT sentence embeddings
+#Train Classifier on BERT sentence embeddings
 fitted_pipe = nlu.load('embed_sentence.bert train.classifier').fit(train_df)
 preds = fitted_pipe.predict(train_df)
 ```
 
 ```python
-#Train NER on ELECTRA sentence embeddings
+#Train Classifier on ELECTRA sentence embeddings
 fitted_pipe = nlu.load('embed_sentence.electra train.classifier').fit(train_df)
 preds = fitted_pipe.predict(train_df)
 ```
+
+# Multi Class Text Classifier Training
+[Multi Class Text Classifier Training Demo](https://colab.research.google.com/drive/12FA2TVvvRWw4pRhxDnK32WAzl9dbF6Qw?usp=sharing)         
+To train the Multi Class text classifier model, you must pass a dataframe with a ```text``` column and a ```y``` column for the label.        
+By default *Universal Sentence Encoder Embeddings (USE)* are used as sentence embeddings. 
+
+```python
+fitted_pipe = nlu.load('train.classifier').fit(train_df)
+preds = fitted_pipe.predict(train_df)
+```
+
+If you add a nlu sentence embeddings reference, before the train reference, NLU will use that Sentence embeddings instead of the default USE.
+
+```python
+#Train on BERT sentence emebddings
+fitted_pipe = nlu.load('embed_sentence.bert train.classifier').fit(train_df)
+preds = fitted_pipe.predict(train_df)
+```
+
+# Multi Label Classifier training
+[ Train Multi Label Classifier on E2E dataset Demo](https://colab.research.google.com/drive/15ZqfNUqliRKP4UgaFcRg5KOSTkqrtDXy?usp=sharing)      
+[Train Multi Label  Classifier on Stack Overflow Question Tags dataset Demo](https://colab.research.google.com/drive/1Y0pYdUMKSs1ZP0NDcKgVECqkKD9ShIdc?usp=sharing)    
+This model can predict multiple labels for one sentence.     
+Uses a Bidirectional GRU with Convolution model that we have built inside TensorFlow and supports up to 100 classes.        
+To train the Multi Class text classifier model, you must pass a dataframe with a ```text``` column and a ```y``` column for the label.   
+The ```y``` label must be a string column where each label is seperated with a seperator.     
+By default, ```,``` is assumed as line seperator.      
+If your dataset is using a different label seperator, you must configure the ```label_seperator``` parameter while calling the ```fit()``` method.    
+
+By default *Universal Sentence Encoder Embeddings (USE)* are used as sentence embeddings for training.
+
+```python
+fitted_pipe = nlu.load('train.multi_classifier').fit(train_df)
+preds = fitted_pipe.predict(train_df)
+```
+
+If you add a nlu sentence embeddings reference, before the train reference, NLU will use that Sentence embeddings instead of the default USE.
+```python
+#Train on BERT sentence emebddings
+fitted_pipe = nlu.load('embed_sentence.bert train.multi_classifier').fit(train_df)
+preds = fitted_pipe.predict(train_df)
+```
+
+Configure a custom line seperator
+```python
+#Use ; as label seperator
+fitted_pipe = nlu.load('embed_sentence.electra train.multi_classifier').fit(train_df, label_seperator=';')
+preds = fitted_pipe.predict(train_df)
+```
+
 
 
 #Part of Speech (POS) Training
@@ -68,54 +118,6 @@ If a NLU reference to a Token Embeddings model is added before the train referen
 train_path = '/content/eng.train'
 fitted_pipe = nlu.load('bert train.ner').fit(dataset_path=train_path)
 ```
-
-# Multi Class Text Classifier Training
-[Multi Class Text Classifier Training Demo](https://colab.research.google.com/drive/12FA2TVvvRWw4pRhxDnK32WAzl9dbF6Qw?usp=sharing)         
-To train the Multi Class text classifier model, you must pass a dataframe with a ```text``` column and a ```y``` column for the label.
-By default *Universal Sentence Encoder Embeddings (USE)* are used as sentence embeddings. 
-
-```python
-fitted_pipe = nlu.load('train.classifier').fit(train_df)
-preds = fitted_pipe.predict(train_df)
-```
-
-If you add a nlu sentence embeddings reference, before the train reference, NLU will use that Sentence embeddings instead of the default USE.
-
-```python
-#Train on BERT sentence emebddings
-fitted_pipe = nlu.load('embed_sentence.bert train.classifier').fit(train_df)
-preds = fitted_pipe.predict(train_df)
-```
-
-# Multi Class Text Classifier for sentences with multiple classes Training
-[Multi Class Text Classifier Training for multi class sentences Demo](https://colab.research.google.com/drive/15ZqfNUqliRKP4UgaFcRg5KOSTkqrtDXy?usp=sharing)         
-This model can predict multiple classes for one sentence.
-To train the Multi Class text classifier model, you must pass a dataframe with a ```text``` column and a ```y``` column for the label.   
-The ```y``` label must be a string column where each label is seperated with a seperator.     
-By default, ```,``` is assumed as line seperator.      
-If your dataset is using a different label seperator, you must configure the ```label_seperator``` parameter while calling the ```fit()``` method.    
-
-By default *Universal Sentence Encoder Embeddings (USE)* are used as sentence embeddings for training.
-
-```python
-fitted_pipe = nlu.load('train.multi_classifier').fit(train_df)
-preds = fitted_pipe.predict(train_df)
-```
-
-If you add a nlu sentence embeddings reference, before the train reference, NLU will use that Sentence embeddings instead of the default USE.
-```python
-#Train on BERT sentence emebddings
-fitted_pipe = nlu.load('embed_sentence.bert train.multi_classifier').fit(train_df)
-preds = fitted_pipe.predict(train_df)
-```
-
-Configure a custom line seperator
-```python
-#Use ; as label seperator
-fitted_pipe = nlu.load('embed_sentence.bert train.multi_classifier').fit(train_df, label_seperator=';')
-preds = fitted_pipe.predict(train_df)
-```
-
 
 
 
