@@ -221,12 +221,10 @@ class NLUPipeline(BasePipe):
         stages = []
         for component in self.pipe_components:
             stages.append(component.model)
-        self.is_fitted = True
         self.spark_estimator_pipe = Pipeline(stages=stages)
 
         if dataset_path != None and 'ner' in self.nlu_ref:
             from sparknlp.training import CoNLL
-
             s_df = CoNLL().readDataset(self.spark,path=dataset_path, )
             self.spark_transformer_pipe = self.spark_estimator_pipe.fit(s_df.withColumnRenamed('label','y'))
 
@@ -236,8 +234,8 @@ class NLUPipeline(BasePipe):
             self.spark_transformer_pipe = self.spark_estimator_pipe.fit(s_df)
         elif isinstance(dataset,pd.DataFrame) and 'multi' in  self.nlu_ref:
             schema = StructType([
-                StructField("y", StringType(), True), \
-                StructField("text", StringType(), True) \
+                StructField("y", StringType(), True),
+                StructField("text", StringType(), True)
                 ])
             from pyspark.sql import functions as F
             df = self.spark.createDataFrame(data=dataset, schema=schema).withColumn('y',F.split('y',label_seperator))
@@ -253,7 +251,7 @@ class NLUPipeline(BasePipe):
 
         else :
             # fit on empty dataframe since no data provided
-            logger.info('Fitting on empty Dataframe, could not infer correct training method! This is intended for non-trainable pipelines.')
+            logger.info('Fitting on empty Dataframe, could not infer correct training method. This is intended for non-trainable pipelines.')
             self.spark_transformer_pipe = self.spark_estimator_pipe.fit(self.get_sample_spark_dataframe())
 
 
@@ -1636,6 +1634,7 @@ class PipelineQueryVerifier():
             input_columns = PipelineQueryVerifier.clean_irrelevant_features(input_columns)
 
             if len(input_columns) != 0 and not pipe.has_trainable_components:  # fix missing column name
+                logger.info(f"Fixing bad input col for C={component_to_check} untrainable pipe")
                 for missing_column in input_columns:
                     for other_component in pipe.pipe_components:
                         if component_to_check.component_info.name == other_component.component_info.name: continue
@@ -1647,6 +1646,8 @@ class PipelineQueryVerifier():
                             other_component.model.setOutputCol(missing_column)
 
             elif len(input_columns) != 0 and  pipe.has_trainable_components:  # fix missing column name
+                logger.info(f"Fixing bad input col for C={component_to_check} trainable pipe")
+
                 # for trainable components, we change their input columns and leave other components outputs unchanged
                 for missing_column in input_columns:
                     for other_component in pipe.pipe_components:
@@ -1786,6 +1787,7 @@ class PipelineQueryVerifier():
         :param pipe: pipe to be configured
         :return: configured pipe
         '''
+        logger.info('Configuring components to document level')
         # Every sentenceEmbedding can work on Dcument col
         # This works on the assuption that EVERY annotator that works on sentence col, can also work on document col. Douple Tripple verify later
         # here we could change the col name to doc_embedding potentially
@@ -1794,18 +1796,18 @@ class PipelineQueryVerifier():
         for c in pipe.pipe_components:
             if 'token' in c.component_info.spark_output_column_names: continue
             if 'sentence' in c.component_info.inputs and 'document' not in c.component_info.inputs:
-                logger.info(f"Configuring C={c.component_info.name}  of Type={type(c.model)}")
+                logger.info(f"Configuring C={c.component_info.name}  of Type={type(c.model)} input to document level")
                 c.component_info.inputs.remove('sentence')
                 c.component_info.inputs.append('document')
-                c.model.setInputCols(c.component_info.spark_input_column_names)
 
             if 'sentence' in c.component_info.spark_input_column_names and 'document' not in c.component_info.spark_input_column_names:
                 # if 'sentence' in c.component_info.spark_input_column_names : c.component_info.spark_input_column_names.remove('sentence')
                 c.component_info.spark_input_column_names.remove('sentence')
                 c.component_info.spark_input_column_names.append('document')
+                c.model.setInputCols(c.component_info.spark_input_column_names)
 
-                if c.component_info.type =='sentence_embeddings' : #convert sentence embeds to doc
-                    c.component_info.output_level='document'
+            if c.component_info.type =='sentence_embeddings' : #convert sentence embeds to doc
+                c.component_info.output_level='document'
 
         return pipe
 
