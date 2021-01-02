@@ -645,11 +645,12 @@ class NLUPipeline(BasePipe):
         :return: Spark Dataframe with new columns ready for toPandas conversion and also a list with all column names which should be used for Pandas conversion.
         '''
         columns_for_select = []
+        logger.info(f"Extracting multi level fields={multi_level_col_names}")
+
         def extract_classnames_and_confidences(x,keys_in_metadata, threshold=0.5):
             ## UDF for extracting confidences and their class names as struct types if the confidence is larger than threshold
             confidences = []
             classes = []
-
             if not isinstance(x,dict) : return [[],[]]#[[0.0],['No Classes Detected']]
             for key in keys_in_metadata :
                 if key =='sentence' : continue     # irrelevant metadata
@@ -657,29 +658,34 @@ class NLUPipeline(BasePipe):
                     confidences.append(float(x[key]))
                     classes.append(key)
             return [confidences, classes]
-
         schema = StructType([
             StructField("confidences", ArrayType(DoubleType()), False),
             StructField("classes", ArrayType(StringType()), False)
         ])
+        def extract_map_values_float(x,key): return [float(sentence[key]) for sentence in x]
 
             # we dont care about .result col, we get all from metadarta
         for field in multi_level_col_names:
             base_field_name = field.split('.')[0]
             confidence_field_name = base_field_name+'_confidences'
             class_field_name = base_field_name+'_classes'
-
             if 'metadata' in field :
+
                 keys_in_metadata = self.extract_keys_in_metadata(ptmp,field)
                 if len(keys_in_metadata) == 0: continue
                 if not meta:
-                    # create a confidence and class column which both contain a list of predicted classes/confidences
-                    # we apply the  UDF only to the first element because metadata is duplicated for multi classifier dl and all relevent info is in the first element of the metadata col list
-                    extract_classnames_and_confidences_udf = udf(lambda z: extract_classnames_and_confidences(z, keys_in_metadata), schema)
-                    ptmp = ptmp.withColumn('multi_level_extract_result', extract_classnames_and_confidences_udf(expr(f'{field}[0]')))
-                    ptmp = ptmp.withColumn(confidence_field_name , ptmp['multi_level_extract_result.confidences'])
-                    ptmp = ptmp.withColumn(class_field_name, ptmp['multi_level_extract_result.classes'])
-                    columns_for_select += [confidence_field_name, class_field_name]
+                    if 'keyword' in field: # yake handling
+                        array_map_values = udf(lambda z: extract_map_values_float(z,'score'), ArrayType(FloatType()))
+                        ptmp = ptmp.withColumn(confidence_field_name, array_map_values(field))
+                        columns_for_select += [confidence_field_name]
+                    else :
+                        # create a confidence and class column which both contain a list of predicted classes/confidences
+                        # we apply the  UDF only to the first element because metadata is duplicated for multi classifier dl and all relevent info is in the first element of the metadata col list
+                        extract_classnames_and_confidences_udf = udf(lambda z: extract_classnames_and_confidences(z, keys_in_metadata, threshold=threshold), schema)
+                        ptmp = ptmp.withColumn('multi_level_extract_result', extract_classnames_and_confidences_udf(expr(f'{field}[0]')))
+                        ptmp = ptmp.withColumn(confidence_field_name , ptmp['multi_level_extract_result.confidences'])
+                        ptmp = ptmp.withColumn(class_field_name, ptmp['multi_level_extract_result.classes'])
+                        columns_for_select += [confidence_field_name, class_field_name]
 
                 else :
                     confidence_field_names = []
@@ -687,11 +693,23 @@ class NLUPipeline(BasePipe):
                         #create one col per confidence and only get those
                         if key =='sentence':continue
                         new_confidence_field_name = base_field_name + '_' +key +'_confidence'
-                        ptmp = ptmp.withColumn(new_confidence_field_name, expr(f'{field}[0]["{key}"]'))
-                        confidence_field_names.append(new_confidence_field_name)
+                        if 'keyword' in field: # yake handling
+                            array_map_values = udf(lambda z: extract_map_values_float(z,'score'), ArrayType(FloatType()))
+                            ptmp = ptmp.withColumn(new_confidence_field_name, array_map_values(field))
+                            confidence_field_names.append(new_confidence_field_name)
+
+                        else:
+                            ptmp = ptmp.withColumn(new_confidence_field_name, expr(f'{field}[0]["{key}"]'))
+                            confidence_field_names.append(new_confidence_field_name)
+
+
                     columns_for_select += confidence_field_names
 
-
+            else :
+                base_field_name = field.split('.')[0]
+                class_field_name = base_field_name+'_classes'
+                ptmp = ptmp.withColumn(class_field_name,ptmp[field])
+                columns_for_select += [class_field_name]
 
         return ptmp, columns_for_select
 
@@ -772,7 +790,7 @@ class NLUPipeline(BasePipe):
         for c in self.pipe_components:
             if target in c.component_info.spark_output_column_names:
                 # MultiClassifier outputs should never be at same output level as pipe, returning special_case takes care of this
-                if isinstance(c.model, (MultiClassifierDLModel, MultiClassifierDLApproach)): return "multi_level"
+                if isinstance(c.model, (MultiClassifierDLModel, MultiClassifierDLApproach,YakeModel)): return "multi_level"
                 return self.resolve_component_to_output_level(c)
 
 
