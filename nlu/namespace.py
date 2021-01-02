@@ -670,7 +670,8 @@ class NameSpace():
             'pt.stopwords': 'stopwords_pt',
             'pt.bert': 'bert_portuguese_base_cased',
             'pt.bert.cased': 'bert_portuguese_base_cased',
-            'pt.ner.large': 'bert_portuguese_large_cased',
+            'pt.bert.cased.large':'bert_portuguese_large_cased',
+
         },
         'ru': {
             'ru.lemma': 'lemma',

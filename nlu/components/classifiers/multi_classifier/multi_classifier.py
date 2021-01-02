@@ -13,7 +13,7 @@ class MultiClassifier:
     def get_pretrained_model(name, language):
         return MultiClassifierDLModel.pretrained(name,language) \
             .setInputCols("sentence_embeddings") \
-            .setOutputCol("category")
+            .setOutputCol("multi_category")
     
 
 
@@ -22,7 +22,7 @@ class MultiClassifier:
     def get_default_trainable_model():
         return MultiClassifierDLApproach() \
             .setInputCols("sentence_embeddings") \
-            .setOutputCol("category") \
+            .setOutputCol("multi_category") \
             .setLabelColumn("y") \
             .setEnableOutputLogs(True) \
             .setMaxEpochs(2) \

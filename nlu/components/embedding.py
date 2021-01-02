@@ -16,6 +16,7 @@ class Embeddings(SparkNLUComponent):
         elif 'electra' in nlu_ref and 'sent' in nlu_ref : annotator_class= 'sentence_bert'
 
         elif 'bert' in nlu_ref and 'albert' not in nlu_ref: annotator_class= 'bert'
+        elif 'bert' in nlp_ref and 'albert' not in nlp_ref: annotator_class= 'bert'
 
         elif 'electra' in nlu_ref or 'electra' in nlp_ref:  annotator_class= 'bert'
         elif 'labse' in nlu_ref   or 'labse' in nlp_ref:  annotator_class= 'sentence_bert'
