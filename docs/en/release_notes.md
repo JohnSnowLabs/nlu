@@ -29,7 +29,7 @@ The Multi Label Classifier is using Bidirectional GRU and CNNs inside TensorFlow
 - [ Train Multi Label Classifier on E2E dataset Demo](https://colab.research.google.com/drive/15ZqfNUqliRKP4UgaFcRg5KOSTkqrtDXy?usp=sharing)
 - [Train Multi Label  Classifier on Stack Overflow Question Tags dataset Demo](https://colab.research.google.com/drive/1Y0pYdUMKSs1ZP0NDcKgVECqkKD9ShIdc?usp=sharing)       
   This model can predict multiple labels for one sentence.
-  To train the Multi Class text classifier model, you must pass a dataframe with a ```text``` column and a ```y``` column for the label.   
+  To train the Multi Label text classifier model, you must pass a dataframe with a ```text``` column and a ```y``` column for the label.   
   The ```y``` label must be a string column where each label is seperated with a seperator.     
   By default, ```,``` is assumed as line seperator.      
   If your dataset is using a different label seperator, you must configure the ```label_seperator``` parameter while calling the ```fit()``` method.
@@ -65,7 +65,7 @@ preds = fitted_pipe.predict(train_df)
 ### NLU 1.0.6 New Notebooks and Tutorials
 
 - [ Train Multi Label Classifier on E2E dataset](https://colab.research.google.com/drive/15ZqfNUqliRKP4UgaFcRg5KOSTkqrtDXy?usp=sharing)
-- [Train Multi Label  Classifier on Stack Overflow Question Tags dataset](https://colab.research.google.com/drive/1Y0pYdUMKSs1ZP0NDcKgVECqkKD9ShIdc?usp=sharing)
+- [Train Multi Label  Classifier on Stack Overflow Question Tags dataset](https://drive.google.com/file/d/1Nmrncn-y559od3AKJglwfJ0VmZKjtMAF/view?usp=sharing)
 
 ### NLU 1.0.6 Bug-fixes
 - Fixed a bug that caused ```en.ner.dl.bert``` to be inaccessible

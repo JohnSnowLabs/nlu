@@ -35,15 +35,15 @@ class MultiClassifierDlTests(unittest.TestCase):
         pipe = pipe.fit(train_df)
         df = pipe.predict(train_df)
         print(df.columns)
-        print(df[['multi_classifier','y']])
-        print(df[['multi_classifier_confidence','y']])
+        print(df[['multi_classifier_classes','y']])
+        print(df[['multi_classifier_confidences','y']])
 
         df = pipe.predict(test_df)
         print(df.columns)
-        print(df[['multi_classifier','y']])
+        print(df[['multi_classifier_classes','y']])
         print(df[['multi_classifier_confidence','y']])
         df.dropna(inplace=True)
-        print (classification_report(df['y'], df['multi_classifier']))
+        print (classification_report(df['y'], df['multi_classifier_classes']))
     # Too heavy running on github actions
 
     #
@@ -126,7 +126,9 @@ class MultiClassifierDlTests(unittest.TestCase):
     def load_multi_classifier_dl_dataset(self):
         output_file_name = 'e2e_test.csv'
         output_folder = 'multi_classifier_dl/'
-        data_url = "http://ckl-it.de/wp-content/uploads/2020/12/testset_w_refs.csv"
+        # data_url = "http://ckl-it.de/wp-content/uploads/2020/12/testset_w_refs.csv"
+        data_url = "http://ckl-it.de/wp-content/uploads/2020/12/e2e.csv"
+
         return pd.read_csv(t.download_dataset(data_url,output_file_name,output_folder)).iloc[0:100]
 
         # output_file_name = 'news_category_test.csv'
