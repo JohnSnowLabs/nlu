@@ -186,7 +186,8 @@ class NLUPipeline(BasePipe):
                       ],
             # 'sub_token': [TextMatcherModel, BigTextMatcherModel, RegexMatcherModel, ],
             'input_dependent': [BertSentenceEmbeddings, UniversalSentenceEncoder, ViveknSentimentModel,
-                                SentimentDLModel, MultiClassifierDLModel, MultiClassifierDLModel, ClassifierDLModel
+                                SentimentDLModel, MultiClassifierDLModel, MultiClassifierDLModel, ClassifierDLModel,
+                                MarianTransformer,T5Transformer
 
                                 ],
         }
