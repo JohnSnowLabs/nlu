@@ -1,0 +1,24 @@
+{
+  "name": "t5",
+  "output_level": "input_dependent",
+  "description": "todo",
+  "trainable": false,
+  "outputs": [
+    "sequence"
+  ],
+  "inputs": [
+    "document"
+  ],
+  "type": "seq2seq",
+  "file_dependencies": {},
+  "spark_input_column_names": [
+    "document"
+  ],
+  "spark_output_column_names": [
+    "t5"
+  ],
+  "provider": "sparknlp",
+  "license": "open source",
+  "computation_context": "spark",
+  "output_context": "spark"
+}
