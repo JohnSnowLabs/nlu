@@ -59,12 +59,27 @@ class NameSpace():
         #  These are names for NLU components that can be created withouth a language prefix
 
         # multi lang pipes
-        'lang': ('detect_language_20','pipe'),  # multi lang alias
+        'lang': ('detect_language_375','pipe'),  # multi lang alias
         'lang.7': ('detect_language_7','pipe'),  # multi lang detector alias
         'lang.20': ('detect_language_20','pipe'),  # multi lang detector alias
-        'classify.lang': ('detect_language_20','pipe'),  # multi lang detector default
-        'classify.lang.20': ('detect_language_20','pipe'),  # multi lang detector default
-        'classify.lang.7': ('detect_language_7','pipe'),
+        'lang.21' :  ('detect_language_21', 'pipe') ,
+        'lang.43' :  ('detect_language_43', 'pipe') ,
+        'lang.95' :  ('detect_language_95', 'pipe') ,
+        'lang.99' :  ('detect_language_99', 'pipe') ,
+        'lang.220' : ('detect_language_220', 'pipe') ,
+        'lang.231' : ('detect_language_231', 'pipe') ,
+
+
+        # Aliases
+        'classify.lang': ('detect_language_375','pipe'),  # multi lang detector default
+        'classify.lang.7': ('detect_language_7','pipe'),  # multi lang detector alias
+        'classify.lang.20': ('detect_language_20','pipe'),  # multi lang detector alias
+        'classify.lang.21' :  ('detect_language_21', 'pipe') ,
+        'classify.lang.43' :  ('detect_language_43', 'pipe') ,
+        'classify.lang.95' :  ('detect_language_95', 'pipe') ,
+        'classify.lang.99' :  ('detect_language_99', 'pipe') ,
+        'classify.lang.220' : ('detect_language_220', 'pipe') ,
+        'classify.lang.231' : ('detect_language_231', 'pipe') ,
 
 
         # eng pipes
@@ -397,12 +412,30 @@ class NameSpace():
             'es.ner.lg': 'entity_recognizer_lg',
         },
         'xx': {
-            'lang': 'detect_language_20',  # multi lang alias
+            'lang.' : 'detect_language_375' , # default lang classifer
             'lang.7': 'detect_language_7',  # multi lang detector alias
             'lang.20': 'detect_language_20',  # multi lang detector alias
             'xx.classify.lang': 'detect_language_20',  # multi lang detector default
             'xx.classify.lang.20': 'detect_language_20',  # multi lang detector default
             'xx.classify.lang.7': 'detect_language_7',
+
+            # 2.7 lang classifiers
+
+            'xx.classify.lang.' : 'detect_language_375' , # default lang classifer
+            'xx.classify.lang.21' : 'detect_language_21' ,
+            'xx.classify.lang.43' : 'detect_language_43' ,
+            'xx.classify.lang.95' : 'detect_language_95' ,
+            'xx.classify.lang.99' : 'detect_language_99' ,
+            'xx.classify.lang.220' : 'detect_language_220' ,
+            'xx.classify.lang.231' : 'detect_language_231' ,
+            'xx.classify.lang.bigru' : 'detect_language_bigru_21' ,
+            'lang.21' : 'detect_language_21' ,
+            'lang.43' : 'detect_language_43' ,
+            'lang.95' : 'detect_language_95' ,
+            'lang.99' : 'detect_language_99' ,
+            'lang.220' : 'detect_language_220' ,
+            'lang.231' : 'detect_language_231' ,
+            'lang.bigru' : 'detect_language_bigru_21' ,
 
 
             # 2.7 marian translate pipe references
@@ -781,7 +814,7 @@ class NameSpace():
             'en.ner.onto.bert.small_l8_512'    :'onto_small_bert_L8_512',
             'en.ner.onto.electra.uncased_small'                 :'onto_electra_small_uncased',
             'en.ner.onto.electra.uncased_base'                 :'onto_electra_base_uncased',
-
+            'en.ner.bert_base_cased' : 'ner_dl_bert_base_cased' ,
 
             'en.ner.glove.100d': 'ner_dl_sentence',
             'en.spell.symmetric': 'spellcheck_sd',
@@ -1068,6 +1101,10 @@ class NameSpace():
             'ar.stopwords': 'stopwords_ar',
             'ar.lemma' : 'lemma',
             'ar.pos' : 'pos_ud_padt',
+            'ar.embed' : 'arabic_w2v_cc_300d' ,
+            'ar.embed.cbow' : 'arabic_w2v_cc_300d' ,
+            'ar.embed.cbow.300d' : 'arabic_w2v_cc_300d' ,
+
         },
         'hy': {
             'hy.stopwords': 'stopwords_hy',
@@ -1129,7 +1166,11 @@ class NameSpace():
             'fi.embed.bert.uncased.': 'bert_finnish_uncased',
             'fi.embed_sentence': 'sent_bert_finnish_cased',
             'fi.embed_sentence.bert.cased': 'sent_bert_finnish_cased',
-            'fi.embed_sentence.bert.uncased': 'sent_bert_finnish_uncased'
+            'fi.embed_sentence.bert.uncased': 'sent_bert_finnish_uncased',
+            'fi.ner.6B_100d' : 'finnish_ner_6B_100' ,
+            'fi.ner.6B_300d' : 'finnish_ner_6B_300' ,
+            'fi.ner.840B_300d' : 'finnish_ner_840B_300' ,
+
 
         },
         'gl': {
@@ -1150,7 +1191,16 @@ class NameSpace():
 
         },
         'he': {
-            'he.stopwords': 'stopwords_he'
+            'he.stopwords': 'stopwords_he',
+            'he.embed' : 'hebrew_cc_300d' ,  # default he embeddings
+            'he.embed.glove' : 'hebrew_cc_300d' ,  # default he cbow embeddings
+            'he.embed.cbow_300d' : 'hebrew_cc_300d' ,  # default he embeddings
+            'he.ner' : 'hebrewner_cc_300d' , #default he ner
+            'he.ner.cc_300d' : 'hebrewner_cc_300d' ,
+            'he.pos' : 'pos_ud_htb' , #defauklt he pos
+            'he.pos.ud_htb' : 'pos_ud_htb' , #
+            'he.lemma' : 'lemma' ,
+
 
         },
         'hi': {
@@ -1191,9 +1241,14 @@ class NameSpace():
 
         },
         'ja': {
-            'ja.stopwords': 'stopwords_ja'
-
-        },
+            'ja.stopwords': 'stopwords_ja',
+            'ja.segment_words' : 'wordseg_gsd_ud' ,
+             'ja.ner' : 'ner_ud_gsd_glove_840B_300d' , #default ja ner
+            'ja.pos' : 'pos_ud_gsd' ,  # default pos ner
+            'ja.ner.ud_gsd' : 'ner_ud_gsd_glove_840B_300d' , # default ner ud_gsd
+            'ja.ner.ud_gsd.glove_840B_300D' : 'ner_ud_gsd_glove_840B_300d' ,
+            'ja.pos.ud_gsd' : 'pos_ud_gsd' ,
+          },
         'la': {
             'la.stopwords': 'stopwords_la',
             'la.lemma': 'lemma',
@@ -1216,6 +1271,13 @@ class NameSpace():
             'fa.stopwords': 'stopwords_fa',
             'fa.lemma': 'lemma',
             'fa.pos' : 'pos_ud_perdt',
+            'fa.ner' : 'personer_cc_300d' ,#default fa pos
+            'fa.ner.person' : 'personer_cc_300d' , # default fa ner person
+            'fa.ner.person.cc_300d' : 'personer_cc_300d' ,
+            'fa.embed' : 'persian_w2v_cc_300d' , # default fa embeds
+            'fa.embed.word2vec' : 'persian_w2v_cc_300d' , # default fa word2vec embeds
+            'fa.embed.word2vec.300d' : 'persian_w2v_cc_300d' ,
+
         },
         'ro': {
             'ro.lemma': 'lemma',
@@ -1257,7 +1319,8 @@ class NameSpace():
             'sv.ner.840B_300': 'swedish_ner_840B_300'
         },
         'th': {
-            'th.stopwords': 'stopwords_th'
+            'th.stopwords': 'stopwords_th',
+            'th.ner.lst20.glove_840B_300D'             : 'ner_lst20_glove_840B_300d',
         },
         'tr': {
             'tr.lemma': 'lemma',
@@ -1299,6 +1362,10 @@ class NameSpace():
             'zh.ner.bert'   : 'ner_msra_bert_768d', # default zh bert nert,
             'zh.ner.msra.bert_768D'   : 'ner_msra_bert_768d', # default zh bert nert,
             'zh.ner.weibo.bert_768d'   : 'ner_weibo_bert_768d',
+            'zh.lemma' : 'lemma' ,
+            'zh.embed' : 'bert_base_chinese' ,
+            'zh.bert' : 'bert_base_chinese' , # default zh embeds
+
 
         }
 ,
@@ -1309,8 +1376,26 @@ class NameSpace():
         },
         'ur': {
             'ur.lemma' : 'lemma',
-            'ur.pos' : 'pos_ud_udtb',
-            'ur.sentiment' : 'sentimentdl_urduvec_imdb'
+            'ur.pos' : 'pos_ud_udtb', #default ur pos
+            'ur.pos.ud_udtb' : 'pos_ud_udtb',
+
+            'ur.sentiment' : 'sentimentdl_urduvec_imdb',
+            'ur.embed' : 'urduvec_140M_300d' , # default ur embeds
+            'ur.embed.urdu_vec_140M_300d' : 'urduvec_140M_300d' ,
+            'ur.ner' : 'uner_mk_140M_300d' ,
+            'ur.ner.mk_140M_300d' : 'uner_mk_140M_300d' ,
+
+        },
+
+        'ko':{
+
+            'ko.segment_words' : 'wordseg_kaist_ud' ,
+            'ko.pos' : 'pos_ud_kaist' ,  #default ko pos
+            'ko.ner' : 'ner_kmou_glove_840B_300d' , # default ko ner
+            'ko.pos.ud_kaist' : 'pos_ud_kaist' ,
+            'ko.ner.kmou' : 'ner_kmou_glove_840B_300d' , #default ner kmou
+            'ko.ner.kmou.glove_840B_300d' : 'ner_kmou_glove_840B_300d' ,
+
         },
 
         'xx': {
@@ -1323,6 +1408,16 @@ class NameSpace():
 
             'xx.classify.wiki_7': 'ld_wiki_7',
             'xx.classify.wiki_20': 'ld_wiki_20',
+            'xx.classify.wiki_21' : 'ld_wiki_tatoeba_cnn_21' ,
+            'xx.classify.wiki_21.bigru' : 'ld_tatoeba_bigru_21' ,
+            'xx.classify.wiki_99' : 'ld_tatoeba_cnn_99' ,
+            'xx.classify.wiki_231' : 'ld_wiki_cnn_231' ,
+            'xx.classify.wiki_43' : 'ld_wiki_tatoeba_cnn_43' ,
+            'xx.classify.wiki_95' : 'ld_wiki_tatoeba_cnn_95' ,
+            'xx.classify.wiki_220' : 'ld_wiki_tatoeba_cnn_220' ,
+            'xx.classify.wiki_375' : 'ld_wiki_tatoeba_cnn_375' ,
+
+
 
             'xx.embed_sentence': 'sent_bert_multi_cased',
             'xx.embed_sentence.bert': 'sent_bert_multi_cased',
