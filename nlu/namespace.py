@@ -9,9 +9,11 @@ class NameSpace():
                    'sarcasm','emotion', 'spam','fakenews', 'cyberbullying',
                    'wiki','wiki_7', 'wiki_20','yake','toxic'
                    ]
-    seq2seq = ['t5','marian']
+    seq2seq = ['t5','marian','translate_to']
     actions = ['tokenize', 'sentence', 'embed', 'embed_sentence', 'embed_chunk','classify', 'chunk', 'pos', 'ner',
                'dep', 'dep.untyped', 'lemma', 'match', 'norm', 'spell','stem', 'stopwords','clean','ngram',
+                'translate_to',
+
                ]
     trainable_model_references = ['classifier_dl']
 
@@ -98,7 +100,7 @@ class NameSpace():
         'sentiment.twitter': ('analyze_sentimentdl_use_twitter','pipe'),
         'dependency': ('dependency_parse','pipe'),
 
-        # models
+
         'tokenize': ('spark_nlp_tokenizer', 'model'),  # tokenizer rule based model
         'stem': ('stemmer', 'model'),  # stem rule based model
         'norm': ('normalizer', 'model'),  #  rule based model
@@ -1181,9 +1183,9 @@ class NameSpace():
             'da.lemma': 'lemma',
             'da.pos': 'pos_ud_ddt',
             'da.ner': 'dane_ner_6B_100',
-            'da.ner.6B100D': 'dane_ner_6B_100',
-            'da.ner.6B300D': 'dane_ner_6B_300',
-            'da.ner840B100D.': 'dane_ner_840B_100'
+            'da.ner.6B_100D': 'dane_ner_6B_100',
+            'da.ner.6B_300D': 'dane_ner_6B_300',
+            'da.ner.840B_300D': 'dane_ner_840B_300'
             
 
 
@@ -1280,6 +1282,26 @@ class NameSpace():
         'zu': {
             'zu.stopwords': 'stopwords_zu'
         },
+        'zh' : {
+
+            'zh.segment_words'   : 'wordseg_weibo', #defaul zh wordseg,
+            'zh.tokenize'   : 'wordseg_weibo', #defaul tokenize alias
+
+            'zh.segment_words.weibo'   : 'wordseg_weibo',
+            'zh.segment_words.pku'   : 'wordseg_pku',
+            'zh.segment_words.msra'   : 'wordseg_msra',
+            'zh.segment_words.large'   : 'wordseg_large',
+            'zh.segment_words.ctb9'   : 'wordseg_ctb9',
+            'zh.pos'   : 'pos_ud_gsd', # default zh pos,
+            'zh.pos.ud_gsd'   : 'pos_ud_gsd',
+            'zh.pos.ctb9'   : 'pos_ctb9',
+            'zh.ner'   : 'ner_msra_bert_768d', # default zh ner,
+            'zh.ner.bert'   : 'ner_msra_bert_768d', # default zh bert nert,
+            'zh.ner.msra.bert_768D'   : 'ner_msra_bert_768d', # default zh bert nert,
+            'zh.ner.weibo.bert_768d'   : 'ner_weibo_bert_768d',
+
+        }
+,
 
         'et' : {
             'et.lemma' : 'lemma',
