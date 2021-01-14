@@ -1,0 +1,24 @@
+{
+  "name": "word_segmenter",
+  "description": "todo",
+  "trainable": false,
+  "output_level": "token",
+  "outputs": [
+    "token"
+  ],
+  "inputs": [
+    "document"
+  ],
+  "type": "tokenizer",
+  "file_dependencies": {},
+  "spark_input_column_names": [
+    "document"
+  ],
+  "spark_output_column_names": [
+    "token"
+  ],
+  "provider": "sparknlp",
+  "license": "open source",
+  "computation_context": "spark",
+  "output_context": "spark"
+}
