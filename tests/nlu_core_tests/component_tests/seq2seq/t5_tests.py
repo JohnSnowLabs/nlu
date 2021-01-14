@@ -361,11 +361,7 @@ class TestT5(unittest.TestCase):
         data = [
             'wsc:     The stable was very roomy, with four good stalls; a large swinging window opened into the yard , which made *it* pleasant and airy.',
            'wsc :          The party was really crazy and  a lot of people had fun until *it* ended.',
-            'wsc :          The party was really crazy and  *it* happend.',
-            'wsc :          The party was really crazy and  it was  super *fun*.',
-            'wsc :          The *party* was really crazy and  it was  super fun.',
-
-          'wsc: The stable was very roomy, with four good stalls; a large swinging window opened into the yard , which made *it* pleasant and airy.'
+            'wsc :          The party was really crazy but the the car killed everybody,  *it* was going so fast!.',
 
         ]
 
