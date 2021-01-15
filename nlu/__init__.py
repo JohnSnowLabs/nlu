@@ -1,4 +1,4 @@
-__version__ = '1.0.6'
+__version__ = '1.1.0'
 
 import sys
 
@@ -117,6 +117,8 @@ from nlu.components.normalizer import Normalizer
 from nlu.components.stopwordscleaner import StopWordsCleaner
 from nlu.components.stemmers.stemmer.spark_nlp_stemmer import SparkNLPStemmer
 from nlu.components.normalizers.normalizer.spark_nlp_normalizer import SparkNLPNormalizer
+from nlu.components.normalizers.document_normalizer.spark_nlp_normalizer import SparkNLPDocumentNormalizer
+
 from nlu.components.lemmatizers.lemmatizer.spark_nlp_lemmatizer import SparkNLPLemmatizer
 from nlu.components.stopwordscleaners.stopwordcleaner.nlustopwordcleaner import NLUStopWordcleaner
 from nlu.components.stopwordscleaner import StopWordsCleaner
@@ -125,6 +127,8 @@ from nlu.components.spell_checkers.norvig_spell.norvig_spell_checker import Norv
 from nlu.components.spell_checkers.context_spell.context_spell_checker import ContextSpellChecker
 from nlu.components.spell_checkers.symmetric_spell.symmetric_spell_checker import SymmetricSpellChecker
 from nlu.components.tokenizers.default_tokenizer.default_tokenizer import DefaultTokenizer
+from nlu.components.tokenizers.word_segmenter.word_segmenter import WordSegmenter
+
 from nlu.components.chunkers.default_chunker.default_chunker import DefaultChunker
 from nlu.components.embeddings_chunks.chunk_embedder.chunk_embedder import ChunkEmbedder
 from nlu.components.chunkers.ngram.ngram import NGram
@@ -134,6 +138,10 @@ from nlu.components.utils.sentence_detector.sentence_detector import SparkNLPSen
 from nlu.components.sentence_detector import NLUSentenceDetector
 from nlu.info import AllComponentsInfo
 
+#seq2seq
+from nlu.components.seq2seqs.marian.marian import Marian
+from nlu.components.seq2seqs.t5.t5 import T5
+from nlu.components.sequence2sequence import Seq2Seq
 global spark_started, spark, active_pipes, all_components_info, nlu_package_location
 
 nlu_package_location = nlu.__file__[:-11]
@@ -236,6 +244,8 @@ def load(request ='from_disk', path=None,verbose=False,version_checks=True):
             return pipe
         components_requested = request.split(' ')
         pipe = NLUPipeline()
+        language = parse_language_from_nlu_ref(request)
+        pipe.lang=language
         pipe.nlu_ref = request
         for nlu_ref in components_requested:
             nlu_ref.replace(' ', '')
@@ -264,7 +274,17 @@ def load(request ='from_disk', path=None,verbose=False,version_checks=True):
     return pipe
 
 
-def get_default_component_of_type(missing_component_type):
+def parse_language_from_nlu_ref(nlu_ref):
+
+    infos = nlu_ref.split('.')
+    for split in infos:
+        if split in nlu.AllComponentsInfo().all_languages:
+            logger.info(f'Parsed Nlu_ref={nlu_ref} as lang={split}')
+            return split
+    logger.info(f'Parsed Nlu_ref={nlu_ref} as lang=en')
+    return 'en'
+
+def get_default_component_of_type(missing_component_type,language='en'):
     '''
     This function returns a default component for a missing component type.
     It is used to auto complete pipelines, which are missng required components.
@@ -296,10 +316,10 @@ def get_default_component_of_type(missing_component_type):
         # if there is an @ in the name, we must get some specific pretrained model from the sparknlp reference that should follow after the @
         missing_component_type, sparknlp_reference = missing_component_type.split('@')
         if 'embed' in missing_component_type:
-            return construct_component_from_identifier(language='en', component_type='embed',
+            return construct_component_from_identifier(language=language, component_type='embed',
                                                        nlp_ref=sparknlp_reference)
         if 'pos' in missing_component_type or 'ner' in missing_component_type:
-            return construct_component_from_identifier(language='en', component_type='classifier',
+            return construct_component_from_identifier(language=language, component_type='classifier',
                                                        nlp_ref=sparknlp_reference)
         if 'chunk_embeddings' in missing_component_type:
             return embeddings_chunker.EmbeddingsChunker()
@@ -325,12 +345,16 @@ def parse_component_data_from_name_query(nlu_reference, detect_lang=False, path=
         Additional data about dataset and variant will be resolved by corrosponding action classes
 
     If train prefix is part of the nlu_reference ,the trainable namespace will e searched
+
+    if 'translate_to' or 'marian' is inside of the nlu_reference, 'xx' will be prefixed to the ref and set as lang if it is not already
+    Since all translate models are xx lang
     :param nlu_reference: User request (should be a NLU reference)
     :param detect_lang: Wether to automatically  detect language
     :return: Pipeline or component for the NLU reference.
     '''
 
     infos = nlu_reference.split('.')
+
     if len(infos) < 0:
         logger.exception("EXCEPTION: Could not create a component for nlu reference=%s", nlu_reference)
         return NluError()
@@ -344,12 +368,20 @@ def parse_component_data_from_name_query(nlu_reference, detect_lang=False, path=
     # I.e. 'explain_ml' , 'explain; 'albert_xlarge_uncased' or ' tokenize'  or 'sentiment' s requested. in this case, every possible annotator must be checked.
     # format <class> or <nlu identifier>
     # type parsing via checking parts in nlu action <>
+
+
     if len(infos) == 0:
         logger.exception("Split  on query is 0.")
     # Query of format <class>, no embeds,lang or dataset specified
     elif 'train' in infos :
         trainable = True
         component_type = infos[1]
+    elif 'translate_to' in nlu_reference and not 't5' in nlu_reference:
+        language = 'xx'
+        if nlu_reference[0:3] != 'xx.':
+            nlu_reference = 'xx.' + nlu_reference
+        logger.info(f'Setting lang as xx for nlu_ref={nlu_reference}')
+        component_type = 'translate_to'
     elif len(infos) == 1:
         # if we only have 1 split result, it must a a NLU action reference or an alias
         logger.info('Setting default lang to english')
@@ -498,7 +530,6 @@ def construct_trainable_component_from_identifier(nlu_ref,nlp_ref):
 
     logger.info(f'Creating trainable NLU component for nlu_ref = {nlu_ref} and nlp_ref = {nlp_ref}')
     try:
-
         if nlu_ref in ['train.deep_sentence_detector','train.sentence_detector']:
             #no label col but trainable?
             return  nlu.NLUSentenceDetector(annotator_class = 'deep_sentence_detector', trainable='True')
@@ -514,18 +545,14 @@ def construct_trainable_component_from_identifier(nlu_ref,nlp_ref):
             pass
         if nlu_ref in ['train.classifier_dl','train.classifier'] :
             return nlu.Classifier(annotator_class = 'classifier_dl', trainable=True)
-
         if nlu_ref in ['train.ner','train.named_entity_recognizer_dl'] :
             return nlu.Classifier(annotator_class = 'ner', trainable=True)
         if nlu_ref in ['train.sentiment_dl','train.sentiment'] :
             return nlu.Classifier(annotator_class = 'sentiment_dl', trainable=True)
-
         if nlu_ref in ['train.vivekn_sentiment'] :
             pass
         if nlu_ref in ['train.pos'] :
             return nlu.Classifier(annotator_class = 'pos', trainable=True)
-
-
         if nlu_ref in ['train.multi_classifier'] :
             return nlu.Classifier(annotator_class = 'multi_classifier', trainable=True)
 
@@ -646,7 +673,10 @@ def construct_component_from_pipe_identifier(language, nlp_ref, nlu_ref,path=Non
             constructed_components.append(nlu.StopWordsCleaner(model=component))
         elif isinstance(component, (TextMatcherModel, RegexMatcherModel, DateMatcher,MultiDateMatcher)) or parsed == 'match':
             constructed_components.append(nlu.Matcher(model=component))
-
+        elif isinstance(component,(T5Transformer)):
+            constructed_components.append(nlu.Seq2Seq(annotator_class='t5', model=component))
+        elif isinstance(component,(MarianTransformer)):
+            constructed_components.append(nlu.Seq2Seq(annotator_class='marian', model=component))
         else:
             logger.exception(
                 f"EXCEPTION: Could not infer component type for lang={language} and nlp_ref={nlp_ref} and model {component} during pipeline conversion,")
@@ -678,8 +708,12 @@ def construct_component_from_identifier(language, component_type='', dataset='',
                 component_type, nlp_ref, dataset, language, nlu_ref)
     try:
 
+        if any(
+            x in NameSpace.seq2seq for x in [nlp_ref, nlu_ref, dataset, component_type, ]):
+            return Seq2Seq(annotator_class=component_type, language=language, get_default=False, nlp_ref=nlp_ref,configs=dataset)
+
         # if any([component_type in NameSpace.word_embeddings,dataset in NameSpace.word_embeddings, nlu_ref in NameSpace.word_embeddings, nlp_ref in NameSpace.word_embeddings]):
-        if any(x in NameSpace.word_embeddings and not x in NameSpace.classifiers for x in
+        elif any(x in NameSpace.word_embeddings and not x in NameSpace.classifiers for x in
                [nlp_ref, nlu_ref, dataset, component_type, ] + dataset.split('_')):
             return Embeddings(get_default=False, nlp_ref=nlp_ref, nlu_ref=nlu_ref, language=language)
 
@@ -708,7 +742,7 @@ def construct_component_from_identifier(language, component_type='', dataset='',
             return nlu.lemmatizer.Lemmatizer(language=language, nlp_ref=nlp_ref)
 
         elif any('norm' in x for x in [nlp_ref, nlu_ref, dataset, component_type]):
-            return nlu.normalizer.Normalizer()
+            return nlu.normalizer.Normalizer(nlp_ref=nlp_ref, nlu_ref=nlu_ref)
         elif any('clean' in x or 'stopword' in x for x in [nlp_ref, nlu_ref, dataset, component_type]):
             return nlu.StopWordsCleaner(language=language, get_default=False, nlp_ref=nlp_ref)
         elif any('sentence_detector' in x for x in [nlp_ref, nlu_ref, dataset, component_type]):
@@ -717,8 +751,9 @@ def construct_component_from_identifier(language, component_type='', dataset='',
         elif any('match' in x for x in [nlp_ref, nlu_ref, dataset, component_type]):
             return Matcher(nlu_ref=nlu_ref, nlp_ref=nlp_ref)
 
-        elif any('tokenize' in x for x in [nlp_ref, nlu_ref, dataset, component_type]):
-            return nlu.tokenizer.Tokenizer()
+# THIS NEEDS TO CAPTURE THE WORD SEGMNETER!!!
+        elif any('tokenize' in x or 'segment_words' in x for x in [nlp_ref, nlu_ref, dataset, component_type]):
+            return nlu.tokenizer.Tokenizer(nlp_ref=nlp_ref, nlu_ref=nlu_ref, language=language,get_default=False)
 
         elif any('stem' in x for x in [nlp_ref, nlu_ref, dataset, component_type]):
             return Stemmer()
