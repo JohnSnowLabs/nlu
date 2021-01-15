@@ -404,7 +404,16 @@ class TestT5(unittest.TestCase):
         print(res[['T5','document']])
 
 
+    def test_pre_config_t5_summarize(self):
+        data = [
+            'the belgian duo took to the dance floor on monday night with some friends . manchester united face newcastle in the premier league on wednesday . red devils will be looking for just their second league away win in seven . louis van gaal’s side currently sit two points clear of liverpool in fourth .'
+        ]
 
+        pipe = nlu.load('en.t5.summarize',verbose=True)
+
+        res = pipe.predict(data)
+        print(res.columns)
+        print(res[['T5','document']])
 if __name__ == '__main__':
     unittest.main()
 
