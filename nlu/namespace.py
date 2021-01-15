@@ -119,6 +119,8 @@ class NameSpace():
         'tokenize': ('spark_nlp_tokenizer', 'model'),  # tokenizer rule based model
         'stem': ('stemmer', 'model'),  # stem rule based model
         'norm': ('normalizer', 'model'),  #  rule based model
+        'norm_document': ('normalizer', 'model'),  #  rule based model
+
         'chunk': ('default_chunker', 'model'),  #  rule based model
         'embed_chunk': ('chunk_embeddings', 'model'),  # rule based model
         'ngram': ('ngram', 'model'),  #  rule based model
@@ -237,6 +239,14 @@ class NameSpace():
         'classify.wiki_7': ('ld_wiki_7','model'),
         'classify.wiki_20': ('ld_wiki_20','model'),
         'yake': ('yake','model'),
+
+
+        # 2.7.0 new aliases
+        't5': ('t5_base','model'),
+        't5.summarize': ('t5_base','model'),
+        't5.classify.grammar_correctness': ('t5_base','model'),
+        't5.classify.sentiment': ('t5_base','model'),
+        't5.answer_question': ('t5_base','model'),
 
     }
 
@@ -816,6 +826,9 @@ class NameSpace():
             'en.ner.onto.electra.uncased_base'                 :'onto_electra_base_uncased',
             'en.ner.bert_base_cased' : 'ner_dl_bert_base_cased' ,
 
+            'en.ner.ade' : 'ade_ner_100d' ,
+            'en.ner.aspect_sentiment' : 'ner_aspect_based_sentiment' ,
+
             'en.ner.glove.100d': 'ner_dl_sentence',
             'en.spell.symmetric': 'spellcheck_sd',
             'en.spell.norvig': 'spellcheck_norvig',
@@ -990,6 +1003,13 @@ class NameSpace():
             'en.t5' : 'google_t5_small_ssm_nq',
             'en.t5.small' : 't5_small',
             'en.t5.base' : 't5_base',
+            # 2.7.0 new aliases
+            'en.t5.summarize': 't5_base',
+            'en.t5.classify.grammar_correctness': 't5_base',
+            'en.t5.classify.sentiment': 't5_base',
+            'en.t5.answer_question': 't5_base',
+
+
 
         },
         'fr': {
@@ -1364,7 +1384,7 @@ class NameSpace():
             'zh.ner.weibo.bert_768d'   : 'ner_weibo_bert_768d',
             'zh.lemma' : 'lemma' ,
             'zh.embed' : 'bert_base_chinese' ,
-            'zh.bert' : 'bert_base_chinese' , # default zh embeds
+            'zh.embed.bert' : 'bert_base_chinese' , # default zh embeds
 
 
         }
