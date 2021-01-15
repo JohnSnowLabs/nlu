@@ -39,7 +39,7 @@ class BasePipe(dict):
         self.spark_non_light_transformer_pipe = None
         self.pipe_components = []  # orderd list of nlu_component objects
         self.output_datatype = 'pandas'  # What data type should be returned after predict either spark, pandas, modin, numpy, string or array
-
+        self.lang = 'en'
     def isInstanceOfNlpClassifer(self, model):
         '''
         Check for a given Spark NLP model if it is an instance of a classifier , either approach or already fitted transformer will return true
@@ -154,7 +154,7 @@ class NLUPipeline(BasePipe):
                        PerceptronApproach,
                        Stemmer,
                        ContextSpellCheckerApproach,
-
+                       nlu.WordSegmenter,
                        Lemmatizer, TypedDependencyParserApproach, DependencyParserApproach,
                        Tokenizer, RegexTokenizer, RecursiveTokenizer
                 ,StopWordsCleaner, DateMatcher, TextMatcher, BigTextMatcher, MultiDateMatcher
@@ -762,8 +762,16 @@ class NLUPipeline(BasePipe):
         It sets the output level of the pipe accordingly
         param sdf : Spark dataframe after transformations
         '''
-        # new_output_level = self.pipe_components[-1].component_info.output_level
-        self.output_level = self.resolve_component_to_output_level(self.pipe_components[-1])
+        # Loop in reverse over pipe and get first non util/sentence_detecotr/tokenizer/doc_assember. If there is non, take last
+        bad_types = [ 'util','document','sentence']
+        bad_names = ['token']
+
+        for c in self.pipe_components[::-1]:
+            if any (t in  c.component_info.type for t in bad_types) : continue
+            if any (n in  c.component_info.name for n in bad_names) : continue
+            self.output_level = self.resolve_component_to_output_level(c)
+            logger.info('Inferred and set output level of pipeline to %s', self.output_level)
+            return
         if self.output_level == None : self.output_level = 'document' # Voodo Normalizer bug that does not happen in debugger bugfix
         logger.info('Inferred and set output level of pipeline to %s', self.output_level)
 
@@ -1600,7 +1608,9 @@ class PipelineQueryVerifier():
             components_to_add = []
             # Create missing components
             for missing_component in missing_components:
-                components_to_add.append(nlu.get_default_component_of_type(missing_component))
+                if 'embedding' in missing_component: components_to_add.append(nlu.get_default_component_of_type(missing_component,language= pipe.lang))
+                else: components_to_add.append(nlu.get_default_component_of_type(missing_component))
+
             logger.info('Resolved for missing components the following NLU components : %s', str(components_to_add))
 
             # Add missing components and validate order of components is correct
