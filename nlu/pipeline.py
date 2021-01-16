@@ -1608,7 +1608,7 @@ class PipelineQueryVerifier():
             components_to_add = []
             # Create missing components
             for missing_component in missing_components:
-                if 'embedding' in missing_component: components_to_add.append(nlu.get_default_component_of_type(missing_component,language= pipe.lang))
+                if 'embedding' in missing_component or 'token' in missing_component: components_to_add.append(nlu.get_default_component_of_type(missing_component,language= pipe.lang))
                 else: components_to_add.append(nlu.get_default_component_of_type(missing_component))
 
             logger.info('Resolved for missing components the following NLU components : %s', str(components_to_add))
