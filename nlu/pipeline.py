@@ -773,8 +773,8 @@ class NLUPipeline(BasePipe):
             if any (n in  c.component_info.name for n in bad_names) : continue
             self.output_level = self.resolve_component_to_output_level(c)
             logger.info('Inferred and set output level of pipeline to %s', self.output_level)
-            return
-        if self.output_level == None : self.output_level = 'document' # Voodo Normalizer bug that does not happen in debugger bugfix
+            break
+        if self.output_level == None  or self.output_level == '': self.output_level = 'document' # Voodo Normalizer bug that does not happen in debugger bugfix
         logger.info('Inferred and set output level of pipeline to %s', self.output_level)
 
     def get_chunk_col_name(self):
