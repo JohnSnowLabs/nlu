@@ -11,7 +11,6 @@ class TestMarian(unittest.TestCase):
         # pipe.print_info()
         # pipe['t5'].setTask('Answer the question')
 
-        # TODO DEFAULT T5 INFERENCE TO DOC level
         # test for each tasks
         data = ['Who is president of germany', 'Who is donald trump ?', 'What is NLP?', 'How to make tea?']
         df = pipe.predict(data)
@@ -26,7 +25,6 @@ class TestMarian(unittest.TestCase):
         # pipe.print_info()
         # pipe['t5'].setTask('Answer the question')
 
-        # TODO DEFAULT T5 INFERENCE TO DOC level
         # test for each tasks
         data = ['Wer ist Praesident von Deutschland', 'Wer ist donald trump ?', 'Was ist NLP?', 'Wie macht man Tee?']
         df = pipe.predict(data)
@@ -40,7 +38,6 @@ class TestMarian(unittest.TestCase):
         # pipe.print_info()
         # pipe['t5'].setTask('Answer the question')
 
-        # TODO DEFAULT T5 INFERENCE TO DOC level
         # test for each tasks
         data = ['Wer ist Praesident von Deutschland', 'Wer ist donald trump ?', 'Was ist NLP?', 'Wie macht man Tee?']
         df = pipe.predict(data)
