@@ -157,7 +157,8 @@ class NLUPipeline(BasePipe):
                        nlu.WordSegmenter,
                        Lemmatizer, TypedDependencyParserApproach, DependencyParserApproach,
                        Tokenizer, RegexTokenizer, RecursiveTokenizer
-                ,StopWordsCleaner, DateMatcher, TextMatcher, BigTextMatcher, MultiDateMatcher
+                ,StopWordsCleaner, DateMatcher, TextMatcher, BigTextMatcher, MultiDateMatcher,
+                       WordSegmenterApproach
                        ],
             # sub token is when annotator is token based but some tokens may be missing since dropped/cleanes
             # are matchers chunk or sub token?
@@ -183,6 +184,7 @@ class NLUPipeline(BasePipe):
                       TypedDependencyParserModel, DependencyParserModel,
                       RecursiveTokenizerModel,
                       TextMatcherModel, BigTextMatcherModel, RegexMatcherModel,
+                      WordSegmenterModel
                       ],
             # 'sub_token': [TextMatcherModel, BigTextMatcherModel, RegexMatcherModel, ],
             'input_dependent': [BertSentenceEmbeddings, UniversalSentenceEncoder, ViveknSentimentModel,
