@@ -299,7 +299,7 @@ def get_default_component_of_type(missing_component_type,language='en'):
         if missing_component_type == 'document': return Util('document_assembler')
         if missing_component_type == 'sentence': return Util('sentence_detector')
         if missing_component_type == 'sentence_embeddings': return Embeddings('use')
-        if 'token' in missing_component_type: return nlu.components.tokenizer.Tokenizer("default_tokenizer")
+        if 'token' in missing_component_type: return nlu.components.tokenizer.Tokenizer("default_tokenizer", language=language)
         if missing_component_type == 'word_embeddings': return Embeddings(nlu_ref='glove')
         if missing_component_type == 'pos':   return Classifier(nlu_ref='pos')
         if missing_component_type == 'ner':   return Classifier(nlu_ref='ner')
