@@ -23,6 +23,8 @@ class Embeddings(SparkNLUComponent):
 
         elif 'tfhub' in nlu_ref or 'tfhub' in nlp_ref: annotator_class= 'use'
         elif 'glove' in nlu_ref or 'glove' in nlp_ref : annotator_class = 'glove'
+        elif 'cc_300d' in nlu_ref or 'cc_300d' in nlp_ref : annotator_class = 'glove'
+
         elif 'albert' in nlu_ref or 'albert' in nlp_ref : annotator_class = 'albert'
         elif 'xlnet' in nlu_ref or 'xlnet' in nlp_ref : annotator_class = 'xlnet'
 
