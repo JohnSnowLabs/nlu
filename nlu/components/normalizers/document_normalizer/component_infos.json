@@ -1,7 +1,7 @@
 {
   "name": "document_normalizer",
   "description": "todo",
-  "output_level": "token",
+  "output_level": "document",
   "trainable": false,
   "outputs": [
     "normalized"
