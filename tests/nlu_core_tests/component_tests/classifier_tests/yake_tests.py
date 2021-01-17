@@ -9,18 +9,26 @@ class TestYake(unittest.TestCase):
         df = nlu.load('yake',verbose=True).predict('What a wonderful day! Arnold schwanenegger is the Terminator and he wants to get to the American chopper', metadata=True)
         print(df.columns)
         print(df)
-        print(df[['keywords', 'keywords_score_confidence']])
+        print(df[['keywords_classes', 'keywords_score_confidence']])
+
+
+        df = nlu.load('yake',verbose=True).predict('What a wonderful day! Arnold schwanenegger is the Terminator and he wants to get to the American chopper', metadata=False)
+        print(df.columns)
+        print(df)
+        print(df[['keywords_classes', 'keywords_confidences']])
+
+
 
         df = nlu.load('yake',verbose=True).predict('What a wonderful day! Arnold schwanenegger is the Terminator and he wants to get to the American chopper', output_level='token')
         print(df.columns)
-        print(df[['keywords', 'keywords_score_confidence']])
+        print(df[['keywords_classes', 'keywords_confidences']])
         df = nlu.load('yake',verbose=True).predict('What a wonderful day! Arnold schwanenegger is the Terminator and he wants to get to the American chopper', output_level='chunk')
         print(df.columns)
-        print(df[['keywords', 'keywords_score_confidence']])
+        print(df[['keywords_classes', 'keywords_confidences']])
         #Column name of confidence changed if yake at same or not at same output level!
         df = nlu.load('yake',verbose=True).predict('What a wonderful day! Arnold schwanenegger is the Terminator and he wants to get to the American chopper', output_level='document')
         print(df.columns)
-        print(df[['keywords', 'keywords_confidence']])
+        print(df[['keywords_classes', 'keywords_confidences']])
 
 if __name__ == '__main__':
     unittest.main()
