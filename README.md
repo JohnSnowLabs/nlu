@@ -16,7 +16,7 @@ Take a look at our official Spark NLU page: [https://nlu.johnsnowlabs.com/](http
 ## Getting Started with NLU 
 To get your hands on the power of NLU, you just need to install it via pip and ensure Java 8 is installed and properly configured. Checkout [Quickstart for more infos](https://nlu.johnsnowlabs.com/docs/en/install)
 ```bash 
-pip install nlu
+pip install nlu pyspark==2.4.7
 ``` 
 
 ## Loading and predict with any model in 1 line python 
@@ -36,12 +36,13 @@ nlu.load('bert elmo albert xlnet glove use').predict('I love NLU! <3')
 ## What kind of models does NLU provide? 
 NLU provides everything a data scientist might want to wish for in one line of code!  
  - NLU provides everything a data scientist might want to wish for in one line of code!
- - 350 + pre-trained models
+ - 1000 + pre-trained models
  - 100+ of the latest NLP word embeddings ( BERT, ELMO, ALBERT, XLNET, GLOVE, BIOBERT, ELECTRA, COVIDBERT) and different variations of them
  - 50+ of the latest NLP sentence embeddings ( BERT, ELECTRA, USE) and different variations of them
- - 50+ Classifiers (NER, POS, Emotion, Sarcasm, Questions, Spam)
- - 40+ Supported Languages
- - Labeled and Unlabeled Dependency parsing
+ - 100+ Classifiers (NER, POS, Emotion, Sarcasm, Questions, Spam)
+ - 300+ Supported Languages
+- Summarize Text and Answer Questions with T5
+- Labeled and Unlabeled Dependency parsing
  - Various Text Cleaning and Pre-Processing methods like Stemming, Lemmatizing, Normalizing, Filtering, Cleaning pipelines and more
 
 

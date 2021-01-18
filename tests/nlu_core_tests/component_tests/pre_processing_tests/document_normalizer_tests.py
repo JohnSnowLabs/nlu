@@ -11,9 +11,6 @@ class TestNormalize(unittest.TestCase):
         pipe.print_info()
         print(df['normalized_document'])
         print(df.iloc['normalized_document'].iloc[0])
-#  Example This is an example of a simple HTML page with one paragraph.']
-
-
 
 if __name__ == '__main__':
     unittest.main()

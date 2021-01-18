@@ -474,6 +474,12 @@ def resolve_component_from_parsed_query_data(language, component_type, dataset, 
         logger.info('Found Spark NLP reference in language free aliases namespace')
         resolved = True
 
+        if len(sparknlp_data) > 2 :
+            dataset=sparknlp_data[2]
+        if len(sparknlp_data) > 3 :
+            # special case overwrite for T5
+            nlu_ref=sparknlp_data[3]
+
     # 3. If reference is none of the Namespaces, it must be a component like tokenizer or YAKE or Chunker etc....
     # If it is not, then it does not exist and will be caught later
     if not resolved:

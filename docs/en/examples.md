@@ -1043,3 +1043,338 @@ nlu.load('sentence_detector').predict('NLU can detect things. Like beginning and
 |It can also do much more! | [[0.4970400035381317, -0.013454999774694443, 0...]|   [NNP, MD, VB, NNS, ., IN, VBG, CC, NNS, IN, NN...]|    [O, O, O, O, O, B-sent, O, O, O, O, O, O, B-se...] |
 
 </div></div></div></div>
+
+
+
+## Document Normalization
+[Document Normalizer example](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/text_pre_processing_and_cleaning/document_normalizer_demo.ipynb)     
+The DocumentNormalizer extracts content from HTML or XML documents, applying either data cleansing using an arbitrary number of custom regular expressions either data extraction following the different parameters
+
+```python
+pipe = nlu.load('norm_document')
+data = '<!DOCTYPE html> <html> <head> <title>Example</title> </head> <body> <p>This is an example of a simple HTML page with one paragraph.</p> </body> </html>'
+df = pipe.predict(data,output_level='document')
+df
+```
+
+
+{:.table-model-big.mb0}
+|text|normalized_text|
+|------|-------------|
+| `<!DOCTYPE html> <html> <head> <title>Example</title> </head> <body> <p>This is an example of a simple HTML page with one paragraph.</p> </body> </html>`       |Example This is an example of a simple HTML page with one paragraph.|
+
+## Word Segmenter
+[Word Segmenter Example](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/multilingual/japanese_ner_pos_and_tokenization.ipynb)     
+The WordSegmenter segments languages without any rule-based tokenization such as Chinese, Japanese, or Korean
+```python
+pipe = nlu.load('ja.segment_words')
+# japanese for 'Donald Trump and Angela Merkel dont share many opinions'
+ja_data = ['ドナルド・トランプとアンゲラ・メルケルは多くの意見を共有していません']
+df = pipe.predict(ja_data, output_level='token')
+df
+
+```
+
+{:.table-model-big.mb0}
+|	token|
+|--------|
+|	ドナルド|
+|	・|
+|	トランプ|
+|	と|
+|	アンゲラ|
+|	・|
+|	メルケル|
+|	は|
+|	多く|
+|	の|
+|	意見|
+|	を|
+|	共有|
+|	し|
+|	て|
+|	い|
+|	ませ|
+|	ん|
+
+
+
+## Translation 
+[Translation example](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/sequence2sequence/translation_demo.ipynb)
+You can translate between more than 192 Languages pairs with the [Marian Models](https://marian-nmt.github.io/publications/)
+You need to specify the language your data is in as `start_language` and the language you want to translate to as `target_language`.    
+The language references must be [ISO language codes](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes)
+
+`nlu.load('<start_language>.translate.<target_language>')`
+
+**Translate Turkish to English:**     
+`nlu.load('tr.translate_to.fr')`
+
+**Translate English to French:**     
+`nlu.load('en.translate_to.fr')`
+
+
+**Translate French to Hebrew:**     
+`nlu.load('en.translate_to.fr')`
+
+```python
+translate_pipe = nlu.load('en.translate_to.fr')
+df = translate_pipe.predict('Billy likes to go to the mall every sunday')
+df
+```
+
+{:.table-model-big.mb0}
+|	sentence|	translation|
+|-----------|--------------|
+|Billy likes to go to the mall every sunday	| Billy geht gerne jeden Sonntag ins Einkaufszentrum|
+
+
+
+
+
+
+## T5
+[Example of every T5 task](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/sequence2sequence/T5_tasks_summarize_question_answering_and_more)
+### Overview of every task available with T5
+[The T5 model](https://arxiv.org/pdf/1910.10683.pdf) is trained on various datasets for 17 different tasks which fall into 8 categories.
+
+
+1. Text summarization
+2. Question answering
+3. Translation
+4. Sentiment analysis
+5. Natural Language inference
+6. Coreference resolution
+7. Sentence Completion
+8. Word sense disambiguation
+
+### Every T5 Task with explanation:
+
+
+{:.table-model-big.mb0}
+|Task Name | Explanation | 
+|----------|--------------|
+|[1.CoLA](https://nyu-mll.github.io/CoLA/)                   | Classify if a sentence is gramaticaly correct|
+|[2.RTE](https://dl.acm.org/doi/10.1007/11736790_9)                    | Classify whether if a statement can be deducted from a sentence|
+|[3.MNLI](https://arxiv.org/abs/1704.05426)                   | Classify for a hypothesis and premise whether they contradict or contradict each other or neither of both (3 class).|
+|[4.MRPC](https://www.aclweb.org/anthology/I05-5002.pdf)                   | Classify whether a pair of sentences is a re-phrasing of each other (semantically equivalent)|
+|[5.QNLI](https://arxiv.org/pdf/1804.07461.pdf)                   | Classify whether the answer to a question can be deducted from an answer candidate.|
+|[6.QQP](https://www.quora.com/q/quoradata/First-Quora-Dataset-Release-Question-Pairs)                    | Classify whether a pair of questions is a re-phrasing of each other (semantically equivalent)|
+|[7.SST2](https://www.aclweb.org/anthology/D13-1170.pdf)                   | Classify the sentiment of a sentence as positive or negative|
+|[8.STSB](https://www.aclweb.org/anthology/S17-2001/)                   | Classify the sentiment of a sentence on a scale from 1 to 5 (21 Sentiment classes)|
+|[9.CB](https://ojs.ub.uni-konstanz.de/sub/index.php/sub/article/view/601)                     | Classify for a premise and a hypothesis whether they contradict each other or not (binary).|
+|[10.COPA](https://www.aaai.org/ocs/index.php/SSS/SSS11/paper/view/2418/0)                   | Classify for a question, premise, and 2 choices which choice the correct choice is (binary).|
+|[11.MultiRc](https://www.aclweb.org/anthology/N18-1023.pdf)                | Classify for a question, a paragraph of text, and an answer candidate, if the answer is correct (binary),|
+|[12.WiC](https://arxiv.org/abs/1808.09121)                    | Classify for a pair of sentences and a disambigous word if the word has the same meaning in both sentences.|
+|[13.WSC/DPR](https://www.aaai.org/ocs/index.php/KR/KR12/paper/view/4492/0)       | Predict for an ambiguous pronoun in a sentence what it is referring to.  |
+|[14.Summarization](https://arxiv.org/abs/1506.03340)          | Summarize text into a shorter representation.|
+|[15.SQuAD](https://arxiv.org/abs/1606.05250)                  | Answer a question for a given context.|
+|[16.WMT1.](https://arxiv.org/abs/1706.03762)                  | Translate English to German|
+|[17.WMT2.](https://arxiv.org/abs/1706.03762)                   | Translate English to French|
+|[18.WMT3.](https://arxiv.org/abs/1706.03762)                   | Translate English to Romanian|
+
+[refer to this notebook](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/sequence2sequence/T5_tasks_summarize_question_answering_and_more) to see how to use every T5 Task.
+
+
+
+
+## Question Answering
+[Question answering example](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/sequence2sequence/T5_tasks_summarize_question_answering_and_more))
+
+Predict an `answer` to a `question` based on input `context`.    
+This is based on [SQuAD - Context based question answering](https://arxiv.org/abs/1606.05250)
+
+
+
+{:.table-model-big.mb0}
+|Predicted Answer | Question | Context | 
+|-----------------|----------|------|
+|carbon monoxide| What does increased oxygen concentrations in the patient’s lungs displace? | Hyperbaric (high-pressure) medicine uses special oxygen chambers to increase the partial pressure of O 2 around the patient and, when needed, the medical staff. Carbon monoxide poisoning, gas gangrene, and decompression sickness (the ’bends’) are sometimes treated using these devices. Increased O 2 concentration in the lungs helps to displace carbon monoxide from the heme group of hemoglobin. Oxygen gas is poisonous to the anaerobic bacteria that cause gas gangrene, so increasing its partial pressure helps kill them. Decompression sickness occurs in divers who decompress too quickly after a dive, resulting in bubbles of inert gas, mostly nitrogen and helium, forming in their blood. Increasing the pressure of O 2 as soon as possible is part of the treatment.
+|pie| What did Joey eat for breakfast?| Once upon a time, there was a squirrel named Joey. Joey loved to go outside and play with his cousin Jimmy. Joey and Jimmy played silly games together, and were always laughing. One day, Joey and Jimmy went swimming together 50 at their Aunt Julie’s pond. Joey woke up early in the morning to eat some food before they left. Usually, Joey would eat cereal, fruit (a pear), or oatmeal for breakfast. After he ate, he and Jimmy went to the pond. On their way there they saw their friend Jack Rabbit. They dove into the water and swam for several hours. The sun was out, but the breeze was cold. Joey and Jimmy got out of the water and started walking home. Their fur was wet, and the breeze chilled them. When they got home, they dried off, and Jimmy put on his favorite purple shirt. Joey put on a blue shirt with red and green dots. The two squirrels ate some food that Joey’s mom, Jasmine, made and went off to bed,'|  
+
+```python
+# Set the task on T5
+t5['t5'].setTask('question ') 
+
+
+# define Data, add additional tags between sentences
+data = ['''
+What does increased oxygen concentrations in the patient’s lungs displace? 
+context: Hyperbaric (high-pressure) medicine uses special oxygen chambers to increase the partial pressure of O 2 around the patient and, when needed, the medical staff. Carbon monoxide poisoning, gas gangrene, and decompression sickness (the ’bends’) are sometimes treated using these devices. Increased O 2 concentration in the lungs helps to displace carbon monoxide from the heme group of hemoglobin. Oxygen gas is poisonous to the anaerobic bacteria that cause gas gangrene, so increasing its partial pressure helps kill them. Decompression sickness occurs in divers who decompress too quickly after a dive, resulting in bubbles of inert gas, mostly nitrogen and helium, forming in their blood. Increasing the pressure of O 2 as soon as possible is part of the treatment.
+''']
+
+
+#Predict on text data with T5
+t5.predict(data)
+```
+
+### How to configure T5 task parameter for Squad Context based question answering and pre-process data
+`.setTask('question:)` and prefix the context which can be made up of multiple sentences with `context:`
+
+### Example pre-processed input for T5 Squad Context based question answering:
+```
+question: What does increased oxygen concentrations in the patient’s lungs displace? 
+context: Hyperbaric (high-pressure) medicine uses special oxygen chambers to increase the partial pressure of O 2 around the patient and, when needed, the medical staff. Carbon monoxide poisoning, gas gangrene, and decompression sickness (the ’bends’) are sometimes treated using these devices. Increased O 2 concentration in the lungs helps to displace carbon monoxide from the heme group of hemoglobin. Oxygen gas is poisonous to the anaerobic bacteria that cause gas gangrene, so increasing its partial pressure helps kill them. Decompression sickness occurs in divers who decompress too quickly after a dive, resulting in bubbles of inert gas, mostly nitrogen and helium, forming in their blood. Increasing the pressure of O 2 as soon as possible is part of the treatment.
+```
+
+
+
+## Text Summarization 
+[Summarization example](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/sequence2sequence/T5_tasks_summarize_question_answering_and_more)
+
+`Summarizes` a paragraph into a shorter version with the same semantic meaning, based on [Text summarization](https://arxiv.org/abs/1506.03340)
+
+```python
+# Set the task on T5
+pipe = nlu.load('summarize')
+
+# define Data, add additional tags between sentences
+data = [
+'''
+The belgian duo took to the dance floor on monday night with some friends . manchester united face newcastle in the premier league on wednesday . red devils will be looking for just their second league away win in seven . louis van gaal’s side currently sit two points clear of liverpool in fourth .
+''',
+'''  Calculus, originally called infinitesimal calculus or "the calculus of infinitesimals", is the mathematical study of continuous change, in the same way that geometry is the study of shape and algebra is the study of generalizations of arithmetic operations. It has two major branches, differential calculus and integral calculus; the former concerns instantaneous rates of change, and the slopes of curves, while integral calculus concerns accumulation of quantities, and areas under or between curves. These two branches are related to each other by the fundamental theorem of calculus, and they make use of the fundamental notions of convergence of infinite sequences and infinite series to a well-defined limit.[1] Infinitesimal calculus was developed independently in the late 17th century by Isaac Newton and Gottfried Wilhelm Leibniz.[2][3] Today, calculus has widespread uses in science, engineering, and economics.[4] In mathematics education, calculus denotes courses of elementary mathematical analysis, which are mainly devoted to the study of functions and limits. The word calculus (plural calculi) is a Latin word, meaning originally "small pebble" (this meaning is kept in medicine – see Calculus (medicine)). Because such pebbles were used for calculation, the meaning of the word has evolved and today usually means a method of computation. It is therefore used for naming specific methods of calculation and related theories, such as propositional calculus, Ricci calculus, calculus of variations, lambda calculus, and process calculus.'''
+]
+
+
+#Predict on text data with T5
+pipe.predict(data)
+```
+
+
+{:.table-model-big.mb0}
+| Predicted summary| Text | 
+|------------------|-------|
+| manchester united face newcastle in the premier league on wednesday . louis van gaal's side currently sit two points clear of liverpool in fourth . the belgian duo took to the dance floor on monday night with some friends .            | the belgian duo took to the dance floor on monday night with some friends . manchester united face newcastle in the premier league on wednesday . red devils will be looking for just their second league away win in seven . louis van gaal’s side currently sit two points clear of liverpool in fourth . | 
+
+
+## Binary Sentence similarity/ Paraphrasing 
+[Binary sentence similarity example](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/sequence2sequence/T5_tasks_summarize_question_answering_and_more)
+Classify whether one sentence is a re-phrasing or similar to another sentence      
+This is a sub-task of [GLUE](https://arxiv.org/pdf/1804.07461.pdf) and based on [MRPC - Binary Paraphrasing/ sentence similarity classification ](https://www.aclweb.org/anthology/I05-5002.pdf)
+
+```
+t5 = nlu.load('en.t5.base')
+# Set the task on T5
+t5['t5'].setTask('mrpc ')
+
+# define Data, add additional tags between sentences
+data = [
+''' sentence1: We acted because we saw the existing evidence in a new light , through the prism of our experience on 11 September , " Rumsfeld said .
+sentence2: Rather , the US acted because the administration saw " existing evidence in a new light , through the prism of our experience on September 11 "
+'''
+,
+'''  
+sentence1: I like to eat peanutbutter for breakfast
+sentence2: 	I like to play football.
+'''
+]
+
+#Predict on text data with T5
+t5.predict(data)
+```
+
+
+{:.table-model-big.mb0}
+| Sentence1 | Sentence2 | prediction|
+|------------|------------|----------|
+|We acted because we saw the existing evidence in a new light , through the prism of our experience on 11 September , " Rumsfeld said .| Rather , the US acted because the administration saw " existing evidence in a new light , through the prism of our experience on September 11 " . | equivalent | 
+| I like to eat peanutbutter for breakfast| I like to play football | not_equivalent | 
+
+
+### How to configure T5 task for MRPC and pre-process text
+`.setTask('mrpc sentence1:)` and prefix second sentence with `sentence2:`
+
+### Example pre-processed input for T5 MRPC - Binary Paraphrasing/ sentence similarity
+
+```
+mrpc 
+sentence1: We acted because we saw the existing evidence in a new light , through the prism of our experience on 11 September , " Rumsfeld said . 
+sentence2: Rather , the US acted because the administration saw " existing evidence in a new light , through the prism of our experience on September 11",
+```
+
+
+
+## Regressive Sentence similarity/ Paraphrasing
+
+Measures how similar two sentences are on a scale from 0 to 5 with 21 classes representing a regressive label.     
+This is a sub-task of [GLUE](https://arxiv.org/pdf/1804.07461.pdf) and based on[STSB - Regressive semantic sentence similarity](https://www.aclweb.org/anthology/S17-2001/) .
+
+```python
+t5 = nlu.load('en.t5.base')
+# Set the task on T5
+t5['t5'].setTask('stsb ') 
+
+# define Data, add additional tags between sentences
+data = [
+             
+              ''' sentence1:  What attributes would have made you highly desirable in ancient Rome?  
+                  sentence2:  How I GET OPPERTINUTY TO JOIN IT COMPANY AS A FRESHER?'
+              '''
+             ,
+             '''  
+              sentence1: What was it like in Ancient rome?
+              sentence2: 	What was Ancient rome like?
+              ''',
+              '''  
+              sentence1: What was live like as a King in Ancient Rome??
+              sentence2: 	What was Ancient rome like?
+              '''
+
+             ]
+
+
+
+#Predict on text data with T5
+t5.predict(data)
+
+```
+
+
+{:.table-model-big.mb0}
+| Question1 | Question2 | prediction|
+|------------|------------|----------|
+|What attributes would have made you highly desirable in ancient Rome?        | How I GET OPPERTINUTY TO JOIN IT COMPANY AS A FRESHER? | 0 | 
+|What was it like in Ancient rome?  | What was Ancient rome like?| 5.0 | 
+|What was live like as a King in Ancient Rome??       | What is it like to live in Rome? | 3.2 | 
+
+
+### How to configure T5 task for stsb and pre-process text
+`.setTask('stsb sentence1:)` and prefix second sentence with `sentence2:`
+
+
+
+
+### Example pre-processed input for T5 STSB - Regressive semantic sentence similarity
+
+```
+stsb
+sentence1: What attributes would have made you highly desirable in ancient Rome?        
+sentence2: How I GET OPPERTINUTY TO JOIN IT COMPANY AS A FRESHER?',
+```
+
+
+
+
+
+## Grammar Checking
+[Grammar checking with T5 example](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/sequence2sequence/T5_tasks_summarize_question_answering_and_more))
+Judges if a sentence is grammatically acceptable.    
+Based on [CoLA - Binary Grammatical Sentence acceptability classification](https://nyu-mll.github.io/CoLA/)
+
+```python
+pipe = nlu.load('grammar_correctness')
+# Set the task on T5
+pipe['t5'].setTask('cola sentence: ')
+# define Data
+data = ['Anna and Mike is going skiing and they is liked is','Anna and Mike like to dance']
+#Predict on text data with T5
+pipe.predict(data)
+```
+
+{:.table-model-big.mb0}
+|sentence  | prediction|
+|------------|------------|
+| Anna and Mike is going skiing and they is liked is | unacceptable |      
+| Anna and Mike like to dance | acceptable | 
+
