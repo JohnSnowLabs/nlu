@@ -19,7 +19,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 
 REQUIRED_PKGS = [
     # 'pyspark>=2.4.0,<2.5',
-    'spark-nlp>=2.6.2,<2.7',
+    'spark-nlp>=2.7.1,<2.8',
     'numpy',
     'pyarrow>=0.16.0',
     'pandas',
@@ -47,7 +47,7 @@ setup(
     # For a discussion on single-sourcing the version across setup.py and the
     # project code, see
     # https://packaging.python.org/en/latest/single_source_version.html
-    version='1.0.6',  # Required
+    version='1.1.0rc1',  # Required
 
     # This is a one-line description or tagline of what your project does. This
     # corresponds to the "Summary" metadata field:
@@ -157,6 +157,12 @@ setup(
         ('', ['nlu/components/embeddings/use/component_infos.json']),
         ('', ['nlu/components/embeddings/sentence_bert/component_infos.json']),
 
+        #Seq2Seq
+
+        ('', ['nlu/components/seq2seqs/marian/component_infos.json']),
+        ('', ['nlu/components/seq2seqs/t5/component_infos.json']),
+
+
 
         #lemma
         ('', ['nlu/components/lemmatizers/lemmatizer/component_infos.json']),
@@ -170,6 +176,7 @@ setup(
 
         #normalizer
         ('', ['nlu/components/normalizers/normalizer/component_infos.json']),
+        ('', ['nlu/components/normalizers/document_normalizer/component_infos.json']),
 
         #sentence detector
         ('', ['nlu/components/sentence_detectors/deep_sentence_detector/component_infos.json']),
@@ -185,6 +192,7 @@ setup(
         #tokenizer
         ('', ['nlu/components/tokenizers/default_tokenizer/component_infos.json']),
         ('', ['nlu/components/tokenizers/regex_tokenizer/component_infos.json']),
+        ('', ['nlu/components/tokenizers/word_segmenter/component_infos.json']),
 
         #stopwords
         ('', ['nlu/components/stopwordscleaners/stopwordcleaner/component_infos.json']),

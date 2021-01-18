@@ -13,6 +13,28 @@ modify_date: "2020-06-12"
 
 <div class="h3-box" markdown="1">
 
+component_examples/
+
+## NLU 1.1.0 Release Notes 
+We are incredibly happy to announce NLU 1.1.0 is released and it integrates the X models in
+Y languages of the new Spark-NLP 2.7.0 release.
+You can now summarize text, answer questions, translate between 300 languages and mine various
+amount of multi-lingual data.
+
+### New Notebooks, Tutorials and Articles
+- Translate between 300 languages with marian
+- Try out the 17 Tasks on T5
+- Tokenize chinese and classify NER
+- Tokenize chinese and Korean NER
+- Tokenize chinese and Japanese NER
+
+- Aspect based NER
+=   Pre-Trained tokenizers for THai, Japanese, Korean and Chinese
+
+
+
+
+
 ##  NLU 1.0.6 Release Notes
 ### Trainable Multi Label Classifiers, predict Stackoverflow Tags and much more in 1 Line of with NLU 1.0.6
 We are glad to announce NLU 1.0.6 has been released!

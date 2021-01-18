@@ -39,7 +39,7 @@ class BasePipe(dict):
         self.spark_non_light_transformer_pipe = None
         self.pipe_components = []  # orderd list of nlu_component objects
         self.output_datatype = 'pandas'  # What data type should be returned after predict either spark, pandas, modin, numpy, string or array
-
+        self.lang = 'en'
     def isInstanceOfNlpClassifer(self, model):
         '''
         Check for a given Spark NLP model if it is an instance of a classifier , either approach or already fitted transformer will return true
@@ -154,10 +154,11 @@ class NLUPipeline(BasePipe):
                        PerceptronApproach,
                        Stemmer,
                        ContextSpellCheckerApproach,
-
+                       nlu.WordSegmenter,
                        Lemmatizer, TypedDependencyParserApproach, DependencyParserApproach,
                        Tokenizer, RegexTokenizer, RecursiveTokenizer
-                ,StopWordsCleaner, DateMatcher, TextMatcher, BigTextMatcher, MultiDateMatcher
+                ,StopWordsCleaner, DateMatcher, TextMatcher, BigTextMatcher, MultiDateMatcher,
+                       WordSegmenterApproach
                        ],
             # sub token is when annotator is token based but some tokens may be missing since dropped/cleanes
             # are matchers chunk or sub token?
@@ -183,10 +184,12 @@ class NLUPipeline(BasePipe):
                       TypedDependencyParserModel, DependencyParserModel,
                       RecursiveTokenizerModel,
                       TextMatcherModel, BigTextMatcherModel, RegexMatcherModel,
+                      WordSegmenterModel
                       ],
             # 'sub_token': [TextMatcherModel, BigTextMatcherModel, RegexMatcherModel, ],
             'input_dependent': [BertSentenceEmbeddings, UniversalSentenceEncoder, ViveknSentimentModel,
-                                SentimentDLModel, MultiClassifierDLModel, MultiClassifierDLModel, ClassifierDLModel
+                                SentimentDLModel, MultiClassifierDLModel, MultiClassifierDLModel, ClassifierDLModel,
+                                MarianTransformer,T5Transformer
 
                                 ],
         }
@@ -645,11 +648,12 @@ class NLUPipeline(BasePipe):
         :return: Spark Dataframe with new columns ready for toPandas conversion and also a list with all column names which should be used for Pandas conversion.
         '''
         columns_for_select = []
+        logger.info(f"Extracting multi level fields={multi_level_col_names}")
+
         def extract_classnames_and_confidences(x,keys_in_metadata, threshold=0.5):
             ## UDF for extracting confidences and their class names as struct types if the confidence is larger than threshold
             confidences = []
             classes = []
-
             if not isinstance(x,dict) : return [[],[]]#[[0.0],['No Classes Detected']]
             for key in keys_in_metadata :
                 if key =='sentence' : continue     # irrelevant metadata
@@ -657,29 +661,34 @@ class NLUPipeline(BasePipe):
                     confidences.append(float(x[key]))
                     classes.append(key)
             return [confidences, classes]
-
         schema = StructType([
             StructField("confidences", ArrayType(DoubleType()), False),
             StructField("classes", ArrayType(StringType()), False)
         ])
+        def extract_map_values_float(x,key): return [float(sentence[key]) for sentence in x]
 
             # we dont care about .result col, we get all from metadarta
         for field in multi_level_col_names:
             base_field_name = field.split('.')[0]
             confidence_field_name = base_field_name+'_confidences'
             class_field_name = base_field_name+'_classes'
-
             if 'metadata' in field :
+
                 keys_in_metadata = self.extract_keys_in_metadata(ptmp,field)
                 if len(keys_in_metadata) == 0: continue
                 if not meta:
-                    # create a confidence and class column which both contain a list of predicted classes/confidences
-                    # we apply the  UDF only to the first element because metadata is duplicated for multi classifier dl and all relevent info is in the first element of the metadata col list
-                    extract_classnames_and_confidences_udf = udf(lambda z: extract_classnames_and_confidences(z, keys_in_metadata), schema)
-                    ptmp = ptmp.withColumn('multi_level_extract_result', extract_classnames_and_confidences_udf(expr(f'{field}[0]')))
-                    ptmp = ptmp.withColumn(confidence_field_name , ptmp['multi_level_extract_result.confidences'])
-                    ptmp = ptmp.withColumn(class_field_name, ptmp['multi_level_extract_result.classes'])
-                    columns_for_select += [confidence_field_name, class_field_name]
+                    if 'keyword' in field: # yake handling
+                        array_map_values = udf(lambda z: extract_map_values_float(z,'score'), ArrayType(FloatType()))
+                        ptmp = ptmp.withColumn(confidence_field_name, array_map_values(field))
+                        columns_for_select += [confidence_field_name]
+                    else :
+                        # create a confidence and class column which both contain a list of predicted classes/confidences
+                        # we apply the  UDF only to the first element because metadata is duplicated for multi classifier dl and all relevent info is in the first element of the metadata col list
+                        extract_classnames_and_confidences_udf = udf(lambda z: extract_classnames_and_confidences(z, keys_in_metadata, threshold=threshold), schema)
+                        ptmp = ptmp.withColumn('multi_level_extract_result', extract_classnames_and_confidences_udf(expr(f'{field}[0]')))
+                        ptmp = ptmp.withColumn(confidence_field_name , ptmp['multi_level_extract_result.confidences'])
+                        ptmp = ptmp.withColumn(class_field_name, ptmp['multi_level_extract_result.classes'])
+                        columns_for_select += [confidence_field_name, class_field_name]
 
                 else :
                     confidence_field_names = []
@@ -687,11 +696,23 @@ class NLUPipeline(BasePipe):
                         #create one col per confidence and only get those
                         if key =='sentence':continue
                         new_confidence_field_name = base_field_name + '_' +key +'_confidence'
-                        ptmp = ptmp.withColumn(new_confidence_field_name, expr(f'{field}[0]["{key}"]'))
-                        confidence_field_names.append(new_confidence_field_name)
+                        if 'keyword' in field: # yake handling
+                            array_map_values = udf(lambda z: extract_map_values_float(z,'score'), ArrayType(FloatType()))
+                            ptmp = ptmp.withColumn(new_confidence_field_name, array_map_values(field))
+                            confidence_field_names.append(new_confidence_field_name)
+
+                        else:
+                            ptmp = ptmp.withColumn(new_confidence_field_name, expr(f'{field}[0]["{key}"]'))
+                            confidence_field_names.append(new_confidence_field_name)
+
+
                     columns_for_select += confidence_field_names
 
-
+            else :
+                base_field_name = field.split('.')[0]
+                class_field_name = base_field_name+'_classes'
+                ptmp = ptmp.withColumn(class_field_name,ptmp[field])
+                columns_for_select += [class_field_name]
 
         return ptmp, columns_for_select
 
@@ -743,9 +764,17 @@ class NLUPipeline(BasePipe):
         It sets the output level of the pipe accordingly
         param sdf : Spark dataframe after transformations
         '''
-        # new_output_level = self.pipe_components[-1].component_info.output_level
-        self.output_level = self.resolve_component_to_output_level(self.pipe_components[-1])
-        if self.output_level == None : self.output_level = 'document' # Voodo Normalizer bug that does not happen in debugger bugfix
+        # Loop in reverse over pipe and get first non util/sentence_detecotr/tokenizer/doc_assember. If there is non, take last
+        bad_types = [ 'util','document','sentence']
+        bad_names = ['token']
+
+        for c in self.pipe_components[::-1]:
+            if any (t in  c.component_info.type for t in bad_types) : continue
+            if any (n in  c.component_info.name for n in bad_names) : continue
+            self.output_level = self.resolve_component_to_output_level(c)
+            logger.info('Inferred and set output level of pipeline to %s', self.output_level)
+            break
+        if self.output_level == None  or self.output_level == '': self.output_level = 'document' # Voodo Normalizer bug that does not happen in debugger bugfix
         logger.info('Inferred and set output level of pipeline to %s', self.output_level)
 
     def get_chunk_col_name(self):
@@ -772,7 +801,7 @@ class NLUPipeline(BasePipe):
         for c in self.pipe_components:
             if target in c.component_info.spark_output_column_names:
                 # MultiClassifier outputs should never be at same output level as pipe, returning special_case takes care of this
-                if isinstance(c.model, (MultiClassifierDLModel, MultiClassifierDLApproach)): return "multi_level"
+                if isinstance(c.model, (MultiClassifierDLModel, MultiClassifierDLApproach,YakeModel)): return "multi_level"
                 return self.resolve_component_to_output_level(c)
 
 
@@ -1581,7 +1610,9 @@ class PipelineQueryVerifier():
             components_to_add = []
             # Create missing components
             for missing_component in missing_components:
-                components_to_add.append(nlu.get_default_component_of_type(missing_component))
+                if 'embedding' in missing_component or 'token' in missing_component: components_to_add.append(nlu.get_default_component_of_type(missing_component,language= pipe.lang))
+                else: components_to_add.append(nlu.get_default_component_of_type(missing_component))
+
             logger.info('Resolved for missing components the following NLU components : %s', str(components_to_add))
 
             # Add missing components and validate order of components is correct

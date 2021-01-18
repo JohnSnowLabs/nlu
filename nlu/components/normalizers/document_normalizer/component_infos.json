@@ -1,0 +1,24 @@
+{
+  "name": "document_normalizer",
+  "description": "todo",
+  "output_level": "document",
+  "trainable": false,
+  "outputs": [
+    "normalized"
+  ],
+  "inputs": [
+    "document"
+  ],
+  "type": "normalizer",
+  "file_dependencies": {},
+  "spark_input_column_names": [
+    "document"
+  ],
+  "spark_output_column_names": [
+    "normalized_document"
+  ],
+  "provider": "sparknlp",
+  "license": "open source",
+  "computation_context": "spark",
+  "output_context": "spark"
+}
