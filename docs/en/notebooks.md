@@ -15,17 +15,36 @@ Checkout the following notebooks for examples on how to work with NLU.
 
 
 ## NLU Training Examples
-- [NER training demo](https://colab.research.google.com/drive/1_GwhdXULq45GZkw3157fAOx4Wqo-fmFV?usp=sharing)        
-- [Multi Class Text Classifier Training Demo](https://colab.research.google.com/drive/12FA2TVvvRWw4pRhxDnK32WAzl9dbF6Qw?usp=sharing)         
+### Binary Class Text Classification training
+- [2 class Finance News sentiment classifier training](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/Training/binary_text_classification/NLU_training_sentiment_classifier_demo_apple_twitter.ipynb)
+- [2 class Reddit comment sentiment classifier training](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/Training/binary_text_classification/NLU_training_sentiment_classifier_demo_reddit.ipynb)
+- [2 class Apple Tweets sentiment classifier training](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/Training/binary_text_classification/NLU_training_sentiment_classifier_demo_IMDB.ipynb)
+- [2 class IMDB Movie sentiment classifier training](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/Training/binary_text_classification/NLU_training_sentiment_classifier_demo_IMDB.ipynb)
+- [2 class twitter classifier training](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/Training/binary_text_classification/NLU_training_sentiment_classifier_demo_twitter.ipynb)
 
+### Multi Class Text Classification training 
+- [5 class WineEnthusiast Wine review classifier training](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/Training/multi_class_text_classification/NLU_training_multi_class_text_classifier_demo_wine.ipynb)
+- [3 class Amazon Phone review classifier training](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/Training/multi_class_text_classification/NLU_training_multi_class_text_classifier_demo_amazon.ipynb)
+- [5 class Amazon Musical Instruments review classifier training](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/Training/multi_class_text_classification/NLU_training_multi_class_text_classifier_demo_musical_instruments.ipynb)
+- [5 class Tripadvisor Hotel review classifier training](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/Training/multi_class_text_classification/NLU_training_multi_class_text_classifier_demo_hotel_reviews.ipynb)
+- [5 class Phone review classifier training](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/Training/multi_class_text_classification/NLU_training_multi_class_text_classifier_demo_hotel_reviews.ipynb)
 
-## NLU Applications Example
-- [Sentence Similarity with Multiple Sentence Embeddings](https://colab.research.google.com/drive/1LtOdtXtRJ3_N8kYywPd5k2AJMCGcgAdN?usp=sharing)
-- [6 Wordembeddings in 1 line with T-SNE plotting](https://colab.research.google.com/drive/1DBk55f9iERI9BDA4kmZ8yO6J65jGmcEA?usp=sharing)
+### Multi Label Text  Classification training
+- [ Train Multi Label Classifier on E2E dataset Demo](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/Training/multi_label_text_classification/NLU_traing_multi_label_classifier_E2e.ipynb)
+- [Train Multi Label  Classifier on Stack Overflow Question Tags dataset Demo](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/Training/multi_label_text_classification/NLU_training_multi_token_label_text_classifier_stackoverflow_tags.ipynb)
+
+### Named Entity Recognition training (NER)
+- [NER Training example](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/Training/named_entity_recognition/NLU_training_NER_demo.ipynb)
+
+### Part of Speech tagger training (POS)
+- [POS Training example](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/Training/part_of_speech/NLU_training_POS_demo.ipynb)
+
+## NLU Applications Examples
+- [Sentence Similarity with Multiple Sentence Embeddings](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/sentence_embeddings/sentence_similarirty_stack_overflow_questions.ipynb)
+- [6 Wordembeddings in 1 line with T-SNE plotting](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/word_embeddings/NLU_multiple_word_embeddings_and_t-SNE_visualization_example.ipynb)
 </div><div class="h3-box" markdown="1">
 
 ## NLU Demos on Datasets
-- [6 Wordembeddings at in 1 line with T-SNE plotting](https://colab.research.google.com/drive/1DBk55f9iERI9BDA4kmZ8yO6J65jGmcEA?usp=sharing)
 
 - [Kaggle Twitter Airline Sentiment Analysis NLU demo](https://www.kaggle.com/kasimchristianloan/nlu-sentiment-airline-demo)
 - [Kaggle Twitter Airline Emotion Analysis NLU demo](https://www.kaggle.com/kasimchristianloan/nlu-emotion-airline-demo)
@@ -35,155 +54,101 @@ Checkout the following notebooks for examples on how to work with NLU.
 </div><div class="h3-box" markdown="1">
 
 
-## NLU component By examples
+
+## NLU examples grouped by component
 
 The following are Collab examples which showcase each NLU component and some applications.
-
-</div><div class="h3-box" markdown="1">
 
 ### Named Entity Recognition (NER)
 
-- [NER pretrained on ONTO Notes](https://colab.research.google.com/drive/1_sgbJV3dYPZ_Q7acCgKWgqZkWcKAfg79?usp=sharing)
-- [NER pretrained on CONLL](https://colab.research.google.com/drive/1CYzHfQyFCdvIOVO2Z5aggVI9c0hDEOrw?usp=sharing)
+  - [NER pretrained on ONTO Notes](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/named_entity_recognition_(NER)/NLU_ner_ONTO_18class_example.ipynb)
+  - [NER pretrained on CONLL](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/named_entity_recognition_(NER)/NLU_ner_CONLL_2003_5class_example.ipynb)
+  - [Tokenize, extract POS and NER in Chinese](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/multilingual/chinese_ner_pos_and_tokenization.ipynb)
+  - [Tokenize, extract POS and NER in Korean](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/multilingual/korean_ner_pos_and_tokenization.ipynb)
+  - [Tokenize, extract POS and NER in Japanese](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/multilingual/japanese_ner_pos_and_tokenization.ipynb)
+  - [Aspect based sentiment NER sentiment for restaurants](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/named_entity_recognition_(NER)/aspect_based_ner_sentiment_restaurants.ipynb)
 
-</div><div class="h3-box" markdown="1">
 
 ### Part of speech (POS)
-- [POS pretrained on ANC dataset](https://colab.research.google.com/drive/1tW833T3HS8F5Lvn6LgeDd5LW5226syKN?usp=sharing)
 
-</div><div class="h3-box" markdown="1">
+  - [POS pretrained on ANC dataset](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/part_of_speech(POS)/NLU_part_of_speech_ANC_example.ipynb)
+  - [Tokenize, extract POS and NER in Chinese](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/multilingual/chinese_ner_pos_and_tokenization.ipynb)
+  - [Tokenize, extract POS and NER in Korean](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/multilingual/korean_ner_pos_and_tokenization.ipynb)
+  - [Tokenize, extract POS and NER in Japanese](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/multilingual/japanese_ner_pos_and_tokenization.ipynb)
+
+### Sequence2Sequence
+  - [Translate between 192+ languages with marian](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/sequence2sequence/translation_demo.ipynb)
+  - [Try out the 18 Tasks like Summarization Question Answering and more on T5](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/sequence2sequence/T5_tasks_summarize_question_answering_and_more)
+
+
 
 ###  Classifiers
-- [Unsupervised Keyword Extraction with YAKE](https://colab.research.google.com/drive/1BdomIc1nhrGxLFOpK5r82Zc4eFgnIgaO?usp=sharing)
-- [Toxic Text Classifier](https://colab.research.google.com/drive/1QRG5ZtAvoJAMZ8ytFMfXj_W8ogdeRi9m?usp=sharing)
-- [Twitter Sentiment Classifier](https://colab.research.google.com/drive/1H1Gekn2qzXzOf5rrT8LmHmmuoOGsiu8m?usp=sharing)
-- [Movie Review Sentiment Classifier](https://colab.research.google.com/drive/1k5x1zxnG4bBkmYAc-bc63sMA4-oQ6-dP?usp=sharing)
-- [Sarcasm Classifier](https://colab.research.google.com/drive/1XffsjlRp9wxZgxyYvEF9bG2CiX-pjBEw?usp=sharing)
-- [50 Class Questions Classifier](https://colab.research.google.com/drive/1OwlmLzwkcJKhuz__RUH74O9HqFZutxzS?usp=sharing)
-- [20 Class Languages Classifier](https://colab.research.google.com/drive/1CzMfRFJZsj4j1fhormDQdHOIV5IybC57?usp=sharing)
-- [Fake News Classifier](https://colab.research.google.com/drive/1QuoeGLgmtkUnDQQ2oVS1tuZC2qHDj3p9?usp=sharing)
-- [E2E Classifier](https://colab.research.google.com/drive/1OSkiXGEpKlm9HWDoVb42uLNQQgb7nqNZ?usp=sharing)
-- [Cyberbullying Classifier](https://colab.research.google.com/drive/1OSkiXGEpKlm9HWDoVb42uLNQQgb7nqNZ?usp=sharing)
-- [Spam Classifier](https://colab.research.google.com/drive/1u-8Fs3Etz07bFNx0CDV_le3Xz73VbK0z?usp=sharing)
-- [Emotion Classifier](https://colab.research.google.com/drive/1eBf3MN_O8uJnimK6GeweksXl6JHYKzOT?usp=sharing)
-
-</div><div class="h3-box" markdown="1">
+  - [Unsupervised Keyword Extraction with YAKE](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/classifiers/unsupervised_keyword_extraction_with_YAKE.ipynb)
+  - [Toxic Text Classifier](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/classifiers/toxic_classification.ipynb)
+  - [Twitter Sentiment Classifier](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/classifiers/sentiment_classification.ipynb)
+  - [Movie Review Sentiment Classifier](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/classifiers/sentiment_classification_movies.ipynb)
+  - [Sarcasm Classifier](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/classifiers/sarcasm_classification.ipynb)
+  - [50 Class Questions Classifier](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/classifiers/question_classification.ipynb)
+  - [300 Class Languages Classifier](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/classifiers/NLU_language_classification.ipynb)
+  - [Fake News Classifier](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/classifiers/fake_news_classification.ipynb)
+  - [E2E Classifier](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/classifiers/E2E_classification.ipynb)
+  - [Cyberbullying Classifier](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/classifiers/cyberbullying_cassification_for_racism_and_sexism.ipynb)
+  - [Spam Classifier](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/classifiers/spam_classification.ipynb)
+  - [Emotion Classifier](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/classifiers/emotion_classification.ipynb)
 
 ### Word Embeddings 
-
-- [BERT, ALBERT, ELMO, ELECTRA, XLNET, GLOVE and t-SNE plotting](https://colab.research.google.com/drive/1DBk55f9iERI9BDA4kmZ8yO6J65jGmcEA?usp=sharing)
-- [BERT Word Embeddings and t-SNE plotting](https://colab.research.google.com/drive/1Rg1vdSeq6sURc48RV8lpS47ja0bYwQmt?usp=sharing)
-- [ALBERT Word Embeddings and t-SNE plotting](https://colab.research.google.com/drive/18yd9pDoPkde79boTbAC8Xd03ROKisPsn?usp=sharing)
-- [ELMO Word Embeddings and t-SNE plotting](https://colab.research.google.com/drive/1TtNYB9z0yH8d1ZjfxkH0TVxQ2O_iOYVV?usp=sharing)
-- [XLNET Word Embeddings and t-SNE plotting](https://colab.research.google.com/drive/1C9T29QA00yjLuJ1yEMTbjUQMpUv35pHb?usp=sharing)
-- [ELECTRA Word Embeddings and t-SNE plotting](https://colab.research.google.com/drive/1FueGEaOj2JkbqHzdmxwKrNMHzgVt4baE?usp=sharing)
-- [COVIDBERT Word Embeddings and t-SNE plotting](https://colab.research.google.com/drive/1Yzc-GuNQyeWewJh5USTN7PbbcJvd-D7s?usp=sharing)
-- [BIOBERT Word Embeddings and t-SNE plotting](https://colab.research.google.com/drive/1llANd-XGD8vkGNMcqTi_8Dr_Ys6cr83W?usp=sharing)
-- [GLOVE Word Embeddings and t-SNE plotting](https://colab.research.google.com/drive/1IQxf4pJ_EnrIDyd0fAX-dv6u0YQWae2g?usp=sharing)
-
-</div><div class="h3-box" markdown="1">
-# NLU component By examples
-
-The following are Collab examples which showcase each NLU component and some applications.
-
-- ### Named Entity Recognition (NER)
-    - [NER pretrained on ONTO Notes](https://colab.research.google.com/drive/1_sgbJV3dYPZ_Q7acCgKWgqZkWcKAfg79?usp=sharing)
-    - [NER pretrained on CONLL](https://colab.research.google.com/drive/1CYzHfQyFCdvIOVO2Z5aggVI9c0hDEOrw?usp=sharing)
-- ### Part of speech (POS)
-    - [POS pretrained on ANC dataset](https://colab.research.google.com/drive/1tW833T3HS8F5Lvn6LgeDd5LW5226syKN?usp=sharing)
-- ###  Classifiers
-    - [Unsupervised Keyword Extraction with YAKE](https://colab.research.google.com/drive/1BdomIc1nhrGxLFOpK5r82Zc4eFgnIgaO?usp=sharing)
-    - [Toxic Text Classifier](https://colab.research.google.com/drive/1QRG5ZtAvoJAMZ8ytFMfXj_W8ogdeRi9m?usp=sharing)
-    - [Twitter Sentiment Classifier](https://colab.research.google.com/drive/1H1Gekn2qzXzOf5rrT8LmHmmuoOGsiu8m?usp=sharing)
-    - [Movie Review Sentiment Classifier](https://colab.research.google.com/drive/1k5x1zxnG4bBkmYAc-bc63sMA4-oQ6-dP?usp=sharing)
-    - [Sarcasm Classifier](https://colab.research.google.com/drive/1XffsjlRp9wxZgxyYvEF9bG2CiX-pjBEw?usp=sharing)
-    - [50 Class Questions Classifier](https://colab.research.google.com/drive/1OwlmLzwkcJKhuz__RUH74O9HqFZutxzS?usp=sharing)
-    - [20 Class Languages Classifier](https://colab.research.google.com/drive/1CzMfRFJZsj4j1fhormDQdHOIV5IybC57?usp=sharing)
-    - [Fake News Classifier](https://colab.research.google.com/drive/1QuoeGLgmtkUnDQQ2oVS1tuZC2qHDj3p9?usp=sharing)
-    - [E2E Classifier](https://colab.research.google.com/drive/1OSkiXGEpKlm9HWDoVb42uLNQQgb7nqNZ?usp=sharing)
-    - [Cyberbullying Classifier](https://colab.research.google.com/drive/1OSkiXGEpKlm9HWDoVb42uLNQQgb7nqNZ?usp=sharing)
-    - [Spam Classifier](https://colab.research.google.com/drive/1u-8Fs3Etz07bFNx0CDV_le3Xz73VbK0z?usp=sharing)
-    - [Emotion Classifier](https://colab.research.google.com/drive/1eBf3MN_O8uJnimK6GeweksXl6JHYKzOT?usp=sharing)
-
-- ### Word Embeddings 
-    - [BERT, ALBERT, ELMO, ELECTRA, XLNET, GLOVE and t-SNE plotting](https://colab.research.google.com/drive/1DBk55f9iERI9BDA4kmZ8yO6J65jGmcEA?usp=sharing)
-    - [BERT Word Embeddings and t-SNE plotting](https://colab.research.google.com/drive/1Rg1vdSeq6sURc48RV8lpS47ja0bYwQmt?usp=sharing)
-    - [ALBERT Word Embeddings and t-SNE plotting](https://colab.research.google.com/drive/18yd9pDoPkde79boTbAC8Xd03ROKisPsn?usp=sharing)
-    - [ELMO Word Embeddings and t-SNE plotting](https://colab.research.google.com/drive/1TtNYB9z0yH8d1ZjfxkH0TVxQ2O_iOYVV?usp=sharing)
-    - [XLNET Word Embeddings and t-SNE plotting](https://colab.research.google.com/drive/1C9T29QA00yjLuJ1yEMTbjUQMpUv35pHb?usp=sharing)
-    - [ELECTRA Word Embeddings and t-SNE plotting](https://colab.research.google.com/drive/1FueGEaOj2JkbqHzdmxwKrNMHzgVt4baE?usp=sharing)
-    - [COVIDBERT Word Embeddings and t-SNE plotting](https://colab.research.google.com/drive/1Yzc-GuNQyeWewJh5USTN7PbbcJvd-D7s?usp=sharing)
-    - [BIOBERT Word Embeddings and t-SNE plotting](https://colab.research.google.com/drive/1llANd-XGD8vkGNMcqTi_8Dr_Ys6cr83W?usp=sharing)
-    - [GLOVE Word Embeddings and t-SNE plotting](https://colab.research.google.com/drive/1IQxf4pJ_EnrIDyd0fAX-dv6u0YQWae2g?usp=sharing)
-- ### Sentence Embeddings
-    - [BERT Sentence Embeddings and t-SNE plotting](https://colab.research.google.com/drive/1FmREx0O4BDeogldyN74_7Lur5NeiOVye?usp=sharing)
-    - [ELECTRA Sentence Embeddings and t-SNE plotting](https://colab.research.google.com/drive/1VXHH0ltHF_hXdiRqRlrV_lymAO4ws5PO?usp=sharing)
-    - [USE Sentence Embeddings and t-SNE plotting](https://colab.research.google.com/drive/1gZzOMiCovmrp7z8FIidzDTLS0nt8kPJT?usp=sharing)
-
-- ### Dependency Parsing 
-    - [Untyped Dependency Parsing](https://colab.research.google.com/drive/1PC8ga_NFlOcTNeDVJY4x8Pl5oe0jVmue?usp=sharing)
-    - [Typed Dependency Parsing](https://colab.research.google.com/drive/1KXUqcF8e-LU9cXnHE8ni8z758LuFPvY7?usp=sharing)
-
-- ### Text Pre Processing and Cleaning
-    - [Tokenization](https://colab.research.google.com/drive/13BC6k6gLj1w5RZ0SyHjKsT2EOwJwbYwb?usp=sharing)
-    - [Stopwords removal](https://colab.research.google.com/drive/1nWob4u93t2EJYupcOIanuPBDfShtYjGT?usp=sharing)
-    - [Stemming](https://colab.research.google.com/drive/1gKTJJmffR9wz13Ms3pDy64jhUI8ZHZYu?usp=sharing)
-    - [Lemmatization](https://colab.research.google.com/drive/1cBtx9cVCjavt-Oq5TG1lO-9JfUfqznnK?usp=sharing)
-    - [Normalizing](https://colab.research.google.com/drive/1kfnnwkiQPQa465Jic6va9QXTRssU4mlX?usp=sharing)
-    - [Spell checking](https://colab.research.google.com/drive/1bnRR8FygiiN3zJz3mRdbjPBUvFsx6IVB?usp=sharing)
-    - [Sentence Detecting](https://colab.research.google.com/drive/1CAXEdRk_q3U5qbMXsxoVyZRwvonKthhF?usp=sharing)
-
-- ### Chunkers
-    - [N Gram](https://colab.research.google.com/drive/1pgqoRJ6yGWbTLWdLnRvwG5DLSU3rxuMq?usp=sharing)
-    - [Entity Chunking](https://colab.research.google.com/drive/1svpqtC3cY6JnRGeJngIPl2raqxdowpyi?usp=sharing)
-- ### Matchers
-    - [Date Matcher](https://colab.research.google.com/drive/1JrlfuV2jNGTdOXvaWIoHTSf6BscDMkN7?usp=sharing)
-    
-# Simple NLU Demos
-- [NLU different output levels Demo](https://colab.research.google.com/drive/1C4N3wpC17YzZf9fXHDNAJ5JvSmfbq7zT?usp=sharing)
+  - [BERT, ALBERT, ELMO, ELECTRA, XLNET, GLOVE at once with t-SNE plotting](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/word_embeddings/NLU_multiple_word_embeddings_and_t-SNE_visualization_example.ipynb)
+  - [BERT Word Embeddings and t-SNE plotting](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/word_embeddings/NLU_BERT_word_embeddings_and_t-SNE_visualization_example.ipynb)
+  - [ALBERT Word Embeddings and t-SNE plotting](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/word_embeddings/NLU_ALBERT_word_embeddings_and_t-SNE_visualization_example.ipynb)
+  - [ELMO Word Embeddings and t-SNE plotting](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/word_embeddings/NLU_ELMo_word_embeddings_and_t-SNE_visualization_example.ipynb)
+  - [XLNET Word Embeddings and t-SNE plotting](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/word_embeddings/NLU_XLNET_word_embeddings_and_t-SNE_visualization_example.ipynb)
+  - [ELECTRA Word Embeddings and t-SNE plotting](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/word_embeddings/NLU_ELECTRA_word_embeddings_and_t-SNE_visualization_example.ipynb)
+  - [COVIDBERT Word Embeddings and t-SNE plotting](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/word_embeddings/NLU_COVIDBERT_word_embeddings_and_t-SNE_visualization_example.ipynb)
+  - [BIOBERT Word Embeddings and t-SNE plotting](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/word_embeddings/NLU_BIOBERT_word_embeddings_and_t-SNE_visualization_example.ipynb)
+  - [GLOVE Word Embeddings and t-SNE plotting](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/word_embeddings/NLU_GLOVE_word_embeddings_and_t-SNE_visualization_example.ipynb)
 
 ### Sentence Embeddings
+  - [BERT Sentence Embeddings and t-SNE plotting](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/sentence_embeddings/NLU_BERT_sentence_embeddings_and_t-SNE_visualization_Example.ipynb)
+  - [ELECTRA Sentence Embeddings and t-SNE plotting](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/sentence_embeddings/NLU_ELECTRA_sentence_embeddings_and_t-SNE_visualization_example.ipynb)
+  - [USE Sentence Embeddings and t-SNE plotting](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/sentence_embeddings/NLU_USE_sentence_embeddings_and_t-SNE_visualization_example.ipynb)
 
-- [BERT Sentence Embeddings and t-SNE plotting](https://colab.research.google.com/drive/1FmREx0O4BDeogldyN74_7Lur5NeiOVye?usp=sharing)
-- [ELECTRA Sentence Embeddings and t-SNE plotting](https://colab.research.google.com/drive/1VXHH0ltHF_hXdiRqRlrV_lymAO4ws5PO?usp=sharing)
-- [USE Sentence Embeddings and t-SNE plotting](https://colab.research.google.com/drive/1gZzOMiCovmrp7z8FIidzDTLS0nt8kPJT?usp=sharing)
+### Sentence Embeddings
+  - [BERT Sentence Embeddings and t-SNE plotting](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/sentence_embeddings/NLU_BERT_sentence_embeddings_and_t-SNE_visualization_Example.ipynb)
+  - [ELECTRA Sentence Embeddings and t-SNE plotting](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/sentence_embeddings/NLU_ELECTRA_sentence_embeddings_and_t-SNE_visualization_example.ipynb)
+  - [USE Sentence Embeddings and t-SNE plotting](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/sentence_embeddings/NLU_USE_sentence_embeddings_and_t-SNE_visualization_example.ipynb)
 
 </div><div class="h3-box" markdown="1">
 
 ### Dependency Parsing
-
-- [Untyped Dependency Parsing](https://colab.research.google.com/drive/1PC8ga_NFlOcTNeDVJY4x8Pl5oe0jVmue?usp=sharing)
-- [Typed Dependency Parsing](https://colab.research.google.com/drive/1KXUqcF8e-LU9cXnHE8ni8z758LuFPvY7?usp=sharing)
+  - [Untyped Dependency Parsing](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/dependency_parsing/NLU_untyped_dependency_parsing_example.ipynb)
+  - [Typed Dependency Parsing](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/dependency_parsing/NLU_typed_dependency_parsing_example.ipynb)
 
 </div><div class="h3-box" markdown="1">
 
 ### Text Pre Processing and Cleaning
-
-- [Tokenization](https://colab.research.google.com/drive/13BC6k6gLj1w5RZ0SyHjKsT2EOwJwbYwb?usp=sharing)
-- [Stopwords removal](https://colab.research.google.com/drive/1nWob4u93t2EJYupcOIanuPBDfShtYjGT?usp=sharing)
-- [Stemming](https://colab.research.google.com/drive/1gKTJJmffR9wz13Ms3pDy64jhUI8ZHZYu?usp=sharing)
-- [Lemmatization](https://colab.research.google.com/drive/1cBtx9cVCjavt-Oq5TG1lO-9JfUfqznnK?usp=sharing)
-- [Normalizing](https://colab.research.google.com/drive/1kfnnwkiQPQa465Jic6va9QXTRssU4mlX?usp=sharing)
-- [Spell checking](https://colab.research.google.com/drive/1bnRR8FygiiN3zJz3mRdbjPBUvFsx6IVB?usp=sharing)
-- [Sentence Detecting](https://colab.research.google.com/drive/1CAXEdRk_q3U5qbMXsxoVyZRwvonKthhF?usp=sharing)
+  - [Tokenization](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/text_pre_processing_and_cleaning/NLU_tokenization_example.ipynb)
+  - [Stopwords removal](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/text_pre_processing_and_cleaning/NLU_stopwords_removal_example.ipynb)
+  - [Stemming](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/text_pre_processing_and_cleaning/NLU_stemmer_example.ipynb)
+  - [Lemmatization](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/text_pre_processing_and_cleaning/NLU_lemmatization.ipynb)
+  - [Normalizing](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/text_pre_processing_and_cleaning/NLU_normalizer_example.ipynb)
+  - [Spell checking](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/text_pre_processing_and_cleaning/NLU_spellchecking_example.ipynb)
+  - [Sentence Detecting](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/text_pre_processing_and_cleaning/NLU_sentence_detection_example.ipynb)
+  - [Normalize documents](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/text_pre_processing_and_cleaning/document_normalizer_demo.ipynb)
 
 </div><div class="h3-box" markdown="1">
 
 ### Chunkers
-
-- [N Gram](https://colab.research.google.com/drive/1pgqoRJ6yGWbTLWdLnRvwG5DLSU3rxuMq?usp=sharing)
-- [Entity Chunking](https://colab.research.google.com/drive/1svpqtC3cY6JnRGeJngIPl2raqxdowpyi?usp=sharing)
+  - [N Gram](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/chunkers/NLU_n-gram.ipynb)
+  - [Entity Chunking](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/chunkers/NLU_chunking_example.ipynb)
 
 </div><div class="h3-box" markdown="1">
 
 ### Matchers
 
-- [Date Matcher](https://colab.research.google.com/drive/1JrlfuV2jNGTdOXvaWIoHTSf6BscDMkN7?usp=sharing)
+  - [Date Matcher](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/matchers/NLU_date_matching.ipynb)
     
 </div><div class="h3-box" markdown="1">
 
-## Simple NLU Demos
 
-- [NLU different output levels Demo](https://colab.research.google.com/drive/1C4N3wpC17YzZf9fXHDNAJ5JvSmfbq7zT?usp=sharing)
 
 </div></div>
