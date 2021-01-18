@@ -248,6 +248,13 @@ class NameSpace():
         't5.classify.sentiment': ('t5_base','model'),
         't5.answer_question': ('t5_base','model'),
 
+        # 2.7.0 new aliases
+        't5': ('t5_base','model'),
+        'summarize': ('t5_base','model','summarize','t5'),
+        'grammar_correctness': ('t5_base','model','grammar_correctness','t5'),
+        'answer_question': ('t5_base','model','answer_question','t5'),
+        # 'classify.sentiment': ('t5_base','model'),
+
     }
 
     # multi lang models

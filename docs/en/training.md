@@ -88,7 +88,8 @@ preds = fitted_pipe.predict(train_df)
 
 
 
-#Part of Speech (POS) Training
+# Part of Speech (POS) Training
+
 Your dataset must be in the form of universal dependencies [Universal Dependencies](https://universaldependencies.org/).
 You must configure the dataset_path in the ```fit()``` method to point to the universal dependencies you wish to train on.       
 You can configure the delimiter via the ```label_seperator``` parameter      
