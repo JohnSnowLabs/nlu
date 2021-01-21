@@ -142,6 +142,9 @@ from nlu.info import AllComponentsInfo
 from nlu.components.seq2seqs.marian.marian import Marian
 from nlu.components.seq2seqs.t5.t5 import T5
 from nlu.components.sequence2sequence import Seq2Seq
+
+from nlu.pipeline_logic import PipelineQueryVerifier
+
 global spark_started, spark, active_pipes, all_components_info, nlu_package_location
 
 nlu_package_location = nlu.__file__[:-11]
@@ -258,7 +261,7 @@ def load(request ='from_disk', path=None,verbose=False,version_checks=True):
                 for c in nlu_component: pipe.add(c, nlu_ref, pretrained_pipe_component=True)
             else:
                 pipe.add(nlu_component, nlu_ref)
-                pipe = pipeline.PipelineQueryVerifier.check_and_fix_nlu_pipeline(pipe)
+                pipe = PipelineQueryVerifier.check_and_fix_nlu_pipeline(pipe)
 
     except:
         import sys
