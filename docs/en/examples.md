@@ -1173,7 +1173,7 @@ df
 |[17.WMT2.](https://arxiv.org/abs/1706.03762)                   | Translate English to French|
 |[18.WMT3.](https://arxiv.org/abs/1706.03762)                   | Translate English to Romanian|
 
-- [Evert T5 Task example notebook](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/sequence2sequence/T5_tasks_summarize_question_answering_and_more) to see how to use every T5 Task.
+- [Every T5 Task example notebook](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/sequence2sequence/T5_tasks_summarize_question_answering_and_more) to see how to use every T5 Task.
 - [T5 Open and Closed Book question answering  notebook](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/sequence2sequence/T5_question_answering.ipynb)
 
 
