@@ -1173,49 +1173,9 @@ df
 |[17.WMT2.](https://arxiv.org/abs/1706.03762)                   | Translate English to French|
 |[18.WMT3.](https://arxiv.org/abs/1706.03762)                   | Translate English to Romanian|
 
-[refer to this notebook](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/sequence2sequence/T5_tasks_summarize_question_answering_and_more) to see how to use every T5 Task.
+- [Every T5 Task example notebook](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/sequence2sequence/T5_tasks_summarize_question_answering_and_more) to see how to use every T5 Task.
+- [T5 Open and Closed Book question answering  notebook](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/sequence2sequence/T5_question_answering.ipynb)
 
-
-
-
-## Question Answering
-[Question answering example](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/sequence2sequence/T5_tasks_summarize_question_answering_and_more))
-
-Predict an `answer` to a `question` based on input `context`.    
-This is based on [SQuAD - Context based question answering](https://arxiv.org/abs/1606.05250)
-
-
-
-{:.table-model-big.mb0}
-|Predicted Answer | Question | Context | 
-|-----------------|----------|------|
-|carbon monoxide| What does increased oxygen concentrations in the patient’s lungs displace? | Hyperbaric (high-pressure) medicine uses special oxygen chambers to increase the partial pressure of O 2 around the patient and, when needed, the medical staff. Carbon monoxide poisoning, gas gangrene, and decompression sickness (the ’bends’) are sometimes treated using these devices. Increased O 2 concentration in the lungs helps to displace carbon monoxide from the heme group of hemoglobin. Oxygen gas is poisonous to the anaerobic bacteria that cause gas gangrene, so increasing its partial pressure helps kill them. Decompression sickness occurs in divers who decompress too quickly after a dive, resulting in bubbles of inert gas, mostly nitrogen and helium, forming in their blood. Increasing the pressure of O 2 as soon as possible is part of the treatment.
-|pie| What did Joey eat for breakfast?| Once upon a time, there was a squirrel named Joey. Joey loved to go outside and play with his cousin Jimmy. Joey and Jimmy played silly games together, and were always laughing. One day, Joey and Jimmy went swimming together 50 at their Aunt Julie’s pond. Joey woke up early in the morning to eat some food before they left. Usually, Joey would eat cereal, fruit (a pear), or oatmeal for breakfast. After he ate, he and Jimmy went to the pond. On their way there they saw their friend Jack Rabbit. They dove into the water and swam for several hours. The sun was out, but the breeze was cold. Joey and Jimmy got out of the water and started walking home. Their fur was wet, and the breeze chilled them. When they got home, they dried off, and Jimmy put on his favorite purple shirt. Joey put on a blue shirt with red and green dots. The two squirrels ate some food that Joey’s mom, Jasmine, made and went off to bed,'|  
-
-```python
-# Set the task on T5
-t5['t5'].setTask('question ') 
-
-
-# define Data, add additional tags between sentences
-data = ['''
-What does increased oxygen concentrations in the patient’s lungs displace? 
-context: Hyperbaric (high-pressure) medicine uses special oxygen chambers to increase the partial pressure of O 2 around the patient and, when needed, the medical staff. Carbon monoxide poisoning, gas gangrene, and decompression sickness (the ’bends’) are sometimes treated using these devices. Increased O 2 concentration in the lungs helps to displace carbon monoxide from the heme group of hemoglobin. Oxygen gas is poisonous to the anaerobic bacteria that cause gas gangrene, so increasing its partial pressure helps kill them. Decompression sickness occurs in divers who decompress too quickly after a dive, resulting in bubbles of inert gas, mostly nitrogen and helium, forming in their blood. Increasing the pressure of O 2 as soon as possible is part of the treatment.
-''']
-
-
-#Predict on text data with T5
-t5.predict(data)
-```
-
-### How to configure T5 task parameter for Squad Context based question answering and pre-process data
-`.setTask('question:)` and prefix the context which can be made up of multiple sentences with `context:`
-
-### Example pre-processed input for T5 Squad Context based question answering:
-```
-question: What does increased oxygen concentrations in the patient’s lungs displace? 
-context: Hyperbaric (high-pressure) medicine uses special oxygen chambers to increase the partial pressure of O 2 around the patient and, when needed, the medical staff. Carbon monoxide poisoning, gas gangrene, and decompression sickness (the ’bends’) are sometimes treated using these devices. Increased O 2 concentration in the lungs helps to displace carbon monoxide from the heme group of hemoglobin. Oxygen gas is poisonous to the anaerobic bacteria that cause gas gangrene, so increasing its partial pressure helps kill them. Decompression sickness occurs in divers who decompress too quickly after a dive, resulting in bubbles of inert gas, mostly nitrogen and helium, forming in their blood. Increasing the pressure of O 2 as soon as possible is part of the treatment.
-```
 
 
 
@@ -1332,7 +1292,7 @@ t5.predict(data)
 
 
 {:.table-model-big.mb0}
-| Question1 | Question2 | prediction|
+| Sentence1 | Sentence2 | prediction|
 |------------|------------|----------|
 |What attributes would have made you highly desirable in ancient Rome?        | How I GET OPPERTINUTY TO JOIN IT COMPANY AS A FRESHER? | 0 | 
 |What was it like in Ancient rome?  | What was Ancient rome like?| 5.0 | 
@@ -1377,4 +1337,121 @@ pipe.predict(data)
 |------------|------------|
 | Anna and Mike is going skiing and they is liked is | unacceptable |      
 | Anna and Mike like to dance | acceptable | 
+
+
+
+
+
+
+## Open book question answering
+[T5 Open and Closed Book question answering tutorial](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/sequence2sequence/T5_question_answering.ipynb)
+
+You can imagine an `open book` question similar to an examen where you are allowed to bring in text documents or cheat sheets that help you answer questions in an examen. Kinda like bringing a history book to an history examen.
+
+In `T5's` terms, this means the model is given a `question` and an **additional piece of textual information** or so called `context`.
+
+This enables the `T5` model to answer questions on textual datasets like `medical records`,`newsarticles` , `wiki-databases` , `stories` and `movie scripts` , `product descriptions`, 'legal documents' and many more.
+
+You can answer `open book question` in 1 line of code, leveraging the latest NLU release and Google's T5.     
+All it takes is :
+
+
+
+```python
+nlu.load('answer_question').predict("""
+Where did Jebe die?
+context: Ghenkis Khan recalled Subtai back to Mongolia soon afterwards,
+ and Jebe died on the road back to Samarkand""")
+>>> Output: Samarkand
+```
+
+Example for answering medical questions based on medical context
+``` python
+question ='''
+What does increased oxygen concentrations in the patient’s lungs displace? 
+context: Hyperbaric (high-pressure) medicine uses special oxygen chambers to increase the partial pressure of O 2 around the patient and, when needed, the medical staff. 
+Carbon monoxide poisoning, gas gangrene, and decompression sickness (the ’bends’) are sometimes treated using these devices. Increased O 2 concentration in the lungs helps to displace carbon monoxide from the heme group of hemoglobin.
+ Oxygen gas is poisonous to the anaerobic bacteria that cause gas gangrene, so increasing its partial pressure helps kill them. Decompression sickness occurs in divers who decompress too quickly after a dive, resulting in bubbles of inert gas, mostly nitrogen and helium, forming in their blood. Increasing the pressure of O 2 as soon as possible is part of the treatment.
+'''
+
+
+#Predict on text data with T5
+nlu.load('answer_question').predict(question)
+>>> Output: carbon monoxide	
+```
+
+Take a look at this example on a recent news article snippet :
+```python
+question1 = 'Who is Jack ma?'
+question2 = 'Who is founder of Alibaba Group?'
+question3 = 'When did Jack Ma re-appear?'
+question4 = 'How did Alibaba stocks react?'
+question5 = 'Whom did Jack Ma meet?'
+question6 = 'Who did Jack Ma hide from?'
+
+# from https://www.bbc.com/news/business-55728338 
+news_article_snippet = """ context:
+Alibaba Group founder Jack Ma has made his first appearance since Chinese regulators cracked down on his business empire.
+His absence had fuelled speculation over his whereabouts amid increasing official scrutiny of his businesses.
+The billionaire met 100 rural teachers in China via a video meeting on Wednesday, according to local government media.
+Alibaba shares surged 5% on Hong Kong's stock exchange on the news.
+"""
+# join question with context, works with Pandas DF aswell!
+questions = [
+             question1+ news_article_snippet,
+             question2+ news_article_snippet,
+             question3+ news_article_snippet,
+             question4+ news_article_snippet,
+             question5+ news_article_snippet,
+             question6+ news_article_snippet,]
+nlu.load('answer_question').predict(questions)
+```
+This will output a Pandas Dataframe similar to this :
+
+
+{:.table-model-big.mb0}
+|Answer|Question|
+|-----|---------|
+Alibaba Group founder| 	Who is Jack ma? |        
+|Jack Ma	|Who is founder of Alibaba Group? |  
+Wednesday	| When did Jack Ma re-appear? | 
+surged 5%	| How did Alibaba stocks react? | 
+100 rural teachers	| Whom did Jack Ma meet? | 
+Chinese regulators	|Who did Jack Ma hide from?|
+
+
+
+## Closed book question answering
+[T5 Open and Closed Book question answering tutorial](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/sequence2sequence/T5_question_answering.ipynb)
+
+A `closed book question` is the exact opposite of a `open book question`. In an examen scenario, you are only allowed to use what you have memorized in your brain and nothing else.      
+In `T5's` terms this means that T5 can only use it's stored weights to answer a `question` and is given **no aditional context**.        
+`T5` was pre-trained on the [C4 dataset](https://commoncrawl.org/) which contains **petabytes  of web crawling data**  collected over the last 8 years, including Wikipedia in every language.
+
+
+This gives `T5` the broad knowledge of the internet stored in it's weights to answer various `closed book questions`
+
+You can answer `closed book question` in 1 line of code, leveraging the latest NLU release and Google's T5.     
+You need to pass one string to NLU, which starts which a `question` and is followed by  a `context:` tag and then the actual context contents.
+All it takes is :
+
+
+```python
+nlu.load('en.t5').predict('Who is president of Nigeria?')
+>>> Muhammadu Buhari 
+```
+
+
+```python
+nlu.load('en.t5').predict('What is the most spoken language in India?')
+>>> Hindi
+```
+
+
+```python
+nlu.load('en.t5').predict('What is the capital of Germany?')
+>>> Berlin
+```
+
+
 
