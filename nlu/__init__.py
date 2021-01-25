@@ -805,63 +805,37 @@ def extract_classifier_metadata_from_nlu_ref(nlu_ref):
 
 class NluError:
     def __init__(self):
-        pass
         self.has_trainable_components = False
     @staticmethod
     def predict(text, output_level='error', positions='error', metadata='error', drop_irrelevant_cols=False):
-        print(
-            'The NLU components could not be properly created. Please check previous print messages and Verbose mode for further info')
-
+        print('The NLU components could not be properly created. Please check previous print messages and Verbose mode for further info')
     @staticmethod
-    def print_info(): print(
-        "Sorry something went wrong when building the pipeline. Please check verbose mode and your NLU reference.")
+    def print_info(): print("Sorry something went wrong when building the pipeline. Please check verbose mode and your NLU reference.")
 
 
 
 #Discovery
-
 def print_all_languages():
     ''' Print all languages which are available in NLU Spark NLP pointer '''
     discoverer.print_all_languages()
-
 def print_all_nlu_components_for_lang(lang='en', c_type='classifier'):
     '''Print all NLU components available for a language Spark NLP pointer'''
     discoverer.print_all_nlu_components_for_lang(lang, c_type)
-
-
 def print_all_nlu_components_for_lang(lang='en'):
     '''Print all NLU components available for a language Spark NLP pointer'''
     discoverer.print_all_nlu_components_for_lang(lang)
-
 def print_components(lang='', action=''):
-    '''
-    Print every single NLU reference for models and pipeliens and their Spark NLP pointer
+    '''Print every single NLU reference for models and pipeliens and their Spark NLP pointer
     :param lang: Language requirements for the components filterd. See nlu.languages() for supported languages
-    :param action: Components that will be filterd.
-    :return: None. This method will print its results.
-    '''
+    :param action: Components that will be filterd.'''
     discoverer.print_components(lang,action)
-
-
-
-
-
 def print_component_types():
     ''' Prints all unique component types in NLU'''
     discoverer.print_component_types()
-
-
 def print_all_model_kinds_for_action(action):
     discoverer.print_all_model_kinds_for_action(action)
-
-
 def print_all_model_kinds_for_action_and_lang(lang, action):
     discoverer.print_all_model_kinds_for_action_and_lang(lang,action)
-
-
 def print_trainable_components():
-    '''
-    Print every trainable Algorithm/Model
-    :return: None
-'''
+    '''Print every trainable Algorithm/Model'''
     discoverer.print_trainable_components()
