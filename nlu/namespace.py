@@ -1131,6 +1131,9 @@ class NameSpace():
             'ar.embed' : 'arabic_w2v_cc_300d' ,
             'ar.embed.cbow' : 'arabic_w2v_cc_300d' ,
             'ar.embed.cbow.300d' : 'arabic_w2v_cc_300d' ,
+            "ar.embed.aner ":"aner_cc_300d",
+            "ar.embed.aner.300d ":"aner_cc_300d",
+
 
         },
         'hy': {
@@ -1147,9 +1150,12 @@ class NameSpace():
 
         },
         'bn': {
-            'bn.stopwords': 'stopwords_bn'
+            'bn.stopwords': 'stopwords_bn',
+            "bn.lemma" :" lemma",
+            "bn.pos": "pos_msri",
 
-        },
+
+    },
         'br': {
             'br.stopwords': 'stopwords_br',
             'br.lemma': 'lemma',
@@ -1275,7 +1281,9 @@ class NameSpace():
             'ja.ner.ud_gsd' : 'ner_ud_gsd_glove_840B_300d' , # default ner ud_gsd
             'ja.ner.ud_gsd.glove_840B_300D' : 'ner_ud_gsd_glove_840B_300d' ,
             'ja.pos.ud_gsd' : 'pos_ud_gsd' ,
-          },
+            "ja.lemma:": "lemma",
+
+        },
         'la': {
             'la.stopwords': 'stopwords_la',
             'la.lemma': 'lemma',
@@ -1348,6 +1356,11 @@ class NameSpace():
         'th': {
             'th.stopwords': 'stopwords_th',
             'th.ner.lst20.glove_840B_300D'             : 'ner_lst20_glove_840B_300d',
+            "th.segment_words":"wordseg_best",
+            "th.pos":"pos_lst20",
+            "th.sentiment":"sentiment_jager_use",
+            "th.classify.sentiment":"sentiment_jager_use",
+
         },
         'tr': {
             'tr.lemma': 'lemma',
@@ -1356,6 +1369,7 @@ class NameSpace():
             'tr.stopwords': 'stopwords_tr',
             'tr.ner' : 'turkish_ner_840B_300',#ner tr default
            'tr.ner.bert' : 'turkish_ner_bert'#ner tr default
+
 
         },
         'uk': {
@@ -1382,9 +1396,13 @@ class NameSpace():
             'zh.segment_words.msra'   : 'wordseg_msra',
             'zh.segment_words.large'   : 'wordseg_large',
             'zh.segment_words.ctb9'   : 'wordseg_ctb9',
+            "zh.segment_words.gsd" : "wordseg_gsd_ud_trad",
+
             'zh.pos'   : 'pos_ud_gsd', # default zh pos,
             'zh.pos.ud_gsd'   : 'pos_ud_gsd',
             'zh.pos.ctb9'   : 'pos_ctb9',
+            "zh.pos.ud_gsd_trad": "pos_ud_gsd_trad",
+
             'zh.ner'   : 'ner_msra_bert_768d', # default zh ner,
             'zh.ner.bert'   : 'ner_msra_bert_768d', # default zh bert nert,
             'zh.ner.msra.bert_768D'   : 'ner_msra_bert_768d', # default zh bert nert,
@@ -1422,10 +1440,22 @@ class NameSpace():
             'ko.pos.ud_kaist' : 'pos_ud_kaist' ,
             'ko.ner.kmou' : 'ner_kmou_glove_840B_300d' , #default ner kmou
             'ko.ner.kmou.glove_840B_300d' : 'ner_kmou_glove_840B_300d' ,
+            "ko.lemma": "lemma",
 
         },
 
-        'xx': {
+        'bh': {
+            "bh.pos" : " pos_ud_bhtb",
+            "bh.lemma": "lemma",
+            },
+        'am' : {
+            "am.pos":"pos_ud_att",
+            "am.lemma":"lemma",
+               },
+
+
+
+                                 'xx': {
             'xx.embed': 'glove_840B_300',
 
             'xx.embed.glove.840B_300': 'glove_840B_300',
