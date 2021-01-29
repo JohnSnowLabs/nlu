@@ -7,14 +7,40 @@ from sparknlp.base import *
 from sparknlp.base import LightPipeline
 from sparknlp.annotator import *
 import pyspark
-from pyspark.sql.types import ArrayType, FloatType, StringType, DoubleType
+from pyspark.sql.types import ArrayType, FloatType, DoubleType
 from pyspark.sql.functions import col as pyspark_col
-from pyspark.sql.functions import flatten, explode, arrays_zip, map_keys, map_values, monotonically_increasing_id, greatest, expr,udf
+from pyspark.sql.functions import  explode,   monotonically_increasing_id, greatest, expr,udf,array
 import pandas as pd
 import numpy as np
 from  typing import List
 
 from pyspark.sql.types import StructType,StructField, StringType, IntegerType
+from pyspark.sql import functions as F
+from pyspark.sql import types as t
+#
+# def arrays_zip(*args):
+#     return list(zip(*args))
+from pyspark.sql.column import Column, _to_java_column, _to_seq, _create_column_from_literal, \
+    _create_column_from_name
+
+
+
+
+# arrays_zip = F.udf(lambda x, y: list(zip(x, y)),
+#                     t.ArrayType(t.StructType([
+#                         # Choose Datatype according to requirement
+#                         t.StructField("first", t.IntegerType()),
+#                         t.StructField("second", t.StringType())
+#                     ])))
+
+
+def withExpr(expr:str) : return pyspark_col(expr)
+#
+# def arrays_zip(*cols):
+#     sc = nlu.spark
+#     withExpr()
+#     return pyspark_col(sc._jvm.functions.arrays_zip(_to_seq(sc, cols, _to_java_column)))
+
 
 class BasePipe(dict):
     # we inherhit from dict so the pipe is indexable and we have a nice shortcut for accessing the spark nlp model
@@ -932,7 +958,26 @@ class NLUPipeline(BasePipe):
         logger.info(f'as same level fields = {not_at_same_output_level_fields}')
 
         # explode the columns which are at the same output level..if there are maps at the different output level we will get array maps.  then we use UDF functions to extract the resulting array maps
-        ptmp = sdf.withColumn("tmp", arrays_zip(*same_output_level_fields)).withColumn("res", explode('tmp'))
+        # ptmp = sdf.withColumn("tmp", arrays_zip(*same_output_level_fields)).withColumn("res", explode('tmp'))
+
+        # arrays_zip = F.udf(zip_col_py,t.ArrayType(t.StructType(sdf.schema.fields))])))
+        # def zip_col_py(*cols):return list(zip(cols))
+        def zip_col_py(*cols):return cols
+
+        output_fields = sdf[same_output_level_fields].schema.fields
+        udf_type = t.ArrayType(t.StructType())
+
+        arrays_zip_ = F.udf(zip_col_py,udf_type)
+
+        # INSTEAD OF STR COL ARRAY< WE NEED ACTUAL COLS!
+        # pyspark.sql.l
+
+        ptmp = sdf.withColumn("tmp", arrays_zip_(*same_output_level_fields))
+
+        exp = ptmp.withColumn("res", explode('tmp'))
+
+
+
         final_select_not_at_same_output_level = []
 
 
