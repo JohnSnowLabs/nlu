@@ -957,28 +957,22 @@ class NLUPipeline(BasePipe):
         logger.info(f'exploding amd zipping at same level fields = {same_output_level_fields}')
         logger.info(f'as same level fields = {not_at_same_output_level_fields}')
 
-        # explode the columns which are at the same output level..if there are maps at the different output level we will get array maps.  then we use UDF functions to extract the resulting array maps
-        # ptmp = sdf.withColumn("tmp", arrays_zip(*same_output_level_fields)).withColumn("res", explode('tmp'))
-
-        # arrays_zip = F.udf(zip_col_py,t.ArrayType(t.StructType(sdf.schema.fields))])))
-        # def zip_col_py(*cols):return list(zip(cols))
-        def zip_col_py(*cols):return cols
+        def zip_col_py(*cols): return [[c[:] for c in cols ],]
 
         output_fields = sdf[same_output_level_fields].schema.fields
-        udf_type = t.ArrayType(t.StructType())
+        for i,o in enumerate(output_fields) : o.name = str(i)
 
+        udf_type = t.ArrayType(t.StructType(output_fields))
         arrays_zip_ = F.udf(zip_col_py,udf_type)
 
-        # INSTEAD OF STR COL ARRAY< WE NEED ACTUAL COLS!
-        # pyspark.sql.l
 
-        ptmp = sdf.withColumn("tmp", arrays_zip_(*same_output_level_fields))
-
-        exp = ptmp.withColumn("res", explode('tmp'))
+        ptmp = sdf.withColumn('tmp', arrays_zip_(*same_output_level_fields)) \
+            .withColumn("res", explode('tmp'))
 
 
 
         final_select_not_at_same_output_level = []
+
 
 
         ptmp, final_select_same_output_level = self.rename_columns_and_extract_map_values_same_level(ptmp=ptmp,
