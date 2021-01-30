@@ -136,8 +136,6 @@ from nlu.components.chunkers.ngram.ngram import NGram
 # sentence
 from nlu.components.utils.sentence_detector.sentence_detector import SparkNLPSentenceDetector
 from nlu.components.sentence_detector import NLUSentenceDetector
-from nlu.info import AllComponentsInfo
-from nlu.discovery import Discoverer
 
 #seq2seq
 from nlu.components.seq2seqs.marian.marian import Marian
@@ -149,16 +147,18 @@ from nlu.pipeline_logic import PipelineQueryVerifier
 global spark_started, spark, active_pipes, all_components_info, nlu_package_location
 
 nlu_package_location = nlu.__file__[:-11]
-all_components_info = nlu.AllComponentsInfo()
-discoverer = nlu.Discoverer()
 
 active_pipes = []
 spark_started = False
 spark = None
 
+from nlu.info import AllComponentsInfo
+from nlu.discovery import Discoverer
 import os
 import sparknlp
-sparknlp.start()
+sparknlp.start(spark23=True)
+all_components_info = nlu.AllComponentsInfo()
+discoverer = nlu.Discoverer()
 
 def read_nlu_info(path):
     f = open(os.path.join(path,'nlu_info.txt'), "r")
