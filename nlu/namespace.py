@@ -145,7 +145,6 @@ class NameSpace():
         # 'spell.symmetric': ('spellcheck_sd', 'model'), # TODO erronous
         'spell.norivg': ('spellcheck_norvig', 'model'),
         'sentiment.vivekn': ('sentiment_vivekn', 'model'),
-        
         'dep.untyped.conllu': ('dependency_conllu', 'model'),
         'dep.untyped': ('dependency_conllu.untyped', 'model'),  # default untyped dependency
         'dep': ('dependency_typed_conllu', 'model'),  # default typed dependency
@@ -303,6 +302,7 @@ class NameSpace():
             'en.clean.pattern': 'clean_pattern',
             'en.clean.slang': 'clean_slang',
             'en.spell': 'check_spelling_dl',  # dfault spell
+
             'en.spell.dl': 'check_spelling_dl',
             'en.spell.context': 'check_spelling_dl',
             'en.sentiment': 'analyze_sentiment',
@@ -325,6 +325,14 @@ class NameSpace():
             'en.ner.onto.electra.base'  :'onto_recognize_entities_electra_base',
             'en.ner.onto.electra.small'  :'onto_recognize_entities_electra_small',
 
+
+            # 2.7.1 and 2.7.2
+            "en.sentiment.glove":"analyze_sentimentdl_glove_imdb",
+            "en.sentiment.glove.imdb":"analyze_sentimentdl_glove_imdb",
+            "en.classify.sentiment.glove.imdb":"analyze_sentimentdl_glove_imdb",
+            "en.classify.sentiment.glove":"analyze_sentimentdl_glove_imdb",
+            "en.classify.trec50.pipe":"classifierdl_use_trec50_pipeline",
+            "en.ner.onto.large":"onto_recognize_entities_electra_large",
 
 
 
@@ -1015,6 +1023,19 @@ class NameSpace():
             'en.t5.classify.grammar_correctness': 't5_base',
             'en.t5.classify.sentiment': 't5_base',
             'en.t5.answer_question': 't5_base',
+
+
+            # 2.7,1 and 2.7.2 ATIS classifier and ALIASES
+            "en.classify.questions.atis":"classifierdl_use_atis",
+            "en.classify.questions.airline":"classifierdl_use_atis",
+            "en.classify.intent.atis":"classifierdl_use_atis",
+            "en.classify.intent.airline":"classifierdl_use_atis",
+
+            # 2.7,1 and 2.7.2 ATIS NER and ALIASES
+            "en.ner.atis":"nerdl_atis_840b_300d",
+            "en.ner.airline":"nerdl_atis_840b_300d",
+            "en.ner.aspect.airline":"nerdl_atis_840b_300d",
+            "en.ner.aspect.atis":"nerdl_atis_840b_300d",
 
 
 
