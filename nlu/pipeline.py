@@ -480,8 +480,7 @@ class NLUPipeline(BasePipe):
                     # scientific notation starts after 6 decimal places, so we can have at most exactly 6
                     # since greatest() breaks the dataframe Schema, we must rename the columns first or run into issues with PySpark Struct queriying
 
-                    for key in cols_to_max: ptmp = ptmp.withColumn(key.replace('.', '_'),
-                                                                   pyspark_col(key).cast('decimal(7,6)'))
+                    for key in cols_to_max: ptmp = ptmp.withColumn(key.replace('.', '_'),pyspark_col(key).cast('decimal(7,6)'))
                     # casted = ptmp.select(*(pyspark_col(c).cast("decimal(6,6)").alias(c.replace('.','_')) for c in cols_to_max))
 
                     max_confidence_name = field.split('.')[0] + '_confidence'
@@ -520,6 +519,7 @@ class NLUPipeline(BasePipe):
             if len(keys_in_metadata[0].asDict()['metadata']) == 0: return []
 
         keys_in_metadata = list(keys_in_metadata[0].asDict()['metadata'][0].keys())
+        if 'sentence' in keys_in_metadata : keys_in_metadata.remove('sentence')
         logger.info(f'Field={field} has keys in metadata={keys_in_metadata}')
 
         return keys_in_metadata

@@ -156,7 +156,9 @@ from nlu.info import AllComponentsInfo
 from nlu.discovery import Discoverer
 import os
 import sparknlp
+# sparknlp.start(spark23=True)
 sparknlp.start(spark23=True)
+
 all_components_info = nlu.AllComponentsInfo()
 discoverer = nlu.Discoverer()
 
