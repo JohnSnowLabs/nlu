@@ -956,18 +956,18 @@ class NLUPipeline(BasePipe):
 
         logger.info(f'exploding amd zipping at same level fields = {same_output_level_fields}')
         logger.info(f'as same level fields = {not_at_same_output_level_fields}')
-
         def zip_col_py(*cols): return [[c[:] for c in cols ],]
 
         output_fields = sdf[same_output_level_fields].schema.fields
-        for i,o in enumerate(output_fields) : o.name = str(i)
-
-        udf_type = t.ArrayType(t.StructType(output_fields))
+        d_types = []
+        for i,o in enumerate(output_fields) : d_types.append(StructField(name=str(i),dataType= o.dataType.elementType) )
+        udf_type = t.ArrayType(t.StructType(d_types))
         arrays_zip_ = F.udf(zip_col_py,udf_type)
 
 
         ptmp = sdf.withColumn('tmp', arrays_zip_(*same_output_level_fields)) \
             .withColumn("res", explode('tmp'))
+
 
 
 
