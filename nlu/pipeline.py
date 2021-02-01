@@ -956,7 +956,12 @@ class NLUPipeline(BasePipe):
 
         logger.info(f'exploding amd zipping at same level fields = {same_output_level_fields}')
         logger.info(f'as same level fields = {not_at_same_output_level_fields}')
-        def zip_col_py(*cols): return [[c[:] for c in cols ],]
+        # def zip_col_py(*cols): return [[c[:] for c in cols ],]
+        # def zip_col_py(*cols): return [[c[:] if not isinstance(c[0],list) else c[1]for c in cols ],]
+        # def zip_col_py(*cols): return [[c[:] if not isinstance(c[0],list) else c[1]for c in cols ],]
+        # def zip_col_py(*cols): return [[c[:] if not isinstance(c[0],list) else [r for r in c] for c in cols ],]
+        # def zip_col_py(*cols): return [[c[:] if not isinstance(c[0],list) else c[i] for i,c in enumerate(cols) ]]
+        def zip_col_py(*cols): return list(zip(*cols))
 
         output_fields = sdf[same_output_level_fields].schema.fields
         d_types = []
