@@ -7,14 +7,40 @@ from sparknlp.base import *
 from sparknlp.base import LightPipeline
 from sparknlp.annotator import *
 import pyspark
-from pyspark.sql.types import ArrayType, FloatType, StringType, DoubleType
+from pyspark.sql.types import ArrayType, FloatType, DoubleType
 from pyspark.sql.functions import col as pyspark_col
-from pyspark.sql.functions import flatten, explode, arrays_zip, map_keys, map_values, monotonically_increasing_id, greatest, expr,udf
+from pyspark.sql.functions import  explode,   monotonically_increasing_id, greatest, expr,udf,array
 import pandas as pd
 import numpy as np
 from  typing import List
 
 from pyspark.sql.types import StructType,StructField, StringType, IntegerType
+from pyspark.sql import functions as F
+from pyspark.sql import types as t
+#
+# def arrays_zip(*args):
+#     return list(zip(*args))
+from pyspark.sql.column import Column, _to_java_column, _to_seq, _create_column_from_literal, \
+    _create_column_from_name
+
+
+
+
+# arrays_zip = F.udf(lambda x, y: list(zip(x, y)),
+#                     t.ArrayType(t.StructType([
+#                         # Choose Datatype according to requirement
+#                         t.StructField("first", t.IntegerType()),
+#                         t.StructField("second", t.StringType())
+#                     ])))
+
+
+def withExpr(expr:str) : return pyspark_col(expr)
+#
+# def arrays_zip(*cols):
+#     sc = nlu.spark
+#     withExpr()
+#     return pyspark_col(sc._jvm.functions.arrays_zip(_to_seq(sc, cols, _to_java_column)))
+
 
 class BasePipe(dict):
     # we inherhit from dict so the pipe is indexable and we have a nice shortcut for accessing the spark nlp model
@@ -454,8 +480,7 @@ class NLUPipeline(BasePipe):
                     # scientific notation starts after 6 decimal places, so we can have at most exactly 6
                     # since greatest() breaks the dataframe Schema, we must rename the columns first or run into issues with PySpark Struct queriying
 
-                    for key in cols_to_max: ptmp = ptmp.withColumn(key.replace('.', '_'),
-                                                                   pyspark_col(key).cast('decimal(7,6)'))
+                    for key in cols_to_max: ptmp = ptmp.withColumn(key.replace('.', '_'),pyspark_col(key).cast('decimal(7,6)'))
                     # casted = ptmp.select(*(pyspark_col(c).cast("decimal(6,6)").alias(c.replace('.','_')) for c in cols_to_max))
 
                     max_confidence_name = field.split('.')[0] + '_confidence'
@@ -494,6 +519,7 @@ class NLUPipeline(BasePipe):
             if len(keys_in_metadata[0].asDict()['metadata']) == 0: return []
 
         keys_in_metadata = list(keys_in_metadata[0].asDict()['metadata'][0].keys())
+        if 'sentence' in keys_in_metadata : keys_in_metadata.remove('sentence')
         logger.info(f'Field={field} has keys in metadata={keys_in_metadata}')
 
         return keys_in_metadata
@@ -930,10 +956,28 @@ class NLUPipeline(BasePipe):
 
         logger.info(f'exploding amd zipping at same level fields = {same_output_level_fields}')
         logger.info(f'as same level fields = {not_at_same_output_level_fields}')
+        # def zip_col_py(*cols): return [[c[:] for c in cols ],]
+        # def zip_col_py(*cols): return [[c[:] if not isinstance(c[0],list) else c[1]for c in cols ],]
+        # def zip_col_py(*cols): return [[c[:] if not isinstance(c[0],list) else c[1]for c in cols ],]
+        # def zip_col_py(*cols): return [[c[:] if not isinstance(c[0],list) else [r for r in c] for c in cols ],]
+        # def zip_col_py(*cols): return [[c[:] if not isinstance(c[0],list) else c[i] for i,c in enumerate(cols) ]]
+        def zip_col_py(*cols): return list(zip(*cols))
 
-        # explode the columns which are at the same output level..if there are maps at the different output level we will get array maps.  then we use UDF functions to extract the resulting array maps
-        ptmp = sdf.withColumn("tmp", arrays_zip(*same_output_level_fields)).withColumn("res", explode('tmp'))
+        output_fields = sdf[same_output_level_fields].schema.fields
+        d_types = []
+        for i,o in enumerate(output_fields) : d_types.append(StructField(name=str(i),dataType= o.dataType.elementType) )
+        udf_type = t.ArrayType(t.StructType(d_types))
+        arrays_zip_ = F.udf(zip_col_py,udf_type)
+
+
+        ptmp = sdf.withColumn('tmp', arrays_zip_(*same_output_level_fields)) \
+            .withColumn("res", explode('tmp'))
+
+
+
+
         final_select_not_at_same_output_level = []
+
 
 
         ptmp, final_select_same_output_level = self.rename_columns_and_extract_map_values_same_level(ptmp=ptmp,
