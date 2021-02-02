@@ -17,29 +17,10 @@ from  typing import List
 from pyspark.sql.types import StructType,StructField, StringType, IntegerType
 from pyspark.sql import functions as F
 from pyspark.sql import types as t
-#
-# def arrays_zip(*args):
-#     return list(zip(*args))
-from pyspark.sql.column import Column, _to_java_column, _to_seq, _create_column_from_literal, \
-    _create_column_from_name
 
 
 
 
-# arrays_zip = F.udf(lambda x, y: list(zip(x, y)),
-#                     t.ArrayType(t.StructType([
-#                         # Choose Datatype according to requirement
-#                         t.StructField("first", t.IntegerType()),
-#                         t.StructField("second", t.StringType())
-#                     ])))
-
-
-def withExpr(expr:str) : return pyspark_col(expr)
-#
-# def arrays_zip(*cols):
-#     sc = nlu.spark
-#     withExpr()
-#     return pyspark_col(sc._jvm.functions.arrays_zip(_to_seq(sc, cols, _to_java_column)))
 
 
 class BasePipe(dict):
@@ -954,13 +935,10 @@ class NLUPipeline(BasePipe):
                                                                                                      same_output_level_fields,
                                                                                                      not_at_same_output_level_fields)
 
+
+
         logger.info(f'exploding amd zipping at same level fields = {same_output_level_fields}')
         logger.info(f'as same level fields = {not_at_same_output_level_fields}')
-        # def zip_col_py(*cols): return [[c[:] for c in cols ],]
-        # def zip_col_py(*cols): return [[c[:] if not isinstance(c[0],list) else c[1]for c in cols ],]
-        # def zip_col_py(*cols): return [[c[:] if not isinstance(c[0],list) else c[1]for c in cols ],]
-        # def zip_col_py(*cols): return [[c[:] if not isinstance(c[0],list) else [r for r in c] for c in cols ],]
-        # def zip_col_py(*cols): return [[c[:] if not isinstance(c[0],list) else c[i] for i,c in enumerate(cols) ]]
         def zip_col_py(*cols): return list(zip(*cols))
 
         output_fields = sdf[same_output_level_fields].schema.fields
