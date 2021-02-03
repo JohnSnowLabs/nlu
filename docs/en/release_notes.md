@@ -14,6 +14,314 @@ modify_date: "2020-06-12"
 <div class="h3-box" markdown="1">
 
 
+## NLU 1.1.1 Release Notes
+We are very excited to release NLU 1.1.1!
+This release features 3 new tutorial notebooks for Open/Closed book question answering with Google's T5, Intent classification and Aspect Based NER.
+In Addition NLU 1.1.0 comes with  25+ pretrained models and pipelines in Amharic, Bengali, Bhojpuri, Japanese, and Korean languages from the [amazing Spark2.7.2 release](https://github.com/JohnSnowLabs/spark-nlp/releases/tag/2.7.2)
+Finally NLU now supports running on Spark 2.3 clusters.
+
+
+### NLU 1.1.0 New Non-English Models
+|Language | nlu.load() reference | Spark NLP Model reference | Type |
+|---------|---------------------|----------------------------|------|
+|Arabic | [ar.ner](https://nlp.johnsnowlabs.com/2020/12/05/aner_cc_300d_ar.html) |[arabic_w2v_cc_300d](https://nlp.johnsnowlabs.com/2020/12/05/aner_cc_300d_ar.html) | Named Entity Recognizer                    |
+|Arabic | [ar.embed.aner](https://nlp.johnsnowlabs.com/2020/12/05/aner_cc_300d_ar.html) |[aner_cc_300d](https://nlp.johnsnowlabs.com/2020/12/05/aner_cc_300d_ar.html) | Word Embedding                    |
+|Arabic | [ar.embed.aner.300d](https://nlp.johnsnowlabs.com/2020/12/05/aner_cc_300d_ar.html) |[aner_cc_300d](https://nlp.johnsnowlabs.com/2020/12/05/aner_cc_300d_ar.html) | Word Embedding (Alias)                    |
+|Bengali | [bn.stopwords](https://nlp.johnsnowlabs.com/2020/07/14/stopwords_bn.html) |[stopwords_bn](https://nlp.johnsnowlabs.com/2020/07/14/stopwords_bn.html) | Stopwords Cleaner                    |
+|Bengali | [bn.pos](https://nlp.johnsnowlabs.com/2021/01/20/pos_msri_bn.html) |[pos_msri](https://nlp.johnsnowlabs.com/2021/01/20/pos_msri_bn.html) | Part of Speech                    |
+|Thai | [th.segment_words](https://nlp.johnsnowlabs.com/2021/01/11/ner_lst20_glove_840B_300d_th.html) |[wordseg_best](https://nlp.johnsnowlabs.com/2021/01/11/ner_lst20_glove_840B_300d_th.html) | Word Segmenter                    |
+|Thai | [th.pos](https://nlp.johnsnowlabs.com/2021/01/13/pos_lst20_th.html) |[pos_lst20](https://nlp.johnsnowlabs.com/2021/01/13/pos_lst20_th.html) | Part of Speech                    |
+|Thai |   [th.sentiment](https://nlp.johnsnowlabs.com/2021/01/14/sentiment_jager_use_th.html) |[sentiment_jager_use](https://nlp.johnsnowlabs.com/2021/01/14/sentiment_jager_use_th.html) | Sentiment Classifier                     |
+|Thai |    [th.classify.sentiment](https://nlp.johnsnowlabs.com/2021/01/14/sentiment_jager_use_th.html) |[sentiment_jager_use](https://nlp.johnsnowlabs.com/2021/01/14/sentiment_jager_use_th.html) | Sentiment Classifier (Alias)                    |
+|Chinese | [zh.pos.ud_gsd_trad](https://nlp.johnsnowlabs.com/2021/01/25/pos_ud_gsd_trad_zh.html) |[pos_ud_gsd_trad](https://nlp.johnsnowlabs.com/2021/01/25/pos_ud_gsd_trad_zh.html) | Part of Speech                    |
+|Chinese | [zh.segment_words.gsd](https://nlp.johnsnowlabs.com/2021/01/25/wordseg_gsd_ud_trad_zh.html) |[wordseg_gsd_ud_trad](https://nlp.johnsnowlabs.com/2021/01/25/wordseg_gsd_ud_trad_zh.html) | Word Segmenter                    |
+|Bihari | [bh.pos](https://nlp.johnsnowlabs.com/2021/01/18/pos_ud_bhtb_bh.html) |[pos_ud_bhtb](https://nlp.johnsnowlabs.com/2021/01/18/pos_ud_bhtb_bh.html) | Part of Speech                    |
+|Amharic | [am.pos](https://nlp.johnsnowlabs.com/2021/01/20/pos_ud_att_am.html) |[pos_ud_att](https://nlp.johnsnowlabs.com/2021/01/20/pos_ud_att_am.html) | Part of Speech                    |
+
+
+
+### NLU 1.1.1 New English Models and Pipelines
+|Language | nlu.load() reference | Spark NLP Model reference | Type |
+|---------|---------------------|----------------------------|------|
+| English | [en.sentiment.glove](https://nlp.johnsnowlabs.com/2021/01/15/analyze_sentimentdl_glove_imdb_en.html) |[analyze_sentimentdl_glove_imdb](https://nlp.johnsnowlabs.com/2021/01/15/analyze_sentimentdl_glove_imdb_en.html)     | Sentiment Classifier |
+| English | [en.sentiment.glove.imdb](https://nlp.johnsnowlabs.com/2021/01/15/analyze_sentimentdl_glove_imdb_en.html) |[analyze_sentimentdl_glove_imdb](https://nlp.johnsnowlabs.com/2021/01/15/analyze_sentimentdl_glove_imdb_en.html)     | Sentiment Classifier (Alias) |
+| English | [en.classify.sentiment.glove.imdb](https://nlp.johnsnowlabs.com/2021/01/15/analyze_sentimentdl_glove_imdb_en.html) |[analyze_sentimentdl_glove_imdb](https://nlp.johnsnowlabs.com/2021/01/15/analyze_sentimentdl_glove_imdb_en.html)     | Sentiment Classifier (Alias) |
+| English | [en.classify.sentiment.glove](https://nlp.johnsnowlabs.com/2021/01/15/analyze_sentimentdl_glove_imdb_en.html) |[analyze_sentimentdl_glove_imdb](https://nlp.johnsnowlabs.com/2021/01/15/analyze_sentimentdl_glove_imdb_en.html)     | Sentiment Classifier (Alias) |
+| English | [en.classify.trec50.pipe](https://nlp.johnsnowlabs.com/2021/01/08/classifierdl_use_trec50_pipeline_en.html) |[classifierdl_use_trec50_pipeline](https://nlp.johnsnowlabs.com/2021/01/08/classifierdl_use_trec50_pipeline_en.html)     | Language Classifier |
+| English | [en.ner.onto.large](https://nlp.johnsnowlabs.com/2020/12/09/onto_recognize_entities_electra_large_en.html) |[onto_recognize_entities_electra_large](https://nlp.johnsnowlabs.com/2020/12/09/onto_recognize_entities_electra_large_en.html)     | Named Entity Recognizer |
+| English | [en.classify.questions.atis](https://nlp.johnsnowlabs.com/2021/01/25/classifierdl_use_atis_en.html) |[classifierdl_use_atis](https://nlp.johnsnowlabs.com/2021/01/25/classifierdl_use_atis_en.html)     | Intent Classifier |
+| English  | [en.classify.questions.airline](https://nlp.johnsnowlabs.com/2021/01/25/classifierdl_use_atis_en.html) |[classifierdl_use_atis](https://nlp.johnsnowlabs.com/2021/01/25/classifierdl_use_atis_en.html)     | Intent Classifier (Alias) |
+| English | [en.classify.intent.atis](https://nlp.johnsnowlabs.com/2021/01/25/classifierdl_use_atis_en.html) |[classifierdl_use_atis](https://nlp.johnsnowlabs.com/2021/01/25/classifierdl_use_atis_en.html)     | Intent Classifier (Alias) |
+| English | [en.classify.intent.airline](https://nlp.johnsnowlabs.com/2021/01/25/classifierdl_use_atis_en.html) |[classifierdl_use_atis](https://nlp.johnsnowlabs.com/2021/01/25/classifierdl_use_atis_en.html)     | Intent Classifier (Alias) |
+| English | [en.ner.atis](https://nlp.johnsnowlabs.com/2021/01/25/nerdl_atis_840b_300d_en.html) |[nerdl_atis_840b_300d](https://nlp.johnsnowlabs.com/2021/01/25/nerdl_atis_840b_300d_en.html)     | Aspect based NER |
+| English | [en.ner.airline](https://nlp.johnsnowlabs.com/2021/01/25/nerdl_atis_840b_300d_en.html) |[nerdl_atis_840b_300d](https://nlp.johnsnowlabs.com/2021/01/25/nerdl_atis_840b_300d_en.html)     | Aspect based NER (Alias) |
+| English | [en.ner.aspect.airline](https://nlp.johnsnowlabs.com/2021/01/25/nerdl_atis_840b_300d_en.html) |[nerdl_atis_840b_300d](https://nlp.johnsnowlabs.com/2021/01/25/nerdl_atis_840b_300d_en.html)     | Aspect based NER (Alias) |
+| English | [en.ner.aspect.atis](https://nlp.johnsnowlabs.com/2021/01/25/nerdl_atis_840b_300d_en.html) |[nerdl_atis_840b_300d](https://nlp.johnsnowlabs.com/2021/01/25/nerdl_atis_840b_300d_en.html)     | Aspect based NER (Alias) |
+
+### New Easy NLU 1-liner Examples : 
+
+#### Extract aspects and entities from airline questions (ATIS dataset)
+```python
+	
+nlu.load("en.ner.atis").predict("i want to fly from baltimore to dallas round trip")
+output:  ["baltimore"," dallas", "round trip"]
+```
+
+
+
+#### Intent Classification for Airline Traffic Information System queries (ATIS dataset)
+
+
+```python
+
+nlu.load("en.classify.questions.atis").predict("what is the price of flight from newyork to washington")
+output:  "atis_airfare"	
+```
+
+
+
+#### Recognize Entities OntoNotes - ELECTRA Large
+
+
+```python
+
+nlu.load("en.ner.onto.large").predict("Johnson first entered politics when elected in 2001 as a member of Parliament. He then served eight years as the mayor of London.")	
+output:  ["Johnson", "first", "2001", "eight years", "London"]	
+```
+
+#### Question classification of open-domain and fact-based questions Pipeline - TREC50
+
+
+```python
+nlu.load("en.classify.trec50.pipe").predict("When did the construction of stone circles begin in the UK? ")
+output:  LOC_other
+```
+
+#### Traditional Chinese Word Segmentation
+
+```python
+# 'However, this treatment also creates some problems' in Chinese
+nlu.load("zh.segment_words.gsd").predict("然而，這樣的處理也衍生了一些問題。")
+output:  ["然而",",","這樣","的","處理","也","衍生","了","一些","問題","。"]
+
+```
+
+
+#### Part of Speech for Traditional Chinese
+
+```python
+# 'However, this treatment also creates some problems' in Chinese
+nlu.load("zh.pos.ud_gsd_trad").predict("然而，這樣的處理也衍生了一些問題。")
+```
+Output:
+
+|Token |  POS   |
+| ----- | ----- |
+| 然而  | ADV   |
+| ，    | PUNCT |
+| 這樣  | PRON  |
+| 的    | PART  |
+| 處理  | NOUN  |
+| 也    | ADV   |
+| 衍生  | VERB  |
+| 了    | PART  |
+| 一些  | ADJ   |
+| 問題  | NOUN  |
+| 。    | PUNCT |
+
+#### Thai Word Segment Recognition
+
+
+```python
+# 'Mona Lisa is a 16th-century oil painting created by Leonardo held at the Louvre in Paris' in Thai
+nlu.loadnlu.load("th.segment_words").predict("Mona Lisa เป็นภาพวาดสีน้ำมันในศตวรรษที่ 16 ที่สร้างโดย Leonardo จัดขึ้นที่พิพิธภัณฑ์ลูฟร์ในปารีส")
+
+```
+Output:
+
+| token |
+| --------- |
+| M         |
+| o         |
+| n         |
+| a         |
+| Lisa      |
+| เป็น       |
+| ภาพ       |
+| ว         |
+| า         |
+| ด         |
+| สีน้ำ       |
+| มัน        |
+| ใน        |
+| ศตวรรษ    |
+| ที่         |
+| 16        |
+| ที่         |
+| สร้าง      |
+| โ         |
+| ด         |
+| ย         |
+| L         |
+| e         |
+| o         |
+| n         |
+| a         |
+| r         |
+| d         |
+| o         |
+| จัด        |
+| ขึ้น        |
+| ที่         |
+| พิพิธภัณฑ์    |
+| ลูฟร์       |
+| ใน        |
+| ปารีส      |
+
+#### Part of Speech for Bengali (POS)
+
+```python
+# 'The village is also called 'Mod' in Tora language' in Behgali 
+nlu.load("bn.pos").predict("বাসস্থান-ঘরগৃহস্থালি তোড়া ভাষায় গ্রামকেও বলে ` মোদ ' ৷")
+```
+Output:
+
+| token             | pos  |
+| ----------------- | ---- |
+| বাসস্থান-ঘরগৃহস্থালি | NN   |
+| তোড়া              | NNP  |
+| ভাষায়             | NN   |
+| গ্রামকেও           | NN   |
+| বলে               | VM   |
+| `                 | SYM  |
+| মোদ               | NN   |
+| '                 | SYM  |
+| ৷                 | SYM  |
+
+
+
+#### Stop Words Cleaner for Bengali
+
+
+```python
+# 'This language is not enough' in Bengali 
+df = nlu.load("bn.stopwords").predict("এই ভাষা যথেষ্ট নয়")
+
+```
+Output:
+
+| cleanTokens | token |
+| :---------- | :---- |
+| ভাষা        | এই    |
+| যথেষ্ট       | ভাষা  |
+| নয়          | যথেষ্ট |
+| None        | নয়    |
+
+
+#### Part of Speech for Bengali
+```python
+
+# 'The people of Ohu know that the foundation of Bhojpuri was shaken' in Bengali
+nlu.load('bh.pos').predict("ओहु लोग के मालूम बा कि श्लील होखते भोजपुरी के नींव हिल जाई").to_markdown()
+```
+Output:
+
+| pos   | token   |
+| :---- | :------ |
+| DET   | ओहु     |
+| NOUN  | लोग     |
+| ADP   | के      |
+| NOUN  | मालूम   |
+| VERB  | बा      |
+| SCONJ | कि      |
+| ADJ   | श्लील   |
+| VERB  | होखते   |
+| PROPN | भोजपुरी |
+| ADP   | के      |
+| NOUN  | नींव    |
+| VERB  | हिल     |
+| AUX   | जाई     |
+
+
+#### Amharic Part of Speech (POS)
+```python
+# ' "Son, finish the job," he said.' in Amharic
+nlu.load('am.pos').predict('ልጅ ኡ ን ሥራ ው ን አስጨርስ ኧው ኣል ኧሁ ።"').to_markdown()
+```
+
+Output:
+
+| pos   | token   |
+|:------|:--------|
+| NOUN  | ልጅ      |
+| DET   | ኡ       |
+| PART  | ን       |
+| NOUN  | ሥራ      |
+| DET   | ው       |
+| PART  | ን       |
+| VERB  | አስጨርስ   |
+| PRON  | ኧው      |
+| AUX   | ኣል      |
+| PRON  | ኧሁ      |
+| PUNCT | ።       |
+| NOUN  | "       |
+
+
+#### Thai Sentiment Classification
+```python
+#  'I love peanut butter and jelly!' in thai
+nlu.load('th.classify.sentiment').predict('ฉันชอบเนยถั่วและเยลลี่!')[['sentiment','sentiment_confidence']].to_markdown()
+```
+
+Output:
+
+| sentiment   |   sentiment_confidence |
+|:------------|-----------------------:|
+| positive    |               0.999998 |
+
+
+#### Arabic Named Entity Recognition (NER)
+```python
+# 'In 1918, the forces of the Arab Revolt liberated Damascus with the help of the British' in Arabic
+nlu.load('ar.ner').predict('في عام 1918 حررت قوات الثورة العربية دمشق بمساعدة من الإنكليز',output_level='chunk')[['entities_confidence','ner_confidence','entities']].to_markdown()
+```
+
+Output:
+
+| entity_class   | ner_confidence                                                                                                                                                                  | entities            |
+|:----------------------|:--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:--------------------|
+| ORG                   | [1.0, 1.0, 1.0, 0.9997000098228455, 0.9840999841690063, 0.9987999796867371, 0.9990000128746033, 0.9998999834060669, 0.9998999834060669, 0.9993000030517578, 0.9998999834060669] | قوات الثورة العربية |
+| LOC                   | [1.0, 1.0, 1.0, 0.9997000098228455, 0.9840999841690063, 0.9987999796867371, 0.9990000128746033, 0.9998999834060669, 0.9998999834060669, 0.9993000030517578, 0.9998999834060669] | دمشق                |
+| PER                   | [1.0, 1.0, 1.0, 0.9997000098228455, 0.9840999841690063, 0.9987999796867371, 0.9990000128746033, 0.9998999834060669, 0.9998999834060669, 0.9993000030517578, 0.9998999834060669] | الإنكليز            |
+
+
+
+### NLU 1.1.0 Enhancements : 
+-  Spark 2.3 compatibility
+
+### New NLU Notebooks and Tutorials 
+- [Open and Closed book question Ansering](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/sequence2sequence/T5_question_answering.ipynb)
+- [Aspect based NER for Airline ATIS](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/classifiers/intent_classification_airlines_ATIS.ipynb)
+- [Intent Classification for Airline emssages ATIS](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/named_entity_recognition_(NER)/NER_aspect_airline_ATIS.ipynb)
+
+### Installation
+
+```bash
+# PyPi
+!pip install nlu pyspark==2.4.7
+#Conda
+# Install NLU from Anaconda/Conda
+conda install -c johnsnowlabs nlu
+```
+
+### Additional NLU ressources
+- [NLU Website](https://nlu.johnsnowlabs.com/)
+- [All NLU Tutorial Notebooks](https://nlu.johnsnowlabs.com/docs/en/notebooks)
+- [NLU Videos and Blogposts on NLU](https://nlp.johnsnowlabs.com/learn#pythons-nlu-library)
+- [NLU on Github](https://github.com/JohnSnowLabs/nlu)
+
+
+
 
 ##  NLU 1.1.0 Release Notes 
 We are incredibly excited to release NLU 1.1.0!
@@ -385,7 +693,7 @@ df
 |	ん|
 
 
-## Installation
+### Installation
 
 ```bash
 # PyPi
@@ -396,7 +704,7 @@ conda install -c johnsnowlabs nlu
 ```
 
 
-# Additional NLU ressources
+### Additional NLU ressources
 - [NLU Website](https://nlu.johnsnowlabs.com/)
 - [All NLU Tutorial Notebooks](https://nlu.johnsnowlabs.com/docs/en/notebooks)
 - [NLU Videos and Blogposts on NLU](https://nlp.johnsnowlabs.com/learn#pythons-nlu-library)

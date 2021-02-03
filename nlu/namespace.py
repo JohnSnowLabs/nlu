@@ -145,7 +145,6 @@ class NameSpace():
         # 'spell.symmetric': ('spellcheck_sd', 'model'), # TODO erronous
         'spell.norivg': ('spellcheck_norvig', 'model'),
         'sentiment.vivekn': ('sentiment_vivekn', 'model'),
-        
         'dep.untyped.conllu': ('dependency_conllu', 'model'),
         'dep.untyped': ('dependency_conllu.untyped', 'model'),  # default untyped dependency
         'dep': ('dependency_typed_conllu', 'model'),  # default typed dependency
@@ -303,6 +302,7 @@ class NameSpace():
             'en.clean.pattern': 'clean_pattern',
             'en.clean.slang': 'clean_slang',
             'en.spell': 'check_spelling_dl',  # dfault spell
+
             'en.spell.dl': 'check_spelling_dl',
             'en.spell.context': 'check_spelling_dl',
             'en.sentiment': 'analyze_sentiment',
@@ -325,6 +325,14 @@ class NameSpace():
             'en.ner.onto.electra.base'  :'onto_recognize_entities_electra_base',
             'en.ner.onto.electra.small'  :'onto_recognize_entities_electra_small',
 
+
+            # 2.7.1 and 2.7.2
+            "en.sentiment.glove":"analyze_sentimentdl_glove_imdb",
+            "en.sentiment.glove.imdb":"analyze_sentimentdl_glove_imdb",
+            "en.classify.sentiment.glove.imdb":"analyze_sentimentdl_glove_imdb",
+            "en.classify.sentiment.glove":"analyze_sentimentdl_glove_imdb",
+            "en.classify.trec50.pipe":"classifierdl_use_trec50_pipeline",
+            "en.ner.onto.large":"onto_recognize_entities_electra_large",
 
 
 
@@ -1017,6 +1025,19 @@ class NameSpace():
             'en.t5.answer_question': 't5_base',
 
 
+            # 2.7,1 and 2.7.2 ATIS classifier and ALIASES
+            "en.classify.questions.atis":"classifierdl_use_atis",
+            "en.classify.questions.airline":"classifierdl_use_atis",
+            "en.classify.intent.atis":"classifierdl_use_atis",
+            "en.classify.intent.airline":"classifierdl_use_atis",
+
+            # 2.7,1 and 2.7.2 ATIS NER and ALIASES
+            "en.ner.atis":"nerdl_atis_840b_300d",
+            "en.ner.airline":"nerdl_atis_840b_300d",
+            "en.ner.aspect.airline":"nerdl_atis_840b_300d",
+            "en.ner.aspect.atis":"nerdl_atis_840b_300d",
+
+
 
         },
         'fr': {
@@ -1131,6 +1152,12 @@ class NameSpace():
             'ar.embed' : 'arabic_w2v_cc_300d' ,
             'ar.embed.cbow' : 'arabic_w2v_cc_300d' ,
             'ar.embed.cbow.300d' : 'arabic_w2v_cc_300d' ,
+            "ar.embed.aner":"arabic_w2v_cc_300d",
+            "ar.embed.aner.300d":"arabic_w2v_cc_300d",
+            "ar.embed.glove":"arabic_w2v_cc_300d",
+
+            "ar.ner" :"aner_cc_300d",
+            "ar.ner.aner" :"aner_cc_300d",
 
         },
         'hy': {
@@ -1147,9 +1174,12 @@ class NameSpace():
 
         },
         'bn': {
-            'bn.stopwords': 'stopwords_bn'
+            'bn.stopwords': 'stopwords_bn',
+            "bn.lemma" :" lemma",
+            "bn.pos": "pos_msri",
 
-        },
+
+    },
         'br': {
             'br.stopwords': 'stopwords_br',
             'br.lemma': 'lemma',
@@ -1275,7 +1305,9 @@ class NameSpace():
             'ja.ner.ud_gsd' : 'ner_ud_gsd_glove_840B_300d' , # default ner ud_gsd
             'ja.ner.ud_gsd.glove_840B_300D' : 'ner_ud_gsd_glove_840B_300d' ,
             'ja.pos.ud_gsd' : 'pos_ud_gsd' ,
-          },
+            "ja.lemma:": "lemma",
+
+        },
         'la': {
             'la.stopwords': 'stopwords_la',
             'la.lemma': 'lemma',
@@ -1348,6 +1380,11 @@ class NameSpace():
         'th': {
             'th.stopwords': 'stopwords_th',
             'th.ner.lst20.glove_840B_300D'             : 'ner_lst20_glove_840B_300d',
+            "th.segment_words":"wordseg_best",
+            "th.pos":"pos_lst20",
+            "th.sentiment":"sentiment_jager_use",
+            "th.classify.sentiment":"sentiment_jager_use",
+
         },
         'tr': {
             'tr.lemma': 'lemma',
@@ -1356,6 +1393,7 @@ class NameSpace():
             'tr.stopwords': 'stopwords_tr',
             'tr.ner' : 'turkish_ner_840B_300',#ner tr default
            'tr.ner.bert' : 'turkish_ner_bert'#ner tr default
+
 
         },
         'uk': {
@@ -1382,9 +1420,13 @@ class NameSpace():
             'zh.segment_words.msra'   : 'wordseg_msra',
             'zh.segment_words.large'   : 'wordseg_large',
             'zh.segment_words.ctb9'   : 'wordseg_ctb9',
+            "zh.segment_words.gsd" : "wordseg_gsd_ud_trad",
+
             'zh.pos'   : 'pos_ud_gsd', # default zh pos,
             'zh.pos.ud_gsd'   : 'pos_ud_gsd',
             'zh.pos.ctb9'   : 'pos_ctb9',
+            "zh.pos.ud_gsd_trad": "pos_ud_gsd_trad",
+
             'zh.ner'   : 'ner_msra_bert_768d', # default zh ner,
             'zh.ner.bert'   : 'ner_msra_bert_768d', # default zh bert nert,
             'zh.ner.msra.bert_768D'   : 'ner_msra_bert_768d', # default zh bert nert,
@@ -1422,10 +1464,22 @@ class NameSpace():
             'ko.pos.ud_kaist' : 'pos_ud_kaist' ,
             'ko.ner.kmou' : 'ner_kmou_glove_840B_300d' , #default ner kmou
             'ko.ner.kmou.glove_840B_300d' : 'ner_kmou_glove_840B_300d' ,
+            "ko.lemma": "lemma",
 
         },
 
-        'xx': {
+        'bh': {
+            "bh.pos" : "pos_ud_bhtb",
+            "bh.lemma": "lemma",
+            },
+        'am' : {
+            "am.pos":"pos_ud_att",
+            "am.lemma":"lemma",
+               },
+
+
+
+                                 'xx': {
             'xx.embed': 'glove_840B_300',
 
             'xx.embed.glove.840B_300': 'glove_840B_300',
