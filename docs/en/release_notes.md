@@ -36,7 +36,7 @@ nlu.load('th.sentiment').predict("C̄hạn chxb ney t̄hạ̀w læa yel lī̀")
 ### NLU 1.1.0 New Non-English Models
 |Language | nlu.load() reference | Spark NLP Model reference | Type |
 |---------|---------------------|----------------------------|------|
-|Arabic | [ar.ner]TODODODODO) |[arabic_w2v_cc_300d](TODODODODODOD) | Named Entity Recognizer                    |
+|Arabic | [ar.ner](https://nlp.johnsnowlabs.com/2020/12/05/aner_cc_300d_ar.html) |[arabic_w2v_cc_300d](https://nlp.johnsnowlabs.com/2020/12/05/aner_cc_300d_ar.html) | Named Entity Recognizer                    |
 |Arabic | [ar.embed.aner](https://nlp.johnsnowlabs.com/2020/12/05/aner_cc_300d_ar.html) |[aner_cc_300d](https://nlp.johnsnowlabs.com/2020/12/05/aner_cc_300d_ar.html) | Word Embedding                    |
 |Arabic | [ar.embed.aner.300d](https://nlp.johnsnowlabs.com/2020/12/05/aner_cc_300d_ar.html) |[aner_cc_300d](https://nlp.johnsnowlabs.com/2020/12/05/aner_cc_300d_ar.html) | Word Embedding (Alias)                    |
 |Bengali | [bn.stopwords](https://nlp.johnsnowlabs.com/2020/07/14/stopwords_bn.html) |[stopwords_bn](https://nlp.johnsnowlabs.com/2020/07/14/stopwords_bn.html) | Stopwords Cleaner                    |
