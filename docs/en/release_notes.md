@@ -20,18 +20,6 @@ This release features 3 new tutorial notebooks for Open/Closed book question ans
 In Addition NLU 1.1.0 comes with  25+ pretrained models and pipelines in Amharic, Bengali, Bhojpuri, Japanese, and Korean languages from the [amazing Spark2.7.2 release](https://github.com/JohnSnowLabs/spark-nlp/releases/tag/2.7.2)
 Finally NLU now supports running on Spark 2.3 clusters.
 
-#### Pre-Trained Arabic Embeddings
-```python
-nlu.load('ar.embed.aner').predict("مرحبًا من John Snow Labs")
-```
-
-#### Pre-Trained Thai Sentiment Classifier
-```python
-# I love peanut butter and Jelly in Thai
-nlu.load('th.sentiment').predict("C̄hạn chxb ney t̄hạ̀w læa yel lī̀")
->>> The Output
-```
-
 
 ### NLU 1.1.0 New Non-English Models
 |Language | nlu.load() reference | Spark NLP Model reference | Type |
