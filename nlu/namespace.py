@@ -1152,9 +1152,12 @@ class NameSpace():
             'ar.embed' : 'arabic_w2v_cc_300d' ,
             'ar.embed.cbow' : 'arabic_w2v_cc_300d' ,
             'ar.embed.cbow.300d' : 'arabic_w2v_cc_300d' ,
-            "ar.embed.aner ":"aner_cc_300d",
-            "ar.embed.aner.300d ":"aner_cc_300d",
+            "ar.embed.aner":"arabic_w2v_cc_300d",
+            "ar.embed.aner.300d":"arabic_w2v_cc_300d",
+            "ar.embed.glove":"arabic_w2v_cc_300d",
 
+            "ar.ner" :"aner_cc_300d",
+            "ar.ner.aner" :"aner_cc_300d",
 
         },
         'hy': {
@@ -1466,7 +1469,7 @@ class NameSpace():
         },
 
         'bh': {
-            "bh.pos" : " pos_ud_bhtb",
+            "bh.pos" : "pos_ud_bhtb",
             "bh.lemma": "lemma",
             },
         'am' : {

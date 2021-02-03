@@ -379,6 +379,10 @@ class NLUPipeline(BasePipe):
         reorderd_fields_to_rename = fields_to_rename.copy()
         for swap in cols_to_swap:
             name = swap.split('.')[0] + '.result'
+
+            if 'ar_embed_aner_300d' in name : # AR ANER edge edge case
+                reorderd_fields_to_rename.append(swap)
+                continue
             reorderd_fields_to_rename[reorderd_fields_to_rename.index(swap)], reorderd_fields_to_rename[
                 reorderd_fields_to_rename.index(name)] = reorderd_fields_to_rename[
                                                              reorderd_fields_to_rename.index(name)], \

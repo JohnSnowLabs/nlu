@@ -9,7 +9,7 @@
   "inputs": [
     "token"
   ],
-  "type": "embedding",
+  "type": "lemmatizer",
   "file_dependencies": {
     "lemma_file": "aws.todo.com"
   },

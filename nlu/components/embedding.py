@@ -33,7 +33,13 @@ class Embeddings(SparkNLUComponent):
         elif 'embed' in nlu_ref          : annotator_class = 'glove'
 
         if model != None : self.model = model
+
         else :
+
+            # Check if this language has embeddings, if NOT set to multi lang xx!
+            multi_lang_embeds = ['th']
+            if language in multi_lang_embeds : language ='xx'
+
             if 'albert' in annotator_class :
                 from nlu import SparkNLPAlbert
                 if get_default: self.model =  SparkNLPAlbert.get_default_model()

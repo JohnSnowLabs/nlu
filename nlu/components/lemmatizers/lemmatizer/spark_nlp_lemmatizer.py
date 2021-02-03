@@ -18,5 +18,5 @@ class SparkNLPLemmatizer:
     @staticmethod
     def get_default_trainable_model():
         return Lemmatizer \
-            .setInputCols(["token"]) \
+            .setInputCols("token") \
             .setOutputCol("lemma")

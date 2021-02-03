@@ -1,4 +1,4 @@
-__version__ = '1.1.0'
+__version__ = '1.1.1'
 
 import sys
 
@@ -293,6 +293,11 @@ def parse_language_from_nlu_ref(nlu_ref):
     logger.info(f'Parsed Nlu_ref={nlu_ref} as lang=en')
     return 'en'
 
+def resolve_multi_lang_embed(language,sparknlp_reference):
+    if language == 'ar' and 'glove' in sparknlp_reference : return 'arabic_w2v_cc_300d'
+    else : return sparknlp_reference
+
+
 def get_default_component_of_type(missing_component_type,language='en'):
     '''
     This function returns a default component for a missing component type.
@@ -322,9 +327,12 @@ def get_default_component_of_type(missing_component_type,language='en'):
         if missing_component_type == 'ner_converter': return Util('ner_converter')
 
     else:
+        multi_lang =['ar']
         # if there is an @ in the name, we must get some specific pretrained model from the sparknlp reference that should follow after the @
         missing_component_type, sparknlp_reference = missing_component_type.split('@')
         if 'embed' in missing_component_type:
+            # TODO RESOLVE MULTI LANG EMBEDS
+            if language in multi_lang : sparknlp_reference = resolve_multi_lang_embed(language,sparknlp_reference)
             return construct_component_from_identifier(language=language, component_type='embed',
                                                        nlp_ref=sparknlp_reference)
         if 'pos' in missing_component_type or 'ner' in missing_component_type:
@@ -425,6 +433,7 @@ def parse_component_data_from_name_query(nlu_reference, detect_lang=False):
         component_type = infos[0]
         dataset = infos[1]
         component_embeddings = infos[1]
+
 
     logger.info(
         'For input nlu_ref %s detected : \n lang: %s  , component type: %s , component dataset: %s , component embeddings  %s  ',
