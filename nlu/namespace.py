@@ -1175,7 +1175,7 @@ class NameSpace():
         },
         'bn': {
             'bn.stopwords': 'stopwords_bn',
-            "bn.lemma" :" lemma",
+            "bn.lemma" :"lemma",
             "bn.pos": "pos_msri",
 
 
@@ -1305,7 +1305,7 @@ class NameSpace():
             'ja.ner.ud_gsd' : 'ner_ud_gsd_glove_840B_300d' , # default ner ud_gsd
             'ja.ner.ud_gsd.glove_840B_300D' : 'ner_ud_gsd_glove_840B_300d' ,
             'ja.pos.ud_gsd' : 'pos_ud_gsd' ,
-            "ja.lemma:": "lemma",
+            "ja.lemma": "lemma",
 
         },
         'la': {
