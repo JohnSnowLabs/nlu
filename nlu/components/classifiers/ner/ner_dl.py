@@ -11,6 +11,7 @@ class NERDL:
             .setIncludeConfidence(True)
 
 
+
     @staticmethod
     def get_pretrained_model(name, language):
         return NerDLModel.pretrained(name,language) \

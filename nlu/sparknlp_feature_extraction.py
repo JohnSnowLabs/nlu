@@ -1,5 +1,17 @@
 from functools import reduce
+"""
+Contains methods to apply on pandas Dataframes, so called Extractors which are meant to run on the result of a SparkNLP pipeline .to_pandas() result`
 
+There is one extractor for every Annotatornnotatyor class in Spark NLP. 
+Each extractor is meant to applied on a pandas df, running df.apply(extractor)
+
+Analogus Spark based API <<<TO BE IMPLEMENTED>>>
+
+All extractors leverage  extract_base_sparknlp_features 
+Most extractors provide configurable metadata and all of them provide a full_metadata which gets every key/value pair frrom the metadata field
+
+
+"""
 
 def extract_base_sparknlp_features(row, key_prefix, extract_positions = True, extract_result = True, extract_annotator_type=True, extract_embeddings = True):
     """
@@ -49,7 +61,6 @@ def extract_sparknlp_full_metadata(row, meta_key_prefix, meta_key_blacklist=[]):
     extract_val_from_dic_list_to_list = lambda key : lambda x,y :  x+ [y[key]]
     # List of lambda expression, on for each Key to be extracted. (TODO balcklisting?)
     dict_value_extractors = list(map(extract_val_from_dic_list_to_list,keys_in_metadata))
-    # FUCKINGNG CLOSOISURTUREEE MAGICKZKZZ YEAAH IT PICKZZ UP DA VARUIBLZZ AND GIVES ME A FUCN WITH VARIBLZ
     # reduce list of dicts with same struct and a common key to a list of values for thay key. Leveraging closuer for meta_dict_list
     reduce_dict_list_to_values = lambda t : reduce(t,metadatas_dict_list,[])
     # list of lists, where each list is corrosponding to all values in the previous dict list
