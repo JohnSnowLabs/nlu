@@ -1177,7 +1177,8 @@ class NameSpace():
             'bn.stopwords': 'stopwords_bn',
             "bn.lemma" :"lemma",
             "bn.pos": "pos_msri",
-
+            'bn.ner':'ner_jifs_glove_840B_300d',
+            'bn.ner.glove':'ner_jifs_glove_840B_300d',
 
     },
         'br': {
@@ -1264,6 +1265,8 @@ class NameSpace():
             'hi.stopwords': 'stopwords_hi',
             'hi.lemma': 'lemma',
             'hi.pos': 'pos_ud_hdtb',
+            'hi.embed' : 'hindi_cc_300d'
+
 
         },
         'hu': {
