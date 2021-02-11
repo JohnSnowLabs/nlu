@@ -672,6 +672,7 @@ def construct_component_from_pipe_identifier(language, nlp_ref, nlu_ref,path=Non
         elif isinstance(component, Stemmer):
             constructed_components.append(nlu.stemmer.Stemmer(model=component))
         elif isinstance(component, (NerDLModel, NerCrfModel)):
+            component.setIncludeConfidence(True) # Pipes dont always extrat confidences, so here we enable all pipes to extract confidences manually
             constructed_components.append(nlu.Classifier(model=component, annotator_class='ner'))
         elif isinstance(component, LanguageDetectorDL):
             constructed_components.append(nlu.Classifier(model=component, annotator_class='language_detector'))
