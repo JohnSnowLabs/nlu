@@ -1,101 +1,127 @@
 from dataclasses import dataclass
 
-@dataclass
-class SparkNLPExtractorConfig:
-    """
-    Universal Configuration class for defining what data to extract from a Spark NLP annotator.
-    These extractor configs can be passed to any extractor NLU defined for Spark-NLP.
-    Setting a boolean config to false, results in the extractor NOT returning that field from the Annotator outputs
-    """
-    output_col_prefix     :str        # Prefix used for naming output columns
-    get_begin             :bool       # Get Annotation beginnings
-    get_end               :bool       # Get Annotation ends
-    get_embeds            :bool       # Get Annotation Embeds
-    get_result            :bool       # Get Annotation results
-    get_meta              :bool       # get only relevant feature from meta map (Hard coded)
-    get_full_meta         :bool       # get all keys and vals from base emta map
-    get_annotator_type    :bool       # Get Annotator Type
-    unpack_single_list    :bool       # Should unpack the result field. Only set true for annotators that return exactly one element in their result, like Document classifier! This will convert list with just 1 element into just their element in the final pandas representation
-    meta_white_list       :List[str]  # Whitelist some keys which should be fetched from meta map
-    meta_black_list       :List[str]  # black_list some keys which should not be fetched from meta map
-    # { # dict of finisher extractor methods, which will be applied to specific fields aber finishing up base extraction
-    #   'field' : extractor_method
-    # }
-def get_default_full_extractor_config(output_col_prefix='DEFAULT'):
+"""
+This file contains methods to get pre-defined configurations for every annotator.
+Extractor_resolver.py should be used to resolve SparkNLP Annotator classes to methods 
+in this file, which return the corrosponding configs that need to be passed to 
+the master_extractor() call.
+
+This file is where all the in extractor_base_data_classes.py Dataclasses are combined with the 
+extractors defined in extractor_methods.py.
+
+
+"""
+
+def default_full_config(output_col_prefix='DEFAULT'):
     return SparkNLPExtractorConfig(
         output_col_prefix   = output_col_prefix,
+        get_positions       = True,
         get_begin           = True,
         get_end             = True,
         get_embeds          = True,
         get_result          = True,
         get_meta            = True,
         get_full_meta       = True,
-        meta_white_list = [],
-        meta_black_list      = [],
         get_annotator_type  = True,
-        unpack_single_list  = False
     )
 
-def get_default_document_extractor_config():
+def default_document_config():
     return SparkNLPExtractorConfig(
         output_col_prefix   = 'document',
-        get_begin           = False,
-        get_end             = False,
-        get_embeds          = False,
         get_result          = True,
-        get_meta            = False,
-        get_full_meta       = False,
-        meta_white_list = [],
-        meta_black_list      = [],
-        get_annotator_type  = False,
-        unpack_single_list  = False
     )
 
 
-def get_default_word_embedding_extractor_config():
+def default_NER_config(output_col_prefix='NER'):
+    """Extracts NER tokens withouth positions, just the IOB tags,confidences and classified tokens """
     return SparkNLPExtractorConfig(
-        output_col_prefix   = 'word_embedding',
-        get_begin           = False,
-        get_end             = False,
-        get_embeds          = False,
-        get_result          = True,
-        get_meta            = False,
-        get_full_meta       = False,
-        meta_white_list = [],
-        meta_black_list      = [],
-        get_annotator_type  = False,
-        unpack_single_list  = False
-    )
-
-def get_default_NER_extractor_config():
-    return SparkNLPExtractorConfig(
-        output_col_prefix   = 'NER',
-        get_begin           = False,
-        get_end             = False,
-        get_embeds          = False,
+        output_col_prefix   = output_col_prefix,
         get_result          = True,
         get_meta            = True,
-        get_full_meta       = False,
         meta_white_list     = ['confidence'],
-        meta_black_list     = [],
-        get_annotator_type  = False,
-        unpack_single_list  = False
+        name                = 'NER with IOB tags and confidences for them. ',
+        description         = 'NER with IOB tags and confidences for them. ',
     )
 
-
-
-def get_default_named_word_embedding_extractor_config(output_col_prefix='DEFAULT'):
-    """Prefixes _word_embedding to input name"""
+def default_language_classifier_config(output_col_prefix='language'):
     return SparkNLPExtractorConfig(
-        output_col_prefix   = output_col_prefix + '_word',
-        get_begin           = False,
-        get_end             = False,
-        get_embeds          = False,
+        output_col_prefix   = output_col_prefix,
         get_result          = True,
-        get_meta            = False,
-        get_full_meta       = False,
-        meta_black_list      = [],
-        meta_white_list = [],
-        get_annotator_type  = False,
-        unpack_single_list  = False
+        get_meta            = True,
+        get_full_meta       = True,
+        pop_result_list     = True,
+        name                = 'Only keep maximum language confidence',
+        description         = 'Instead of returning the confidence for every language the Classifier was traiend on, only the maximum confidence will be returned',
+        meta_data_extractor = SparkNLPExtractor(meta_extract_language_classifier_max_confidence,
+                                                'Extract the maximum confidence from all classified languages and drop the others. TODO top k results',
+                                                'Keep only top language confidence')
     )
+def default_only_result_config(output_col_prefix):
+    return SparkNLPExtractorConfig(
+        output_col_prefix   = output_col_prefix,
+        get_result          = True,
+        name                = 'Default result extractor',
+        description         = 'Just get the result field'
+    )
+def default_only_embedding_config(output_col_prefix):
+    return SparkNLPExtractorConfig(
+        output_col_prefix   = output_col_prefix,
+        get_embeds          = True,
+        name                = 'Default Embed extractor',
+        description         = 'Just get the Embed field'
+    )
+
+
+def default_only_result_and_positions_config(output_col_prefix):
+    return SparkNLPExtractorConfig(
+        output_col_prefix   = output_col_prefix,
+        get_result          = True,
+        get_positions       = True,
+        name                = 'Positional result only default',
+        description         = 'Get the result field and the positions'
+    )
+
+def default_tokenizer_config(output_col_prefix='token'):
+    return default_only_result_config(output_col_prefix)
+
+def default_POS_config(output_col_prefix='POS_tag'):
+    return default_only_result_config(output_col_prefix)
+
+
+def default_sentence_detector_DL_config(output_col_prefix='sentence'):
+    return default_only_result_config(output_col_prefix)
+
+def default_chunker_config(output_col_prefix='matched_chunk'):
+    return default_only_result_config(output_col_prefix)
+
+
+def default_ner_converter_config(output_col_prefix='ner_chunk'):
+    return default_only_result_config(output_col_prefix)
+
+# RLY TR%?
+def default_T5_config(output_col_prefix='T5'):
+    return default_only_result_config(output_col_prefix)
+
+
+
+# EMBEDS
+def default_sentence_embedding_config(output_col_prefix='sentence_embedding'):
+    return default_only_embedding_config(output_col_prefix)
+
+def default_chunk_embedding_config(output_col_prefix='chunk_embedding'):
+    return default_only_embedding_config(output_col_prefix)
+
+def default_word_embedding_config(output_col_prefix='word_embedding'):
+    return default_only_embedding_config(output_col_prefix)
+
+# TOKEN CLEANERS
+
+
+
+
+def default_stopwords_config(output_col_prefix='stopwords_removed'):
+    return default_only_result_config(output_col_prefix)
+def default_lemma_config(output_col_prefix='lemma'):
+    return default_only_result_config(output_col_prefix)
+def default_stemm_config(output_col_prefix='stemm'):
+    return default_only_result_config(output_col_prefix)
