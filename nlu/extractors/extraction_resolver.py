@@ -9,61 +9,134 @@ Every Annotator should have 2 configs. Some might offor multuple configs/method 
 
 """
 from sparknlp.annotator import *
-
-annotator_levels_approach_based = {
-    'document': [DocumentAssembler, Chunk2Doc,
-                 YakeModel,
-                 ],
-    'sentence': [SentenceDetector, SentenceDetectorDLApproach, ],
-    'chunk': [Chunker, ChunkEmbeddings,  ChunkTokenizer, Token2Chunk, TokenAssembler,
-              NerConverter, Doc2Chunk,NGramGenerator],
-    'token': [ NerCrfApproach, NerDLApproach,
-               PerceptronApproach,
-               Stemmer,
-               ContextSpellCheckerApproach,
-               nlu.WordSegmenter,
-               Lemmatizer, TypedDependencyParserApproach, DependencyParserApproach,
-               Tokenizer, RegexTokenizer, RecursiveTokenizer
-        ,StopWordsCleaner, DateMatcher, TextMatcher, BigTextMatcher, MultiDateMatcher,
-               WordSegmenterApproach
-               ],
-    # sub token is when annotator is token based but some tokens may be missing since dropped/cleanes
-    # are matchers chunk or sub token?
-    # 'sub_token': [StopWordsCleaner, DateMatcher, TextMatcher, BigTextMatcher, MultiDateMatcher],
-    # these can be document or sentence
-    'input_dependent': [ViveknSentimentApproach, SentimentDLApproach, ClassifierDLApproach,
-                        LanguageDetectorDL,
-                        MultiClassifierDLApproach,  SentenceEmbeddings, NorvigSweetingApproach,
-                        ],
-
-    # 'unclassified': [Yake, Ngram]
+from nlu.extractors.extractor_configs import *
+from nlu.extractors.extractor_base_data_classes import *
+d = {
+    NerConverter : {
+        'default': default_NER_config ,
+    },
+    MultiClassifierDLModel : {
+        'default': '',# TODO
+    },
+    PerceptronModel : {
+        'default': default_POS_config,
+    },
+    # ClassifierDl : {
+    #     'default': '',# TODO
+    # },
+    ClassifierDLModel : {
+        'default': '',# TODO
+    },
+    BertEmbeddings : {
+        'default': default_word_embedding_config,
+    },
+    AlbertEmbeddings : {
+        'default': default_word_embedding_config,
+    },
+    XlnetEmbeddings : {
+        'default': default_word_embedding_config,
+    },
+    WordEmbeddingsModel : {
+        'default': default_word_embedding_config,
+    },
+    ElmoEmbeddings : {
+        'default': default_word_embedding_config,
+    },
+    BertSentenceEmbeddings : {
+        'default': default_sentence_embedding_config,
+    },
+    UniversalSentenceEncoder : {
+        'default': default_sentence_embedding_config,
+    },
+    TokenizerModel : {
+        'default': default_tokenizer_config,
+    },
+    DocumentAssembler : {
+        'default': default_document_config,
+    },
+    SentenceDetectorDLModel : {
+        'default': default_sentence_detector_DL_config,
+    },
+    SentenceDetector : {
+        'default': '',# TODO
+    },
+    ContextSpellCheckerModel : {
+        'default': '',# TODO
+    },
+    SymmetricDeleteModel : {
+        'default': '',# TODO
+    },
+    NorvigSweetingModel : {
+        'default': '',# TODO
+    },
+    LemmatizerModel : {
+        'default': '',# TODO
+    },
+    NormalizerModel : {
+        'default': '',# TODO
+    },
+    Stemmer : {
+        'default': default_stemm_config,# TODO
+    },
+    NerDLModel : {
+        'default': '',# TODO
+    },
+    NerCrfModel : {
+        'default': '',# TODO
+    },
+    LanguageDetectorDL : {
+        'default': '',# TODO
+    },
+    DependencyParserModel : {
+        'default': '',# TODO
+    },
+    TypedDependencyParserModel : {
+        'default': '',# TODO
+    },
+    SentimentDLModel : {
+        'default': '',# TODO
+    },
+    SentimentDetectorModel : {
+        'default': '',# TODO
+    },
+    ViveknSentimentModel : {
+        'default': '',# TODO
+    },
+    Chunker : {
+        'default': '',# TODO
+    },
+    # NGram : {
+    #     'default': '',# TODO
+    # },
+    ChunkEmbeddings : {
+        'default': '',# TODO
+    },
+    StopWordsCleaner : {
+        'default': default_stopwords_config,# TODO
+    },
+    TextMatcherModel : {
+        'default': '',# TODO
+    },
+    RegexMatcherModel : {
+        'default': '',# TODO
+    },
+    # DateMatcher : {
+    #     'default': default_'',# TODO
+    # },
+    MultiDateMatcher : {
+        'default': '',# TODO
+    },
+    T5Transformer : {
+        'default': '',# TODO
+    },
+    MarianTransformer : {
+        'default': '',# TODO
+    }
 }
 
 
-annotator_levels_model_based = {
-    'document': [],
-    'sentence': [SentenceDetectorDLModel, ],
-    'chunk': [ChunkTokenizerModel, ChunkTokenizerModel, ],
-    'token': [ContextSpellCheckerModel, AlbertEmbeddings, BertEmbeddings, ElmoEmbeddings, WordEmbeddings,
-              XlnetEmbeddings, WordEmbeddingsModel,
-              NerDLModel, NerCrfModel, PerceptronModel, SymmetricDeleteModel, NorvigSweetingModel,
-              ContextSpellCheckerModel,
-              TypedDependencyParserModel, DependencyParserModel,
-              RecursiveTokenizerModel,
-              TextMatcherModel, BigTextMatcherModel, RegexMatcherModel,
-              WordSegmenterModel
-              ],
-    # 'sub_token': [TextMatcherModel, BigTextMatcherModel, RegexMatcherModel, ],
-    'input_dependent': [BertSentenceEmbeddings, UniversalSentenceEncoder, ViveknSentimentModel,
-                        SentimentDLModel, MultiClassifierDLModel, MultiClassifierDLModel, ClassifierDLModel,
-                        MarianTransformer,T5Transformer
 
-                        ],
-}
 
-all_embeddings = {
-    'token' : [AlbertEmbeddings, BertEmbeddings, ElmoEmbeddings, WordEmbeddings,
-               XlnetEmbeddings,WordEmbeddingsModel],
-    'input_dependent' : [SentenceEmbeddings, UniversalSentenceEncoder,BertSentenceEmbeddings]
 
-}
+
+

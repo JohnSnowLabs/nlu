@@ -86,7 +86,7 @@ class SparkNLPExtractorConfig:
     meta_white_list : List[str]
           Whitelist some keys which should be fetched from meta map. If this is not [], meta_black_list will be ignored
     meta_black_list : List[str]
-          black_list some keys which should not be fetched from meta map
+          black_list some keys which should not be fetched from meta map. Will only be used, when meta_white_list=[], otherwise, this setting will be ignored.
     meta_data_extractor : List[str]
           An extractor is a method that takes in [Dict[str,Any]] and returs [Any]
     begin_extractor : SparkNLPExtractor

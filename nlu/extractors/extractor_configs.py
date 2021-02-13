@@ -11,6 +11,8 @@ extractors defined in extractor_methods.py.
 
 
 """
+from nlu.extractors.extractor_base_data_classes import *
+
 
 def default_full_config(output_col_prefix='DEFAULT'):
     return SparkNLPExtractorConfig(
