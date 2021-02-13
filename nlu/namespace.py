@@ -105,7 +105,7 @@ class NameSpace():
         'clean.pattern': ('clean_pattern','pipe'),
         'clean.slang': ('clean_slang','pipe'),
         # 'spell': ('check_spelling','pipe'),  # bad spell_checker,
-        'spell': ('check_spelling_dl','pipe'),  # default spell 
+        'spell': ('spellcheck_dl','model'),  # default spell
         'sentiment': ('analyze_sentiment','pipe'),
         'emotion': ('classifierdl_use_emotion','model'), # default emotion model
 
@@ -1175,9 +1175,10 @@ class NameSpace():
         },
         'bn': {
             'bn.stopwords': 'stopwords_bn',
-            "bn.lemma" :" lemma",
+            "bn.lemma" :"lemma",
             "bn.pos": "pos_msri",
-
+            'bn.ner':'ner_jifs_glove_840B_300d',
+            'bn.ner.glove':'ner_jifs_glove_840B_300d',
 
     },
         'br': {
@@ -1264,6 +1265,8 @@ class NameSpace():
             'hi.stopwords': 'stopwords_hi',
             'hi.lemma': 'lemma',
             'hi.pos': 'pos_ud_hdtb',
+            'hi.embed' : 'hindi_cc_300d'
+
 
         },
         'hu': {
@@ -1305,7 +1308,7 @@ class NameSpace():
             'ja.ner.ud_gsd' : 'ner_ud_gsd_glove_840B_300d' , # default ner ud_gsd
             'ja.ner.ud_gsd.glove_840B_300D' : 'ner_ud_gsd_glove_840B_300d' ,
             'ja.pos.ud_gsd' : 'pos_ud_gsd' ,
-            "ja.lemma:": "lemma",
+            "ja.lemma": "lemma",
 
         },
         'la': {
@@ -1439,7 +1442,7 @@ class NameSpace():
         }
 ,
 
-        'et' : {
+        'et': {
             'et.lemma' : 'lemma',
             'et.pos' : 'pos_ud_edt',
         },

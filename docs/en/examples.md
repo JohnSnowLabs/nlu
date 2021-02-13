@@ -1118,7 +1118,7 @@ The language references must be [ISO language codes](https://en.wikipedia.org/wi
 `nlu.load('en.translate_to.fr')`
 
 ```python
-translate_pipe = nlu.load('en.translate_to.fr')
+translate_pipe = nlu.load('en.translate_to.de')
 df = translate_pipe.predict('Billy likes to go to the mall every sunday')
 df
 ```

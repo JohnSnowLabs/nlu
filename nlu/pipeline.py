@@ -440,8 +440,10 @@ class NLUPipeline(BasePipe):
                         if key == 'sentence' and 'language' in field: continue
                         if key == 'chunk' and 'entities' in field: continue
                         if key == 'sentence' and 'entities' in field: continue
-                        if field == 'entities.metadata' or field =='ner.metadata': new_fields.append(new_field.replace('metadata','confidence'))
-                        else : new_fields.append(new_field.replace('metadata', key + '_confidence'))
+                        if field == 'entities.metadata' : new_fields.append(new_field.replace('metadata','class'))
+
+                        if field =='ner.metadata': new_fields.append(new_field.replace('metadata','confidence'))
+                        elif 'entities' not in field: new_fields.append(new_field.replace('metadata', key + '_confidence'))
                         if new_fields[-1] == 'entities_entity': new_fields[-1] = 'ner_tag'
                         ptmp = ptmp.withColumn(new_fields[-1],pyspark_col(('res.' + str(fields_to_rename.index(field)) + '.' + key)))
 
