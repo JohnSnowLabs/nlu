@@ -105,7 +105,7 @@ class NameSpace():
         'clean.pattern': ('clean_pattern','pipe'),
         'clean.slang': ('clean_slang','pipe'),
         # 'spell': ('check_spelling','pipe'),  # bad spell_checker,
-        'spell': ('check_spelling_dl','pipe'),  # default spell 
+        'spell': ('spellcheck_dl','model'),  # default spell
         'sentiment': ('analyze_sentiment','pipe'),
         'emotion': ('classifierdl_use_emotion','model'), # default emotion model
 
@@ -1442,7 +1442,7 @@ class NameSpace():
         }
 ,
 
-        'et' : {
+        'et': {
             'et.lemma' : 'lemma',
             'et.pos' : 'pos_ud_edt',
         },
