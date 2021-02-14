@@ -75,8 +75,12 @@ d = {
     NormalizerModel : {
         'default': '',# TODO
     },
+    DocumentNormalizer : {
+        'default' # TODO
+    }
+    ,
     Stemmer : {
-        'default': default_stemm_config,# TODO
+        'default': default_stemm_config,
     },
     NerDLModel : {
         'default': '',# TODO
@@ -105,9 +109,9 @@ d = {
     Chunker : {
         'default': '',# TODO
     },
-    # NGram : {
-    #     'default': '',# TODO
-    # },
+    NGramGenerator : {
+        'default': '',# TODO
+    },
     ChunkEmbeddings : {
         'default': '',# TODO
     },
@@ -131,6 +135,9 @@ d = {
     },
     MarianTransformer : {
         'default': '',# TODO
+    }
+    PretrainedPipeline : {
+        'default' : '', #TODO RLY?
     }
 }
 
