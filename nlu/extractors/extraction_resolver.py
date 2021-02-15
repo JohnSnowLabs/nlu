@@ -70,7 +70,7 @@ d = {
         'default': '',# TODO
     },
     LemmatizerModel : {
-        'default': '',# TODO
+        'default': default_lemma_config,
     },
     NormalizerModel : {
         'default': '',# TODO
@@ -98,13 +98,13 @@ d = {
         'default': '',# TODO
     },
     SentimentDLModel : {
-        'default': '',# TODO
+        'default': default_sentiment_dl_config,
     },
     SentimentDetectorModel : {
         'default': '',# TODO
     },
     ViveknSentimentModel : {
-        'default': '',# TODO
+        'default': default_sentiment_vivk_config,
     },
     Chunker : {
         'default': '',# TODO
@@ -113,10 +113,10 @@ d = {
         'default': '',# TODO
     },
     ChunkEmbeddings : {
-        'default': '',# TODO
+        'default': default_chunk_embedding_config,# TODO
     },
     StopWordsCleaner : {
-        'default': default_stopwords_config,# TODO
+        'default': default_stopwords_config,
     },
     TextMatcherModel : {
         'default': '',# TODO

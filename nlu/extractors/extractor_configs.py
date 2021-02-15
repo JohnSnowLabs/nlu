@@ -127,7 +127,7 @@ def default_chunker_config(output_col_prefix='matched_chunk'):
 def default_ner_converter_config(output_col_prefix='ner_chunk'):
     return default_only_result_config(output_col_prefix)
 
-# RLY TR%?
+# TODO double check. Also Model depended T5
 def default_T5_config(output_col_prefix='T5'):
     return default_only_result_config(output_col_prefix)
 
