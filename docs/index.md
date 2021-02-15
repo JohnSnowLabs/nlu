@@ -26,7 +26,7 @@ data:
        - title: Powerful One-Liners
          image: 
             src: /assets/images/powerfull_one.svg
-         excerpt: Hundreds of NLP models in tens of languages are at your fingertips with just one line of code
+         excerpt: Over a thousand NLP models in hundreds of languages are at your fingertips with just one line of code
        - title: Elegant Python
          image: 
             src: /assets/images/elegant_python.svg
