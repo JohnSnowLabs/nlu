@@ -67,6 +67,8 @@ class SparkNLPExtractorConfig:
           Get Annotation results
     get_meta : bool
           Should get meta any meta at all? IF THIS FALSE, get_full_meta, whitelist and extractors will be ignored.
+    get_sentence_origin : bool.
+          Should extract from which sentence a prediction was generated from. If output level is Document, this field is irrelevant and should be set to False.
     get_full_meta : bool
           Get all keys and vals from base meta map. If this is true, white/blacklist will be ignored
     get_annotator_type : bool
@@ -86,7 +88,7 @@ class SparkNLPExtractorConfig:
     meta_white_list : List[str]
           Whitelist some keys which should be fetched from meta map. If this is not [], meta_black_list will be ignored
     meta_black_list : List[str]
-          black_list some keys which should not be fetched from meta map. Will only be used, when meta_white_list=[], otherwise, this setting will be ignored.
+          black_list some keys which should not be fetched from meta map
     meta_data_extractor : List[str]
           An extractor is a method that takes in [Dict[str,Any]] and returs [Any]
     begin_extractor : SparkNLPExtractor
@@ -101,12 +103,13 @@ class SparkNLPExtractorConfig:
     """
     ## TODO pretty __repr__ or __to__string() method! Leverage  SparkNLPExtractor fields
     output_col_prefix   :str
-    get_positions       :bool              = field(default = False) # todo implement in ex
+    get_positions       :bool              = field(default = False)
     get_begin           :bool              = field(default = False)
     get_end             :bool              = field(default = False)
     get_embeds          :bool              = field(default = False)
     get_result          :bool              = field(default = False)
     get_meta            :bool              = field(default = False)
+    get_sentence_origin :bool              = field(default = False) # Should extract from which sentence a prediction was generated from. If output level is Document, this field is irrelevant and should be set to false
     get_full_meta       :bool              = field(default = False)
     get_annotator_type  :bool              = field(default = False)
     pop_result_list     :bool              = field(default = False) # TODO implement in ex
