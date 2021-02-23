@@ -1,4 +1,3 @@
-
 """
 This file contains methods to get pre-defined configurations for every annotator.
 Extractor_resolver.py should be used to resolve SparkNLP Annotator classes to methods
@@ -10,6 +9,8 @@ extractors defined in extractor_methods.py.
 
 
 """
+from import nlu.extractors.extractor_base_data_classes import extractor_base_data_classes.
+import nlu.extractors.extractor_base_data_classes
 
 def default_full_config(output_col_prefix='DEFAULT'):
     return SparkNLPExtractorConfig(
