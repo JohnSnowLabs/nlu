@@ -9,8 +9,8 @@ extractors defined in extractor_methods.py.
 
 
 """
-from import nlu.extractors.extractor_base_data_classes import extractor_base_data_classes.
-import nlu.extractors.extractor_base_data_classes
+
+from nlu.extractors.extractor_base_data_classes import SparkNLPExtractor,SparkNLPExtractorConfig
 
 def default_full_config(output_col_prefix='DEFAULT'):
     return SparkNLPExtractorConfig(
