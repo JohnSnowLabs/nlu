@@ -1,4 +1,5 @@
 import nlu
+import nlu.component_resolution
 from nlu.pipeline import NLUPipeline
 
 import logging
@@ -165,7 +166,7 @@ class PipelineQueryVerifier():
 
         if not ner_converter_exists and ner_exists:
             logger.info('Adding NER Converter to pipeline')
-            pipe.add(nlu.get_default_component_of_type(('ner_converter')))
+            pipe.add(nlu.component_resolution.get_default_component_of_type(('ner_converter')))
 
         return pipe
 
@@ -185,8 +186,10 @@ class PipelineQueryVerifier():
             components_to_add = []
             # Create missing components
             for missing_component in missing_components:
-                if 'embedding' in missing_component or 'token' in missing_component: components_to_add.append(nlu.get_default_component_of_type(missing_component,language= pipe.lang))
-                else: components_to_add.append(nlu.get_default_component_of_type(missing_component))
+                if 'embedding' in missing_component or 'token' in missing_component: components_to_add.append(
+                    nlu.component_resolution.get_default_component_of_type(missing_component, language= pipe.lang))
+                else: components_to_add.append(
+                    nlu.component_resolution.get_default_component_of_type(missing_component))
 
             logger.info('Resolved for missing components the following NLU components : %s', str(components_to_add))
 

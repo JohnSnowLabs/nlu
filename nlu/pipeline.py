@@ -1,4 +1,7 @@
 import logging
+
+import nlu.component_resolution
+
 logger = logging.getLogger('nlu')
 import nlu
 import nlu.pipe_components
@@ -64,7 +67,7 @@ class BasePipe(dict):
         '''
         if nlu_reference == 'default_name' : return
         nlu_reference = nlu_reference.replace('train.', '')
-        model_meta = nlu.extract_classifier_metadata_from_nlu_ref(nlu_reference)
+        model_meta = nlu.component_resolution.extract_classifier_metadata_from_nlu_ref(nlu_reference)
         can_use_name = False
         new_output_name = model_meta[0]
         i = 0
@@ -1216,7 +1219,7 @@ class NLUPipeline(BasePipe):
             for component in self.pipe_components:
                 if component.component_info.output_level == 'chunk': chunk_provided = True
             if chunk_provided == False:
-                self.pipe_components.append(nlu.get_default_component_of_type('chunk'))
+                self.pipe_components.append(nlu.component_resolution.get_default_component_of_type('chunk'))
                 # this could break indexing..
 
                 self = nlu.pipeline_logic.PipelineQueryVerifier.check_and_fix_nlu_pipeline(self)
