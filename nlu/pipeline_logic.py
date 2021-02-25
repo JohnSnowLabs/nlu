@@ -77,10 +77,45 @@ class PipelineQueryVerifier():
         return component_list
 
     @staticmethod
+    def extract_storage_ref(component):
+        """Extract storage ref from a NLU component which embelished a Spark NLP Annotator"""
+        return component.model.extractParamMap()[component.model.getParam('storageRef')]
+
+    @staticmethod
+    def has_storage_ref(component):
+        """Check if a storage ref is defined on the Spark NLP Annotator embelished by the NLU Component"""
+        for k,_ in component.extractParamMap().items():
+            if k.name =='storageRef' : return True
+        return False
+    @staticmethod
+    def check_if_storage_ref_is_satisfied(component_to_check, pipe, storage_ref_to_find):
+        """Check if any other component in the pipeline has same storage ref as the input component"""
+
+        for c in pipe.pipe_components:
+            if component_to_check.component_info.name != c.component_info.name:
+                if PipelineQueryVerifier.has_storage_ref(c) :
+                    if PipelineQueryVerifier.extract_storage_ref(c) == storage_ref_to_find :
+                        # Both components have Different Names AND their Storage Ref Matches up AND they both take in tokens -> Match
+                        if 'token' in c.component_info.inputs and 'token' in component_to_check.component_info.inputs: return True
+                        # component_to_check requires Sentence_embedding but the Matching Storage_ref component takes in Token
+                        #   -> Convert the Output of the Match to SentenceLevel and feed the component_to_cheeck to the new component
+                        # 1. Figure out if component is Word/Sent/Chunk/Doc level
+                        return 'yay'
+
+
+    @staticmethod
     def get_missing_required_features(pipe: NLUPipeline):
         '''
         Takes in a NLUPipeline and returns a list of missing  feature types types which would cause the pipeline to crash if not added
-        If it is some kind of model that uses embeddings, it will check the metadata for that model and return a string with moelName@spark_nlp_embedding_reference format
+        If it is some kind of model that uses embeddings, it will check the metadata for that model
+        and return a string with moelName@spark_nlp_storage_ref format
+
+        It works in the following schema
+
+        1. Get all feature provisions from the pipeline
+        2. Get all feature requirements for pipeline
+        3. Get missing requirements, by substracting provided from requirements, what is left are the missing features
+
         '''
         logger.info('Resolving missing components')
         pipe_requirements = [['sentence',
@@ -92,23 +127,32 @@ class PipelineQueryVerifier():
             trainable = PipelineQueryVerifier.is_untrained_model(component)
             if trainable : pipe.has_trainable_components = True
             # 1. Get all feature provisions from the pipeline
-            logger.info("Getting Missing Feature for component =%s", component.component_info.name)
+            logger.info(f"Getting Missing Feature for component={component.component_info.name}",)
             if not component.component_info.inputs == component.component_info.outputs:
                 pipe_provided_features.append(
                     component.component_info.outputs)  # edge case for components that provide token and require token and similar cases.
             # 2. get all feature requirements for pipeline
             if PipelineQueryVerifier.has_embeddings_requirement(component) and not trainable:
+                #check if storage_ref is satisfied by another component in the pipe
+
                 # special case for models with embedding requirements. we will modify the output string which then will be resolved by the default component resolver (which will get the correct embedding )
                 if component.component_info.type == 'chunk_embeddings':
                     # there is no ref for Chunk embeddings, so we have a special case here and need to define a default value that will always be used for chunkers
-                    sparknlp_embeddings_requirement_reference = 'glove'
+                    storage_ref = 'glove'
                 else:
-                    sparknlp_embeddings_requirement_reference = component.model.extractParamMap()[
-                        component.model.getParam('storageRef')]
+                    # Todo storageRefResolution() here. StorageRef on Model must Match a storage Ref on a Embedding generator of same lang in the pipe!
+                    storage_ref = PipelineQueryVerifier.extract_storage_ref(component)
+
+                    check_if_storage_ref_is_satisfied(component,pipe,storage_ref)
+                    check_if_storage_ref_satisfied_and_format_is_correct(component, pipe, storage_ref)
+                    # If there is a correct storage_ref, but it is of type word_emb and required is sent_emb then we add a converter
+                    checK_if_storage_ref_can_be_satisfied_by_conversion()
+                    # add_word_to_sent_conversion_and_update_component_inputs(embedding_to_convert, components_to_update)
+
                 inputs_with_sparknlp_reference = []
                 for feature in component.component_info.inputs:
                     if 'embed' in feature:
-                        inputs_with_sparknlp_reference.append(feature + '@' + sparknlp_embeddings_requirement_reference)
+                        inputs_with_sparknlp_reference.append(feature + '@' + storage_ref)
                     else:
                         inputs_with_sparknlp_reference.append(feature)
                 pipe_requirements.append(inputs_with_sparknlp_reference)
@@ -171,12 +215,26 @@ class PipelineQueryVerifier():
 
     @staticmethod
     def check_and_fix_nlu_pipeline(pipe: NLUPipeline):
+        """Check if the NLU pipeline is ready to transform data and return it.
+        If all dependencies not satisfied, returns a new NLU pipeline where dependencies and sub-dependencies are satisfied.
+
+        Checks and resolves in the following order :
+
+
+        1. Get a reference list of input features missing for the current pipe
+        2. Resolve the list of missing features by adding new  Annotators to pipe
+        3. Add NER Converter if required (When there is a NER model)
+        4. Fix order and output column names
+        5.
+
+        :param pipe:
+        :return:
+        """
         # main entry point for Model stacking withouth pretrained pipelines
         # requirements and provided features will be lists of lists
         all_features_provided = False
         while all_features_provided == False:
-            # After new components have been added, we must loop agan and check for the new components if requriements are met
-            # OR we implement a function caled "Add components with requirements". That one needs to know though, which requirements are already met ...
+            # After new components have been added, we must loop again and check for the new components if requriements are met
 
             # Find missing components
             missing_components = PipelineQueryVerifier.get_missing_required_features(pipe)
@@ -196,6 +254,7 @@ class PipelineQueryVerifier():
                 logger.info('adding %s=', new_component.component_info.name)
 
             # 3 Add NER converter if NER component is in pipeline : (This is a bit ineficcent but it is most stable)
+            # TODO in NLU HC either NER or NER converter internal
             pipe = PipelineQueryVerifier.add_ner_converter_if_required(pipe)
 
         logger.info('Fixing column names')
