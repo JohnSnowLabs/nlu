@@ -16,21 +16,25 @@ d = {
 'en.embed.biobert.pmc':'biobert_pmc_base_cased',
 'en.embed.biobert.pubmed':'biobert_pubmed_base_cased',
 'en.embed.biobert.pubmed_large':'biobert_pubmed_large_cased',
-'en.embed.biobert.':'biobert_pubmed_pmc_base_cased',
-
-# Biobert resolve
-'en.':'biobertresolve_cpt',
-'en.':'biobertresolve_icd10cm',
-'en.':'biobertresolve_icd10cm_hcc',
-'en.':'biobertresolve_icd10pcs',
-'en.':'biobertresolve_icdo',
-'en.':'biobertresolve_loinc',
-'en.':'biobertresolve_rxnorm_bdcd',
-'en.':'biobertresolve_snomed_findings',
-'en.':'biobertresolve_snomed_findings_int',
+'en.embed.biobert.pubmed_pmc':'biobert_pubmed_pmc_base_cased',
 
 
-# Chunkr esolve
+# SentenceEntityResolverModel biobert
+# These all hava analogus models with s prefixed to them. Deprecated?
+# Sentence Entity Resolvers Deprecated models
+# 'en.':'biobertresolve_cpt', #  TODO Crash?
+# 'en.':'biobertresolve_icd10cm', # TODO crash
+# 'en.':'biobertresolve_icd10cm_hcc',  # TODO crash
+# 'en.':'biobertresolve_icd10pcs', # todo crash
+# 'en.':'biobertresolve_icdo', # todo crash
+# 'en.':'biobertresolve_loinc', # todo crash
+# 'en.':'biobertresolve_rxnorm_bdcd',
+# 'en.':'biobertresolve_snomed_findings',
+# 'en.':'biobertresolve_snomed_findings_int',
+
+
+# Chunk resolve
+
 'en.':'chunkresolve_athena_conditions_healthcare',
 'en.':'chunkresolve_cpt_clinical',
 'en.':'chunkresolve_cpt_icdoem',

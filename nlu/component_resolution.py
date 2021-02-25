@@ -634,3 +634,4 @@ def extract_classifier_metadata_from_nlu_ref(nlu_ref):
         if e in nlu.all_components_info.all_languages or e in nlu.namespace.NameSpace.actions: continue
         model_infos.append(e)
     return model_infos
+
