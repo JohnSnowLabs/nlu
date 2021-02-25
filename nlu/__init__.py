@@ -1,8 +1,8 @@
 __version__ = '1.1.1'
-
-from nlu.component_resolution import parse_language_from_nlu_ref, nlu_ref_to_component, \
-    construct_component_from_pipe_identifier
-
+#
+# from nlu.component_resolution import parse_language_from_nlu_ref, nlu_ref_to_component, \
+#     construct_component_from_pipe_identifier
+import sys
 
 def check_pyspark_install():
     try :
