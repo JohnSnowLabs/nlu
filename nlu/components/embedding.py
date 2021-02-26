@@ -47,10 +47,12 @@ class Embeddings(SparkNLUComponent):
             elif 'bert' in annotator_class and 'sent' in annotator_class  :
                 from nlu import BertSentence
                 if get_default : self.model =  BertSentence.get_default_model()
+                elif is_licensed : self.model = BertSentence.get_pretrained_model(nlp_ref, language,'clinical/models' )
                 else : self.model = BertSentence.get_pretrained_model(nlp_ref, language)
             elif 'electra' in annotator_class and 'sent' in annotator_class  :
                 from nlu import BertSentence
                 if get_default : self.model =  BertSentence.get_default_model()
+                elif is_licensed : self.model = BertSentence.get_pretrained_model(nlp_ref, language,'clinical/models' )
                 else : self.model = BertSentence.get_pretrained_model(nlp_ref, language)
             elif 'bert' in annotator_class :
                 from nlu import SparkNLPBert

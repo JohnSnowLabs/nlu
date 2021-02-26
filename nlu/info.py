@@ -40,7 +40,7 @@ class AllComponentsInfo:
 
         for path in all_component_paths :
             if '__py' in path : continue
-            logger.info('Loading info dict @ path'+ path)
+            # logger.info('Loading info dict @ path'+ path)
             component = ComponentInfo.from_directory(path)
             self.all_components[component.name] = component
             if component.type == 'classifier' : self.classifiers[component.name] = component

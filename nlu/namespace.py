@@ -1888,7 +1888,7 @@ class NameSpace():
 
                 #Sentence Entity resolvers
 
-                # resolve sentence mli
+                # BertSEntenceEmbeddings MLI
                 'en.embed_sentence.biobert.mli':'sbiobert_base_cased_mli',
                 'en.embed_sentence.bluebert':'sent_bluebert_base_uncased_mednli',
 
@@ -1933,7 +1933,7 @@ class NameSpace():
         'clinical' : 'en.embed.glove.clinical',
         'biobert_pubmed_base_cased' : 'en.embed.biobert.pubmed',
         'embeddings_healthcare100' : 'en.embed.glove.healthcare_100d',
-        'BERT_SENTENCE_EMBEDDINGS_0bee53f1b2cc' : 'sbiobert_base_cased_mli',
+        'BERT_SENTENCE_EMBEDDINGS_0bee53f1b2cc' : 'en.embed_sentence.biobert.mli',
          },
 
 

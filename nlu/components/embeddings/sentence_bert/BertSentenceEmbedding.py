@@ -11,8 +11,8 @@ class BertSentence:
         .setOutputCol("bert_sentence")
 
     @staticmethod
-    def get_pretrained_model(name, language):
-        return   BertSentenceEmbeddings.pretrained(name,language) \
+    def get_pretrained_model(name, language, bucket=None):
+        return   BertSentenceEmbeddings.pretrained(name,language,bucket) \
             .setInputCols('document') \
             .setOutputCol("bert_sentence")
 

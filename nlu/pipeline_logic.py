@@ -296,13 +296,15 @@ class PipelineQueryVerifier():
                     if converter is not None : components_to_add.append(converter)
 
             # Create missing components
+            logger.info(f' Resolving for components ={missing_components}')
+
             for missing_component in missing_components:
                 if 'embedding' in missing_component or 'token' in missing_component: components_to_add.append(
                     nlu.component_resolution.get_default_component_of_type(missing_component, language= pipe.lang))
                 else: components_to_add.append(
                     nlu.component_resolution.get_default_component_of_type(missing_component))
 
-            logger.info('Resolved for missing components the following NLU components : %s', str(components_to_add))
+            logger.info(f'Resolved for missing components the following NLU components : {components_to_add}')
 
             # Add missing components and validate order of components is correct
             for new_component in components_to_add:
