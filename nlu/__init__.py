@@ -227,7 +227,10 @@ def enable_verbose():
     ch.setLevel(logging.INFO)
     logger.addHandler(ch)
 
-
+def is_spark_23_installed():
+    version = pyspark.version.__version__
+    if '2.3' == version[:3]: return True
+    return False
 def load(request ='from_disk', path=None,verbose=False,version_checks=True):
     '''
     Load either a prebuild pipeline or a set of components identified by a whitespace seperated list of components
@@ -239,7 +242,8 @@ def load(request ='from_disk', path=None,verbose=False,version_checks=True):
     '''
     gc.collect()
     # if version_checks : check_pyspark_install()
-    spark = sparknlp.start()
+
+    spark = sparknlp.start(spark23=is_spark_23_installed())
     spark.catalog.clearCache()
     spark_started = True
     if verbose:
