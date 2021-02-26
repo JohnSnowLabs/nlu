@@ -1,22 +1,49 @@
 d = {
-#ASSERT (so smul) AssertionDLModel
-'en.':'assertion_dl', # clinical
-'en.':'assertion_dl_biobert', # biobert_pubmed_base_cased
-'en.':'assertion_dl_healthcare', # embeddings_healthcare100
-'en.':'assertion_dl_large', # clinical
+#ASSERT (so smul) AssertionDLModel ||| EXPORTED
+'en.assert':'assertion_dl', # clinicalz
+'en.assert.biobert':'assertion_dl_biobert', # biobert_pubmed_base_cased
+'en.assert.healthcare':'assertion_dl_healthcare', # embeddings_healthcare100
+'en.assert.large':'assertion_dl_large', # clinical
 
 
-# PIPE?
-# AssertionLogRegModel
-'en.':'assertion_ml',
 
-#BIOBERT embeddings
-'en.embed.biobert.clinical':'biobert_clinical_base_cased',
+#BIOBERT embeddings  |||||||||||| EXPORTED
+'en.embed.biobert.clinical':'biobert_clinical_base_cased', # Todo crash NO POOLING LAYER
 'en.embed.biobert.discharge':'biobert_discharge_base_cased',
 'en.embed.biobert.pmc':'biobert_pmc_base_cased',
-'en.embed.biobert.pubmed':'biobert_pubmed_base_cased',
+'en.embed.biobert.pubmed':'biobert_pubmed_base_cased', # Todo crash NO POOLING LAYER
 'en.embed.biobert.pubmed_large':'biobert_pubmed_large_cased',
 'en.embed.biobert.pubmed_pmc':'biobert_pubmed_pmc_base_cased',
+
+
+# sentence Entity resolvers ||||||||EX{PRTED
+
+# resolve sentence mli
+'en.':'sbiobert_base_cased_mli',
+'en.':'sbiobertresolve_cpt',
+'en.':'sbiobertresolve_cpt_augmented',
+'en.':'sbiobertresolve_cpt_procedures_augmented',
+'en.':'sbiobertresolve_hcc_augmented',
+'en.':'sbiobertresolve_icd10cm',
+'en.':'sbiobertresolve_icd10cm_augmented',
+'en.':'sbiobertresolve_icd10cm_augmented_billable_hcc',
+'en.':'sbiobertresolve_icd10pcs',
+'en.':'sbiobertresolve_icdo',
+'en.':'sbiobertresolve_rxcui',
+'en.':'sbiobertresolve_rxnorm',
+'en.':'sbiobertresolve_snomed_auxConcepts',
+'en.':'sbiobertresolve_snomed_auxConcepts_int',
+'en.':'sbiobertresolve_snomed_findings',
+'en.':'sbiobertresolve_snomed_findings_int',
+'en.':'sbluebert_base_uncased_mli',
+
+
+
+
+#===========================+EXPORT END ==================================
+
+# AssertionLogRegModel
+'en.':'assertion_ml',
 
 
 # SentenceEntityResolverModel biobert
@@ -34,7 +61,6 @@ d = {
 
 
 # Chunk resolve
-
 'en.':'chunkresolve_athena_conditions_healthcare',
 'en.':'chunkresolve_cpt_clinical',
 'en.':'chunkresolve_cpt_icdoem',
@@ -106,7 +132,7 @@ d = {
 'en.':'deidentify_rb_no_regex',
 
 
-# embeddings
+# WordEmbeddings ||||||||||||||EXPORTET
 'en.':'embeddings_biovec',
 'en.':'embeddings_clinical',
 'en.':'embeddings_healthcare',
@@ -114,6 +140,7 @@ d = {
 'en.':'embeddings_icd10_base',
 'en.':'embeddings_icdoem',
 'en.':'embeddings_icdoem_2ng',
+
 
 
 # ensemble resolve
@@ -351,50 +378,21 @@ d = {
 'en.':'resolve_rxnorm_l2_icdoem_2ng',
 
 # resolve snomed
-'en.':'resolve_snomed_clinical_l1',
-'en.':'resolve_snomed_clinical_l2',
-'en.':'resolve_snomed_l1_idx_icdoem_2ng',
-'en.':'resolve_snomed_l1_ovrlrc_icdoem_2ng',
-'en.':'resolve_snomed_l1_tfidf_icdoem_2ng',
-'en.':'resolve_snomed_l2_icdoem_2ng',
+'en.resolve.snomed':'resolve_snomed_clinical_l1', # default snomed resolver
+'en.resolve.snomed.clinical.l1':'resolve_snomed_clinical_l1',
+'en.resolve.snomed.clinical.l2':'resolve_snomed_clinical_l2',
+'en.resolve.snomed.l1.idx':'resolve_snomed_l1_idx_icdoem_2ng',
+'en.resolve.snomed.l1.ovrlrc':'resolve_snomed_l1_ovrlrc_icdoem_2ng',
+'en.resolve.snomed.l1.tfidf':'resolve_snomed_l1_tfidf_icdoem_2ng',
+'en.resolve.snomed.l2.icdoem':'resolve_snomed_l2_icdoem_2ng',
 
-# sentence Entity resolvers
-
-# resolve sentence mli
-'en.':'sbiobert_base_cased_mli',
-
-# resolve sentence cpt
-'en.':'sbiobertresolve_cpt',
-'en.':'sbiobertresolve_cpt_augmented',
-'en.':'sbiobertresolve_cpt_procedures_augmented',
-
-# resolve sentence hcc
-'en.':'sbiobertresolve_hcc_augmented',
-
-# resolve sentence icd
-'en.':'sbiobertresolve_icd10cm',
-'en.':'sbiobertresolve_icd10cm_augmented',
-'en.':'sbiobertresolve_icd10cm_augmented_billable_hcc',
-'en.':'sbiobertresolve_icd10pcs',
-'en.':'sbiobertresolve_icdo',
-
-# rewsolve sentence rx
-'en.':'sbiobertresolve_rxcui',
-'en.':'sbiobertresolve_rxnorm',
-# resolve sentence snomed s
-'en.':'sbiobertresolve_snomed_auxConcepts',
-'en.':'sbiobertresolve_snomed_auxConcepts_int',
-'en.':'sbiobertresolve_snomed_findings',
-'en.':'sbiobertresolve_snomed_findings_int',
-
-# resolve sentence ?????
-'en.':'sbluebert_base_uncased_mli',
 
 
 
 # ????
 'en.':'sent_biobert_base_uncased_mednli',
 'en.':'sent_bluebert_base_uncased_mednli',
+    'en.resolve_sentence.mli.bluebuert':'sbluebert_base_uncased_mli',
 
 # sentence detector dl healthcare
 'en.':'sentence_detector_dl_healthcare',
