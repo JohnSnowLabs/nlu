@@ -11,8 +11,8 @@ class Glove:
 
 
     @staticmethod
-    def get_pretrained_model(name, language):
-        return WordEmbeddingsModel.pretrained(name,language) \
+    def get_pretrained_model(name, language, bucket = None):
+        return WordEmbeddingsModel.pretrained(name,language,bucket) \
             .setInputCols("document", "token") \
             .setOutputCol("glove_embeddings")
 

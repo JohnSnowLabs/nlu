@@ -55,6 +55,7 @@ class Embeddings(SparkNLUComponent):
             elif 'bert' in annotator_class :
                 from nlu import SparkNLPBert
                 if get_default : self.model =  SparkNLPBert.get_default_model()
+                elif is_licensed : self.model = SparkNLPBert.get_pretrained_model(nlp_ref, language,'clinical/models' )
                 else : self.model = SparkNLPBert.get_pretrained_model(nlp_ref, language)
             elif 'elmo' in annotator_class  :
                 from nlu import SparkNLPElmo
@@ -73,6 +74,7 @@ class Embeddings(SparkNLUComponent):
                 if annotator_class == 'glove' and get_default==True: self.model = Glove.get_default_model()
                 else :
                     if get_default : self.model = Glove.get_default_model()
+                    elif is_licensed : self.model = Glove.get_pretrained_model(nlp_ref,language,'clinical/models')
                     else :
                         if nlp_ref == 'glove_840B_300' or  nlp_ref== 'glove_6B_300':
                             # if language=='en' and nlp_ref=='glove_6B_300': #special case
@@ -80,4 +82,5 @@ class Embeddings(SparkNLUComponent):
                             self.model = Glove.get_pretrained_model(nlp_ref, language)
                         else :
                             self.model = Glove.get_pretrained_model(nlp_ref, language)
+
         SparkNLUComponent.__init__(self, annotator_class, component_type)

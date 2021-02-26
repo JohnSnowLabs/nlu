@@ -7,7 +7,8 @@ class NameSpace():
     classifiers = ['classify', 'e2e', 'emotion', 'sentiment', 'ner',
                    'pos', 'trec6','trec50', 'questions',
                    'sarcasm','emotion', 'spam','fakenews', 'cyberbullying',
-                   'wiki','wiki_7', 'wiki_20','yake','toxic'
+                   'wiki','wiki_7', 'wiki_20','yake','toxic',
+                   'assert'
                    ]
     seq2seq = ['t5','marian','translate_to']
     actions = ['tokenize', 'sentence', 'embed', 'embed_sentence', 'embed_chunk','classify', 'chunk', 'pos', 'ner',
@@ -1857,12 +1858,39 @@ class NameSpace():
         'en' :
             {
                 #AssertionDLModel
-                'en.assert':'assertion_dl', # clinical
-                'en.assert.biobert':'assertion_dl_biobert', # biobert_pubmed_base_cased
-                'en.assert.healthcare':'assertion_dl_healthcare', # embeddings_healthcare100
-                'en.assert.large':'assertion_dl_large', # clinical
+                'en.assert':'assertion_dl',
+                'en.assert.biobert':'assertion_dl_biobert',
+                'en.assert.healthcare':'assertion_dl_healthcare',
+                'en.assert.large':'assertion_dl_large',
+
+
+
+                #BIOBERT embeddings
+                'en.embed.glove.clinical':'embeddings_clinical',
+
+
+                # Todo errors with biobert embeds
+                'en.embed.biobert.clinical':'biobert_clinical_base_cased',
+                'en.embed.biobert.discharge':'biobert_discharge_base_cased',
+                'en.embed.biobert.pmc':'biobert_pmc_base_cased',
+                'en.embed.biobert.pubmed':'biobert_pubmed_base_cased',
+                'en.embed.biobert.pubmed_large':'biobert_pubmed_large_cased',
+                'en.embed.biobert.pubmed_pmc':'biobert_pubmed_pmc_base_cased',
 
             }
     }
     pretrained_healthcare_pipe_references = {}
     healthcare_component_alias_references = {}
+    # map storage ref to nlu ref
+
+    storage_ref_2_nlu_ref = { } #
+
+    licensed_storage_ref_2_nlu_ref = {
+        'en':{
+        'clinical' : 'en.embed.glove.clinical',
+        'biobert_pubmed_base_cased' : 'en.embed.biobert.pubmed',
+        'embeddings_healthcare100' : ' ',
+         },
+
+
+    }

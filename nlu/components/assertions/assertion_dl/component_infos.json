@@ -1,26 +1,28 @@
 {
-  "name": "default_chunker",
+  "name": "assertion_dl",
   "description": "todo",
-  "output_level": "chunk",
-  "trainable": false,
+  "output_level": "??????????????//",
+  "trainable": true,
   "outputs": [
-    "chunk"
+    "assertion"
   ],
   "inputs": [
-    "document",
-    "pos"
+    "sentence",
+    "chunk",
+    "word_embeddings"
   ],
-  "type": "chunker",
+  "type": "asserter",
   "file_dependencies": {},
   "spark_input_column_names": [
-    "document",
-    "pos"
+    "sentence",
+    "chunk",
+    "word_embeddings"
   ],
   "spark_output_column_names": [
-    "chunk"
+    "assertion"
   ],
-  "provider": "sparknlp",
-  "license": "open source",
+  "provider": "sparknlp healthcare",
+  "license": "licensed",
   "computation_context": "spark",
   "output_context": "spark"
 }

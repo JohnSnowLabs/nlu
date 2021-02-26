@@ -146,15 +146,16 @@ def get_default_component_of_type(missing_component_type,language='en'):
     else:
         multi_lang =['ar']
         # if there is an @ in the name, we must get some specific pretrained model from the sparknlp reference that should follow after the @
-        missing_component_type, sparknlp_reference = missing_component_type.split('@')
+        missing_component_type, storage_ref = missing_component_type.split('@')
         if 'embed' in missing_component_type:
             # TODO RESOLVE MULTI LANG EMBEDS
-            if language in multi_lang : sparknlp_reference = resolve_multi_lang_embed(language,sparknlp_reference)
-            return construct_component_from_identifier(language=language, component_type='embed',
-                                                       nlp_ref=sparknlp_reference)
+            if language in multi_lang : storage_ref = resolve_multi_lang_embed(language,storage_ref)
+            else :  nlu_ref,nlp_ref, is_licensed =  resolve_storage_ref(language,storage_ref)
+            return construct_component_from_identifier(language=language, component_type='embed', nlu_ref=nlu_ref,
+                                                       nlp_ref=nlp_ref, is_licensed=is_licensed)
         if 'pos' in missing_component_type or 'ner' in missing_component_type:
             return construct_component_from_identifier(language=language, component_type='classifier',
-                                                       nlp_ref=sparknlp_reference)
+                                                       nlp_ref=storage_ref)
         if 'chunk_embeddings' in missing_component_type:
             return embeddings_chunker.EmbeddingsChunker()
         if 'unlabeled_dependency' in missing_component_type or 'dep.untyped' in missing_component_type:
@@ -165,6 +166,31 @@ def get_default_component_of_type(missing_component_type,language='en'):
             return None
 
         logger.exception("Could not resolve default component type for missing type=%s", missing_component_type)
+
+def resolve_storage_ref(lang, storage_ref):
+    """Returns a nlp_ref, nlu_ref and wether it is a licensed model or not"""
+    nlu_ref,nlp_ref,is_licensed = None,None,None
+    # get nlu ref
+    if storage_ref in nlu.NameSpace.licensed_storage_ref_2_nlu_ref[lang].keys():
+        nlu_ref = nlu.NameSpace.licensed_storage_ref_2_nlu_ref[lang][storage_ref]
+        is_licensed = True
+    elif storage_ref in nlu.NameSpace.storage_ref_2_nlu_ref[lang].keys():
+        nlu_ref = nlu.NameSpace.storage_ref_2_nlu_ref[lang][storage_ref]
+
+    # get nlp ref
+    if nlu_ref in nlu.NameSpace.pretrained_healthcare_model_references[lang].keys():
+        nlp_ref = nlu.NameSpace.pretrained_healthcare_model_references[lang][nlu_ref]
+    elif nlu_ref in nlu.NameSpace.pretrained_pipe_references[lang].keys():
+        nlp_ref = nlu.NameSpace.pretrained_healthcare_model_references[lang][nlu_ref]
+    if nlu_ref == None :
+        logger.exception("COULD NOT RESOLVE STORAGE_REF")
+        nlp_ref = storage_ref
+        nlu_ref = storage_ref
+
+    return nlu_ref, nlp_ref, is_licensed
+
+
+
 def resolve_multi_lang_embed(language,sparknlp_reference):
     """Helper Method for resolving Multi Lingual References to correct embedding"""
     if language == 'ar' and 'glove' in sparknlp_reference : return 'arabic_w2v_cc_300d'
@@ -604,12 +630,14 @@ def construct_component_from_identifier(language, component_type='', dataset='',
     logger.info('Creating singular NLU component for type=%s sparknlp_ref=%s , dataset=%s, language=%s , nlu_ref=%s ',
                 component_type, nlp_ref, dataset, language, nlu_ref)
     try:
-        if any(
+        if 'assert' in component_type:
+            return nlu.Asserter(nlp_ref=nlp_ref, nlu_ref=nlu_ref, language=language,get_default=False, is_licensed=is_licensed)
+        elif any(
             x in NameSpace.seq2seq for x in [nlp_ref, nlu_ref, dataset, component_type, ]):
             return Seq2Seq(annotator_class=component_type, language=language, get_default=False, nlp_ref=nlp_ref,configs=dataset, is_licensed=is_licensed)
 
         # if any([component_type in NameSpace.word_embeddings,dataset in NameSpace.word_embeddings, nlu_ref in NameSpace.word_embeddings, nlp_ref in NameSpace.word_embeddings]):
-        elif any(x in NameSpace.word_embeddings and not x in NameSpace.classifiers for x in
+        elif any(x in NameSpace.word_embeddings and x not in NameSpace.classifiers for x in
                [nlp_ref, nlu_ref, dataset, component_type, ] + dataset.split('_')):
             return Embeddings(get_default=False, nlp_ref=nlp_ref, nlu_ref=nlu_ref, language=language, is_licensed=is_licensed)
 
@@ -663,9 +691,6 @@ def construct_component_from_identifier(language, component_type='', dataset='',
         elif component_type == 'ngram':
             return nlu.chunker.Chunker('ngram')
 
-        elif 'assert' in component_type:
-            print('asserting bi')
-            return nlu.Asserter(nlp_ref=nlp_ref, nlu_ref=nlu_ref, language=language,get_default=False, is_licensed=is_licensed)
 
         logger.exception('EXCEPTION: Could not resolve singular Component for type=%s and nlp_ref=%s and nlu_ref=%s',
                          component_type, nlp_ref, nlu_ref)
@@ -688,4 +713,5 @@ def extract_classifier_metadata_from_nlu_ref(nlu_ref):
         if e in nlu.all_components_info.all_languages or e in nlu.namespace.NameSpace.actions: continue
         model_infos.append(e)
     return model_infos
+
 

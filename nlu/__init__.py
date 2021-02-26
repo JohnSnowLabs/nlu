@@ -206,8 +206,8 @@ def get_authenticated_spark(SPARK_NLP_LICENSE,AWS_ACCESS_KEY_ID,AWS_SECRET_ACCES
 
 def is_authorized_enviroment():
     """ TODO"""
-    global authorized
-    return authorized
+    global is_authenticated
+    return is_authenticated
 
 def auth(SPARK_NLP_LICENSE,AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY,JSL_SECRET):
     """ Authenticate enviroment for JSL Liscensed models. Installs NLP-Healthcare if not in enviroment detected"""
@@ -303,42 +303,42 @@ def load(request ='from_disk', path=None,verbose=False):
 
     if verbose:
         enable_verbose()
+    #
+    # try:
 
-    try:
+    if path != None :
+        logger.info(f'Trying to load nlu pipeline from local hard drive, located at {path}')
+        pipe = load_nlu_pipe_from_hdd(path)
+        return pipe
+    components_requested = request.split(' ')
+    pipe = NLUPipeline()
+    language = parse_language_from_nlu_ref(request)
+    pipe.lang=language
+    pipe.nlu_ref = request
+    for nlu_ref in components_requested:
+        nlu_ref.replace(' ', '')
+        # component = component.lower()
+        if nlu_ref == '': continue
+        nlu_component = nlu_ref_to_component(nlu_ref, authenticated=is_authenticated)
+        # if we get a list of components, then the NLU reference is a pipeline, we do not need to check order
+        if type(nlu_component) == type([]):
+            # lists are parsed down to multiple components
+            for c in nlu_component: pipe.add(c, nlu_ref, pretrained_pipe_component=True)
+        else:
+            pipe.add(nlu_component, nlu_ref)
+            pipe = PipelineQueryVerifier.check_and_fix_nlu_pipeline(pipe)
 
-        if path != None :
-            logger.info(f'Trying to load nlu pipeline from local hard drive, located at {path}')
-            pipe = load_nlu_pipe_from_hdd(path)
-            return pipe
-        components_requested = request.split(' ')
-        pipe = NLUPipeline()
-        language = parse_language_from_nlu_ref(request)
-        pipe.lang=language
-        pipe.nlu_ref = request
-        for nlu_ref in components_requested:
-            nlu_ref.replace(' ', '')
-            # component = component.lower()
-            if nlu_ref == '': continue
-            nlu_component = nlu_ref_to_component(nlu_ref, authenticated=is_authenticated)
-            # if we get a list of components, then the NLU reference is a pipeline, we do not need to check order
-            if type(nlu_component) == type([]):
-                # lists are parsed down to multiple components
-                for c in nlu_component: pipe.add(c, nlu_ref, pretrained_pipe_component=True)
-            else:
-                pipe.add(nlu_component, nlu_ref)
-                pipe = PipelineQueryVerifier.check_and_fix_nlu_pipeline(pipe)
-
-    except:
-        import sys
-        e = sys.exc_info()
-        print(e[0])
-        print(e[1])
-
-        print(
-            "Something went wrong during loading and fitting the pipe. Check the other prints for more information and also verbose mode. Did you use a correct model reference?")
-
-        return NluError()
-    # active_pipes.append(pipe)
+    # except:
+    #     import sys
+    #     e = sys.exc_info()
+    #     print(e[0])
+    #     print(e[1])
+    #
+    #     print(
+    #         "Something went wrong during loading and fitting the pipe. Check the other prints for more information and also verbose mode. Did you use a correct model reference?")
+    #
+    #     return NluError()
+    active_pipes.append(pipe)
     return pipe
 
 class NluError:
