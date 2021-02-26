@@ -83,7 +83,7 @@ from nlu.components.unlabeled_dependency_parser import UnlabeledDependencyParser
 |NLP Annotator| nlu.load() base reference|                                                              kek  |     Inputs |            Outputs | has stor_ref | 
 |-------------|--------------------------|-------------------------------------------------------|-----------|---------------------------|---------------|
 |Chunk2Token                          | chunk2Token (only internal)                              |           | chunk                     | token              x | 
-|AssertionDL  (HGIH)                  | assert                                                   |           | sentence/chunk/word_emb   |                |               | 
+|AssertionDL  (HGIH)       X          | assert                                                   |           | sentence/chunk/word_emb   |                |               | 
 |SentenceEntityResolver  (HIGH)       | resolve.sentence / resolve.sentence / resolve_sentence   |      x    |                           |               |
 |DeIdentification         (High)      | deidentify/anonymize                                     |           |                           |               | 
 |RelationExtraction (HIGH)            | extract_relation / classify.relation                     |           |                           |               |
@@ -575,7 +575,6 @@ def construct_component_from_pipe_identifier(language, nlp_ref, nlu_ref,path=Non
             constructed_components.append(nlu.Classifier(model=component, annotator_class='ner'))
         elif isinstance(component, LanguageDetectorDL):
             constructed_components.append(nlu.Classifier(model=component, annotator_class='language_detector'))
-
         elif isinstance(component, DependencyParserModel):
             constructed_components.append(UnlabledDepParser(model=component))
         elif isinstance(component, TypedDependencyParserModel):
@@ -632,6 +631,10 @@ def construct_component_from_identifier(language, component_type='', dataset='',
     try:
         if 'assert' in component_type:
             return nlu.Asserter(nlp_ref=nlp_ref, nlu_ref=nlu_ref, language=language,get_default=False, is_licensed=is_licensed)
+        elif 'resolve' in component_type or 'resolve' in nlu_ref:
+            return nlu.Resolver(nlp_ref=nlp_ref, nlu_ref=nlu_ref, language=language,get_default=False, is_licensed=is_licensed)
+
+
         elif any(
             x in NameSpace.seq2seq for x in [nlp_ref, nlu_ref, dataset, component_type, ]):
             return Seq2Seq(annotator_class=component_type, language=language, get_default=False, nlp_ref=nlp_ref,configs=dataset, is_licensed=is_licensed)

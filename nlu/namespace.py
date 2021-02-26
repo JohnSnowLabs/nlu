@@ -1858,16 +1858,24 @@ class NameSpace():
         'en' :
             {
                 #AssertionDLModel
-                'en.assert':'assertion_dl',
-                'en.assert.biobert':'assertion_dl_biobert',
-                'en.assert.healthcare':'assertion_dl_healthcare',
+                'en.assert':'assertion_dl', #ok
+                'en.assert.biobert':'assertion_dl_biobert', # todo
+                'en.assert.healthcare':'assertion_dl_healthcare', # ok
                 'en.assert.large':'assertion_dl_large',
+
+
+                # WordEmbedding Model Glove Embeddings
+                'en.embed.glove.clinical':'embeddings_clinical',
+                'en.embed.glove.biovec':'embeddings_biovec',
+                'en.embed.glove.healthcare':'embeddings_healthcare',
+                'en.embed.glove.healthcare_100d':'embeddings_healthcare_100d',
+                'en.embed.glove.icd10':'embeddings_icd10_base',
+                'en.embed.glove.icdoem':'embeddings_icdoem',
+                'en.embed.glove.icdoem_2ng':'embeddings_icdoem_2ng',
 
 
 
                 #BIOBERT embeddings
-                'en.embed.glove.clinical':'embeddings_clinical',
-
 
                 # Todo errors with biobert embeds
                 'en.embed.biobert.clinical':'biobert_clinical_base_cased',
@@ -1877,19 +1885,55 @@ class NameSpace():
                 'en.embed.biobert.pubmed_large':'biobert_pubmed_large_cased',
                 'en.embed.biobert.pubmed_pmc':'biobert_pubmed_pmc_base_cased',
 
+
+                #Sentence Entity resolvers
+
+                # resolve sentence mli
+                'en.embed_sentence.biobert.mli':'sbiobert_base_cased_mli',
+                'en.embed_sentence.bluebert':'sent_bluebert_base_uncased_mednli',
+
+                # resolve sentence cpt
+                'en.resolve_sentence':'sbiobertresolve_cpt',
+                'en.resolve_sentence.cpt.':'sbiobertresolve_cpt',
+                'en.resolve_sentence.cpt.augmented':'sbiobertresolve_cpt_augmented',
+                'en.resolve_sentence.cpt.procedures_augmented':'sbiobertresolve_cpt_procedures_augmented',
+                # resolve sentence hcc
+                'en.resolve_sentence.hcc.augmented':'sbiobertresolve_hcc_augmented',
+                # resolve sentence icd
+                'en.resolve_sentence.icd10cm.':'sbiobertresolve_icd10cm',
+                'en.resolve_sentence.icd10cm.augmented':'sbiobertresolve_icd10cm_augmented',
+                'en.resolve_sentence.icd10cm.augmented_billable':'sbiobertresolve_icd10cm_augmented_billable_hcc',
+                'en.resolve_sentence.icd10pcs':'sbiobertresolve_icd10pcs',
+                'en.resolve_sentence.icdo':'sbiobertresolve_icdo',
+                # rewsolve sentence rx
+                'en.resolve_sentence.rxcui':'sbiobertresolve_rxcui',
+                'en.resolve_sentence.rxnorm':'sbiobertresolve_rxnorm',
+                # resolve sentence snomed s
+                'en.resolve_sentence.snomed':'sbiobertresolve_snomed_auxConcepts', #alias
+                'en.resolve_sentence.snomed.aux_concepts':'sbiobertresolve_snomed_auxConcepts',
+                'en.resolve_sentence.snomed.aux_concepts_int':'sbiobertresolve_snomed_auxConcepts_int',
+                'en.resolve_sentence.snomed.findings':'sbiobertresolve_snomed_findings',
+                'en.resolve_sentence.snomed.findings_int':'sbiobertresolve_snomed_findings_int',
+
+
+
             }
     }
     pretrained_healthcare_pipe_references = {}
     healthcare_component_alias_references = {}
     # map storage ref to nlu ref
 
-    storage_ref_2_nlu_ref = { } #
+    storage_ref_2_nlu_ref = {
+        'en' : {}
+
+    } #
 
     licensed_storage_ref_2_nlu_ref = {
         'en':{
         'clinical' : 'en.embed.glove.clinical',
         'biobert_pubmed_base_cased' : 'en.embed.biobert.pubmed',
-        'embeddings_healthcare100' : ' ',
+        'embeddings_healthcare100' : 'en.embed.glove.healthcare_100d',
+        'BERT_SENTENCE_EMBEDDINGS_0bee53f1b2cc' : 'sbiobert_base_cased_mli',
          },
 
 

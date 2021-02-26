@@ -55,6 +55,7 @@ from nlu.pipeline import *
 
 # NLU Healthcare components
 from nlu.components.assertion import Asserter
+from nlu.components.resolution import Resolver
 
 
 

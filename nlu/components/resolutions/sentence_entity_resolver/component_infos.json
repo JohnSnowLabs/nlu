@@ -1,0 +1,24 @@
+{
+  "name": "assertion_dl",
+  "description": "todo",
+  "output_level": "sentence",
+  "trainable": true,
+  "outputs": [
+    "resolution"
+  ],
+  "inputs": [
+    "sentence_embeddings"
+  ],
+  "type": "resolver",
+  "file_dependencies": {},
+  "spark_input_column_names": [
+    "sentence_embeddings"
+  ],
+  "spark_output_column_names": [
+    "resolution"
+  ],
+  "provider": "spark nlp healthcare",
+  "license": "licensed",
+  "computation_context": "spark",
+  "output_context": "spark"
+}
