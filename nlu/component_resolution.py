@@ -20,7 +20,6 @@ Handler for getting default components, etcc.
 # we must first check OC compoments vanilla style and if that fails we must do special infer_CS_component_level() all
 # This call must infer the output level without type checks, i.e. use component infos or some string map or some trick (( !! component info!!!)
 
-
 # 2. Squeeze in 9 Annotators in old extraction process, most annotators are like old ones
 #
 from pyspark.ml import PipelineModel
@@ -34,7 +33,8 @@ from sparknlp.annotator import NerConverter, MultiClassifierDLModel, PerceptronM
     ChunkEmbeddings, StopWordsCleaner, MultiDateMatcher, T5Transformer, MarianTransformer
 
 import nlu
-from nlu import logger, Util, Embeddings, Classifier, NluError, all_components_info, NameSpace, ClassifierDl, \
+#NluError, all_components_info,
+from nlu import logger, Util, Embeddings, Classifier, NameSpace, ClassifierDl, \
     NLUSentenceDetector, NGram, Seq2Seq, SpellChecker, Matcher
 from nlu.components import embeddings_chunker
 from nlu.components.labeled_dependency_parser import LabeledDependencyParser as LabledDepParser
@@ -80,22 +80,22 @@ from nlu.components.unlabeled_dependency_parser import UnlabeledDependencyParser
 
 # PRIORITZED
 
-|NLP Annotator| nlu.load() base reference|
-|-------------|--------------------------|
-|Chunk2Token                          | chunk2Token (only internal)           | 
-|AssertionDL  (HGIH)                  | assert                                | 
-|SentenceEntityResolver  (HIGH)       | resolve.sentence / resolve.sentence / resolve_sentence   |
-|DeIdentification         (High)      | deidentify/anonymize                  | 
-|RelationExtraction (HIGH)            | extract_relation / classify.relation  |
-|ChunkEntityResolver    (MID)         | resolve.chunk / resolve.entities    /resolve_chunk  |
-|Contextual Parser                    | parse_context                         |
-|Disambiguation (Low prio)            | disambiguate                          |
-|Generic Classifier (mid prio)        | train.generic                         |
-|Chunk Merger                         | merge_chunks                          |
-|DrugNormalizer                       | norm.drugs                            |
-|Text2Sql  (Deprecated)               | seq2seq.text2sql /text2sql            |
-|DocumentLogRegClassifier (DEPRECATED)| classifiy.log_reg.<dataset>/classifiy.<dataset>           | 
-|AssertionLogReg    (low prio)        | assert.log_reg             /assert            | 
+|NLP Annotator| nlu.load() base reference|                                                              kek  |     Inputs |            Outputs | has stor_ref | 
+|-------------|--------------------------|-------------------------------------------------------|-----------|---------------------------|---------------|
+|Chunk2Token                          | chunk2Token (only internal)                              |           | chunk                     | token              x | 
+|AssertionDL  (HGIH)                  | assert                                                   |           | sentence/chunk/word_emb   |                |               | 
+|SentenceEntityResolver  (HIGH)       | resolve.sentence / resolve.sentence / resolve_sentence   |      x    |                           |               |
+|DeIdentification         (High)      | deidentify/anonymize                                     |           |                           |               | 
+|RelationExtraction (HIGH)            | extract_relation / classify.relation                     |           |                           |               |
+|ChunkEntityResolver    (MID)         | resolve.chunk / resolve.entities    /resolve_chunk       |           |                           |               |
+|Contextual Parser                    | parse_context                                            |           |                           |       x        |
+|Disambiguation (Low prio)            | disambiguate                                             |           |                           |               |
+|Generic Classifier (mid prio)        | train.generic                                            |           |                           |               |
+|Chunk Merger                         | merge_chunks                                             |           |                           |               |
+|DrugNormalizer                       | norm.drugs                                               |           |                           |               |
+|Text2Sql  (Deprecated)               | seq2seq.text2sql /text2sql                               |           |                           |               |
+|DocumentLogRegClassifier (DEPRECATED)| classifiy.log_reg.<dataset>/classifiy.<dataset>          |           |                           |               | 
+|AssertionLogReg    (low prio)        | assert.log_reg             /assert                       |           |                           |               | 
 
 
 
@@ -170,7 +170,7 @@ def resolve_multi_lang_embed(language,sparknlp_reference):
     if language == 'ar' and 'glove' in sparknlp_reference : return 'arabic_w2v_cc_300d'
     else : return sparknlp_reference
 
-def nlu_ref_to_component(nlu_reference, detect_lang=False):
+def nlu_ref_to_component(nlu_reference, detect_lang=False, authenticated=False):
     '''
     This method implements the main namespace for all component names. It parses the input request and passes the data to a resolver method which searches the namespace for a Component for the input request
     It returns a list of NLU.component objects or just one NLU.component object alone if just one component was specified.
@@ -194,7 +194,7 @@ def nlu_ref_to_component(nlu_reference, detect_lang=False):
 
     if len(infos) < 0:
         logger.exception("EXCEPTION: Could not create a component for nlu reference=%s", nlu_reference)
-        return NluError()
+        return nlu.NluError()
     language = ''
     component_type = ''
     dataset = ''
@@ -224,10 +224,10 @@ def nlu_ref_to_component(nlu_reference, detect_lang=False):
         # if we only have 1 split result, it must a a NLU action reference or an alias
         logger.info('Setting default lang to english')
         language = 'en'
-        if infos[0] in all_components_info.all_components or all_components_info.all_nlu_actions:
+        if infos[0] in nlu.all_components_info.all_components or nlu.all_components_info.all_nlu_actions:
             component_type = infos[0]
     #  check if it is any query of style #<lang>.<class>.<dataset>.<embeddings>
-    elif infos[0] in all_components_info.all_languages:
+    elif infos[0] in nlu.all_components_info.all_languages:
         language = infos[0]
         component_type = infos[1]
         logger.info(f"Got request for trainable model {component_type}")
@@ -235,6 +235,9 @@ def nlu_ref_to_component(nlu_reference, detect_lang=False):
             dataset = infos[2]
         if len(infos) == 4:  # embeddings specified
             component_embeddings = infos[3]
+
+
+
 
     # passing embed_sentence can have format embed_sentence.lang.embedding or embed_sentence.embedding
     # i.e. embed_sentence.bert
@@ -259,14 +262,14 @@ def nlu_ref_to_component(nlu_reference, detect_lang=False):
     logger.info(
         'For input nlu_ref %s detected : \n lang: %s  , component type: %s , component dataset: %s , component embeddings  %s  ',
         nlu_reference, language, component_type, dataset, component_embeddings)
-    resolved_component = resolve_component_from_parsed_query_data(language, component_type, dataset,component_embeddings, nlu_reference, trainable)
+    resolved_component = resolve_component_from_parsed_query_data(language, component_type, dataset,component_embeddings, nlu_reference, trainable,authenticated=authenticated)
     if resolved_component is None:
         logger.exception("EXCEPTION: Could not create a component for nlu reference=%s", nlu_reference)
-        return NluError()
+        return nlu.NluError()
     return resolved_component
 
 
-def resolve_component_from_parsed_query_data(language, component_type, dataset, component_embeddings, nlu_ref,trainable=False,path=None):
+def resolve_component_from_parsed_query_data(language, component_type, dataset, component_embeddings, nlu_ref,trainable=False,path=None,authenticated=False):
     '''
     Searches the NLU name spaces for a matching NLU reference. From that NLU reference, a SparkNLP reference will be aquired which resolved to a SparkNLP pretrained model or pipeline
     :param nlu_ref: Full request which was passed to nlu.load()
@@ -280,7 +283,7 @@ def resolve_component_from_parsed_query_data(language, component_type, dataset, 
     nlp_ref = ''
     logger.info('Searching local Namespaces for SparkNLP reference.. ')
     resolved = False
-
+    is_licensed = False
     # 0. check trainable references
     if trainable == True :
         if nlu_ref in NameSpace.trainable_models.keys():
@@ -305,21 +308,56 @@ def resolve_component_from_parsed_query_data(language, component_type, dataset, 
             logger.info(f'Found Spark NLP reference in pretrained models namespace = {nlp_ref}')
             resolved = True
 
-    # 2. check if alias/default references for resolution
+    # 3. check if alias/default references for resolution
     if resolved == False and nlu_ref in NameSpace.component_alias_references.keys():
         sparknlp_data = NameSpace.component_alias_references[nlu_ref]
         component_kind = sparknlp_data[1]
         nlp_ref = sparknlp_data[0]
         logger.info('Found Spark NLP reference in language free aliases namespace')
         resolved = True
-
         if len(sparknlp_data) > 2 :
             dataset=sparknlp_data[2]
         if len(sparknlp_data) > 3 :
             # special case overwrite for T5
             nlu_ref=sparknlp_data[3]
 
-    # 3. If reference is none of the Namespaces, it must be a component like tokenizer or YAKE or Chunker etc....
+
+    # 4. Check Healthcare Pipe Namespace
+    if resolved == False and language in NameSpace.pretrained_healthcare_pipe_references.keys():
+        if nlu_ref in NameSpace.pretrained_healthcare_pipe_references[language].keys():
+            component_kind = 'pipe'
+            nlp_ref = NameSpace.pretrained_healthcare_pipe_references[language][nlu_ref]
+            logger.info(f'Found Spark NLP reference in pretrained healthcare pipe namespace = {nlp_ref}')
+            resolved = True
+            is_licensed = True
+
+    # 5. Check Healthcare Model Namespace
+    if resolved == False and language in NameSpace.pretrained_healthcare_model_references.keys():
+        if nlu_ref in NameSpace.pretrained_healthcare_model_references[language].keys():
+            component_kind = 'model'
+            nlp_ref = NameSpace.pretrained_healthcare_model_references[language][nlu_ref]
+            logger.info(f'Found Spark NLP reference in pretrained healthcare model namespace = {nlp_ref}')
+            resolved = True
+            is_licensed = True
+
+    # 6. Check Healthcare Aliases Namespace
+    if resolved == False and nlu_ref in NameSpace.healthcare_component_alias_references.keys():
+        sparknlp_data = NameSpace.healthcare_component_alias_references[nlu_ref]
+        component_kind = sparknlp_data[1]
+        nlp_ref = sparknlp_data[0]
+        logger.info('Found Spark NLP reference in language free healthcare aliases namespace')
+        resolved = True
+        is_licensed = True
+        # if len(sparknlp_data) > 2 :
+        #     dataset=sparknlp_data[2]
+        # if len(sparknlp_data) > 3 :
+        #     # special case overwrite for T5
+        #     nlu_ref=sparknlp_data[3]
+
+
+
+
+    # 7. If reference is none of the Namespaces, it must be a component like tokenizer or YAKE or Chunker etc....
     # If it is not, then it does not exist and will be caught later
     if not resolved:
         resolved = True
@@ -328,31 +366,31 @@ def resolve_component_from_parsed_query_data(language, component_type, dataset, 
 
     # Convert references into NLU Component object which embelishes NLP annotators
     if component_kind == 'pipe':
-        constructed_components = construct_component_from_pipe_identifier(language, nlp_ref, nlu_ref)
+        constructed_components = construct_component_from_pipe_identifier(language, nlp_ref, nlu_ref,is_licensed=is_licensed)
         logger.info(f'Inferred Spark reference nlp_ref={nlp_ref} and nlu_ref={nlu_ref}  to NLP Annotator Class {constructed_components}')
         if constructed_components is None:
             logger.exception(
                 f'EXCEPTION : Could not create NLU component for nlp_ref={nlp_ref} and nlu_ref={nlu_ref}  to NLP Annotator Classes {constructed_components}')
-            return NluError
+            return nlu.NluError
         else:
             return constructed_components
     elif component_kind in ['model', 'component']:
         constructed_component = construct_component_from_identifier(language, component_type, dataset,
                                                                     component_embeddings, nlu_ref,
-                                                                    nlp_ref)
+                                                                    nlp_ref,is_licensed=is_licensed)
 
         logger.info(f'Inferred Spark reference nlp_ref={nlp_ref} and nlu_ref={nlu_ref}  to NLP Annotator Class {constructed_component}')
 
         if constructed_component is None:
             logger.exception(f'EXCEPTION : Could not create NLU component for nlp_ref={nlp_ref} and nlu_ref={nlu_ref}')
-            return NluError
+            return nlu.NluError
         else:
             return constructed_component
     elif component_kind == 'trainable_model':
         constructed_component = construct_trainable_component_from_identifier(nlu_ref,nlp_ref)
         if constructed_component is None:
             logger.exception(f'EXCEPTION : Could not create NLU component for nlp_ref={nlp_ref} and nlu_ref={nlu_ref}')
-            return NluError
+            return nlu.NluError
         else:
             constructed_component.component_info.is_untrained = True
             return constructed_component
@@ -361,7 +399,7 @@ def resolve_component_from_parsed_query_data(language, component_type, dataset, 
             "EXCEPTION : Could not resolve query=%s for kind=%s and reference=%s in any of NLU's namespaces ", nlu_ref,
             component_kind,
             nlp_ref)
-        return NluError
+        return nlu.NluError
 
 
 def construct_trainable_component_from_identifier(nlu_ref,nlp_ref):
@@ -408,7 +446,7 @@ def construct_trainable_component_from_identifier(nlu_ref,nlp_ref):
         return None
 
 
-def construct_component_from_pipe_identifier(language, nlp_ref, nlu_ref,path=None):
+def construct_component_from_pipe_identifier(language, nlp_ref, nlu_ref,path=None, is_licensed=False):
     '''
     # creates a list of components from a Spark NLP Pipeline reference
     # 1. download pipeline
@@ -420,6 +458,9 @@ def construct_component_from_pipe_identifier(language, nlp_ref, nlu_ref,path=Non
     :param path: Load pipe from HDD
     :return: Each element of the SaprkNLP pipeline wrapped as a NLU componed inside of a list
     '''
+
+    # TODO IS LICESNED HERE! IF YES, JUST ADD BUCKET TO PRETRAIEND PIE DOWNLAOD AND DONESD!
+    # AKTUALLY JK, need assertInstance TypeCheck for all Classes
     logger.info("Starting Spark NLP to NLU pipeline conversion process")
     from sparknlp.pretrained import PretrainedPipeline, LightPipeline
     if 'language' in nlp_ref: language = 'xx'  # special edge case for lang detectors
@@ -538,7 +579,7 @@ def construct_component_from_pipe_identifier(language, nlp_ref, nlu_ref,path=Non
 
 
 def construct_component_from_identifier(language, component_type='', dataset='', component_embeddings='', nlu_ref='',
-                                        nlp_ref=''):
+                                        nlp_ref='',is_licensed=False):
     '''
     Creates a NLU component from a pretrained SparkNLP model reference or Class reference.
     Class references will return default pretrained models

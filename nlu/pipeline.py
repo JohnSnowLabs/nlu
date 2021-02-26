@@ -1,6 +1,5 @@
 import logging
 
-import nlu.component_resolution
 
 logger = logging.getLogger('nlu')
 import nlu
