@@ -38,7 +38,7 @@ class BasePipe(dict):
         self.output_different_levels = True
         self.light_pipe_configured = False
         self.spark_non_light_transformer_pipe = None
-        self.pipe_components = []  # orderd list of nlu_component objects
+        self.components = []  # orderd list of nlu_component objects
         self.output_datatype = 'pandas'  # What data type should be returned after predict either spark, pandas, modin, numpy, string or array
         self.lang = 'en'
     def isInstanceOfNlpClassifer(self, model):
@@ -70,7 +70,7 @@ class BasePipe(dict):
         i = 0
         while can_use_name == False:
             can_use_name = True
-            for c in self.pipe_components:
+            for c in self.components:
                 if new_output_name in c.component_info.spark_input_column_names + c.component_info.spark_output_column_names and c.component_info.name != component.component_info.name:
                     can_use_name = False
         if can_use_name == False:
@@ -89,7 +89,7 @@ class BasePipe(dict):
         :return:
         '''
         self.nlu_reference = nlu_reference
-        self.pipe_components.append(component)
+        self.components.append(component)
         # ensure that input/output cols are properly set
         component.__set_missing_model_attributes__()
         # Spark NLP model reference shortcut
@@ -223,7 +223,7 @@ class NLUPipeline(BasePipe):
         '''
         self.is_fitted = True
         stages = []
-        for component in self.pipe_components:
+        for component in self.components:
             stages.append(component.model)
         self.spark_estimator_pipe = Pipeline(stages=stages)
 
@@ -276,7 +276,7 @@ class NLUPipeline(BasePipe):
         '''
         # find the component. Column output name should be unique
         component_inputs = []
-        for component in self.pipe_components:
+        for component in self.components:
             if field_name == component.component_info.name:
                 component_inputs = component.component_info.spark_input_column_names
 
@@ -286,7 +286,7 @@ class NLUPipeline(BasePipe):
             if 'embed' in input_name: target_output_component = input_name
 
         # get the model that outputs that feature
-        for component in self.pipe_components:
+        for component in self.components:
             component_outputs = component.component_info.spark_output_column_names
             for input_name in component_outputs:
                 if target_output_component == input_name:
@@ -737,7 +737,7 @@ class NLUPipeline(BasePipe):
 
         # (2.) A classifier, which is using sentence/doc embeddings.
         # We iterate over the pipe and check which Embed component is feeding the classifier and what the input that embed annotator is (sent or doc)
-        for c in self.pipe_components:
+        for c in self.components:
             # check if c is of sentence embedding class  which is always input dependent
             if any ( isinstance(c.model, e ) for e in self.all_embeddings['input_dependent']  ) :
                 if 'document' in c.component_info.spark_input_column_names :  return 'document'
@@ -776,7 +776,7 @@ class NLUPipeline(BasePipe):
         bad_types = [ 'util','document','sentence']
         bad_names = ['token']
 
-        for c in self.pipe_components[::-1]:
+        for c in self.components[::-1]:
             if any (t in  c.component_info.type for t in bad_types) : continue
             if any (n in  c.component_info.name for n in bad_names) : continue
             self.output_level = self.resolve_component_to_output_level(c)
@@ -792,7 +792,7 @@ class NLUPipeline(BasePipe):
         :return: Name of the chunk type column in the dataset
         '''
 
-        for component in self.pipe_components:
+        for component in self.components:
             if component.component_info.output_level == 'chunk':
                 # Usually al chunk components ahve only one output and that is the cunk col so we can safely just pass the first element of the output list to the caller
                 logger.info("Detected %s as chunk output column for later zipping", component.component_info.name)
@@ -806,7 +806,7 @@ class NLUPipeline(BasePipe):
         :return: The output level of the field
         '''
         target = field.split('.')[0]
-        for c in self.pipe_components:
+        for c in self.components:
             if target in c.component_info.spark_output_column_names:
                 # MultiClassifier outputs should never be at same output level as pipe, returning special_case takes care of this
                 if isinstance(c.model, (MultiClassifierDLModel, MultiClassifierDLApproach,YakeModel)): return "multi_level"
@@ -1090,7 +1090,7 @@ class NLUPipeline(BasePipe):
         :return:
         '''
 
-        for c in self.pipe_components:
+        for c in self.components:
             if 'sentence' in c.component_info.spark_output_column_names : return True
         return False
 
@@ -1215,10 +1215,10 @@ class NLUPipeline(BasePipe):
         if output_level == 'chunk':
             # If no chunk output component in pipe we must add it and run the query PipelineQueryVerifier again
             chunk_provided = False
-            for component in self.pipe_components:
+            for component in self.components:
                 if component.component_info.output_level == 'chunk': chunk_provided = True
             if chunk_provided == False:
-                self.pipe_components.append(nlu.get_default_component_of_type('chunk'))
+                self.components.append(nlu.get_default_component_of_type('chunk'))
                 # this could break indexing..
 
                 self = nlu.pipeline_logic.PipelineQueryVerifier.check_and_fix_nlu_pipeline(self)

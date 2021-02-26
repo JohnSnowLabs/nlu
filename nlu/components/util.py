@@ -1,4 +1,4 @@
-from nlu.pipe_components import SparkNLUComponent, NLUComponent
+from nlu.pipe_components import SparkNLUComponent
 
 class Util(SparkNLUComponent):
 
@@ -20,4 +20,7 @@ class Util(SparkNLUComponent):
             elif annotator_class == 'ner_to_chunk_converter' :
                 from nlu import NerToChunkConverter
                 self.model =  NerToChunkConverter.get_default_model()
+            elif annotator_class == 'sentence_embeddings':
+                from nlu import SparkNLPSentenceEmbeddings
+                self.model = SparkNLPSentenceEmbeddings.get_default_model()
         SparkNLUComponent.__init__(self, annotator_class, component_type)

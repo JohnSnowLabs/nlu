@@ -77,6 +77,7 @@ from nlu.components.utils.ner_to_chunk_converter.ner_to_chunk_converter import N
 from nlu.components.embedding import Embeddings
 from nlu.components.util import Util
 from nlu.components.utils.ner_to_chunk_converter import ner_to_chunk_converter
+from nlu.components.utils.sentence_embeddings.spark_nlp_sentence_embedding import SparkNLPSentenceEmbeddings
 
 # sentence
 from nlu.components.sentence_detectors.pragmatic_sentence_detector.sentence_detector import PragmaticSentenceDetector
@@ -295,7 +296,9 @@ def parse_language_from_nlu_ref(nlu_ref):
 
 def resolve_multi_lang_embed(language,sparknlp_reference):
     if language == 'ar' and 'glove' in sparknlp_reference : return 'arabic_w2v_cc_300d'
+    if language == 'ur' : return 'urduvec_140M_300d'
     else : return sparknlp_reference
+
 
 
 def get_default_component_of_type(missing_component_type,language='en'):
@@ -327,11 +330,11 @@ def get_default_component_of_type(missing_component_type,language='en'):
         if missing_component_type == 'ner_converter': return Util('ner_converter')
 
     else:
-        multi_lang =['ar']
+        multi_lang =['ar','ur']
         # if there is an @ in the name, we must get some specific pretrained model from the sparknlp reference that should follow after the @
         missing_component_type, sparknlp_reference = missing_component_type.split('@')
         if 'embed' in missing_component_type:
-            # TODO RESOLVE MULTI LANG EMBEDS
+
             if language in multi_lang : sparknlp_reference = resolve_multi_lang_embed(language,sparknlp_reference)
             return construct_component_from_identifier(language=language, component_type='embed',
                                                        nlp_ref=sparknlp_reference)

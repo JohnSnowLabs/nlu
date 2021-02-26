@@ -922,8 +922,7 @@ class NameSpace():
             'en.classify.cyberbullying': 'classifierdl_use_cyberbullying',  # Alias withouth embedding
             'en.classify.sarcasm': 'classifierdl_use_sarcasm',  # Alias withouth embedding
             'en.sentiment.twitter': 'sentimentdl_use_twitter',  # Alias withouth embedding
-            'en.sentiment.imdb': 'sentimentdl_glove_imdb',  # Default sentiment imdb with embeddigns glvoe
-        
+
             #2.6 Release models
             'en.yake' :'yake',
 
@@ -1453,6 +1452,7 @@ class NameSpace():
 
             'ur.sentiment' : 'sentimentdl_urduvec_imdb',
             'ur.embed' : 'urduvec_140M_300d' , # default ur embeds
+            'ur.embed.glove.300d' : 'urduvec_140M_300d' , # default ur embeds
             'ur.embed.urdu_vec_140M_300d' : 'urduvec_140M_300d' ,
             'ur.ner' : 'uner_mk_140M_300d' ,
             'ur.ner.mk_140M_300d' : 'uner_mk_140M_300d' ,
