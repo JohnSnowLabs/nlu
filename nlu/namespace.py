@@ -241,7 +241,6 @@ class NameSpace():
 
 
         # 2.7.0 new aliases
-        't5': ('t5_base','model'),
         't5.summarize': ('t5_base','model'),
         't5.classify.grammar_correctness': ('t5_base','model'),
         't5.classify.sentiment': ('t5_base','model'),
@@ -1035,7 +1034,9 @@ class NameSpace():
             "en.ner.airline":"nerdl_atis_840b_300d",
             "en.ner.aspect.airline":"nerdl_atis_840b_300d",
             "en.ner.aspect.atis":"nerdl_atis_840b_300d",
-
+            # 2.7.3 snips
+            'en.classify.snips' : 'nerdl_snips_100d',
+            'en.ner.snips'      : 'classifierdl_use_snips'
 
 
         },
@@ -1178,6 +1179,10 @@ class NameSpace():
             "bn.pos": "pos_msri",
             'bn.ner':'ner_jifs_glove_840B_300d',
             'bn.ner.glove':'ner_jifs_glove_840B_300d',
+            'bn.embed.glove' : 'bengaliner_cc_300d',
+            'bn.embed' : 'bengaliner_cc_300d',
+            'bn.ner.cc':'bengali_cc_300d',
+            'bn.ner.cc_300d':'bengali_cc_300d',
 
     },
         'br': {
