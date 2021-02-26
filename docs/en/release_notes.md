@@ -13,6 +13,25 @@ modify_date: "2020-06-12"
 
 <div class="h3-box" markdown="1">
 
+## NLU 1.1.3 Release Notes
+
+
+### New NLU Webinar
+
+### NLU 1.1.3 Enhancements
+- Added automatic conversion  to Sentence Embeddings of Word Embeddings when there is no Sentence Embedding Avaiable and a model needs the converted version to run.
+
+
+
+### NLU 1.1.3 Bug Fixes
+- Fixed a bug that caused `ur.sentiment` NLU pipeline to build incorrectly
+- Fixed a bug that caused `sentiment.imdb.glove` NLU pipeline to build incorrectly
+- Fixed a bug that caused `en.sentiment.glove.imdb` NLU pipeline to build incorrectly
+
+
+
+### New  Easy NLU 1-liners in 1.1.2
+
 ## NLU 1.1.2 Release Notes
 
 We are very happy to announce NLU 1.1.2 has been released with the integration of 30+ models and pipelines Bengali Named Entity Recognition, Hindi Word Embeddings,
