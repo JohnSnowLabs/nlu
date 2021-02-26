@@ -13,8 +13,512 @@ modify_date: "2020-06-12"
 
 <div class="h3-box" markdown="1">
 
+## NLU 1.1.3 Release Notes
+
+
+### New NLU Webinar
+
+### NLU 1.1.3 Enhancements
+- Added automatic conversion  to Sentence Embeddings of Word Embeddings when there is no Sentence Embedding Avaiable and a model needs the converted version to run.
+
+
+
+### NLU 1.1.3 Bug Fixes
+- Fixed a bug that caused `ur.sentiment` NLU pipeline to build incorrectly
+- Fixed a bug that caused `sentiment.imdb.glove` NLU pipeline to build incorrectly
+- Fixed a bug that caused `en.sentiment.glove.imdb` NLU pipeline to build incorrectly
+
+
+
+### New  Easy NLU 1-liners in 1.1.2
+
+## NLU 1.1.2 Release Notes
+
+We are very happy to announce NLU 1.1.2 has been released with the integration of 30+ models and pipelines Bengali Named Entity Recognition, Hindi Word Embeddings,
+and state-of-the-art transformer based OntoNotes models and pipelines from the [incredible Spark NLP 2.7.3 Release](https://github.com/JohnSnowLabs/spark-nlp/releases/tag/2.7.3) in addition to a few bugfixes.  
+In addition to that, there is a [new NLU Webinar video](https://www.youtube.com/watch?t=2141&v=hJR9m3NYnwk&feature=youtu.be) showcasing in detail 
+how to use NLU to analyze a crypto news dataset to extract keywords unsupervised and predict sentimential/emotional distributions of the dataset and much more!
+
+### [Python's NLU library: 1,000+ models, 200+ Languages, State of the Art Accuracy, 1 Line of code - NLU NYC/DC NLP Meetup Webinar](https://www.youtube.com/watch?t=2141&v=hJR9m3NYnwk&feature=youtu.be)
+Using just 1 line of Python code by leveraging the NLU library, which is powered by the award-winning Spark NLP.
+
+This webinar covers, using live coding in real-time,
+how to deliver summarization, translation, unsupervised keyword extraction, emotion analysis,
+question answering, spell checking, named entity recognition, document classification, and other common NLP tasks. T
+his is all done with a single line of code, that works directly on Python strings or pandas data frames.
+Since NLU is based on Spark NLP, no code changes are required to scale processing to multi-core or cluster environment - integrating natively with Ray, Dask, or Spark data frames.
+
+The recent releases for Spark NLP and NLU include pre-trained models for over 200 languages and language detection for 375 languages.
+This includes 20 languages families; non-Latin alphabets; languages that do not use spaces for word segmentation like
+Chinese, Japanese, and Korean; and languages written from right to left like Arabic, Farsi, Urdu, and Hebrew.
+We'll also cover some of the algorithms and models that are included. The code notebooks will be freely available online.
+
+ 
+
+### NLU 1.1.2 New Models  and Pipelines
+
+#### NLU 1.1.2 New Non-English Models
+
+|Language | nlu.load() reference | Spark NLP Model reference | Type |
+|---------|---------------------|----------------------------|------|
+|Bengali | [bn.ner](https://nlp.johnsnowlabs.com/2021/01/27/ner_jifs_glove_840B_300d_bn.html) |[ner_jifs_glove_840B_300d](https://nlp.johnsnowlabs.com/2021/01/27/ner_jifs_glove_840B_300d_bn.html) | Word Embeddings Model (Alias) |
+| Bengali  | [bn.ner.glove](https://nlp.johnsnowlabs.com/2021/01/27/ner_jifs_glove_840B_300d_bn.html) | [ner_jifs_glove_840B_300d](https://nlp.johnsnowlabs.com/2021/01/27/ner_jifs_glove_840B_300d_bn.html) | Word Embeddings Model (Alias) |
+|Hindi|[hi.embed](https://nlp.johnsnowlabs.com/2021/02/03/hindi_cc_300d_hi.html)|[hindi_cc_300d](https://nlp.johnsnowlabs.com/2021/02/03/hindi_cc_300d_hi.html)|NerDLModel|
+|Bengali | [bn.lemma](https://nlp.johnsnowlabs.com/2021/01/20/lemma_bn.html) |[lemma](https://nlp.johnsnowlabs.com/2021/01/20/lemma_bn.html) | Lemmatizer                    |
+|Japanese | [ja.lemma](https://nlp.johnsnowlabs.com/2021/01/15/lemma_ja.html) |[lemma](https://nlp.johnsnowlabs.com/2021/01/15/lemma_ja.html) | Lemmatizer                    |
+|Bihari | [bh.lemma](https://nlp.johnsnowlabs.com/2021/01/18/lemma_bh.html) |[lemma](https://nlp.johnsnowlabs.com/2021/01/18/lemma_bh.html) | Lemma                    |
+|Amharic | [am.lemma](https://nlp.johnsnowlabs.com/2021/01/20/lemma_am.html) |[lemma](https://nlp.johnsnowlabs.com/2021/01/20/lemma_am.html) | Lemma                    |
+
+#### NLU 1.1.2 New English Models and Pipelines
+
+|Language | nlu.load() reference | Spark NLP Model reference | Type |
+|---------|---------------------|----------------------------|------|
+| English | [en.ner.onto.bert.small_l2_128](https://nlp.johnsnowlabs.com/2020/12/05/onto_small_bert_L2_128_en.html) |[onto_small_bert_L2_128](https://nlp.johnsnowlabs.com/2020/12/05/onto_small_bert_L2_128_en.html)     | NerDLModel |
+| English | [en.ner.onto.bert.small_l4_256](https://nlp.johnsnowlabs.com/2020/12/05/onto_small_bert_L4_256_en.html) |[onto_small_bert_L4_256](https://nlp.johnsnowlabs.com/2020/12/05/onto_small_bert_L4_256_en.html)     | NerDLModel |
+| English | [en.ner.onto.bert.small_l4_512](https://nlp.johnsnowlabs.com/2020/12/05/onto_small_bert_L4_512_en.html) |[onto_small_bert_L4_512](https://nlp.johnsnowlabs.com/2020/12/05/onto_small_bert_L4_512_en.html)     | NerDLModel |
+| English | [en.ner.onto.bert.small_l8_512](https://nlp.johnsnowlabs.com/2020/12/05/onto_small_bert_L8_512_en.html) |[onto_small_bert_L8_512](https://nlp.johnsnowlabs.com/2020/12/05/onto_small_bert_L8_512_en.html)     | NerDLModel |
+| English | [en.ner.onto.bert.cased_base](https://nlp.johnsnowlabs.com/2020/12/05/onto_bert_base_cased_en.html) |[onto_bert_base_cased](https://nlp.johnsnowlabs.com/2020/12/05/onto_bert_base_cased_en.html)     | NerDLModel |
+| English | [en.ner.onto.bert.cased_large](https://nlp.johnsnowlabs.com/2020/12/05/onto_bert_large_cased_en.html) |[onto_bert_large_cased](https://nlp.johnsnowlabs.com/2020/12/05/onto_bert_large_cased_en.html)     | NerDLModel |
+| English | [en.ner.onto.electra.uncased_small](https://nlp.johnsnowlabs.com/2020/12/05/onto_electra_small_uncased_en.html) |[onto_electra_small_uncased](https://nlp.johnsnowlabs.com/2020/12/05/onto_electra_small_uncased_en.html)     | NerDLModel |
+| English  | [en.ner.onto.electra.uncased_base](https://nlp.johnsnowlabs.com/2020/12/05/onto_electra_base_uncased_en.html) |[onto_electra_base_uncased](https://nlp.johnsnowlabs.com/2020/12/05/onto_electra_base_uncased_en.html)     | NerDLModel |
+| English | [en.ner.onto.electra.uncased_large](https://nlp.johnsnowlabs.com/2020/12/05/onto_electra_large_uncased_en.html) |[onto_electra_large_uncased](https://nlp.johnsnowlabs.com/2020/12/05/onto_electra_large_uncased_en.html)     | NerDLModel |
+| English | [en.ner.onto.bert.tiny](https://nlp.johnsnowlabs.com/2020/12/09/onto_recognize_entities_bert_tiny_en.html) | [onto_recognize_entities_bert_tiny](https://nlp.johnsnowlabs.com/2020/12/09/onto_recognize_entities_bert_tiny_en.html) | Pipeline |
+| English | [en.ner.onto.bert.mini](https://nlp.johnsnowlabs.com/2020/12/09/onto_recognize_entities_bert_mini_en.html) |[onto_recognize_entities_bert_mini](https://nlp.johnsnowlabs.com/2020/12/09/onto_recognize_entities_bert_mini_en.html)     | Pipeline |
+| English | [en.ner.onto.bert.small](https://nlp.johnsnowlabs.com/2020/12/09/onto_recognize_entities_bert_small_en.html) | [onto_recognize_entities_bert_small](https://nlp.johnsnowlabs.com/2020/12/09/onto_recognize_entities_bert_small_en.html) | Pipeline |
+| English | [en.ner.onto.bert.medium](https://nlp.johnsnowlabs.com/2020/12/09/onto_recognize_entities_bert_medium_en.html) |[onto_recognize_entities_bert_medium](https://nlp.johnsnowlabs.com/2020/12/09/onto_recognize_entities_bert_medium_en.html)     | Pipeline |
+| English | [en.ner.onto.bert.base](https://nlp.johnsnowlabs.com/2020/12/09/onto_recognize_entities_bert_base_en.html) |[onto_recognize_entities_bert_base](https://nlp.johnsnowlabs.com/2020/12/09/onto_recognize_entities_bert_base_en.html)     | Pipeline |
+|English|[en.ner.onto.bert.large](https://nlp.johnsnowlabs.com/2020/12/09/onto_recognize_entities_bert_large_en.html)|[onto_recognize_entities_bert_large](https://nlp.johnsnowlabs.com/2020/12/09/onto_recognize_entities_bert_large_en.html)|Pipeline|
+|English|[en.ner.onto.electra.small](https://nlp.johnsnowlabs.com/2020/12/09/onto_recognize_entities_electra_small_en.html)|[onto_recognize_entities_electra_small](https://nlp.johnsnowlabs.com/2020/12/09/onto_recognize_entities_electra_small_en.html)|Pipeline|
+|English|[en.ner.onto.electra.base](https://nlp.johnsnowlabs.com/2020/12/09/onto_recognize_entities_electra_base_en.html)|[onto_recognize_entities_electra_base](https://nlp.johnsnowlabs.com/2020/12/09/onto_recognize_entities_electra_base_en.html)|Pipeline|
+|English|[en.ner.onto.large](https://nlp.johnsnowlabs.com/2020/12/09/onto_recognize_entities_electra_large_en.html)|[onto_recognize_entities_electra_large](https://nlp.johnsnowlabs.com/2020/12/09/onto_recognize_entities_electra_large_en.html)|Pipeline|
+
+
+
+### New Tutorials and Notebooks
+
+- [NYC/DC NLP Meetup Webinar video analyze Crypto News, Unsupervised Keywords, Translate between 300 Languages, Question Answering, Summerization, POS, NER in 1 line of code in almost just 20 minutes](https://www.youtube.com/watch?t=2141&v=hJR9m3NYnwk&feature=youtu.be)
+- [NLU basics POS/NER/Sentiment Classification/BERTology Embeddings](https://github.com/JohnSnowLabs/nlu/blob/master/examples/webinars_conferences_etc/NYC_DC_NLP_MEETUP/0_liners_intro.ipynb)
+- [Explore Crypto Newsarticle dataset, unsupervised Keyword extraction, Stemming, Emotion/Sentiment distribution Analysis](https://github.com/JohnSnowLabs/nlu/blob/master/examples/webinars_conferences_etc/NYC_DC_NLP_MEETUP/1_NLU_base_features_on_dataset_with_YAKE_Lemma_Stemm_classifiers_NER_.ipynb)
+- [Translate between more than 300 Languages in 1 line of code with the Marian Models](https://github.com/JohnSnowLabs/nlu/blob/master/examples/webinars_conferences_etc/NYC_DC_NLP_MEETUP/2_multilingual_translation_and_othr_stuff_with_marian.ipynb)
+- [New NLU 1.1.2 Models Showcase Notebooks, Bengali NER, Hindi Embeddings, 30 new_models](https://colab.research.google.com/github/JohnSnowLabs/nlu/blob/master/examples/release_notebooks/NLU1.1.2_Bengali_ner_Hindi_Embeddings_30_new_models.ipynb)
+
+
+### NLU 1.1.2 Bug Fixes
+
+- Fixed a bug that caused NER confidences not beeing extracted
+- Fixed a bug that caused nlu.load('spell') to crash
+- Fixed a bug that caused Uralic/Estonian/ET language models not to be loaded properly
+
+
+### New  Easy NLU 1-liners in 1.1.2
+
+
+#### [Named Entity Recognition for Bengali (GloVe 840B 300d)](https://nlp.johnsnowlabs.com/2021/01/27/ner_jifs_glove_840B_300d_bn.html)
+
+
+```python
+#Bengali for :  It began to be widely used in the United States in the early '90s.
+nlu.load("bn.ner").predict("৯০ এর দশকের শুরুর দিকে বৃহৎ আকারে মার্কিন যুক্তরাষ্ট্রে এর প্রয়োগের প্রক্রিয়া শুরু হয়'")
+```
+output :
+
+|   entities             | token     | Entities_classes   |   ner_confidence |
+|:---------------------|:----------|:----------------------|-----------------:|
+| ['মার্কিন যুক্তরাষ্ট্রে'] | ৯০        | ['LOC']               |           1      |
+| ['মার্কিন যুক্তরাষ্ট্রে'] | এর        | ['LOC']               |           0.9999 |
+| ['মার্কিন যুক্তরাষ্ট্রে'] | দশকের     | ['LOC']               |           1      |
+| ['মার্কিন যুক্তরাষ্ট্রে'] | শুরুর       | ['LOC']               |           0.9969 |
+| ['মার্কিন যুক্তরাষ্ট্রে'] | দিকে      | ['LOC']               |           1      |
+| ['মার্কিন যুক্তরাষ্ট্রে'] | বৃহৎ       | ['LOC']               |           0.9994 |
+| ['মার্কিন যুক্তরাষ্ট্রে'] | আকারে     | ['LOC']               |           1      |
+| ['মার্কিন যুক্তরাষ্ট্রে'] | মার্কিন    | ['LOC']               |           0.9602 |
+| ['মার্কিন যুক্তরাষ্ট্রে'] | যুক্তরাষ্ট্রে | ['LOC']               |           0.4134 |
+| ['মার্কিন যুক্তরাষ্ট্রে'] | এর        | ['LOC']               |           1      |
+| ['মার্কিন যুক্তরাষ্ট্রে'] | প্রয়োগের   | ['LOC']               |           1      |
+| ['মার্কিন যুক্তরাষ্ট্রে'] | প্রক্রিয়া   | ['LOC']               |           1      |
+| ['মার্কিন যুক্তরাষ্ট্রে'] | শুরু        | ['LOC']               |           0.9999 |
+| ['মার্কিন যুক্তরাষ্ট্রে'] | হয়        | ['LOC']               |           1      |
+| ['মার্কিন যুক্তরাষ্ট্রে'] | '         | ['LOC']               |           1      |
+
+
+#### [Bengali Lemmatizer](https://nlp.johnsnowlabs.com/2021/01/20/lemma_bn.html)
+
+
+```python
+#Bengali for :  One morning in the marble-decorated building of Vaidyanatha, an obese monk was engaged in the enchantment of Duis and the milk service of one and a half Vaidyanatha. Give me two to eat
+nlu.load("bn.lemma").predict("একদিন প্রাতে বৈদ্যনাথের মার্বলমণ্ডিত দালানে একটি স্থূলোদর সন্ন্যাসী দুইসের মোহনভোগ এবং দেড়সের দুগ্ধ সেবায় নিযুক্ত আছে বৈদ্যনাথ গায়ে একখানি চাদর দিয়া জোড়করে একান্ত বিনীতভাবে ভূতলে বসিয়া ভক্তিভরে পবিত্র ভোজনব্যাপার নিরীক্ষণ করিতেছিলেন এমন সময় কোনোমতে দ্বারীদের দৃষ্টি এড়াইয়া জীর্ণদেহ বালক সহিত একটি অতি শীর্ণকায়া রমণী গৃহে প্রবেশ করিয়া ক্ষীণস্বরে কহিল বাবু দুটি খেতে দাও")
+
+```
+output :
+
+| lemma                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | document                                                                                                                                                                                                                                                                                                                                          |
+|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ['একদিন', 'প্রাতঃ', 'বৈদ্যনাথ', 'মার্বলমণ্ডিত', 'দালান', 'এক', 'স্থূলউদর', 'সন্ন্যাসী', 'দুইসের', 'মোহনভোগ', 'এবং', 'দেড়সের', 'দুগ্ধ', 'সেবা', 'নিযুক্ত', 'আছে', 'বৈদ্যনাথ', 'গা', 'একখান', 'চাদর', 'দেওয়া', 'জোড়কর', 'একান্ত', 'বিনীতভাব', 'ভূতল', 'বসা', 'ভক্তিভরা', 'পবিত্র', 'ভোজনব্যাপার', 'নিরীক্ষণ', 'করা', 'এমন', 'সময়', 'কোনোমত', 'দ্বারী', 'দৃষ্টি', 'এড়ানো', 'জীর্ণদেহ', 'বালক', 'সহিত', 'এক', 'অতি', 'শীর্ণকায়া', 'রমণী', 'গৃহ', 'প্রবেশ', 'বিশ্বাস', 'ক্ষীণস্বর', 'কহা', 'বাবু', 'দুই', 'খাওয়া', 'দাওয়া'] | একদিন প্রাতে বৈদ্যনাথের মার্বলমণ্ডিত দালানে একটি স্থূলোদর সন্ন্যাসী দুইসের মোহনভোগ এবং দেড়সের দুগ্ধ সেবায় নিযুক্ত আছে বৈদ্যনাথ গায়ে একখানি চাদর দিয়া জোড়করে একান্ত বিনীতভাবে ভূতলে বসিয়া ভক্তিভরে পবিত্র ভোজনব্যাপার নিরীক্ষণ করিতেছিলেন এমন সময় কোনোমতে দ্বারীদের দৃষ্টি এড়াইয়া জীর্ণদেহ বালক সহিত একটি অতি শীর্ণকায়া রমণী গৃহে প্রবেশ করিয়া ক্ষীণস্বরে কহিল বাবু দুটি খেতে দাও |
+
+
+#### [Japanese Lemmatizer](https://nlp.johnsnowlabs.com/2021/01/15/lemma_ja.html)
+
+
+```python
+#Japanese for :  Some residents were uncomfortable with this, but it seems that no one is now openly protesting or protesting.
+nlu.load("ja.lemma").predict("これに不快感を示す住民はいましたが,現在,表立って反対や抗議の声を挙げている住民はいないようです。")
+
+```
+output :
+
+| lemma                                                                                                                                                                                                                                                          | document                                                                                         |
+|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:-------------------------------------------------------------------------------------------------|
+| ['これ', 'にる', '不快', '感', 'を', '示す', '住民', 'はる', 'いる', 'まする', 'たる', 'がる', ',', '現在', ',', '表立つ', 'てる', '反対', 'やる', '抗議', 'のる', '声', 'を', '挙げる', 'てる', 'いる', '住民', 'はる', 'いる', 'なぐ', 'よう', 'です', '。'] | これに不快感を示す住民はいましたが,現在,表立って反対や抗議の声を挙げている住民はいないようです。 |
+
+#### [Aharic Lemmatizer](https://nlp.johnsnowlabs.com/2021/01/20/lemma_am.html)
+
+
+```python
+#Aharic for :  Bookmark the permalink.
+nlu.load("am.lemma").predict("መጽሐፉን መጽሐፍ ኡ ን አስያዛት አስያዝ ኧ ኣት ።")
+
+```
+output  :
+
+| lemma                                                | document                         |
+|:-----------------------------------------------------|:---------------------------------|
+| ['_', 'መጽሐፍ', 'ኡ', 'ን', '_', 'አስያዝ', 'ኧ', 'ኣት', '።'] | መጽሐፉን መጽሐፍ ኡ ን አስያዛት አስያዝ ኧ ኣት ። |
+
+#### [Bhojpuri Lemmatizer](https://nlp.johnsnowlabs.com/2021/01/18/lemma_bh.html)
+
+
+```python
+#Bhojpuri for : In this event, participation of World Bhojpuri Conference, Purvanchal Ekta Manch, Veer Kunwar Singh Foundation, Purvanchal Bhojpuri Mahasabha, and Herf - Media.
+nlu.load("bh.lemma").predict("एह आयोजन में विश्व भोजपुरी सम्मेलन , पूर्वांचल एकता मंच , वीर कुँवर सिंह फाउन्डेशन , पूर्वांचल भोजपुरी महासभा , अउर हर्फ - मीडिया के सहभागिता बा ।")
+```
+
+output :
+
+| lemma                                                                                                                                                                                                                               | document                                                                                                                      |
+|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:------------------------------------------------------------------------------------------------------------------------------|
+| ['एह', 'आयोजन', 'में', 'विश्व', 'भोजपुरी', 'सम्मेलन', 'COMMA', 'पूर्वांचल', 'एकता', 'मंच', 'COMMA', 'वीर', 'कुँवर', 'सिंह', 'फाउन्डेशन', 'COMMA', 'पूर्वांचल', 'भोजपुरी', 'महासभा', 'COMMA', 'अउर', 'हर्फ', '-', 'मीडिया', 'को', 'सहभागिता', 'बा', '।'] | एह आयोजन में विश्व भोजपुरी सम्मेलन , पूर्वांचल एकता मंच , वीर कुँवर सिंह फाउन्डेशन , पूर्वांचल भोजपुरी महासभा , अउर हर्फ - मीडिया के सहभागिता बा । |
+
+#### [Named Entity Recognition - BERT Tiny (OntoNotes)](https://nlp.johnsnowlabs.com/2020/12/05/onto_small_bert_L2_128_en.html)
+```python
+nlu.load("en.ner.onto.bert.small_l2_128").predict("""William Henry Gates III (born October 28, 1955) is an American business magnate,
+ software developer, investor, and philanthropist. He is best known as the co-founder of Microsoft Corporation. During his career at Microsoft,
+  Gates held the positions of chairman, chief executive officer (CEO), president and chief software architect,
+   while also being the largest individual shareholder until May 2014.
+    He is one of the best-known entrepreneurs and pioneers of the microcomputer revolution of the 1970s and 1980s. Born and raised in Seattle, Washington, Gates co-founded Microsoft with childhood friend Paul Allen in 1975, in Albuquerque, New Mexico;
+     it went on to become the world's largest personal computer software company. Gates led the company as chairman and CEO until stepping down as CEO in January 2000, but he remained chairman and became chief software architect.
+     During the late 1990s, Gates had been criticized for his business tactics, which have been considered anti-competitive. This opinion has been upheld by numerous court rulings. In June 2006, Gates announced that he would be transitioning to a part-time
+      role at Microsoft and full-time work at the Bill & Melinda Gates Foundation, the private charitable foundation that he and his wife, Melinda Gates, established in 2000.
+ He gradually transferred his duties to Ray Ozzie and Craig Mundie.
+  He stepped down as chairman of Microsoft in February 2014 and assumed a new post as technology adviser to support the newly appointed CEO Satya Nadella.""",output_level = "document")
+```
+
+output  :
+
+| ner_confidence | entities | Entities_classes                                          |
+| :------------------------------------------------- | :----------------------------------------------------------- | :----------------------------------------------------------- |
+| [0.8536999821662903, 0.7195000052452087, 0.746...] | ['PERSON', 'DATE', 'NORP', 'ORG', 'ORG', 'PERSON', 'DATE', 'CARDINAL', 'DATE', 'DATE', 'GPE', 'GPE', 'PERSON', 'DATE', 'GPE', 'GPE'] | ['William Henry Gates III', 'October 28, 1955', 'American', 'Microsoft Corporation', 'Microsoft', 'Gates', 'May 2014', 'one', '1970s', '1980s', 'Seattle', 'Washington', 'Paul Allen', '1975', 'Albuquerque', 'New Mexico'] |
+
+####  [Named Entity Recognition - BERT Mini (OntoNotes)](https://nlp.johnsnowlabs.com/2020/12/05/onto_small_bert_L4_256_en.html)
+```python
+nlu.load("en.ner.onto.bert.small_l4_256").predict("""William Henry Gates III (born October 28, 1955) is an American business magnate,
+ software developer, investor, and philanthropist. He is best known as the co-founder of Microsoft Corporation. During his career at Microsoft,
+  Gates held the positions of chairman, chief executive officer (CEO), president and chief software architect,
+   while also being the largest individual shareholder until May 2014.
+    He is one of the best-known entrepreneurs and pioneers of the microcomputer revolution of the 1970s and 1980s. Born and raised in Seattle, Washington, Gates co-founded Microsoft with childhood friend Paul Allen in 1975, in Albuquerque, New Mexico;
+     it went on to become the world's largest personal computer software company. Gates led the company as chairman and CEO until stepping down as CEO in January 2000, but he remained chairman and became chief software architect.
+     During the late 1990s, Gates had been criticized for his business tactics, which have been considered anti-competitive. This opinion has been upheld by numerous court rulings. In June 2006, Gates announced that he would be transitioning to a part-time
+      role at Microsoft and full-time work at the Bill & Melinda Gates Foundation, the private charitable foundation that he and his wife, Melinda Gates, established in 2000.
+ He gradually transferred his duties to Ray Ozzie and Craig Mundie.
+  He stepped down as chairman of Microsoft in February 2014 and assumed a new post as technology adviser to support the newly appointed CEO Satya Nadella.""",output_level = "document")
+```
+
+output :
+
+|  ner_confidence	  | entities                                                                                                                                                                                                                                           | Entities_classes                                                                                                                     |
+|---------------:|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:----------------------------------------------------------------------------------------------------------------------------------------|
+|          [0.835099995136261, 0.40450000762939453, 0.331...] | ['William Henry Gates III', 'October 28, 1955', 'American', 'Microsoft Corporation', 'Microsoft', 'Gates', 'May 2014', 'one', '1970s and 1980s', 'Seattle', 'Washington', 'Gates', 'Microsoft', 'Paul Allen', '1975', 'Albuquerque', 'New Mexico'] | ['PERSON', 'DATE', 'NORP', 'ORG', 'ORG', 'ORG', 'DATE', 'CARDINAL', 'DATE', 'GPE', 'GPE', 'ORG', 'ORG', 'PERSON', 'DATE', 'GPE', 'GPE'] |
+
+
+
+
+#### [Named Entity Recognition - BERT Small (OntoNotes)](https://nlp.johnsnowlabs.com/2020/12/05/onto_small_bert_L4_512_en.html)
+
+```python
+nlu.load("en.ner.onto.bert.small_l4_512").predict("""William Henry Gates III (born October 28, 1955) is an American business magnate,
+ software developer, investor, and philanthropist. He is best known as the co-founder of Microsoft Corporation. During his career at Microsoft,
+  Gates held the positions of chairman, chief executive officer (CEO), president and chief software architect,
+   while also being the largest individual shareholder until May 2014.
+    He is one of the best-known entrepreneurs and pioneers of the microcomputer revolution of the 1970s and 1980s. Born and raised in Seattle, Washington, Gates co-founded Microsoft with childhood friend Paul Allen in 1975, in Albuquerque, New Mexico;
+     it went on to become the world's largest personal computer software company. Gates led the company as chairman and CEO until stepping down as CEO in January 2000, but he remained chairman and became chief software architect.
+     During the late 1990s, Gates had been criticized for his business tactics, which have been considered anti-competitive. This opinion has been upheld by numerous court rulings. In June 2006, Gates announced that he would be transitioning to a part-time
+      role at Microsoft and full-time work at the Bill & Melinda Gates Foundation, the private charitable foundation that he and his wife, Melinda Gates, established in 2000.
+ He gradually transferred his duties to Ray Ozzie and Craig Mundie.
+  He stepped down as chairman of Microsoft in February 2014 and assumed a new post as technology adviser to support the newly appointed CEO Satya Nadella.""",output_level = "document")
+```
+output :
+
+|   ner_confidence | entities                                                                                                                                                                                                                                               | Entities_classes                                                                                                                           |
+|---------------:|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:----------------------------------------------------------------------------------------------------------------------------------------------|
+|              [0.964900016784668, 0.8299000263214111, 0.9607...]| ['William Henry Gates III', 'October 28, 1955', 'American', 'Microsoft Corporation', 'Microsoft', 'Gates', 'May 2014', 'one', 'the 1970s and 1980s', 'Seattle', 'Washington', 'Gates', 'Microsoft', 'Paul Allen', '1975', 'Albuquerque', 'New Mexico'] | ['PERSON', 'DATE', 'NORP', 'ORG', 'ORG', 'PERSON', 'DATE', 'CARDINAL', 'DATE', 'GPE', 'GPE', 'PERSON', 'ORG', 'PERSON', 'DATE', 'GPE', 'GPE'] |
+
+
+#### [Named Entity Recognition - BERT Medium (OntoNotes)](https://nlp.johnsnowlabs.com/2020/12/05/onto_small_bert_L8_512_en.html)
+
+```python
+nlu.load("en.ner.onto.bert.small_l8_512").predict("""William Henry Gates III (born October 28, 1955) is an American business magnate,
+ software developer, investor, and philanthropist. He is best known as the co-founder of Microsoft Corporation. During his career at Microsoft,
+  Gates held the positions of chairman, chief executive officer (CEO), president and chief software architect,
+   while also being the largest individual shareholder until May 2014.
+    He is one of the best-known entrepreneurs and pioneers of the microcomputer revolution of the 1970s and 1980s. Born and raised in Seattle, Washington, Gates co-founded Microsoft with childhood friend Paul Allen in 1975, in Albuquerque, New Mexico;
+     it went on to become the world's largest personal computer software company. Gates led the company as chairman and CEO until stepping down as CEO in January 2000, but he remained chairman and became chief software architect.
+     During the late 1990s, Gates had been criticized for his business tactics, which have been considered anti-competitive. This opinion has been upheld by numerous court rulings. In June 2006, Gates announced that he would be transitioning to a part-time
+      role at Microsoft and full-time work at the Bill & Melinda Gates Foundation, the private charitable foundation that he and his wife, Melinda Gates, established in 2000.
+ He gradually transferred his duties to Ray Ozzie and Craig Mundie.
+  He stepped down as chairman of Microsoft in February 2014 and assumed a new post as technology adviser to support the newly appointed CEO Satya Nadella.""",output_level = "document")
+```
+output :
+
+| ner_confidence   | entities                                                                                                                                                                                                                           | Entities_classes                                                                                                        |
+|---------------:|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:---------------------------------------------------------------------------------------------------------------------------|
+|        [0.916700005531311, 0.5873000025749207, 0.8816...] | ['William Henry Gates III', 'October 28, 1955', 'American', 'Microsoft Corporation', 'Microsoft', 'Gates', 'May 2014', 'the 1970s and 1980s', 'Seattle', 'Washington', 'Gates', 'Paul Allen', '1975', 'Albuquerque', 'New Mexico'] | ['PERSON', 'DATE', 'NORP', 'ORG', 'ORG', 'PERSON', 'DATE', 'DATE', 'GPE', 'GPE', 'PERSON', 'PERSON', 'DATE', 'GPE', 'GPE'] |
+
+
+
+#### [Named Entity Recognition - BERT Base (OntoNotes)](https://nlp.johnsnowlabs.com/2020/12/05/onto_bert_base_cased_en.html)
+
+```python
+nlu.load("en.ner.onto.bert.cased_base").predict("""William Henry Gates III (born October 28, 1955) is an American business magnate,
+ software developer, investor, and philanthropist. He is best known as the co-founder of Microsoft Corporation. During his career at Microsoft,
+  Gates held the positions of chairman, chief executive officer (CEO), president and chief software architect,
+   while also being the largest individual shareholder until May 2014.
+    He is one of the best-known entrepreneurs and pioneers of the microcomputer revolution of the 1970s and 1980s. Born and raised in Seattle, Washington, Gates co-founded Microsoft with childhood friend Paul Allen in 1975, in Albuquerque, New Mexico;
+     it went on to become the world's largest personal computer software company. Gates led the company as chairman and CEO until stepping down as CEO in January 2000, but he remained chairman and became chief software architect.
+     During the late 1990s, Gates had been criticized for his business tactics, which have been considered anti-competitive. This opinion has been upheld by numerous court rulings. In June 2006, Gates announced that he would be transitioning to a part-time
+      role at Microsoft and full-time work at the Bill & Melinda Gates Foundation, the private charitable foundation that he and his wife, Melinda Gates, established in 2000.
+ He gradually transferred his duties to Ray Ozzie and Craig Mundie.
+  He stepped down as chairman of Microsoft in February 2014 and assumed a new post as technology adviser to support the newly appointed CEO Satya Nadella.""",output_level = "document")
+```
+output :
+
+|   ner_confidence | entities                                                                                                                                                                                                                                               | Entities_classes                                                                                                                           |
+|---------------:|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:----------------------------------------------------------------------------------------------------------------------------------------------|
+|              [0.504800021648407, 0.47290000319480896, 0.462...] | ['William Henry Gates III', 'October 28, 1955', 'American', 'Microsoft Corporation', 'Microsoft', 'Gates', 'May 2014', 'one', 'the 1970s and 1980s', 'Seattle', 'Washington', 'Gates', 'Microsoft', 'Paul Allen', '1975', 'Albuquerque', 'New Mexico'] | ['PERSON', 'DATE', 'NORP', 'ORG', 'ORG', 'PERSON', 'DATE', 'CARDINAL', 'DATE', 'GPE', 'GPE', 'PERSON', 'ORG', 'PERSON', 'DATE', 'GPE', 'GPE'] |
+
+
+
+#### [Named Entity Recognition - BERT Large (OntoNotes)](https://nlp.johnsnowlabs.com/2020/12/05/onto_electra_small_uncased_en.html)
+```python
+nlu.load("en.ner.onto.electra.uncased_small").predict("""William Henry Gates III (born October 28, 1955) is an American business magnate,
+ software developer, investor, and philanthropist. He is best known as the co-founder of Microsoft Corporation. During his career at Microsoft,
+  Gates held the positions of chairman, chief executive officer (CEO), president and chief software architect,
+   while also being the largest individual shareholder until May 2014.
+    He is one of the best-known entrepreneurs and pioneers of the microcomputer revolution of the 1970s and 1980s. Born and raised in Seattle, Washington, Gates co-founded Microsoft with childhood friend Paul Allen in 1975, in Albuquerque, New Mexico;
+     it went on to become the world's largest personal computer software company. Gates led the company as chairman and CEO until stepping down as CEO in January 2000, but he remained chairman and became chief software architect.
+     During the late 1990s, Gates had been criticized for his business tactics, which have been considered anti-competitive. This opinion has been upheld by numerous court rulings. In June 2006, Gates announced that he would be transitioning to a part-time
+      role at Microsoft and full-time work at the Bill & Melinda Gates Foundation, the private charitable foundation that he and his wife, Melinda Gates, established in 2000.
+ He gradually transferred his duties to Ray Ozzie and Craig Mundie.
+  He stepped down as chairman of Microsoft in February 2014 and assumed a new post as technology adviser to support the newly appointed CEO Satya Nadella.""",output_level = "document")
+```
+output :
+
+|   ner_confidence | entities                                                                                                                                                                                                                                          | Entities_classes                                                                                                                                   |
+|---------------:|:--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:------------------------------------------------------------------------------------------------------------------------------------------------------|
+|            [0.7213000059127808, 0.6384000182151794, 0.731...]  | ['William Henry Gates III', 'October 28, 1955', 'American', 'Microsoft Corporation', 'Microsoft', 'Gates', 'May 2014', 'one', '1970s', '1980s', 'Seattle', 'Washington', 'Gates', 'Microsoft', 'Paul Allen', '1975', 'Albuquerque', 'New Mexico'] | ['PERSON', 'DATE', 'NORP', 'ORG', 'ORG', 'PERSON', 'DATE', 'CARDINAL', 'DATE', 'DATE', 'GPE', 'GPE', 'PERSON', 'ORG', 'PERSON', 'DATE', 'GPE', 'GPE'] |
+
+#### [Named Entity Recognition - ELECTRA Small (OntoNotes)](https://nlp.johnsnowlabs.com/2020/12/05/onto_electra_small_uncased_en.html)
+
+```python
+nlu.load("en.ner.onto.electra.uncased_small").predict("""William Henry Gates III (born October 28, 1955) is an American business magnate,
+ software developer, investor, and philanthropist. He is best known as the co-founder of Microsoft Corporation. During his career at Microsoft,
+  Gates held the positions of chairman, chief executive officer (CEO), president and chief software architect,
+   while also being the largest individual shareholder until May 2014.
+    He is one of the best-known entrepreneurs and pioneers of the microcomputer revolution of the 1970s and 1980s. Born and raised in Seattle, Washington, Gates co-founded Microsoft with childhood friend Paul Allen in 1975, in Albuquerque, New Mexico;
+     it went on to become the world's largest personal computer software company. Gates led the company as chairman and CEO until stepping down as CEO in January 2000, but he remained chairman and became chief software architect.
+     During the late 1990s, Gates had been criticized for his business tactics, which have been considered anti-competitive. This opinion has been upheld by numerous court rulings. In June 2006, Gates announced that he would be transitioning to a part-time
+      role at Microsoft and full-time work at the Bill & Melinda Gates Foundation, the private charitable foundation that he and his wife, Melinda Gates, established in 2000.
+ He gradually transferred his duties to Ray Ozzie and Craig Mundie.
+  He stepped down as chairman of Microsoft in February 2014 and assumed a new post as technology adviser to support the newly appointed CEO Satya Nadella.""",output_level = "document")
+```
+
+output :
+
+|   ner_confidence | Entities_classes                                                                                                                                   | entities                                                                                                                                                                                                                                          |
+|---------------:|:------------------------------------------------------------------------------------------------------------------------------------------------------|:--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|            [0.8496000170707703, 0.4465999901294708, 0.568...]  | ['PERSON', 'DATE', 'NORP', 'ORG', 'ORG', 'PERSON', 'DATE', 'CARDINAL', 'DATE', 'DATE', 'GPE', 'GPE', 'PERSON', 'ORG', 'PERSON', 'DATE', 'GPE', 'GPE'] | ['William Henry Gates III', 'October 28, 1955', 'American', 'Microsoft Corporation', 'Microsoft', 'Gates', 'May 2014', 'one', '1970s', '1980s', 'Seattle', 'Washington', 'Gates', 'Microsoft', 'Paul Allen', '1975', 'Albuquerque', 'New Mexico'] |
+
+
+
+#### [Named Entity Recognition - ELECTRA Base (OntoNotes)](https://nlp.johnsnowlabs.com/2020/12/05/onto_electra_base_uncased_en.html)
+
+```python
+nlu.load("en.ner.onto.electra.uncased_base").predict("""William Henry Gates III (born October 28, 1955) is an American business magnate,
+ software developer, investor, and philanthropist. He is best known as the co-founder of Microsoft Corporation. During his career at Microsoft,
+  Gates held the positions of chairman, chief executive officer (CEO), president and chief software architect,
+   while also being the largest individual shareholder until May 2014.
+    He is one of the best-known entrepreneurs and pioneers of the microcomputer revolution of the 1970s and 1980s. Born and raised in Seattle, Washington, Gates co-founded Microsoft with childhood friend Paul Allen in 1975, in Albuquerque, New Mexico;
+     it went on to become the world's largest personal computer software company. Gates led the company as chairman and CEO until stepping down as CEO in January 2000, but he remained chairman and became chief software architect.
+     During the late 1990s, Gates had been criticized for his business tactics, which have been considered anti-competitive. This opinion has been upheld by numerous court rulings. In June 2006, Gates announced that he would be transitioning to a part-time
+      role at Microsoft and full-time work at the Bill & Melinda Gates Foundation, the private charitable foundation that he and his wife, Melinda Gates, established in 2000.
+ He gradually transferred his duties to Ray Ozzie and Craig Mundie.
+  He stepped down as chairman of Microsoft in February 2014 and assumed a new post as technology adviser to support the newly appointed CEO Satya Nadellabase.""",output_level = "document")
+
+```
+
+output :
+
+|   ner_confidence | entities                                                                                                                                                                                                                                              | Entities_classes                                                                                                                                   |
+|---------------:|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:------------------------------------------------------------------------------------------------------------------------------------------------------|
+|              [0.5134000182151794, 0.9419000148773193, 0.802...]| ['William Henry Gates III', 'October 28, 1955', 'American', 'Microsoft Corporation', 'Microsoft', 'Gates', 'May 2014', 'one', 'the 1970s', '1980s', 'Seattle', 'Washington', 'Gates', 'Microsoft', 'Paul Allen', '1975', 'Albuquerque', 'New Mexico'] | ['PERSON', 'DATE', 'NORP', 'ORG', 'ORG', 'PERSON', 'DATE', 'CARDINAL', 'DATE', 'DATE', 'GPE', 'GPE', 'PERSON', 'ORG', 'PERSON', 'DATE', 'GPE', 'GPE'] |
+
+
+#### [Named Entity Recognition - ELECTRA Large (OntoNotes)](https://nlp.johnsnowlabs.com/2020/12/05/onto_electra_large_uncased_en.html)
+
+```python
+
+nlu.load("en.ner.onto.electra.uncased_large").predict("""William Henry Gates III (born October 28, 1955) is an American business magnate,
+ software developer, investor, and philanthropist. He is best known as the co-founder of Microsoft Corporation. During his career at Microsoft,
+  Gates held the positions of chairman, chief executive officer (CEO), president and chief software architect,
+   while also being the largest individual shareholder until May 2014.
+    He is one of the best-known entrepreneurs and pioneers of the microcomputer revolution of the 1970s and 1980s. Born and raised in Seattle, Washington, Gates co-founded Microsoft with childhood friend Paul Allen in 1975, in Albuquerque, New Mexico;
+     it went on to become the world's largest personal computer software company. Gates led the company as chairman and CEO until stepping down as CEO in January 2000, but he remained chairman and became chief software architect.
+     During the late 1990s, Gates had been criticized for his business tactics, which have been considered anti-competitive. This opinion has been upheld by numerous court rulings. In June 2006, Gates announced that he would be transitioning to a part-time
+      role at Microsoft and full-time work at the Bill & Melinda Gates Foundation, the private charitable foundation that he and his wife, Melinda Gates, established in 2000.
+ He gradually transferred his duties to Ray Ozzie and Craig Mundie.
+  He stepped down as chairman of Microsoft in February 2014 and assumed a new post as technology adviser to support the newly appointed CEO Satya Nadellabase.""",output_level = "document")
+```
+
+output :
+
+|   ner_confidence | entities                                                                                                                                                                                                                                                            | Entities_classes                                                                                                                                          |
+|---------------:|:--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:-------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|              [0.8442000150680542, 0.26840001344680786, 0.57...] | ['William Henry Gates', 'October 28, 1955', 'American', 'Microsoft Corporation', 'Microsoft', 'Gates', 'May 2014', 'one', '1970s', '1980s', 'Seattle', 'Washington', 'Gates co-founded', 'Microsoft', 'Paul Allen', '1975', 'Albuquerque', 'New Mexico', 'largest'] | ['PERSON', 'DATE', 'NORP', 'ORG', 'ORG', 'PERSON', 'DATE', 'CARDINAL', 'DATE', 'DATE', 'GPE', 'GPE', 'PERSON', 'ORG', 'PERSON', 'DATE', 'GPE', 'GPE', 'GPE'] |
+
+
+#### [Recognize Entities OntoNotes - BERT Tiny](https://nlp.johnsnowlabs.com/2020/12/09/onto_recognize_entities_bert_tiny_en.html)
+
+```python
+
+nlu.load("en.ner.onto.bert.tiny").predict("Johnson first entered politics when elected in 2001 as a member of Parliament. He then served eight years as the mayor of London, from 2008 to 2016, before rejoining Parliament.",output_level="document")
+```
+
+output :
+
+|   ner_confidence | entities                                                                            | Entities_classes                                         |
+|---------------:|:------------------------------------------------------------------------------------|:------------------------------------------------------------|
+|              [0.994700014591217, 0.9412999749183655, 0.9685...] | ['Johnson', 'first', '2001', 'Parliament', 'eight years', 'London', '2008 to 2016'] | ['PERSON', 'ORDINAL', 'DATE', 'ORG', 'DATE', 'GPE', 'DATE'] |
+
+#### [Recognize Entities OntoNotes - BERT Mini](https://nlp.johnsnowlabs.com/2020/12/09/onto_recognize_entities_bert_mini_en.html)
+
+```python
+nlu.load("en.ner.onto.bert.mini").predict("Johnson first entered politics when elected in 2001 as a member of Parliament. He then served eight years as the mayor of London, from 2008 to 2016, before rejoining Parliament.",output_level="document")
+```
+output :
+
+|   ner_confidence | entities                                                              | Entities_classes                                  |
+|---------------:|:----------------------------------------------------------------------|:-----------------------------------------------------|
+|              [0.996399998664856, 0.9733999967575073, 0.8766...]| ['Johnson', 'first', '2001', 'eight years', 'London', '2008 to 2016'] | ['PERSON', 'ORDINAL', 'DATE', 'DATE', 'GPE', 'DATE'] |
+
+#### [Recognize Entities OntoNotes - BERT Small](https://nlp.johnsnowlabs.com/2020/12/09/onto_recognize_entities_bert_small_en.html)
+
+
+```python
+nlu.load("en.ner.onto.bert.small").predict("Johnson first entered politics when elected in 2001 as a member of Parliament. He then served eight years as the mayor of London, from 2008 to 2016, before rejoining Parliament.",output_level="document")
+```
+output :
+
+|   ner_confidence | entities                                                                            | Entities_classes                                         |
+|---------------:|:------------------------------------------------------------------------------------|:------------------------------------------------------------|
+|              [0.9987999796867371, 0.9610000252723694, 0.998...]| ['Johnson', 'first', '2001', 'eight years', 'London', '2008 to 2016', 'Parliament'] | ['PERSON', 'ORDINAL', 'DATE', 'DATE', 'GPE', 'DATE', 'ORG'] |
+
+#### [Recognize Entities OntoNotes - BERT Medium](https://nlp.johnsnowlabs.com/2020/12/09/onto_recognize_entities_bert_medium_en.html)
+
+```python
+
+nlu.load("en.ner.onto.bert.medium").predict("Johnson first entered politics when elected in 2001 as a member of Parliament. He then served eight years as the mayor of London, from 2008 to 2016, before rejoining Parliament.",output_level="document")
+```
+output :
+
+|   ner_confidence | entities                                                              | Entities_classes                                  |
+|---------------:|:----------------------------------------------------------------------|:-----------------------------------------------------|
+|              [0.9969000220298767, 0.8575999736785889, 0.995...] | ['Johnson', 'first', '2001', 'eight years', 'London', '2008 to 2016'] | ['PERSON', 'ORDINAL', 'DATE', 'DATE', 'GPE', 'DATE'] |
+
+#### [Recognize Entities OntoNotes - BERT Base](https://nlp.johnsnowlabs.com/2020/12/09/onto_recognize_entities_bert_base_en.html)
+
+```python
+nlu.load("en.ner.onto.bert.base").predict("Johnson first entered politics when elected in 2001 as a member of Parliament. He then served eight years as the mayor of London, from 2008 to 2016, before rejoining Parliament.",output_level="document")
+```
+
+
+output :
+
+|   ner_confidence | entities                                                                                          | Entities_classes                                                |
+|---------------:|:--------------------------------------------------------------------------------------------------|:-------------------------------------------------------------------|
+|              [0.996999979019165, 0.933899998664856, 0.99930...] | ['Johnson', 'first', '2001', 'Parliament', 'eight years', 'London', '2008 to 2016', 'Parliament'] | ['PERSON', 'ORDINAL', 'DATE', 'ORG', 'DATE', 'GPE', 'DATE', 'ORG'] |
+
+#### [Recognize Entities OntoNotes - BERT Large](https://nlp.johnsnowlabs.com/2020/12/09/onto_recognize_entities_bert_large_en.html)
+
+
+```python
+nlu.load("en.ner.onto.bert.large").predict("Johnson first entered politics when elected in 2001 as a member of Parliament. He then served eight years as the mayor of London, from 2008 to 2016, before rejoining Parliament.",output_level="document")
+```
+
+output :
+
+|   ner_confidence | entities                                                                                          | Entities_classes                                                |
+|---------------:|:--------------------------------------------------------------------------------------------------|:-------------------------------------------------------------------|
+|              [0.9786999821662903, 0.9549000263214111, 0.998...] | ['Johnson', 'first', '2001', 'Parliament', 'eight years', 'London', '2008 to 2016', 'Parliament'] | ['PERSON', 'ORDINAL', 'DATE', 'ORG', 'DATE', 'GPE', 'DATE', 'ORG'] |
+
+#### [Recognize Entities OntoNotes - ELECTRA Small](https://nlp.johnsnowlabs.com/2020/12/09/onto_recognize_entities_electra_small_en.html)
+
+```pythone
+nlu.load("en.ner.onto.electra.small").predict("Johnson first entered politics when elected in 2001 as a member of Parliament. He then served eight years as the mayor of London, from 2008 to 2016, before rejoining Parliament.",output_level="document")
+```
+output :
+
+|   ner_confidence | entities                                                              | Entities_classes                                  |
+|---------------:|:----------------------------------------------------------------------|:-----------------------------------------------------|
+|              [0.9952999949455261, 0.8589000105857849, 0.996...] | ['Johnson', 'first', '2001', 'eight years', 'London', '2008 to 2016'] | ['PERSON', 'ORDINAL', 'DATE', 'DATE', 'GPE', 'DATE'] |
+
+#### [Recognize Entities OntoNotes - ELECTRA Base](https://nlp.johnsnowlabs.com/2020/12/09/onto_recognize_entities_electra_base_en.html)
+```python
+nlu.load("en.ner.onto.electra.base").predict("Johnson first entered politics when elected in 2001 as a member of Parliament. He then served eight years as the mayor of London, from 2008 to 2016, before rejoining Parliament.",output_level="document")
+```
+output :
+
+|   ner_confidence | entities                                                                            | Entities_classes                                                 |
+|---------------:|:------------------------------------------------------------------------------------|:--------------------------------------------------------------------|
+|              [0.9987999796867371, 0.9474999904632568, 0.999...] | ['Johnson', 'first', '2001', 'Parliament', 'eight years', 'London', '2008', '2016'] | ['PERSON', 'ORDINAL', 'DATE', 'ORG', 'DATE', 'GPE', 'DATE', 'DATE'] |
+
+#### [Recognize Entities OntoNotes - ELECTRA Large](https://nlp.johnsnowlabs.com/2020/12/09/onto_recognize_entities_electra_large_en.html)
+
+```python
+nlu.load("en.ner.onto.large").predict("Johnson first entered politics when elected in 2001 as a member of Parliament. He then served eight years as the mayor of London, from 2008 to 2016, before rejoining Parliament.",output_level="document")
+```
+output :
+
+|   ner_confidence | entities                                                              | Entities_classes                                  |
+|---------------:|:----------------------------------------------------------------------|:-----------------------------------------------------|
+|              [0.9998000264167786, 0.9613999724388123, 0.998...] | ['Johnson', 'first', '2001', 'eight years', 'London', '2008 to 2016'] | ['PERSON', 'ORDINAL', 'DATE', 'DATE', 'GPE', 'DATE'] |
+
+### NLU Installation
+
+```bash
+# PyPi
+!pip install nlu pyspark==2.4.7
+#Conda
+# Install NLU from Anaconda/Conda
+conda install -c johnsnowlabs nlu
+```
+
+### Additional NLU ressources
+- [NLU Website](https://nlu.johnsnowlabs.com/)
+- [All NLU Tutorial Notebooks](https://nlu.johnsnowlabs.com/docs/en/notebooks)
+- [NLU Videos and Blogposts on NLU](https://nlp.johnsnowlabs.com/learn#pythons-nlu-library)
+- [NLU on Github](https://github.com/JohnSnowLabs/nlu)
+
 
 ## NLU 1.1.1 Release Notes
+
 We are very excited to release NLU 1.1.1!
 This release features 3 new tutorial notebooks for Open/Closed book question answering with Google's T5, Intent classification and Aspect Based NER.
 In Addition NLU 1.1.0 comes with  25+ pretrained models and pipelines in Amharic, Bengali, Bhojpuri, Japanese, and Korean languages from the [amazing Spark2.7.2 release](https://github.com/JohnSnowLabs/spark-nlp/releases/tag/2.7.2)
@@ -22,6 +526,7 @@ Finally NLU now supports running on Spark 2.3 clusters.
 
 
 ### NLU 1.1.0 New Non-English Models
+
 |Language | nlu.load() reference | Spark NLP Model reference | Type |
 |---------|---------------------|----------------------------|------|
 |Arabic | [ar.ner](https://nlp.johnsnowlabs.com/2020/12/05/aner_cc_300d_ar.html) |[arabic_w2v_cc_300d](https://nlp.johnsnowlabs.com/2020/12/05/aner_cc_300d_ar.html) | Named Entity Recognizer                    |
@@ -41,6 +546,7 @@ Finally NLU now supports running on Spark 2.3 clusters.
 
 
 ### NLU 1.1.1 New English Models and Pipelines
+
 |Language | nlu.load() reference | Spark NLP Model reference | Type |
 |---------|---------------------|----------------------------|------|
 | English | [en.sentiment.glove](https://nlp.johnsnowlabs.com/2021/01/15/analyze_sentimentdl_glove_imdb_en.html) |[analyze_sentimentdl_glove_imdb](https://nlp.johnsnowlabs.com/2021/01/15/analyze_sentimentdl_glove_imdb_en.html)     | Sentiment Classifier |
@@ -61,6 +567,7 @@ Finally NLU now supports running on Spark 2.3 clusters.
 ### New Easy NLU 1-liner Examples : 
 
 #### Extract aspects and entities from airline questions (ATIS dataset)
+
 ```python
 	
 nlu.load("en.ner.atis").predict("i want to fly from baltimore to dallas round trip")
@@ -70,7 +577,6 @@ output:  ["baltimore"," dallas", "round trip"]
 
 
 #### Intent Classification for Airline Traffic Information System queries (ATIS dataset)
-
 
 ```python
 
@@ -82,7 +588,6 @@ output:  "atis_airfare"
 
 #### Recognize Entities OntoNotes - ELECTRA Large
 
-
 ```python
 
 nlu.load("en.ner.onto.large").predict("Johnson first entered politics when elected in 2001 as a member of Parliament. He then served eight years as the mayor of London.")	
@@ -90,7 +595,6 @@ output:  ["Johnson", "first", "2001", "eight years", "London"]
 ```
 
 #### Question classification of open-domain and fact-based questions Pipeline - TREC50
-
 
 ```python
 nlu.load("en.classify.trec50.pipe").predict("When did the construction of stone circles begin in the UK? ")
@@ -113,6 +617,7 @@ output:  ["然而",",","這樣","的","處理","也","衍生","了","一些","�
 # 'However, this treatment also creates some problems' in Chinese
 nlu.load("zh.pos.ud_gsd_trad").predict("然而，這樣的處理也衍生了一些問題。")
 ```
+
 Output:
 
 |Token |  POS   |
@@ -137,6 +642,7 @@ Output:
 nlu.loadnlu.load("th.segment_words").predict("Mona Lisa เป็นภาพวาดสีน้ำมันในศตวรรษที่ 16 ที่สร้างโดย Leonardo จัดขึ้นที่พิพิธภัณฑ์ลูฟร์ในปารีส")
 
 ```
+
 Output:
 
 | token |
@@ -184,6 +690,7 @@ Output:
 # 'The village is also called 'Mod' in Tora language' in Behgali 
 nlu.load("bn.pos").predict("বাসস্থান-ঘরগৃহস্থালি তোড়া ভাষায় গ্রামকেও বলে ` মোদ ' ৷")
 ```
+
 Output:
 
 | token             | pos  |
@@ -208,6 +715,7 @@ Output:
 df = nlu.load("bn.stopwords").predict("এই ভাষা যথেষ্ট নয়")
 
 ```
+
 Output:
 
 | cleanTokens | token |
@@ -224,6 +732,7 @@ Output:
 # 'The people of Ohu know that the foundation of Bhojpuri was shaken' in Bengali
 nlu.load('bh.pos').predict("ओहु लोग के मालूम बा कि श्लील होखते भोजपुरी के नींव हिल जाई").to_markdown()
 ```
+
 Output:
 
 | pos   | token   |

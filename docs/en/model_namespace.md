@@ -462,8 +462,11 @@ wrapped inside of a NLU Pipeline.
 | ar  | ar.embed                                        | arabic_w2v_cc_300d                 |
 | ar  | ar.embed.cbow                                   | arabic_w2v_cc_300d                 |
 | ar  | ar.embed.cbow.300d                              | arabic_w2v_cc_300d                 |
-| ar  | ar.embed.aner                                   | aner_cc_300d                       |
-| ar  | ar.embed.aner.300d                              | aner_cc_300d                       |
+| ar  | ar.embed.aner                                   | arabic_w2v_cc_300d                 |
+| ar  | ar.embed.aner.300d                              | arabic_w2v_cc_300d                 |
+| ar  | ar.embed.glove                                  | arabic_w2v_cc_300d                 |
+| ar  | ar.ner                                          | aner_cc_300d                       |
+| ar  | ar.ner.aner                                     | aner_cc_300d                       |
 | hy  | hy.stopwords                                    | stopwords_hy                       |
 | hy  | hy.lemma                                        | lemma                              |
 | hy  | hy.pos                                          | pos_ud_armtdp                      |
@@ -473,6 +476,8 @@ wrapped inside of a NLU Pipeline.
 | bn  | bn.stopwords                                    | stopwords_bn                       |
 | bn  | bn.lemma                                        | lemma                              |
 | bn  | bn.pos                                          | pos_msri                           |
+| bn  | bn.ner                                          | ner_jifs_glove_840B_300d           |
+| bn  | bn.ner.glove                                    | ner_jifs_glove_840B_300d           |
 | br  | br.stopwords                                    | stopwords_br                       |
 | br  | br.lemma                                        | lemma                              |
 | br  | br.pos                                          | pos_ud_keb                         |
@@ -525,6 +530,7 @@ wrapped inside of a NLU Pipeline.
 | hi  | hi.stopwords                                    | stopwords_hi                       |
 | hi  | hi.lemma                                        | lemma                              |
 | hi  | hi.pos                                          | pos_ud_hdtb                        |
+| hi  | hi.embed                                        | hindi_cc_300d                      |
 | hu  | hu.lemma                                        | lemma                              |
 | hu  | hu.pos                                          | pos_ud_szeged                      |
 | hu  | hu.pos.ud_szeged                                | pos_ud_szeged                      |
@@ -548,7 +554,7 @@ wrapped inside of a NLU Pipeline.
 | ja  | ja.ner.ud_gsd                                   | ner_ud_gsd_glove_840B_300d         |
 | ja  | ja.ner.ud_gsd.glove_840B_300D                   | ner_ud_gsd_glove_840B_300d         |
 | ja  | ja.pos.ud_gsd                                   | pos_ud_gsd                         |
-| ja  | ja.lemma:                                       | lemma                              |
+| ja  | ja.lemma                                        | lemma                              |
 | la  | la.stopwords                                    | stopwords_la                       |
 | la  | la.lemma                                        | lemma                              |
 | la  | la.pos                                          | pos_ud_llct                        |
@@ -1483,6 +1489,5 @@ wrapped inside of a NLU Pipeline.
 | xx  | xx.en.translate_to.gil           | translate_en_gil                      |
 | xx  | xx.en.translate_to.uk            | translate_en_uk                       |
 | xx  | xx.en.translate_to.fr            | translate_en_fr                       |
-
 
 </div></div></div></div>

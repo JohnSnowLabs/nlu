@@ -24,7 +24,7 @@ class ClassifierDlTests(unittest.TestCase):
         print(df.columns)
         print(df[['category','y']])
         print (classification_report(df['y'], df['category']))
-
+        pipe.save('/home/loan/Documents/freelance/jsl/nlu/nlu4realgit/tests/trained_models/quick_classifi')
 # Too heavy running on github actions
     # def test_classifier_dl_custom_embeds_doc_level(self):
     #     test_df = self.load_classifier_dl_dataset()

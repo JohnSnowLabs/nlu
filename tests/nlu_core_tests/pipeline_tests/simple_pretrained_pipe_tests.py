@@ -15,7 +15,6 @@ class PretrainedPipeTests(unittest.TestCase):
         print(df.columns)
         print(df)
 
-
 if __name__ == '__main__':
     unittest.main()
 

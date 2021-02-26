@@ -26,7 +26,7 @@ class AllComponentsInfo:
         self.utils = {}
         self.all_right_to_left_langs_with_pretrained_tokenizer = ['zh','ko','ja']
         self.all_pretrained_pipe_languages = ['en', 'nl','fr','de','it','no','pl','pt','ru','es','xx',]
-        self.all_pretrained_model_languages = ['bh','am','da','fr','de','it','nb','no','nn','pl','pt','ru','es','af','ar','hy','eu','bn','br','bg','ca','cs','eo','fi','gl','el','ha','he','hi','hu','id','ga','ja','la','lv','mr','fa','ro','sk','sl','so','st','sw','sv','th','tr','uk','yo','zu','zh','xx','ur','ko',
+        self.all_pretrained_model_languages = ['et','bh','am','da','fr','de','it','nb','no','nn','pl','pt','ru','es','af','ar','hy','eu','bn','br','bg','ca','cs','eo','fi','gl','el','ha','he','hi','hu','id','ga','ja','la','lv','mr','fa','ro','sk','sl','so','st','sw','sv','th','tr','uk','yo','zu','zh','xx','ur','ko',
                                                ]
         self.all_languages = set(self.all_pretrained_pipe_languages).union(set(self.all_pretrained_model_languages))
         self.all_classifier_classes =[]
