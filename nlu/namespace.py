@@ -1179,10 +1179,15 @@ class NameSpace():
             "bn.pos": "pos_msri",
             'bn.ner':'ner_jifs_glove_840B_300d',
             'bn.ner.glove':'ner_jifs_glove_840B_300d',
-            'bn.embed.glove' : 'bengaliner_cc_300d',
-            'bn.embed' : 'bengaliner_cc_300d',
-            'bn.ner.cc':'bengali_cc_300d',
-            'bn.ner.cc_300d':'bengali_cc_300d',
+
+            'bn.ner.cc_300d' : 'bengaliner_cc_300d',
+
+            'bn.embed.cc_300d':'bengali_cc_300d',
+
+
+            'bn.embed':'bengali_cc_300d',
+            'bn.embed.glove':'bengali_cc_300d',
+
 
     },
         'br': {

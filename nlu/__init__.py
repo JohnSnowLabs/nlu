@@ -160,7 +160,6 @@ discoverer = nlu.Discoverer()
 
 import os
 import sparknlp
-sparknlp.start()
 
 def read_nlu_info(path):
     f = open(os.path.join(path,'nlu_info.txt'), "r")
