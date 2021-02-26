@@ -106,7 +106,9 @@ class PipelineQueryVerifier():
                 if PipelineQueryVerifier.has_storage_ref(c) :
                     if PipelineQueryVerifier.extract_storage_ref(c) == storage_ref_to_find :
                         # Both components have Different Names AND their Storage Ref Matches up AND they both take in tokens -> Match
-                        if 'token' in component_to_check.component_info.inputs and c.component_info.type == 'word_embeddings' : return True
+                        if 'token' in component_to_check.component_info.inputs and c.component_info.type == 'word_embeddings' :
+                            logger.info(f'Match found = {c}')
+                            return True, None
 
                         # Since document and be substituted for sentence and vice versa if either of them matches up we have a match
                         if 'sentence_embeddings' in component_to_check.component_info.inputs and c.component_info.type == 'sentence_embeddings':
@@ -244,7 +246,6 @@ class PipelineQueryVerifier():
             The converter is a NLU Component Embelishement of the Spark NLP Sentence Embeddings Annotator
         """
         c = nlu.Util(annotator_class='sentence_embeddings')
-        print("GOT UTILLLLLLLLLLLLLLLLL", c)
         storage_ref = PipelineQueryVerifier.extract_storage_ref(component)
         c.model.setStorageRef(storage_ref)
         c.model.setInputCols('document','word_embeddings')

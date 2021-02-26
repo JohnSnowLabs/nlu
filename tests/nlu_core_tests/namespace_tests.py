@@ -373,6 +373,9 @@ class TestNameSpace(unittest.TestCase):
     def test_26_bert(self):
         res = nlu.load('en.ner.bert',verbose=True).predict('The NLU library is a machine learning library, simmilar to Tensorflow and Keras')
         print(res)
+
+
+
 if __name__ == '__main__':
     unittest.main()
 
