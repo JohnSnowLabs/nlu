@@ -364,6 +364,16 @@ def resolve_component_from_parsed_query_data(language, component_type, dataset, 
         component_kind = 'component'
         logger.info('Could not find reference in NLU namespace. Assuming it is a component that is an ragmatic NLP annotator with NO model to download behind it.')
 
+
+    if not nlu.is_authorized_enviroment() and is_licensed :
+        print(f"The nlu_ref=[{nlu_ref}] is pointing to a licensed Spark NLP Annotator or Model [{nlp_ref}]. \n"
+              f"Your environment does not seem to be Authorized!\n"
+              f"Please RESTART your Python environment and run nlu.auth(SPARK_NLP_LICENSE,AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY,JSL_SECRET)  \n"
+              f"with your corrosponding credentials. If you have no credentials you can get a trial version with credentials here https://www.johnsnowlabs.com/spark-nlp-try-free/ \n"
+              f"Or contact us at contact@jonsnowlabs.com"
+              f"NLU will ignore this error and continue running, but you will encounter errors most likely. ")
+
+
     # Convert references into NLU Component object which embelishes NLP annotators
     if component_kind == 'pipe':
         constructed_components = construct_component_from_pipe_identifier(language, nlp_ref, nlu_ref,is_licensed=is_licensed)
@@ -594,30 +604,29 @@ def construct_component_from_identifier(language, component_type='', dataset='',
     logger.info('Creating singular NLU component for type=%s sparknlp_ref=%s , dataset=%s, language=%s , nlu_ref=%s ',
                 component_type, nlp_ref, dataset, language, nlu_ref)
     try:
-
         if any(
             x in NameSpace.seq2seq for x in [nlp_ref, nlu_ref, dataset, component_type, ]):
-            return Seq2Seq(annotator_class=component_type, language=language, get_default=False, nlp_ref=nlp_ref,configs=dataset)
+            return Seq2Seq(annotator_class=component_type, language=language, get_default=False, nlp_ref=nlp_ref,configs=dataset, is_licensed=is_licensed)
 
         # if any([component_type in NameSpace.word_embeddings,dataset in NameSpace.word_embeddings, nlu_ref in NameSpace.word_embeddings, nlp_ref in NameSpace.word_embeddings]):
         elif any(x in NameSpace.word_embeddings and not x in NameSpace.classifiers for x in
                [nlp_ref, nlu_ref, dataset, component_type, ] + dataset.split('_')):
-            return Embeddings(get_default=False, nlp_ref=nlp_ref, nlu_ref=nlu_ref, language=language)
+            return Embeddings(get_default=False, nlp_ref=nlp_ref, nlu_ref=nlu_ref, language=language, is_licensed=is_licensed)
 
         # elif any([component_type in NameSpace.sentence_embeddings,dataset in NameSpace.sentence_embeddings, nlu_ref in NameSpace.sentence_embeddings, nlp_ref in NameSpace.sentence_embeddings]):
         if any(x in NameSpace.sentence_embeddings and not x in NameSpace.classifiers for x in
                [nlp_ref, nlu_ref, dataset, component_type, ] + dataset.split('_')):
-            return Embeddings(get_default=False, nlp_ref=nlp_ref, nlu_ref=nlu_ref, language=language)
+            return Embeddings(get_default=False, nlp_ref=nlp_ref, nlu_ref=nlu_ref, language=language, is_licensed=is_licensed)
 
         elif any(
                 x in NameSpace.classifiers for x in [nlp_ref, nlu_ref, dataset, component_type, ] + dataset.split('_')):
-            return Classifier(get_default=False, nlp_ref=nlp_ref, nlu_ref=nlu_ref, language=language)
+            return Classifier(get_default=False, nlp_ref=nlp_ref, nlu_ref=nlu_ref, language=language, is_licensed=is_licensed)
 
 
 
         elif any('spell' in x for x in [nlp_ref, nlu_ref, dataset, component_type]):
             return SpellChecker(annotator_class=component_type, language=language, get_default=True, nlp_ref=nlp_ref,
-                                dataset=dataset)
+                                dataset=dataset, is_licensed=is_licensed)
 
         elif any('dep' in x and not 'untyped' in x for x in [nlp_ref, nlu_ref, dataset, component_type]):
             return LabledDepParser()
@@ -626,21 +635,21 @@ def construct_component_from_identifier(language, component_type='', dataset='',
             return UnlabledDepParser()
 
         elif any('lemma' in x for x in [nlp_ref, nlu_ref, dataset, component_type]):
-            return nlu.lemmatizer.Lemmatizer(language=language, nlp_ref=nlp_ref)
+            return nlu.lemmatizer.Lemmatizer(language=language, nlp_ref=nlp_ref, is_licensed=is_licensed)
 
         elif any('norm' in x for x in [nlp_ref, nlu_ref, dataset, component_type]):
-            return nlu.normalizer.Normalizer(nlp_ref=nlp_ref, nlu_ref=nlu_ref)
+            return nlu.normalizer.Normalizer(nlp_ref=nlp_ref, nlu_ref=nlu_ref, is_licensed=is_licensed)
         elif any('clean' in x or 'stopword' in x for x in [nlp_ref, nlu_ref, dataset, component_type]):
-            return nlu.StopWordsCleaner(language=language, get_default=False, nlp_ref=nlp_ref)
+            return nlu.StopWordsCleaner(language=language, get_default=False, nlp_ref=nlp_ref, is_licensed=is_licensed)
         elif any('sentence_detector' in x for x in [nlp_ref, nlu_ref, dataset, component_type]):
-            return NLUSentenceDetector(nlu_ref=nlu_ref, nlp_ref=nlp_ref, language=language)
+            return NLUSentenceDetector(nlu_ref=nlu_ref, nlp_ref=nlp_ref, language=language, is_licensed=is_licensed)
 
         elif any('match' in x for x in [nlp_ref, nlu_ref, dataset, component_type]):
-            return Matcher(nlu_ref=nlu_ref, nlp_ref=nlp_ref)
+            return Matcher(nlu_ref=nlu_ref, nlp_ref=nlp_ref, is_licensed=is_licensed)
 
-# THIS NEEDS TO CAPTURE THE WORD SEGMNETER!!!
+
         elif any('tokenize' in x or 'segment_words' in x for x in [nlp_ref, nlu_ref, dataset, component_type]):
-            return nlu.tokenizer.Tokenizer(nlp_ref=nlp_ref, nlu_ref=nlu_ref, language=language,get_default=False)
+            return nlu.tokenizer.Tokenizer(nlp_ref=nlp_ref, nlu_ref=nlu_ref, language=language,get_default=False, is_licensed=is_licensed)
 
         elif any('stem' in x for x in [nlp_ref, nlu_ref, dataset, component_type]):
             return Stemmer()
@@ -653,6 +662,10 @@ def construct_component_from_identifier(language, component_type='', dataset='',
             return nlu.chunker.Chunker()
         elif component_type == 'ngram':
             return nlu.chunker.Chunker('ngram')
+
+        elif 'assert' in component_type:
+            print('asserting bi')
+            return nlu.Asserter(nlp_ref=nlp_ref, nlu_ref=nlu_ref, language=language,get_default=False, is_licensed=is_licensed)
 
         logger.exception('EXCEPTION: Could not resolve singular Component for type=%s and nlp_ref=%s and nlu_ref=%s',
                          component_type, nlp_ref, nlu_ref)

@@ -1,0 +1,26 @@
+{
+  "name": "default_chunker",
+  "description": "todo",
+  "output_level": "chunk",
+  "trainable": false,
+  "outputs": [
+    "chunk"
+  ],
+  "inputs": [
+    "document",
+    "pos"
+  ],
+  "type": "chunker",
+  "file_dependencies": {},
+  "spark_input_column_names": [
+    "document",
+    "pos"
+  ],
+  "spark_output_column_names": [
+    "chunk"
+  ],
+  "provider": "sparknlp",
+  "license": "open source",
+  "computation_context": "spark",
+  "output_context": "spark"
+}

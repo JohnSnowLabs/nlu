@@ -2,7 +2,7 @@ from nlu.pipe_components import SparkNLUComponent
 
 class Embeddings(SparkNLUComponent):
 
-    def __init__(self, annotator_class='glove', language ='en', component_type='embedding', get_default=True, model = None, nlp_ref ='', nlu_ref =''):
+    def __init__(self, annotator_class='glove', language ='en', component_type='embedding', get_default=True, model = None, nlp_ref ='', nlu_ref ='', is_licensed=False):
         if 'use' in nlu_ref or 'tfhub_use' in nlp_ref: annotator_class = 'use'
         # first check for sentence then token embeddings.
         elif 'bert' in nlp_ref and 'albert' not in nlp_ref and 'sent' in nlp_ref : annotator_class= 'sentence_bert'

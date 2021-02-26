@@ -1,7 +1,7 @@
 from nlu.pipe_components import SparkNLUComponent
 
 class SpellChecker(SparkNLUComponent):
-    def __init__(self, annotator_class='context_spell', language ='en', component_type='spell_checker', get_default=True, model = None, nlp_ref='', dataset='', nlu_ref =''):
+    def __init__(self, annotator_class='context_spell', language ='en', component_type='spell_checker', get_default=True, model = None, nlp_ref='', dataset='', nlu_ref ='', is_licensed=False):
         if annotator_class == 'context' or annotator_class == 'norvig' or annotator_class == 'symmetric':
             annotator_class = annotator_class + '_spell'
         if dataset != '':annotator_class = dataset + '_spell'

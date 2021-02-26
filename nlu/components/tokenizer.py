@@ -2,7 +2,7 @@ from nlu.pipe_components import SparkNLUComponent, NLUComponent
 import nlu
 class Tokenizer(SparkNLUComponent):
 
-    def __init__(self, annotator_class='default_tokenizer', language='en', component_type='tokenizer', get_default = True, nlp_ref='', nlu_ref='', model=None):
+    def __init__(self, annotator_class='default_tokenizer', language='en', component_type='tokenizer', get_default = True, nlp_ref='', nlu_ref='', model=None, is_licensed=False):
 
         if 'segment_words' in nlu_ref : annotator_class = 'word_segmenter'
         elif 'token' in annotator_class and  language in nlu.AllComponentsInfo().all_right_to_left_langs_with_pretrained_tokenizer : annotator_class = 'word_segmenter'

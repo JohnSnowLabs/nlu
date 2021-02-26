@@ -1,6 +1,6 @@
 from nlu.pipe_components import SparkNLUComponent
 class Classifier(SparkNLUComponent):
-    def __init__(self, annotator_class='sentiment_dl', language='en', component_type='classifier', get_default=True, model = None, nlp_ref ='', nlu_ref='',trainable=False):
+    def __init__(self, annotator_class='sentiment_dl', language='en', component_type='classifier', get_default=True, model = None, nlp_ref ='', nlu_ref='',trainable=False, is_licensed=False):
         if 'e2e' in nlu_ref or 'toxic' in nlu_ref : annotator_class= 'multi_classifier'
         elif 'e2e' in nlp_ref or 'toxic' in nlp_ref : annotator_class= 'multi_classifier'
 

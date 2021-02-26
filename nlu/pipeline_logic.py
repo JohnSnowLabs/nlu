@@ -1,5 +1,4 @@
 import nlu
-import nlu.component_resolution
 from nlu.pipeline import NLUPipeline
 
 import logging

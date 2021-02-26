@@ -1852,3 +1852,17 @@ class NameSpace():
         },
 
     }
+
+    pretrained_healthcare_model_references = {
+        'en' :
+            {
+                #AssertionDLModel
+                'en.assert':'assertion_dl', # clinical
+                'en.assert.biobert':'assertion_dl_biobert', # biobert_pubmed_base_cased
+                'en.assert.healthcare':'assertion_dl_healthcare', # embeddings_healthcare100
+                'en.assert.large':'assertion_dl_large', # clinical
+
+            }
+    }
+    pretrained_healthcare_pipe_references = {}
+    healthcare_component_alias_references = {}

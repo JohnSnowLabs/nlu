@@ -2,7 +2,7 @@ from nlu.pipe_components import SparkNLUComponent
 
 class Seq2Seq(SparkNLUComponent):
 
-    def __init__(self, annotator_class='t5', language ='en', component_type='seq2seq', get_default=True, model = None, nlp_ref ='', nlu_ref ='',dataset='', configs=''):
+    def __init__(self, annotator_class='t5', language ='en', component_type='seq2seq', get_default=True, model = None, nlp_ref ='', nlu_ref ='',dataset='', configs='', is_licensed=False):
         if 't5' in nlu_ref or 't5' in nlp_ref: annotator_class = 't5'
         elif 'marian' in nlu_ref or 'marian' in nlp_ref: annotator_class = 'marian'
         elif 'translate_to' in nlu_ref or 'translate_to' in nlp_ref or 'translate_to' in annotator_class: annotator_class = 'marian'

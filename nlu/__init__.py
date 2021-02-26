@@ -53,6 +53,11 @@ logger.addHandler(ch)
 import gc
 from nlu.pipeline import *
 
+# NLU Healthcare components
+from nlu.components.assertion import Asserter
+
+
+
 from nlu import info
 from nlu.info import ComponentInfo
 from nlu.components import tokenizer, stemmer, spell_checker, normalizer, lemmatizer, embeddings, chunker, \
@@ -145,14 +150,15 @@ from nlu.components.sequence2sequence import Seq2Seq
 
 from nlu.pipeline_logic import PipelineQueryVerifier
 
-global spark_started, spark, active_pipes, all_components_info, nlu_package_location
-
+from nlu.component_resolution import *
+global spark, active_pipes, all_components_info, nlu_package_location,authorized
+is_authenticated=False
 nlu_package_location = nlu.__file__[:-11]
 
 active_pipes = []
 spark_started = False
 spark = None
-
+authenticated = False
 from nlu.info import AllComponentsInfo
 from nlu.discovery import Discoverer
 all_components_info = nlu.AllComponentsInfo()
@@ -160,7 +166,54 @@ discoverer = nlu.Discoverer()
 
 import os
 import sparknlp
-sparknlp.start()
+
+def install_and_import_healthcare(JSL_SECRET):
+    # pip install  spark-nlp-jsl==2.7.3 --extra-index-url https://pypi.johnsnowlabs.com/2.7.3-3f5059a2258ea6585a0bd745ca84dac427bca70c --upgrade
+    """ Install Spark-NLP-Healthcare PyPI Package in current enviroment if it cannot be imported and liscense provided"""
+    import importlib
+    try:
+        importlib.import_module('sparknlp_jsl')
+    except ImportError:
+        import pip
+        # Todo update to latest version of spark-nlp-jsl
+        print("Spark NLP Healthcare could not be imported. Installing latest spark-nlp-jsl PyPI package via pip...")
+        pip.main(['install', 'spark-nlp-jsl==2.7.3', '--extra-index-url', f'https://pypi.johnsnowlabs.com/{JSL_SECRET}'])
+    finally:
+        import site
+        from importlib import reload
+        reload(site)
+        globals()['sparknlp_jsl'] = importlib.import_module('sparknlp_jsl')
+
+def authenticate_enviroment(SPARK_NLP_LICENSE,AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY):
+    """Set Secret environ variables for Spark Context"""
+    import os
+    os.environ['SPARK_NLP_LICENSE'] = SPARK_NLP_LICENSE
+    os.environ['AWS_ACCESS_KEY_ID']= AWS_ACCESS_KEY_ID
+    os.environ['AWS_SECRET_ACCESS_KEY'] = AWS_SECRET_ACCESS_KEY
+
+def get_authenticated_spark(SPARK_NLP_LICENSE,AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY,JSL_SECRET):
+    """
+    Authenticates enviroment if not already done so and returns Spark Context with Healthcare Jar loaded
+    0. If no Spark-NLP-Healthcare, install it via PyPi
+    1. If not auth, run authenticate_enviroment()
+
+    """
+    install_and_import_healthcare(JSL_SECRET)
+    authenticate_enviroment(SPARK_NLP_LICENSE,AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY)
+
+    import sparknlp_jsl
+    return sparknlp_jsl.start(JSL_SECRET)
+
+def is_authorized_enviroment():
+    """ TODO"""
+    global authorized
+    return authorized
+
+def auth(SPARK_NLP_LICENSE,AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY,JSL_SECRET):
+    """ Authenticate enviroment for JSL Liscensed models. Installs NLP-Healthcare if not in enviroment detected"""
+    global is_authenticated
+    is_authenticated = True
+    get_authenticated_spark(SPARK_NLP_LICENSE,AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY,JSL_SECRET)
 
 def read_nlu_info(path):
     f = open(os.path.join(path,'nlu_info.txt'), "r")
@@ -229,20 +282,25 @@ def enable_verbose():
     logger.addHandler(ch)
 
 # TODO IMPLEMENT AUTH PARAMS AND PASS THEM DOWN THE CALL STACK
-def load(request ='from_disk', path=None,verbose=False,version_checks=True, AWS_KEY='', AWS_SECRET='', JSL_LICENSE='', auth_json=''):
+def load(request ='from_disk', path=None,verbose=False):
     '''
     Load either a prebuild pipeline or a set of components identified by a whitespace seperated list of components
+    You must call nlu.auth() BEFORE calling nlu.load() to access licensed models.
+    If you did not call nlu.auth() but did call nlu.load() you must RESTART your Python Process and call nlu.auth().
+    You cannot authorize once nlu.load() is called because of Spark Context.
     :param verbose:
     :param path: If path is not None, the model/pipe for the NLU reference will be loaded from the path. Useful for offline mode. Currently only loading entire NLU pipelines is supported, but not loading singular pipes
     :param request: A NLU model/pipeline/component reference
     :param version_checks: Wether to check if Pyspark is properly installed and if the Pyspark version is correct for the NLU version. If set to False, these tests will be skipped
     :return: returns a non fitted nlu pipeline object
     '''
+    global is_authenticated
+    is_authenticated = True
     gc.collect()
     # if version_checks : check_pyspark_install()
     spark = sparknlp.start()
     spark.catalog.clearCache()
-    spark_started = True
+
     if verbose:
         enable_verbose()
 
@@ -261,7 +319,7 @@ def load(request ='from_disk', path=None,verbose=False,version_checks=True, AWS_
             nlu_ref.replace(' ', '')
             # component = component.lower()
             if nlu_ref == '': continue
-            nlu_component = nlu_ref_to_component(nlu_ref)
+            nlu_component = nlu_ref_to_component(nlu_ref, authenticated=is_authenticated)
             # if we get a list of components, then the NLU reference is a pipeline, we do not need to check order
             if type(nlu_component) == type([]):
                 # lists are parsed down to multiple components
@@ -282,8 +340,6 @@ def load(request ='from_disk', path=None,verbose=False,version_checks=True, AWS_
         return NluError()
     # active_pipes.append(pipe)
     return pipe
-
-
 
 class NluError:
     def __init__(self):
