@@ -87,6 +87,7 @@ from nlu.components.unlabeled_dependency_parser import UnlabeledDependencyParser
 |SentenceEntityResolver  (HIGH)       | resolve.sentence / resolve.sentence / resolve_sentence   |      x    |                           |               |
 |DeIdentification         (High)      | deidentify/anonymize                                     |           |                           |               | 
 |RelationExtraction (HIGH)            | extract_relation / classify.relation                     |           |                           |               |
+|RelationExtraction(DL) (HIGH)            | extract_relation / classify.relation                     |           |                           |               |
 |ChunkEntityResolver    (MID)         | resolve.chunk / resolve.entities    /resolve_chunk       |           |                           |               |
 |Contextual Parser                    | parse_context                                            |           |                           |       x        |
 |Disambiguation (Low prio)            | disambiguate                                             |           |                           |               |

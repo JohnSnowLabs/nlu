@@ -1890,7 +1890,12 @@ class NameSpace():
 
                 # BertSEntenceEmbeddings MLI
                 'en.embed_sentence.biobert.mli':'sbiobert_base_cased_mli',
-                'en.embed_sentence.bluebert':'sent_bluebert_base_uncased_mednli',
+                'en.embed_sentence.bluebert.mli':'sbluebert_base_uncased_mli',
+
+                'en.embed_sentence.bluebert.mednli':'sent_bluebert_base_uncased_mednli',
+                'en.embed_sentence.biobert.mednli':'sent_biobert_base_uncased_mednli',
+
+
 
                 # resolve sentence cpt
                 'en.resolve_sentence':'sbiobertresolve_cpt',

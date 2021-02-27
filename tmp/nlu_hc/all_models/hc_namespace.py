@@ -1,4 +1,12 @@
 d = {
+
+
+# SentenceBertEmbedding |||||||||||||| EXPORTERD
+'en.':'sent_biobert_base_uncased_mednli',
+'en.':'sent_bluebert_base_uncased_mednli',
+'en.resolve_sentence.mli.bluebuert':'sbluebert_base_uncased_mli',
+
+
 #ASSERT (so smul) AssertionDLModel ||| EXPORTED
 'en.assert':'assertion_dl', # clinicalz
 'en.assert.biobert':'assertion_dl_biobert', # biobert_pubmed_base_cased
@@ -17,8 +25,6 @@ d = {
 
 
 # sentence Entity resolvers ||||||||EX{PRTED
-
-# resolve sentence mli
 'en.':'sbiobert_base_cased_mli',
 'en.':'sbiobertresolve_cpt',
 'en.':'sbiobertresolve_cpt_augmented',
@@ -58,6 +64,14 @@ d = {
 # 'en.':'biobertresolve_rxnorm_bdcd',
 # 'en.':'biobertresolve_snomed_findings',
 # 'en.':'biobertresolve_snomed_findings_int',
+
+
+
+
+
+
+
+
 
 
 # Chunk resolve
@@ -308,66 +322,45 @@ d = {
 # pipe?
 'en.':'ppl_posology_rxnorm',
 
-# relation extractor body parts
-'en.':'re_bodypart_directions',
-'en.':'re_bodypart_problem',
-'en.':'re_bodypart_proceduretest',
-# relation extractor chem
-'en.':'re_chemprot_clinical',
-
-# relation clincial
-
-'en.':'re_clinical',
-'en.':'re_date_clinical',
-# relation extractor  drug interaction
-'en.':'re_drug_drug_interaction_clinical',
-# relation extractor human phenotype
-'en.':'re_human_phenotype_gene_clinical',
-
-# relation extractor temporal events
-'en.':'re_temporal_events_clinical',
-'en.':'re_temporal_events_enriched_clinical',
-
 # relation extractor pipe posology ?
 'en.':'recognize_entities_posology',
 
-# relation extractor bodypart
+
+
+# RelationExtraction
+'en.':'re_bodypart_directions',
+'en.':'re_bodypart_problem',
+'en.':'re_bodypart_proceduretest',
+'en.':'re_chemprot_clinical',
+'en.':'re_clinical',
+'en.':'re_date_clinical',
+'en.':'re_drug_drug_interaction_clinical',
+'en.':'re_human_phenotype_gene_clinical',
+'en.':'re_temporal_events_clinical',
+'en.':'re_temporal_events_enriched_clinical',
+
+# RelationExtractionDL
 'en.':'redl_bodypart_direction_biobert',
 'en.':'redl_bodypart_problem_biobert',
 'en.':'redl_bodypart_procedure_test_biobert',
-# relation extractor chem
 'en.':'redl_chemprot_biobert',
-
-# relation extractor clinical
 'en.':'redl_clinical_biobert',
-
-
-# relation extractor date clinical
 'en.':'redl_date_clinical_biobert',
-
-# relation extractor drug drug
 'en.':'redl_drug_drug_interaction_biobert',
-
-# relation extractor human phenotype
 'en.':'redl_human_phenotype_gene_biobert',
-
-
-# relation extractor temporal events
 'en.':'redl_temporal_events_biobert',
+
+
 
 # resolve cpt
 'en.':'resolve_cpt_cl_em',
 'en.':'resolve_cpt_icdoem',
-
-# resolve icd10
 'en.':'resolve_icd10',
 'en.':'resolve_icd10cm_cl_em',
 'en.':'resolve_icd10cm_icdem',
 'en.':'resolve_icd10cm_icdoem',
 'en.':'resolve_icd10pcs_cl_em',
 'en.':'resolve_icdo_icdoem',
-
-# resolve rxnorm
 'en.':'resolve_rxnorm_clinical_l1',
 'en.':'resolve_rxnorm_clinical_l2',
 'en.':'resolve_rxnorm_healthcare_l1',
@@ -388,11 +381,6 @@ d = {
 
 
 
-
-# ????
-'en.':'sent_biobert_base_uncased_mednli',
-'en.':'sent_bluebert_base_uncased_mednli',
-    'en.resolve_sentence.mli.bluebuert':'sbluebert_base_uncased_mli',
 
 # sentence detector dl healthcare
 'en.':'sentence_detector_dl_healthcare',
