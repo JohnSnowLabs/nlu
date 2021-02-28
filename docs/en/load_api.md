@@ -53,12 +53,11 @@ To configure your model or pipeline, first load a NLU component and use the prin
 The print outputs tell you at which index of the pipe_components attribute which NLU component is located.   
 Via  setters which are named according to the parameter values a model can be configured
 
-
 ```python
-#example for configuring the first element in the pipe
+# example for configuring the first element in the pipe
 pipe = nlu.load('en.sentiment.twitter')
 pipe.generate_class_metadata_table()
-document_assembler_model = pipe.pipe_components[0].model
+document_assembler_model = pipe.components[0].model
 document_assembler_model.setCleanupMode('inplace')
 ```
 
