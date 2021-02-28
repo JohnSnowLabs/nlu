@@ -8,13 +8,13 @@
   ],
   "inputs": [
     "document",
-    "embeddings"
+    "word_embeddings"
   ],
   "type": "sentence_embeddings",
   "file_dependencies": {},
   "spark_input_column_names": [
     "document",
-    "embeddings"
+    "word_embeddings"
   ],
   "spark_output_column_names": [
     "sentence_embeddings"
