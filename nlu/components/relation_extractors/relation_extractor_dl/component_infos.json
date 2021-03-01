@@ -1,5 +1,5 @@
 {
-  "name": "relation_extractor",
+  "name": "relation_extractor_dl",
   "description": "todo",
   "output_level": "chunk",
   "trainable": true,
@@ -7,18 +7,14 @@
     "relation"
   ],
   "inputs": [
-    "word_embeddings",
-    "pos",
     "entities",
-    "unlabeled_dependency"
+    "document"
   ],
   "type": "asserter",
   "file_dependencies": {},
   "spark_input_column_names": [
-    "word_embeddings",
-    "pos",
     "entities",
-    "unlabeled_dependency"
+    "document"
   ],
   "spark_output_column_names": [
     "relation"
