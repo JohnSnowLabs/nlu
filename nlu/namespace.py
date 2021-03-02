@@ -255,7 +255,6 @@ class NameSpace():
         # 'classify.sentiment': ('t5_base','model'),
 
     }
-
     # multi lang models
     pretrained_pipe_references = {
 
@@ -1922,6 +1921,113 @@ class NameSpace():
 
 
 
+
+                # Greedy Relation extracction
+                'en.extract_relation.posology':'posology_re', # TODo OCRASHES SOME STRINGS!
+
+                # RelationExtractionModel
+
+                # todo random crashes for some strings
+                # 'en.extract_relation':'re_clinical',
+                # 'en.extract_relation.bodypart.direction':'re_bodypart_directions',
+                # 'en.extract_relation.bodypart.problem':'re_bodypart_problem',
+                # 'en.extract_relation.bodypart.proceduretest':'re_bodypart_proceduretest',
+                # 'en.extract_relation.chemprot':'re_chemprot_clinical',
+                # 'en.extract_relation.clinical':'re_clinical',
+                # 'en.extract_relation.date_clinical':'re_date_clinical',
+                # 'en.extract_relation.drug_drug_interaction':'re_drug_drug_interaction_clinical',
+                # 'en.extract_relation.human_phenotype_gene':'re_human_phenotype_gene_clinical',
+                # 'en.extract_relation.temporal_events':'re_temporal_events_clinical',
+                # 'en.extract_relation.temporal_events.enriched':'re_temporal_events_enriched_clinical',
+                # RelationExtractionDL
+
+
+                'en.extract_relation':'redl_bodypart_direction_biobert',
+                'en.extract_relation.bodypart.direction':'redl_bodypart_direction_biobert',
+                'en.extract_relation.bodypart.problem':'redl_bodypart_problem_biobert',
+                'en.extract_relation.bodypart.procedure':'redl_bodypart_procedure_test_biobert',
+                'en.extract_relation.chemprot':'redl_chemprot_biobert',
+                'en.extract_relation.clinical':'redl_clinical_biobert',
+                'en.extract_relation.date':'redl_date_clinical_biobert',
+                'en.extract_relation.drug_drug_interaction':'redl_drug_drug_interaction_biobert',
+                'en.extract_relation.humen_phenotype_gene':'redl_human_phenotype_gene_biobert',
+                'en.extract_relation.temporal_events':'redl_temporal_events_biobert',
+
+
+                #PartOfSpeechModels
+                'en.pos.clinical':'pos_clinical',
+                'en.pos.fast':'pos_fast_med',
+
+                # NERDLModels
+                # 'en.ner.ade.biobert':'ner_ade_biobert', # Todo error param pooling layer does not exist
+                'en.ner.ade.clinical':'ner_ade_clinical', # ok
+                'en.ner.ade.clinical_bert':'ner_ade_clinicalbert', # ok ok
+                'en.ner.ade.ade_healthcare':'ner_ade_healthcare',
+                'en.ner.anatomy':'ner_anatomy',
+                'en.ner.anatomy.biobert':'ner_anatomy_biobert',
+                'en.ner.anatomy.coarse':'ner_anatomy_coarse',
+                'en.ner.anatomy.coarse_biobert':'ner_anatomy_coarse_biobert',
+                'en.ner.aspect_sentiment':'ner_aspect_based_sentiment',
+                'en.ner.bacterial_species':'ner_bacterial_species',
+                'en.ner.bionlp':'ner_bionlp',
+                'en.ner.bionlp.biobert':'ner_bionlp_biobert',
+                'en.ner.bionlp.biobert.noncontrib':'ner_bionlp_noncontrib', # todo whats noncontrib?
+                'en.ner.cancer':'ner_cancer_genetics',
+                'en.ner.cellular':'ner_cellular',
+                'en.ner.cellular.biobert':'ner_cellular_biobert',
+                'en.ner.chemicals':'ner_chemicals',
+                'en.ner.chemprot':'ner_chemprot_biobert',
+                'en.ner.chemprot.clinical':'ner_chemprot_clinical',
+                'en.ner.clinical':'ner_clinical',
+                'en.ner.clinical.biobert':'ner_clinical_biobert',
+                'en.ner.clinical.icdem':'ner_clinical_icdem',
+                'en.ner.clinical.large':'ner_clinical_large',
+                'en.ner.clinical.noncontrib':'ner_clinical_noncontrib',
+
+
+                #NERDL
+                'en.ner.diseases.':'ner_diseases',
+                'en.ner.diseases.biobert':'ner_diseases_biobert',
+                'en.ner.diseases.large':'ner_diseases_large',
+                'en.ner.drugs':'ner_drugs',
+                'en.ner.drugsgreedy':'ner_drugs_greedy',
+                'en.ner.drugs.large':'ner_drugs_large',
+                'en.ner.events_biobert':'ner_events_biobert',
+                'en.ner.events_clinical':'ner_events_clinical',
+                'en.ner.events_healthcre':'ner_events_healthcare',
+                'en.ner.financial_contract':'ner_financial_contract',
+                'en.ner.healthcare':'ner_healthcare',
+                'en.ner.human_phenotype.gene_biobert':'ner_human_phenotype_gene_biobert',
+                'en.ner.human_phenotype.gene_clinical':'ner_human_phenotype_gene_clinical',
+                'en.ner.human_phenotype.go_biobert':'ner_human_phenotype_go_biobert',
+                'en.ner.human_phenotype.go_clinical':'ner_human_phenotype_go_clinical',
+                'en.ner.jsl':'ner_jsl',
+                'en.ner.jsl.biobert':'ner_jsl_biobert',
+                'en.ner.jsl.enriched':'ner_jsl_enriched',
+                'en.ner.jsl.enriched_biobert':'ner_jsl_enriched_biobert',
+                'en.ner.measurements':'ner_measurements_clinical',
+                'en.ner.medmentions':'ner_medmentions_coarse',
+                'en.ner.posology':'ner_posology',
+                'en.ner.posology.biobert':'ner_posology_biobert',
+                'en.ner.posology.greedy':'ner_posology_greedy',
+                'en.ner.posology.healthcare':'ner_posology_healthcare',
+                'en.ner.posology.large':'ner_posology_large',
+                'en.ner.posology.large_biobert':'ner_posology_large_biobert',
+                'en.ner.posology.small':'ner_posology_small',
+                'en.ner.radiology':'ner_radiology',
+                'en.ner.radiology.wip_clinical':'ner_radiology_wip_clinical',
+                'en.ner.risk_factors':'ner_risk_factors',
+                'en.ner.risk_factors.biobert':'ner_risk_factors_biobert',
+                'en.ner.i2b2':'nerdl_i2b2',
+                'en.ner.tumour':'nerdl_tumour_demo',
+                'en.ner.jsl.wip.clinical':'jsl_ner_wip_clinical',
+                'en.ner.jsl.wip.clinical.greedy':'jsl_ner_wip_greedy_clinical',
+                'en.ner.jsl.wip.clinical.modifier':'jsl_ner_wip_modifier_clinical',
+                'en.ner.jsl.wip.clinical.rd':'jsl_rd_ner_wip_greedy_clinical',
+
+
+
+
             }
     }
     pretrained_healthcare_pipe_references = {}
@@ -1939,7 +2045,13 @@ class NameSpace():
         'biobert_pubmed_base_cased' : 'en.embed.biobert.pubmed',
         'embeddings_healthcare100' : 'en.embed.glove.healthcare_100d',
         'BERT_SENTENCE_EMBEDDINGS_0bee53f1b2cc' : 'en.embed_sentence.biobert.mli',
-         },
+        'RelationExtractionModel_3ab4750ad5b6' : 'en.embed.glove.clinical',
+        'RelationExtractionModel_6b61602c8303' : 'en.embed.glove.clinical',
+        'RelationExtractionModel_9c255241fec3' : 'en.embed.glove.clinical',
+        # 'bert_base_cased' : 'en.embed.glove.clinical'
+        'bert_base_cased' : 'en.embed.bert.base_cased'
+
+    },
 
 
     }
