@@ -1,28 +1,29 @@
 {
-  "name": "unlabeled_dependency_parser",
+  "name": "deidentifier",
   "description": "todo",
-  "output_level": "token",
+  "output_level": "chunk",
   "trainable": true,
   "outputs": [
-    "unlabeled_dependency"
+    "deidentified"
   ],
   "inputs": [
+    "entities",
     "document",
-    "pos",
     "token"
   ],
-  "type": "dependency",
+  "type": "deidentification",
   "file_dependencies": {},
   "spark_input_column_names": [
+    "entities",
     "document",
-    "pos",
     "token"
+
   ],
   "spark_output_column_names": [
-    "unlabeled_dependency"
+    "deidentified"
   ],
-  "provider": "sparknlp",
-  "license": "open source",
+  "provider": "sparknlp healthcare",
+  "license": "licensed",
   "computation_context": "spark",
   "output_context": "spark"
 }

@@ -13,8 +13,8 @@ class NERDL:
 
 
     @staticmethod
-    def get_pretrained_model(name, language):
-        return NerDLModel.pretrained(name,language) \
+    def get_pretrained_model(name, language, bucket=None):
+        return NerDLModel.pretrained(name,language,bucket) \
             .setInputCols(["sentence", "token", "word_embeddings"]) \
             .setOutputCol("ner") \
             .setIncludeConfidence(True)
