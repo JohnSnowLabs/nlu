@@ -1858,7 +1858,7 @@ class NameSpace():
             {
                 #AssertionDLModel
                 'en.assert':'assertion_dl', #ok
-                'en.assert.biobert':'assertion_dl_biobert', # todo
+                'en.assert.biobert':'assertion_dl_biobert',
                 'en.assert.healthcare':'assertion_dl_healthcare', # ok
                 'en.assert.large':'assertion_dl_large',
 
@@ -1928,6 +1928,7 @@ class NameSpace():
                 # RelationExtractionModel
 
                 # todo random crashes for some strings
+                # KEEP THOSE TAHT DONT HAVE A DL/BERT VERSION - > check if bert avaiable
                 # 'en.extract_relation':'re_clinical',
                 # 'en.extract_relation.bodypart.direction':'re_bodypart_directions',
                 # 'en.extract_relation.bodypart.problem':'re_bodypart_problem',
@@ -1955,7 +1956,7 @@ class NameSpace():
 
 
                 #PartOfSpeechModels
-                'en.pos.clinical':'pos_clinical',
+                'en.pos.clinical':'pos_clinical', # DEFAULT POS HC|| RELATION EXTRACTION TRAIN ON THIS!
                 'en.pos.fast':'pos_fast_med',
 
                 # NERDLModels
@@ -1971,7 +1972,8 @@ class NameSpace():
                 'en.ner.bacterial_species':'ner_bacterial_species',
                 'en.ner.bionlp':'ner_bionlp',
                 'en.ner.bionlp.biobert':'ner_bionlp_biobert',
-                'en.ner.bionlp.biobert.noncontrib':'ner_bionlp_noncontrib', # todo whats noncontrib?
+                # NOTHING BEFROE 2018!!
+                # 'en.ner.bionlp.biobert.noncontrib':'ner_bionlp_noncontrib', # todo whats noncontrib? MEANS DEPRECATED
                 'en.ner.cancer':'ner_cancer_genetics',
                 'en.ner.cellular':'ner_cellular',
                 'en.ner.cellular.biobert':'ner_cellular_biobert',
@@ -2020,11 +2022,37 @@ class NameSpace():
                 'en.ner.risk_factors.biobert':'ner_risk_factors_biobert',
                 'en.ner.i2b2':'nerdl_i2b2',
                 'en.ner.tumour':'nerdl_tumour_demo',
+
+                # JSL is WIP, WIP means work in progress in nlp ref --> WIP NAMESPACE
                 'en.ner.jsl.wip.clinical':'jsl_ner_wip_clinical',
                 'en.ner.jsl.wip.clinical.greedy':'jsl_ner_wip_greedy_clinical',
                 'en.ner.jsl.wip.clinical.modifier':'jsl_ner_wip_modifier_clinical',
                 'en.ner.jsl.wip.clinical.rd':'jsl_rd_ner_wip_greedy_clinical',
 
+
+
+                # NERDL DEID
+                'en.ner.deid.augmented':'ner_deid_augmented',
+                'en.ner.deid.biobert':'ner_deid_biobert',
+                'en.ner.deid.enriched':'ner_deid_enriched',
+                'en.ner.deid.enriched_biobert':'ner_deid_enriched_biobert',
+                'en.ner.deid.large':'ner_deid_large',
+                'en.ner.deid.sd':'ner_deid_sd',
+                'en.ner.deid.sd_large':'ner_deid_sd_large',
+                'en.ner.deid.synthetic':'ner_deid_synthetic',
+                'en.ner.deid.dl':'ner_deidentify_dl',
+                'en.ner.deid.':'nerdl_deid',
+
+
+                # DeIdentificationModel
+
+                # 'en.de_identify':'deidentify_dl', # todo ????    lOAD AS ner moadel??? THIS ENEDS EMEBDDINGS??
+                'en.de_identify':'deidentify_rb',
+                'en.de_identify.rules':'deid_rules',
+                'en.de_identify.clinical':'deidentify_enriched_clinical',
+                'en.de_identify.large':'deidentify_large',
+                'en.de_identify.rb':'deidentify_rb',
+                'en.de_identify.rb_no_regex':'deidentify_rb_no_regex',
 
 
 
@@ -2041,6 +2069,7 @@ class NameSpace():
 
     licensed_storage_ref_2_nlu_ref = {
         'en':{
+            # HARDCODE
         'clinical' : 'en.embed.glove.clinical',
         'biobert_pubmed_base_cased' : 'en.embed.biobert.pubmed',
         'embeddings_healthcare100' : 'en.embed.glove.healthcare_100d',
