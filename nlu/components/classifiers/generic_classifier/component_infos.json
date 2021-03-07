@@ -1,0 +1,27 @@
+{
+  "name": "sentiment_dl",
+  "output_level": "sentence",
+  "description": "todo",
+  "trainable": true,
+  "outputs": [
+    "category"
+  ],
+  "inputs": [
+    "label",
+    "sentence_embeddings"
+  ],
+  "type": "classifier",
+  "file_dependencies": {},
+  "spark_input_column_names": [
+    "sentence",
+    "label",
+    "sentence_embeddings"
+  ],
+  "spark_output_column_names": [
+    "category"
+  ],
+  "provider": "sparknlp",
+  "license": "open source",
+  "computation_context": "spark",
+  "output_context": "spark"
+}
