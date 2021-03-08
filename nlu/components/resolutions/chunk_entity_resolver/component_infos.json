@@ -1,23 +1,23 @@
 {
-  "name": "sentence_resolver",
+  "name": "chunk_resolver",
   "description": "todo",
-  "output_level": "input_dependent",
+  "output_level": "chunk",
   "trainable": true,
   "outputs": [
-    "sentence_resolution"
+    "chunk_resolution"
   ],
   "inputs": [
-    "entities",
-    "sentence_embeddings"
+    "token",
+    "chunk_embeddings"
   ],
   "type": "resolver",
   "file_dependencies": {},
   "spark_input_column_names": [
-    "entities",
-    "sentence_embeddings"
+    "token",
+    "chunk_embeddings"
   ],
   "spark_output_column_names": [
-    "resolution"
+    "chunk_resolution"
   ],
   "provider": "spark nlp healthcare",
   "license": "licensed",
