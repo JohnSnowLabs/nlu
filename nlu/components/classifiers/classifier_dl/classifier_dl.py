@@ -9,8 +9,8 @@ class ClassifierDl:
             .setOutputCol("category")
 
     @staticmethod
-    def get_pretrained_model(name, language):
-        return ClassifierDLModel.pretrained(name,language) \
+    def get_pretrained_model(name, language, bucket=None):
+        return ClassifierDLModel.pretrained(name,language,bucket) \
             .setInputCols("sentence_embeddings") \
             .setOutputCol("category")
 

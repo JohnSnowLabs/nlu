@@ -9,8 +9,8 @@ class SentimentDl:
 
 
     @staticmethod
-    def get_pretrained_model(name, language):
-        return   SentimentDLModel.pretrained(name,language) \
+    def get_pretrained_model(name, language, bucket=None):
+        return   SentimentDLModel.pretrained(name,language,bucket) \
             .setInputCols("sentence_embeddings") \
             .setOutputCol("category") \
 
