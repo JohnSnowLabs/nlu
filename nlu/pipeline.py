@@ -1,5 +1,7 @@
 import logging
 
+from nlu.extractors.extraction_resolver import OC_anno2config
+from nlu.extractors.extractor_methods.base_extractor_methods import *
 
 logger = logging.getLogger('nlu')
 import nlu
@@ -772,19 +774,20 @@ class NLUPipeline(BasePipe):
         It sets the output level of the pipe accordingly
         param sdf : Spark dataframe after transformations
         '''
-        # Loop in reverse over pipe and get first non util/sentence_detecotr/tokenizer/doc_assember. If there is non, take last
-        bad_types = [ 'util','document','sentence']
-        bad_names = ['token']
+        if self.output_level == '' :
+            # Loop in reverse over pipe and get first non util/sentence_detecotr/tokenizer/doc_assember. If there is non, take last
+            bad_types = [ 'util','document','sentence']
+            bad_names = ['token']
 
-        for c in self.components[::-1]:
-            if any (t in  c.component_info.type for t in bad_types) : continue
-            if any (n in  c.component_info.name for n in bad_names) : continue
-            self.output_level = self.resolve_component_to_output_level(c)
+            for c in self.components[::-1]:
+                if any (t in  c.component_info.type for t in bad_types) : continue
+                if any (n in  c.component_info.name for n in bad_names) : continue
+                self.output_level = self.resolve_component_to_output_level(c)
+                logger.info('Inferred and set output level of pipeline to %s', self.output_level)
+                break
+            if self.output_level == None  or self.output_level == '': self.output_level = 'document' # Voodo Normalizer bug that does not happen in debugger bugfix
             logger.info('Inferred and set output level of pipeline to %s', self.output_level)
-            break
-        if self.output_level == None  or self.output_level == '': self.output_level = 'document' # Voodo Normalizer bug that does not happen in debugger bugfix
-        logger.info('Inferred and set output level of pipeline to %s', self.output_level)
-
+        else : return
     def get_chunk_col_name(self):
         '''
         This methdo checks wether there is a chunk component in the pipelien.
@@ -885,6 +888,33 @@ class NLUPipeline(BasePipe):
         return same_output_level_fields, not_at_same_output_level_fields,multi_level_fields
 
 
+    def get_annotator_extraction_configs(self,):
+        """Search first OC namespace and if not found the HC Namespace for each Annotator Class in pipeline and get corrosponding config"""
+        anno_2_ex_config = {}
+        for c in self.components:
+            if type(c.model) in OC_anno2config.keys():
+                if OC_anno2config[type(c.model)]['default'] == '' :
+                    logger.info(f'could not find default configs, using full default for model ={c.model}')
+                    anno_2_ex_config[c.component_info.spark_output_column_names[0]] = OC_anno2config[type(c.model)]['default_full'](output_col_prefix=c.component_info.name)
+                else :
+                    anno_2_ex_config[c.component_info.spark_output_column_names[0]] = OC_anno2config[type(c.model)]['default'](output_col_prefix=c.component_info.name)
+            else:
+                from nlu.extractors.extraction_resolver_HC import HC_anno2config
+                if HC_anno2config[type(c.model)]['default'] == '' :
+                    logger.info(f'could not find default configs in hc resolver space, using full default for model ={c.model}')
+                    anno_2_ex_config[c.component_info.spark_output_column_names[0]] = HC_anno2config[type(c.model)]['default_full'](output_col_prefix=c.component_info.name)
+                else :
+                    anno_2_ex_config[c.component_info.spark_output_column_names[0]] = HC_anno2config[type(c.model)]['default'](output_col_prefix=c.component_info.name)
+        return anno_2_ex_config
+
+    def unpack_and_apply_extractors(self,sdf:pyspark.sql.DataFrame):
+        """1. Unpack SDF to PDF with Spark NLP Annotator Dictionaries
+           2. Get the extractor configs for the corrosponding Annotator classes
+           3. Apply The extractor configs with the extractor methods to each column and merge back with zip/explode"""
+        anno_2_ex_config = self.get_annotator_extraction_configs()
+        unpack_df = sdf.toPandas().applymap(extract_pyspark_rows)
+        return apply_extractors_and_merge(unpack_df,anno_2_ex_config)
+
     def pythonify_spark_dataframe(self, processed, get_different_level_output=True, keep_stranger_features=True,
                                   stranger_features=[], drop_irrelevant_cols=True, output_metadata=False,
                                   index_provided=False):
@@ -908,25 +938,21 @@ class NLUPipeline(BasePipe):
         :param output_metadata: Wether to keep or drop additional metadataf or predictions, like prediction confidence
         :return: Pandas dataframe which easy accessable features
         '''
-
         stranger_features += ['origin_index']
-
-        if self.output_level == '': self.infer_and_set_output_level()
-
-        field_dict = self.get_field_types_dict(processed, stranger_features,keep_stranger_features)  # map field to type of field
+        self.infer_and_set_output_level()
+        # map field to type of field
+        field_dict = self.get_field_types_dict(processed, stranger_features,keep_stranger_features)
         not_at_same_output_level_fields = []
 
         if self.output_level == 'chunk':
             # if output level is chunk, we must check if we actually have a chunk column in the pipe. So we search it
             chunk_col = self.get_chunk_col_name()
             same_output_level_fields = [chunk_col + '.result']
-        else:
-            same_output_level_fields = [self.output_level + '.result']
+        else: same_output_level_fields = [self.output_level + '.result']
 
-        logger.info('Setting Output level as : %s', self.output_level)
+        logger.info(f'Setting Output level as : {self.output_level}', )
 
-        if keep_stranger_features:
-            sdf = processed.select(['*'])
+        if keep_stranger_features: sdf = processed.select(['*'])
         else:
             features_to_keep = list(set(processed.columns) - set(stranger_features))
             sdf = processed.select(features_to_keep)
@@ -935,69 +961,85 @@ class NLUPipeline(BasePipe):
             logger.info("Generating origin Index via Spark. May contain irregular distributed index values.")
             sdf = sdf.withColumn(monotonically_increasing_id().alias('origin_index'))
 
-        same_output_level_fields, not_at_same_output_level_fields,multi_level_fields = self.select_features_from_result(field_dict,
-                                                                                                     processed,
-                                                                                                     stranger_features,
-                                                                                                     same_output_level_fields,
-                                                                                                     not_at_same_output_level_fields)
-
-
-
-        logger.info(f'exploding amd zipping at same level fields = {same_output_level_fields}')
-        logger.info(f'as same level fields = {not_at_same_output_level_fields}')
-        def zip_col_py(*cols): return list(zip(*cols))
-
-        output_fields = sdf[same_output_level_fields].schema.fields
-        d_types = []
-        for i,o in enumerate(output_fields) : d_types.append(StructField(name=str(i),dataType= o.dataType.elementType) )
-        udf_type = t.ArrayType(t.StructType(d_types))
-        arrays_zip_ = F.udf(zip_col_py,udf_type)
-
-
-        ptmp = sdf.withColumn('tmp', arrays_zip_(*same_output_level_fields)) \
-            .withColumn("res", explode('tmp'))
+        # same_output_level_fields, not_at_same_output_level_fields,multi_level_fields = self.select_features_from_result(field_dict,
+        #                                                                                              processed,
+        #                                                                                              stranger_features,
+        #                                                                                              same_output_level_fields,
+        #                                                                                              not_at_same_output_level_fields)
 
 
 
 
-        final_select_not_at_same_output_level = []
+
+        return self.unpack_and_apply_extractors(processed)
+
+
+        #
+        #
+        # logger.info(f'exploding amd zipping at same level fields = {same_output_level_fields}')
+        # logger.info(f'as same level fields = {not_at_same_output_level_fields}')
+        # def zip_col_py(*cols): return list(zip(*cols))
+        #
+        # output_fields = sdf[same_output_level_fields].schema.fields
+        # d_types = []
+        # for i,o in enumerate(output_fields) : d_types.append(StructField(name=str(i),dataType= o.dataType.elementType) )
+        # udf_type = t.ArrayType(t.StructType(d_types))
+        # arrays_zip_ = F.udf(zip_col_py,udf_type)
+        #
+        #
+        # ptmp = sdf.withColumn('tmp', arrays_zip_(*same_output_level_fields)) \
+        #     .withColumn("res", explode('tmp'))
+        #
+        #
+        #
+        #
+        # final_select_not_at_same_output_level = []
+        #
+        #
+        #
+        # ptmp, final_select_same_output_level = self.rename_columns_and_extract_map_values_same_level(ptmp=ptmp,
+        #                                                                                              fields_to_rename=same_output_level_fields,
+        #                                                                                              same_output_level=True,
+        #                                                                                              stranger_features=stranger_features,
+        #                                                                                              meta=output_metadata)
+        # if get_different_level_output:
+        #     ptmp, final_select_not_at_same_output_level = self.rename_columns_and_extract_map_values_different_level(
+        #         ptmp=ptmp, fields_to_rename=not_at_same_output_level_fields, same_output_level=False,
+        #         meta=output_metadata, )
+        #
+        # ptmp,final_select_multi_output_level = self.extract_multi_level_outputs(ptmp, multi_level_fields, output_metadata)
+        # if keep_stranger_features: final_select_not_at_same_output_level += stranger_features
+        #
+        #
+        #
+        #
+        # logger.info('Final cleanup select of same level =%s', final_select_same_output_level)
+        # logger.info('Final cleanup select of different level =%s', final_select_not_at_same_output_level)
+        # logger.info('Final cleanup select of multi level =%s', final_select_multi_output_level)
+        #
+        # logger.info('Final ptmp columns = %s', ptmp.columns)
+        #
+        # final_cols = final_select_same_output_level + final_select_not_at_same_output_level + final_select_multi_output_level + ['origin_index']
+        # if drop_irrelevant_cols: final_cols = self.drop_irrelevant_cols(final_cols)
+        # # ner columns is NER-IOB format, mostly useless for the users. If meta false, we drop it here.
+        # if output_metadata == False and 'ner' in final_cols: final_cols.remove('ner')
+        # final_df = ptmp.select(list(set(final_cols)))
+        #
+        # pandas_df = self.finalize_return_datatype(final_df)
+        # if isinstance(pandas_df,pyspark.sql.dataframe.DataFrame):
+        #     return pandas_df # is actually spark df
+        # else:
+        #     pandas_df.set_index('origin_index', inplace=True)
+        #     return self.convert_embeddings_to_np(pandas_df)
 
 
 
-        ptmp, final_select_same_output_level = self.rename_columns_and_extract_map_values_same_level(ptmp=ptmp,
-                                                                                                     fields_to_rename=same_output_level_fields,
-                                                                                                     same_output_level=True,
-                                                                                                     stranger_features=stranger_features,
-                                                                                                     meta=output_metadata)
-        if get_different_level_output:
-            ptmp, final_select_not_at_same_output_level = self.rename_columns_and_extract_map_values_different_level(
-                ptmp=ptmp, fields_to_rename=not_at_same_output_level_fields, same_output_level=False,
-                meta=output_metadata, )
-
-        ptmp,final_select_multi_output_level = self.extract_multi_level_outputs(ptmp, multi_level_fields, output_metadata)
-        if keep_stranger_features: final_select_not_at_same_output_level += stranger_features
 
 
 
 
-        logger.info('Final cleanup select of same level =%s', final_select_same_output_level)
-        logger.info('Final cleanup select of different level =%s', final_select_not_at_same_output_level)
-        logger.info('Final cleanup select of multi level =%s', final_select_multi_output_level)
 
-        logger.info('Final ptmp columns = %s', ptmp.columns)
 
-        final_cols = final_select_same_output_level + final_select_not_at_same_output_level + final_select_multi_output_level + ['origin_index']
-        if drop_irrelevant_cols: final_cols = self.drop_irrelevant_cols(final_cols)
-        # ner columns is NER-IOB format, mostly useless for the users. If meta false, we drop it here.
-        if output_metadata == False and 'ner' in final_cols: final_cols.remove('ner')
-        final_df = ptmp.select(list(set(final_cols)))
-
-        pandas_df = self.finalize_return_datatype(final_df)
-        if isinstance(pandas_df,pyspark.sql.dataframe.DataFrame):
-            return pandas_df # is actually spark df
-        else:
-            pandas_df.set_index('origin_index', inplace=True)
-            return self.convert_embeddings_to_np(pandas_df)
 
 
     def convert_embeddings_to_np(self, pdf):
