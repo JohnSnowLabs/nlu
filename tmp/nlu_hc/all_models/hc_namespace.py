@@ -1,5 +1,134 @@
 d = {
 
+# DeIdentificationModel  |||| EXPORTED
+'en.de_identify':'deidentify_dl',
+'en.de_identify.rules':'deid_rules',
+'en.de_identify.clinical':'deidentify_enriched_clinical',
+'en.de_identify.large':'deidentify_large',
+'en.de_identify.rb':'deidentify_rb',
+'en.de_identify.rb_no_regex':'deidentify_rb_no_regex',
+
+# ner DEID  |||| EXPORTED
+'en.ner.deid.augmented':'ner_deid_augmented',
+'en.ner.deid.biobert':'ner_deid_biobert',
+'en.ner.deid.enriched':'ner_deid_enriched',
+'en.ner.deid.enriched_biobert':'ner_deid_enriched_biobert',
+'en.ner.deid.large':'ner_deid_large',
+'en.ner.deid.sd':'ner_deid_sd',
+'en.ner.deid.sd_large':'ner_deid_sd_large',
+'en.ner.deid.synthetic':'ner_deid_synthetic',
+'en.ner.deid.dl':'ner_deidentify_dl',
+'en.ner.deid.':'nerdl_deid',
+
+# WordEmbeddings ||||||||||||||EXPORTET
+'en.':'embeddings_biovec',
+'en.':'embeddings_clinical',
+'en.':'embeddings_healthcare',
+'en.':'embeddings_healthcare_100d',
+'en.':'embeddings_icd10_base',
+'en.':'embeddings_icdoem',
+'en.':'embeddings_icdoem_2ng',
+
+
+# pos clinical || EXPORTED
+'en.pos.clinical':'pos_clinical',
+'en.pos.fast':'pos_fast_med',
+
+
+# RelationExtraction ||| EXPORTED BUT DEPRECRATED?!??!
+'en.extract_relation':'re_bodypart_directions',
+'en.extract_relation.bodypart.direction':'re_bodypart_directions',
+'en.extract_relation.bodypart.problem':'re_bodypart_problem',
+'en.extract_relation.bodypart.proceduretest':'re_bodypart_proceduretest',
+'en.extract_relation.chemprot':'re_chemprot_clinical',
+'en.extract_relation.clinical':'re_clinical',
+'en.extract_relation.date_clinical':'re_date_clinical',
+'en.extract_relation.drug_drug_interaction':'re_drug_drug_interaction_clinical',
+'en.extract_relation.human_phenotype_gene':'re_human_phenotype_gene_clinical',
+'en.extract_relation.temporal_events':'re_temporal_events_clinical',
+'en.extract_relation.temporal_events.enriched':'re_temporal_events_enriched_clinical',
+
+# RelationExtractionDL |||| EXOIRTED
+'en.extract_relation':'redl_bodypart_direction_biobert',
+'en.extract_relation.bodypart.direction':'redl_bodypart_direction_biobert',
+'en.extract_relation.bodypart.problem':'redl_bodypart_problem_biobert',
+'en.extract_relation.bodypart.procedure':'redl_bodypart_procedure_test_biobert',
+'en.extract_relation.chemprot':'redl_chemprot_biobert',
+'en.extract_relation.clinical':'redl_clinical_biobert',
+'en.extract_relation.date':'redl_date_clinical_biobert',
+'en.extract_relation.drug_drug_interaction':'redl_drug_drug_interaction_biobert',
+'en.extract_relation.humen_phenotype_gene':'redl_human_phenotype_gene_biobert',
+'en.extract_relation.temporal_events':'redl_temporal_events_biobert',
+
+
+#NERDL Models  ||||  EXPORTED!!!
+'en.ner.ade.biobert':'ner_ade_biobert',
+'en.ner.ade.clinical':'ner_ade_clinical',
+'en.ner.ade.clinical_bert':'ner_ade_clinicalbert',
+'en.ner.ade.ade_healthcare':'ner_ade_healthcare',
+'en.ner.anatomy':'ner_anatomy',
+'en.ner.anatomy.biobert':'ner_anatomy_biobert',
+'en.ner.anatomy.coarse':'ner_anatomy_coarse',
+'en.ner.anatomy.coarse_biobert':'ner_anatomy_coarse_biobert',
+'en.ner.aspect_sentiment':'ner_aspect_based_sentiment',
+'en.ner.bacterial_species':'ner_bacterial_species',
+'en.ner.bionlp':'ner_bionlp',
+'en.ner.bionlp.biobert':'ner_bionlp_biobert',
+'en.ner.bionlp.biobert.noncontrib':'ner_bionlp_noncontrib', # todo whats noncontrib?
+'en.ner.cancer':'ner_cancer_genetics',
+'en.ner.cellular':'ner_cellular',
+'en.ner.cellular.biobert':'ner_cellular_biobert',
+'en.ner.chemicals':'ner_chemicals',
+'en.ner.chemprot':'ner_chemprot_biobert',
+'en.ner.chemprot.clinical':'ner_chemprot_clinical',
+'en.ner.clinical':'ner_clinical',
+'en.ner.clinical.biobert':'ner_clinical_biobert',
+'en.ner.clinical.icdem':'ner_clinical_icdem',
+'en.ner.clinical.large':'ner_clinical_large',
+'en.ner.clinical.noncontrib':'ner_clinical_noncontrib',
+
+### NERDL |||||| EXPORTED (PART2)
+'en.ner.diseases.':'ner_diseases',
+'en.ner.diseases.biobert':'ner_diseases_biobert',
+'en.ner.diseases.large':'ner_diseases_large',
+'en.ner.drugs':'ner_drugs',
+'en.ner.drugsgreedy':'ner_drugs_greedy',
+'en.ner.drugs.large':'ner_drugs_large',
+'en.ner.events_biobert':'ner_events_biobert',
+'en.ner.events_clinical':'ner_events_clinical',
+'en.ner.events_healthcre':'ner_events_healthcare',
+'en.ner.financial_contract':'ner_financial_contract',
+'en.ner.healthcare':'ner_healthcare',
+'en.ner.human_phenotype.gene_biobert':'ner_human_phenotype_gene_biobert',
+'en.ner.human_phenotype.gene_clinical':'ner_human_phenotype_gene_clinical',
+'en.ner.human_phenotype.go_biobert':'ner_human_phenotype_go_biobert',
+'en.ner.human_phenotype.go_clinical':'ner_human_phenotype_go_clinical',
+'en.ner.jsl':'ner_jsl',
+'en.ner.jsl.biobert':'ner_jsl_biobert',
+'en.ner.jsl.enriched':'ner_jsl_enriched',
+'en.ner.jsl.enriched_biobert':'ner_jsl_enriched_biobert',
+'en.ner.measurements':'ner_measurements_clinical',
+'en.ner.medmentions':'ner_medmentions_coarse',
+'en.ner.posology':'ner_posology',
+'en.ner.posology.biobert':'ner_posology_biobert',
+'en.ner.posology.greedy':'ner_posology_greedy',
+'en.ner.posology.healthcare':'ner_posology_healthcare',
+'en.ner.posology.large':'ner_posology_large',
+'en.ner.posology.large_biobert':'ner_posology_large_biobert',
+'en.ner.posology.small':'ner_posology_small',
+'en.ner.radiology':'ner_radiology',
+'en.ner.radiology.wip_clinical':'ner_radiology_wip_clinical',
+'en.ner.risk_factors':'ner_risk_factors',
+'en.ner.risk_factors.biobert':'ner_risk_factors_biobert',
+'en.ner.i2b2':'nerdl_i2b2',
+'en.ner.tumour':'nerdl_tumour_demo',
+'en.ner.jsl.wip.clinical':'jsl_ner_wip_clinical',
+'en.ner.jsl.wip.clinical.greedy':'jsl_ner_wip_greedy_clinical',
+'en.ner.jsl.wip.clinical.modifier':'jsl_ner_wip_modifier_clinical',
+'en.ner.jsl.wip.clinical.rd':'jsl_rd_ner_wip_greedy_clinical',
+
+
+
 
 # SentenceBertEmbedding |||||||||||||| EXPORTERD
 'en.':'sent_biobert_base_uncased_mednli',
@@ -46,6 +175,51 @@ d = {
 
 
 
+
+# ClassifierDL Models       +++++++++}|||||||||||||||||||||||||||||||||||||| EXPORTED `
+'en.classify.icd10.clinical':'classifier_icd10cm_hcc_clinical', # WHCIH CLASS? # TODO NOT LAODING
+'en.classify.icd10.healthcare':'classifier_icd10cm_hcc_healthcare', # TODO NOT LOADING CORRECt
+'en.classify.ade.biobert':'classifierdl_ade_biobert',
+'en.classify.ade.clinical':'classifierdl_ade_clinicalbert',
+'en.classify.ade.conversational':'classifierdl_ade_conversational_biobert',
+'en.classify.gender.biobert':'classifierdl_gender_biobert',
+'en.classify.gender.sbert':'classifierdl_gender_sbert', # ok!
+'en.classify.pico':'classifierdl_pico_biobert',
+'en.classify.icd10.use':'useclassifier_icd10cm_hcc',
+
+    # Chunk resolve ||||||||| EXPORTED
+    'en.resolve_chunk.athena_conditions':'chunkresolve_athena_conditions_healthcare',
+    'en.resolve_chunk.cpt_clinical':'chunkresolve_cpt_clinical',
+    'en.resolve_chunk.cpt_icdoem':'chunkresolve_cpt_icdoem',
+    'en.resolve_chunk.icd10cm.clinical':'chunkresolve_icd10cm_clinical',
+    'en.resolve_chunk.icd10cm.diseases_clinical':'chunkresolve_icd10cm_diseases_clinical',
+    'en.resolve_chunk.icd10cm.hcc_clinical':'chunkresolve_icd10cm_hcc_clinical',
+    'en.resolve_chunk.icd10cm.hcc_healthcare':'chunkresolve_icd10cm_hcc_healthcare',
+    'en.resolve_chunk.icd10cm.icdoem,':'chunkresolve_icd10cm_icdoem',
+    'en.resolve_chunk.icd10cm.icdoem_2ng':'chunkresolve_icd10cm_icdoem_2ng',
+    'en.resolve_chunk.icd10cm.injuries':'chunkresolve_icd10cm_injuries_clinical',
+    'en.resolve_chunk.icd10cm.musculoskeletal':'chunkresolve_icd10cm_musculoskeletal_clinical',
+    'en.resolve_chunk.icd10cm.neoplasms':'chunkresolve_icd10cm_neoplasms_clinical',
+    'en.resolve_chunk.icd10cm.poison':'chunkresolve_icd10cm_poison_ext_clinical',
+    'en.resolve_chunk.icd10cm.puerile':'chunkresolve_icd10cm_puerile_clinical',
+    'en.resolve_chunk.icd10cpt.icdoem':'chunkresolve_icd10cpt_icdoem_2ng',
+    'en.resolve_chunk.icd10pcs.clinical':'chunkresolve_icd10pcs_clinical',
+    'en.resolve_chunk.icd10pcs.icdoem':'chunkresolve_icd10pcs_icdoem',
+    'en.resolve_chunk.icd10pcs.icdoem_2ng':'chunkresolve_icd10pcs_icdoem_2ng',
+    'en.resolve_chunk.icdo.clinical':'chunkresolve_icdo_clinical',
+    'en.resolve_chunk.icdo.icdoem':'chunkresolve_icdo_icdoem',
+    'en.resolve_chunk.loinc':'chunkresolve_loinc_clinical',
+    'en.resolve_chunk.rxnorm.cd':'chunkresolve_rxnorm_cd_clinical',
+    'en.resolve_chunk.rxnorm.in':'chunkresolve_rxnorm_in_clinical',
+    'en.resolve_chunk.rxnorm.in_healthcare':'chunkresolve_rxnorm_in_healthcare',
+    'en.resolve_chunk.rxnorm.sbd':'chunkresolve_rxnorm_sbd_clinical',
+    'en.resolve_chunk.rxnorm.scd':'chunkresolve_rxnorm_scd_clinical',
+    'en.resolve_chunk.rxnorm.scdc':'chunkresolve_rxnorm_scdc_clinical',
+    'en.resolve_chunk.rxnorm.scdc_healthcare':'chunkresolve_rxnorm_scdc_healthcare',
+    'en.resolve_chunk.rxnorm.xsmall.clinical':'chunkresolve_rxnorm_xsmall_clinical',
+    'en.resolve_chunk.snomed.findings':'chunkresolve_snomed_findings_clinical',
+
+
 #===========================+EXPORT END ==================================
 
 # AssertionLogRegModel
@@ -74,58 +248,12 @@ d = {
 
 
 
-# Chunk resolve
-'en.':'chunkresolve_athena_conditions_healthcare',
-'en.':'chunkresolve_cpt_clinical',
-'en.':'chunkresolve_cpt_icdoem',
 
-# Chunk resolve icd
-'en.':'chunkresolve_icd10cm_clinical',
-'en.':'chunkresolve_icd10cm_diseases_clinical',
-'en.':'chunkresolve_icd10cm_hcc_clinical',
-'en.':'chunkresolve_icd10cm_hcc_healthcare',
-'en.':'chunkresolve_icd10cm_icdoem',
-'en.':'chunkresolve_icd10cm_icdoem_2ng',
-'en.':'chunkresolve_icd10cm_injuries_clinical',
-'en.':'chunkresolve_icd10cm_musculoskeletal_clinical',
-'en.':'chunkresolve_icd10cm_neoplasms_clinical',
-'en.':'chunkresolve_icd10cm_poison_ext_clinical',
-'en.':'chunkresolve_icd10cm_puerile_clinical',
-'en.':'chunkresolve_icd10cpt_icdoem_2ng',
-'en.':'chunkresolve_icd10pcs_clinical',
-'en.':'chunkresolve_icd10pcs_icdoem',
-'en.':'chunkresolve_icd10pcs_icdoem_2ng',
-'en.':'chunkresolve_icdo_clinical',
-'en.':'chunkresolve_icdo_icdoem',
 
-'en.':'chunkresolve_loinc_clinical',
 
-# chunk resolve rxnorm
-'en.':'chunkresolve_rxnorm_cd_clinical',
-'en.':'chunkresolve_rxnorm_in_clinical',
-'en.':'chunkresolve_rxnorm_in_healthcare',
-'en.':'chunkresolve_rxnorm_sbd_clinical',
-'en.':'chunkresolve_rxnorm_scd_clinical',
-'en.':'chunkresolve_rxnorm_scdc_clinical',
-'en.':'chunkresolve_rxnorm_scdc_healthcare',
-'en.':'chunkresolve_rxnorm_xsmall_clinical',
 
-#Chunk resolve snomed
-'en.':'chunkresolve_snomed_findings_clinical',
 
-# Classify icd
-'en.':'classifier_icd10cm_hcc_clinical',
-'en.':'classifier_icd10cm_hcc_healthcare',
-# cassify ade
-'en.':'classifierdl_ade_biobert',
-'en.':'classifierdl_ade_clinicalbert',
-'en.':'classifierdl_ade_conversational_biobert',
-# Classify gender
-'en.':'classifierdl_gender_biobert',
-'en.':'classifierdl_gender_sbert',
 
-# Classify pico
-'en.':'classifierdl_pico_biobert',
 
 
 #?
@@ -137,222 +265,8 @@ d = {
 # context
 'en.':'context_spell_med',
 
-# deid
-'en.':'deid_rules',
-'en.':'deidentify_dl',
-'en.':'deidentify_enriched_clinical',
-'en.':'deidentify_large',
-'en.':'deidentify_rb',
-'en.':'deidentify_rb_no_regex',
 
-
-# WordEmbeddings ||||||||||||||EXPORTET
-'en.':'embeddings_biovec',
-'en.':'embeddings_clinical',
-'en.':'embeddings_healthcare',
-'en.':'embeddings_healthcare_100d',
-'en.':'embeddings_icd10_base',
-'en.':'embeddings_icdoem',
-'en.':'embeddings_icdoem_2ng',
-
-
-
-# ensemble resolve
-'en.':'ensembleresolve_icd10cm_clinical',
-'en.':'ensembleresolve_rxnorm_small_clinical',
-'en.':'ensembleresolve_snomed_small_clinical',
-
-# entity resolve
-'en.':'entity_resolver_icd10',
-
-# Explain
-'en.':'explain_clinical_doc_ade',
-'en.':'explain_clinical_doc_carp',
-'en.':'explain_clinical_doc_era',
-
-# Jsl assert
-'en.':'jsl_assertion_wip',
-'en.':'jsl_assertion_wip_large',
-
-# JSL embeds
-'en.':'jsl_bert_pubmed_cased',
-'en.':'jsl_ner_wip_clinical',
-
-# jsl ner
-'en.':'jsl_ner_wip_greedy_clinical',
-'en.':'jsl_ner_wip_modifier_clinical',
-'en.':'jsl_rd_ner_wip_greedy_clinical',
-
-# ner ade
-'en.':'ner_ade_biobert',
-'en.':'ner_ade_clinical',
-'en.':'ner_ade_clinicalbert',
-'en.':'ner_ade_healthcare',
-
-# ner anatomy
-'en.':'ner_anatomy',
-'en.':'ner_anatomy_biobert',
-'en.':'ner_anatomy_coarse',
-'en.':'ner_anatomy_coarse_biobert',
-
-# ner aspect sentiment
-'en.':'ner_aspect_based_sentiment',
-
-# ner bacterial species
-'en.':'ner_bacterial_species',
-
-# ner bionlp
-'en.':'ner_bionlp',
-'en.':'ner_bionlp_biobert',
-'en.':'ner_bionlp_noncontrib',
-
-# ner cancer
-'en.':'ner_cancer_genetics',
-
-# ner cells
-'en.':'ner_cellular',
-'en.':'ner_cellular_biobert',
-
-# ner chem
-'en.':'ner_chemicals',
-'en.':'ner_chemprot_biobert',
-'en.':'ner_chemprot_clinical',
-
-# ner clinica;
-'en.':'ner_clinical',
-'en.':'ner_clinical_biobert',
-'en.':'ner_clinical_icdem',
-'en.':'ner_clinical_large',
-'en.':'ner_clinical_noncontrib',
-
-
-# ner CRF (DEPARACTD)
-# 'en.':'ner_crf',
-# ner DEID
-'en.':'ner_deid_augmented',
-'en.':'ner_deid_biobert',
-'en.':'ner_deid_enriched',
-'en.':'ner_deid_enriched_biobert',
-'en.':'ner_deid_large',
-'en.':'ner_deid_sd',
-'en.':'ner_deid_sd_large',
-'en.':'ner_deid_synthetic',
-'en.':'ner_deidentify_dl',
-
-
-# ner diag
-'es.':'ner_diag_proc',
-
-# ner disease
-'en.':'ner_diseases',
-'en.':'ner_diseases_biobert',
-'en.':'ner_diseases_large',
-
-
-# ner drugs
-'en.':'ner_drugs',
-'en.':'ner_drugs_greedy',
-'en.':'ner_drugs_large',
-
-# ner events
-'en.':'ner_events_biobert',
-'en.':'ner_events_clinical',
-'en.':'ner_events_healthcare',
-
-# ner fin
-'en.':'ner_financial_contract',
-
-
-# ner hc
-'en.':'ner_healthcare',
-
-# ner phenotype
-'en.':'ner_human_phenotype_gene_biobert',
-'en.':'ner_human_phenotype_gene_clinical',
-'en.':'ner_human_phenotype_go_biobert',
-'en.':'ner_human_phenotype_go_clinical',
-
-# ner jsl
-'en.':'ner_jsl',
-'en.':'ner_jsl_biobert',
-'en.':'ner_jsl_enriched',
-'en.':'ner_jsl_enriched_biobert',
-
-# ner measurements
-'en.':'ner_measurements_clinical',
-# ner medmentions
-'en.':'ner_medmentions_coarse',
-
-# ner neoplasm
-'es.':'ner_neoplasms',
-# ner posology
-'en.':'ner_posology',
-'en.':'ner_posology_biobert',
-'en.':'ner_posology_greedy',
-'en.':'ner_posology_healthcare',
-'en.':'ner_posology_large',
-'en.':'ner_posology_large_biobert',
-'en.':'ner_posology_small',
-
-# ner radiology
-'en.':'ner_radiology',
-'en.':'ner_radiology_wip_clinical',
-# ner risk factors
-'en.':'ner_risk_factors',
-'en.':'ner_risk_factors_biobert',
-
-# ner CRF (DEPRACTATED)
-# 'en.':'nercrf_deid',
-# 'en.':'nercrf_tumour_demo',
-
-# ner deid
-'en.':'nerdl_deid',
-# ner i2b2
-'en.':'nerdl_i2b2',
-'en.':'nerdl_tumour_demo',
-
-# ? (pipes?)
-'en.':'people_disambiguator',
-
-# pos clinical
-'en.':'pos_clinical',
-# pos med
-'en.':'pos_fast_med',
-
-# pipe?
-'en.':'ppl_posology_rxnorm',
-
-# relation extractor pipe posology ?
-'en.':'recognize_entities_posology',
-
-
-
-# RelationExtraction
-'en.':'re_bodypart_directions',
-'en.':'re_bodypart_problem',
-'en.':'re_bodypart_proceduretest',
-'en.':'re_chemprot_clinical',
-'en.':'re_clinical',
-'en.':'re_date_clinical',
-'en.':'re_drug_drug_interaction_clinical',
-'en.':'re_human_phenotype_gene_clinical',
-'en.':'re_temporal_events_clinical',
-'en.':'re_temporal_events_enriched_clinical',
-
-# RelationExtractionDL
-'en.':'redl_bodypart_direction_biobert',
-'en.':'redl_bodypart_problem_biobert',
-'en.':'redl_bodypart_procedure_test_biobert',
-'en.':'redl_chemprot_biobert',
-'en.':'redl_clinical_biobert',
-'en.':'redl_date_clinical_biobert',
-'en.':'redl_drug_drug_interaction_biobert',
-'en.':'redl_human_phenotype_gene_biobert',
-'en.':'redl_temporal_events_biobert',
-
-
-
-# resolve cpt
+# resolve cpt (SENTENCE OR CHUNK??) or pipe?
 'en.':'resolve_cpt_cl_em',
 'en.':'resolve_cpt_icdoem',
 'en.':'resolve_icd10',
@@ -370,49 +284,63 @@ d = {
 'en.':'resolve_rxnorm_l1_tfidf_icdoem_2ng',
 'en.':'resolve_rxnorm_l2_icdoem_2ng',
 
-# resolve snomed
-'en.resolve.snomed':'resolve_snomed_clinical_l1', # default snomed resolver
-'en.resolve.snomed.clinical.l1':'resolve_snomed_clinical_l1',
-'en.resolve.snomed.clinical.l2':'resolve_snomed_clinical_l2',
-'en.resolve.snomed.l1.idx':'resolve_snomed_l1_idx_icdoem_2ng',
-'en.resolve.snomed.l1.ovrlrc':'resolve_snomed_l1_ovrlrc_icdoem_2ng',
-'en.resolve.snomed.l1.tfidf':'resolve_snomed_l1_tfidf_icdoem_2ng',
-'en.resolve.snomed.l2.icdoem':'resolve_snomed_l2_icdoem_2ng',
+# resolve snomed (SENTENCE OR CHUNK??) or pipe?
+'en.resolve_?.snomed':'resolve_snomed_clinical_l1', # default snomed resolver
+'en.resolve_?.snomed.clinical.l1':'resolve_snomed_clinical_l1',
+'en.resolve_?.snomed.clinical.l2':'resolve_snomed_clinical_l2',
+'en.resolve_?.snomed.l1.idx':'resolve_snomed_l1_idx_icdoem_2ng',
+'en.resolve_?.snomed.l1.ovrlrc':'resolve_snomed_l1_ovrlrc_icdoem_2ng',
+'en.resolve_?.snomed.l1.tfidf':'resolve_snomed_l1_tfidf_icdoem_2ng',
+'en.resolve_?.snomed.l2.icdoem':'resolve_snomed_l2_icdoem_2ng',
 
 
+
+# ensemble resolve # TODO class?
+'en.':'ensembleresolve_icd10cm_clinical',
+'en.':'ensembleresolve_rxnorm_small_clinical',
+'en.':'ensembleresolve_snomed_small_clinical',
+# entity resolve
+'en.':'entity_resolver_icd10',
+
+# Explain Pipes
+'en.':'explain_clinical_doc_ade',
+'en.':'explain_clinical_doc_carp',
+'en.':'explain_clinical_doc_era',
+
+# relation extractor pipe posology
+'en.':'recognize_entities_posology',
+
+
+# ? (pipes?)
+'en.':'people_disambiguator',
+# pipe?
+'en.':'ppl_posology_rxnorm',
 
 
 # sentence detector dl healthcare
 'en.':'sentence_detector_dl_healthcare',
-
-# spel check clinical
+# spel check clinical pipe?
 'en.':'spellcheck_clinical',
-
 # spellcheck dl
 'en.':'spellcheck_dl',
-
 # t5?
 'en.':'t5_base_mediqa_mnli',
+# text matchcher old deprecated/ client project
+# 'en.':'textmatch_cpt_token',
+# 'en.':'textmatch_cpt_token_n2c1',
+# 'en.':'textmatch_icd10cm',
+# 'en.':'textmatch_icd10cm_uncased',
+# 'en.':'textmatch_icdo',
+# 'en.':'textmatch_icdo_ner',
+# 'en.':'textmatch_icdo_ner_n2c4',
+#
 
-# text 2 sql deprecated
-# 'en.':'text2sql_glove',
 
-
-# text match cpt
-'en.':'textmatch_cpt_token',
-'en.':'textmatch_cpt_token_n2c1',
-
-# text match
-'en.':'textmatch_icd10cm',
-'en.':'textmatch_icd10cm_uncased',
-'en.':'textmatch_icdo',
-'en.':'textmatch_icdo_ner',
-'en.':'textmatch_icdo_ner_n2c4',
-
-# classify icd10
-'en.':'useclassifier_icd10cm_hcc',
 }
 
+
+
+########################## NON EN TODO ##########################
 # DE
 w2v_cc_300d,de
 chunkresolve_ICD10GM,de
@@ -434,3 +362,22 @@ embeddings_scielowiki_50d,es
 embeddings_sciwiki_150d,es
 embeddings_sciwiki_300d,es
 embeddings_sciwiki_50d,es
+'es.':'ner_neoplasms', # todo sure es?
+'es.':'ner_diag_proc',
+
+# ner CRF (DEPARACTD)
+# 'en.':'ner_crf',
+
+# ner CRF (DEPRACTATED)
+# 'en.':'nercrf_deid',z
+# TODO JSL STUFF IS ARE UNDOCUMENTED CLIENT PROEJCTS! exclude for now!
+# Jsl assert
+'en.':'jsl_assertion_wip',
+'en.':'jsl_assertion_wip_large',
+# JSL embeds
+'en.':'jsl_bert_pubmed_cased',
+
+
+
+
+
