@@ -24,3 +24,4 @@ class AssertionTests(unittest.TestCase):
 if __name__ == '__main__':
     AssertionTests().test_entities_config()
 
+
