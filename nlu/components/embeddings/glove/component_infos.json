@@ -17,7 +17,7 @@
     "token"
   ],
   "spark_output_column_names": [
-    "glove_embeddings"
+    "word_embeddings"
   ],
   "provider": "sparknlp",
   "license": "open source",

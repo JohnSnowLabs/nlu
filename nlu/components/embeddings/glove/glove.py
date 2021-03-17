@@ -7,14 +7,14 @@ class Glove:
     def get_default_model():
         return WordEmbeddingsModel.pretrained() \
         .setInputCols("document", "token") \
-        .setOutputCol("glove_embeddings")
+        .setOutputCol("word_embeddings")
 
 
     @staticmethod
     def get_pretrained_model(name, language, bucket = None):
         return WordEmbeddingsModel.pretrained(name,language,bucket) \
             .setInputCols("document", "token") \
-            .setOutputCol("glove_embeddings")
+            .setOutputCol("word_embeddings")
 
 
 

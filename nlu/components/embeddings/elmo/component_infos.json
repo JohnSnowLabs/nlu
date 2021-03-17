@@ -18,7 +18,7 @@
     "token"
   ],
   "spark_output_column_names": [
-    "elmo"
+    "word_embeddings"
   ],
   "provider": "sparknlp",
   "license": "open source",
