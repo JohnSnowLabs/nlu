@@ -8,15 +8,15 @@
   ],
   "inputs": [
     "sentence",
-    "chunk",
-    "word_embeddings"
+    "word_embeddings",
+    "entities"
   ],
   "type": "asserter",
   "file_dependencies": {},
   "spark_input_column_names": [
+    "word_embeddings",
     "sentence",
-    "chunk",
-    "word_embeddings"
+    "entities"
   ],
   "spark_output_column_names": [
     "assertion"

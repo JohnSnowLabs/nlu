@@ -12,7 +12,7 @@ class NLUComponent():
         # when NLU might support 3rd party models we should rework this
         # self.model = None  # Either Spark NLP model or some 3rd party custom model. Reference to a model
         self.component_path = nlu.nlu_package_location + 'components/' + component_type + 's/' + component_name + '/'
-        self.component_info = nlu.ComponentInfo.from_directory(component_info_dir=self.component_path)
+        self.info = nlu.ComponentInfo.from_directory(component_info_dir=self.component_path)
 
     def print_parameters_explanation(self):
         pass
@@ -21,20 +21,28 @@ class NLUComponent():
         pass
 
     def info(self):
-        print(self.component_info['info'])
+        print(self.info['info'])
         self.print_parameters_explanation()
         self.print_parameters()
 
 
 class  SparkNLUComponent(NLUComponent):
-    def __init__(self, component_name, component_type):
+    def __init__(self, component_name, component_type, nlu_ref='', nlp_ref='',lang='',loaded_from_pretrained_pipe=False):
         # super().__init__(annotator_class, component_type)
         # super(SparkNLUComponent,self).__init__(annotator_class, component_type)
+        self.nlu_ref = nlu_ref
+        self.nlp_ref = nlp_ref
+        self.lang    = lang
+        self.loaded_from_pretrained_pipe = loaded_from_pretrained_pipe
+
         NLUComponent.__init__(self, component_name, component_type)
-        self.spark = nlu.sparknlp.start()
-        nlu.spark = self.spark
-        nlu.spark_started = True
         self.__set_missing_model_attributes__()
+
+        # self.spark = nlu.sparknlp.start()
+        # nlu.spark = self.spark
+        # nlu.spark_started = True
+
+
     # def __postinit__(self):
 
     def __set_missing_model_attributes__(self):
@@ -47,14 +55,14 @@ class  SparkNLUComponent(NLUComponent):
         for k in self.model.extractParamMap():
             if "inputCol" in str(k):
                 if isinstance(self.model.extractParamMap()[k], str) :
-                    self.component_info.spark_input_column_names =  [self.model.extractParamMap()[k]]
+                    self.info.spark_input_column_names =  [self.model.extractParamMap()[k]]
                 else :
-                    self.component_info.spark_input_column_names =  self.model.extractParamMap()[k]
+                    self.info.spark_input_column_names =  self.model.extractParamMap()[k]
             if "outputCol" in str(k):
                 if isinstance(self.model.extractParamMap()[k], str) :
-                    self.component_info.spark_output_column_names =  [self.model.extractParamMap()[k]]
+                    self.info.spark_output_column_names =  [self.model.extractParamMap()[k]]
                 else :
-                    self.component_info.spark_output_column_names =  self.model.extractParamMap()[k]
+                    self.info.spark_output_column_names =  self.model.extractParamMap()[k]
             # if "labelCol" in str(k):
             #     if isinstance(self.model.extractParamMap()[k], str) :
             #         self.component_info['spark_label_column_names'] =  [self.model.extractParamMap()[k]]

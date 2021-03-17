@@ -1,5 +1,5 @@
 {
-  "name": "chunk_embedder",
+  "name": "chunk_embedding_converter",
   "output_level": "chunk",
   "description": "todo",
   "trainable": false,
@@ -7,14 +7,14 @@
     "chunk_embeddings"
   ],
   "inputs": [
-    "chunk",
+    "entities",
     "word_embeddings"
   ],
   "type": "chunk_embeddings",
   "file_dependencies": {},
   "spark_input_column_names": [
-    "chunk",
-    "glove_embeddings"
+    "entities",
+    "work_embeddings"
   ],
   "spark_output_column_names": [
     "chunk_embeddings"

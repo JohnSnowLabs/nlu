@@ -1,5 +1,4 @@
-from typing import Callable
-from typing import List, Dict, Set, Dict, Tuple, Optional
+from typing import List, Dict, Set, Dict, Tuple, Optional, Any,Callable, Dict
 from dataclasses import dataclass, field
 
 """
@@ -12,6 +11,18 @@ Contains dataclases which represent Extractors and their configuration
 - What abotu multiple exctracotrs? Make attribute extractor attrivbute a luist of methods? People of can just write phat mehtods? Buy what about combing n
 - white/black list based application of specific methods to specirfic keywords . 
 - What if you want multiple output cols, one per extractor method? 
+
+"""
+from typing import Callable
+from typing import List, Dict, Set, Dict, Tuple, Optional
+from dataclasses import dataclass, field
+from typing import Callable
+from typing import List, Dict, Set, Dict, Tuple, Optional, Any
+from typing import Callable
+from typing import List, Dict, Set, Dict, Tuple, Optional
+from dataclasses import dataclass, field
+"""
+Contains dataclases which represent Extractors and their configuration
 
 """
 

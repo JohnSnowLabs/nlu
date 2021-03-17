@@ -22,11 +22,6 @@ from pyspark.sql.types import StructType,StructField, StringType, IntegerType
 from pyspark.sql import functions as F
 from pyspark.sql import types as t
 
-
-
-
-
-
 class BasePipe(dict):
     # we inherhit from dict so the pipe is indexable and we have a nice shortcut for accessing the spark nlp model
     def __init__(self):
@@ -75,7 +70,7 @@ class BasePipe(dict):
         while can_use_name == False:
             can_use_name = True
             for c in self.components:
-                if new_output_name in c.component_info.spark_input_column_names + c.component_info.spark_output_column_names and c.component_info.name != component.component_info.name:
+                if new_output_name in c.info.spark_input_column_names + c.info.spark_output_column_names and c.info.name != component.info.name:
                     can_use_name = False
         if can_use_name == False:
             new_output_name = new_output_name + '_' + str(i)
@@ -83,7 +78,7 @@ class BasePipe(dict):
         # classifiers always have just 1 output col
         logger.info(f"Configured output columns name to {new_output_name} for classifier in {nlu_reference}")
         component.model.setOutputCol(new_output_name)
-        component.component_info.spark_output_column_names = [new_output_name]
+        component.info.spark_output_column_names = [new_output_name]
 
     def add(self, component, nlu_reference="default_name", pretrained_pipe_component=False):
         '''
@@ -92,26 +87,31 @@ class BasePipe(dict):
         :param nlu_reference: NLU references, passed for components that are used specified and not automatically generate by NLU
         :return:
         '''
-        self.nlu_reference = nlu_reference
+        if hasattr(component.info,'nlu_ref'): nlu_reference =   component.info.nlu_ref # TODO ALL PIPE components muss implement this then we can remove this tenerary operator here
+
+        # self.nlu_reference = component.info.nlu_ref if component.info
+
         self.components.append(component)
         # ensure that input/output cols are properly set
-        component.__set_missing_model_attributes__()
         # Spark NLP model reference shortcut
-        name = component.component_info.name.replace(' ', '').replace('train.','')
+
+        name = component.info.name.replace(' ', '').replace('train.', '')
+        if nlu.pipeline_logic.PipelineQueryVerifier.has_storage_ref(component):
+            name = name +'@' +  nlu.pipeline_logic.PipelineQueryVerifier.extract_storage_ref(component)
         logger.info(f"Adding {name} to internal pipe")
 
         # Configure output column names of classifiers from category to something more meaningful
         if self.isInstanceOfNlpClassifer(component.model): self.configure_outputs(component, nlu_reference)
 
         # Add Component as self.index and in attributes
-        if 'embed' in component.component_info.type and nlu_reference not in self.keys() and not pretrained_pipe_component:
-            new_output_column = nlu_reference
-            new_output_column = new_output_column.replace('.', '_')
-            component.nlu_reference = nlu_reference
-            component.model.setOutputCol(new_output_column)
-            component.component_info.spark_output_column_names = [new_output_column]
-            component.component_info.name = new_output_column
-            self[new_output_column] = component.model
+        if 'embed' in component.info.type and nlu_reference not in self.keys() and not pretrained_pipe_component:
+            # new_output_column = nlu_reference
+            # new_output_column = new_output_column.replace('.', '_')
+            # component.nlu_reference = nlu_reference
+            # component.model.setOutputCol(new_output_column)
+            # component.info.spark_output_column_names = [new_output_column]
+            # component.info.name = new_output_column
+            self[name] = component.info.name
         # name parsed from component info, dont fiddle with column names of components unwrapped from pretrained pipelines
         elif name not in self.keys():
             component.nlu_reference = nlu_reference
@@ -121,8 +121,8 @@ class BasePipe(dict):
             new_output_column = new_output_column.replace('.', '_')
             component.nlu_reference = nlu_reference
             component.model.setOutputCol(new_output_column)
-            component.component_info.spark_output_column_names = [new_output_column]
-            component.component_info.name = new_output_column
+            component.info.spark_output_column_names = [new_output_column]
+            component.info.name = new_output_column
             self[new_output_column] = component.model
         # self.component_execution_plan.update()
 
@@ -281,8 +281,8 @@ class NLUPipeline(BasePipe):
         # find the component. Column output name should be unique
         component_inputs = []
         for component in self.components:
-            if field_name == component.component_info.name:
-                component_inputs = component.component_info.spark_input_column_names
+            if field_name == component.info.name:
+                component_inputs = component.info.spark_input_column_names
 
         # get the embedding feature name
         target_output_component = ''
@@ -291,12 +291,12 @@ class NLUPipeline(BasePipe):
 
         # get the model that outputs that feature
         for component in self.components:
-            component_outputs = component.component_info.spark_output_column_names
+            component_outputs = component.info.spark_output_column_names
             for input_name in component_outputs:
                 if target_output_component == input_name:
                     # this is the component that feeds into the component we are trying to resolve the output  level for.
                     # That is so, because the output of this component matches the input of the component we are resolving
-                    return self.resolve_type_to_output_level(component.component_info.type)
+                    return self.resolve_type_to_output_level(component.info.type)
 
 
     #todo rm
@@ -734,16 +734,16 @@ class NLUPipeline(BasePipe):
         '''
         # (1.) A classifier, which is using sentence/document. We just check input cols
 
-        if 'document' in component.component_info.spark_input_column_names :  return 'document'
-        if 'sentence' in component.component_info.spark_input_column_names :  return 'sentence'
+        if 'document' in component.info.spark_input_column_names :  return 'document'
+        if 'sentence' in component.info.spark_input_column_names :  return 'sentence'
 
         # (2.) A classifier, which is using sentence/doc embeddings.
         # We iterate over the pipe and check which Embed component is feeding the classifier and what the input that embed annotator is (sent or doc)
         for c in self.components:
             # check if c is of sentence embedding class  which is always input dependent
             if any ( isinstance(c.model, e ) for e in self.all_embeddings['input_dependent']  ) :
-                if 'document' in c.component_info.spark_input_column_names :  return 'document'
-                if 'sentence' in c.component_info.spark_input_column_names :  return 'sentence'
+                if 'document' in c.info.spark_input_column_names :  return 'document'
+                if 'sentence' in c.info.spark_input_column_names :  return 'sentence'
 
 
     def resolve_component_to_output_level(self,component):
@@ -780,8 +780,8 @@ class NLUPipeline(BasePipe):
             bad_names = ['token']
 
             for c in self.components[::-1]:
-                if any (t in  c.component_info.type for t in bad_types) : continue
-                if any (n in  c.component_info.name for n in bad_names) : continue
+                if any (t in  c.info.type for t in bad_types) : continue
+                if any (n in  c.info.name for n in bad_names) : continue
                 self.output_level = self.resolve_component_to_output_level(c)
                 logger.info('Inferred and set output level of pipeline to %s', self.output_level)
                 break
@@ -796,10 +796,10 @@ class NLUPipeline(BasePipe):
         '''
 
         for component in self.components:
-            if component.component_info.output_level == 'chunk':
+            if component.info.output_level == 'chunk':
                 # Usually al chunk components ahve only one output and that is the cunk col so we can safely just pass the first element of the output list to the caller
-                logger.info("Detected %s as chunk output column for later zipping", component.component_info.name)
-                return component.component_info.spark_output_column_names[0]
+                logger.info("Detected %s as chunk output column for later zipping", component.info.name)
+                return component.info.spark_output_column_names[0]
 
     def resolve_field_to_output_level(self, field,f_type):
         '''
@@ -810,7 +810,7 @@ class NLUPipeline(BasePipe):
         '''
         target = field.split('.')[0]
         for c in self.components:
-            if target in c.component_info.spark_output_column_names:
+            if target in c.info.spark_output_column_names:
                 # MultiClassifier outputs should never be at same output level as pipe, returning special_case takes care of this
                 if isinstance(c.model, (MultiClassifierDLModel, MultiClassifierDLApproach,YakeModel)): return "multi_level"
                 return self.resolve_component_to_output_level(c)
@@ -895,16 +895,16 @@ class NLUPipeline(BasePipe):
             if type(c.model) in OC_anno2config.keys():
                 if OC_anno2config[type(c.model)]['default'] == '' :
                     logger.info(f'could not find default configs, using full default for model ={c.model}')
-                    anno_2_ex_config[c.component_info.spark_output_column_names[0]] = OC_anno2config[type(c.model)]['default_full'](output_col_prefix=c.component_info.name)
+                    anno_2_ex_config[c.info.spark_output_column_names[0]] = OC_anno2config[type(c.model)]['default_full'](output_col_prefix=c.info.name)
                 else :
-                    anno_2_ex_config[c.component_info.spark_output_column_names[0]] = OC_anno2config[type(c.model)]['default'](output_col_prefix=c.component_info.name)
+                    anno_2_ex_config[c.info.spark_output_column_names[0]] = OC_anno2config[type(c.model)]['default'](output_col_prefix=c.info.name)
             else:
                 from nlu.extractors.extraction_resolver_HC import HC_anno2config
                 if HC_anno2config[type(c.model)]['default'] == '' :
                     logger.info(f'could not find default configs in hc resolver space, using full default for model ={c.model}')
-                    anno_2_ex_config[c.component_info.spark_output_column_names[0]] = HC_anno2config[type(c.model)]['default_full'](output_col_prefix=c.component_info.name)
+                    anno_2_ex_config[c.info.spark_output_column_names[0]] = HC_anno2config[type(c.model)]['default_full'](output_col_prefix=c.info.name)
                 else :
-                    anno_2_ex_config[c.component_info.spark_output_column_names[0]] = HC_anno2config[type(c.model)]['default'](output_col_prefix=c.component_info.name)
+                    anno_2_ex_config[c.info.spark_output_column_names[0]] = HC_anno2config[type(c.model)]['default'](output_col_prefix=c.info.name)
         return anno_2_ex_config
 
     def unpack_and_apply_extractors(self,sdf:pyspark.sql.DataFrame):
@@ -1133,7 +1133,7 @@ class NLUPipeline(BasePipe):
         '''
 
         for c in self.components:
-            if 'sentence' in c.component_info.spark_output_column_names : return True
+            if 'sentence' in c.info.spark_output_column_names : return True
         return False
 
     def add_missing_sentence_component(self):
@@ -1259,7 +1259,7 @@ class NLUPipeline(BasePipe):
             # If no chunk output component in pipe we must add it and run the query PipelineQueryVerifier again
             chunk_provided = False
             for component in self.components:
-                if component.component_info.output_level == 'chunk': chunk_provided = True
+                if component.info.output_level == 'chunk': chunk_provided = True
             if chunk_provided == False:
                 self.components.append(nlu.component_resolution.get_default_component_of_type('chunk'))
                 # this could break indexing..

@@ -57,8 +57,10 @@ from nlu.pipeline import *
 from nlu.components.assertion import Asserter
 from nlu.components.resolution import Resolver
 from nlu.components.relation import Relation
+from nlu.components.deidentification import Deidentification
 
 
+from nlu.components.utils.sentence_embeddings.spark_nlp_sentence_embedding import SparkNLPSentenceEmbeddings
 
 from nlu import info
 from nlu.info import ComponentInfo

@@ -6,6 +6,6 @@ class ChunkEmbedder:
     @staticmethod
     def get_default_model():
         return   ChunkEmbeddings() \
-            .setInputCols(["chunk", "glove_embeddings"]) \
-            .setOutputCol("chunk_embeddings") \
+            .setInputCols(["entities", "work_embeddings"]) \
+            .setOutputCol("word_embeddings") \
             .setPoolingStrategy("AVERAGE")

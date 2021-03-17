@@ -9,137 +9,84 @@ Every Annotator should have 2 configs. Some might offor multuple configs/method 
                                 If a document has multi-sentences, this will map a label back to a corrosponding sentence
 
 """
-from sparknlp.annotator import *
 from nlu.extractors.extractor_configs import *
-from nlu.extractors.extractor_base_data_classes import *
-d = {
-    NerConverter : {
-        'default': default_NER_config ,
-    },
-    MultiClassifierDLModel : {
+from sparknlp_jsl.annotator  import *
+HC_anno2config = {
+    AssertionDLModel : {
         'default': '',# TODO
+        'default_full'  : default_full_config,
     },
-    PerceptronModel : {
-        'default': default_POS_config,
-    },
-    # ClassifierDl : {
-    #     'default': '',# TODO
-    # },
-    ClassifierDLModel : {
+    AssertionLogRegModel : {
         'default': '',# TODO
+        'default_full'  : default_full_config,
     },
-    BertEmbeddings : {
-        'default': default_word_embedding_config,
-    },
-    AlbertEmbeddings : {
-        'default': default_word_embedding_config,
-    },
-    XlnetEmbeddings : {
-        'default': default_word_embedding_config,
-    },
-    WordEmbeddingsModel : {
-        'default': default_word_embedding_config,
-    },
-    ElmoEmbeddings : {
-        'default': default_word_embedding_config,
-    },
-    BertSentenceEmbeddings : {
-        'default': default_sentence_embedding_config,
-    },
-    UniversalSentenceEncoder : {
-        'default': default_sentence_embedding_config,
-    },
-    TokenizerModel : {
-        'default': default_tokenizer_config,
-    },
-    DocumentAssembler : {
-        'default': default_document_config,
-    },
-    SentenceDetectorDLModel : {
-        'default': default_sentence_detector_DL_config,
-    },
-    SentenceDetector : {
+    SentenceEntityResolverModel : {
         'default': '',# TODO
+        'default_full'  : default_full_config,
     },
-    ContextSpellCheckerModel : {
+
+    ChunkEntityResolverModel : {
         'default': '',# TODO
+        'default_full'  : default_full_config,
     },
-    SymmetricDeleteModel : {
+
+    DeIdentificationModel : {
         'default': '',# TODO
+        'default_full'  : default_full_config,
     },
-    NorvigSweetingModel : {
+    RelationExtractionModel : {
         'default': '',# TODO
+        'default_full'  : default_full_config,
     },
-    LemmatizerModel : {
+
+    RelationExtractionDLModel : {
         'default': '',# TODO
+        'default_full'  : default_full_config,
     },
-    NormalizerModel : {
+
+
+    Chunk2Token : {
         'default': '',# TODO
+        'default_full'  : default_full_config,
     },
-    DocumentNormalizer : {
-        'default' # TODO
-    }
-    ,
-    Stemmer : {
-        'default': default_stemm_config,
-    },
-    NerDLModel : {
-        'default':default_NER_config, # TODO
-    },
-    NerCrfModel : {
+
+    ContextualParserModel : {
         'default': '',# TODO
+        'default_full'  : default_full_config,
+
     },
-    LanguageDetectorDL : {
+
+    DrugNormalizer : {
         'default': '',# TODO
+        'default_full'  : default_full_config,
     },
-    DependencyParserModel : {
+
+    GenericClassifierModel : {
         'default': '',# TODO
+        'default_full'  : default_full_config,
     },
-    TypedDependencyParserModel : {
+
+
+    ChunkMergeModel : {
         'default': '',# TODO
+        'default_full'  : default_full_config,
     },
-    SentimentDLModel : {
+
+    NerDisambiguatorModel : {
         'default': '',# TODO
+        'default_full'  : default_full_config,
     },
-    SentimentDetectorModel : {
+
+    RENerChunksFilter : {
         'default': '',# TODO
+        'default_full'  : default_full_config,
     },
-    ViveknSentimentModel : {
+
+    NerOverwriter : {
         'default': '',# TODO
+        'default_full'  : default_full_config,
     },
-    Chunker : {
-        'default': '',# TODO
-    },
-    NGramGenerator : {
-        'default': '',# TODO
-    },
-    ChunkEmbeddings : {
-        'default': '',# TODO
-    },
-    StopWordsCleaner : {
-        'default': default_stopwords_config,# TODO
-    },
-    TextMatcherModel : {
-        'default': '',# TODO
-    },
-    RegexMatcherModel : {
-        'default': '',# TODO
-    },
-    # DateMatcher : {
-    #     'default': default_'',# TODO
-    # },
-    MultiDateMatcher : {
-        'default': '',# TODO
-    },
-    T5Transformer : {
-        'default': '',# TODO
-    },
-    MarianTransformer : {
-        'default': '',# TODO
-    }
-    PretrainedPipeline : {
-        'default' : '', #TODO RLY?
-    }
+
 }
 
 

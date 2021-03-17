@@ -1,32 +1,34 @@
 from nlu.pipe_components import SparkNLUComponent
 class Classifier(SparkNLUComponent):
-    def __init__(self, annotator_class='sentiment_dl', language='en', component_type='classifier', get_default=True, model = None, nlp_ref ='', nlu_ref='',trainable=False, is_licensed=False):
-        if 'e2e' in nlu_ref or 'toxic' in nlu_ref : annotator_class= 'multi_classifier'
-        elif 'e2e' in nlp_ref or 'toxic' in nlp_ref : annotator_class= 'multi_classifier'
+    def __init__(self, annotator_class='sentiment_dl', language='en', component_type='classifier', get_default=True, model = None, nlp_ref ='', nlu_ref='',trainable=False, is_licensed=False, do_ref_checks=True, lang='en',loaded_from_pretrained_pipe=False):
+        if do_ref_checks:
+            if 'e2e' in nlu_ref or 'toxic' in nlu_ref : annotator_class= 'multi_classifier'
+            elif 'e2e' in nlp_ref or 'toxic' in nlp_ref : annotator_class= 'multi_classifier'
 
-        elif 'multiclassifierdl' in nlp_ref : annotator_class= 'multi_classifier'
-        elif 'classifierdl' in nlp_ref: annotator_class= 'classifier_dl'
+            elif 'multiclassifierdl' in nlp_ref : annotator_class= 'multi_classifier'
+            elif 'classifierdl' in nlp_ref: annotator_class= 'classifier_dl'
 
-        elif 'yake' in nlu_ref: annotator_class= 'yake'
-        elif 'yake' in nlp_ref: annotator_class= 'yake'
+            elif 'yake' in nlu_ref: annotator_class= 'yake'
+            elif 'yake' in nlp_ref: annotator_class= 'yake'
 
-        elif 'sentimentdl' in nlp_ref : annotator_class= 'sentiment_dl'
+            elif 'sentimentdl' in nlp_ref : annotator_class= 'sentiment_dl'
 
-        elif 'vivekn' in nlp_ref or 'vivekn' in nlp_ref : annotator_class= 'vivekn_sentiment'
+            elif 'vivekn' in nlp_ref or 'vivekn' in nlp_ref : annotator_class= 'vivekn_sentiment'
 
-        elif 'wiki_' in nlu_ref or 'wiki_' in nlp_ref : annotator_class= 'language_detector'
-        elif 'pos' in nlu_ref and 'ner' not in nlu_ref:  annotator_class= 'pos'
-        elif 'pos' in nlp_ref and 'ner' not in nlp_ref:  annotator_class= 'pos'
+            elif 'wiki_' in nlu_ref or 'wiki_' in nlp_ref : annotator_class= 'language_detector'
+            elif 'pos' in nlu_ref and 'ner' not in nlu_ref:  annotator_class= 'pos'
+            elif 'pos' in nlp_ref and 'ner' not in nlp_ref:  annotator_class= 'pos'
 
-        elif 'ner' in nlu_ref: annotator_class= 'ner'
-        elif 'ner' in nlp_ref: annotator_class= 'ner'
-
+            elif 'ner' in nlu_ref: annotator_class= 'ner'
+            elif 'ner' in nlp_ref: annotator_class= 'ner'
+            elif 'icd' in nlu_ref: annotator_class= 'classifier_dl'
         
         if model != None : self.model = model
         else :
             if 'sentiment' in annotator_class and 'vivekn' not in annotator_class:
                 from nlu import SentimentDl
                 if trainable : self.model = SentimentDl.get_default_trainable_model()
+                elif is_licensed : self.model = SentimentDl.get_pretrained_model(nlp_ref, language, bucket='clinical/models')
                 elif get_default : self.model = SentimentDl.get_default_model()
                 else : self.model = SentimentDl.get_pretrained_model(nlp_ref, language)
             elif 'vivekn' in annotator_class:
@@ -53,6 +55,7 @@ class Classifier(SparkNLUComponent):
             elif ('classifier_dl' in annotator_class or annotator_class == 'toxic') and not 'multi' in annotator_class:
                 from nlu import ClassifierDl
                 if trainable: self.model = ClassifierDl.get_trainable_model()
+                elif is_licensed : self.model = ClassifierDl.get_pretrained_model(nlp_ref, language, bucket='clinical/models')
                 elif get_default : self.model = ClassifierDl.get_default_model()
                 else : self.model = ClassifierDl.get_pretrained_model(nlp_ref, language)
             elif 'language_detector' in annotator_class:
@@ -74,4 +77,6 @@ class Classifier(SparkNLUComponent):
                 if trainable : self.model = MultiClassifier.get_default_trainable_model()
                 elif get_default : self.model = MultiClassifier.get_default_model()
                 else : self.model = MultiClassifier.get_pretrained_model(nlp_ref, language)
-        SparkNLUComponent.__init__(self, annotator_class, component_type)
+
+
+        SparkNLUComponent.__init__(self, annotator_class, component_type, nlu_ref, lang,loaded_from_pretrained_pipe )

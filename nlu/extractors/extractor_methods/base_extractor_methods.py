@@ -8,18 +8,9 @@ They expect dictionaries which represent the metadata field extracted from Spark
 
 """
 
-from typing import Callable
-from typing import List, Dict, Set, Dict, Tuple, Optional
-from dataclasses import dataclass, field
-from typing import Callable
-from typing import List, Dict, Set, Dict, Tuple, Optional, Any
-from typing import Callable
-from typing import List, Dict, Set, Dict, Tuple, Optional
-from dataclasses import dataclass, field
 from pyspark.sql import Row as PysparkRow
 import pandas as pd
 from nlu.extractors.extractor_base_data_classes import *
-import numpy as np
 
 def extract_pyspark_rows(r:pd.Series,)-> pd.Series:
     """ Convert pyspark.sql.Row[Annotation] to List(Dict[str,str]) objects. Except for key=metadata in dict, this element in the Dict which is [str,Dict[str,str]]
@@ -128,7 +119,7 @@ def extract_sparknlp_metadata(row : pd.Series, configs:SparkNLPExtractorConfig)-
 
     if configs.get_full_meta:
         keys_in_metadata = list(metadatas_dict_list[0].keys()) if len(metadatas_dict_list) > 0 else []
-    elif  len(configs.meta_white_list) != 0 :
+    elif len(configs.meta_white_list) != 0 :
         keys_in_metadata = [k for k in metadatas_dict_list[0].keys() if k in configs.meta_white_list ]
     elif len(configs.meta_black_list) !=0 :
         keys_in_metadata = [k for k in metadatas_dict_list[0].keys() if k not in configs.meta_black_list ]

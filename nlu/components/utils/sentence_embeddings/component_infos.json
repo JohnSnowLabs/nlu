@@ -1,5 +1,5 @@
 {
-  "name": "sentence_embedding",
+  "name": "sentence_embedding_converter",
   "output_level": "sentence",
   "trainable": false,
   "description": "todo",

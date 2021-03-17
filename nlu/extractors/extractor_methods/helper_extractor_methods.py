@@ -8,17 +8,7 @@ They expect dictionaries which represent the metadata field extracted from Spark
 
 """
 
-from typing import Callable
-from typing import List, Dict, Set, Dict, Tuple, Optional
-from dataclasses import dataclass, field
-from typing import Callable
-from typing import List, Dict, Set, Dict, Tuple, Optional, Any
-from typing import Callable
-from typing import List, Dict, Set, Dict, Tuple, Optional
-from dataclasses import dataclass, field
-from pyspark.sql import Row as PysparkRow
 import pandas as pd
-from nlu.extractors.extractor_base_data_classes import *
 def meta_extract_language_classifier_max_confidence(row,configs):
     ''' Extract the language classificationw ith highest confidence and drop the others '''
     # Get the best, but what about TOP K! todo
