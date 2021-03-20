@@ -33,7 +33,7 @@ d = {
 # pos clinical || EXPORTED
 'en.pos.clinical':'pos_clinical',
 'en.pos.fast':'pos_fast_med',
-
+ss
 
 # RelationExtraction ||| EXPORTED BUT DEPRECRATED?!??!
 'en.extract_relation':'re_bodypart_directions',
