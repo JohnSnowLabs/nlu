@@ -50,9 +50,6 @@ class PipelineQueryVerifier():
                 if 'embed' in feature: return True
         return False
 
-
-
-
     @staticmethod
     def extract_storage_ref_AT_column(component, col='input'):
         '''
@@ -428,10 +425,6 @@ class PipelineQueryVerifier():
 
             if len(missing_components) ==0 and len (missing_storage_refs) == 0 and len(components_for_embedding_conversion) == 0: break  # Now all features are provided
 
-
-
-
-
             # Create missing base storage ref producers
             for missing_component in missing_storage_refs:
                 components_to_add.append(nlu.component_resolution.get_default_component_of_type(missing_component, language=pipe.lang))
@@ -465,6 +458,7 @@ class PipelineQueryVerifier():
             # 3 Add NER converter if NER component is in pipeline : (This is a bit ineficcent but it is most stable)
             # TODO in NLU HC either NER or NER converter internal
             # TODO Multi NER SCenario, each NER needs its own converter
+            # todo add unique NER converter for each NER right away
             pipe = PipelineQueryVerifier.add_ner_converter_if_required(pipe)
 
         logger.info('Fixing column names')
