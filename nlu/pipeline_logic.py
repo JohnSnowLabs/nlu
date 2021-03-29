@@ -6,7 +6,17 @@ from nlu.pipe_components import SparkNLUComponent
 logger = logging.getLogger('nlu')
 
 import inspect
+from dataclasses import dataclass
 
+@dataclass
+# class ComponentResolutionInformation:
+#     """Class holding information about a feature that needs to be resolved  """
+#     name: str
+#     unit_price: float
+#     quantity_on_hand: int = 0
+#
+#     def total_cost(self) -> float:
+#         return self.unit_price * self.quantity_on_hand
 
 class PipelineQueryVerifier():
     '''
@@ -170,7 +180,9 @@ class PipelineQueryVerifier():
         # If there is just 1 component, there is nothing to check
         if len(pipe.components) == 1: return False, None
         conversion_candidate = None
+        conversion_type = ""
         logger.info(f'checking for storage={storage_ref_to_find} is avaiable in pipe..')
+        # TODO RETURN CONVERSION TYPEEEE sent/chunk conversion!
         for c in pipe.components:
             if component_to_check.info.name != c.info.name:
                 if PipelineQueryVerifier.has_storage_ref(c):
@@ -189,14 +201,14 @@ class PipelineQueryVerifier():
                         #   -> Convert the Output of the Match to SentenceLevel and feed the component_to_check to the new component
                         if 'sentence_embeddings' in component_to_check.info.inputs and c.info.type == 'word_embeddings':
                             logger.info(f'Sentence Embedding Conversion Candidate found={c.info.name}')
+                            conversion_type      = 'word2sentence'
                             conversion_candidate = c
 
                         #analogus case as above for chunk
-                        if 'chunk_embeddings' in component_to_check.info.inputs and c.info.type == 'chunk_embeddings':
+                        if 'chunk_embeddings' in component_to_check.info.inputs and c.info.type == 'word_embeddings': ## todo was "chunk_embeddings"
                             logger.info(f'Sentence Embedding Conversion Candidate found={c.info.name}')
+                            conversion_type      = 'word2chunk'
                             conversion_candidate = c
-
-
 
 
         logger.info(f'No matching storage ref found')
@@ -215,6 +227,83 @@ class PipelineQueryVerifier():
         """Check if a NLU Component consumes embeddings """
         return any('embed' in i for i in component.info.inputs)
 
+
+    @staticmethod
+    def is_embedding_consumer(component:SparkNLUComponent) -> bool:
+        """Check if a NLU Component consumes embeddings """
+        return any('embed' in i for i in component.info.inputs)
+
+
+    @staticmethod
+    def extract_required_features_refless_from_pipe(pipe: NLUPipeline):
+        """Extract provided features from pipe, which have no storage ref"""
+        provided_features_no_ref = []
+        for c in pipe:
+            for feat in c.info.inputs:
+                if 'embed' not in feat : provided_features_no_ref.append(feat)
+        return  provided_features_no_ref
+
+    @staticmethod
+    def extract_required_features_ref_from_pipe(pipe: NLUPipeline):
+        """Extract provided features from pipe, which have  storage ref"""
+        provided_features_ref = []
+        for c in pipe:
+            for feat in c.info.inputs:
+                if 'embed' in feat : provided_features_ref.append(feat +"@"+ PipelineQueryVerifier.extract_storage_ref(c))
+        return provided_features_ref
+
+
+    @staticmethod
+    def extract_provided_features_refless_from_pipe(pipe: NLUPipeline):
+        """Extract provided features from pipe, which have no storage ref"""
+        provided_features_no_ref = []
+        for c in pipe:
+            for feat in c.info.outputs:
+                if 'embed' not in feat : provided_features_no_ref.append(feat)
+        return  provided_features_no_ref
+
+    @staticmethod
+    def extract_provided_features_ref_from_pipe(pipe: NLUPipeline):
+        """Extract provided features from pipe, which have  storage ref"""
+        provided_features_ref = []
+        for c in pipe:
+            for feat in c.info.outputs:
+                if 'embed' in feat : provided_features_ref.append(feat +"@"+ PipelineQueryVerifier.extract_storage_ref(c))
+        return provided_features_ref
+    @staticmethod
+    def check_if_pipe_trainable(pipe: NLUPipeline):
+        """Check if  contains trainable moels """
+        for c in pipe :
+            if PipelineQueryVerifier.is_untrained_model(c): return True
+        return False
+
+    @staticmethod
+    def extract_conversion_candidates(pipe, trainable):
+        """ Extract either [] or a list of components that should be converted to chunk/sent embends"""
+        components_for_sentence_embedding_conversion = []
+        for component in pipe:
+            if PipelineQueryVerifier.has_embeddings_requirement(component) and not trainable and PipelineQueryVerifier.has_storage_ref(component):
+                # We check if Storage ref is satisfied by some component and if it also is matched output_level_wise (checked by check_if_storage_ref_is_satisfied).
+                # If there storage_ref is satisfied, we add a converter right away and update cols
+                storage_ref = PipelineQueryVerifier.extract_storage_ref(component)
+                storage_ref_satisfied, conversion_candidate = PipelineQueryVerifier.check_if_storage_ref_is_satisfied(component, pipe, storage_ref)
+                if not storage_ref_satisfied and conversion_candidate is not None: components_for_sentence_embedding_conversion.append(conversion_candidate)
+        return components_for_sentence_embedding_conversion
+
+
+
+    @staticmethod
+    def get_missing_required_features_V2(pipe: NLUPipeline):
+        provided_features_no_ref                = PipelineQueryVerifier.extract_provided_features_refless_from_pipe(pipe)
+        required_features_no_ref                = PipelineQueryVerifier.extract_required_features_refless_from_pipe(pipe)
+        provided_features_ref                   = PipelineQueryVerifier.extract_provided_features_ref_from_pipe(pipe)
+        required_features_ref                   = PipelineQueryVerifier.extract_required_features_ref_from_pipe(pipe)
+        is_trainable                            = PipelineQueryVerifier.check_if_pipe_trainable(pipe)
+
+        sentence_emb_conversion_candidates      = []
+        sentence_chunk_conversion_candidates    = []
+        components_for_ner_conversion           = []
+        pipe.has_trainable_components           = True
     @staticmethod
     def get_missing_required_features(pipe: NLUPipeline):
         '''
@@ -230,18 +319,16 @@ class PipelineQueryVerifier():
 
         '''
         logger.info('Resolving missing components')
-        pipe_requirements = [['sentence',
-                              'token']]  # default requirements so we can support all output levels. minimal extra comoputation effort. If we add CHUNK here, we will aalwayshave POS default
-        pipe_provided_features = []
+        pipe_requirements = [['sentence','token']]  # default requirements so we can support all output levels. minimal extra comoputation effort. If we add CHUNK here, we will aalwayshave POS default
         components_for_sentence_embedding_conversion = []
         pipe.has_trainable_components = False
-        pipe_required_features_with_storage_ref = []
+        pipe_provided_features_withouth_storage_ref = []
         flat_provisions_with_storage_ref = []
+        pipe_required_features_with_storage_ref = []
         missing_storage_refs = []
 
         components_for_ner_conversion = []
         components_for_chunk_embedding_conversion = []
-
 
 
         for component in pipe.components:
@@ -251,9 +338,9 @@ class PipelineQueryVerifier():
             logger.info(f"Getting Missing Feature for component={component.info.name}", )
             if not component.info.inputs == component.info.outputs:
                 # edge case for components that provide token and require token and similar cases. I.e. Tokenizer/Normalizer/etc.
-                pipe_provided_features.append(component.info.outputs)
+                pipe_provided_features_withouth_storage_ref.append(component.info.outputs)
 
-            # 1.1 Get all feature provisions with @storage_ref notation from the pipeline for converters and providers of emebddings
+            # 1.1 Get all storage ref feature provisions with @storage_ref notation from the pipeline for converters and providers of emebddings
             if PipelineQueryVerifier.has_storage_ref(component) and PipelineQueryVerifier.is_embedding_provider(component):
                 flat_provisions_with_storage_ref.append(component.info.outputs[0] + '@' + PipelineQueryVerifier.extract_storage_ref(component))
 
@@ -261,14 +348,9 @@ class PipelineQueryVerifier():
             if PipelineQueryVerifier.has_embeddings_requirement(component) and not trainable and PipelineQueryVerifier.has_storage_ref(component):
                 # We check if Storage ref is satisfied by some component and if it also is matched output_level_wise (checked by check_if_storage_ref_is_satisfied).
                 # If there storage_ref is satisfied, we add a converter right away and update cols
-
                 storage_ref = PipelineQueryVerifier.extract_storage_ref(component)
-
                 storage_ref_satisfied, conversion_candidate = PipelineQueryVerifier.check_if_storage_ref_is_satisfied(component, pipe, storage_ref)
-
-
-                if not storage_ref_satisfied and conversion_candidate is not None:
-                    components_for_sentence_embedding_conversion.append(conversion_candidate)
+                if not storage_ref_satisfied and conversion_candidate is not None: components_for_sentence_embedding_conversion.append(conversion_candidate)
 
             for feature in component.info.inputs:
                 if 'embed' in feature:
@@ -287,7 +369,7 @@ class PipelineQueryVerifier():
         # Flatten lists, make them to sets and get missing components by substracting them.
         flat_requirements_with_storage_ref = set(item for sublist in pipe_requirements for item in sublist)
         flat_provisions_with_storage_ref = set(flat_provisions_with_storage_ref)
-        flat_provisions_no_storage_ref = set(item for sublist in pipe_provided_features for item in sublist)
+        flat_provisions_no_storage_ref = set(item for sublist in pipe_provided_features_withouth_storage_ref for item in sublist)
 
         # rmv spark identifier from provision
         flat_requirements_withouth_storage_ref = set(item.split('@')[0] if '@' in item else item for item in flat_requirements_with_storage_ref)
@@ -329,7 +411,6 @@ class PipelineQueryVerifier():
         ner_exists = False
 
         for component in pipe.components:
-            if 'ner' in component.info.outputs: ner_exists = True
             if 'entities' in component.info.outputs: ner_converter_exists = True
 
         if ner_converter_exists == True:
@@ -429,8 +510,11 @@ class PipelineQueryVerifier():
             for missing_component in missing_storage_refs:
                 components_to_add.append(nlu.component_resolution.get_default_component_of_type(missing_component, language=pipe.lang))
 
-            # if len(components_for_sentence_embedding_conversion) > 0:
 
+            # Create missing base components, storage refs are fetched in rpevious loop
+            for missing_component in missing_components:
+                if 'embed' in missing_component : continue
+                components_to_add.append(nlu.component_resolution.get_default_component_of_type(missing_component, language=pipe.lang))
             # Create converters
             for c in components_for_embedding_conversion:
                 if 'chunk' in c.name : converter =  PipelineQueryVerifier.add_chunk_embedding_converter(c)
@@ -439,10 +523,6 @@ class PipelineQueryVerifier():
                 if converter is not None: components_to_add.append(converter)
 
 
-            # Create missing base components, storage refs are fetched in rpevious loop
-            for missing_component in missing_components:
-                    if 'embed' in missing_component : continue
-                    components_to_add.append(nlu.component_resolution.get_default_component_of_type(missing_component, language=pipe.lang))
 
 
 
