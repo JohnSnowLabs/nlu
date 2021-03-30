@@ -55,14 +55,34 @@ class  SparkNLUComponent(NLUComponent):
         for k in self.model.extractParamMap():
             if "inputCol" in str(k):
                 if isinstance(self.model.extractParamMap()[k], str) :
+                    if self.model.extractParamMap()[k] == 'embeddings': # swap name so we have uniform col names
+                        self.model.setInputCols( 'word_embeddings')
                     self.info.spark_input_column_names =  [self.model.extractParamMap()[k]]
                 else :
+                    if 'embeddings' in self.model.extractParamMap()[k]: # swap name so we have uniform col names
+                        new_cols = self.model.extractParamMap()[k]
+                        new_cols.remove("embeddings")
+                        new_cols.append("word_embeddings")
+                        self.model.setInputCols(new_cols)
                     self.info.spark_input_column_names =  self.model.extractParamMap()[k]
+
             if "outputCol" in str(k):
                 if isinstance(self.model.extractParamMap()[k], str) :
+                    if self.model.extractParamMap()[k] == 'embeddings': # swap name so we have uniform col names
+                        self.model.setOutputCol( 'word_embeddings')
                     self.info.spark_output_column_names =  [self.model.extractParamMap()[k]]
                 else :
+                    if 'embeddings' in self.model.extractParamMap()[k]: # swap name so we have uniform col names
+                        new_cols = self.model.extractParamMap()[k]
+                        new_cols.remove("embeddings")
+                        new_cols.append("word_embeddings")
+                        self.model.setOutputCol(new_cols)
                     self.info.spark_output_column_names =  self.model.extractParamMap()[k]
+
+
+
+
+
             # if "labelCol" in str(k):
             #     if isinstance(self.model.extractParamMap()[k], str) :
             #         self.component_info['spark_label_column_names'] =  [self.model.extractParamMap()[k]]

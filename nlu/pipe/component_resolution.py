@@ -39,7 +39,7 @@ from nlu import logger, Util, Embeddings, Classifier, NameSpace, ClassifierDl, \
 from nlu.components import embeddings_chunker
 from nlu.components.labeled_dependency_parser import LabeledDependencyParser as LabledDepParser
 from nlu.components.unlabeled_dependency_parser import UnlabeledDependencyParser as UnlabledDepParser
-
+from nlu.pipe.pipeline_logic import PipelineQueryVerifier
 """
 
 1.  AssertionLogReg // CHUNK level // SAME LEVEL AS NER !
@@ -523,6 +523,7 @@ def construct_component_from_pipe_identifier(language, nlp_ref, nlu_ref,path=Non
     '''
 
     # TODO IS LICESNED HERE! IF YES, JUST ADD BUCKET TO PRETRAIEND PIE DOWNLAOD AND DONESD!
+    ## TODO ENFORE @NOTATION AND WRITE STORAGE_REF ON CONVERTERS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     # AKTUALLY JK, need assertInstance TypeCheck for all Classes
     logger.info("Starting Spark NLP to NLU pipeline conversion process")
     from sparknlp.pretrained import PretrainedPipeline, LightPipeline
@@ -568,7 +569,6 @@ def construct_component_from_pipe_identifier(language, nlp_ref, nlu_ref,path=Non
             constructed_components.append(nlu.Embeddings(model=component, annotator_class='elmo',lang=language, nlu_ref=nlu_ref,nlp_ref=nlp_ref,loaded_from_pretrained_pipe=True,do_ref_checks=False))
         elif isinstance(component, BertSentenceEmbeddings):
             constructed_components.append(nlu.Embeddings(model=component, annotator_class='bert_sentence',lang=language, nlu_ref=nlu_ref,nlp_ref=nlp_ref,loaded_from_pretrained_pipe=True,do_ref_checks=False))
-
 
 
         elif isinstance(component, TokenizerModel):
@@ -644,11 +644,12 @@ def construct_component_from_pipe_identifier(language, nlp_ref, nlu_ref,path=Non
             logger.exception(
                 f"EXCEPTION: Could not infer component type for lang={language} and nlp_ref={nlp_ref} during pipeline conversion,")
             return None
-    return constructed_components
+
+    return PipelineQueryVerifier.enforece_AT_embedding_provider_output_col_name_schema_for_list_of_components(PipelineQueryVerifier.set_storage_ref_attribute_of_embedding_converters(constructed_components))
 
 
-def construct_component_from_identifier(language, component_type='', dataset='', component_embeddings='', nlu_ref='',
-                                        nlp_ref='',is_licensed=False):
+
+def construct_component_from_identifier(language, component_type='', dataset='', component_embeddings='', nlu_ref='',nlp_ref='',is_licensed=False):
     '''
     Creates a NLU component from a pretrained SparkNLP model reference or Class reference.
     Class references will return default pretrained models
@@ -660,8 +661,7 @@ def construct_component_from_identifier(language, component_type='', dataset='',
     :param nlp_ref: Full Spark NLP reference
     :return: Returns a NLU component which embelished the Spark NLP pretrained model and class for that model
     '''
-    logger.info('Creating singular NLU component for type=%s sparknlp_ref=%s , dataset=%s, language=%s , nlu_ref=%s ',
-                component_type, nlp_ref, dataset, language, nlu_ref)
+    logger.info(f'Creating singular NLU component for type={component_type} sparknlp_ref={nlp_ref} , nlu_ref={nlu_ref} dataset={dataset}, language={language} ' )
     try:
         if 'assert' in component_type:
             return nlu.Asserter(nlp_ref=nlp_ref, nlu_ref=nlu_ref, language=language,get_default=False, is_licensed=is_licensed)

@@ -5,7 +5,7 @@ from nlu.extractors.extractor_methods.base_extractor_methods import *
 
 logger = logging.getLogger('nlu')
 import nlu
-import nlu.pipe_components
+import nlu.pipe.pipe_components
 import sparknlp
 from sparknlp.base import *
 from sparknlp.base import LightPipeline
@@ -13,14 +13,13 @@ from sparknlp.annotator import *
 import pyspark
 from pyspark.sql.types import ArrayType, FloatType, DoubleType
 from pyspark.sql.functions import col as pyspark_col
-from pyspark.sql.functions import  explode,   monotonically_increasing_id, greatest, expr,udf,array
+from pyspark.sql.functions import monotonically_increasing_id, greatest, expr,udf
 import pandas as pd
 import numpy as np
 from  typing import List
 
 from pyspark.sql.types import StructType,StructField, StringType, IntegerType
-from pyspark.sql import functions as F
-from pyspark.sql import types as t
+
 
 class BasePipe(dict):
     # we inherhit from dict so the pipe is indexable and we have a nice shortcut for accessing the spark nlp model
@@ -51,6 +50,9 @@ class BasePipe(dict):
             ClassifierDLModel, ClassifierDLModel, MultiClassifierDLModel, MultiClassifierDLApproach, SentimentDLModel,
             SentimentDLApproach))
 
+
+
+
     def configure_outputs(self, component, nlu_reference):
         '''
         Configure output column names of classifiers from category to something more meaningful
@@ -63,7 +65,7 @@ class BasePipe(dict):
         '''
         if nlu_reference == 'default_name' : return
         nlu_reference = nlu_reference.replace('train.', '')
-        model_meta = nlu.component_resolution.extract_classifier_metadata_from_nlu_ref(nlu_reference)
+        model_meta = nlu.pipe.component_resolution.extract_classifier_metadata_from_nlu_ref(nlu_reference)
         can_use_name = False
         new_output_name = model_meta[0]
         i = 0
@@ -96,8 +98,8 @@ class BasePipe(dict):
         # Spark NLP model reference shortcut
 
         name = component.info.name.replace(' ', '').replace('train.', '')
-        if nlu.pipeline_logic.PipelineQueryVerifier.has_storage_ref(component):
-            name = name +'@' +  nlu.pipeline_logic.PipelineQueryVerifier.extract_storage_ref(component)
+        if nlu.pipe.pipeline_logic.PipelineQueryVerifier.has_storage_ref(component):
+            name = name +'@' + nlu.pipe.pipeline_logic.PipelineQueryVerifier.extract_storage_ref(component)
         logger.info(f"Adding {name} to internal pipe")
 
         # Configure output column names of classifiers from category to something more meaningful
@@ -970,7 +972,6 @@ class NLUPipeline(BasePipe):
 
 
 
-
         return self.unpack_and_apply_extractors(processed)
 
 
@@ -1261,16 +1262,16 @@ class NLUPipeline(BasePipe):
             for component in self.components:
                 if component.info.output_level == 'chunk': chunk_provided = True
             if chunk_provided == False:
-                self.components.append(nlu.component_resolution.get_default_component_of_type('chunk'))
+                self.components.append(nlu.pipe.component_resolution.get_default_component_of_type('chunk'))
                 # this could break indexing..
 
-                self = nlu.pipeline_logic.PipelineQueryVerifier.check_and_fix_nlu_pipeline(self)
+                self = nlu.pipe.pipeline_logic.PipelineQueryVerifier.check_and_fix_nlu_pipeline(self)
         # if not self.is_fitted: self.fit()
 
         # currently have to always fit, otherwise parameter changes wont take effect
         if output_level == 'sentence' or output_level == 'document':
-            self = nlu.pipeline_logic.PipelineQueryVerifier.configure_component_output_levels(self)
-            self = nlu.pipeline_logic.PipelineQueryVerifier.check_and_fix_nlu_pipeline(self)
+            self = nlu.pipe.pipeline_logic.PipelineQueryVerifier.configure_component_output_levels(self)
+            self = nlu.pipe.pipeline_logic.PipelineQueryVerifier.check_and_fix_nlu_pipeline(self)
 
 
         if not self.is_fitted :
