@@ -1,22 +1,20 @@
 import nlu
 from nlu.pipe.pipeline import NLUPipeline
-
 import logging
 from nlu.pipe.pipe_components import SparkNLUComponent
 from nlu.pipe.pipe_utils import PipeUtils
-
+from nlu.pipe.component_utils import ComponentUtils
 
 logger = logging.getLogger('nlu')
-
-import inspect
 from dataclasses import dataclass
+from nlu.pipe.component_resolution import get_default_component_of_type
+
 @dataclass
 class StorageRefConversionResolutionData:
     """Hold information that can be used to resolve to a NLU component, which satisfies the storage ref demands."""
     storage_ref: str # storage ref a resolver component should have
     component_candidate: SparkNLUComponent # from which NLU component should the converter feed
     type: str # what kind of conversion, either word2chunk or word2sentence
-
 
 class PipelineQueryVerifier():
     '''
@@ -28,7 +26,6 @@ class PipelineQueryVerifier():
         3. Check Feature naems in the output
         4. Check wether pipeline needs to be fitted
     '''
-
     @staticmethod
     def check_if_storage_ref_is_satisfied_or_get_conversion_candidate(component_to_check:SparkNLUComponent, pipe:NLUPipeline, storage_ref_to_find:str):
         """Check if any other component in the pipeline has same storage ref as the input component..
@@ -79,7 +76,7 @@ class PipelineQueryVerifier():
     def extract_required_features_refless_from_pipe(pipe: NLUPipeline):
         """Extract provided features from pipe, which have no storage ref"""
         provided_features_no_ref = []
-        for c in pipe:
+        for c in pipe.components:
             for feat in c.info.inputs:
                 if 'embed' not in feat : provided_features_no_ref.append(feat)
         return  provided_features_no_ref
@@ -88,7 +85,7 @@ class PipelineQueryVerifier():
     def extract_required_features_ref_from_pipe(pipe: NLUPipeline):
         """Extract provided features from pipe, which have  storage ref"""
         provided_features_ref = []
-        for c in pipe:
+        for c in pipe.components:
             for feat in c.info.inputs:
                 if 'embed' in feat : provided_features_ref.append(feat +"@"+ PipeUtils.extract_storage_ref(c))
         return provided_features_ref
@@ -98,7 +95,7 @@ class PipelineQueryVerifier():
     def extract_provided_features_refless_from_pipe(pipe: NLUPipeline):
         """Extract provided features from pipe, which have no storage ref"""
         provided_features_no_ref = []
-        for c in pipe:
+        for c in pipe.components:
             for feat in c.info.outputs:
                 if 'embed' not in feat : provided_features_no_ref.append(feat)
         return  provided_features_no_ref
@@ -107,7 +104,7 @@ class PipelineQueryVerifier():
     def extract_provided_features_ref_from_pipe(pipe: NLUPipeline):
         """Extract provided features from pipe, which have  storage ref"""
         provided_features_ref = []
-        for c in pipe:
+        for c in pipe.components:
             for feat in c.info.outputs:
                 if 'embed' in feat : provided_features_ref.append(feat +"@"+ PipeUtils.extract_storage_ref(c))
         return provided_features_ref
@@ -141,18 +138,18 @@ class PipelineQueryVerifier():
     @staticmethod
     def get_missing_required_features_V2(pipe: NLUPipeline):
         provided_features_no_ref                = PipelineQueryVerifier.extract_provided_features_refless_from_pipe(pipe)
-        required_features_no_ref                = PipelineQueryVerifier.extract_required_features_refless_from_pipe(pipe)
+        required_features_no_ref                = ComponentUtils.clean_irrelevant_features(PipelineQueryVerifier.extract_required_features_refless_from_pipe(pipe))
         provided_features_ref                   = PipelineQueryVerifier.extract_provided_features_ref_from_pipe(pipe)
         required_features_ref                   = PipelineQueryVerifier.extract_required_features_ref_from_pipe(pipe)
-        is_trainable                            = PipelineQueryVerifier.check_if_pipe_trainable(pipe)
+        is_trainable                            = PipeUtils.is_trainable_pipe(pipe)
+        conversion_candidates                   = [] # todo
+        pipe.has_trainable_components           = is_trainable
 
 
-        sentence_chunk_conversion_candidates    = []
-        components_for_ner_conversion           = []
-        pipe.has_trainable_components           = True
+        missing_features_no_ref = set(required_features_no_ref) - set(provided_features_no_ref)# - set(['text','label'])
+        missing_features_ref    = set(required_features_ref)    - set(provided_features_ref)
 
-        # Dependency logic math TODO and return missing features
-        # return missing_components,missing_storage_refs, components_for_sentence_embedding_conversion
+        return missing_features_no_ref,missing_features_ref, conversion_candidates
 
     @staticmethod
     def check_if_component_is_in_pipe(pipe: NLUPipeline, component_name_to_check, check_strong=True):
@@ -202,13 +199,13 @@ class PipelineQueryVerifier():
                 pipe_provided_features_withouth_storage_ref.append(component.info.outputs)
 
             # 1.1 Get all storage ref feature provisions with @storage_ref notation from the pipeline for converters and providers of emebddings
-            if PipeUtils.has_storage_ref(component) and PipeUtils.is_embedding_provider(component):
+            if PipeUtils.has_storage_ref(component) and ComponentUtils.is_embedding_provider(component):
                 flat_provisions_with_storage_ref.append(component.info.outputs[0] + '@' + PipeUtils.extract_storage_ref(component))
 
             """ 2. get all feature requirements for pipeline
             We check if Storage ref is satisfied by some component and if it also is matched output_level_wise (checked by check_if_storage_ref_is_satisfied).
             If there storage_ref is satisfied, we add a converter right away and update cols"""
-            if PipeUtils.component_has_embeddings_requirement(component) and not trainable and PipeUtils.has_storage_ref(component):
+            if ComponentUtils.component_has_embeddings_requirement(component) and not trainable and PipeUtils.has_storage_ref(component):
                 storage_ref = PipeUtils.extract_storage_ref(component)
 
                 storage_ref_satisfied, conversion_resolution_data = PipelineQueryVerifier.check_if_storage_ref_is_satisfied_or_get_conversion_candidate(component, pipe, storage_ref)
@@ -237,7 +234,7 @@ class PipelineQueryVerifier():
         flat_requirements_withouth_storage_ref = set(item.split('@')[0] if '@' in item else item for item in flat_requirements_with_storage_ref)
 
         # see what is missing, with identifier removed
-        missing_components = PipeUtils.clean_irrelevant_features(flat_requirements_withouth_storage_ref - flat_provisions_no_storage_ref)
+        missing_components = ComponentUtils.clean_irrelevant_features(flat_requirements_withouth_storage_ref - flat_provisions_no_storage_ref)
         logger.info(f"Required columns with storage ref {pipe_required_features_with_storage_ref}", )
         logger.info(f"Required columns no ref flat {flat_requirements_withouth_storage_ref} ")
         logger.info(f"Required columns flat {flat_requirements_with_storage_ref} ")
@@ -246,8 +243,8 @@ class PipelineQueryVerifier():
 
         logger.info(f"Missing columns no ref flat {missing_components}", )
         # since embeds are missing, we add embed with reference back
-        if PipeUtils.component_has_embeddings_requirement(flat_requirements_with_storage_ref) and not trainable:
-            missing_storage_refs = PipeUtils.clean_irrelevant_features(flat_requirements_with_storage_ref - flat_provisions_no_storage_ref- flat_provisions_with_storage_ref )
+        if ComponentUtils.component_has_embeddings_requirement(flat_requirements_with_storage_ref) and not trainable:
+            missing_storage_refs = ComponentUtils.clean_irrelevant_features(flat_requirements_with_storage_ref - flat_provisions_no_storage_ref- flat_provisions_with_storage_ref )
         logger.info(f"Missing columns no ref flat with storage refs {missing_storage_refs}", )
 
         # IF only @ in missing components, run the double checker with consults the namespace for storage ref match ups since not all storage_refs on a EmbeddingConsumer match up with storage ref of Embedding Provider
@@ -268,10 +265,8 @@ class PipelineQueryVerifier():
         :param pipe: The pipeline we wish to configure ner_converter dependency for
         :return: pipeline with NER configured
         '''
-
         ner_converter_exists = False
         ner_exists = False
-
         for component in pipe.components:
             if 'entities' in component.info.outputs: ner_converter_exists = True
 
@@ -281,8 +276,7 @@ class PipelineQueryVerifier():
 
         if not ner_converter_exists and ner_exists:
             logger.info('Adding NER Converter to pipeline')
-            pipe.add(nlu.pipe.component_resolution.get_default_component_of_type(('ner_converter')))
-
+            pipe.add(get_default_component_of_type(('ner_converter')))
         return pipe
 
     @staticmethod
@@ -332,12 +326,65 @@ class PipelineQueryVerifier():
         c.info.spark_output_column_names = ['chunk_embeddings@' + storage_ref]
         c.info.output_column_names = ['chunk_embeddings@' + storage_ref]
         return c
+    @staticmethod
+    def check_if_all_dependencies_satisfied(missing_components, missing_storage_refs, components_for_embedding_conversion):
+        """Check if all dependencies are satisfied."""
+        return len(missing_components) ==0 and len (missing_storage_refs) == 0 and len(components_for_embedding_conversion) == 0
+
+    @staticmethod
+    def satisfy_dependencies(pipe: NLUPipeline) -> NLUPipeline:
+        """For a given pipeline with N components, builds a DAG in reverse and satisfiy each of their dependencies and child dependencies with a BFS approach and returns the resulting pipeline"""
+        all_features_provided = False
+        while all_features_provided == False:
+            # After new components have been added, we must loop again and check for the new components if requriements are met
+            components_to_add = []
+            # Find missing components
+            # TODO WHY SENTENCE IN MISSIGN COMP??
+            missing_components, missing_storage_refs, components_for_embedding_conversion = PipelineQueryVerifier.get_missing_required_features_V2(pipe)
+            logger.info(f"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+            logger.info(f"Trying to resolve missing features for \n missing_components={missing_components} \n missing storage_refs={missing_storage_refs}\n conversion_candidates={components_for_embedding_conversion}")
+
+            if PipelineQueryVerifier.check_if_all_dependencies_satisfied(missing_components, missing_storage_refs, components_for_embedding_conversion): break  # Now all features are provided
+            # TODO watch out, sentence_conv@storage_ref can either point to a sent_emb or mean to convertsmth! How2 hadnel!?
+            # Create missing base storage ref producers
+            for missing_component in missing_storage_refs:
+                component = get_default_component_of_type(missing_component, language=pipe.lang)
+                # if PipeUtils.is_converter_component_resolution_reference(missing_component):
+                if 'chunk_emb' in missing_component:
+                    components_to_add.append(ComponentUtils.config_chunk_embed_converter(component))
+                else :components_to_add.append(component)
+
+
+            # Create missing base components, storage refs are fetched in rpevious loop
+            for missing_component in missing_components:
+                # if 'ner' in missing_component :
+                components_to_add.append(get_default_component_of_type(missing_component, language=pipe.lang))
+
+            # Create converters
+            for resolution_info in components_for_embedding_conversion:
+                converter=None
+                if   'word2chunk' ==  resolution_info.type : converter =  PipelineQueryVerifier.add_chunk_embedding_converter(resolution_info)
+                elif 'word2sentence' ==  resolution_info.type : converter = PipelineQueryVerifier.add_sentence_embedding_converter(resolution_info)
+                if converter is not None: components_to_add.append(converter)
 
 
 
+            logger.info(f'Resolved for missing components the following NLU components : {components_to_add}')
+
+            # Add missing components
+            for new_component in components_to_add:
+                pipe.add(new_component)
+                logger.info(f'adding {new_component.info.name}')
 
 
+            # 3 Add NER converter if NER component is in pipeline : (This is a bit ineficcent but it is most stable)
+            # TODO in NLU HC either NER or NER converter internal
+            # TODO Multi NER SCenario, each NER needs its own converter
+            pipe = PipelineQueryVerifier.add_ner_converter_if_required(pipe)
 
+        logger.info(f"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+        logger.info(f"ALLL DEPENDENCIES SATISFIED")
+        return pipe
     @staticmethod
     def check_and_fix_nlu_pipeline(pipe: NLUPipeline) -> NLUPipeline:
         """Check if the NLU pipeline is ready to transform data and return it.
@@ -357,61 +404,11 @@ class PipelineQueryVerifier():
         """
         # main entry point for Model stacking withouth pretrained pipelines
         # requirements and provided features will be lists of lists
-        all_features_provided = False
-        while all_features_provided == False:
-            # After new components have been added, we must loop again and check for the new components if requriements are met
-            components_to_add = []
 
-            # Find missing components
-            # TODO WHY SENTENCE IN MISSIGN COMP??
-            missing_components, missing_storage_refs, components_for_embedding_conversion = PipelineQueryVerifier.get_missing_required_features_V2(pipe)
-            logger.info(f"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
-            logger.info(f"Trying to resolve missing features for \n missing_components={missing_components} \n missing storage_refs={missing_storage_refs}\n conversion_candidates={components_for_embedding_conversion}")
-
-            if len(missing_components) ==0 and len (missing_storage_refs) == 0 and len(components_for_embedding_conversion) == 0: break  # Now all features are provided
-
-            # Create missing base storage ref producers
-            for missing_component in missing_storage_refs:
-                if '@' not in missing_component: continue# TODO DIRTY BNUGFIX, ALL REFERENCES HERE SHOULD HAVE @
-                components_to_add.append(
-                    nlu.pipe.component_resolution.get_default_component_of_type(missing_component, language=pipe.lang))
-
-
-            # Create missing base components, storage refs are fetched in rpevious loop
-            for missing_component in missing_components:
-                # if 'ner' in missing_component :
-                if 'embed' in missing_component : continue
-                components_to_add.append(
-                    nlu.pipe.component_resolution.get_default_component_of_type(missing_component, language=pipe.lang))
-            # Create converters
-
-
-            for resolution_info in components_for_embedding_conversion:
-                converter=None
-                if   'word2chunk' ==  resolution_info.type : converter =  PipelineQueryVerifier.add_chunk_embedding_converter(resolution_info)
-                elif 'word2sentence' ==  resolution_info.type : converter = PipelineQueryVerifier.add_sentence_embedding_converter(resolution_info)
-                if converter is not None: components_to_add.append(converter)
-
-
-
-
-
-            logger.info(f'Resolved for missing components the following NLU components : {components_to_add}')
-
-
-            # Add missing components
-            for new_component in components_to_add:
-                pipe.add(new_component)
-                logger.info(f'adding {new_component.info.name}')
-
-
-            # 3 Add NER converter if NER component is in pipeline : (This is a bit ineficcent but it is most stable)
-            # TODO in NLU HC either NER or NER converter internal
-            # TODO Multi NER SCenario, each NER needs its own converter
-            pipe = PipelineQueryVerifier.add_ner_converter_if_required(pipe)
-
+        # 1. Resolve dependencies, builds a DAG in reverse and satisfies dependencies with aBreath-First-Search approach
+        pipe = PipelineQueryVerifier.satisfy_dependencies(pipe)
         logger.info('Fixing column names')
-        #  Validate naming of output columns is correct and no error will be thrown in spark
+        #  2. Validate naming of output columns is correct and no error will be thrown in spark
         pipe = PipelineQueryVerifier.check_and_fix_component_output_column_name_satisfaction(pipe)
 
         # 4.  fix order
@@ -452,8 +449,8 @@ class PipelineQueryVerifier():
     @staticmethod
     def is_storage_ref_match(embedding_consumer, embedding_provider,pipe):
         """Check for 2 components, if one provides the embeddings for the other. Makes sure that output_level matches up (chunk/sent/tok/embeds)"""
-        consumer_AT_ref = PipeUtils.extract_storage_ref_AT_column(embedding_consumer,'input')
-        provider_AT_rev = PipeUtils.extract_storage_ref_AT_column(embedding_provider,'output')
+        consumer_AT_ref = ComponentUtils.extract_storage_ref_AT_column(embedding_consumer,'input')
+        provider_AT_rev = ComponentUtils.extract_storage_ref_AT_column(embedding_provider,'output')
         consum_level    = PipelineQueryVerifier.extract_embed_level_identity(embedding_consumer, 'input')
         provide_level   = PipelineQueryVerifier.extract_embed_level_identity(embedding_provider, 'output')
 
@@ -488,7 +485,6 @@ class PipelineQueryVerifier():
             ## TODO FALL BACK FOR BAD MATCHES WHICH ACTUALLY MATCH-> consult name space
         return False
 
-
     @staticmethod
     def resolve_nlu_ref_2_storage_ref(nlu_ref):
         """For a given NLU ref search Namespace.licensed_storafe_ref_2_nlu_ref values. If there is a value match, return the key which is the storageRef this NLU ref is mapped to.
@@ -500,60 +496,11 @@ class PipelineQueryVerifier():
         return ''
 
 
-    def enforece_AT_embedding_provider_output_col_name_schema_for_pipe  (pipe: NLUPipeline):
-        """For every embedding provider, enforce that their output col is named <output_level>@storage_ref for output_levels word,chunk,sentence aka document , i.e. word_embed@elmo or sentence_embed@elmo etc.."""
-        for c in pipe.components:
-            if PipeUtils.is_embedding_provider(c):
-                level_AT_ref = PipeUtils.extract_storage_ref_AT_column(c,'output')
-                c.info.outputs = [level_AT_ref]
-                c.info.spark_output_column_names = [level_AT_ref]
-                c.model.setOutputCol(level_AT_ref[0])
-                # if c.info.name =='ChunkEmbeddings' : c.model.setOutputCol(level_AT_ref[0])
-                # else : c.model.setOutputCol(level_AT_ref)
-        return pipe
-
-
-
-
-    @staticmethod
-    def is_embedding_converter  (component : SparkNLUComponent):
-        """Check if NLU component is embedding converter """
-        if component.info.name in ['chunk_embedding_converter', 'sentence_embedding_converter']: return True
-        return False
-
-
-
-    @staticmethod
-    def enforece_AT_embedding_provider_output_col_name_schema_for_list_of_components  (pipe_list):
-        """For every embedding provider, enforce that their output col is named <output_level>@storage_ref for output_levels word,chunk,sentence aka document , i.e. word_embed@elmo or sentence_embed@elmo etc.."""
-        for c in pipe_list:
-            if PipeUtils.is_embedding_provider(c):
-                level_AT_ref = PipeUtils.extract_storage_ref_AT_column(c,'output')
-                c.info.outputs = [level_AT_ref]
-                c.info.spark_output_column_names = [level_AT_ref]
-                c.model.setOutputCol(level_AT_ref[0])
-                # if c.info.name =='ChunkEmbeddings' : c.model.setOutputCol(level_AT_ref[0])
-                # else : c.model.setOutputCol(level_AT_ref)
-        return pipe_list
-
-    @staticmethod
-    def enforece_AT_embedding_provider_output_col_name_schema_for_pipeline  (pipe:NLUPipeline):
-        """For every embedding provider, enforce that their output col is named <output_level>@storage_ref for output_levels word,chunk,sentence aka document , i.e. word_embed@elmo or sentence_embed@elmo etc.."""
-        for c in pipe.components:
-            if PipeUtils.is_embedding_provider(c):
-                level_AT_ref = PipeUtils.extract_storage_ref_AT_column(c,'output')
-                c.info.outputs = [level_AT_ref]
-                c.info.spark_output_column_names = [level_AT_ref]
-                c.model.setOutputCol(level_AT_ref[0])
-                # if c.info.name =='ChunkEmbeddings' : c.model.setOutputCol(level_AT_ref[0])
-                # else : c.model.setOutputCol(level_AT_ref)
-        return pipe
-
     @staticmethod
     def set_storage_ref_attribute_of_embedding_converters(pipe_list):
         """For every embedding converter, we set storage ref attr on it, based on what the storage ref from it's provider is """
         for converter in pipe_list:
-            if PipeUtils.is_embedding_provider(converter) and  PipelineQueryVerifier.is_embedding_converter(converter) :
+            if ComponentUtils.is_embedding_provider(converter) and  ComponentUtils.is_embedding_converter(converter) :
                 embed_col = PipelineQueryVerifier.extract_embed_col(converter)
                 for provider in pipe_list:
                     if embed_col in provider.info.outputs:
@@ -580,8 +527,8 @@ class PipelineQueryVerifier():
         '''
         logger.info("Fixing input and output column names")
 
-        pipe = PipelineQueryVerifier.enforece_AT_embedding_provider_output_col_name_schema_for_pipeline(pipe)
-
+        pipe = PipeUtils.enforece_AT_embedding_provider_output_col_name_schema_for_pipeline(pipe)
+            ## TODO THIS IS RENAMING CHUNK_EMB TO WORD_EMB AND BREAKS SORT!@@
         for component_to_check in pipe.components:
             input_columns = set(component_to_check.info.spark_input_column_names)
             # a component either has '' storage ref or at most 1
@@ -591,10 +538,10 @@ class PipelineQueryVerifier():
                 output_columns = set(other_component.info.spark_output_column_names)
                 input_columns -= output_columns # we substract alrfready provided columns
 
-            input_columns = PipeUtils.clean_irrelevant_features(input_columns)
+            input_columns = ComponentUtils.clean_irrelevant_features(input_columns)
 
             # Resolve basic mismatches, usually storage refs
-            if len(input_columns) != 0 and not pipe.has_trainable_components or PipeUtils.is_embedding_consumer(component_to_check):  # fix missing column name
+            if len(input_columns) != 0 and not pipe.has_trainable_components or ComponentUtils.is_embedding_consumer(component_to_check):  # fix missing column name
                 # TODO we must not only check if input satisfied, but if storage refs match! and Match Storage_refs accordingly
                 logger.info(f"Fixing bad input col for C={component_to_check} untrainable pipe")
                 resolved_storage_ref_cols = []
@@ -604,7 +551,7 @@ class PipelineQueryVerifier():
                         if other_component.info.type == missing_column:
                             # We update the output name for the component which consumes our feature
 
-                            if PipeUtils.has_storage_ref(other_component) and PipeUtils.is_embedding_provider(component_to_check):
+                            if PipeUtils.has_storage_ref(other_component) and ComponentUtils.is_embedding_provider(component_to_check):
                                  if PipelineQueryVerifier.are_producer_consumer_matches(component_to_check,other_component):
                                      resolved_storage_ref_cols.append((other_component.info.spark_output_column_names[0],missing_column))
 
@@ -678,7 +625,7 @@ class PipelineQueryVerifier():
                 output_columns = set(other_component.info.spark_output_column_names)
                 input_columns -= output_columns  # set substraction
 
-            input_columns = PipeUtils.clean_irrelevant_features(input_columns)
+            input_columns = ComponentUtils.clean_irrelevant_features(input_columns)
 
             if len(input_columns) != 0:  # fix missing column name
                 for missing_column in input_columns:
@@ -711,12 +658,12 @@ class PipelineQueryVerifier():
         while all_components_orderd == False:
             for component in all_components:
                 logger.info(f"Optimizing order for component {component.info.name}")
-                input_columns = PipeUtils.clean_irrelevant_features(component.info.spark_input_column_names, True)
+                input_columns = ComponentUtils.clean_irrelevant_features(component.info.spark_input_column_names, True)
                 if set(input_columns).issubset(provided_features):
                     correct_order_component_pipeline.append(component)
                     if component in all_components: all_components.remove(component)
                     # for feature in component.info.spark_output_column_names: provided_features.append(feature)
-                    provided_features += PipeUtils.clean_irrelevant_features(component.info.spark_output_column_names,True)
+                    provided_features += ComponentUtils.clean_irrelevant_features(component.info.spark_output_column_names,True)
             if len(all_components) == 0: all_components_orderd = True
 
         pipe.components = correct_order_component_pipeline

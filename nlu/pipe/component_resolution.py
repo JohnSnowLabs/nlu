@@ -39,7 +39,6 @@ from nlu import logger, Util, Embeddings, Classifier, NameSpace, ClassifierDl, \
 from nlu.components import embeddings_chunker
 from nlu.components.labeled_dependency_parser import LabeledDependencyParser as LabledDepParser
 from nlu.components.unlabeled_dependency_parser import UnlabeledDependencyParser as UnlabledDepParser
-from nlu.pipe.pipeline_logic import PipelineQueryVerifier
 """
 
 1.  AssertionLogReg // CHUNK level // SAME LEVEL AS NER !
@@ -569,8 +568,6 @@ def construct_component_from_pipe_identifier(language, nlp_ref, nlu_ref,path=Non
             constructed_components.append(nlu.Embeddings(model=component, annotator_class='elmo',lang=language, nlu_ref=nlu_ref,nlp_ref=nlp_ref,loaded_from_pretrained_pipe=True,do_ref_checks=False))
         elif isinstance(component, BertSentenceEmbeddings):
             constructed_components.append(nlu.Embeddings(model=component, annotator_class='bert_sentence',lang=language, nlu_ref=nlu_ref,nlp_ref=nlp_ref,loaded_from_pretrained_pipe=True,do_ref_checks=False))
-
-
         elif isinstance(component, TokenizerModel):
             constructed_components.append(nlu.Tokenizer(model=component, annotator_class='default_tokenizer',lang=language, nlu_ref=nlu_ref,nlp_ref=nlp_ref,loaded_from_pretrained_pipe=True))
         elif isinstance(component, DocumentAssembler):
@@ -645,8 +642,8 @@ def construct_component_from_pipe_identifier(language, nlp_ref, nlu_ref,path=Non
                 f"EXCEPTION: Could not infer component type for lang={language} and nlp_ref={nlp_ref} during pipeline conversion,")
             return None
 
-    return PipelineQueryVerifier.enforece_AT_embedding_provider_output_col_name_schema_for_list_of_components(PipelineQueryVerifier.set_storage_ref_attribute_of_embedding_converters(constructed_components))
 
+    return PipeUtils.enforece_AT_embedding_provider_output_col_name_schema_for_list_of_components(PipeUtils.set_storage_ref_attribute_of_embedding_converters(constructed_components))
 
 
 def construct_component_from_identifier(language, component_type='', dataset='', component_embeddings='', nlu_ref='',nlp_ref='',is_licensed=False):

@@ -1,7 +1,16 @@
 import inspect
 from nlu.pipe.pipe_components import SparkNLUComponent
+from nlu.pipe.component_utils import ComponentUtils
 
+# from nlu.pipe.pipeline import NLUPipeline
+"""Pipe Level logic oprations and utils"""
 class PipeUtils():
+    @staticmethod
+    def is_trainable_pipe(pipe):
+        '''Check if pipe is trainable'''
+        for c in pipe.components:
+            if PipeUtils.is_untrained_model(c):return True
+        return False
     @staticmethod
     def is_untrained_model(component):
         '''
@@ -13,79 +22,8 @@ class PipeUtils():
         if 'is_untrained' in dict(inspect.getmembers(component.info)).keys(): return True
         return False
 
-    @staticmethod
-    def clean_irrelevant_features(component_list, remove_AT_notation = False ):
-        '''
-        Remove irrelevant features from a list of component features
-        Also remove the @notation from names, since they are irrelevant for ordering
-        :param component_list: list of features
-        :param remove_AT_notation: remove AT notation from c names if true. Used for sorting
-        :return: list with only relevant feature names
-        '''
-        # remove irrelevant missing features for pretrained models
-        if 'text' in component_list: component_list.remove('text')
-        if 'raw_text' in component_list: component_list.remove('raw_text')
-        if 'raw_texts' in component_list: component_list.remove('raw_texts')
-        if 'label' in component_list: component_list.remove('label')
-        if 'sentiment_label' in component_list: component_list.remove('sentiment_label')
-        if remove_AT_notation:
-            new_cs = []
-            for c in component_list :new_cs.append(c.split("@")[0])
-            return new_cs
-        return component_list
 
-    @staticmethod
-    def component_has_embeddings_requirement(component):
-        '''
-        Check for the input component, wether it depends on some embedding. Returns True if yes, otherwise False.
-        :param component:  The component to check
-        :return: True if the component needs some specifc embedding (i.e.glove, bert, elmo etc..). Otherwise returns False
-        '''
 
-        if type(component) == list or type(component) == set:
-            for feature in component:
-                if 'embed' in feature: return True
-            return False
-        else:
-            if component.info.type == 'word_embeddings': return False
-            if component.info.type == 'sentence_embeddings': return False
-            if component.info.type == 'chunk_embeddings': return False
-            for feature in component.info.inputs:
-                if 'embed' in feature: return True
-        return False
-    @staticmethod
-    def component_has_embeddings_provisions(component):
-        '''
-        Check for the input component, wether it depends on some embedding. Returns True if yes, otherwise False.
-        :param component:  The component to check
-        :return: True if the component needs some specifc embedding (i.e.glove, bert, elmo etc..). Otherwise returns False
-        '''
-        if type(component) == type(list) or type(component) == type(set):
-            for feature in component:
-                if 'embed' in feature: return True
-            return False
-        else:
-            for feature in component.info.outputs:
-                if 'embed' in feature: return True
-        return False
-
-    @staticmethod
-    def extract_storage_ref_AT_column(component, col='input'):
-        '''
-        Extract <col>_embed_col@storage_ref notation from a component if it has a storage ref, otherwise '
-
-        :param component:  To extract notation from
-        :cols component:  Wether to extract for the input or output col
-        :return: '' if no storage_ref, <col>_embed_col@storage_ref otherwise
-        '''
-        if not PipeUtils.has_storage_ref(component) :
-            if   col =='input' : return component.info.inputs
-            elif col =='output': return component.info.outputs
-        if   col =='input'  : e_col    = next(filter(lambda s : 'embed' in s, component.info.inputs))
-        elif col =='output' : e_col    = next(filter(lambda s : 'embed' in s, component.info.outputs))
-
-        stor_ref = PipeUtils.extract_storage_ref_from_component(component)
-        return e_col + '@' + stor_ref
 
     @staticmethod
     def extract_storage_ref(component):
@@ -143,16 +81,35 @@ class PipeUtils():
         return model.extractParamMap()[model.model.getParam('storageRef')]
 
 
-    @staticmethod
-    def is_embedding_provider(component:SparkNLUComponent) -> bool:
-        """Check if a NLU Component returns embeddings """
-        if 'embed' in component.info.outputs[0]:
-            return True
-        else:
-            return False
 
     @staticmethod
-    def is_embedding_consumer(component:SparkNLUComponent) -> bool:
-        """Check if a NLU Component consumes embeddings """
-        return any('embed' in i for i in component.info.inputs)
+    def enforece_AT_embedding_provider_output_col_name_schema_for_list_of_components  (pipe_list):
+        """For every embedding provider, enforce that their output col is named <output_level>@storage_ref for output_levels word,chunk,sentence aka document , i.e. word_embed@elmo or sentence_embed@elmo etc.."""
+        for c in pipe_list:
+            if ComponentUtils.is_embedding_provider(c):
+                level_AT_ref = ComponentUtils.extract_storage_ref_AT_column(c,'output')
+                c.info.outputs = [level_AT_ref]
+                c.info.spark_output_column_names = [level_AT_ref]
+                c.model.setOutputCol(level_AT_ref[0])
+                # if c.info.name =='ChunkEmbeddings' : c.model.setOutputCol(level_AT_ref[0])
+                # else : c.model.setOutputCol(level_AT_ref)
+        return pipe_list
 
+    @staticmethod
+    def enforece_AT_embedding_provider_output_col_name_schema_for_pipeline  (pipe):
+        """For every embedding provider, enforce that their output col is named <output_level>@storage_ref for output_levels word,chunk,sentence aka document , i.e. word_embed@elmo or sentence_embed@elmo etc.."""
+        for c in pipe.components:
+            if ComponentUtils.is_embedding_provider(c):
+                level_AT_ref = ComponentUtils.extract_storage_ref_AT_column(c,'output')
+                c.info.outputs = [level_AT_ref]
+                c.info.spark_output_column_names = [level_AT_ref]
+                c.model.setOutputCol(level_AT_ref[0])
+                # if c.info.name =='ChunkEmbeddings' : c.model.setOutputCol(level_AT_ref[0])
+                # else : c.model.setOutputCol(level_AT_ref)
+        return pipe
+
+
+    @staticmethod
+    def is_converter_component_resolution_reference(reference:str)-> bool:
+        if 'chunk_emb' in reference : return True
+        if 'chunk_emb' in reference : return True

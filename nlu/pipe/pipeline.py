@@ -17,9 +17,9 @@ from pyspark.sql.functions import monotonically_increasing_id, greatest, expr,ud
 import pandas as pd
 import numpy as np
 from  typing import List
-
+from nlu.pipe.pipe_utils import PipeUtils
 from pyspark.sql.types import StructType,StructField, StringType, IntegerType
-
+from nlu.pipe.component_resolution import extract_classifier_metadata_from_nlu_ref
 
 class BasePipe(dict):
     # we inherhit from dict so the pipe is indexable and we have a nice shortcut for accessing the spark nlp model
@@ -65,7 +65,7 @@ class BasePipe(dict):
         '''
         if nlu_reference == 'default_name' : return
         nlu_reference = nlu_reference.replace('train.', '')
-        model_meta = nlu.pipe.component_resolution.extract_classifier_metadata_from_nlu_ref(nlu_reference)
+        model_meta = extract_classifier_metadata_from_nlu_ref(nlu_reference)
         can_use_name = False
         new_output_name = model_meta[0]
         i = 0
@@ -98,8 +98,8 @@ class BasePipe(dict):
         # Spark NLP model reference shortcut
 
         name = component.info.name.replace(' ', '').replace('train.', '')
-        if nlu.pipe.pipeline_logic.PipelineQueryVerifier.has_storage_ref(component):
-            name = name +'@' + nlu.pipe.pipeline_logic.PipelineQueryVerifier.extract_storage_ref(component)
+        if PipeUtils.has_storage_ref(component):
+            name = name +'@' + PipeUtils.extract_storage_ref(component)
         logger.info(f"Adding {name} to internal pipe")
 
         # Configure output column names of classifiers from category to something more meaningful
