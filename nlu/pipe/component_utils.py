@@ -1,13 +1,26 @@
 import inspect
 from nlu.pipe.pipe_components import SparkNLUComponent
+from nlu.pipe.storage_ref_utils import StorageRefUtils
 
 """Component and Column Level logic operations and utils"""
 class ComponentUtils():
     @staticmethod
-    def config_chunk_embed_converter(converter:SparkNLUComponent):
-        '''For a Chunk to be added to a pipeline, configure its input/output and set storage ref to amtch the storage ref'''
-        storage_ref = converter.info.outputs[0].split('@')[0]
-        converter.info.storage_ref = storage_ref
+    def config_chunk_embed_converter(converter:SparkNLUComponent)->SparkNLUComponent:
+        '''For a Chunk to be added to a pipeline, configure its input/output and set storage ref to amtch the storage ref and
+        enfore storage ref notation. This will be used to infer backward later which component should feed this consumer'''
+        storage_ref = StorageRefUtils.extract_storage_ref(converter)
+        input_embed_col = ComponentUtils.extract_embed_col(converter)
+        new_embed_col_with_AT_notation = input_embed_col+"@"+storage_ref
+        converter.info.inputs.remove(input_embed_col)
+        converter.info.inputs.append(new_embed_col_with_AT_notation)
+        converter.info.spark_input_column_names.remove(input_embed_col)
+        converter.info.spark_input_column_names.append(new_embed_col_with_AT_notation)
+        converter.model.setInputCols(converter.info.inputs)
+
+
+        return converter
+    # @staticmethod
+    # def update_outputs(component:SparkNLUComponent)->SparkNLUComponent:
 
 
     @staticmethod
@@ -33,7 +46,7 @@ class ComponentUtils():
 
 
     @staticmethod
-    def component_has_embeddings_requirement(component):
+    def component_has_embeddings_requirement(component:SparkNLUComponent):
         '''
         Check for the input component, wether it depends on some embedding. Returns True if yes, otherwise False.
         :param component:  The component to check
@@ -52,7 +65,7 @@ class ComponentUtils():
                 if 'embed' in feature: return True
         return False
     @staticmethod
-    def component_has_embeddings_provisions(component):
+    def component_has_embeddings_provisions(component:SparkNLUComponent):
         '''
         Check for the input component, wether it depends on some embedding. Returns True if yes, otherwise False.
         :param component:  The component to check
@@ -69,7 +82,7 @@ class ComponentUtils():
 
 
     @staticmethod
-    def extract_storage_ref_AT_column(component, col='input'):
+    def extract_storage_ref_AT_notation(component:SparkNLUComponent, col='input'):
         '''
         Extract <col>_embed_col@storage_ref notation from a component if it has a storage ref, otherwise '
 
@@ -77,13 +90,13 @@ class ComponentUtils():
         :cols component:  Wether to extract for the input or output col
         :return: '' if no storage_ref, <col>_embed_col@storage_ref otherwise
         '''
-        if not PipeUtils.has_storage_ref(component) :
+        if not StorageRefUtils.has_storage_ref(component) :
             if   col =='input' : return component.info.inputs
             elif col =='output': return component.info.outputs
         if   col =='input'  : e_col    = next(filter(lambda s : 'embed' in s, component.info.inputs))
         elif col =='output' : e_col    = next(filter(lambda s : 'embed' in s, component.info.outputs))
 
-        stor_ref = PipeUtils.extract_storage_ref_from_component(component)
+        stor_ref = StorageRefUtils.extract_storage_ref(component)
         return e_col + '@' + stor_ref
 
     @staticmethod
@@ -101,7 +114,30 @@ class ComponentUtils():
 
 
     @staticmethod
-    def is_embedding_converter  (component : SparkNLUComponent):
+    def is_embedding_converter  (component : SparkNLUComponent) -> bool:
         """Check if NLU component is embedding converter """
         if component.info.name in ['chunk_embedding_converter', 'sentence_embedding_converter']: return True
+        return False
+
+
+    @staticmethod
+    def extract_embed_col(component:SparkNLUComponent, column='input')->str:
+        """Extract the exact name of the embed column in the component"""
+        if column == 'input':
+            for c in component.info.spark_input_column_names:
+                if 'embed' in c : return c
+
+        if column == 'output':
+            for c in component.info.spark_output_column_names:
+                if 'embed' in c : return c
+
+    @staticmethod
+    def is_untrained_model(component:SparkNLUComponent)->bool:
+        '''
+        Check for a given component if it is an embelishment of an traianble model.
+        In this case we will ignore embeddings requirements further down the logic pipeline
+        :param component: Component to check
+        :return: True if it is trainable, False if not
+        '''
+        if 'is_untrained' in dict(inspect.getmembers(component.info)).keys(): return True
         return False

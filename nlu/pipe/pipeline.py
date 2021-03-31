@@ -20,6 +20,7 @@ from  typing import List
 from nlu.pipe.pipe_utils import PipeUtils
 from pyspark.sql.types import StructType,StructField, StringType, IntegerType
 from nlu.pipe.component_resolution import extract_classifier_metadata_from_nlu_ref
+from nlu.pipe.storage_ref_utils import StorageRefUtils
 
 class BasePipe(dict):
     # we inherhit from dict so the pipe is indexable and we have a nice shortcut for accessing the spark nlp model
@@ -98,8 +99,8 @@ class BasePipe(dict):
         # Spark NLP model reference shortcut
 
         name = component.info.name.replace(' ', '').replace('train.', '')
-        if PipeUtils.has_storage_ref(component):
-            name = name +'@' + PipeUtils.extract_storage_ref(component)
+        if StorageRefUtils.has_storage_ref(component):
+            name = name +'@' + StorageRefUtils.extract_storage_ref(component)
         logger.info(f"Adding {name} to internal pipe")
 
         # Configure output column names of classifiers from category to something more meaningful
