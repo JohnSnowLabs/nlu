@@ -1,5 +1,3 @@
-import nlu.pipe_components
-import sparknlp
 from sparknlp.annotator import *
 
 class SparkNLPXlnet:

@@ -1,4 +1,5 @@
-from nlu.pipe_components import SparkNLUComponent, NLUComponent
+from nlu.pipe.pipe_components import SparkNLUComponent
+
 
 class Chunker(SparkNLUComponent):
 

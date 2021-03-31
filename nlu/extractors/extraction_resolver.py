@@ -65,6 +65,12 @@ OC_anno2config = {
         'default': default_sentence_embedding_config,
         'default_full'  : default_full_config,
     },
+    SentenceEmbeddings : {
+        'default': default_sentence_embedding_config,
+        'default_full'  : default_full_config,
+    },
+
+
     Tokenizer : {
         'default': default_tokenizer_config,
         'default_full'  : default_full_config,

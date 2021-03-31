@@ -3,7 +3,6 @@ __version__ = '1.1.1'
 # from nlu.component_resolution import parse_language_from_nlu_ref, nlu_ref_to_component, \
 #     construct_component_from_pipe_identifier
 import sys
-
 def check_pyspark_install():
     try :
         from pyspark.sql import SparkSession
@@ -51,8 +50,6 @@ ch.setLevel(logging.CRITICAL)
 logger.addHandler(ch)
 
 import gc
-from nlu.pipeline import *
-
 # NLU Healthcare components
 from nlu.components.assertion import Asserter
 from nlu.components.resolution import Resolver
@@ -152,9 +149,10 @@ from nlu.components.seq2seqs.marian.marian import Marian
 from nlu.components.seq2seqs.t5.t5 import T5
 from nlu.components.sequence2sequence import Seq2Seq
 
-from nlu.pipeline_logic import PipelineQueryVerifier
-
-from nlu.component_resolution import *
+from nlu.pipe.pipeline import NLUPipeline
+from nlu.pipe.pipe_utils import PipeUtils
+from nlu.pipe.pipe_logic import PipelineQueryVerifier
+from nlu.pipe.component_resolution import *
 global spark, active_pipes, all_components_info, nlu_package_location,authorized
 is_authenticated=False
 nlu_package_location = nlu.__file__[:-11]
@@ -330,7 +328,7 @@ def load(request ='from_disk', path=None,verbose=False):
             for c in nlu_component: pipe.add(c, nlu_ref, pretrained_pipe_component=True)
         else:
             pipe.add(nlu_component, nlu_ref)
-            pipe = PipelineQueryVerifier.check_and_fix_nlu_pipeline(pipe)
+    pipe = PipelineQueryVerifier.check_and_fix_nlu_pipeline(pipe)
 
     # except:
     #     import sys
@@ -342,7 +340,6 @@ def load(request ='from_disk', path=None,verbose=False):
     #         "Something went wrong during loading and fitting the pipe. Check the other prints for more information and also verbose mode. Did you use a correct model reference?")
     #
     #     return NluError()
-    active_pipes.append(pipe)
     return pipe
 
 class NluError:

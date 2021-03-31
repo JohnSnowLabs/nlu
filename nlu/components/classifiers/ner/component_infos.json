@@ -9,7 +9,6 @@
   "inputs": [
     "sentence",
     "token",
-    "label",
     "word_embeddings"
   ],
   "type": "classifier",
@@ -19,7 +18,6 @@
   "spark_input_column_names": [
     "sentence",
     "token",
-    "label",
     "word_embeddings"
   ],
   "spark_output_column_names": [

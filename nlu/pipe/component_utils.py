@@ -1,3 +1,5 @@
+import logging
+logger = logging.getLogger('nlu')
 import inspect
 from nlu.pipe.pipe_components import SparkNLUComponent
 from nlu.pipe.storage_ref_utils import StorageRefUtils
@@ -141,3 +143,18 @@ class ComponentUtils():
         '''
         if 'is_untrained' in dict(inspect.getmembers(component.info)).keys(): return True
         return False
+
+
+
+    @staticmethod
+    def set_storage_ref_attribute_of_embedding_converters(pipe_list):
+        """For every embedding converter, we set storage ref attr on it, based on what the storage ref from it's provider is """
+        for converter in pipe_list:
+            if ComponentUtils.is_embedding_provider(converter) and  ComponentUtils.is_embedding_converter(converter) :
+                embed_col = ComponentUtils.extract_embed_col(converter)
+                for provider in pipe_list:
+                    if embed_col in provider.info.outputs:
+                        converter.info.storage_ref = StorageRefUtils.extract_storage_ref(provider)
+                # if c.info.name =='ChunkEmbeddings' : c.model.setOutputCol(level_AT_ref[0])
+                # else : c.model.setOutputCol(level_AT_ref)
+        return pipe_list

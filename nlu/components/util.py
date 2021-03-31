@@ -1,4 +1,4 @@
-from nlu.pipe_components import SparkNLUComponent
+from nlu.pipe.pipe_components import SparkNLUComponent
 
 class Util(SparkNLUComponent):
 

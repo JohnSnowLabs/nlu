@@ -1271,8 +1271,8 @@ class NLUPipeline(BasePipe):
 
         # currently have to always fit, otherwise parameter changes wont take effect
         if output_level == 'sentence' or output_level == 'document':
-            self = nlu.pipe.pipeline_logic.PipelineQueryVerifier.configure_component_output_levels(self)
-            self = nlu.pipe.pipeline_logic.PipelineQueryVerifier.check_and_fix_nlu_pipeline(self)
+            self = PipeUtils.configure_component_output_levels(self)
+            self = PipeUtils.check_and_fix_nlu_pipeline(self)
 
 
         if not self.is_fitted :

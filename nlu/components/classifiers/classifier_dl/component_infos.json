@@ -7,14 +7,12 @@
     "category"
   ],
   "inputs": [
-    "sentence_embeddings",
-    "label"
+    "sentence_embeddings"
   ],
   "type": "classifier",
   "file_dependencies": {},
   "spark_input_column_names": [
-    "sentence_embeddings",
-    "label"
+    "sentence_embeddings"
   ],
   "spark_output_column_names": [
     "category"

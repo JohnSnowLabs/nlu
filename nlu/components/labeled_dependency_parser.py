@@ -1,4 +1,4 @@
-from nlu.pipe_components import SparkNLUComponent
+from nlu.pipe.pipe_components import SparkNLUComponent
 
 class LabeledDependencyParser(SparkNLUComponent):
     def __init__(self, annotator_class='labeled_dependency_parser', language ='en', component_type='dependency_typed', get_default=True, nlp_ref='',  nlu_ref='', model=None):

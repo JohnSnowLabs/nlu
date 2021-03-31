@@ -1,4 +1,3 @@
-import nlu.pipe_components
 from sparknlp.annotator import *
 
 

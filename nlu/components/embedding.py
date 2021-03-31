@@ -1,5 +1,5 @@
-from nlu.pipe_components import SparkNLUComponent
-from nlu.pipeline_logic import PipelineQueryVerifier
+from nlu.pipe.pipe_components import SparkNLUComponent
+
 
 class Embeddings(SparkNLUComponent):
 

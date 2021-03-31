@@ -39,77 +39,8 @@ from nlu import logger, Util, Embeddings, Classifier, NameSpace, ClassifierDl, \
 from nlu.components import embeddings_chunker
 from nlu.components.labeled_dependency_parser import LabeledDependencyParser as LabledDepParser
 from nlu.components.unlabeled_dependency_parser import UnlabeledDependencyParser as UnlabledDepParser
-"""
-
-1.  AssertionLogReg // CHUNK level // SAME LEVEL AS NER !
-2.  AssertionDL // CHUNK level // SAME LEVEL AS NER !
-3.  Chunk2Token // Helper for Pipe logic most likey internal usage..
-4.  ChunkEntityResolver
-5.  SentenceEntityResolver
-6.  DocumentLogRegClassifier // Skip for now, only trainable. but basically jsut another classifier and nobody would use it since classifier DL coola, right!?
-7.  DeIdentificator // Token LVL, 1 to 1 Map  // Just changes representation of tokens.# Actually SUB token, since "Dr Steward Johnson" can become "[DOCTOR]", thus recducing token count
-8.  Contextual Parser// Skip for now, only trainable and file dependent
-9.  RelationExtraction
-10. Disambiguation
-11. Generic Classifier
-12. Chunk Merge
-13. Internal NER Converter(entity confidences etc..)
-14. Text2Sql
-15. DrugNormalizer
-
-
-
-|NLP Annotator| nlu.load() base reference|
-|-------------|--------------------------|
-|AssertionLogReg            | assert.log_reg                        | 
-|AssertionDL                | assert                                | 
-|Chunk2Token                | chunk2Token (only internal)           | 
-|ChunkEntityResolver        | resolve.chunk / resolve.entities      |
-|SentenceEntityResolver     | resolve.sentence / resolve.sentence   |
-|DocumentLogRegClassifier   | classifiy.log_reg.<dataset>           | 
-|DeIdentificator            | deidentify/anonymize                  | 
-|Contextual Parser          | parse_context                         |
-|RelationExtraction         | extract.relation / classify.relation  |
-|Disambiguation             | disambiguate                          |
-|Generic Classifier         | train.generic                         |
-|Chunk Merger               | merge_chunks                          |
-|Text2Sql                   | seq2seq.text2sql /text2sql            |
-|DrugNormalizer             | norm.drugs                            |
-|RENerChunksFilter
-
-# PRIORITZED
-
-|NLP Annotator| nlu.load() base reference|                                                              kek  |     Inputs |            Outputs | has stor_ref | 
-|-------------|--------------------------|-------------------------------------------------------|-----------|---------------------------|---------------|
-|AssertionDL  (HGIH)       X          | assert                                                   |           | sentence/chunk/word_emb   |                |               | 
-|SentenceEntityResolver  (HIGH)      X | resolve.sentence / resolve.sentence / resolve_sentence   |      x    |                           |               |
-|DeIdentification   (High)      X      | deidentify/anonymize                                     |           |                           |               | 
-|RelationExtraction (HIGH) X(deprecated?)         | extract_relation / classify.relation                     |           |                           |               |
-|RelationExtraction(DL) (HIGH)   X          | extract_relation / classify.relation                     |           |                           |               |
-|ChunkEntityResolver    (MID)  X       | resolve.chunk / resolve.entities    /resolve_chunk       |           |                           |               |
-|Chunk2Token                          | chunk2Token (only internal)                              |           | chunk                     | token              x | 
-|Contextual Parser                    | parse_context                                            |           |                           |       x        |
-|DrugNormalizer                       | norm.drugs                                               |           |                           |               |
-|Generic Classifier (mid prio)        | train.generic                                            |           |                           |               |
-|Chunk Merger                         | merge_chunks                                             |           |                           |               |
-|Text2Sql  (Deprecated)               | seq2seq.text2sql /text2sql                               |           |                           |               |
-|DocumentLogRegClassifier (DEPRECATED)| classifiy.log_reg.<dataset>/classifiy.<dataset>          |           |                           |               | 
-|AssertionLogReg    (low prio)        | assert.log_reg             /assert                       |           |                           |               | 
-|Disambiguation (Low prio)            | disambiguate                                             |           |                           |               |
-|RENerChunksFilter
- ChunkMergeApproach
-NEROverWriter(low)
-
-| trainable annoators (MODELSHUB MODEL) | 
-|---------------------|
-- AssertionDLApproach  
-- ChunkEntityResolverApproach
-- SentenceEntityResolverApproach 
-- DeIdentification 
-- RelationExtractionApproach  (NO DL VERSION!!)
-- GenericClassifierApproach  x?
-- ContextualParserModel 
-"""
+from nlu.pipe.pipe_utils import PipeUtils
+from nlu.pipe.component_utils import ComponentUtils
 
 
 def parse_language_from_nlu_ref(nlu_ref):
@@ -643,7 +574,7 @@ def construct_component_from_pipe_identifier(language, nlp_ref, nlu_ref,path=Non
             return None
 
 
-    return PipeUtils.enforece_AT_embedding_provider_output_col_name_schema_for_list_of_components(PipeUtils.set_storage_ref_attribute_of_embedding_converters(constructed_components))
+    return PipeUtils.enforece_AT_embedding_provider_output_col_name_schema_for_list_of_components(ComponentUtils.set_storage_ref_attribute_of_embedding_converters(constructed_components))
 
 
 def construct_component_from_identifier(language, component_type='', dataset='', component_embeddings='', nlu_ref='',nlp_ref='',is_licensed=False):

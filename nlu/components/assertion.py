@@ -1,4 +1,4 @@
-from nlu.pipe_components import SparkNLUComponent
+from nlu.pipe.pipe_components import SparkNLUComponent
 class Asserter(SparkNLUComponent):
     def __init__(self, annotator_class='assertion_dl', language='en', component_type='assertion', get_default=True, model = None, nlp_ref ='', nlu_ref='',trainable=False, is_licensed=False):
 

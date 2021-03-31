@@ -8,13 +8,12 @@
   ],
   "inputs": [
     "document",
-    "sentence",
     "token"
   ],
   "type": "word_embeddings",
   "file_dependencies": {},
   "spark_input_column_names": [
-    "sentence",
+    "document",
     "token"
   ],
   "spark_output_column_names": [

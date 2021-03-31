@@ -14,7 +14,7 @@
   "file_dependencies": {},
   "spark_input_column_names": [
     "entities",
-    "work_embeddings"
+    "word_embeddings"
   ],
   "spark_output_column_names": [
     "chunk_embeddings"

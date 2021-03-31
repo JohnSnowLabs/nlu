@@ -7,15 +7,15 @@
     "sentence_embeddings"
   ],
   "inputs": [
-    "sentence"
+    "document"
   ],
   "type": "sentence_embeddings",
   "file_dependencies": {},
   "spark_input_column_names": [
-    "sentence"
+    "document"
   ],
   "spark_output_column_names": [
-    "bert_sentence"
+    "document"
   ],
   "provider": "sparknlp",
   "license": "open source",

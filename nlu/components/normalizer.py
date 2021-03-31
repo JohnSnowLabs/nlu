@@ -1,4 +1,4 @@
-from nlu.pipe_components import SparkNLUComponent
+from nlu.pipe.pipe_components import SparkNLUComponent
 
 class Normalizer(SparkNLUComponent):
     def __init__(self, annotator_class='normalizer', language='en', component_type='normalizer', get_default=True, nlp_ref='',nlu_ref='',model=None, is_licensed=False):
