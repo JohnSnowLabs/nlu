@@ -313,10 +313,21 @@ class PipelineQueryVerifier():
         c.info.spark_output_column_names = ['chunk_embeddings@' + storage_ref]
         c.info.output_column_names = ['chunk_embeddings@' + storage_ref]
         return c
+
+    @staticmethod
+    def check_if_all_conversions_satisfied(components_for_embedding_conversion):
+        """Check if all dependencies are satisfied."""
+        for conversion in components_for_embedding_conversion:
+            if conversion.component_candidate is not None : return False
+        return True
+
     @staticmethod
     def check_if_all_dependencies_satisfied(missing_components, missing_storage_refs, components_for_embedding_conversion):
         """Check if all dependencies are satisfied."""
-        return len(missing_components) ==0 and len (missing_storage_refs) == 0 and len(components_for_embedding_conversion) == 0
+        return len(missing_components) ==0 and len (missing_storage_refs) == 0 and PipelineQueryVerifier.check_if_all_conversions_satisfied(components_for_embedding_conversion)
+
+
+
 
     @staticmethod
     def satisfy_dependencies(pipe: NLUPipeline) -> NLUPipeline:
@@ -325,8 +336,6 @@ class PipelineQueryVerifier():
         while all_features_provided == False:
             # After new components have been added, we must loop again and check for the new components if requriements are met
             components_to_add = []
-            # Find missing components
-            # TODO WHY SENTENCE IN MISSIGN COMP??
             missing_components, missing_storage_refs, components_for_embedding_conversion = PipelineQueryVerifier.get_missing_required_features_V2(pipe)
             logger.info(f"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
             logger.info(f"Trying to resolve missing features for \n missing_components={missing_components} \n missing storage_refs={missing_storage_refs}\n conversion_candidates={components_for_embedding_conversion}")
