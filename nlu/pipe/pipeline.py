@@ -944,7 +944,7 @@ class NLUPipeline(BasePipe):
         stranger_features += ['origin_index']
         self.infer_and_set_output_level()
         # map field to type of field
-        field_dict = self.get_field_types_dict(processed, stranger_features,keep_stranger_features)
+        # field_dict = self.get_field_types_dict(processed, stranger_features,keep_stranger_features)
         not_at_same_output_level_fields = []
 
         if self.output_level == 'chunk':

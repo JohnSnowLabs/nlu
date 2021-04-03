@@ -158,3 +158,26 @@ class ComponentUtils():
                 # if c.info.name =='ChunkEmbeddings' : c.model.setOutputCol(level_AT_ref[0])
                 # else : c.model.setOutputCol(level_AT_ref)
         return pipe_list
+
+    @staticmethod
+    def extract_embed_level_identity(component, col='input'):
+        """Figure out if component feeds on chunk/sent aka doc/word emb for either nput or output cols"""
+        if col =='input':
+            if any(filter(lambda s : 'document_embed' in s , component.info.inputs)): return 'document_embeddings'
+            if any(filter(lambda s : 'sentence_embed' in s , component.info.inputs)): return 'sentence_embeddings'
+            if any(filter(lambda s : 'chunk_embed' in s , component.info.inputs)): return 'chunk_embeddings'
+            if any(filter(lambda s : 'token_embed' in s , component.info.inputs)): return 'token_embeddings'
+        elif col == 'output':
+            if any(filter(lambda s : 'document_embed' in s , component.info.outputs)): return 'document_embeddings'
+            if any(filter(lambda s : 'sentence_embed' in s , component.info.outputs)): return 'sentence_embeddings'
+            if any(filter(lambda s : 'chunk_embed' in s , component.info.outputs)): return 'chunk_embeddings'
+            if any(filter(lambda s : 'token_embed' in s , component.info.outputs)): return 'token_embeddings'
+
+    @staticmethod
+    def are_producer_consumer_matches(e_consumer:SparkNLUComponent,e_provider:SparkNLUComponent) -> bool:
+        """Check for embedding_consumer and embedding_producer if they match storage_ref and output level wise wise """
+        if StorageRefUtils.extract_storage_ref(e_consumer)== StorageRefUtils.extract_storage_ref(e_provider):
+            if ComponentUtils.extract_embed_level_identity(e_consumer, 'input') ==  ComponentUtils.extract_embed_level_identity(e_provider, 'output'):
+                return True
+            ## TODO FALL BACK FOR BAD MATCHES WHICH ACTUALLY MATCH-> consult name space
+        return False
