@@ -26,8 +26,6 @@ class PipeUtils():
                 c.info.outputs = [level_AT_ref]
                 c.info.spark_output_column_names = [level_AT_ref]
                 c.model.setOutputCol(level_AT_ref[0])
-                # if c.info.name =='ChunkEmbeddings' : c.model.setOutputCol(level_AT_ref[0])
-                # else : c.model.setOutputCol(level_AT_ref)
         return pipe_list
 
     @staticmethod
@@ -51,9 +49,6 @@ class PipeUtils():
                     c.info.spark_input_column_names.remove(input_embed_col)
                     c.info.spark_input_column_names.append(new_embed_col_with_AT_notation)
                     c.model.setInputCols(c.info.inputs)
-
-                # if c.info.name =='ChunkEmbeddings' : c.model.setOutputCol(level_AT_ref[0])
-                # else : c.model.setOutputCol(level_AT_ref)
         return pipe
 
 
