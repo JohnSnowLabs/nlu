@@ -55,7 +55,7 @@ class BasePipe(dict):
 
 
 
-    def configure_outputs(self, component, nlu_reference):
+    def configure_outputs(self, component, nlu_reference, name_to_add=''):
         '''
         Configure output column names of classifiers from category to something more meaningful
         Name should be Name of classifier, based on NLU reference.
@@ -84,7 +84,7 @@ class BasePipe(dict):
         component.model.setOutputCol(new_output_name)
         component.info.spark_output_column_names = [new_output_name]
 
-    def add(self, component, nlu_reference="default_name", pretrained_pipe_component=False, update_cols = True):
+    def add(self, component, nlu_reference="default_name", pretrained_pipe_component=False, name_to_add=''):
         '''
 
         :param component:
@@ -105,33 +105,23 @@ class BasePipe(dict):
             name = name +'@' + StorageRefUtils.extract_storage_ref(component)
         logger.info(f"Adding {name} to internal pipe")
 
+
+
         # Configure output column names of classifiers from category to something more meaningful
         if self.isInstanceOfNlpClassifer(component.model): self.configure_outputs(component, nlu_reference)
 
-        # Add Component as self.index and in attributes
-        if 'embed' in component.info.type and nlu_reference not in self.keys() and not pretrained_pipe_component:
-            # new_output_column = nlu_reference
-            # new_output_column = new_output_column.replace('.', '_')
-            # component.model.setOutputCol(new_output_column)
-            # component.info.spark_output_column_names = [new_output_column]
-            # component.info.name = new_output_column
-            self[name] = component.info.name
-        # name parsed from component info, dont fiddle with column names of components unwrapped from pretrained pipelines
-        elif name not in self.keys():
-            component.info.nlu_ref = nlu_reference
-            self[name] = component.model
-        else:  # default name applied
-            nlu_identifier = ComponentUtils.get_nlu_ref_identifier(component)
-            new_output_column = component.info.outputs[0] + '@' + nlu_identifier
-            # new_output_column = new_output_column.replace('.', '_')
-            component.info.nlu_ref = nlu_reference
-
-            if update_cols :
-                component.model.setOutputCol(new_output_column)
-                component.info.spark_output_column_names = [new_output_column]
-                component.info.name = new_output_column
-            self[component.info.name +"@"+ nlu_identifier] = component.model
-        # self.component_execution_plan.update()
+        if name_to_add == '':
+            # Add Component as self.index and in attributes
+            if 'embed' in component.info.type and nlu_reference not in self.keys() and not pretrained_pipe_component:
+                self[name] = component.info.name
+            elif name not in self.keys():
+                if not hasattr(component.info,'nlu_ref'):  component.info.nlu_ref  = nlu_reference
+                self[name] = component.model
+            else:
+                nlu_identifier = ComponentUtils.get_nlu_ref_identifier(component)
+                component.info.nlu_ref = nlu_reference
+                self[component.info.name +"@"+ nlu_identifier] = component.model
+        else :self[name_to_add] = component.model
 
 class NLUPipeline(BasePipe):
     def __init__(self):

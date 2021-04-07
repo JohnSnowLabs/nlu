@@ -130,7 +130,7 @@ class ComponentUtils():
     @staticmethod
     def is_NER_converter(component:SparkNLUComponent) -> bool:
         """Check if a NLU Component wraps a NER-IOB to NER-Pr etty converter """
-        return component.info.name in ['NerToChunkConverter']
+        return component.info.name in ['NerToChunkConverter','ner_to_chunk_converter','ner_to_chunk_converter_licensed']
 
     @staticmethod
     def extract_NER_col(component:SparkNLUComponent, column='input')->str:
@@ -217,12 +217,10 @@ class ComponentUtils():
     @staticmethod
     def get_nlu_ref_identifier(component:SparkNLUComponent) -> str:
         """The tail of a NLU ref after splitting on '.' gives a unique identifier for NON-Aliased components
-         If result is '' uses component ID as fallback
+         If result is '' raises value Error
          """
         tail = ''
         if hasattr(component.info, 'nlu_ref') and component.info.nlu_ref !='':
             tail = component.info.nlu_ref.split('.')[-1].split('@')[-1]
-        if tail != '' :
-            return tail
-        else : return str(component.model)
-
+        if tail == '' : raise ValueError
+        return tail

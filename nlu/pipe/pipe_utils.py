@@ -31,7 +31,7 @@ class PipeUtils():
 
     @staticmethod
     def enforce_AT_schema_on_pipeline(pipe):
-        """Enforces the AT naming schema on all column names"""
+        """Enforces the AT naming schema on all column names and add missing NER converters"""
         return PipeUtils.enforce_AT_schema_on_NER_processors_and_add_missing_NER_converters(PipeUtils.enforce_AT_schema_on_embedding_processors(pipe))
 
     @staticmethod
@@ -88,8 +88,13 @@ class PipeUtils():
                 converter_to_update.info.outputs = [new_NER_converter_AT_ref]
                 converter_to_update.info.spark_output_column_names = [new_NER_converter_AT_ref]
                 converter_to_update.model.setOutputCol(new_NER_converter_AT_ref)
-        for conv in new_converters:pipe.add(conv, update_cols=False)
 
+        # Add new converters to pipe
+        for conv in new_converters:
+            if conv.info.license == 'healthcare':
+                pipe.add(conv,  name_to_add = f'chunk_converter_licensed@{conv.info.outputs[0].split("@")[0]}')
+            else :
+                pipe.add(conv,  name_to_add = f'chunk_converter@{conv.info.outputs[0].split("@")[0]}')
         return pipe
 
     @staticmethod

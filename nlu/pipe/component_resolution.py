@@ -515,10 +515,8 @@ def construct_component_from_pipe_identifier(language, nlp_ref, nlu_ref,path=Non
 
 
 
-
-        # TODO update the rest of these with new params
         elif isinstance(component, RegexMatcherModel) or parsed == 'match':
-            constructed_components.append(nlu.Matcher(model=component, annotator_class='regex'))
+            constructed_components.append(nlu.Matcher(model=component, annotator_class='regex',))
         elif isinstance(component, TextMatcherModel):
             constructed_components.append(nlu.Matcher(model=component, annotator_class='text'))
         elif isinstance(component, DateMatcher):
@@ -536,7 +534,7 @@ def construct_component_from_pipe_identifier(language, nlp_ref, nlu_ref,path=Non
         elif isinstance(component, Stemmer):
             constructed_components.append(nlu.stemmer.Stemmer(model=component))
         elif isinstance(component, (NerDLModel, NerCrfModel)):
-            constructed_components.append(nlu.Classifier(model=component, annotator_class='ner'))
+            constructed_components.append(nlu.Classifier(model=component, annotator_class='ner',lang=language, nlu_ref=nlu_ref,nlp_ref=nlp_ref,loaded_from_pretrained_pipe=True))
         elif isinstance(component, LanguageDetectorDL):
             constructed_components.append(nlu.Classifier(model=component, annotator_class='language_detector'))
         elif isinstance(component, DependencyParserModel):
