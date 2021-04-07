@@ -27,23 +27,18 @@ class NLUComponent():
 
 
 class  SparkNLUComponent(NLUComponent):
-    def __init__(self, component_name, component_type, nlu_ref='', nlp_ref='',lang='',loaded_from_pretrained_pipe=False):
+    def __init__(self, component_name, component_type, nlu_ref='', nlp_ref='',lang='',loaded_from_pretrained_pipe=False, is_licensed=False):
         # super().__init__(annotator_class, component_type)
         # super(SparkNLUComponent,self).__init__(annotator_class, component_type)
-        self.nlu_ref = nlu_ref
-        self.nlp_ref = nlp_ref
-        self.lang    = lang
-        self.loaded_from_pretrained_pipe = loaded_from_pretrained_pipe
 
         NLUComponent.__init__(self, component_name, component_type)
+        self.info.nlu_ref = nlu_ref
+        self.info.nlp_ref = nlp_ref
+        self.info.lang    = lang
+        self.info.loaded_from_pretrained_pipe = loaded_from_pretrained_pipe
+
         self.__set_missing_model_attributes__()
-
-        # self.spark = nlu.sparknlp.start()
-        # nlu.spark = self.spark
-        # nlu.spark_started = True
-
-
-    # def __postinit__(self):
+        if is_licensed : self.info.license = 'healthcare'
 
     def __set_missing_model_attributes__(self):
         '''

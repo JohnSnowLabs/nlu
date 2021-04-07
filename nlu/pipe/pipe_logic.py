@@ -320,7 +320,7 @@ class PipelineQueryVerifier():
 
             # Resolve basic mismatches, usually storage refs
             if len(input_columns) != 0 and not pipe.has_trainable_components or ComponentUtils.is_embedding_consumer(component_to_check):  # fix missing column name
-                # TODO we must not only check if input satisfied, but if storage refs match! and Match Storage_refs accordingly
+                # We must not only check if input satisfied, but if storage refs match! and Match Storage_refs accordingly
                 logger.info(f"Fixing bad input col for C={component_to_check} untrainable pipe")
                 resolved_storage_ref_cols = []
                 for missing_column in input_columns:
@@ -347,7 +347,6 @@ class PipelineQueryVerifier():
 
 
             # TODO USE is_storage_ref_match ?
-
             # Resolve training missatches
             elif len(input_columns) != 0 and pipe.has_trainable_components:  # fix missing column name
                 logger.info(f"Fixing bad input col for C={component_to_check} trainable pipe")
@@ -413,7 +412,6 @@ class PipelineQueryVerifier():
 
         # 7. Check if output column names overlap, if yes, fix
         # pipe = PipelineQueryVerifier.check_and_fix_component_order(pipe)
-        # 6.  Download all file depenencies like train files or  dictionaries
         logger.info('Done with pipe optimizing')
 
         return pipe
@@ -524,7 +522,6 @@ class PipelineQueryVerifier():
     @staticmethod
     def check_and_fix_component_output_column_name_overlap(pipe: NLUPipeline):
         '''
-        #todo use?
         This method enforces that every component has a unique output column name.
         Especially for classifiers or bert_embeddings this issue might occur,
 

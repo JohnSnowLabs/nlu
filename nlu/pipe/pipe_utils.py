@@ -60,14 +60,15 @@ class PipeUtils():
 
                 ner_identifier = ComponentUtils.get_nlu_ref_identifier(c)
                 if converter_to_update is  None :
-                    # TODO if this is MEDICAL MODEL use INTERNAL COVNERTER!
-                    converter_to_update  = Util("ner_to_chunk_converter")
+                    if c.info.license == 'healthcare': converter_to_update  = Util("ner_to_chunk_converter_licensed",is_licensed=True )
+                    else : converter_to_update  = Util("ner_to_chunk_converter")
                     new_converters.append(converter_to_update)
 
                 converter_to_update.info.nlu_ref = f'ner_converter@{ner_identifier}'
 
                 # 3. generate new col names
-                new_NER_AT_ref = output_NER_col + '@' + ner_identifier
+                new_NER_AT_ref = output_NER_col
+                if '@' not in output_NER_col: new_NER_AT_ref = output_NER_col + '@' + ner_identifier
                 new_NER_converter_AT_ref = 'entities' + '@' + ner_identifier
 
                 # 3.1 upate NER model outputs
