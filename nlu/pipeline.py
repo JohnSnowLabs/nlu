@@ -1234,7 +1234,7 @@ class NLUPipeline(BasePipe):
             if self.has_trainable_components :
                 self.fit(data)
             else : self.fit()
-        # self.configure_light_pipe_usage(len(data), multithread)
+        self.configure_light_pipe_usage(len(data), multithread)
 
         sdf = None
         stranger_features = []
