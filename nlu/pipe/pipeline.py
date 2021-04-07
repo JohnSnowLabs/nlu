@@ -120,7 +120,7 @@ class BasePipe(dict):
             component.nlu_reference = nlu_reference
             self[name] = component.model
         else:  # default name applied
-            new_output_column = name + '@' + nlu_reference
+            new_output_column = component.info.outputs[0] + '@' + nlu_reference
             new_output_column = new_output_column.replace('.', '_')
             component.nlu_reference = nlu_reference
             component.model.setOutputCol(new_output_column)
@@ -921,6 +921,8 @@ class NLUPipeline(BasePipe):
         # todo here user either Spark/Modin/Some other Backend
         unpack_df = sdf.toPandas().applymap(extract_pyspark_rows)
         return apply_extractors_and_merge(unpack_df,anno_2_ex_config)
+
+
 
     def pythonify_spark_dataframe(self, processed, get_different_level_output=True, keep_stranger_features=True,
                                   stranger_features=[], drop_irrelevant_cols=True, output_metadata=False,
