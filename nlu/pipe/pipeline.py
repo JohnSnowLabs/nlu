@@ -892,7 +892,10 @@ class NLUPipeline(BasePipe):
 
 
     def get_annotator_extraction_configs(self,):
-        """Search first OC namespace and if not found the HC Namespace for each Annotator Class in pipeline and get corrosponding config"""
+        """Search first OC namespace and if not found the HC Namespace for each Annotator Class in pipeline and get corrosponding config
+        Returns a dictionary of methods, where keys are column names values are methods  that are applied to extract and represent the data in these
+        these columns in a more pythonic and panda-esque way
+        """
         anno_2_ex_config = {}
         for c in self.components:
             if type(c.model) in OC_anno2config.keys():
@@ -915,6 +918,7 @@ class NLUPipeline(BasePipe):
            2. Get the extractor configs for the corrosponding Annotator classes
            3. Apply The extractor configs with the extractor methods to each column and merge back with zip/explode"""
         anno_2_ex_config = self.get_annotator_extraction_configs()
+        # todo here user either Spark/Modin/Some other Backend
         unpack_df = sdf.toPandas().applymap(extract_pyspark_rows)
         return apply_extractors_and_merge(unpack_df,anno_2_ex_config)
 

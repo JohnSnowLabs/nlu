@@ -5,7 +5,7 @@ logger = logging.getLogger('nlu')
 from nlu.pipe.pipe_components import SparkNLUComponent
 from nlu.pipe.component_utils import ComponentUtils
 from nlu.pipe.storage_ref_utils import StorageRefUtils
-# from nlu.pipe.pipeline import NLUPipeline
+# from nlu.pipe.pipeline import NLUPipeline cannot import or we have circular dep
 """Pipe Level logic oprations and utils"""
 class PipeUtils():
     @staticmethod
@@ -22,11 +22,79 @@ class PipeUtils():
         """For every embedding provider, enforce that their output col is named <output_level>@storage_ref for output_levels word,chunk,sentence aka document , i.e. word_embed@elmo or sentence_embed@elmo etc.."""
         for c in pipe_list:
             if ComponentUtils.is_embedding_provider(c):
-                level_AT_ref = ComponentUtils.extract_storage_ref_AT_notation(c, 'output')
+                level_AT_ref = ComponentUtils.extract_storage_ref_AT_notation_for_embeds(c, 'output')
                 c.info.outputs = [level_AT_ref]
                 c.info.spark_output_column_names = [level_AT_ref]
                 c.model.setOutputCol(level_AT_ref[0])
         return pipe_list
+
+
+    @staticmethod
+    def enforce_AT_schema_on_pipeline(pipe):
+        """Enforces the AT naming schema on all column names"""
+        # todo compose
+        pipe = PipeUtils.enforce_AT_schema_on_embedding_processors(pipe)
+        pipe = PipeUtils.enforce_AT_schema_on_NER_processors(pipe)
+        return pipe
+    @staticmethod
+    def enforce_AT_schema_on_NER_processors(pipe):
+        """For every NER provider and consumer, enforce that their output col is named <output_level>@storage_ref for output_levels word,chunk,sentence aka document , i.e. word_embed@elmo or sentence_embed@elmo etc..
+        We also add NER converters for every NER model that no Converter converting it's inputs
+        1. Find a NER model in pipe
+        2. Find a NER converter feeding from it, if there is None, create one.
+        3. Generate name with Identifier  <ner-iob>@<nlu_ref_identifier>  and <entities>@<nlu_ref_identifier>
+        3.1 Update NER Models    output to <ner-iob>@<nlu_ref_identifier>
+        3.2 Update NER Converter input  to <ner-iob>@<nlu_ref_identifier>
+        3.3 Update NER Converter output to <entities>@<nlu_ref_identifier>
+        """
+        from nlu import Util
+        for c in pipe.components:
+            if ComponentUtils.is_NER_provider(c):
+                output_NER_col = ComponentUtils.extract_NER_col(c,'output')
+                converter_to_update = None
+                if '@' not in output_NER_col:
+                    for other_c in pipe.components:
+                        if output_NER_col in other_c.info.inputs and ComponentUtils.is_NER_converter(other_c.info.name):
+                            converter_to_update = other_c
+
+                        if converter_to_update is  None : converter_to_update  = Util("ner_to_chunk_converter")
+                        # 3. generate new col names
+                        ner_identifier = ComponentUtils.get_nlu_ref_identifier(c)
+                        new_NER_AT_ref = output_NER_col + '@' + ner_identifier
+                        new_NER_converter_AT_ref = 'entities' + '@' + ner_identifier
+
+                        # 3.1 upate NER model outputs
+                        c.info.outputs = [new_NER_AT_ref]
+                        c.info.spark_output_column_names = [new_NER_AT_ref]
+                        c.model.setOutputCol(new_NER_AT_ref)
+
+                        #3.2 update converter inputs
+                        old_ner_input_col = ComponentUtils.extract_NER_col(other_c, 'input')
+                        converter_to_update.info.inputs.remove(old_ner_input_col)
+                        converter_to_update.info.spark_input_column_names.remove(old_ner_input_col)
+                        converter_to_update.info.inputs.append(new_NER_AT_ref)
+                        converter_to_update.info.spark_input_column_names.append(new_NER_AT_ref)
+                        converter_to_update.model.setInputCols(converter_to_update.info.inputs)
+
+                        #3.3 update converter outputs
+                        converter_to_update.info.outputs = [new_NER_converter_AT_ref]
+                        converter_to_update.info.spark_output_column_names = [new_NER_converter_AT_ref]
+                        converter_to_update.model.setOutputCol(new_NER_converter_AT_ref)
+
+
+            if ComponentUtils.is_NER_converter(c):
+                input_NER_col = ComponentUtils.extract_embed_col(c)
+                if '@' not in input_NER_col:
+                    # storage_ref = StorageRefUtils.extract_storage_ref(c)
+                    # new_embed_col_with_AT_notation = input_embed_col+"@"+storage_ref
+                    new_embed_AT_ref = ComponentUtils.extract_storage_ref_AT_notation(c, 'output')
+                    c.info.inputs.remove(input_NER_col)
+                    c.info.inputs.append(new_embed_AT_ref)
+                    c.info.spark_input_column_names.remove(input_NER_col)
+                    c.info.spark_input_column_names.append(new_embed_AT_ref)
+                    c.model.setInputCols(c.info.inputs)
+
+        return pipe
 
     @staticmethod
     def enforce_AT_schema_on_embedding_processors  (pipe):
@@ -34,21 +102,29 @@ class PipeUtils():
         for c in pipe.components:
             if ComponentUtils.is_embedding_provider(c):
                 if '@' not in c.info.outputs[0]:
-                    level_AT_ref = ComponentUtils.extract_storage_ref_AT_notation(c, 'output')
-                    c.info.outputs = [level_AT_ref]
-                    c.info.spark_output_column_names = [level_AT_ref]
-                    c.model.setOutputCol(level_AT_ref[0])
+                    new_embed_AT_ref = ComponentUtils.extract_storage_ref_AT_notation_for_embeds(c, 'output')
+                    c.info.outputs = [new_embed_AT_ref]
+                    c.info.spark_output_column_names = [new_embed_AT_ref]
+                    # c.model.setOutputCol(new_embed_AT_ref[0]) # why [0] here?? bug!
+                    c.model.setOutputCol(new_embed_AT_ref)
 
             if ComponentUtils.is_embedding_consumer(c):
                 input_embed_col = ComponentUtils.extract_embed_col(c)
                 if '@' not in input_embed_col:
-                    storage_ref = StorageRefUtils.extract_storage_ref(c)
-                    new_embed_col_with_AT_notation = input_embed_col+"@"+storage_ref
+                    # storage_ref = StorageRefUtils.extract_storage_ref(c)
+                    # new_embed_col_with_AT_notation = input_embed_col+"@"+storage_ref
+                    new_embed_AT_ref = ComponentUtils.extract_storage_ref_AT_notation_for_embeds(c, 'input')
                     c.info.inputs.remove(input_embed_col)
-                    c.info.inputs.append(new_embed_col_with_AT_notation)
+                    c.info.inputs.append(new_embed_AT_ref)
                     c.info.spark_input_column_names.remove(input_embed_col)
-                    c.info.spark_input_column_names.append(new_embed_col_with_AT_notation)
+                    c.info.spark_input_column_names.append(new_embed_AT_ref)
                     c.model.setInputCols(c.info.inputs)
+
+
+
+
+
+
         return pipe
 
 

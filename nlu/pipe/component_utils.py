@@ -84,7 +84,7 @@ class ComponentUtils():
 
 
     @staticmethod
-    def extract_storage_ref_AT_notation(component:SparkNLUComponent, col='input'):
+    def extract_storage_ref_AT_notation_for_embeds(component:SparkNLUComponent, col='input'):
         '''
         Extract <col>_embed_col@storage_ref notation from a component if it has a storage ref, otherwise '
 
@@ -123,12 +123,43 @@ class ComponentUtils():
 
 
     @staticmethod
+    def is_NER_provider(component:SparkNLUComponent) -> bool:
+        """Check if a NLU Component wraps a NER/NER-Medical model """
+        return component.info.name in ['named_entity_recognizer_dl', 'medical_named_entity_recognizer_dl']
+
+    @staticmethod
+    def is_NER_converter(component:SparkNLUComponent) -> bool:
+        """Check if a NLU Component wraps a NER-IOB to NER-Pr etty converter """
+        return component.info.name in ['NerToChunkConverter']
+
+    @staticmethod
+    def extract_NER_col(component:SparkNLUComponent, column='input')->str:
+        """Extract the exact name of the NER column in the component"""
+        if column == 'input':
+            for f in component.info.spark_input_column_names:
+                if 'ner' in f : return f
+        if column == 'output':
+            for f in component.info.spark_output_column_names:
+                if 'ner' in f : return f
+
+    @staticmethod
+    def extract_NER_converter_col(component:SparkNLUComponent, column='input')->str:
+        """Extract the exact name of the NER-converter  column in the component"""
+        if column == 'input':
+            for f in component.info.spark_input_column_names:
+                if 'entities' in f : return f
+        if column == 'output':
+            for f in component.info.spark_output_column_names:
+                if 'entities' in f : return f
+
+
+
+    @staticmethod
     def extract_embed_col(component:SparkNLUComponent, column='input')->str:
         """Extract the exact name of the embed column in the component"""
         if column == 'input':
             for c in component.info.spark_input_column_names:
                 if 'embed' in c : return c
-
         if column == 'output':
             for c in component.info.spark_output_column_names:
                 if 'embed' in c : return c
@@ -181,3 +212,19 @@ class ComponentUtils():
                 return True
             ## TODO FALL BACK FOR BAD MATCHES WHICH ACTUALLY MATCH-> consult name space
         return False
+
+
+    @staticmethod
+    def get_nlu_ref_identifier(component:SparkNLUComponent) -> str:
+        """The tail of a NLU ref after splitting on '.' gives a unique identifier for NON-Aliased components
+         If result is '' uses component ID as fallback
+         """
+        tail = ''
+        if hasattr(component, 'nlu_ref') and component.nlu_ref !='':
+            tail = component.nlu_ref.split('.')[-1]
+        elif  hasattr(component, 'nlu_reference') and component.nlu_reference !='':
+            tail = component.nlu_reference.split('.')[-1]
+
+        if tail != '' : return tail
+        else : return str(component.model)
+

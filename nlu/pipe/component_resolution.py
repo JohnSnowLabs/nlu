@@ -22,6 +22,7 @@ Handler for getting default components, etcc.
 
 # 2. Squeeze in 9 Annotators in old extraction process, most annotators are like old ones
 #
+import nlu.environment.authentication as auth_utils
 from pyspark.ml import PipelineModel
 from sparknlp import DocumentAssembler
 from sparknlp.annotator import NerConverter, MultiClassifierDLModel, PerceptronModel, ClassifierDLModel, \
@@ -348,7 +349,7 @@ def resolve_component_from_parsed_query_data(language, component_type, dataset, 
         logger.info('Could not find reference in NLU namespace. Assuming it is a component that is an ragmatic NLP annotator with NO model to download behind it.')
 
 
-    if not nlu.is_authorized_enviroment() and is_licensed :
+    if not auth_utils.is_authorized_enviroment() and is_licensed :
         print(f"The nlu_ref=[{nlu_ref}] is pointing to a licensed Spark NLP Annotator or Model [{nlp_ref}]. \n"
               f"Your environment does not seem to be Authorized!\n"
               f"Please RESTART your Python environment and run nlu.auth(SPARK_NLP_LICENSE,AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY,JSL_SECRET)  \n"
@@ -453,8 +454,6 @@ def construct_component_from_pipe_identifier(language, nlp_ref, nlu_ref,path=Non
     '''
 
     # TODO IS LICESNED HERE! IF YES, JUST ADD BUCKET TO PRETRAIEND PIE DOWNLAOD AND DONESD!
-    ## TODO ENFORE @NOTATION AND WRITE STORAGE_REF ON CONVERTERS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    # AKTUALLY JK, need assertInstance TypeCheck for all Classes
     logger.info("Starting Spark NLP to NLU pipeline conversion process")
     from sparknlp.pretrained import PretrainedPipeline, LightPipeline
     if 'language' in nlp_ref: language = 'xx'  # special edge case for lang detectors
@@ -602,11 +601,15 @@ def construct_component_from_identifier(language, component_type='', dataset='',
 
 
 
-        elif any(
-            x in NameSpace.seq2seq for x in [nlp_ref, nlu_ref, dataset, component_type, ]):
+        elif any(x in NameSpace.seq2seq for x in [nlp_ref, nlu_ref, dataset, component_type, ]):
             return Seq2Seq(annotator_class=component_type, language=language, get_default=False, nlp_ref=nlp_ref,configs=dataset, is_licensed=is_licensed)
 
         # if any([component_type in NameSpace.word_embeddings,dataset in NameSpace.word_embeddings, nlu_ref in NameSpace.word_embeddings, nlp_ref in NameSpace.word_embeddings]):
+
+        elif any(x in NameSpace.classifiers for x in [nlp_ref, nlu_ref, dataset, component_type, ] + dataset.split('_')):
+            return Classifier(get_default=False, nlp_ref=nlp_ref, nlu_ref=nlu_ref, language=language, is_licensed=is_licensed)
+
+
         elif any(x in NameSpace.word_embeddings and x not in NameSpace.classifiers for x in
                [nlp_ref, nlu_ref, dataset, component_type, ] + dataset.split('_')):
             return Embeddings(get_default=False, nlp_ref=nlp_ref, nlu_ref=nlu_ref, lang=language, is_licensed=is_licensed)
@@ -616,9 +619,6 @@ def construct_component_from_identifier(language, component_type='', dataset='',
                [nlp_ref, nlu_ref, dataset, component_type, ] + dataset.split('_')):
             return Embeddings(get_default=False, nlp_ref=nlp_ref, nlu_ref=nlu_ref, lang=language, is_licensed=is_licensed)
 
-        elif any(
-                x in NameSpace.classifiers for x in [nlp_ref, nlu_ref, dataset, component_type, ] + dataset.split('_')):
-            return Classifier(get_default=False, nlp_ref=nlp_ref, nlu_ref=nlu_ref, language=language, is_licensed=is_licensed)
 
 
 
