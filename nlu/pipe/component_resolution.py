@@ -453,7 +453,7 @@ def construct_component_from_pipe_identifier(language, nlp_ref, nlu_ref,path=Non
     :return: Each element of the SaprkNLP pipeline wrapped as a NLU componed inside of a list
     '''
 
-    # TODO IS LICESNED HERE! IF YES, JUST ADD BUCKET TO PRETRAIEND PIE DOWNLAOD AND DONESD!
+    # TODO check is IS LICESNED HERE! IF YES, JUST ADD BUCKET TO PRETRAIEND PIE DOWNLAOD AND DONE!
     logger.info("Starting Spark NLP to NLU pipeline conversion process")
     from sparknlp.pretrained import PretrainedPipeline, LightPipeline
     if 'language' in nlp_ref: language = 'xx'  # special edge case for lang detectors

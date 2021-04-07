@@ -1,5 +1,5 @@
 {
-  "name": "NerToChunkConverter",
+    "name": "NerToChunkConverter",
   "description": "todo",
   "trainable": false,
   "output_level": "chunk",

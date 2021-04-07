@@ -32,14 +32,14 @@ class PipeUtils():
     @staticmethod
     def enforce_AT_schema_on_pipeline(pipe):
         """Enforces the AT naming schema on all column names"""
-        # todo compose
-        pipe = PipeUtils.enforce_AT_schema_on_embedding_processors(pipe)
-        pipe = PipeUtils.enforce_AT_schema_on_NER_processors(pipe)
-        return pipe
+        return PipeUtils.enforce_AT_schema_on_NER_processors_and_add_missing_NER_converters(PipeUtils.enforce_AT_schema_on_embedding_processors(pipe))
+
     @staticmethod
-    def enforce_AT_schema_on_NER_processors(pipe):
+    def enforce_AT_schema_on_NER_processors_and_add_missing_NER_converters(pipe):
         """For every NER provider and consumer, enforce that their output col is named <output_level>@storage_ref for output_levels word,chunk,sentence aka document , i.e. word_embed@elmo or sentence_embed@elmo etc..
         We also add NER converters for every NER model that no Converter converting it's inputs
+        In addition, returns the pipeline with missing NER converters added, for every NER model.
+        The converters transform the IOB schema in a merged and more usable form for downstream tasks
         1. Find a NER model in pipe
         2. Find a NER converter feeding from it, if there is None, create one.
         3. Generate name with Identifier  <ner-iob>@<nlu_ref_identifier>  and <entities>@<nlu_ref_identifier>
@@ -48,51 +48,46 @@ class PipeUtils():
         3.3 Update NER Converter output to <entities>@<nlu_ref_identifier>
         """
         from nlu import Util
+        new_converters = []
         for c in pipe.components:
             if ComponentUtils.is_NER_provider(c):
                 output_NER_col = ComponentUtils.extract_NER_col(c,'output')
                 converter_to_update = None
-                if '@' not in output_NER_col:
-                    for other_c in pipe.components:
-                        if output_NER_col in other_c.info.inputs and ComponentUtils.is_NER_converter(other_c.info.name):
-                            converter_to_update = other_c
+                # if '@' not in output_NER_col:
+                for other_c in pipe.components:
+                    if output_NER_col in other_c.info.inputs and ComponentUtils.is_NER_converter(other_c):
+                        converter_to_update = other_c
 
-                        if converter_to_update is  None : converter_to_update  = Util("ner_to_chunk_converter")
-                        # 3. generate new col names
-                        ner_identifier = ComponentUtils.get_nlu_ref_identifier(c)
-                        new_NER_AT_ref = output_NER_col + '@' + ner_identifier
-                        new_NER_converter_AT_ref = 'entities' + '@' + ner_identifier
+                ner_identifier = ComponentUtils.get_nlu_ref_identifier(c)
+                if converter_to_update is  None :
+                    # TODO if this is MEDICAL MODEL use INTERNAL COVNERTER!
+                    converter_to_update  = Util("ner_to_chunk_converter")
+                    new_converters.append(converter_to_update)
 
-                        # 3.1 upate NER model outputs
-                        c.info.outputs = [new_NER_AT_ref]
-                        c.info.spark_output_column_names = [new_NER_AT_ref]
-                        c.model.setOutputCol(new_NER_AT_ref)
+                converter_to_update.info.nlu_ref = f'ner_converter@{ner_identifier}'
 
-                        #3.2 update converter inputs
-                        old_ner_input_col = ComponentUtils.extract_NER_col(other_c, 'input')
-                        converter_to_update.info.inputs.remove(old_ner_input_col)
-                        converter_to_update.info.spark_input_column_names.remove(old_ner_input_col)
-                        converter_to_update.info.inputs.append(new_NER_AT_ref)
-                        converter_to_update.info.spark_input_column_names.append(new_NER_AT_ref)
-                        converter_to_update.model.setInputCols(converter_to_update.info.inputs)
+                # 3. generate new col names
+                new_NER_AT_ref = output_NER_col + '@' + ner_identifier
+                new_NER_converter_AT_ref = 'entities' + '@' + ner_identifier
 
-                        #3.3 update converter outputs
-                        converter_to_update.info.outputs = [new_NER_converter_AT_ref]
-                        converter_to_update.info.spark_output_column_names = [new_NER_converter_AT_ref]
-                        converter_to_update.model.setOutputCol(new_NER_converter_AT_ref)
+                # 3.1 upate NER model outputs
+                c.info.outputs = [new_NER_AT_ref]
+                c.info.spark_output_column_names = [new_NER_AT_ref]
+                c.model.setOutputCol(new_NER_AT_ref)
 
+                #3.2 update converter inputs
+                old_ner_input_col = ComponentUtils.extract_NER_converter_col(converter_to_update, 'input')
+                converter_to_update.info.inputs.remove(old_ner_input_col)
+                converter_to_update.info.spark_input_column_names.remove(old_ner_input_col)
+                converter_to_update.info.inputs.append(new_NER_AT_ref)
+                converter_to_update.info.spark_input_column_names.append(new_NER_AT_ref)
+                converter_to_update.model.setInputCols(converter_to_update.info.inputs)
 
-            if ComponentUtils.is_NER_converter(c):
-                input_NER_col = ComponentUtils.extract_embed_col(c)
-                if '@' not in input_NER_col:
-                    # storage_ref = StorageRefUtils.extract_storage_ref(c)
-                    # new_embed_col_with_AT_notation = input_embed_col+"@"+storage_ref
-                    new_embed_AT_ref = ComponentUtils.extract_storage_ref_AT_notation(c, 'output')
-                    c.info.inputs.remove(input_NER_col)
-                    c.info.inputs.append(new_embed_AT_ref)
-                    c.info.spark_input_column_names.remove(input_NER_col)
-                    c.info.spark_input_column_names.append(new_embed_AT_ref)
-                    c.model.setInputCols(c.info.inputs)
+                #3.3 update converter outputs
+                converter_to_update.info.outputs = [new_NER_converter_AT_ref]
+                converter_to_update.info.spark_output_column_names = [new_NER_converter_AT_ref]
+                converter_to_update.model.setOutputCol(new_NER_converter_AT_ref)
+        for conv in new_converters:pipe.add(conv, update_cols=False)
 
         return pipe
 
@@ -222,3 +217,16 @@ class PipeUtils():
             if   check_strong and component_name_to_check == c.info.name : return True
             elif not check_strong and component_name_to_check in c.info.name : return True
         return False
+
+    @staticmethod
+    def check_if_there_component_with_col_in_components(component_list, features, except_component):
+        """For a given list of features and a list of components, see if there are components taht provide this feature
+        If yes, True, otherwise False
+        """
+        for c in component_list : 
+            if c.info.outputs[0] != except_component.info.outputs[0] :
+                for f in ComponentUtils.clean_irrelevant_features(c.info.spark_output_column_names, True):
+                    if f in features : return True
+
+        return False
+        

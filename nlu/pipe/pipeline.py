@@ -21,6 +21,7 @@ from nlu.pipe.pipe_utils import PipeUtils
 from pyspark.sql.types import StructType,StructField, StringType, IntegerType
 from nlu.pipe.component_resolution import extract_classifier_metadata_from_nlu_ref
 from nlu.pipe.storage_ref_utils import StorageRefUtils
+from nlu.pipe.component_utils import ComponentUtils
 
 class BasePipe(dict):
     # we inherhit from dict so the pipe is indexable and we have a nice shortcut for accessing the spark nlp model
@@ -83,14 +84,14 @@ class BasePipe(dict):
         component.model.setOutputCol(new_output_name)
         component.info.spark_output_column_names = [new_output_name]
 
-    def add(self, component, nlu_reference="default_name", pretrained_pipe_component=False):
+    def add(self, component, nlu_reference="default_name", pretrained_pipe_component=False, update_cols = True):
         '''
 
         :param component:
         :param nlu_reference: NLU references, passed for components that are used specified and not automatically generate by NLU
         :return:
         '''
-        if hasattr(component.info,'nlu_ref'): nlu_reference =   component.info.nlu_ref # TODO ALL PIPE components muss implement this then we can remove this tenerary operator here
+        if hasattr(component.info,'nlu_ref'): nlu_reference = component.info.nlu_ref
 
         # self.nlu_reference = component.info.nlu_ref if component.info
 
@@ -99,6 +100,7 @@ class BasePipe(dict):
         # Spark NLP model reference shortcut
 
         name = component.info.name.replace(' ', '').replace('train.', '')
+
         if StorageRefUtils.has_storage_ref(component):
             name = name +'@' + StorageRefUtils.extract_storage_ref(component)
         logger.info(f"Adding {name} to internal pipe")
@@ -110,23 +112,25 @@ class BasePipe(dict):
         if 'embed' in component.info.type and nlu_reference not in self.keys() and not pretrained_pipe_component:
             # new_output_column = nlu_reference
             # new_output_column = new_output_column.replace('.', '_')
-            # component.nlu_reference = nlu_reference
             # component.model.setOutputCol(new_output_column)
             # component.info.spark_output_column_names = [new_output_column]
             # component.info.name = new_output_column
             self[name] = component.info.name
         # name parsed from component info, dont fiddle with column names of components unwrapped from pretrained pipelines
         elif name not in self.keys():
-            component.nlu_reference = nlu_reference
+            component.info.nlu_ref = nlu_reference
             self[name] = component.model
         else:  # default name applied
-            new_output_column = component.info.outputs[0] + '@' + nlu_reference
-            new_output_column = new_output_column.replace('.', '_')
-            component.nlu_reference = nlu_reference
-            component.model.setOutputCol(new_output_column)
-            component.info.spark_output_column_names = [new_output_column]
-            component.info.name = new_output_column
-            self[new_output_column] = component.model
+            nlu_identifier = ComponentUtils.get_nlu_ref_identifier(component)
+            new_output_column = component.info.outputs[0] + '@' + nlu_identifier
+            # new_output_column = new_output_column.replace('.', '_')
+            component.info.nlu_ref = nlu_reference
+
+            if update_cols :
+                component.model.setOutputCol(new_output_column)
+                component.info.spark_output_column_names = [new_output_column]
+                component.info.name = new_output_column
+            self[component.info.name +"@"+ nlu_identifier] = component.model
         # self.component_execution_plan.update()
 
 class NLUPipeline(BasePipe):
@@ -1158,7 +1162,7 @@ class NLUPipeline(BasePipe):
         '''
         import os
         f = open(os.path.join(path,'nlu_info.txt'), "w")
-        f.write(self.nlu_reference)
+        f.write(self.nlu_ref)
         f.close()
         #1. Write all primitive pipe attributes to dict
         # pipe_data = {

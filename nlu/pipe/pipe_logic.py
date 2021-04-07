@@ -148,8 +148,7 @@ class PipelineQueryVerifier():
     @staticmethod
     def with_missing_ner_converters(pipe: NLUPipeline) -> NLUPipeline:
         '''
-        Returns the pipeline with missing NER converters added, for every NER model.
-        The converters transform the IOB schema in a merged and more usable form for downstream tasks
+
         :param pipe: The pipeline wea dd NER converters to
         :return: new pipeline with NER converters added
         '''
@@ -306,11 +305,8 @@ class PipelineQueryVerifier():
         :return: NLU pipeline where the output and input column names of the models have been adjusted to each other
         '''
         logger.info("Fixing input and output column names")
-
         # pipe = PipeUtils.enforce_AT_schema_on_pipeline(pipe)
 
-
-        ## TODO THIS IS RENAMING CHUNK_EMB TO WORD_EMB AND BREAKS SORT!@@
         for component_to_check in pipe.components:
             input_columns = set(component_to_check.info.spark_input_column_names)
             # a component either has '' storage ref or at most 1
@@ -395,27 +391,24 @@ class PipelineQueryVerifier():
         # main entry point for Model stacking withouth pretrained pipelines
         # requirements and provided features will be lists of lists
 
-        # 1. Resolve dependencies, builds a DAG in reverse and satisfies dependencies with a Breadth-First-Search approach
+        #1. Resolve dependencies, builds a DAG in reverse and satisfies dependencies with a Breadth-First-Search approach
         logger.info('Satisfying dependencies')
         pipe = PipelineQueryVerifier.satisfy_dependencies(pipe)
 
-        # 2. Enforce naming schema <col_name>@<storage_ref> for storage_ref consumers and producers and <entity@nlu_ref> and <ner@nlu_ref> for NER and NER-Converters
+        #2. Enforce naming schema <col_name>@<storage_ref> for storage_ref consumers and producers and <entity@nlu_ref> and <ner@nlu_ref> for NER and NER-Converters
+        # and add NER-IOB to NER-Pretty converters for every NER model that is not already feeding a NER converter
         pipe = PipeUtils.enforce_AT_schema_on_pipeline(pipe)
 
-
-        # 3. add NER-IOB to NER-Pretty converters for every NER model that is not already feeding a NER converter
-        pipe = PipelineQueryVerifier.with_missing_ner_converters(pipe)
-
-        #  4. Validate naming of output columns is correct and no error will be thrown in spark
+        #3. Validate naming of output columns is correct and no error will be thrown in spark
         logger.info('Fixing column names')
         pipe = PipelineQueryVerifier.check_and_fix_component_output_column_name_satisfaction(pipe)
 
-        # 5.  fix order
+        #4.   fix order
         logger.info('Optimizing pipe component order')
         pipe = PipelineQueryVerifier.check_and_fix_component_order(pipe)
 
 
-        # 6. Set on every NLP Annotator the output columns
+        #5. Set on every NLP Annotator the output columns
         pipe = PipeUtils.enforce_NLU_columns_to_NLP_columns(pipe)
 
         # 7. Check if output column names overlap, if yes, fix
@@ -438,26 +431,31 @@ class PipelineQueryVerifier():
     @staticmethod
     def check_and_fix_component_order(pipe: NLUPipeline):
         '''
-        This method takes care that the order of components is the correct in such a way,
-        that the pipeline can be iteratively processed by spark NLP.
-        If output_level == Document, then sentence embeddings will be fed on Document col and classifiers recieve doc_embeds/doc_raw column, depending on if the classifier works with or withouth embeddings
-        If output_level == sentence, then sentence embeddings will be fed on sentence col and classifiers recieve sentence_embeds/sentence_raw column, depending on if the classifier works with or withouth embeddings. IF sentence detector is missing, one will be added.
-
+        This method takes care that the order of components is the correct in such a way,that the pipeline can be iteratively processed by spark NLP.
+        Column Names will not be touched. DAG Task Sort basically.
         '''
         logger.info("Starting to optimize component order ")
         correct_order_component_pipeline = []
         all_components_orderd = False
         all_components = pipe.components
         provided_features = []
+        update_last_type = False
+        last_type_sorted = None
         while all_components_orderd == False:
+            if update_last_type : last_type_sorted = None
+            else : update_last_type = True
             for component in all_components:
                 logger.info(f"Optimizing order for component {component.info.name}")
                 input_columns = ComponentUtils.clean_irrelevant_features(component.info.spark_input_column_names, True)
-                if set(input_columns).issubset(provided_features):
-                    correct_order_component_pipeline.append(component)
-                    if component in all_components: all_components.remove(component)
-                    # for feature in component.info.spark_output_column_names: provided_features.append(feature)
-                    provided_features += ComponentUtils.clean_irrelevant_features(component.info.spark_output_column_names,True)
+                if last_type_sorted is None or component.info.type == last_type_sorted:
+                    if set(input_columns).issubset(provided_features):
+                        correct_order_component_pipeline.append(component)
+                        if component in all_components: all_components.remove(component)
+                        # for feature in component.info.spark_output_column_names: provided_features.append(feature)
+                        provided_features += ComponentUtils.clean_irrelevant_features(component.info.spark_output_column_names,True)
+                        last_type_sorted = component.info.type
+                        update_last_type = False
+                        break
             if len(all_components) == 0: all_components_orderd = True
 
         pipe.components = correct_order_component_pipeline

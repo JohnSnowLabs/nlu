@@ -125,7 +125,7 @@ class ComponentUtils():
     @staticmethod
     def is_NER_provider(component:SparkNLUComponent) -> bool:
         """Check if a NLU Component wraps a NER/NER-Medical model """
-        return component.info.name in ['named_entity_recognizer_dl', 'medical_named_entity_recognizer_dl']
+        return component.info.name.split('@')[0] in ['named_entity_recognizer_dl', 'medical_named_entity_recognizer_dl','ner']
 
     @staticmethod
     def is_NER_converter(component:SparkNLUComponent) -> bool:
@@ -147,7 +147,7 @@ class ComponentUtils():
         """Extract the exact name of the NER-converter  column in the component"""
         if column == 'input':
             for f in component.info.spark_input_column_names:
-                if 'entities' in f : return f
+                if 'ner' in f : return f
         if column == 'output':
             for f in component.info.spark_output_column_names:
                 if 'entities' in f : return f
@@ -220,11 +220,9 @@ class ComponentUtils():
          If result is '' uses component ID as fallback
          """
         tail = ''
-        if hasattr(component, 'nlu_ref') and component.nlu_ref !='':
-            tail = component.nlu_ref.split('.')[-1]
-        elif  hasattr(component, 'nlu_reference') and component.nlu_reference !='':
-            tail = component.nlu_reference.split('.')[-1]
-
-        if tail != '' : return tail
+        if hasattr(component.info, 'nlu_ref') and component.info.nlu_ref !='':
+            tail = component.info.nlu_ref.split('.')[-1].split('@')[-1]
+        if tail != '' :
+            return tail
         else : return str(component.model)
 
