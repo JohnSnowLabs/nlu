@@ -49,9 +49,21 @@ def default_NER_converter_licensed_config(output_col_prefix='entities'):
     return SparkNLPExtractorConfig(
         output_col_prefix   = output_col_prefix,
         get_result          = True,
-        get_meta            = True,
+        get_full_meta       = True,
         meta_white_list     = ['entity','confidence'], #sentence, chunk
         name                = 'default_ner',
-        description         = 'NER with IOB tags and confidences for them',
+        description         = 'Converts IOB-NER representation into entity representation and generates confidences for the entire entity chunk',
+    )
+
+def default_chunk_resolution_config(output_col_prefix='resolved_entities'):
+    """Extracts NER tokens withouth positions, just the IOB tags,confidences and classified tokens """
+    return SparkNLPExtractorConfig(
+        output_col_prefix   = output_col_prefix,
+        get_result          = True,
+        get_meta            = True,
+        meta_white_list     = ['all_k_resolutions','all_k_distances', 'all_k_results','confidence','distance','target_text','all_k_aux_labels',
+                               ], #sentence, chunk
+        name                = 'default_ner',
+        description         = 'Converts IOB-NER representation into entity representation and generates confidences for the entire entity chunk',
     )
 

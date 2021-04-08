@@ -35,8 +35,9 @@ HC_anno2config = {
     },
 
     ChunkEntityResolverModel : {
-        'default': '',# TODO
+        'default': default_chunk_resolution_config,
         'default_full'  : default_full_config,
+        # Todo instead of topK return Best
     },
 
     DeIdentificationModel : {

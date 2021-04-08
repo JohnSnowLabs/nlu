@@ -159,7 +159,7 @@ def extract_master(row:pd.Series ,configs:SparkNLPExtractorConfig ) -> pd.Series
     return pd.Series(
         {
             **base_annos,
-            ** all_metas
+            **all_metas
         })
 
 
@@ -177,6 +177,7 @@ def apply_extractors_and_merge(df, column_to_extractor_map):
     extractor = lambda c : df[c].apply(extract_master, configs = column_to_extractor_map[c])
     # apply the extract_master together with it's configs to every column and geenrate a list of output DF's, one per Spark NLP COL
     # extracted_columns = list( map(extractor,cs))
+    # return pd.concat(list(map(extractor,column_to_extractor_map.keys())), axis=1, ignore_index=True) # merged_extraction_df
     return pd.concat(list(map(extractor,column_to_extractor_map.keys())), axis=1) # merged_extraction_df
 
 
