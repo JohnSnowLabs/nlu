@@ -67,3 +67,26 @@ def default_chunk_resolution_config(output_col_prefix='resolved_entities'):
         description         = 'Converts IOB-NER representation into entity representation and generates confidences for the entire entity chunk',
     )
 
+def default_relation_extraction_positional_config(output_col_prefix='extracted_relations'):
+    """Extracts NER tokens withouth positions, just the IOB tags,confidences and classified tokens """
+    return SparkNLPExtractorConfig(
+        output_col_prefix   = output_col_prefix,
+        get_result          = True,
+        meta_white_list     = [],
+        get_meta            = True,
+        meta_black_list     = ['entity1_begin','entity2_begin','entity1_end','entity2_end',],
+        name                = 'default_relation_extraction',
+        description         = 'Get relation extraction result and all metadata, positions of entities excluded',
+    )
+
+
+def positional_relation_extraction_config(output_col_prefix='extracted_relations'):
+    """Extracts NER tokens withouth positions, just the IOB tags,confidences and classified tokens """
+    return SparkNLPExtractorConfig(
+        output_col_prefix   = output_col_prefix,
+        get_result          = True,
+        get_meta            = True,
+        get_full_meta       = True,
+        name                = 'positional_relation_extraction',
+        description         = 'Get relation extraction result and all metadata, which will include positions of entities chunks',
+    )

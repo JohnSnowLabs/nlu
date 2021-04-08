@@ -45,12 +45,14 @@ HC_anno2config = {
         'default_full'  : default_full_config,
     },
     RelationExtractionModel : {
-        'default': '',# TODO
+        'default': default_relation_extraction_positional_config,
+        'positional': positional_relation_extraction_config,
         'default_full'  : default_full_config,
     },
 
     RelationExtractionDLModel : {
-        'default': '',# TODO
+        'default': default_relation_extraction_positional_config,
+        'positional': positional_relation_extraction_config,
         'default_full'  : default_full_config,
     },
 
