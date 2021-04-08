@@ -15,7 +15,7 @@ from sparknlp.base import *
 
 # from sparknlp.annotator import DocumentAssembler
 
-from nlu.extractors.extractor_configs import *
+from nlu.extractors.extractor_configs_open_source import *
 OC_anno2config = {
     NerConverter : {
         'default': default_ner_converter_config ,

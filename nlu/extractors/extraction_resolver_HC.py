@@ -9,9 +9,18 @@ Every Annotator should have 2 configs. Some might offor multuple configs/method 
                                 If a document has multi-sentences, this will map a label back to a corrosponding sentence
 
 """
-from nlu.extractors.extractor_configs import *
+from nlu.extractors.extractor_configs_open_source import *
+from nlu.extractors.extractor_configs_healthcare import *
+
 from sparknlp_jsl.annotator  import *
 HC_anno2config = {
+
+
+    NerConverterInternal : {
+        'default': default_NER_converter_licensed_config,
+        'default_full'  : default_full_config,
+    },
+
     AssertionDLModel : {
         'default': '',# TODO
         'default_full'  : default_full_config,

@@ -36,6 +36,9 @@ def default_full_config(output_col_prefix='DEFAULT'):
         get_meta            = True,
         get_full_meta       = True,
         get_annotator_type  = True,
+        name                = 'default_full',
+        description         = 'Default full configuration, keeps all data and gets all metadata fields',
+
     )
 
 def default_document_config(output_col_prefix='document'):
@@ -52,8 +55,8 @@ def default_NER_config(output_col_prefix='NER'):
         get_result          = True,
         get_meta            = True,
         meta_white_list     = ['confidence'],
-        name                = 'NER with IOB tags and confidences for them. ',
-        description         = 'NER with IOB tags and confidences for them. ',
+        name                = 'default_ner',
+        description         = 'NER with IOB tags and confidences for them',
     )
 
 def default_language_classifier_config(output_col_prefix='language'):
@@ -76,7 +79,7 @@ def default_only_result_config(output_col_prefix):
         output_col_prefix   = output_col_prefix,
         get_result          = True,
         name                = 'Default result extractor',
-        description         = 'Just get the result field'
+        description         = 'Just gets the result field'
     )
 def default_only_embedding_config(output_col_prefix):
     return SparkNLPExtractorConfig(
@@ -177,77 +180,3 @@ def default_sentence_detector_config(output_col_prefix='sentence'):
 
 
 
-
-
-
-
-#OLD BACKUP
-#
-#
-#
-#
-#
-# def meta_extract_language_classifier_max_confidence(row,configs):
-#     ''' Extract the language classificationw ith highest confidence and drop the others '''
-#     # Get the best, but what about TOP K! todo
-#     # TODO conditional sentence extraction and mroe docs
-#     #unpack all confidences to float and set 'sentence' key value to -1 so it does not affect finding the highest cnfidence
-#     unpack_dict_values = lambda x : -1 if 'sentence' in x[0]  else float(x[1][0])
-#     l = list(map(unpack_dict_values,row.items()))
-#     m = np.argmax(l)
-#     k = list(row.keys())[m]
-#
-#     return {k+'_confidence' : row[k][0]} # remoe [0] for list return
-#
-#
-# def meta_extract_maximum_binary_confidence(row,configs):
-#     ''' Extract the maximum confidence for a binary classifier that returns 2 confidences.
-#     key schema is 'meta_' + configs.output_col_prefix + '_confidence'
-#
-#     Parameters
-#     -------------
-#     configs : SparkNLPExtractorConfig
-#     if configs.get_sentence_origin is True, the sentence origin column will be kept, otherwise dropped.
-#
-#
-#     row : dict
-#         i.e. looks like {'meta_sentiment_dl_sentence': ['0', '1', '2'], 'meta_sentiment_dl_pos': ['1.0', '1.0', '1.0'], 'meta_sentiment_dl_neg': ['5.5978343E-11', '5.5978343E-11', '5.5978343E-11']}
-#
-#     Returns
-#     ------------
-#     dict
-#       if configs.get_sentence_origin True  {'meta_sentiment_dl_sentence': ['0', '1'], 'meta_sentiment_dl_confidence': [0.9366506, 0.9366506]}
-#       else {'meta_sentiment_dl_confidence': [0.9366506, 0.9366506]}
-#     '''
-#     # TODO inline these variables
-#     meta_sent_key = 'meta_' + configs.output_col_prefix + '_sentence'
-#     meta_conf_key_neg = 'meta_' + configs.output_col_prefix + '_neg'
-#     meta_conf_key_pos = 'meta_' + configs.output_col_prefix + '_pos'
-#     # Zip Pos/Neg conf column and keep max
-#     keep_max = lambda x: max(float(x[0]), float(x[1]))
-#     return {
-#         **{'meta_' + configs.output_col_prefix + '_confidence':list(map(keep_max,zip(row[meta_conf_key_pos],row[meta_conf_key_neg])))},
-#         **({'meta_' + configs.output_col_prefix + '_sentence' : row[meta_sent_key]} if configs.get_sentence_origin else {})
-#     }
-#
-#
-# def default_sentiment_dl_config(output_col_prefix='sentiment_dl'):
-#     return SparkNLPExtractorConfig(
-#         output_col_prefix   = output_col_prefix,
-#         get_result          = True,
-#         get_full_meta       = True,
-#         name                = 'Only keep maximum sentiment confidence ',
-#         description         = 'Instead of returning the confidence for Postive and Negative, only the confidence of the more likely class will be returned in the confidence column',
-#         meta_data_extractor = SparkNLPExtractor(meta_extract_maximum_binary_confidence,
-#                                                 'Instead of returining positive/negative confidence, only the maximum confidence will be returned withouth sentence number reference.',
-#                                                 'Maximum binary confidence')
-#     )
-#
-# def default_sentiment_vivk_config(output_col_prefix='vivk_sentiment'):
-#     return SparkNLPExtractorConfig(
-#         output_col_prefix   = output_col_prefix,
-#         get_result          = True,
-#         get_full_meta       = True,
-#         name                = 'Default sentiment vivk',
-#         description         = 'Get prediction confidence and the resulting label'
-#     )

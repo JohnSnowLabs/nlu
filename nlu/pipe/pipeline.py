@@ -895,16 +895,16 @@ class NLUPipeline(BasePipe):
             if type(c.model) in OC_anno2config.keys():
                 if OC_anno2config[type(c.model)]['default'] == '' :
                     logger.info(f'could not find default configs, using full default for model ={c.model}')
-                    anno_2_ex_config[c.info.spark_output_column_names[0]] = OC_anno2config[type(c.model)]['default_full'](output_col_prefix=c.info.name)
+                    anno_2_ex_config[c.info.spark_output_column_names[0]] = OC_anno2config[type(c.model)]['default_full'](output_col_prefix=c.info.outputs[0])
                 else :
-                    anno_2_ex_config[c.info.spark_output_column_names[0]] = OC_anno2config[type(c.model)]['default'](output_col_prefix=c.info.name)
+                    anno_2_ex_config[c.info.spark_output_column_names[0]] = OC_anno2config[type(c.model)]['default'](output_col_prefix=c.info.outputs[0])
             else:
                 from nlu.extractors.extraction_resolver_HC import HC_anno2config
                 if HC_anno2config[type(c.model)]['default'] == '' :
                     logger.info(f'could not find default configs in hc resolver space, using full default for model ={c.model}')
-                    anno_2_ex_config[c.info.spark_output_column_names[0]] = HC_anno2config[type(c.model)]['default_full'](output_col_prefix=c.info.name)
+                    anno_2_ex_config[c.info.spark_output_column_names[0]] = HC_anno2config[type(c.model)]['default_full'](output_col_prefix=c.info.outputs[0])
                 else :
-                    anno_2_ex_config[c.info.spark_output_column_names[0]] = HC_anno2config[type(c.model)]['default'](output_col_prefix=c.info.name)
+                    anno_2_ex_config[c.info.spark_output_column_names[0]] = HC_anno2config[type(c.model)]['default'](output_col_prefix=c.info.outputs[0])
         return anno_2_ex_config
 
     def unpack_and_apply_extractors(self,sdf:pyspark.sql.DataFrame):

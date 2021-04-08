@@ -110,6 +110,7 @@ def extract_sparknlp_metadata(row : pd.Series, configs:SparkNLPExtractorConfig)-
 
     returns one DICT which will be merged into pd.Serise by the extractor calling this exctractor for .apply() in pythonify
     """
+    if len(row) == 0: return {}
     unpack_dict_list = lambda d, k : d[k]
     # extract list of metadata dictionaries (all dict should have same keys)
     unpack_metadata_to_dict_list = lambda x : unpack_dict_list(x,'metadata')
@@ -154,7 +155,6 @@ def extract_master(row:pd.Series ,configs:SparkNLPExtractorConfig ) -> pd.Series
     if configs.meta_data_extractor.name != '':
         all_metas = configs.meta_data_extractor.extractor_method(all_metas,configs)
 
-    # TODO OTHER CUSTOM EXTRACTOR METHODS!
     # Apply Finishers on metadata/additional fields
     return pd.Series(
         {
