@@ -46,6 +46,7 @@ class PipeUtils():
         3.1 Update NER Models    output to <ner-iob>@<nlu_ref_identifier>
         3.2 Update NER Converter input  to <ner-iob>@<nlu_ref_identifier>
         3.3 Update NER Converter output to <entities>@<nlu_ref_identifier>
+        4. Update every Component that feeds from the NER converter (i.e. Resolver etc..)
         """
         from nlu import Util
         new_converters = []
@@ -88,6 +89,15 @@ class PipeUtils():
                 converter_to_update.info.outputs = [new_NER_converter_AT_ref]
                 converter_to_update.info.spark_output_column_names = [new_NER_converter_AT_ref]
                 converter_to_update.model.setOutputCol(new_NER_converter_AT_ref)
+
+                ## todo improve, this causes the first ner producer to feed to all ner-cosnuners. All other ner-producers will be ignored by ner-consumers,w ithouth special syntax or manual configs
+                ##4. Update all NER consumers input columns
+                for conversion_consumer in pipe.components :
+                    if 'entities' in conversion_consumer.info.inputs:
+                        conversion_consumer.info.inputs.remove('entities')
+                        conversion_consumer.info.spark_input_column_names.remove('entities')
+                        conversion_consumer.info.inputs.append(new_NER_converter_AT_ref)
+                        conversion_consumer.info.spark_input_column_names.append(new_NER_converter_AT_ref)
 
         # Add new converters to pipe
         for conv in new_converters:
