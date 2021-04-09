@@ -49,7 +49,6 @@ def default_NER_converter_licensed_config(output_col_prefix='entities'):
     return SparkNLPExtractorConfig(
         output_col_prefix   = output_col_prefix,
         get_result          = True,
-        get_full_meta       = True,
         meta_white_list     = ['entity','confidence'], #sentence, chunk
         name                = 'default_ner',
         description         = 'Converts IOB-NER representation into entity representation and generates confidences for the entire entity chunk',
@@ -85,8 +84,15 @@ def positional_relation_extraction_config(output_col_prefix='extracted_relations
     return SparkNLPExtractorConfig(
         output_col_prefix   = output_col_prefix,
         get_result          = True,
-        get_meta            = True,
-        get_full_meta       = True,
+        name                = 'default_de_identifier_extraction',
+        description         = 'Get the original text, but with entities like Persons replaced by anonymous labels.',
+    )
+
+def default_de_identification_config(output_col_prefix='de_identified'):
+    """Extracts NER tokens withouth positions, just the IOB tags,confidences and classified tokens """
+    return SparkNLPExtractorConfig(
+        output_col_prefix   = output_col_prefix,
+        get_result          = True,
         name                = 'positional_relation_extraction',
         description         = 'Get relation extraction result and all metadata, which will include positions of entities chunks',
     )

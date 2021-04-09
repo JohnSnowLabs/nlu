@@ -41,7 +41,7 @@ HC_anno2config = {
     },
 
     DeIdentificationModel : {
-        'default': '',# TODO
+        'default': default_de_identification_config,
         'default_full'  : default_full_config,
     },
     RelationExtractionModel : {
