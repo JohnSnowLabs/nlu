@@ -194,6 +194,10 @@ def default_lemma_config(output_col_prefix='lemma'):
     return default_only_result_config(output_col_prefix)
 def default_stemm_config(output_col_prefix='stemm'):
     return default_only_result_config(output_col_prefix)
+def default_norm_config(output_col_prefix='norm'):
+    return default_only_result_config(output_col_prefix)
+def default_norm_document_config(output_col_prefix='norm_document'):
+    return default_only_result_config(output_col_prefix)
 
 def default_sentence_detector_config(output_col_prefix='sentence'):
     return default_only_result_config(output_col_prefix)

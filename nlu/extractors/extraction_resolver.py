@@ -111,12 +111,16 @@ OC_anno2config = {
         'default': default_lemma_config,
         'default_full'  : default_full_config,
     },
+    Normalizer : {
+        'default': default_norm_config,
+        'default_full'  : default_full_config,
+    },
     NormalizerModel : {
-        'default': '',# TODO
+        'default': default_norm_config,
         'default_full'  : default_full_config,
     },
     DocumentNormalizer : {
-        'default' # TODO
+        'default':default_norm_document_config,
         'default_full'  : default_full_config,
     }
     ,
@@ -125,7 +129,7 @@ OC_anno2config = {
         'default_full'  : default_full_config,
     },
     NerDLModel : {
-        'default': default_NER_config,# TODO
+        'default': default_NER_config,
         'default_full'  : default_full_config,
     },
     NerCrfModel : {
@@ -165,7 +169,7 @@ OC_anno2config = {
         'default_full'  : default_full_config,
     },
     ChunkEmbeddings : {
-        'default': default_chunk_embedding_config,# TODO
+        'default': default_chunk_embedding_config,
         'default_full'  : default_full_config,
     },
     StopWordsCleaner : {
