@@ -214,3 +214,11 @@ def default_dep_typed_config(output_col_prefix='dependency_typed'):
 
 
 
+def default_spell_norvig_config(output_col_prefix='spell_checked'):
+    return default_only_result_config(output_col_prefix)
+
+def default_spell_context_config(output_col_prefix='spell_checked'):
+    return default_only_result_config(output_col_prefix)
+
+def default_spell_symmetric_config(output_col_prefix='spell_checked'):
+    return default_only_result_config(output_col_prefix)

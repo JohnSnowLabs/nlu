@@ -94,15 +94,15 @@ OC_anno2config = {
         'default_full'  : default_full_config,
     },
     ContextSpellCheckerModel : {
-        'default': '',# TODO
+        'default': default_spell_context_config,
         'default_full'  : default_full_config,
     },
     SymmetricDeleteModel : {
-        'default': '',# TODO
+        'default': default_spell_symmetric_config,
         'default_full'  : default_full_config,
     },
     NorvigSweetingModel : {
-        'default': '',# TODO
+        'default': default_spell_norvig_config,
         'default_full'  : default_full_config,
     },
     LemmatizerModel : {
