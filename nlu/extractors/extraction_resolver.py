@@ -69,8 +69,6 @@ OC_anno2config = {
         'default': default_sentence_embedding_config,
         'default_full'  : default_full_config,
     },
-
-
     Tokenizer : {
         'default': default_tokenizer_config,
         'default_full'  : default_full_config,
@@ -83,7 +81,7 @@ OC_anno2config = {
         'default': default_tokenizer_config,
         'default_full'  : default_full_config,
     },
-      DocumentAssembler : {
+    DocumentAssembler : {
         'default': default_document_config,
           'default_full'  : default_full_config,
     },
@@ -122,8 +120,7 @@ OC_anno2config = {
     DocumentNormalizer : {
         'default':default_norm_document_config,
         'default_full'  : default_full_config,
-    }
-    ,
+    },
     Stemmer : {
         'default': default_stemm_config,
         'default_full'  : default_full_config,
@@ -141,11 +138,11 @@ OC_anno2config = {
         'default_full'  : default_full_config,
     },
     DependencyParserModel : {
-        'default': '',# TODO
+        'default': default_dep_untyped_config,
         'default_full'  : default_full_config,
     },
     TypedDependencyParserModel : {
-        'default': '',# TODO
+        'default': default_dep_typed_config,
         'default_full'  : default_full_config,
     },
     SentimentDLModel : {
@@ -192,11 +189,11 @@ OC_anno2config = {
         'default_full'  : default_full_config,
     },
     T5Transformer : {
-        'default': '',# TODO
+        'default': default_T5_config,
         'default_full'  : default_full_config,
     },
     MarianTransformer : {
-        'default': '',# TODO
+        'default': default_marian_config,
         'default_full'  : default_full_config,
     },
     # PretrainedPipeline : {

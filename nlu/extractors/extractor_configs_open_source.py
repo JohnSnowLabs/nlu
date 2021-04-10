@@ -167,10 +167,10 @@ def default_chunker_config(output_col_prefix='matched_chunk'):
 def default_ner_converter_config(output_col_prefix='ner_chunk'):
     return default_only_result_config(output_col_prefix)
 
-# RLY TR%?
 def default_T5_config(output_col_prefix='T5'):
     return default_only_result_config(output_col_prefix)
-
+def default_marian_config(output_col_prefix='translated'):
+    return default_only_result_config(output_col_prefix)
 
 
 # EMBEDS
@@ -205,7 +205,11 @@ def default_sentence_detector_config(output_col_prefix='sentence'):
 
 
 
+def default_dep_untyped_config(output_col_prefix='dependency_untyped'):
+    return default_only_result_config(output_col_prefix)
 
+def default_dep_typed_config(output_col_prefix='dependency_typed'):
+    return default_only_result_config(output_col_prefix)
 
 
 
