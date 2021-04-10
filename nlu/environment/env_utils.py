@@ -11,23 +11,23 @@ def get_pyspark_major_and_minor():
 
 def is_env_pyspark_3_1():
     v = get_pyspark_major_and_minor()
-    if v[0] == '3' and v[1] == ['1'] : return True
+    if v[0] == '3' and v[1] == '1' : return True
     return False
 
 def is_env_pyspark_3_0():
     v = get_pyspark_major_and_minor()
-    if v[0] == '3' and v[1] == ['0'] : return True
+    if v[0] == '3' and v[1] == '0' : return True
     return False
 
 
 def is_env_pyspark_2_4():
     v = get_pyspark_major_and_minor()
-    if v[0] == '2' and v[1] == ['4'] : return True
+    if v[0] == '2' and v[1] == '4' : return True
     return False
 
 def is_env_pyspark_2_3():
     v = get_pyspark_major_and_minor()
-    if v[0] == '2' and v[1] == ['3'] : return True
+    if v[0] == '2' and v[1] == '3' : return True
     return False
 
 
