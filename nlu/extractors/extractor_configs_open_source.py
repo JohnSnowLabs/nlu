@@ -114,7 +114,7 @@ def default_sentiment_dl_config(output_col_prefix='sentiment_dl'):
 
 
 
-def default_sentiment_config(output_col_prefix='sentiment_dl'):
+def default_sentiment_config(output_col_prefix='sentiment'):
     return SparkNLPExtractorConfig(
         output_col_prefix   = output_col_prefix,
         get_result          = True,
@@ -125,6 +125,9 @@ def default_sentiment_config(output_col_prefix='sentiment_dl'):
                                                 'Instead of returining positive/negative confidence, only the maximum confidence will be returned withouth sentence number reference.',
                                                 'Maximum binary confidence')
     )
+
+
+
 def default_sentiment_vivk_config(output_col_prefix='vivk_sentiment'):
     return SparkNLPExtractorConfig(
         output_col_prefix   = output_col_prefix,
@@ -135,6 +138,17 @@ def default_sentiment_vivk_config(output_col_prefix='vivk_sentiment'):
     )
 
 
+
+def default_classifier_dl_config(output_col_prefix='classifier_dl'):
+    return SparkNLPExtractorConfig(
+        output_col_prefix   = output_col_prefix,
+        get_result          = True,
+        get_full_meta       = True,
+        pop_result_list     = True,
+        name                = 'default_classifier_dl',
+        description         = 'Instead of returning returning all confidences, returns only the max confidence.',
+        meta_data_extractor = SparkNLPExtractor(meta_extract_classifier_dl_max_confidence,'Maximum  confidence', 'max_confidence')
+    )
 
 
 def default_tokenizer_config(output_col_prefix='token'):

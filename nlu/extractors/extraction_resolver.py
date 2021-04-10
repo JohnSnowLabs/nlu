@@ -32,7 +32,7 @@ OC_anno2config = {
 
     },
     ClassifierDLModel : {
-        'default': '',# TODO
+        'default': default_classifier_dl_config,
         'default_full'  : default_full_config,
     },
     BertEmbeddings : {
