@@ -33,7 +33,6 @@ def default_full_config(output_col_prefix='DEFAULT'):
         get_end             = True,
         get_embeds          = True,
         get_result          = True,
-        get_meta            = True,
         get_full_meta       = True,
         get_annotator_type  = True,
         name                = 'default_full',
@@ -95,4 +94,16 @@ def default_de_identification_config(output_col_prefix='de_identified'):
         get_result          = True,
         name                = 'positional_relation_extraction',
         description         = 'Get relation extraction result and all metadata, which will include positions of entities chunks',
+    )
+
+
+def default_assertion_config(output_col_prefix='assertion'):
+    """Extracts NER tokens withouth positions, just the IOB tags,confidences and classified tokens """
+    return SparkNLPExtractorConfig(
+        output_col_prefix   = output_col_prefix,
+        get_result          = True,
+        name                = 'default_assertion_extraction',
+        get_meta            = True,
+        meta_white_list     = ['confidence'],
+        description         = 'Gets the assertion result and confidence',
     )

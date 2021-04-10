@@ -13,10 +13,6 @@ Contains dataclases which represent Extractors and their configuration
 - What if you want multiple output cols, one per extractor method? 
 
 """
-from typing import Callable
-from typing import List, Dict, Set, Dict, Tuple, Optional
-from dataclasses import dataclass, field
-from typing import Callable
 from typing import List, Dict, Set, Dict, Tuple, Optional, Any
 from typing import Callable
 from typing import List, Dict, Set, Dict, Tuple, Optional

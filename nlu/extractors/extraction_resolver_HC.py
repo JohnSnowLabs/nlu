@@ -13,6 +13,8 @@ from nlu.extractors.extractor_configs_open_source import *
 from nlu.extractors.extractor_configs_healthcare import *
 
 from sparknlp_jsl.annotator  import *
+# Todo one dict for Spark2 and one for Spark3, because medical NER will give errors when importing in Spark 2
+
 HC_anno2config = {
 
 
@@ -22,22 +24,22 @@ HC_anno2config = {
     },
 
     AssertionDLModel : {
-        'default': '',# TODO
+        'default': default_assertion_config,
         'default_full'  : default_full_config,
     },
     AssertionLogRegModel : {
-        'default': '',# TODO
+        'default': default_assertion_config,
         'default_full'  : default_full_config,
     },
     SentenceEntityResolverModel : {
-        'default': '',# TODO
+        'default': default_chunk_resolution_config,
         'default_full'  : default_full_config,
     },
 
     ChunkEntityResolverModel : {
         'default': default_chunk_resolution_config,
         'default_full'  : default_full_config,
-        # Todo instead of topK return Best
+        # Todo instead of topK return Best and pre-rpcoess results, i.e. splti on :::
     },
 
     DeIdentificationModel : {

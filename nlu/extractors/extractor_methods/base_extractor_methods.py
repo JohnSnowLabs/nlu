@@ -159,7 +159,7 @@ def extract_master(row:pd.Series ,configs:SparkNLPExtractorConfig ) -> pd.Series
     return pd.Series(
         {
             **base_annos,
-            **all_metas
+            ** all_metas
         })
 
 

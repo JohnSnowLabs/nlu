@@ -106,12 +106,25 @@ def default_sentiment_dl_config(output_col_prefix='sentiment_dl'):
         get_result          = True,
         get_full_meta       = True,
         name                = 'Only keep maximum sentiment confidence ',
-        description         = 'Instead of returning the confidence for Postive and Negative, only the confidence of the more likely class will be returned in the confidence column',
-        meta_data_extractor = SparkNLPExtractor(meta_extract_maximum_binary_confidence,
+        description         = 'Instead of r eturning the confidence for Postive and Negative, only the confidence of the more likely class will be returned in the confidence column',
+        meta_data_extractor = SparkNLPExtractor(meta_extract_maximum_binary_confidence_sentiment_dl,
                                                 'Instead of returining positive/negative confidence, only the maximum confidence will be returned withouth sentence number reference.',
                                                 'Maximum binary confidence')
     )
 
+
+
+def default_sentiment_config(output_col_prefix='sentiment_dl'):
+    return SparkNLPExtractorConfig(
+        output_col_prefix   = output_col_prefix,
+        get_result          = True,
+        get_full_meta       = True,
+        name                = 'Only keep maximum sentiment confidence ',
+        description         = 'Instead of returning the confidence for Postive and Negative, only the confidence of the more likely class will be returned in the confidence column',
+        meta_data_extractor = SparkNLPExtractor(meta_extract_maximum_binary_confidence_sentiment,
+                                                'Instead of returining positive/negative confidence, only the maximum confidence will be returned withouth sentence number reference.',
+                                                'Maximum binary confidence')
+    )
 def default_sentiment_vivk_config(output_col_prefix='vivk_sentiment'):
     return SparkNLPExtractorConfig(
         output_col_prefix   = output_col_prefix,

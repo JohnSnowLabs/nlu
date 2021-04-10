@@ -149,7 +149,7 @@ OC_anno2config = {
         'default_full'  : default_full_config,
     },
     SentimentDetectorModel : {
-        'default': '',# TODO
+        'default': default_sentiment_config,
         'default_full'  : default_full_config,
     },
     ViveknSentimentModel : {
