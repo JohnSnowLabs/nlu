@@ -12,9 +12,8 @@
     "token"
   ],
   "type": "labeled_dependency",
-  "file_dependencies": {},
   "spark_input_column_names": [
-    "dependency",
+    "unlabeled_dependency",
     "pos",
     "token"
   ],
