@@ -134,7 +134,7 @@ OC_anno2config = {
         'default_full'  : default_full_config,
     },
     LanguageDetectorDL : {
-        'default': '',# TODO
+        'default': default_lang_classifier_config,
         'default_full'  : default_full_config,
     },
     DependencyParserModel : {
@@ -158,11 +158,11 @@ OC_anno2config = {
         'default_full'  : default_full_config,
     },
     Chunker : {
-        'default': '',# TODO
+        'default': default_chunk_config,
         'default_full'  : default_full_config,
     },
     NGramGenerator : {
-        'default': '',# TODO
+        'default': default_ngram_config,
         'default_full'  : default_full_config,
     },
     ChunkEmbeddings : {
@@ -181,9 +181,9 @@ OC_anno2config = {
         'default': '',# TODO
         'default_full'  : default_full_config,
     },
-    # DateMatcher : {
-    #     'default': default_'',# TODO
-    # },
+    DateMatcher : {
+        'default':'',# TODO
+    },
     MultiDateMatcher : {
         'default': '',# TODO
         'default_full'  : default_full_config,

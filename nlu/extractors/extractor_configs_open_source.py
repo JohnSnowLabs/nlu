@@ -43,6 +43,7 @@ def default_full_config(output_col_prefix='DEFAULT'):
 def default_document_config(output_col_prefix='document'):
     return SparkNLPExtractorConfig(
         output_col_prefix   = output_col_prefix,
+        pop_result_list     = True,
         get_result          = True,
     )
 
@@ -113,6 +114,19 @@ def default_sentiment_dl_config(output_col_prefix='sentiment_dl'):
                                                 'Maximum binary confidence')
     )
 
+def default_lang_classifier_config(output_col_prefix='sentiment_dl'):
+    return SparkNLPExtractorConfig(
+        output_col_prefix   = output_col_prefix,
+        get_result          = True,
+        get_full_meta       = True,
+        pop_meta_list       = True,
+        pop_result_list     = True,
+        name                = 'default_lang_classifier_config',
+        description         = 'Instead of returning the confidence for every language, just returns the confidence of the most likely language',
+        meta_data_extractor = SparkNLPExtractor(extract_maximum_confidence,
+                                                'Instead of returining positive/negative confidence, only the maximum confidence will be returned withouth sentence number reference.',
+                                                'Maximum binary confidence')
+    )
 
 
 def default_sentiment_config(output_col_prefix='sentiment'):
@@ -221,4 +235,9 @@ def default_spell_context_config(output_col_prefix='spell_checked'):
     return default_only_result_config(output_col_prefix)
 
 def default_spell_symmetric_config(output_col_prefix='spell_checked'):
+    return default_only_result_config(output_col_prefix)
+def default_ngram_config(output_col_prefix='ngram'):
+    return default_only_result_config(output_col_prefix)
+
+def default_chunk_config(output_col_prefix='matched_chunk'):
     return default_only_result_config(output_col_prefix)
