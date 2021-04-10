@@ -33,6 +33,7 @@ def default_full_config(output_col_prefix='DEFAULT'):
         get_end             = True,
         get_embeds          = True,
         get_result          = True,
+        get_meta            = True,
         get_full_meta       = True,
         get_annotator_type  = True,
         name                = 'default_full',

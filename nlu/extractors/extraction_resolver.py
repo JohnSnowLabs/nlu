@@ -22,7 +22,7 @@ OC_anno2config = {
         'default_full'  : default_full_config,
     },
     MultiClassifierDLModel : {
-        'default': '',# TODO
+        'default': default_multi_classifier_dl_config ,
         'default_full'  : default_full_config,
 
     },
@@ -32,7 +32,7 @@ OC_anno2config = {
 
     },
     ClassifierDLModel : {
-        'default': default_classifier_dl_config,
+        'default': default_multi_classifier_dl_config,
         'default_full'  : default_full_config,
     },
     BertEmbeddings : {
@@ -196,7 +196,7 @@ OC_anno2config = {
         'default_full'  : default_full_config,
     },
     # PretrainedPipeline : {
-    #     'default' : '', #TODO RLY?
+    #     'default' : '',
     # }
 }
 

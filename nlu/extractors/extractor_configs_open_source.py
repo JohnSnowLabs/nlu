@@ -40,7 +40,6 @@ def default_full_config(output_col_prefix='DEFAULT'):
         description         = 'Default full configuration, keeps all data and gets all metadata fields',
 
     )
-
 def default_document_config(output_col_prefix='document'):
     return SparkNLPExtractorConfig(
         output_col_prefix   = output_col_prefix,
@@ -95,6 +94,7 @@ def default_only_result_and_positions_config(output_col_prefix):
         output_col_prefix   = output_col_prefix,
         get_result          = True,
         get_positions       = True,
+
         name                = 'Positional result only default',
         description         = 'Get the result field and the positions'
     )
@@ -105,9 +105,10 @@ def default_sentiment_dl_config(output_col_prefix='sentiment_dl'):
         output_col_prefix   = output_col_prefix,
         get_result          = True,
         get_full_meta       = True,
+        pop_result_list     = True,
         name                = 'Only keep maximum sentiment confidence ',
         description         = 'Instead of r eturning the confidence for Postive and Negative, only the confidence of the more likely class will be returned in the confidence column',
-        meta_data_extractor = SparkNLPExtractor(meta_extract_maximum_binary_confidence_sentiment_dl,
+        meta_data_extractor = SparkNLPExtractor(extract_maximum_confidence,
                                                 'Instead of returining positive/negative confidence, only the maximum confidence will be returned withouth sentence number reference.',
                                                 'Maximum binary confidence')
     )
@@ -119,9 +120,10 @@ def default_sentiment_config(output_col_prefix='sentiment'):
         output_col_prefix   = output_col_prefix,
         get_result          = True,
         get_full_meta       = True,
+        pop_result_list     = True,
         name                = 'Only keep maximum sentiment confidence ',
         description         = 'Instead of returning the confidence for Postive and Negative, only the confidence of the more likely class will be returned in the confidence column',
-        meta_data_extractor = SparkNLPExtractor(meta_extract_maximum_binary_confidence_sentiment,
+        meta_data_extractor = SparkNLPExtractor(extract_maximum_confidence,
                                                 'Instead of returining positive/negative confidence, only the maximum confidence will be returned withouth sentence number reference.',
                                                 'Maximum binary confidence')
     )
@@ -133,21 +135,18 @@ def default_sentiment_vivk_config(output_col_prefix='vivk_sentiment'):
         output_col_prefix   = output_col_prefix,
         get_result          = True,
         get_full_meta       = True,
+        pop_result_list     = True,
         name                = 'Default sentiment vivk',
         description         = 'Get prediction confidence and the resulting label'
     )
 
-
-
-def default_classifier_dl_config(output_col_prefix='classifier_dl'):
+def default_multi_classifier_dl_config(output_col_prefix='classifier_dl'):
     return SparkNLPExtractorConfig(
         output_col_prefix   = output_col_prefix,
         get_result          = True,
         get_full_meta       = True,
-        pop_result_list     = True,
-        name                = 'default_classifier_dl',
-        description         = 'Instead of returning returning all confidences, returns only the max confidence.',
-        meta_data_extractor = SparkNLPExtractor(meta_extract_classifier_dl_max_confidence,'Maximum  confidence', 'max_confidence')
+        name                = 'default_multi_classifier_dl',
+        description         = 'Get all predicted confidences and labels',
     )
 
 

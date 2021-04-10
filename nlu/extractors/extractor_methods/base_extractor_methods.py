@@ -145,6 +145,7 @@ def extract_master(row:pd.Series ,configs:SparkNLPExtractorConfig ) -> pd.Series
     """
     Re-Usable base extractor for simple Annotators like Document/Token/etc..?
     extract_universal/?/Better name?
+    row = a list or Spark-NLP annotations as dictionary
     """
     # Get base annotations
     base_annos = extract_base_sparknlp_features(row,configs)
@@ -173,7 +174,7 @@ def apply_extractors_and_merge(df, column_to_extractor_map):
     # TODO ???? merge columns_to_extract and  column_to_extractor_map into one var? Just use d.keys() or smth
     # TODO WHAT ABOUT NON-SparkNLP columns!?!?!? MERGE THEM IN HERE SOMEEHWHE
     """
-    # keep df and ex_resolver in colsure and aply base extractor with configs for each col
+    # keep df and ex_resolver in closure and apply base extractor with configs for each col
     extractor = lambda c : df[c].apply(extract_master, configs = column_to_extractor_map[c])
     # apply the extract_master together with it's configs to every column and geenrate a list of output DF's, one per Spark NLP COL
     # extracted_columns = list( map(extractor,cs))
