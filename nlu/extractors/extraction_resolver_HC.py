@@ -16,8 +16,10 @@ from sparknlp_jsl.annotator  import *
 # Todo one dict for Spark2 and one for Spark3, because medical NER will give errors when importing in Spark 2
 
 HC_anno2config = {
-
-
+    MedicalNerModel : {
+        'default': '',
+        'default_full'  : default_full_config,
+    },
     NerConverterInternal : {
         'default': default_NER_converter_licensed_config,
         'default_full'  : default_full_config,

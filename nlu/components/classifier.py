@@ -19,10 +19,11 @@ class Classifier(SparkNLUComponent):
             elif 'pos' in nlu_ref and 'ner' not in nlu_ref:  annotator_class= 'pos'
             elif 'pos' in nlp_ref and 'ner' not in nlp_ref:  annotator_class= 'pos'
 
+            elif 'icd' in nlu_ref: annotator_class= 'classifier_dl'
+            elif 'med_ner' in nlu_ref: annotator_class= 'ner_healthcare'
             elif 'ner' in nlu_ref: annotator_class= 'ner'
             elif 'ner' in nlp_ref: annotator_class= 'ner'
-            elif 'icd' in nlu_ref: annotator_class= 'classifier_dl'
-        
+
         if model != None : self.model = model
         else :
             if 'sentiment' in annotator_class and 'vivekn' not in annotator_class:
@@ -35,23 +36,16 @@ class Classifier(SparkNLUComponent):
                 from nlu import ViveknSentiment
                 if get_default : self.model = ViveknSentiment.get_default_model()
                 else : self.model = ViveknSentiment.get_pretrained_model(nlp_ref, language)
-            elif 'ner' in annotator_class or 'ner.dl' in annotator_class:
+            elif 'ner' in annotator_class  and 'ner_healthcare' not in annotator_class:
                 from nlu import NERDL
                 if trainable : self.model = NERDL.get_default_trainable_model()
                 elif is_licensed : self.model = NERDL.get_pretrained_model(nlp_ref, language, bucket='clinical/models')
                 elif get_default : self.model = NERDL.get_default_model()
                 else : self.model = NERDL.get_pretrained_model(nlp_ref, language)
-
-
             elif 'ner.crf' in annotator_class:
                 from nlu import NERDLCRF
                 if get_default : self.model = NERDLCRF.get_default_model()
                 else : self.model = NERDLCRF.get_pretrained_model(nlp_ref, language)
-            # elif 'multi_classifier_dl' in annotator_class:
-            #     from nlu import MultiClassifier
-            #     if trainable : self.model = MultiClassifier.get_default_trainable_model()
-            #     elif get_default : self.model = MultiClassifier.get_default_model()
-            #     else : self.model = MultiClassifier.get_pretrained_model(nlp_ref, language)
             elif ('classifier_dl' in annotator_class or annotator_class == 'toxic') and not 'multi' in annotator_class:
                 from nlu import ClassifierDl
                 if trainable: self.model = ClassifierDl.get_trainable_model()
@@ -77,6 +71,9 @@ class Classifier(SparkNLUComponent):
                 if trainable : self.model = MultiClassifier.get_default_trainable_model()
                 elif get_default : self.model = MultiClassifier.get_default_model()
                 else : self.model = MultiClassifier.get_pretrained_model(nlp_ref, language)
+            elif 'ner_healthcare' in annotator_class:
+                from nlu.components.classifiers.ner_healthcare.ner_dl_healthcare import NERDLHealthcare
+                if trainable : self.model     = NERDLHealthcare.get_default_trainable_model()
+                else : self.model = NERDLHealthcare.get_pretrained_model(nlp_ref, language, bucket='clinical/models')
 
-
-        SparkNLUComponent.__init__(self, annotator_class, component_type, nlu_ref, lang,loaded_from_pretrained_pipe )
+        SparkNLUComponent.__init__(self, annotator_class, component_type, nlu_ref, nlp_ref, lang,loaded_from_pretrained_pipe , is_licensed)

@@ -4,7 +4,7 @@ class SentenceResolver:
     @staticmethod
     def get_pretrained_model(name, language, bucket='clinical/models'):
         return SentenceEntityResolverModel.pretrained(name, language,bucket) \
-            .setInputCols(["sentence_embeddings"])\
+            .setInputCols(['entities',"sentence_embeddings"])\
             .setOutputCol("sentence_resolution")
 
     @staticmethod

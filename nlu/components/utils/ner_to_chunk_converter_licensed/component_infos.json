@@ -1,24 +1,27 @@
 {
-  "name": "ngram",
+  "name": "ner_to_chunk_converter_licensed",
   "description": "todo",
-  "output_level": "chunk",
   "trainable": false,
+  "output_level": "chunk",
   "outputs": [
-    "ngrams"
+    "entities"
   ],
   "inputs": [
+    "sentence",
     "token",
-    "pos"
+    "ner"
   ],
-  "type": "chunker",
+  "type": "util",
   "spark_input_column_names": [
-    "token"
+    "sentence",
+    "token",
+    "ner"
   ],
   "spark_output_column_names": [
-    "ngrams"
+    "entities"
   ],
   "provider": "sparknlp",
-  "license": "open source",
+  "license": "healthcare",
   "computation_context": "spark",
   "output_context": "spark"
 }

@@ -23,7 +23,13 @@ extractors defined in extractor_methods.py.
 
 """
 from nlu.extractors.extractor_methods.base_extractor_methods import *
-
+def default_only_result_config(output_col_prefix):
+    return SparkNLPExtractorConfig(
+        output_col_prefix   = output_col_prefix,
+        get_result          = True,
+        name                = 'Default result extractor',
+        description         = 'Just gets the result field'
+    )
 
 def default_full_config(output_col_prefix='DEFAULT'):
     return SparkNLPExtractorConfig(
@@ -108,3 +114,6 @@ def default_assertion_config(output_col_prefix='assertion'):
         meta_white_list     = ['confidence'],
         description         = 'Gets the assertion result and confidence',
     )
+
+def default_chunk_config(output_col_prefix='med_ner'):
+    return default_only_result_config(output_col_prefix)

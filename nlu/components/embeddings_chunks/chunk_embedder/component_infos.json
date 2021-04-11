@@ -11,7 +11,6 @@
     "word_embeddings"
   ],
   "type": "chunk_embeddings",
-  "file_dependencies": {},
   "spark_input_column_names": [
     "entities",
     "word_embeddings"

@@ -1,5 +1,5 @@
 {
-    "name": "NerToChunkConverter",
+  "name": "ner_to_chunk_converter",
   "description": "todo",
   "trainable": false,
   "output_level": "chunk",
@@ -12,7 +12,6 @@
     "ner"
   ],
   "type": "util",
-  "file_dependencies": {},
   "spark_input_column_names": [
     "sentence",
     "token",

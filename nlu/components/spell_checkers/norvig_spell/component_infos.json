@@ -4,20 +4,17 @@
   "description": "todo",
   "trainable": true,
   "outputs": [
-    "token"
+    "spell_checked"
   ],
   "inputs": [
     "token"
   ],
   "type": "spell_checker",
-  "file_dependencies": {
-    "dictionary": "path_to_dict"
-  },
   "spark_input_column_names": [
     "token"
   ],
   "spark_output_column_names": [
-    "checked"
+    "spell_checked"
   ],
   "provider": "sparknlp",
   "license": "open source",

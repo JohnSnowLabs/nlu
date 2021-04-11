@@ -11,7 +11,6 @@
     "sentence_embeddings"
   ],
   "type": "resolver",
-  "file_dependencies": {},
   "spark_input_column_names": [
     "entities",
     "sentence_embeddings"

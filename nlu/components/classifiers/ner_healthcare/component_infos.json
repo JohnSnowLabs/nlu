@@ -1,20 +1,24 @@
 {
-  "name": "symmetric_spell",
+  "name": "named_entity_recognizer_dl_healthcare",
   "output_level": "token",
   "description": "todo",
   "trainable": true,
   "outputs": [
-    "spell_checked"
+    "ner"
   ],
   "inputs": [
-    "token"
+    "sentence",
+    "token",
+    "word_embeddings"
   ],
-  "type": "spell_checker",
+  "type": "classifier",
   "spark_input_column_names": [
-    "token"
+    "sentence",
+    "token",
+    "word_embeddings"
   ],
   "spark_output_column_names": [
-    "spell_checked"
+    "ner"
   ],
   "provider": "sparknlp",
   "license": "open source",

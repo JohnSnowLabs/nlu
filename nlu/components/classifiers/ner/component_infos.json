@@ -12,9 +12,6 @@
     "word_embeddings"
   ],
   "type": "classifier",
-  "file_dependencies": {
-    "ner-corpus": " aws.com/123"
-  },
   "spark_input_column_names": [
     "sentence",
     "token",
