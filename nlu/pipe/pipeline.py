@@ -1,6 +1,6 @@
 import logging
 
-from nlu.extractors.extraction_resolver import OC_anno2config
+from nlu.extractors.extraction_resolver_OS import OS_anno2config
 from nlu.extractors.extractor_methods.base_extractor_methods import *
 
 logger = logging.getLogger('nlu')
@@ -885,41 +885,45 @@ class NLUPipeline(BasePipe):
         return same_output_level_fields, not_at_same_output_level_fields,multi_level_fields
 
 
-    def get_annotator_extraction_configs(self,):
+    def get_annotator_extraction_configs(self,full_meta):
         """Search first OC namespace and if not found the HC Namespace for each Annotator Class in pipeline and get corrosponding config
         Returns a dictionary of methods, where keys are column names values are methods  that are applied to extract and represent the data in these
         these columns in a more pythonic and panda-esque way
         """
         anno_2_ex_config = {}
         for c in self.components:
-            if type(c.model) in OC_anno2config.keys():
-                if OC_anno2config[type(c.model)]['default'] == '' :
+            if type(c.model) in OS_anno2config.keys():
+                if OS_anno2config[type(c.model)]['default'] == '' or full_meta:
                     logger.info(f'could not find default configs, using full default for model ={c.model}')
-                    anno_2_ex_config[c.info.spark_output_column_names[0]] = OC_anno2config[type(c.model)]['default_full'](output_col_prefix=c.info.outputs[0])
+                    anno_2_ex_config[c.info.spark_output_column_names[0]] = OS_anno2config[type(c.model)]['default_full'](output_col_prefix=c.info.outputs[0])
                 else :
-                    anno_2_ex_config[c.info.spark_output_column_names[0]] = OC_anno2config[type(c.model)]['default'](output_col_prefix=c.info.outputs[0])
+                    anno_2_ex_config[c.info.spark_output_column_names[0]] = OS_anno2config[type(c.model)]['default'](output_col_prefix=c.info.outputs[0])
             else:
                 from nlu.extractors.extraction_resolver_HC import HC_anno2config
-                if HC_anno2config[type(c.model)]['default'] == '' :
+                if HC_anno2config[type(c.model)]['default'] == '' or full_meta :
                     logger.info(f'could not find default configs in hc resolver space, using full default for model ={c.model}')
                     anno_2_ex_config[c.info.spark_output_column_names[0]] = HC_anno2config[type(c.model)]['default_full'](output_col_prefix=c.info.outputs[0])
                 else :
                     anno_2_ex_config[c.info.spark_output_column_names[0]] = HC_anno2config[type(c.model)]['default'](output_col_prefix=c.info.outputs[0])
         return anno_2_ex_config
 
-    def unpack_and_apply_extractors(self,sdf:pyspark.sql.DataFrame):
+    def unpack_and_apply_extractors(self,sdf:pyspark.sql.DataFrame, full_meta=False, keep_stranger_features=True, stranger_features=[])-> pd.DataFrame:
+        # todo here user either Spark/Modin/Some other Backend
         """1. Unpack SDF to PDF with Spark NLP Annotator Dictionaries
            2. Get the extractor configs for the corrosponding Annotator classes
            3. Apply The extractor configs with the extractor methods to each column and merge back with zip/explode"""
-        anno_2_ex_config = self.get_annotator_extraction_configs()
-        # todo here user either Spark/Modin/Some other Backend
+        anno_2_ex_config = self.get_annotator_extraction_configs(full_meta,)
         unpack_df = sdf.toPandas().applymap(extract_pyspark_rows)
-        return apply_extractors_and_merge(unpack_df,anno_2_ex_config)
+        return apply_extractors_and_merge(unpack_df,anno_2_ex_config, keep_stranger_features,stranger_features)
 
 
 
-    def pythonify_spark_dataframe(self, processed, get_different_level_output=True, keep_stranger_features=True,
-                                  stranger_features=[], drop_irrelevant_cols=True, output_metadata=False,
+    def pythonify_spark_dataframe(self, processed,
+                                  get_different_level_output=True,
+                                  keep_stranger_features=True,
+                                  stranger_features=[],
+                                  drop_irrelevant_cols=True,
+                                  output_metadata=False,
                                   index_provided=False):
         '''
         This functions takes in a spark dataframe with Spark NLP annotations in it and transforms it into a Pandas Dataframe with common feature types for further NLP/NLU downstream tasks.
@@ -959,10 +963,10 @@ class NLUPipeline(BasePipe):
         else:
             features_to_keep = list(set(processed.columns) - set(stranger_features))
             sdf = processed.select(features_to_keep)
-
-        if index_provided == False:
-            logger.info("Generating origin Index via Spark. May contain irregular distributed index values.")
-            sdf = sdf.withColumn(monotonically_increasing_id().alias('origin_index'))
+        #
+        # if index_provided == False:
+        #     logger.info("Generating origin Index via Spark. May contain irregular distributed index values.")
+        #     sdf = sdf.withColumn(monotonically_increasing_id().alias('origin_index'))
 
         # same_output_level_fields, not_at_same_output_level_fields,multi_level_fields = self.select_features_from_result(field_dict,
         #                                                                                              processed,
@@ -971,9 +975,11 @@ class NLUPipeline(BasePipe):
         #                                                                                              not_at_same_output_level_fields)
 
 
+# Get stranger features by iterating over DF
 
 
-        return self.unpack_and_apply_extractors(processed)
+
+        return self.unpack_and_apply_extractors(processed, output_metadata, keep_stranger_features, stranger_features)
 
 
         #
@@ -1271,9 +1277,9 @@ class NLUPipeline(BasePipe):
 
         # currently have to always fit, otherwise parameter changes wont take effect
         if output_level == 'sentence' or output_level == 'document':
-            self = PipeUtils.configure_component_output_levels(self)
-            self = PipeUtils.check_and_fix_nlu_pipeline(self)
-
+            # self = PipeUtils.configure_component_output_levels(self)
+            # self = PipeUtils.check_and_fix_nlu_pipeline(self)
+            1 # todo
 
         if not self.is_fitted :
             if self.has_trainable_components :

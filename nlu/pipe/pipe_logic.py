@@ -410,18 +410,11 @@ class PipelineQueryVerifier():
         #5. Set on every NLP Annotator the output columns
         pipe = PipeUtils.enforce_NLU_columns_to_NLP_columns(pipe)
 
-        # 7. Check if output column names overlap, if yes, fix
+        # 6. Check if output column names overlap, if yes, fix
         # pipe = PipelineQueryVerifier.check_and_fix_component_order(pipe)
         logger.info('Done with pipe optimizing')
 
         return pipe
-
-    @staticmethod
-    def get_converters_provider_info(embedding_provider,pipe):
-        """For a component and a pipe, find storage_ref and """
-
-
-
 
 
 
@@ -566,3 +559,6 @@ class PipelineQueryVerifier():
         """Check for embedding consumer if input level matches up outputlevel of consumer
         """
 
+    @staticmethod
+    def get_converters_provider_info(embedding_provider,pipe):
+        """For a component and a pipe, find storage_ref and """
