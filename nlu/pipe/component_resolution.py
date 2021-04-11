@@ -124,25 +124,29 @@ def set_storage_ref_and_resolution_on_component_info(c,storage_ref):
     return c
 def resolve_storage_ref(lang, storage_ref):
     """Returns a nlp_ref, nlu_ref and wether it is a licensed model or not"""
-    nlu_ref,nlp_ref,is_licensed = None,None,None
+    nlu_ref,nlp_ref,is_licensed = None,None,False
     # get nlu ref
-    if storage_ref in nlu.NameSpace.licensed_storage_ref_2_nlu_ref[lang].keys():
-        nlu_ref = nlu.NameSpace.licensed_storage_ref_2_nlu_ref[lang][storage_ref]
-        is_licensed = False
-    elif storage_ref in nlu.NameSpace.storage_ref_2_nlu_ref[lang].keys():
-        nlu_ref = nlu.NameSpace.storage_ref_2_nlu_ref[lang][storage_ref]
+    if lang in nlu.NameSpace.licensed_storage_ref_2_nlu_ref.keys():
+        if storage_ref in nlu.NameSpace.licensed_storage_ref_2_nlu_ref[lang].keys():
+            nlu_ref = nlu.NameSpace.licensed_storage_ref_2_nlu_ref[lang][storage_ref]
+            is_licensed = False
+    elif lang in nlu.NameSpace.storage_ref_2_nlu_ref.keys():
+        if storage_ref in nlu.NameSpace.storage_ref_2_nlu_ref[lang].keys():
+            nlu_ref = nlu.NameSpace.storage_ref_2_nlu_ref[lang][storage_ref] # a HC model may use OS storage_ref_provider, so we dont know yet if it is licensed or not
 
     # get nlp ref
-    if nlu_ref in nlu.NameSpace.pretrained_healthcare_model_references[lang].keys():
+
+    if nlu_ref in nlu.NameSpace.pretrained_models_references[lang].keys():
+        nlp_ref = nlu.NameSpace.pretrained_models_references[lang][nlu_ref]
+    elif nlu_ref in nlu.NameSpace.pretrained_healthcare_model_references[lang].keys():
         nlp_ref = nlu.NameSpace.pretrained_healthcare_model_references[lang][nlu_ref]
         is_licensed = True
-    elif nlu_ref in nlu.NameSpace.pretrained_pipe_references[lang].keys():
-        nlp_ref = nlu.NameSpace.pretrained_healthcare_model_references[lang][nlu_ref]
 
-    if nlu_ref == None or nlp_ref == None :
+    if nlu_ref == None and nlp_ref == None :
         logger.exception("COULD NOT RESOLVE STORAGE_REF")
         nlp_ref = storage_ref
         nlu_ref = storage_ref
+        raise  ValueError
 
     logger.info(f'Resolved storageref = {storage_ref} to NLU_ref = {nlu_ref} and NLP_ref = {nlp_ref}')
     return nlu_ref, nlp_ref, is_licensed

@@ -182,9 +182,20 @@ def apply_extractors_and_merge(df, column_to_extractor_map,  keep_stranger_featu
         list(map(extractor,column_to_extractor_map.keys())) +
         list(map(keep_stragers,stranger_features)) if keep_stranger_features else [],
         axis=1)
+    # return zip_and_explode(
+    #         pd.concat(
+    #             list(map(extractor,column_to_extractor_map.keys())) +
+    #             list(map(keep_stragers,stranger_features)) if keep_stranger_features else [],
+    #             axis=1))
 
 
-def zip_and_explode(df:pd.DataFrame, cols_to_explode:List[str], output_level, lower_output_level, higher_output_level, same_output_level):
+
+
+
+
+# def zip_and_explode(df:pd.DataFrame, cols_to_explode:List[str], output_level, lower_output_level, higher_output_level, same_output_level):
+def zip_and_explode(df:pd.DataFrame,origin_cols_to_explode, origin_cols_not_to_explode):
+
     """ returns a NEW dataframe where cols_to_explode are all exploded together
 
     Used to extract SAME OUTPUT LEVEL annotator outputs.
@@ -197,6 +208,11 @@ def zip_and_explode(df:pd.DataFrame, cols_to_explode:List[str], output_level, lo
     2. What are  columns higher than those at zip level. They will be unpacked from list
     3. What are columns below zip level? They will be left unotuched
     """
+    same_level_cols_filter      = lambda c : any( og_c in c  for og_c in origin_cols_to_explode)
+    not_same_level_cols_filter  = lambda c : any( og_c in c  for og_c in origin_cols_not_to_explode)
+    cols_to_explode             = list(filter(same_level_cols_filter,df.columns))
+    not_same_level_cols         = list(filter(not_same_level_cols_filter,df.columns))
+
     pd_col_extractor_generator = lambda col : lambda x :  df[col]
     explode_series  = lambda s : s.explode()
     pd_col_extractors = list(map(pd_col_extractor_generator,cols_to_explode))

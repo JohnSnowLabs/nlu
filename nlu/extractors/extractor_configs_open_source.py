@@ -239,6 +239,10 @@ def default_spell_symmetric_config(output_col_prefix='spell_checked'):
 def default_ngram_config(output_col_prefix='ngram'):
     return default_only_result_config(output_col_prefix)
 
+def default_word_segmenter_config(output_col_prefix='words_segmented'):
+    return default_only_result_config(output_col_prefix)
+
+
 def default_chunk_config(output_col_prefix='matched_chunk'):
     return default_only_result_config(output_col_prefix)
 

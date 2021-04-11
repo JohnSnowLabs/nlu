@@ -181,6 +181,7 @@ class NLUPipeline(BasePipe):
             'chunk': [ChunkTokenizerModel, ChunkTokenizerModel, ],
             'token': [ContextSpellCheckerModel, AlbertEmbeddings, BertEmbeddings, ElmoEmbeddings, WordEmbeddings,
                       XlnetEmbeddings, WordEmbeddingsModel,
+                      # NER models are token level, they give IOB predictions and cofidences for EVERY token!
                       NerDLModel, NerCrfModel, PerceptronModel, SymmetricDeleteModel, NorvigSweetingModel,
                       ContextSpellCheckerModel,
                       TypedDependencyParserModel, DependencyParserModel,
@@ -397,8 +398,7 @@ class NLUPipeline(BasePipe):
                 reorderd_fields_to_rename.pop(reorderd_fields_to_rename.index(col)))
 
         return reorderd_fields_to_rename
-    def rename_columns_and_extract_map_values_same_level(self, ptmp, fields_to_rename, same_output_level,
-                                                         stranger_features=[], meta=False):
+    def rename_columns_and_extract_map_values_same_level(self, ptmp, fields_to_rename, same_output_level,stranger_features=[], meta=False):
         '''
         Extract features of Spark DF after they where exploded it was exploded
         :param ptmp: The dataframe which contains the columns wto be renamed
@@ -916,6 +916,20 @@ class NLUPipeline(BasePipe):
         unpack_df = sdf.toPandas().applymap(extract_pyspark_rows)
         return apply_extractors_and_merge(unpack_df,anno_2_ex_config, keep_stranger_features,stranger_features)
 
+    def get_output_level_mapping(self)->Dict[str,str]:
+        """Get a dict where key=colname and val=output_level, inferred from processed dataframe and pipe that is currently running"""
+        return {c.info.outputs[0] :self.resolve_component_to_output_level(c)  for c in self.components}
+
+    def get_cols_at_same_output_level(self,col2output_level:Dict[str,str])->List[str]:
+        """Get List of cols which are at same output level as the pipe is currently configured to"""
+        # return [c.info.outputs[0]  for c in self.components if self.resolve_component_to_output_level(c) == self.output_level ]
+        return [c.info.outputs[0]  for c in self.components if col2output_level[c.info.outputs[0]] == self.output_level ]
+
+    def get_cols_not_at_same_output_level(self,col2output_level:Dict[str,str])->List[str]:
+        """Get List of cols which are not at same output level as the pipe is currently configured to"""
+        # return [c.info.outputs[0]  for c in self.components if not self.resolve_component_to_output_level(c) == self.output_level ]
+        return [c.info.outputs[0]  for c in self.components if not col2output_level[c.info.outputs[0]] == self.output_level ]
+
 
 
     def pythonify_spark_dataframe(self, processed,
@@ -947,40 +961,26 @@ class NLUPipeline(BasePipe):
         '''
         stranger_features += ['origin_index']
         self.infer_and_set_output_level()
-        # map field to type of field
-        # field_dict = self.get_field_types_dict(processed, stranger_features,keep_stranger_features)
-        not_at_same_output_level_fields = []
+        col2output_level                 = self.get_output_level_mapping()
+        same_output_level                = self.get_cols_at_same_output_level(col2output_level)
+        not_same_output_level            = self.get_cols_not_at_same_output_level(col2output_level)
 
-        if self.output_level == 'chunk':
-            # if output level is chunk, we must check if we actually have a chunk column in the pipe. So we search it
-            chunk_col = self.get_chunk_col_name()
-            same_output_level_fields = [chunk_col + '.result']
-        else: same_output_level_fields = [self.output_level + '.result']
+
 
         logger.info(f'Setting Output level as : {self.output_level}', )
 
-        if keep_stranger_features: sdf = processed.select(['*'])
-        else:
-            features_to_keep = list(set(processed.columns) - set(stranger_features))
-            sdf = processed.select(features_to_keep)
-        #
         # if index_provided == False:
         #     logger.info("Generating origin Index via Spark. May contain irregular distributed index values.")
         #     sdf = sdf.withColumn(monotonically_increasing_id().alias('origin_index'))
 
-        # same_output_level_fields, not_at_same_output_level_fields,multi_level_fields = self.select_features_from_result(field_dict,
-        #                                                                                              processed,
-        #                                                                                              stranger_features,
-        #                                                                                              same_output_level_fields,
-        #                                                                                              not_at_same_output_level_fields)
-
-
-# Get stranger features by iterating over DF
 
 
 
-        return self.unpack_and_apply_extractors(processed, output_metadata, keep_stranger_features, stranger_features)
 
+
+        return   self.unpack_and_apply_extractors(processed, output_metadata, keep_stranger_features, stranger_features)
+        # pretty_df=  self.unpack_and_apply_extractors(processed, output_metadata, keep_stranger_features, stranger_features)
+        # zip_and_explode(pretty_df, same_output_level, not_same_output_level)
 
         #
         #

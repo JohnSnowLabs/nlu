@@ -193,11 +193,15 @@ OS_anno2config = {
         'default': default_marian_config,
         'default_full'  : default_full_config,
     },
-
     YakeModel : {
         'default': default_yake_config,
         'default_full'  : default_full_config,
     },
+    WordSegmenterModel : {
+        'default': default_word_segmenter_config,
+        'default_full'  : default_full_config,
+    },
+
     # PretrainedPipeline : {
     #     'default' : '',
     # }
