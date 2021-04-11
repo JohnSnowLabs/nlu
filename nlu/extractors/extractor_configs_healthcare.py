@@ -115,5 +115,5 @@ def default_assertion_config(output_col_prefix='assertion'):
         description         = 'Gets the assertion result and confidence',
     )
 
-def default_chunk_config(output_col_prefix='med_ner'):
+def default_ner_config(output_col_prefix='med_ner'):
     return default_only_result_config(output_col_prefix)

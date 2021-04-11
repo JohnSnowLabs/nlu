@@ -241,3 +241,15 @@ def default_ngram_config(output_col_prefix='ngram'):
 
 def default_chunk_config(output_col_prefix='matched_chunk'):
     return default_only_result_config(output_col_prefix)
+
+
+def default_yake_config(output_col_prefix='keywords'):
+    """Extracts NER tokens withouth positions, just the IOB tags,confidences and classified tokens """
+    return SparkNLPExtractorConfig(
+        output_col_prefix   = output_col_prefix,
+        get_result          = True,
+        name                = 'default_yake',
+        get_meta            = True,
+        meta_white_list     = ['score'],
+        description         = 'Get all keywords and their confidences',
+    )

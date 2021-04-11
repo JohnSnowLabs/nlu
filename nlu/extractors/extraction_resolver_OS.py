@@ -16,7 +16,7 @@ from sparknlp.base import *
 # from sparknlp.annotator import DocumentAssembler
 
 from nlu.extractors.extractor_configs_open_source import *
-OC_anno2config = {
+OS_anno2config = {
     NerConverter : {
         'default': default_ner_converter_config ,
         'default_full'  : default_full_config,
@@ -29,7 +29,6 @@ OC_anno2config = {
     PerceptronModel : {
         'default': default_POS_config,
         'default_full'  : default_full_config,
-
     },
     ClassifierDLModel : {
         'default': default_multi_classifier_dl_config,
@@ -38,8 +37,6 @@ OC_anno2config = {
     BertEmbeddings : {
         'default': default_word_embedding_config,
         'default_full'  : default_full_config,
-
-
     },
     AlbertEmbeddings : {
         'default': default_word_embedding_config,
@@ -194,6 +191,11 @@ OC_anno2config = {
     },
     MarianTransformer : {
         'default': default_marian_config,
+        'default_full'  : default_full_config,
+    },
+
+    YakeModel : {
+        'default': default_yake_config,
         'default_full'  : default_full_config,
     },
     # PretrainedPipeline : {

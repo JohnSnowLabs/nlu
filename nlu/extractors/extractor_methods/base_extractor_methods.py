@@ -9,8 +9,9 @@ They expect dictionaries which represent the metadata field extracted from Spark
 """
 
 from pyspark.sql import Row as PysparkRow
-import pandas as pd
 from nlu.extractors.extractor_base_data_classes import *
+from functools import reduce, partial
+import pandas as pd
 
 def extract_pyspark_rows(r:pd.Series,)-> pd.Series:
     """ Convert pyspark.sql.Row[Annotation] to List(Dict[str,str]) objects. Except for key=metadata in dict, this element in the Dict which is [str,Dict[str,str]]
@@ -95,8 +96,7 @@ def extract_base_sparknlp_features(row:pd.Series, configs:SparkNLPExtractorConfi
     return {**beginnings,**endings,**results,**annotator_types, **embeddings} # Merge dicts
 
 
-from functools import reduce, partial
-import pandas as pd
+
 
 def extract_sparknlp_metadata(row : pd.Series, configs:SparkNLPExtractorConfig)-> dict:
     """
@@ -166,23 +166,25 @@ def extract_master(row:pd.Series ,configs:SparkNLPExtractorConfig ) -> pd.Series
 
 
 
-def apply_extractors_and_merge(df, column_to_extractor_map):
+def apply_extractors_and_merge(df, column_to_extractor_map,  keep_stranger_features,stranger_features):
     """ apply extract_master on all fields with corrosponding configs after converting Pyspark Rows to List[Dict]
     and merge them to a final DF (1 to 1 mapping still)
     df  The Df we want to apply the extractors on
     columns_to_extractor_map Map column names to extractor configs. Columns which are not in these keys will be ignored These configs will be passed to master_extractor for every column
-    # TODO ???? merge columns_to_extract and  column_to_extractor_map into one var? Just use d.keys() or smth
-    # TODO WHAT ABOUT NON-SparkNLP columns!?!?!? MERGE THEM IN HERE SOMEEHWHE
     """
     # keep df and ex_resolver in closure and apply base extractor with configs for each col
-    extractor = lambda c : df[c].apply(extract_master, configs = column_to_extractor_map[c])
+    extractor     = lambda c : df[c].apply(extract_master, configs = column_to_extractor_map[c])
+    keep_stragers = lambda c : df[c]
+
+    # merged_extraction_df
     # apply the extract_master together with it's configs to every column and geenrate a list of output DF's, one per Spark NLP COL
-    # extracted_columns = list( map(extractor,cs))
-    # return pd.concat(list(map(extractor,column_to_extractor_map.keys())), axis=1, ignore_index=True) # merged_extraction_df
-    return pd.concat(list(map(extractor,column_to_extractor_map.keys())), axis=1) # merged_extraction_df
+    return pd.concat(
+        list(map(extractor,column_to_extractor_map.keys())) +
+        list(map(keep_stragers,stranger_features)) if keep_stranger_features else [],
+        axis=1)
 
 
-def zip_and_explode(df:pd.DataFrame, cols_to_explode:List[str], lower_output_level, higher_output_level):
+def zip_and_explode(df:pd.DataFrame, cols_to_explode:List[str], output_level, lower_output_level, higher_output_level, same_output_level):
     """ returns a NEW dataframe where cols_to_explode are all exploded together
 
     Used to extract SAME OUTPUT LEVEL annotator outputs.

@@ -17,14 +17,13 @@ from sparknlp_jsl.annotator  import *
 
 HC_anno2config = {
     MedicalNerModel : {
-        'default': '',
+        'default': default_ner_config,
         'default_full'  : default_full_config,
     },
     NerConverterInternal : {
         'default': default_NER_converter_licensed_config,
         'default_full'  : default_full_config,
     },
-
     AssertionDLModel : {
         'default': default_assertion_config,
         'default_full'  : default_full_config,
@@ -37,7 +36,6 @@ HC_anno2config = {
         'default': default_chunk_resolution_config,
         'default_full'  : default_full_config,
     },
-
     ChunkEntityResolverModel : {
         'default': default_chunk_resolution_config,
         'default_full'  : default_full_config,
@@ -59,8 +57,6 @@ HC_anno2config = {
         'positional': positional_relation_extraction_config,
         'default_full'  : default_full_config,
     },
-
-
     Chunk2Token : {
         'default': '',# TODO
         'default_full'  : default_full_config,
