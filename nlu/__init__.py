@@ -1,40 +1,20 @@
-__version__ = '1.1.1'
+__version__ = '3.0.0'
 #
 # from nlu.component_resolution import parse_language_from_nlu_ref, nlu_ref_to_component, \
 #     construct_component_from_pipe_identifier
 import sys
-def check_pyspark_install():
-    try :
-        from pyspark.sql import SparkSession
-        try :
-            import sparknlp
-            v = sparknlp.start().version
-            spark_major = int(v.split('.')[0])
-            if spark_major >= 3 :
-                raise Exception()
-        except :
-            print(f"Detected pyspark version={v} Which is >=3.X\nPlease run '!pip install pyspark==2.4.7' or install any pyspark>=2.4.0 and pyspark<3")
-            # print(f"Or set nlu.load(version_checks=False). We disadvise from doing so, until Pyspark >=3 is officially supported in 2021.")
-            return False
-    except :
-        print("No Pyspark installed!\nPlease run '!pip install pyspark==2.4.7' or install any pyspark>=2.4.0 with pyspark<3")
-        return False
-    return True
-
-def check_python_version():
-    if float(sys.version[:3]) >= 3.8:
-        print("Please use a Python version with version number SMALLER than 3.8")
-        print("Python versions equal or higher 3.8 are currently NOT SUPPORTED by NLU")
-        return False
-    return True
 
 
+import nlu.environment.env_utils as env_utils
+import nlu.environment.authentication as auth_utils
 # if not check_pyspark_install(): raise Exception()
-if not check_python_version(): raise Exception()
+if not env_utils.check_python_version(): raise Exception()
 
 
 
 import nlu
+
+
 import logging
 from nlu.namespace import NameSpace
 import warnings
@@ -121,14 +101,14 @@ from nlu.components.tokenizer import Tokenizer
 from nlu.components.lemmatizer import Lemmatizer
 from nlu.components.stemmer import Stemmer
 from nlu.components.normalizer import Normalizer
-from nlu.components.stopwordscleaner import StopWordsCleaner
+from nlu.components.stopwordscleaner import StopWordsCleaner as StopWordsCleaners
+from nlu.components.stemmer import Stemmer as Stemmers
 from nlu.components.stemmers.stemmer.spark_nlp_stemmer import SparkNLPStemmer
 from nlu.components.normalizers.normalizer.spark_nlp_normalizer import SparkNLPNormalizer
 from nlu.components.normalizers.document_normalizer.spark_nlp_normalizer import SparkNLPDocumentNormalizer
 
 from nlu.components.lemmatizers.lemmatizer.spark_nlp_lemmatizer import SparkNLPLemmatizer
 from nlu.components.stopwordscleaners.stopwordcleaner.nlustopwordcleaner import NLUStopWordcleaner
-from nlu.components.stopwordscleaner import StopWordsCleaner
 ## spell
 from nlu.components.spell_checkers.norvig_spell.norvig_spell_checker import NorvigSpellChecker
 from nlu.components.spell_checkers.context_spell.context_spell_checker import ContextSpellChecker
@@ -153,11 +133,10 @@ from nlu.pipe.pipeline import NLUPipeline
 from nlu.pipe.pipe_utils import PipeUtils
 from nlu.pipe.pipe_logic import PipelineQueryVerifier
 from nlu.pipe.component_resolution import *
-global spark, active_pipes, all_components_info, nlu_package_location,authorized
+global spark, all_components_info, nlu_package_location,authorized
 is_authenticated=False
 nlu_package_location = nlu.__file__[:-11]
 
-active_pipes = []
 spark_started = False
 spark = None
 authenticated = False
@@ -169,122 +148,70 @@ discoverer = nlu.Discoverer()
 import os
 import sparknlp
 
-def install_and_import_healthcare(JSL_SECRET):
-    # pip install  spark-nlp-jsl==2.7.3 --extra-index-url https://pypi.johnsnowlabs.com/2.7.3-3f5059a2258ea6585a0bd745ca84dac427bca70c --upgrade
-    """ Install Spark-NLP-Healthcare PyPI Package in current enviroment if it cannot be imported and liscense provided"""
-    import importlib
-    try:
-        importlib.import_module('sparknlp_jsl')
-    except ImportError:
-        import pip
-        # Todo update to latest version of spark-nlp-jsl
-        print("Spark NLP Healthcare could not be imported. Installing latest spark-nlp-jsl PyPI package via pip...")
-        pip.main(['install', 'spark-nlp-jsl==2.7.3', '--extra-index-url', f'https://pypi.johnsnowlabs.com/{JSL_SECRET}'])
-    finally:
-        import site
-        from importlib import reload
-        reload(site)
-        globals()['sparknlp_jsl'] = importlib.import_module('sparknlp_jsl')
 
-def authenticate_enviroment(SPARK_NLP_LICENSE,AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY):
-    """Set Secret environ variables for Spark Context"""
-    import os
-    os.environ['SPARK_NLP_LICENSE'] = SPARK_NLP_LICENSE
-    os.environ['AWS_ACCESS_KEY_ID']= AWS_ACCESS_KEY_ID
-    os.environ['AWS_SECRET_ACCESS_KEY'] = AWS_SECRET_ACCESS_KEY
-
-def get_authenticated_spark(SPARK_NLP_LICENSE,AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY,JSL_SECRET):
-    """
-    Authenticates enviroment if not already done so and returns Spark Context with Healthcare Jar loaded
-    0. If no Spark-NLP-Healthcare, install it via PyPi
-    1. If not auth, run authenticate_enviroment()
-
-    """
-    install_and_import_healthcare(JSL_SECRET)
-    authenticate_enviroment(SPARK_NLP_LICENSE,AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY)
-
-    import sparknlp_jsl
-    return sparknlp_jsl.start(JSL_SECRET)
-
-def is_authorized_enviroment():
-    """ TODO"""
-    global is_authenticated
-    return is_authenticated
-
-def auth(SPARK_NLP_LICENSE,AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY,JSL_SECRET):
+def auth(SPARK_NLP_LICENSE,AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY,JSL_SECRET, gpu=False):
     """ Authenticate enviroment for JSL Liscensed models. Installs NLP-Healthcare if not in enviroment detected"""
-    global is_authenticated
-    is_authenticated = True
-    get_authenticated_spark(SPARK_NLP_LICENSE,AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY,JSL_SECRET)
-
+    auth_utils.get_authenticated_spark(SPARK_NLP_LICENSE,AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY,JSL_SECRET, gpu)
+    return nlu
 def read_nlu_info(path):
     f = open(os.path.join(path,'nlu_info.txt'), "r")
     nlu_ref = f.readline()
     f.close()
     return nlu_ref
 
-
-def is_running_in_databricks():
-    #Check if the currently running Python Process is running in Databricks or not
-    # If any Enviroment Variable name contains 'DATABRICKS' this will return True, otherwise False
-    for k in os.environ.keys() :
-        if 'DATABRICKS' in k :
-            return True
-    return False
-
 def load_nlu_pipe_from_hdd(pipe_path):
+    """Either there is a pipeline of models in the path or just one singular model.
+    If it is a pipe,  load the pipe and return it.
+    If it is a singular model, load it to the correct AnnotatorClass and NLU component and then generate pipeline for it
+    """
     pipe = NLUPipeline()
-    if nlu.is_running_in_databricks() :
-        if pipe_path.startswith('/dbfs/') or pipe_path.startswith('dbfs/'):
-            nlu_path = pipe_path
-            if pipe_path.startswith('/dbfs/'):
-                nlp_path =  pipe_path.replace('/dbfs','')
-            else :
-                nlp_path =  pipe_path.replace('dbfs','')
-
-        else :
-            nlu_path = 'dbfs/' + pipe_path
-            if pipe_path.startswith('/') : nlp_path = pipe_path
-            else : nlp_path = '/' + pipe_path
-
-        nlu_ref = read_nlu_info(nlu_path)
-        if os.path.exists(pipe_path):
-            # if os.path.exists(info_path):
-            pipe_components = construct_component_from_pipe_identifier(nlu_ref, nlu_ref, 'hdd', path=nlp_path)
-            # pipe_components = construct_component_from_pipe_identifier('nlu_ref','nlu_ref','hdd',path=pipe_path)
-
-            for c in pipe_components: pipe.add(c, nlu_ref, pretrained_pipe_component=True)
-
-            return pipe
-            # else:
-            #     print(f'Could not find nlu_info.json file in  {pipe_path}')
-            #     return NluError
-        else :
-            print(f'Could not find nlu pipe folder in {pipe_path}')
-            return NluError
-
-
-    nlu_ref = read_nlu_info(pipe_path)
+    # if env_utils.is_running_in_databricks() :
+    #     if pipe_path.startswith('/dbfs/') or pipe_path.startswith('dbfs/'):
+    #         nlu_path = pipe_path
+    #         if pipe_path.startswith('/dbfs/'):
+    #             nlp_path =  pipe_path.replace('/dbfs','')
+    #         else :
+    #             nlp_path =  pipe_path.replace('dbfs','')
+    #     else :
+    #         nlu_path = 'dbfs/' + pipe_path
+    #         if pipe_path.startswith('/') : nlp_path = pipe_path
+    #         else : nlp_path = '/' + pipe_path
+    nlu_ref=pipe_path # todo better
     if os.path.exists(pipe_path):
-        # if os.path.exists(info_path):
-        pipe_components = construct_component_from_pipe_identifier(nlu_ref, 'nlu_ref', 'hdd', path=pipe_path)
-        for c in pipe_components: pipe.add(c, nlu_ref, pretrained_pipe_component=True)
+        if offline_utils.is_pipe(pipe_path):
+            pipe_components = construct_component_from_pipe_identifier(nlu_ref, nlu_ref, 'hdd', path=pipe_path)
+        elif offline_utils.is_model(pipe_path):
+            c = offline_utils.verify_model(pipe_path)
+            pipe.add(c, nlu_ref, pretrained_pipe_component=True)
+            return PipelineQueryVerifier.check_and_fix_nlu_pipeline(pipe)
 
+        else :
+            print(f"Could not load model in path {pipe_path}. Make sure the folder contains either a stages subfolder or a metadata subfolder.")
+            raise ValueError
+        for c in pipe_components: pipe.add(c, nlu_ref, pretrained_pipe_component=True)
         return pipe
-        # else:
-        #     print(f'Could not find nlu_info.json file in  {pipe_path}')
-        #     return NluError
+
     else :
-        print(f'Could not find nlu pipe folder in {pipe_path}')
-        return NluError
+        print(f"Could not load model in path {pipe_path}. Make sure the folder contains either a stages subfolder or a metadata subfolder.")
+        raise ValueError
+
+
 def enable_verbose():
     logger.setLevel(logging.INFO)
     ch = logging.StreamHandler()
     ch.setLevel(logging.INFO)
     logger.addHandler(ch)
 
-# TODO IMPLEMENT AUTH PARAMS AND PASS THEM DOWN THE CALL STACK
-def load(request ='from_disk', path=None,verbose=False):
+from nlu.environment.env_utils import *
+
+def get_open_source_spark_context(gpu):
+    if is_env_pyspark_2_3(): return sparknlp.start(spark23=True, gpu=gpu)
+    if is_env_pyspark_2_4(): return sparknlp.start(spark24=True, gpu=gpu)
+    if is_env_pyspark_3_0() or is_env_pyspark_3_1(): return sparknlp.start(gpu=gpu)
+    print(f"Current Spark version {get_pyspark_version()} not supported!")
+    raise ValueError
+
+def load(request ='from_disk', path=None,verbose=False, gpu=False):
     '''
     Load either a prebuild pipeline or a set of components identified by a whitespace seperated list of components
     You must call nlu.auth() BEFORE calling nlu.load() to access licensed models.
@@ -300,18 +227,13 @@ def load(request ='from_disk', path=None,verbose=False):
     is_authenticated = True
     gc.collect()
     # if version_checks : check_pyspark_install()
-    spark = sparknlp.start()
+    spark = get_open_source_spark_context(gpu)
     spark.catalog.clearCache()
-
-    if verbose:
-        enable_verbose()
-    #
-    # try:
+    if verbose:enable_verbose()
 
     if path != None :
         logger.info(f'Trying to load nlu pipeline from local hard drive, located at {path}')
-        pipe = load_nlu_pipe_from_hdd(path)
-        return pipe
+        return load_nlu_pipe_from_hdd(path)
     components_requested = request.split(' ')
     pipe = NLUPipeline()
     language = parse_language_from_nlu_ref(request)

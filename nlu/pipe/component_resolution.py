@@ -23,6 +23,8 @@ Handler for getting default components, etcc.
 # 2. Squeeze in 9 Annotators in old extraction process, most annotators are like old ones
 #
 import nlu.environment.authentication as auth_utils
+import nlu.environment.offline_load_utils as offline_utils
+
 from pyspark.ml import PipelineModel
 from sparknlp import DocumentAssembler
 from sparknlp.annotator import NerConverter, MultiClassifierDLModel, PerceptronModel, ClassifierDLModel, \
@@ -43,7 +45,9 @@ from nlu.components.unlabeled_dependency_parser import UnlabeledDependencyParser
 from nlu.pipe.pipe_utils import PipeUtils
 from nlu.pipe.component_utils import ComponentUtils
 
-
+def load_offline_model(path):
+    c = offline_utils.verify_model(path)
+    return c
 def parse_language_from_nlu_ref(nlu_ref):
     """Parse a ISO language identifier from a NLU reference which can be used to load a Spark NLP model"""
     infos = nlu_ref.split('.')
@@ -468,7 +472,10 @@ def construct_component_from_pipe_identifier(language, nlp_ref, nlu_ref,path=Non
     from sparknlp.pretrained import PretrainedPipeline, LightPipeline
     if 'language' in nlp_ref: language = 'xx'  # special edge case for lang detectors
     if path == None :
-        pipe = PretrainedPipeline(nlp_ref, lang=language)
+        if is_licensed:
+            pipe = PretrainedPipeline(nlp_ref, lang=language,remote_loc='clinical/models')
+        else :
+            pipe = PretrainedPipeline(nlp_ref, lang=language)
         iterable_stages = pipe.light_model.pipeline_model.stages
     else :
         pipe = LightPipeline(PipelineModel.load(path=path))

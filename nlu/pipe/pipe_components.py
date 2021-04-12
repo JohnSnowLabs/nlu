@@ -1,4 +1,5 @@
-from nlu import *
+# from nlu import *
+import nlu
 class NLUComponent():
     '''
         This class loads all the components in the components folder.
@@ -28,15 +29,11 @@ class NLUComponent():
 
 class  SparkNLUComponent(NLUComponent):
     def __init__(self, component_name, component_type, nlu_ref='', nlp_ref='',lang='',loaded_from_pretrained_pipe=False, is_licensed=False):
-        # super().__init__(annotator_class, component_type)
-        # super(SparkNLUComponent,self).__init__(annotator_class, component_type)
-
         NLUComponent.__init__(self, component_name, component_type)
         self.info.nlu_ref = nlu_ref
         self.info.nlp_ref = nlp_ref
         self.info.lang    = lang
         self.info.loaded_from_pretrained_pipe = loaded_from_pretrained_pipe
-
         self.__set_missing_model_attributes__()
         if is_licensed : self.info.license = 'healthcare'
 
