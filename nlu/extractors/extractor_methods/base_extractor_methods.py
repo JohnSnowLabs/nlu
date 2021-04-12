@@ -190,7 +190,12 @@ def apply_extractors_and_merge(df, column_to_extractor_map,  keep_stranger_featu
 
 
 
-
+# def pad_series_for_multi_pad(s):
+#     """Sub token output level """
+#     # index_df.columns=cols_to_explode
+#     # df.explode
+#     # index_sizes = [d.groupby(d.index).size() for d in exploded_df_list]
+#     # index_df = pd.concat(index_sizes, axis=1)
 
 
 # def zip_and_explode(df:pd.DataFrame, cols_to_explode:List[str], output_level, lower_output_level, higher_output_level, same_output_level):
@@ -208,26 +213,32 @@ def zip_and_explode(df:pd.DataFrame,origin_cols_to_explode, origin_cols_not_to_e
     2. What are  columns higher than those at zip level. They will be unpacked from list
     3. What are columns below zip level? They will be left unotuched
     """
+    # Some queries will result in index duplication
     same_level_cols_filter      = lambda c : any( og_c in c  for og_c in origin_cols_to_explode)
-    not_same_level_cols_filter  = lambda c : any( og_c in c  for og_c in origin_cols_not_to_explode)
     cols_to_explode             = list(filter(same_level_cols_filter,df.columns))
-    not_same_level_cols         = list(filter(not_same_level_cols_filter,df.columns))
+    # not_same_level_cols_filter  = lambda c : any( og_c in c  for og_c in origin_cols_not_to_explode)
+    # not_same_level_cols         = list(filter(not_same_level_cols_filter,df.columns))
 
     pd_col_extractor_generator = lambda col : lambda x :  df[col]
-    explode_series  = lambda s : s.explode()
+    explode_series  = lambda s : s.explode()#.reset_index(drop=True)#.rename({'index':'origin_index'})#(drop=True)
     pd_col_extractors = list(map(pd_col_extractor_generator,cols_to_explode))
-    # series_to_explode = list(map(pd_col_extractors,df))
-    # meta_values_list = list(map(reduce_dict_list_to_values, dict_value_extractors))#, metadatas_dict_list,[] ))
-    # zip_and_explode(r,cols_to_explode = ['token_beginnings', 'token_endings'])
     # We call the pd series generator that needs a dummy call
     call = lambda x : x(0)
-    list_of_pd_series = list(map(call,pd_col_extractors))
-    # Call explode on every series object, returns a list of pd.Series objects, which have beene exploded
-    exploded_series_list = list(map(explode_series,list_of_pd_series))
+    list_of_pd_series_to_explod = list(map(call,pd_col_extractors))
+    # Call explode on every series object, returns a list of pd.Series objects, which have been exploded
+    exploded_series_list = list(map(explode_series,list_of_pd_series_to_explod))
     # Create pd.Dataframes from the pd.Series
-    series_list_to_df_list = list(map(pd.DataFrame,exploded_series_list))
+    exploded_df_list = list(map(pd.DataFrame,exploded_series_list))
     # merge results into final pd.DataFrame
-    merged_explosions = pd.concat([df.drop(cols_to_explode,axis=1)] +  series_list_to_df_list,axis=1)
-    # TODO, when out_level=sentence, then all higher shoud not be in list!!!. manyuall unwrap those at higher lvl?!?
+    merged_explosions = pd.concat([df.drop(cols_to_explode,axis=1)] +  exploded_df_list,axis=1)
 
     return merged_explosions
+
+
+"""
+ We basically need to know the longest series for each Column and Index in the exploded serieses
+1. get longest series for each element
+2. Pad all series that are shortet than the longest for each index
+2.1 Exploded fields that are too short paddedw ith NONE
+2.2 Non-Exploded fields padded with repititoon of it self to fill the gap for index
+"""

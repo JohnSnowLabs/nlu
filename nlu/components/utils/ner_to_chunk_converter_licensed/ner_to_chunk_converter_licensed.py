@@ -5,4 +5,4 @@ class NerToChunkConverterLicensed:
     def get_default_model():
         return NerConverterInternal() \
             .setInputCols(["sentence", "token", "ner"]) \
-            .setOutputCol("entities") \
+            .setOutputCol("entities") 

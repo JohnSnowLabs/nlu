@@ -7,4 +7,4 @@ class NGram:
             .setInputCols(["token"]) \
             .setOutputCol("ngrams") \
             .setN(2) \
-            .setEnableCumulative(False) \
+            .setEnableCumulative(False)

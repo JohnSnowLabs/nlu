@@ -23,4 +23,4 @@ class MultiClassifier:
             .setOutputCol("multi_category") \
             .setLabelColumn("y") \
             .setEnableOutputLogs(True) \
-            .setMaxEpochs(2) \
+            .setMaxEpochs(2)

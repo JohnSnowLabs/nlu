@@ -8,7 +8,7 @@ class NameSpace():
                    'pos', 'trec6', 'trec50', 'questions',
                    'sarcasm', 'emotion', 'spam', 'fakenews', 'cyberbullying',
                    'wiki', 'wiki_7', 'wiki_20', 'yake', 'toxic',
-                   'assert'
+                   'assert', 'med_ner'
                    ]
     seq2seq = ['t5', 'marian', 'translate_to']
     actions = ['tokenize', 'sentence', 'embed', 'embed_sentence', 'embed_chunk', 'classify', 'chunk', 'pos', 'ner',
@@ -136,7 +136,7 @@ class NameSpace():
 
         'sentence_detector.pragmatic': ('pragmatic_sentence_detector', 'model'),  # todo
 
-        # 'spell.symmetric': ('spellcheck_sd', 'model'), # TODO erronous
+        'spell.symmetric': ('spellcheck_sd', 'model'), # TODO erronous
         'spell.norivg': ('spellcheck_norvig', 'model'),
         'sentiment.vivekn': ('sentiment_vivekn', 'model'),
         'dep.untyped.conllu': ('dependency_conllu', 'model'),
@@ -1811,6 +1811,8 @@ class NameSpace():
     }
 
     pretrained_healthcare_model_references = {
+
+
         'en':
             {
                 # AssertionDLModel
@@ -1824,28 +1826,28 @@ class NameSpace():
                 'en.embed.glove.biovec': 'embeddings_biovec',
                 'en.embed.glove.healthcare': 'embeddings_healthcare',
                 'en.embed.glove.healthcare_100d': 'embeddings_healthcare_100d',
-                'en.embed.glove.icd10': 'embeddings_icd10_base',
+                # 'en.embed.glove.icd10': 'embeddings_icd10_base', # Broken in JSL
                 'en.embed.glove.icdoem': 'embeddings_icdoem',
                 'en.embed.glove.icdoem_2ng': 'embeddings_icdoem_2ng',
 
                 # BIOBERT embeddings
 
                 # Todo errors with biobert embeds
-                'en.embed.biobert.clinical': 'biobert_clinical_base_cased',
-                'en.embed.biobert.discharge': 'biobert_discharge_base_cased',
-                'en.embed.biobert.pmc': 'biobert_pmc_base_cased',
-                'en.embed.biobert.pubmed': 'biobert_pubmed_base_cased',
-                'en.embed.biobert.pubmed_large': 'biobert_pubmed_large_cased',
-                'en.embed.biobert.pubmed_pmc': 'biobert_pubmed_pmc_base_cased',
+                # 'en.embed.biobert.clinical': 'biobert_clinical_base_cased', # broken
+                # 'en.embed.biobert.discharge': 'biobert_discharge_base_cased',# broken
+                # 'en.embed.biobert.pmc': 'biobert_pmc_base_cased', Broken
+                # 'en.embed.biobert.pubmed': 'biobert_pubmed_base_cased', # broken
+                # 'en.embed.biobert.pubmed_large': 'biobert_pubmed_large_cased', # broken
+                # 'en.embed.biobert.pubmed_pmc': 'biobert_pubmed_pmc_base_cased', # broken
 
                 # Sentence Entity resolvers
 
                 # BertSEntenceEmbeddings MLI
                 'en.embed_sentence.biobert.mli': 'sbiobert_base_cased_mli',
-                'en.embed_sentence.bluebert.mli': 'sbluebert_base_uncased_mli',
+                # 'en.embed_sentence.bluebert.mli': 'sbluebert_base_uncased_mli',# Broken
 
-                'en.embed_sentence.bluebert.mednli': 'sent_bluebert_base_uncased_mednli',
-                'en.embed_sentence.biobert.mednli': 'sent_biobert_base_uncased_mednli',
+                # 'en.embed_sentence.bluebert.mednli': 'sent_bluebert_base_uncased_mednli', # broken
+                # 'en.embed_sentence.biobert.mednli': 'sent_biobert_base_uncased_mednli',  # broken
 
                 # resolve sentence cpt
                 'en.resolve_sentence': 'sbiobertresolve_cpt',
@@ -1855,7 +1857,7 @@ class NameSpace():
                 # resolve sentence hcc
                 'en.resolve_sentence.hcc.augmented': 'sbiobertresolve_hcc_augmented',
                 # resolve sentence icd
-                'en.resolve_sentence.icd10cm.': 'sbiobertresolve_icd10cm',
+                'en.resolve_sentence.icd10cm': 'sbiobertresolve_icd10cm',
                 'en.resolve_sentence.icd10cm.augmented': 'sbiobertresolve_icd10cm_augmented',
                 'en.resolve_sentence.icd10cm.augmented_billable': 'sbiobertresolve_icd10cm_augmented_billable_hcc',
                 'en.resolve_sentence.icd10pcs': 'sbiobertresolve_icd10pcs',
@@ -1871,121 +1873,122 @@ class NameSpace():
                 'en.resolve_sentence.snomed.findings_int': 'sbiobertresolve_snomed_findings_int',
 
                 # Greedy Relation extracction
-                'en.extract_relation.posology': 'posology_re',  # TODo OCRASHES SOME STRINGS!
+                'en.relation.posology': 'posology_re',  # TODo OCRASHES SOME STRINGS!
 
                 # RelationExtractionModel
 
                 # todo random crashes for some strings
                 # KEEP THOSE TAHT DONT HAVE A DL/BERT VERSION - > check if bert avaiable
-                # 'en.extract_relation':'re_clinical',
-                # 'en.extract_relation.bodypart.direction':'re_bodypart_directions',
-                # 'en.extract_relation.bodypart.problem':'re_bodypart_problem',
-                # 'en.extract_relation.bodypart.proceduretest':'re_bodypart_proceduretest',
-                # 'en.extract_relation.chemprot':'re_chemprot_clinical',
-                # 'en.extract_relation.clinical':'re_clinical',
-                # 'en.extract_relation.date_clinical':'re_date_clinical',
-                # 'en.extract_relation.drug_drug_interaction':'re_drug_drug_interaction_clinical',
-                # 'en.extract_relation.human_phenotype_gene':'re_human_phenotype_gene_clinical',
-                # 'en.extract_relation.temporal_events':'re_temporal_events_clinical',
-                # 'en.extract_relation.temporal_events.enriched':'re_temporal_events_enriched_clinical',
+                # 'en.relation':'re_clinical',
+                # 'en.relation.bodypart.direction':'re_bodypart_directions',
+                # 'en.relation.bodypart.problem':'re_bodypart_problem',
+                # 'en.relation.bodypart.proceduretest':'re_bodypart_proceduretest',
+                # 'en.relation.chemprot':'re_chemprot_clinical',
+                # 'en.relation.clinical':'re_clinical',
+                # 'en.relation.date_clinical':'re_date_clinical',
+                # 'en.relation.drug_drug_interaction':'re_drug_drug_interaction_clinical',
+                # 'en.relation.human_phenotype_gene':'re_human_phenotype_gene_clinical',
+                # 'en.relation.temporal_events':'re_temporal_events_clinical',
+                # 'en.relation.temporal_events.enriched':'re_temporal_events_enriched_clinical',
                 # RelationExtractionDL
 
-                'en.extract_relation': 'redl_bodypart_direction_biobert',
-                'en.extract_relation.bodypart.direction': 'redl_bodypart_direction_biobert',
-                'en.extract_relation.bodypart.problem': 'redl_bodypart_problem_biobert',
-                'en.extract_relation.bodypart.procedure': 'redl_bodypart_procedure_test_biobert',
-                'en.extract_relation.chemprot': 'redl_chemprot_biobert',
-                'en.extract_relation.clinical': 'redl_clinical_biobert',
-                'en.extract_relation.date': 'redl_date_clinical_biobert',
-                'en.extract_relation.drug_drug_interaction': 'redl_drug_drug_interaction_biobert',
-                'en.extract_relation.humen_phenotype_gene': 'redl_human_phenotype_gene_biobert',
-                'en.extract_relation.temporal_events': 'redl_temporal_events_biobert',
+                'en.relation': 'redl_bodypart_direction_biobert',
+                'en.relation.bodypart.direction': 'redl_bodypart_direction_biobert',
+                'en.relation.bodypart.problem': 'redl_bodypart_problem_biobert',
+                'en.relation.bodypart.procedure': 'redl_bodypart_procedure_test_biobert',
+                'en.relation.chemprot': 'redl_chemprot_biobert',
+                'en.relation.clinical': 'redl_clinical_biobert',
+                'en.relation.date': 'redl_date_clinical_biobert',
+                'en.relation.drug_drug_interaction': 'redl_drug_drug_interaction_biobert',
+                'en.relation.humen_phenotype_gene': 'redl_human_phenotype_gene_biobert',
+                'en.relation.temporal_events': 'redl_temporal_events_biobert',
 
                 # PartOfSpeechModels
                 'en.pos.clinical': 'pos_clinical',  # DEFAULT POS HC|| RELATION EXTRACTION TRAIN ON THIS!
                 'en.pos.fast': 'pos_fast_med',
 
                 # NERDLModels
-                # 'en.ner.ade.biobert':'ner_ade_biobert', # Todo error param pooling layer does not exist
-                'en.ner.ade.clinical': 'ner_ade_clinical',  # ok
-                'en.ner.ade.clinical_bert': 'ner_ade_clinicalbert',  # ok ok
-                'en.ner.ade.ade_healthcare': 'ner_ade_healthcare',
-                'en.ner.anatomy': 'ner_anatomy',
-                'en.ner.anatomy.biobert': 'ner_anatomy_biobert',
-                'en.ner.anatomy.coarse': 'ner_anatomy_coarse',
-                'en.ner.anatomy.coarse_biobert': 'ner_anatomy_coarse_biobert',
-                'en.ner.aspect_sentiment': 'ner_aspect_based_sentiment',
-                'en.ner.bacterial_species': 'ner_bacterial_species',
-                'en.ner.bionlp': 'ner_bionlp',
-                'en.ner.bionlp.biobert': 'ner_bionlp_biobert',
+                # 'en.med_ner.ade.biobert':'ner_ade_biobert', # Todo error param pooling layer does not exist
+                'en.med_ner.ade.clinical': 'ner_ade_clinical',  # ok
+                'en.med_ner.ade.clinical_bert': 'ner_ade_clinicalbert',  # ok ok
+                'en.med_ner.ade.ade_healthcare': 'ner_ade_healthcare',
+                'en.med_ner.anatomy': 'ner_anatomy',
+                'en.med_ner.anatomy.biobert': 'ner_anatomy_biobert',
+                'en.med_ner.anatomy.coarse': 'ner_anatomy_coarse',
+                'en.med_ner.anatomy.coarse_biobert': 'ner_anatomy_coarse_biobert',
+                'en.med_ner.aspect_sentiment': 'ner_aspect_based_sentiment',
+                'en.med_ner.bacterial_species': 'ner_bacterial_species',
+                'en.med_ner.bionlp': 'ner_bionlp',
+                'en.med_ner.bionlp.biobert': 'ner_bionlp_biobert',
                 # NOTHING BEFROE 2018!!
-                # 'en.ner.bionlp.biobert.noncontrib':'ner_bionlp_noncontrib', # todo whats noncontrib? MEANS DEPRECATED
-                'en.ner.cancer': 'ner_cancer_genetics',
-                'en.ner.cellular': 'ner_cellular',
-                'en.ner.cellular.biobert': 'ner_cellular_biobert',
-                'en.ner.chemicals': 'ner_chemicals',
-                'en.ner.chemprot': 'ner_chemprot_biobert',
-                'en.ner.chemprot.clinical': 'ner_chemprot_clinical',
-                'en.ner.clinical': 'ner_clinical',
-                'en.ner.clinical.biobert': 'ner_clinical_biobert',
-                'en.ner.clinical.icdem': 'ner_clinical_icdem',
-                'en.ner.clinical.large': 'ner_clinical_large',
-                'en.ner.clinical.noncontrib': 'ner_clinical_noncontrib',
+                # 'en.med_ner.bionlp.biobert.noncontrib':'ner_bionlp_noncontrib', # todo whats noncontrib? MEANS DEPRECATED
+                'en.med_ner.cancer': 'ner_cancer_genetics',
+                'en.med_ner.cellular': 'ner_cellular',
+                'en.med_ner.cellular.biobert': 'ner_cellular_biobert',
+                'en.med_ner.chemicals': 'ner_chemicals',
+                'en.med_ner.chemprot': 'ner_chemprot_biobert',
+                'en.med_ner.chemprot.clinical': 'ner_chemprot_clinical',
+                'en.med_ner.clinical': 'ner_clinical',
+                'en.med_ner.clinical.biobert': 'ner_clinical_biobert',
+                # 'en.med_ner.clinical.icdem': 'ner_clinical_icdem', # TODO UNRESOLVED! PIPE?
+                # 'en.med_ner.clinical.large': 'ner_clinical_large',# TODO URNESOLVED, PIPE?
+                'en.med_ner.clinical.noncontrib': 'ner_clinical_noncontrib',
 
                 # NERDL
-                'en.ner.diseases': 'ner_diseases',
-                'en.ner.diseases.biobert': 'ner_diseases_biobert',
-                'en.ner.diseases.large': 'ner_diseases_large',
-                'en.ner.drugs': 'ner_drugs',
-                'en.ner.drugsgreedy': 'ner_drugs_greedy',
-                'en.ner.drugs.large': 'ner_drugs_large',
-                'en.ner.events_biobert': 'ner_events_biobert',
-                'en.ner.events_clinical': 'ner_events_clinical',
-                'en.ner.events_healthcre': 'ner_events_healthcare',
-                'en.ner.financial_contract': 'ner_financial_contract',
-                'en.ner.healthcare': 'ner_healthcare',
-                'en.ner.human_phenotype.gene_biobert': 'ner_human_phenotype_gene_biobert',
-                'en.ner.human_phenotype.gene_clinical': 'ner_human_phenotype_gene_clinical',
-                'en.ner.human_phenotype.go_biobert': 'ner_human_phenotype_go_biobert',
-                'en.ner.human_phenotype.go_clinical': 'ner_human_phenotype_go_clinical',
-                'en.ner.jsl': 'ner_jsl',
-                'en.ner.jsl.biobert': 'ner_jsl_biobert',
-                'en.ner.jsl.enriched': 'ner_jsl_enriched',
-                'en.ner.jsl.enriched_biobert': 'ner_jsl_enriched_biobert',
-                'en.ner.measurements': 'ner_measurements_clinical',
-                'en.ner.medmentions': 'ner_medmentions_coarse',
-                'en.ner.posology': 'ner_posology',
-                'en.ner.posology.biobert': 'ner_posology_biobert',
-                'en.ner.posology.greedy': 'ner_posology_greedy',
-                'en.ner.posology.healthcare': 'ner_posology_healthcare',
-                'en.ner.posology.large': 'ner_posology_large',
-                'en.ner.posology.large_biobert': 'ner_posology_large_biobert',
-                'en.ner.posology.small': 'ner_posology_small',
-                'en.ner.radiology': 'ner_radiology',
-                'en.ner.radiology.wip_clinical': 'ner_radiology_wip_clinical',
-                'en.ner.risk_factors': 'ner_risk_factors',
-                'en.ner.risk_factors.biobert': 'ner_risk_factors_biobert',
-                'en.ner.i2b2': 'nerdl_i2b2', #  TODO ERROR  : java.util.NoSuchElementException: Param caseSensitiveEmbeddings does not exist.
+                'en.med_ner.diseases': 'ner_diseases',
+                'en.med_ner.diseases.biobert': 'ner_diseases_biobert',
+                'en.med_ner.diseases.large': 'ner_diseases_large',
+                'en.med_ner.drugs': 'ner_drugs',
+                'en.med_ner.drugsgreedy': 'ner_drugs_greedy',
+                'en.med_ner.drugs.large': 'ner_drugs_large',
+                'en.med_ner.events_biobert': 'ner_events_biobert',
+                'en.med_ner.events_clinical': 'ner_events_clinical',
+                'en.med_ner.events_healthcre': 'ner_events_healthcare',
+                'en.med_ner.financial_contract': 'ner_financial_contract',
+                'en.med_ner.healthcare': 'ner_healthcare',
+                'en.med_ner.human_phenotype.gene_biobert': 'ner_human_phenotype_gene_biobert',
+                'en.med_ner.human_phenotype.gene_clinical': 'ner_human_phenotype_gene_clinical',
+                'en.med_ner.human_phenotype.go_biobert': 'ner_human_phenotype_go_biobert',
+                'en.med_ner.human_phenotype.go_clinical': 'ner_human_phenotype_go_clinical',
+                'en.med_ner.jsl': 'ner_jsl',
+                'en.med_ner.jsl.biobert': 'ner_jsl_biobert',
+                'en.med_ner.jsl.enriched': 'ner_jsl_enriched',
+                'en.med_ner.jsl.enriched_biobert': 'ner_jsl_enriched_biobert',
+                'en.med_ner.measurements': 'ner_measurements_clinical',
+                'en.med_ner.medmentions': 'ner_medmentions_coarse',
+                'en.med_ner.posology': 'ner_posology',
+                'en.med_ner.posology.biobert': 'ner_posology_biobert',
+                'en.med_ner.posology.greedy': 'ner_posology_greedy',
+                'en.med_ner.posology.healthcare': 'ner_posology_healthcare',
+                'en.med_ner.posology.large': 'ner_posology_large',
+                'en.med_ner.posology.large_biobert': 'ner_posology_large_biobert',
+                'en.med_ner.posology.small': 'ner_posology_small',
+                'en.med_ner.radiology': 'ner_radiology',
+                'en.med_ner.radiology.wip_clinical': 'ner_radiology_wip_clinical',
+                'en.med_ner.risk_factors': 'ner_risk_factors',
+                'en.med_ner.risk_factors.biobert': 'ner_risk_factors_biobert',
+                # 'en.med_ner.i2b2': 'nerdl_i2b2', #  broken
 
-                'en.ner.tumour': 'nerdl_tumour_demo',
+                'en.med_ner.tumour': 'nerdl_tumour_demo',
 
                 # JSL is WIP, WIP means work in progress in nlp ref --> WIP NAMESPACE
-                'en.ner.jsl.wip.clinical': 'jsl_ner_wip_clinical',
-                'en.ner.jsl.wip.clinical.greedy': 'jsl_ner_wip_greedy_clinical',
-                'en.ner.jsl.wip.clinical.modifier': 'jsl_ner_wip_modifier_clinical',
-                'en.ner.jsl.wip.clinical.rd': 'jsl_rd_ner_wip_greedy_clinical',
+                'en.med_ner.jsl.wip.clinical': 'jsl_ner_wip_clinical',
+                'en.med_ner.jsl.wip.clinical.greedy': 'jsl_ner_wip_greedy_clinical',
+                'en.med_ner.jsl.wip.clinical.modifier': 'jsl_ner_wip_modifier_clinical',
+                'en.med_ner.jsl.wip.clinical.rd': 'jsl_rd_ner_wip_greedy_clinical',
 
                 # NERDL DEID
-                'en.ner.deid.augmented': 'ner_deid_augmented',
-                'en.ner.deid.biobert': 'ner_deid_biobert',
-                'en.ner.deid.enriched': 'ner_deid_enriched',
-                'en.ner.deid.enriched_biobert': 'ner_deid_enriched_biobert',
-                'en.ner.deid.large': 'ner_deid_large',
-                'en.ner.deid.sd': 'ner_deid_sd',
-                'en.ner.deid.sd_large': 'ner_deid_sd_large',
-                'en.ner.deid.synthetic': 'ner_deid_synthetic',
-                'en.ner.deid.dl': 'ner_deidentify_dl',
-                'en.ner.deid.': 'nerdl_deid',
+                # 'en.med_ner.deid.<dataset>
+                'en.med_ner.deid.augmented': 'ner_deid_augmented',
+                'en.med_ner.deid.biobert': 'ner_deid_biobert',
+                'en.med_ner.deid.enriched': 'ner_deid_enriched',
+                'en.med_ner.deid.enriched_biobert': 'ner_deid_enriched_biobert',
+                'en.med_ner.deid.large': 'ner_deid_large',
+                'en.med_ner.deid.sd': 'ner_deid_sd',
+                'en.med_ner.deid.sd_large': 'ner_deid_sd_large',
+                'en.med_ner.deid.synthetic': 'ner_deid_synthetic',
+                'en.med_ner.deid.dl': 'ner_deidentify_dl',
+                'en.med_ner.deid.': 'nerdl_deid',
 
                 # DeIdentificationModel
 
@@ -1996,43 +1999,28 @@ class NameSpace():
                 'en.de_identify.large': 'deidentify_large',
                 'en.de_identify.rb': 'deidentify_rb',
                 'en.de_identify.rb_no_regex': 'deidentify_rb_no_regex',
-
-                # ClassifierDL Models
-                'en.classify.icd10.clinical': 'classifier_icd10cm_hcc_clinical',  # WHCIH CLASS? # TODO NOT LAODING
-                'en.classify.icd10.healthcare': 'classifier_icd10cm_hcc_healthcare',  # TODO NOT LOADING CORRECt
-                'en.classify.ade.biobert': 'classifierdl_ade_biobert',
-                'en.classify.ade.clinical': 'classifierdl_ade_clinicalbert',
-                'en.classify.ade.conversational': 'classifierdl_ade_conversational_biobert',
-                # TODO ERROR POOLIN LAYER NOT EXIST!
-                'en.classify.gender.biobert': 'classifierdl_gender_biobert',  # ok
-                'en.classify.gender.sbert': 'classifierdl_gender_sbert',  # ok!
-                'en.classify.pico': 'classifierdl_pico_biobert',  # TODO PARAM POOLING THINGY DOES NOT EXIST!
-                'en.classify.icd10.use': 'useclassifier_icd10cm_hcc',# TODO ERROR Unsuccessful TensorSliceReader constructor: Failed to find any matching files for /tmp/1d145f4e9b43_ner9147662973000500538/variables [[{{node save/RestoreV2}}]]
-
-
-
-
                 # ChunkResolverModels
+                # 'en.resolve_chunk.cpt_icdoem': 'chunkresolve_cpt_icdoem', # broken
+                # 'en.resolve_chunk.icd10cm.icdoem': 'chunkresolve_icd10cm_icdoem', # broken
+                # 'en.resolve_chunk.icd10cm.icdoem_2ng': 'chunkresolve_icd10cm_icdoem_2ng', # broken
+                # 'en.resolve_chunk.icd10cpt.icdoem': 'chunkresolve_icd10cpt_icdoem_2ng', # broken
+                # 'en.resolve_chunk.icd10pcs.icdoem': 'chunkresolve_icd10pcs_icdoem', # broken
+                # 'en.resolve_chunk.icd10pcs.icdoem_2ng': 'chunkresolve_icd10pcs_icdoem_2ng', # broken
+                # 'en.resolve_chunk.icdo.icdoem': 'chunkresolve_icdo_icdoem', # broken
+
                 'en.resolve_chunk.athena_conditions': 'chunkresolve_athena_conditions_healthcare',
                 'en.resolve_chunk.cpt_clinical': 'chunkresolve_cpt_clinical',
-                'en.resolve_chunk.cpt_icdoem': 'chunkresolve_cpt_icdoem',
                 'en.resolve_chunk.icd10cm.clinical': 'chunkresolve_icd10cm_clinical',
                 'en.resolve_chunk.icd10cm.diseases_clinical': 'chunkresolve_icd10cm_diseases_clinical',
                 'en.resolve_chunk.icd10cm.hcc_clinical': 'chunkresolve_icd10cm_hcc_clinical',
                 'en.resolve_chunk.icd10cm.hcc_healthcare': 'chunkresolve_icd10cm_hcc_healthcare',
-                'en.resolve_chunk.icd10cm.icdoem,': 'chunkresolve_icd10cm_icdoem',
-                'en.resolve_chunk.icd10cm.icdoem_2ng': 'chunkresolve_icd10cm_icdoem_2ng',
                 'en.resolve_chunk.icd10cm.injuries': 'chunkresolve_icd10cm_injuries_clinical',
                 'en.resolve_chunk.icd10cm.musculoskeletal': 'chunkresolve_icd10cm_musculoskeletal_clinical',
                 'en.resolve_chunk.icd10cm.neoplasms': 'chunkresolve_icd10cm_neoplasms_clinical',
                 'en.resolve_chunk.icd10cm.poison': 'chunkresolve_icd10cm_poison_ext_clinical',
                 'en.resolve_chunk.icd10cm.puerile': 'chunkresolve_icd10cm_puerile_clinical',
-                'en.resolve_chunk.icd10cpt.icdoem': 'chunkresolve_icd10cpt_icdoem_2ng',
                 'en.resolve_chunk.icd10pcs.clinical': 'chunkresolve_icd10pcs_clinical',
-                'en.resolve_chunk.icd10pcs.icdoem': 'chunkresolve_icd10pcs_icdoem',
-                'en.resolve_chunk.icd10pcs.icdoem_2ng': 'chunkresolve_icd10pcs_icdoem_2ng',
                 'en.resolve_chunk.icdo.clinical': 'chunkresolve_icdo_clinical',
-                'en.resolve_chunk.icdo.icdoem': 'chunkresolve_icdo_icdoem',
                 'en.resolve_chunk.loinc': 'chunkresolve_loinc_clinical',
                 'en.resolve_chunk.rxnorm.cd': 'chunkresolve_rxnorm_cd_clinical',
                 'en.resolve_chunk.rxnorm.in': 'chunkresolve_rxnorm_in_clinical',
@@ -2044,6 +2032,18 @@ class NameSpace():
                 'en.resolve_chunk.rxnorm.xsmall.clinical': 'chunkresolve_rxnorm_xsmall_clinical',
                 'en.resolve_chunk.snomed.findings': 'chunkresolve_snomed_findings_clinical',
 
+
+                'en.classify.icd10.clinical':'classifier_icd10cm_hcc_clinical',      #  WHCIH CLASS? # TODO NOT LAODING
+                'en.classify.icd10.healthcare':'classifier_icd10cm_hcc_healthcare', # TODO NOT LOADING CORRECt
+                'en.classify.ade.biobert':'classifierdl_ade_biobert',
+                'en.classify.ade.clinical':'classifierdl_ade_clinicalbert',
+                'en.classify.ade.conversational':'classifierdl_ade_conversational_biobert',
+                'en.classify.gender.biobert':'classifierdl_gender_biobert',
+                'en.classify.gender.sbert':'classifierdl_gender_sbert', # ok!
+                'en.classify.pico':'classifierdl_pico_biobert',
+                # 'en.classify.icd10.use':'useclassifier_icd10cm_hcc', buggy
+
+
             }
     }
     pretrained_healthcare_pipe_references = {}
@@ -2051,7 +2051,11 @@ class NameSpace():
     # map storage ref to nlu ref
 
     storage_ref_2_nlu_ref = {
-        'en': {}
+        'en': {},
+        'zh': {
+            'bert_base_chinese' : 'zh.embed',
+
+        }
 
     }  #
 
@@ -2059,7 +2063,6 @@ class NameSpace():
         'en': {
             # HARDCODE
             'clinical': 'en.embed.glove.clinical',
-            # 'biobert_pubmed_base_cased': 'en.embed.biobert.pubmed', # TODO THIS EMBEDDING THROWS TENSORFLOW TERROR!!!
             'biobert_pubmed_base_cased': 'biobert_clinical_base_cased',
 
             'embeddings_healthcare100' : 'en.embed.glove.clinical',
@@ -2075,3 +2078,5 @@ class NameSpace():
         },
 
     }
+
+

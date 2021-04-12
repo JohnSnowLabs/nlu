@@ -86,7 +86,6 @@ class ComponentInfo:
     outputs: list  # this is which columns/output types this component is providing
     inputs: list  # this tells us which columns/input types the component is depending on
     type: str  # this tells us which kind of component this is
-    file_dependencies: dict  # Dict, where keys are file name identifiers and value is a dict of attributes (Where to download file, whats the size, etc..) (( MAYBE EMBELISH IN A CLASS?)
     output_level : str # document, sentence, token, chunk, input_dependent or model_dependent
     spark_input_column_names: list  # default expected name for input columns when forking with spark nlp annotators on spark DFs
     spark_output_column_names: list  # default expected name for output columns when forking with spark nlp annotators on spark DFs
@@ -116,7 +115,3 @@ class ComponentInfo:
         except :
             print (" Exception Occured! For Path",component_info_dir , " Json file most likely has missing  features. Todo nicer output error info", sys.exc_info()[0])
             raise
-
-    @classmethod
-    def preprocess_path_string(cls): pass
-    # removes all double / and makes class name lowercase

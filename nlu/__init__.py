@@ -146,12 +146,21 @@ all_components_info = nlu.AllComponentsInfo()
 discoverer = nlu.Discoverer()
 
 import os
+import  json
 import sparknlp
 
 
-def auth(SPARK_NLP_LICENSE,AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY,JSL_SECRET, gpu=False):
-    """ Authenticate enviroment for JSL Liscensed models. Installs NLP-Healthcare if not in enviroment detected"""
-    auth_utils.get_authenticated_spark(SPARK_NLP_LICENSE,AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY,JSL_SECRET, gpu)
+def auth(SPARK_NLP_LICENSE_OR_JSON_PATH,AWS_ACCESS_KEY_ID='',AWS_SECRET_ACCESS_KEY='',JSL_SECRET='', gpu=False):
+    """ Authenticate enviroment for JSL Liscensed models. Installs NLP-Healthcare if not in enviroment detected
+    Either provide path to secret.json file as first param or manually enter them, SPARK_NLP_LICENSE_OR_JSON_PATH,AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY,JSL_SECRET .
+    Set gpu=true if you want to enable GPU mode
+    """
+    if os.path.exists(SPARK_NLP_LICENSE_OR_JSON_PATH):
+        with open(SPARK_NLP_LICENSE_OR_JSON_PATH) as json_file:
+            j = json.load(json_file)
+            auth_utils.get_authenticated_spark(j['SPARK_NLP_LICENSE'],  j['AWS_ACCESS_KEY_ID'],   j['AWS_SECRET_ACCESS_KEY'], j['SECRET'],gpu)
+        return nlu
+    auth_utils.get_authenticated_spark(SPARK_NLP_LICENSE_OR_JSON_PATH,AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY,JSL_SECRET, gpu)
     return nlu
 def read_nlu_info(path):
     f = open(os.path.join(path,'nlu_info.txt'), "r")
