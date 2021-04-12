@@ -248,7 +248,9 @@ class NLUPipeline(BasePipe):
                 StructField("text", StringType(), True)
                 ])
             from pyspark.sql import functions as F
-            df = self.spark.createDataFrame(data=dataset, schema=schema).withColumn('y',F.split('y',label_seperator))
+            df = self.spark.createDataFrame(data=dataset).withColumn('y',F.split('y',label_seperator))
+            # df = self.spark.createDataFrame(data=dataset, schema=schema).withColumn('y',F.split('y',label_seperator))
+            # df = self.spark.createDataFrame(dataset)
             self.spark_transformer_pipe = self.spark_estimator_pipe.fit(df)
 
         elif isinstance(dataset,pd.DataFrame):
@@ -268,7 +270,7 @@ class NLUPipeline(BasePipe):
         return self
     def convert_pd_dataframe_to_spark(self, data):
         #optimize
-        return nlu.spark.createDataFrame(data)
+        return self.spark.createDataFrame(data)
     #todo rm
     def get_output_level_of_embeddings_provider(self, field_type, field_name):
         '''

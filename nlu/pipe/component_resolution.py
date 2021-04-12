@@ -143,10 +143,16 @@ def resolve_storage_ref(lang, storage_ref):
         is_licensed = True
 
     if nlu_ref == None and nlp_ref == None :
-        logger.exception("COULD NOT RESOLVE STORAGE_REF")
-        nlp_ref = storage_ref
-        nlu_ref = storage_ref
-        raise  ValueError
+        logger.info("COULD NOT RESOLVE STORAGE_REF")
+        if storage_ref =='' :
+            logger.info("Using default storage_ref USE, assuming training mode")
+            storage_ref = 'en.embed_sentence.use' # this enables default USE embeds for traianble components
+            nlp_ref = 'tfhub_use'
+            nlu_ref = storage_ref
+        else :
+            nlp_ref = storage_ref
+            nlu_ref = storage_ref
+        # raise  ValueError
 
     logger.info(f'Resolved storageref = {storage_ref} to NLU_ref = {nlu_ref} and NLP_ref = {nlp_ref}')
     return nlu_ref, nlp_ref, is_licensed
@@ -596,7 +602,7 @@ def construct_component_from_identifier(language, component_type='', dataset='',
             return nlu.Asserter(nlp_ref=nlp_ref, nlu_ref=nlu_ref, language=language,get_default=False, is_licensed=is_licensed)
         elif 'resolve' in component_type or 'resolve' in nlu_ref:
             return nlu.Resolver(nlp_ref=nlp_ref, nlu_ref=nlu_ref, language=language,get_default=False, is_licensed=is_licensed)
-        elif 'extract_relation' in nlu_ref:
+        elif 'relation' in nlu_ref:
             return nlu.Relation(nlp_ref=nlp_ref, nlu_ref=nlu_ref, language=language,get_default=False, is_licensed=is_licensed)
         elif 'de_identify' in nlu_ref and 'ner' not in nlu_ref:
             return nlu.Deidentification(nlp_ref=nlp_ref, nlu_ref=nlu_ref, language=language,get_default=False, is_licensed=is_licensed)
@@ -640,7 +646,7 @@ def construct_component_from_identifier(language, component_type='', dataset='',
         elif any('norm' in x for x in [nlp_ref, nlu_ref, dataset, component_type]):
             return nlu.normalizer.Normalizer(nlp_ref=nlp_ref, nlu_ref=nlu_ref, is_licensed=is_licensed)
         elif any('clean' in x or 'stopword' in x for x in [nlp_ref, nlu_ref, dataset, component_type]):
-            return nlu.StopWordsCleaner(language=language, get_default=False, nlp_ref=nlp_ref, is_licensed=is_licensed)
+            return nlu.StopWordsCleaners(language=language, get_default=False, nlp_ref=nlp_ref)
         elif any('sentence_detector' in x for x in [nlp_ref, nlu_ref, dataset, component_type]):
             return NLUSentenceDetector(nlu_ref=nlu_ref, nlp_ref=nlp_ref, language=language, is_licensed=is_licensed)
 
@@ -652,7 +658,7 @@ def construct_component_from_identifier(language, component_type='', dataset='',
             return nlu.tokenizer.Tokenizer(nlp_ref=nlp_ref, nlu_ref=nlu_ref, language=language,get_default=False, is_licensed=is_licensed)
 
         elif any('stem' in x for x in [nlp_ref, nlu_ref, dataset, component_type]):
-            return Stemmer()
+            return nlu.Stemmers()
 
         # supported in future version with auto embed generation
         # elif any('embed_chunk' in x for x in [nlp_ref, nlu_ref, dataset, component_type] ):

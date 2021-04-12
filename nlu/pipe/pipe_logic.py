@@ -249,13 +249,12 @@ class PipelineQueryVerifier():
             logger.info(f"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
             logger.info(f"Trying to resolve missing features for \n missing_components={missing_components} \n missing storage_refs={missing_storage_refs}\n conversion_candidates={components_for_embedding_conversion}")
             if PipelineQueryVerifier.check_if_all_dependencies_satisfied(missing_components, missing_storage_refs, components_for_embedding_conversion): break  # Now all features are provided
-            # TODO watch out, sentence_conv@storage_ref can either point to a sent_emb or mean to convertsmth! Handel?
 
 
             # Create missing base storage ref producers, i.e embeddings
             for missing_component in missing_storage_refs:
                 component = get_default_component_of_type(missing_component, language=pipe.lang)
-                if component is None : continue# Todo, when Conversion candidate exist, resolution will be NONE since there is none and we must convert
+                if component is None : continue
                 if 'chunk_emb' in missing_component:
                     components_to_add.append(ComponentUtils.config_chunk_embed_converter(component))
                 else :components_to_add.append(component)

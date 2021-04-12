@@ -92,9 +92,9 @@ class ComponentUtils():
         :cols component:  Wether to extract for the input or output col
         :return: '' if no storage_ref, <col>_embed_col@storage_ref otherwise
         '''
-        if not StorageRefUtils.has_storage_ref(component) :
-            if   col =='input' : return component.info.inputs
-            elif col =='output': return component.info.outputs
+        # if not StorageRefUtils.has_storage_ref(component) :
+        #     if   col =='input' : return component.info.inputs
+        #     elif col =='output': return component.info.outputs
         if   col =='input'  : e_col    = next(filter(lambda s : 'embed' in s, component.info.inputs))
         elif col =='output' : e_col    = next(filter(lambda s : 'embed' in s, component.info.outputs))
 
