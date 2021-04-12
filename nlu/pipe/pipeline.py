@@ -157,13 +157,11 @@ class NLUPipeline(BasePipe):
                        Stemmer,
                        ContextSpellCheckerApproach,
                        nlu.WordSegmenter,
-                       Lemmatizer, TypedDependencyParserApproach, DependencyParserApproach,
+                       Lemmatizer,LemmatizerModel, TypedDependencyParserApproach, DependencyParserApproach,
                        Tokenizer, RegexTokenizer, RecursiveTokenizer
-                ,StopWordsCleaner, DateMatcher, TextMatcher, BigTextMatcher, MultiDateMatcher,
+                , DateMatcher, TextMatcher, BigTextMatcher, MultiDateMatcher,
                        WordSegmenterApproach
                        ],
-            # sub token is when annotator is token based but some tokens may be missing since dropped/cleanes
-            # are matchers chunk or sub token?
             # 'sub_token': [StopWordsCleaner, DateMatcher, TextMatcher, BigTextMatcher, MultiDateMatcher],
             # these can be document or sentence
             'input_dependent': [ViveknSentimentApproach, SentimentDLApproach, ClassifierDLApproach,
@@ -187,9 +185,15 @@ class NLUPipeline(BasePipe):
                       TypedDependencyParserModel, DependencyParserModel,
                       RecursiveTokenizerModel,
                       TextMatcherModel, BigTextMatcherModel, RegexMatcherModel,
-                      WordSegmenterModel
+                      WordSegmenterModel, TokenizerModel
                       ],
             # 'sub_token': [TextMatcherModel, BigTextMatcherModel, RegexMatcherModel, ],
+            # sub token is when annotator is token based but some tokens may be missing since dropped/cleanes
+
+            'sub_token' : [
+                StopWordsCleaner
+
+            ] ,
             'input_dependent': [BertSentenceEmbeddings, UniversalSentenceEncoder, ViveknSentimentModel,
                                 SentimentDLModel, MultiClassifierDLModel, MultiClassifierDLModel, ClassifierDLModel,
                                 MarianTransformer,T5Transformer
@@ -775,15 +779,15 @@ class NLUPipeline(BasePipe):
             # Loop in reverse over pipe and get first non util/sentence_detecotr/tokenizer/doc_assember. If there is non, take last
             bad_types = [ 'util','document','sentence']
             bad_names = ['token']
-
             for c in self.components[::-1]:
                 if any (t in  c.info.type for t in bad_types) : continue
                 if any (n in  c.info.name for n in bad_names) : continue
                 self.output_level = self.resolve_component_to_output_level(c)
-                logger.info('Inferred and set output level of pipeline to %s', self.output_level)
+                logger.info(f'Inferred and set output level of pipeline to {self.output_level}', )
                 break
             if self.output_level == None  or self.output_level == '': self.output_level = 'document' # Voodo Normalizer bug that does not happen in debugger bugfix
-            logger.info('Inferred and set output level of pipeline to %s', self.output_level)
+            logger.info(f'Inferred and set output level of pipeline to {self.output_level}' )
+
         else : return
     def get_chunk_col_name(self):
         '''
@@ -914,7 +918,9 @@ class NLUPipeline(BasePipe):
            3. Apply The extractor configs with the extractor methods to each column and merge back with zip/explode"""
         anno_2_ex_config = self.get_annotator_extraction_configs(full_meta,)
         unpack_df = sdf.toPandas().applymap(extract_pyspark_rows)
+
         return apply_extractors_and_merge(unpack_df,anno_2_ex_config, keep_stranger_features,stranger_features)
+
 
     def get_output_level_mapping(self)->Dict[str,str]:
         """Get a dict where key=colname and val=output_level, inferred from processed dataframe and pipe that is currently running"""
@@ -966,79 +972,17 @@ class NLUPipeline(BasePipe):
         not_same_output_level            = self.get_cols_not_at_same_output_level(col2output_level)
 
 
-
-        logger.info(f'Setting Output level as : {self.output_level}', )
-
-        # if index_provided == False:
-        #     logger.info("Generating origin Index via Spark. May contain irregular distributed index values.")
-        #     sdf = sdf.withColumn(monotonically_increasing_id().alias('origin_index'))
-
-
+        pretty_df = self.unpack_and_apply_extractors(processed, output_metadata, keep_stranger_features, stranger_features)
+        pretty_df = zip_and_explode(pretty_df, same_output_level, not_same_output_level)
+        pretty_df = self.convert_embeddings_to_np(pretty_df)
+        return pretty_df
+    # pretty_df =  self.finalize_retur_datatype(pretty_df)
+    # pandas_df.set_index('origin_index', inplace=True)
 
 
 
 
-        return   self.unpack_and_apply_extractors(processed, output_metadata, keep_stranger_features, stranger_features)
-        # pretty_df=  self.unpack_and_apply_extractors(processed, output_metadata, keep_stranger_features, stranger_features)
-        # zip_and_explode(pretty_df, same_output_level, not_same_output_level)
 
-        #
-        #
-        # logger.info(f'exploding amd zipping at same level fields = {same_output_level_fields}')
-        # logger.info(f'as same level fields = {not_at_same_output_level_fields}')
-        # def zip_col_py(*cols): return list(zip(*cols))
-        #
-        # output_fields = sdf[same_output_level_fields].schema.fields
-        # d_types = []
-        # for i,o in enumerate(output_fields) : d_types.append(StructField(name=str(i),dataType= o.dataType.elementType) )
-        # udf_type = t.ArrayType(t.StructType(d_types))
-        # arrays_zip_ = F.udf(zip_col_py,udf_type)
-        #
-        #
-        # ptmp = sdf.withColumn('tmp', arrays_zip_(*same_output_level_fields)) \
-        #     .withColumn("res", explode('tmp'))
-        #
-        #
-        #
-        #
-        # final_select_not_at_same_output_level = []
-        #
-        #
-        #
-        # ptmp, final_select_same_output_level = self.rename_columns_and_extract_map_values_same_level(ptmp=ptmp,
-        #                                                                                              fields_to_rename=same_output_level_fields,
-        #                                                                                              same_output_level=True,
-        #                                                                                              stranger_features=stranger_features,
-        #                                                                                              meta=output_metadata)
-        # if get_different_level_output:
-        #     ptmp, final_select_not_at_same_output_level = self.rename_columns_and_extract_map_values_different_level(
-        #         ptmp=ptmp, fields_to_rename=not_at_same_output_level_fields, same_output_level=False,
-        #         meta=output_metadata, )
-        #
-        # ptmp,final_select_multi_output_level = self.extract_multi_level_outputs(ptmp, multi_level_fields, output_metadata)
-        # if keep_stranger_features: final_select_not_at_same_output_level += stranger_features
-        #
-        #
-        #
-        #
-        # logger.info('Final cleanup select of same level =%s', final_select_same_output_level)
-        # logger.info('Final cleanup select of different level =%s', final_select_not_at_same_output_level)
-        # logger.info('Final cleanup select of multi level =%s', final_select_multi_output_level)
-        #
-        # logger.info('Final ptmp columns = %s', ptmp.columns)
-        #
-        # final_cols = final_select_same_output_level + final_select_not_at_same_output_level + final_select_multi_output_level + ['origin_index']
-        # if drop_irrelevant_cols: final_cols = self.drop_irrelevant_cols(final_cols)
-        # # ner columns is NER-IOB format, mostly useless for the users. If meta false, we drop it here.
-        # if output_metadata == False and 'ner' in final_cols: final_cols.remove('ner')
-        # final_df = ptmp.select(list(set(final_cols)))
-        #
-        # pandas_df = self.finalize_return_datatype(final_df)
-        # if isinstance(pandas_df,pyspark.sql.dataframe.DataFrame):
-        #     return pandas_df # is actually spark df
-        # else:
-        #     pandas_df.set_index('origin_index', inplace=True)
-        #     return self.convert_embeddings_to_np(pandas_df)
 
 
 
@@ -1063,34 +1007,29 @@ class NLUPipeline(BasePipe):
         return pdf
 
 
-    def finalize_return_datatype(self, sdf):
+    def finalize_return_datatype(self, df):
         '''
         Take in a Spark dataframe with only relevant columns remaining.
         Depending on what value is set in self.output_datatype, this method will cast the final SDF into Pandas/Spark/Numpy/Modin/List objects
-        :param sdf:
+        :param df:
         :return: The predicted Data as datatype dependign on self.output_datatype
         '''
 
         if self.output_datatype == 'spark':
-            return sdf
+            return df # todo
         elif self.output_datatype == 'pandas':
-            return sdf.toPandas()
+            return df
         elif self.output_datatype == 'modin':
             import modin.pandas as mpd
-            return mpd.DataFrame(sdf.toPandas())
+            return mpd.DataFrame(df)
         elif self.output_datatype == 'pandas_series':
-            return sdf.toPandas()
+            return df
         elif self.output_datatype == 'modin_series':
             import modin.pandas as mpd
-            return mpd.DataFrame(sdf.toPandas())
+            return mpd.DataFrame(df)
         elif self.output_datatype == 'numpy':
-            return sdf.toPandas().to_numpy()
-        elif self.output_datatype == 'string':
-            return sdf.toPandas()
-        elif self.output_datatype == 'string_list':
-            return sdf.toPandas()
-        elif self.output_datatype == 'array':
-            return sdf.toPandas()
+            return df.to_numpy()
+        return df
 
 
     def drop_irrelevant_cols(self, cols):
@@ -1263,16 +1202,16 @@ class NLUPipeline(BasePipe):
 
         self.output_positions = positions
 
-        if output_level == 'chunk':
-            # If no chunk output component in pipe we must add it and run the query PipelineQueryVerifier again
-            chunk_provided = False
-            for component in self.components:
-                if component.info.output_level == 'chunk': chunk_provided = True
-            if chunk_provided == False:
-                self.components.append(nlu.pipe.component_resolution.get_default_component_of_type('chunk'))
-                # this could break indexing..
-
-                self = nlu.pipe.pipeline_logic.PipelineQueryVerifier.check_and_fix_nlu_pipeline(self)
+        # if output_level == 'chunk':
+        #     # If no chunk output component in pipe we must add it and run the query PipelineQueryVerifier again
+        #     chunk_provided = False
+        #     for component in self.components:
+        #         if component.info.output_level == 'chunk': chunk_provided = True
+        #     if chunk_provided == False:
+        #         self.components.append(nlu.pipe.component_resolution.get_default_component_of_type('chunk'))
+        #         # this could break indexing..
+        #
+        #         self = nlu.pipe.pipeline_logic.PipelineQueryVerifier.check_and_fix_nlu_pipeline(self)
         # if not self.is_fitted: self.fit()
 
         # currently have to always fit, otherwise parameter changes wont take effect
