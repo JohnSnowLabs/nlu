@@ -19,7 +19,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 
 REQUIRED_PKGS = [
     # 'pyspark>=2.4.0,<2.5',
-    'spark-nlp>=2.7.1,<2.8',
+    'spark-nlp>=3.0.0,<3.1.0',
     'numpy',
     'pyarrow>=0.16.0',
     'pandas',
@@ -39,7 +39,7 @@ setup(
     #
     # There are some restrictions on what makes a valid project name
     # specification here:    # https://packaging.python.org/specifications/core-metadata/#name
-    name='nlu',  #  Required #nlu
+    name='peanut_butter_data_time',  #  Required #nlu
 
     # Versions should comply with PEP 440:
     # https://www.python.org/dev/peps/pep-0440/
@@ -47,7 +47,7 @@ setup(
     # For a discussion on single-sourcing the version across setup.py and the
     # project code, see
     # https://packaging.python.org/en/latest/single_source_version.html
-    version='1.1.1',  # Required
+    version='3.0.0rc1',  # Required
 
     # This is a one-line description or tagline of what your project does. This
     # corresponds to the "Summary" metadata field:
@@ -209,10 +209,20 @@ setup(
         ('', ['nlu/components/utils/deep_sentence_detector/component_infos.json']),
         ('', ['nlu/components/utils/document_assembler/component_infos.json']),
         ('', ['nlu/components/utils/sentence_detector/component_infos.json']),
-        ('', ['nlu/components/utils/sentence_embedding/component_infos.json']),
+        ('', ['nlu/components/utils/sentence_embeddings/component_infos.json']),
         ('', ['nlu/components/utils/ner_to_chunk_converter/component_infos.json']),
 
         ('', ['nlu/components/utils/token_assembler/component_infos.json']),
+        ('', ['nlu/components/deidentifiers/deidentifier/component_infos.json']),
+        ('', ['nlu/components/relation_extractors/relation_extractor/component_infos.json']),
+        ('', ['nlu/components/relation_extractors/relation_extractor_dl/component_infos.json']),
+        ('', ['nlu/components/resolutions/chunk_entity_resolver/component_infos.json']),
+        ('', ['nlu/components/resolutions/sentence_entity_resolver/component_infos.json']),
+        ('', ['nlu/components/assertions/assertion_dl/component_infos.json']),
+        ('', ['nlu/components/classifiers/generic_classifier/component_infos.json']),
+        ('', ['nlu/components/utils/feature_assembler/component_infos.json']),
+        ('', ['nlu/components/classifiers/ner_healthcare/component_infos.json']),
+        ('', ['nlu/components/utils/ner_to_chunk_converter_licensed/component_infos.json']),
 
     ],
 

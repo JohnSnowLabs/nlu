@@ -2,8 +2,8 @@ from nlu.pipe.pipe_components import SparkNLUComponent
 class Resolver(SparkNLUComponent):
     def __init__(self, annotator_class='sentence_entity_resolver', language='en', component_type='resolution', get_default=True, model = None, nlp_ref ='', nlu_ref='',trainable=False, is_licensed=True):
 
-        if 'chunk'    in nlp_ref or 'chunk'    in nlu_ref : annotator_class='chunk_entity_resolver'
-        if 'sentence' in nlp_ref or 'sentence' in nlu_ref : annotator_class='sentence_entity_resolver'
+        if 'resolve' in nlp_ref and 'resolve_chunk' not in nlp_ref:
+            annotator_class='sentence_entity_resolver'
         if model != None : self.model = model
         else :
             if annotator_class == 'sentence_entity_resolver':

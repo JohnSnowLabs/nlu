@@ -55,6 +55,7 @@ def default_NER_converter_licensed_config(output_col_prefix='entities'):
     return SparkNLPExtractorConfig(
         output_col_prefix   = output_col_prefix,
         get_result          = True,
+        get_meta            = True,
         meta_white_list     = ['entity','confidence'], #sentence, chunk
         name                = 'default_ner',
         description         = 'Converts IOB-NER representation into entity representation and generates confidences for the entire entity chunk',
