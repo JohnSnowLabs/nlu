@@ -10,7 +10,6 @@ class TestCyber(unittest.TestCase):
         df = pipe.predict(['I love pancaces. I hate Mondays', 'I love Fridays'])
         print(df.columns)
         for c in df.columns:print(c,df[c])
-
     def test_snips_ner_model(self):
         pipe = nlu.load('en.ner.snips',verbose=True)
         df = pipe.predict(['I love pancaces. I hate Mondays', 'I love Fridays'])

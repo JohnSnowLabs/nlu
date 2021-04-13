@@ -5,6 +5,7 @@ from sklearn.metrics import classification_report
 import unittest
 from nlu import *
 import tests.test_utils as t
+import pandas as pd
 
 
 class MultiClassifierDlTests(unittest.TestCase):
@@ -13,7 +14,6 @@ class MultiClassifierDlTests(unittest.TestCase):
         # The y column must be a string seperated with ```,``` . Custom seperators can be configured by passing
         test_df = self.load_multi_classifier_dl_dataset()
         # test_df.columns = ['y_str','text']
-        test_df.columns = ['y','text']
 
         # test_df['y'] = test_df.y_str.str.split(',')
 
@@ -31,19 +31,22 @@ class MultiClassifierDlTests(unittest.TestCase):
 #: java.lang.IllegalArgumentException: requirement failed: The label column MultiClassifierDLApproach_cbfe97978b3c__labelColumn type is StringType and it's not compatible. Compatible types are ArrayType(StringType).
 
         # pipe['multi_classifier_dl'].setMaxEpochs(2)
-        pipe.print_info()
+        # pipe.print_info()
         pipe = pipe.fit(train_df)
         df = pipe.predict(train_df)
         print(df.columns)
-        print(df[['multi_classifier_classes','y']])
-        print(df[['multi_classifier_confidences','y']])
+        for c in df.columns : print (df[c])
+        #
+        # print(df[['multi_classifier_classes','y']])
+        # print(df[['multi_classifier_confidences','y']])
 
         df = pipe.predict(test_df)
         print(df.columns)
-        print(df[['multi_classifier_classes','y']])
-        print(df[['multi_classifier_confidence','y']])
+        for c in df.columns : print (df[c])
+        # print(df[['multi_classifier_classes','y']])
+        # print(df[['multi_classifier_confidence','y']])
         df.dropna(inplace=True)
-        print (classification_report(df['y'], df['multi_classifier_classes']))
+        # print (classification_report(df['y'], df['multi_classifier_classes']))
     # Too heavy running on github actions
 
     #

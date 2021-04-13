@@ -13,8 +13,8 @@ class NerTrainingTests(unittest.TestCase):
         pipe = nlu.load('train.ner',verbose=True)
         pipe = pipe.fit(dataset_path=train_path)
         df = pipe.predict(' Hello Donald Trump and Hello Angela Merkel')
-        print(df)
-        print(df.columns)
+        for c in df.columns : print (df[c])
+
     # Too heavy running on github actions
 
     # def test_ner_training_with_custom_embeddings(self):

@@ -7,7 +7,7 @@ class MatcherTests(unittest.TestCase):
     def test_date_matcher(self):
         pipe = nlu.load('match.datetime', verbose=True )
         df = pipe.predict('2020 was a crazy year but wait for October 1. 2020')
-        print(df.columns)
+        for c in df.columns: print(df[c])
 
         #others to test :
         # 'en.match.pattern'
@@ -16,13 +16,13 @@ class MatcherTests(unittest.TestCase):
     def test_pattern_matcher(self):
         pipe = nlu.load('match.pattern', verbose=True )
         df = pipe.predict('2020 was a crazy year but wait for October 1. 2020')
-        print(df.columns)
+        for c in df.columns: print(df[c])
 
 
     def test_chunk_matcher(self):
         pipe = nlu.load('match.chunks', verbose=True )
         df = pipe.predict('2020 was a crazy year but wait for October 1. 2020')
-        print(df.columns)
+        for c in df.columns: print(df[c])
 
 
 

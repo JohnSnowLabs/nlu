@@ -11,11 +11,7 @@ class TestElectraTokenEmbeddings(unittest.TestCase):
 
         df = nlu.load('bert electra ',verbose=True).predict('Am I the muppet or are you the muppet?')
         # df = nlu.load('en.classify.sarcasm',verbose=True).predict(sarcasm_df['text'])
-        print(df.columns)
-        print(df)
-        print(df['bert_embeddings'])
-        print(df['electra_embeddings'])
-
+        for c in df.columns: print(df[c])
 
 
 if __name__ == '__main__':

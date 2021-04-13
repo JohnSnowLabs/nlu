@@ -1,6 +1,7 @@
 
 
 from sklearn.metrics import classification_report
+import pandas as pd
 import tests.test_utils as t
 import unittest
 from nlu import *
@@ -30,9 +31,10 @@ class SentimentTrainingTests(unittest.TestCase):
         print(df.columns)
         print(df)
         print(df.columns)
-        print(df[['sentiment','sentiment_confidence']])
-        print(df.sentiment.value_counts())
-        print(df.sentiment_confidence.value_counts())
+        for c in df.columns : print (df[c])
+        # print(df[['sentiment','sentiment_confidence']])
+        # print(df.sentiment.value_counts())
+        # print(df.sentiment_confidence.value_counts())
 
 
 
@@ -59,11 +61,12 @@ class SentimentTrainingTests(unittest.TestCase):
         # df = fitted_pipe.predict(' I love NLU!')
 
         df = pipe.predict(df_train.iloc[0:500],output_level='document')
-        print(df)
-        print(df.columns)
-        print(df[['sentiment','sentiment_confidence']])
-        print(df.sentiment.value_counts())
-        print(df.sentiment_confidence.value_counts())
+        for c in df.columns : print (df[c])
+        # print(df)
+        # print(df.columns)
+        # print(df[['sentiment','sentiment_confidence']])
+        # print(df.sentiment.value_counts())
+        # print(df.sentiment_confidence.value_counts())
 # TODO test if bad performance persists in Spark NLP with non USE sentence eebddigns
     def test_sentiment_training_with_custom_embeds_sentence_level(self):
 
@@ -87,12 +90,14 @@ class SentimentTrainingTests(unittest.TestCase):
 
         df = pipe.predict(df_train.iloc[0:50],output_level='sentence')
         print(df)
-        print(df.columns)
-        print(df)
-        print(df.columns)
-        print(df[['sentiment','sentiment_confidence']])
-        print(df.sentiment.value_counts())
-        print(df.sentiment_confidence.value_counts())
+        for c in df.columns : print (df[c])
+
+        # print(df.columns)
+        # print(df)
+        # print(df.columns)
+        # print(df[['sentiment','sentiment_confidence']])
+        # print(df.sentiment.value_counts())
+        # print(df.sentiment_confidence.value_counts())
 
 
     def load_sentiment_dl_dataset(self):

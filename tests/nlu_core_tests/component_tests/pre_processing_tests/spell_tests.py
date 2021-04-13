@@ -7,9 +7,7 @@ class TestNormalize(unittest.TestCase):
     def test_spell(self):
         pipe = nlu.load('spell', verbose=True )
         df = pipe.predict('I liek penut butter and jellli')
-        print(df)
-        print(df.columns)
-        print(df['checked'])
+        for c in df.columns: print(df[c])
 
 if __name__ == '__main__':
     unittest.main()

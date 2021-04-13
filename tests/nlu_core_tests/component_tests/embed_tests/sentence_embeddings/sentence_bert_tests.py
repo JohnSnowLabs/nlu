@@ -10,17 +10,12 @@ class TestBertSentenceEmbeddings(unittest.TestCase):
     def test_bert_sentence_embeds(self):
         df = nlu.load('embed_sentence.bert',verbose=True).predict('Am I the muppet or are you the muppet?')
         # df = nlu.load('en.classify.sarcasm',verbose=True).predict(sarcasm_df['text'])
-        print(df.columns)
-        print(df)
-        print(df['embed_sentence_bert_embeddings'])
+        for c in df.columns: print(df[c])
 
 
 
         df = nlu.load('en.embed.bert.small_L4_128', verbose=True).predict("No you are the muppet!")
-        print(df.columns)
-        print(df)
-        print(df['en_embed_bert_small_L4_128_embeddings'])
-
+        for c in df.columns: print(df[c])
 
 
 

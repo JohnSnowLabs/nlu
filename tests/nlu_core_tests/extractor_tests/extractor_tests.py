@@ -3,10 +3,10 @@
 import unittest
 import pandas as pd
 import numpy as np
-from nlu.extractors.extraction_resolver import OC_anno2config
+from nlu.extractors.extraction_resolver_OS import OS_anno2config
 from nlu.extractors.extraction_resolver_HC import HC_anno2config
 
-from nlu.extractors.extractor_configs import  *
+from nlu.extractors.extractor_configs_open_source import  *
 import nlu
 from nlu.extractors.extractor_methods.base_extractor_methods import *
 from nlu.extractors.extractor_methods.helper_extractor_methods import *
