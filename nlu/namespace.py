@@ -1816,9 +1816,9 @@ class NameSpace():
         'en':
             {
                 # AssertionDLModel
-                'en.assert': 'assertion_dl',  # ok
+                'en.assert': 'assertion_dl',
                 'en.assert.biobert': 'assertion_dl_biobert',
-                'en.assert.healthcare': 'assertion_dl_healthcare',  # ok
+                'en.assert.healthcare': 'assertion_dl_healthcare',
                 'en.assert.large': 'assertion_dl_large',
 
                 # WordEmbedding Model Glove Embeddings
@@ -1909,8 +1909,8 @@ class NameSpace():
 
                 # NERDLModels
                 # 'en.med_ner.ade.biobert':'ner_ade_biobert', # Todo error param pooling layer does not exist
-                'en.med_ner.ade.clinical': 'ner_ade_clinical',  # ok
-                'en.med_ner.ade.clinical_bert': 'ner_ade_clinicalbert',  # ok ok
+                'en.med_ner.ade.clinical': 'ner_ade_clinical',
+                'en.med_ner.ade.clinical_bert': 'ner_ade_clinicalbert',
                 'en.med_ner.ade.ade_healthcare': 'ner_ade_healthcare',
                 'en.med_ner.anatomy': 'ner_anatomy',
                 'en.med_ner.anatomy.biobert': 'ner_anatomy_biobert',
@@ -1920,8 +1920,6 @@ class NameSpace():
                 'en.med_ner.bacterial_species': 'ner_bacterial_species',
                 'en.med_ner.bionlp': 'ner_bionlp',
                 'en.med_ner.bionlp.biobert': 'ner_bionlp_biobert',
-                # NOTHING BEFROE 2018!!
-                # 'en.med_ner.bionlp.biobert.noncontrib':'ner_bionlp_noncontrib', # todo whats noncontrib? MEANS DEPRECATED
                 'en.med_ner.cancer': 'ner_cancer_genetics',
                 'en.med_ner.cellular': 'ner_cellular',
                 'en.med_ner.cellular.biobert': 'ner_cellular_biobert',
@@ -1930,11 +1928,7 @@ class NameSpace():
                 'en.med_ner.chemprot.clinical': 'ner_chemprot_clinical',
                 'en.med_ner.clinical': 'ner_clinical',
                 'en.med_ner.clinical.biobert': 'ner_clinical_biobert',
-                # 'en.med_ner.clinical.icdem': 'ner_clinical_icdem', # TODO UNRESOLVED! PIPE?
-                # 'en.med_ner.clinical.large': 'ner_clinical_large',# TODO URNESOLVED, PIPE?
                 'en.med_ner.clinical.noncontrib': 'ner_clinical_noncontrib',
-
-                # NERDL
                 'en.med_ner.diseases': 'ner_diseases',
                 'en.med_ner.diseases.biobert': 'ner_diseases_biobert',
                 'en.med_ner.diseases.large': 'ner_diseases_large',
@@ -1967,18 +1961,12 @@ class NameSpace():
                 'en.med_ner.radiology.wip_clinical': 'ner_radiology_wip_clinical',
                 'en.med_ner.risk_factors': 'ner_risk_factors',
                 'en.med_ner.risk_factors.biobert': 'ner_risk_factors_biobert',
-                # 'en.med_ner.i2b2': 'nerdl_i2b2', #  broken
-
+                'en.med_ner.i2b2': 'nerdl_i2b2', #  broken
                 'en.med_ner.tumour': 'nerdl_tumour_demo',
-
-                # JSL is WIP, WIP means work in progress in nlp ref --> WIP NAMESPACE
                 'en.med_ner.jsl.wip.clinical': 'jsl_ner_wip_clinical',
                 'en.med_ner.jsl.wip.clinical.greedy': 'jsl_ner_wip_greedy_clinical',
                 'en.med_ner.jsl.wip.clinical.modifier': 'jsl_ner_wip_modifier_clinical',
                 'en.med_ner.jsl.wip.clinical.rd': 'jsl_rd_ner_wip_greedy_clinical',
-
-                # NERDL DEID
-                # 'en.med_ner.deid.<dataset>
                 'en.med_ner.deid.augmented': 'ner_deid_augmented',
                 'en.med_ner.deid.biobert': 'ner_deid_biobert',
                 'en.med_ner.deid.enriched': 'ner_deid_enriched',
@@ -1988,7 +1976,11 @@ class NameSpace():
                 'en.med_ner.deid.sd_large': 'ner_deid_sd_large',
                 'en.med_ner.deid.synthetic': 'ner_deid_synthetic',
                 'en.med_ner.deid.dl': 'ner_deidentify_dl',
-                'en.med_ner.deid.': 'nerdl_deid',
+                'en.med_ner.deid': 'nerdl_deid',
+
+                # 'en.med_ner.clinical.icdem': 'ner_clinical_icdem', # TODO UNRESOLVED! PIPE?
+                # 'en.med_ner.clinical.large': 'ner_clinical_large',# TODO URNESOLVED, PIPE?
+
 
                 # DeIdentificationModel
 
@@ -2061,13 +2053,14 @@ class NameSpace():
 
     licensed_storage_ref_2_nlu_ref = {
         'en': {
-            # HARDCODE
             'clinical': 'en.embed.glove.clinical',
             'biobert_pubmed_base_cased': 'biobert_clinical_base_cased',
 
-            'embeddings_healthcare100' : 'en.embed.glove.clinical',
+            # 'embeddings_healthcare100' : 'en.embed.glove.clinical',
             'embeddings_healthcare100': 'en.embed.glove.healthcare_100d',
             'BERT_SENTENCE_EMBEDDINGS_0bee53f1b2cc': 'en.embed_sentence.biobert.mli',
+            # 'BERT_SENTENCE_EMBEDDINGS_0bee53f1b2cc': 'en.embed_sentence.biobert.pubmed_base_cased',
+
             'RelationExtractionModel_3ab4750ad5b6': 'en.embed.glove.clinical',
             'RelationExtractionModel_6b61602c8303': 'en.embed.glove.clinical',
             'RelationExtractionModel_9c255241fec3': 'en.embed.glove.clinical',
