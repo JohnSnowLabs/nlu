@@ -61,7 +61,7 @@ def parse_language_from_nlu_ref(nlu_ref):
 
 
 
-def get_default_component_of_type(missing_component_type,language='en'):
+def get_default_component_of_type(missing_component_type,language='en',is_licensed=False):
     '''
     This function returns a default component for a missing component type.
     It is used to auto complete pipelines, which are missng required components.
@@ -89,6 +89,7 @@ def get_default_component_of_type(missing_component_type,language='en'):
         if missing_component_type == 'date': return nlu.Matcher('date')
         if missing_component_type == 'ner_converter': return Util('ner_converter')
         if missing_component_type == 'ner_chunk': return Util('ner_converter')
+        if missing_component_type == 'entities' and is_licensed: return Util('ner_to_chunk_converter_licensed')
         if missing_component_type == 'entities': return Util('ner_converter')
         if missing_component_type == 'feature_vector': return Util('feature_assembler')
 

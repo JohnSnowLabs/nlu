@@ -235,13 +235,19 @@ class PipelineQueryVerifier():
         return len(missing_components) ==0 and len (missing_storage_refs) == 0 and PipelineQueryVerifier.check_if_all_conversions_satisfied(components_for_embedding_conversion)
 
 
-
+    @staticmethod
+    def has_licensed_components(pipe: NLUPipeline) -> bool:
+        """Check if any licensed components in pipe"""
+        for c in pipe.components :
+            if c.info.license =='healthcare' : return True
+        return False
     @staticmethod
     def satisfy_dependencies(pipe: NLUPipeline) -> NLUPipeline:
         """Dependency Resolution Algorithm.
         For a given pipeline with N components, builds a DAG in reverse and satisfiy each of their dependencies and child dependencies
          with a BFS approach and returns the resulting pipeline"""
         all_features_provided = False
+        is_licensed = PipelineQueryVerifier.has_licensed_components(pipe)
         while all_features_provided == False:
             # After new components have been added, we must loop again and check for the new components if requriements are met
             components_to_add = []
@@ -253,7 +259,7 @@ class PipelineQueryVerifier():
 
             # Create missing base storage ref producers, i.e embeddings
             for missing_component in missing_storage_refs:
-                component = get_default_component_of_type(missing_component, language=pipe.lang)
+                component = get_default_component_of_type(missing_component, language=pipe.lang, is_licensed=is_licensed)
                 if component is None : continue
                 if 'chunk_emb' in missing_component:
                     components_to_add.append(ComponentUtils.config_chunk_embed_converter(component))
@@ -262,7 +268,7 @@ class PipelineQueryVerifier():
 
             # Create missing base components, storage refs are fetched in rpevious loop
             for missing_component in missing_components:
-                components_to_add.append(get_default_component_of_type(missing_component, language=pipe.lang))
+                components_to_add.append(get_default_component_of_type(missing_component, language=pipe.lang,is_licensed=is_licensed))
 
             # Create embedding converters
             for resolution_info in components_for_embedding_conversion:

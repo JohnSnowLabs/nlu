@@ -113,7 +113,7 @@ class BasePipe(dict):
         if name_to_add == '':
             # Add Component as self.index and in attributes
             if 'embed' in component.info.type and nlu_reference not in self.keys() and not pretrained_pipe_component:
-                self[name] = component.info.name
+                self[name] = component.model
             elif name not in self.keys():
                 if not hasattr(component.info,'nlu_ref'):  component.info.nlu_ref  = nlu_reference
                 self[name] = component.model
