@@ -290,7 +290,7 @@ def resolve_component_from_parsed_query_data(language, component_type, dataset, 
             nlp_ref = NameSpace.trainable_models[nlu_ref]
             logger.info(f'Found Spark NLP reference in trainable models namespace = {nlp_ref}')
             resolved = True
-
+            trainable=True
     # 1. check if pipeline references for resolution
     if resolved == False and language in NameSpace.pretrained_pipe_references.keys():
         if nlu_ref in NameSpace.pretrained_pipe_references[language].keys():
@@ -373,7 +373,7 @@ def resolve_component_from_parsed_query_data(language, component_type, dataset, 
               f"NLU will ignore this error and continue running, but you will encounter errors most likely. ")
 
 
-    if nlp_ref =='' and not recurisve_resolve:
+    if nlp_ref == '' and not recurisve_resolve and not trainable and 'en.' not in nlu_ref and language in ['','en']:
         # logger.info('')
         #Search again but with en. prefixed, enables all refs to work withouth en prefix
         return resolve_component_from_parsed_query_data(language, component_type, dataset, component_embeddings, 'en.'+nlu_ref,trainable,path,authenticated,True)
