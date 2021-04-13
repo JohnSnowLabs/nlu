@@ -5,13 +5,13 @@ class BertSentence:
     @staticmethod
     def get_default_model():
         return   BertSentenceEmbeddings.pretrained() \
-        .setInputCols("document") \
+        .setInputCols("sentence") \
         .setOutputCol("bert_sentence")
 
     @staticmethod
     def get_pretrained_model(name, language, bucket=None):
         return   BertSentenceEmbeddings.pretrained(name,language,bucket) \
-            .setInputCols('document') \
+            .setInputCols('sentence') \
             .setOutputCol("bert_sentence")
 
 

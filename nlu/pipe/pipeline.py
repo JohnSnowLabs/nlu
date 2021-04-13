@@ -769,6 +769,16 @@ class NLUPipeline(BasePipe):
                     else : return level
 
 
+        
+        if self.has_licensed_components:
+            from  nlu.extractors.output_level_HC_map import HC_anno2output_level
+            for level in HC_anno2output_level.keys():
+                for t in HC_anno2output_level[level]:
+                    if isinstance(component.model,t) :
+                        if level == 'input_dependent' : return self.resolve_input_dependent_component_to_output_level(component)
+                        else : return level
+            
+
 
     def infer_and_set_output_level(self):
         '''
@@ -973,6 +983,7 @@ class NLUPipeline(BasePipe):
         same_output_level                = self.get_cols_at_same_output_level(col2output_level)
         not_same_output_level            = self.get_cols_not_at_same_output_level(col2output_level)
 
+        logger.info(f"Extracting for same_level_cols = {same_output_level}\nand different_output_level_cols = {not_same_output_level}")
 
         pretty_df = self.unpack_and_apply_extractors(processed, output_metadata, keep_stranger_features, stranger_features)
         pretty_df = zip_and_explode(pretty_df, same_output_level, not_same_output_level)

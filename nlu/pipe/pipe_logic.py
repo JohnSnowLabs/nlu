@@ -248,6 +248,7 @@ class PipelineQueryVerifier():
          with a BFS approach and returns the resulting pipeline"""
         all_features_provided = False
         is_licensed = PipelineQueryVerifier.has_licensed_components(pipe)
+        pipe.has_licensed_components=is_licensed
         while all_features_provided == False:
             # After new components have been added, we must loop again and check for the new components if requriements are met
             components_to_add = []

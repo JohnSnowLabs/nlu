@@ -1,1 +1,23 @@
-{"name": "bert_sentence", "description": "todo", "output_level": "sentence", "trainable": false, "outputs": ["sentence_embeddings"], "inputs": ["document"], "type": "sentence_embeddings", "spark_input_column_names": ["document"], "spark_output_column_names": ["document"], "provider": "sparknlp", "license": "open source", "computation_context": "spark", "output_context": "spark"}
+{
+  "name": "bert_sentence",
+  "description": "todo",
+  "output_level": "sentence",
+  "trainable": false,
+  "outputs": [
+    "sentence_embeddings"
+  ],
+  "inputs": [
+    "sentence"
+  ],
+  "type": "sentence_embeddings",
+  "spark_input_column_names": [
+    "sentence"
+  ],
+  "spark_output_column_names": [
+    "sentence_embeddings"
+  ],
+  "provider": "sparknlp",
+  "license": "open source",
+  "computation_context": "spark",
+  "output_context": "spark"
+}

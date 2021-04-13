@@ -1,1 +1,25 @@
-{"name": "elmo", "description": "todo", "trainable": false, "output_level": "token", "outputs": ["word_embeddings"], "inputs": ["document", "sentence", "token"], "type": "word_embeddings", "spark_input_column_names": ["sentence", "token"], "spark_output_column_names": ["word_embeddings"], "provider": "sparknlp", "license": "open source", "computation_context": "spark", "output_context": "spark"}
+{
+  "name": "elmo",
+  "description": "todo",
+  "trainable": false,
+  "output_level": "token",
+  "outputs": [
+    "word_embeddings"
+  ],
+  "inputs": [
+    "sentence",
+    "token"
+  ],
+  "type": "word_embeddings",
+  "spark_input_column_names": [
+    "sentence",
+    "token"
+  ],
+  "spark_output_column_names": [
+    "word_embeddings"
+  ],
+  "provider": "sparknlp",
+  "license": "open source",
+  "computation_context": "spark",
+  "output_context": "spark"
+}
