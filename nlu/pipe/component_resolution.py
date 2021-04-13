@@ -268,7 +268,7 @@ def nlu_ref_to_component(nlu_reference, detect_lang=False, authenticated=False):
     return resolved_component
 
 
-def resolve_component_from_parsed_query_data(language, component_type, dataset, component_embeddings, nlu_ref,trainable=False,path=None,authenticated=False):
+def resolve_component_from_parsed_query_data(language, component_type, dataset, component_embeddings, nlu_ref,trainable=False,path=None,authenticated=False,recurisve_resolve=False):
     '''
     Searches the NLU name spaces for a matching NLU reference. From that NLU reference, a SparkNLP reference will be aquired which resolved to a SparkNLP pretrained model or pipeline
     :param nlu_ref: Full request which was passed to nlu.load()
@@ -369,9 +369,14 @@ def resolve_component_from_parsed_query_data(language, component_type, dataset, 
               f"Your environment does not seem to be Authorized!\n"
               f"Please RESTART your Python environment and run nlu.auth(SPARK_NLP_LICENSE,AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY,JSL_SECRET)  \n"
               f"with your corrosponding credentials. If you have no credentials you can get a trial version with credentials here https://www.johnsnowlabs.com/spark-nlp-try-free/ \n"
-              f"Or contact us at contact@jonsnowlabs.com"
+              f"Or contact us at contact@jonsnowlabs.com\n"
               f"NLU will ignore this error and continue running, but you will encounter errors most likely. ")
 
+
+    if nlp_ref =='' and not recurisve_resolve:
+        # logger.info('')
+        #Search again but with en. prefixed, enables all refs to work withouth en prefix
+        return resolve_component_from_parsed_query_data(language, component_type, dataset, component_embeddings, 'en.'+nlu_ref,trainable,path,authenticated,True)
 
     # Convert references into NLU Component object which embelishes NLP annotators
     if component_kind == 'pipe':
