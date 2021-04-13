@@ -951,12 +951,11 @@ class NLUPipeline(BasePipe):
 
 
     def pythonify_spark_dataframe(self, processed,
-                                  get_different_level_output=True,
                                   keep_stranger_features=True,
                                   stranger_features=[],
                                   drop_irrelevant_cols=True,
-                                  output_metadata=False,
-                                  index_provided=False):
+                                  output_metadata=False):
+
         '''
         This functions takes in a spark dataframe with Spark NLP annotations in it and transforms it into a Pandas Dataframe with common feature types for further NLP/NLU downstream tasks.
         It will recylce Indexes from Pandas DataFrames and Series if they exist, otherwise a custom id column will be created which is used as inex later on
@@ -988,9 +987,11 @@ class NLUPipeline(BasePipe):
         pretty_df = self.unpack_and_apply_extractors(processed, output_metadata, keep_stranger_features, stranger_features)
         pretty_df = zip_and_explode(pretty_df, same_output_level, not_same_output_level)
         pretty_df = self.convert_embeddings_to_np(pretty_df)
+        if  drop_irrelevant_cols : return pretty_df[self.drop_irrelevant_cols(list(pretty_df.columns))]
         return pretty_df
-    # pretty_df =  self.finalize_retur_datatype(pretty_df)
-    # pandas_df.set_index('origin_index', inplace=True)
+
+
+# pretty_df =  self.finalize_retur_datatype(pretty_df)
 
 
 
@@ -1055,21 +1056,21 @@ class NLUPipeline(BasePipe):
         :return: list of columns with the irrelevant names removed
         '''
         if self.output_level == 'token':
-            if 'document' in cols: cols.remove('document')
-            if 'chunk' in cols: cols.remove('chunk')
-            if 'sentence' in cols: cols.remove('sentence')
+            if 'document_results' in cols: cols.remove('document_results')
+            if 'chunk_results' in cols: cols.remove('chunk_results')
+            if 'sentence_results' in cols: cols.remove('sentence_results')
         if self.output_level == 'sentence':
-            if 'token' in cols: cols.remove('token')
-            if 'chunk' in cols: cols.remove('chunk')
-            if 'document' in cols: cols.remove('document')
+            if 'token_results' in cols: cols.remove('token_results')
+            if 'chunk_results' in cols: cols.remove('chunk_results')
+            if 'document_results' in cols: cols.remove('document_results')
         if self.output_level == 'chunk':
-            if 'document' in cols: cols.remove('document')
-            if 'token' in cols: cols.remove('token')
-            if 'sentence' in cols: cols.remove('sentence')
+            if 'document_results' in cols: cols.remove('document_results')
+            if 'token_results' in cols: cols.remove('token_results')
+            if 'sentence_results' in cols: cols.remove('sentence_results')
         if self.output_level == 'document':
-            if 'token' in cols: cols.remove('token')
-            if 'chunk' in cols: cols.remove('chunk')
-            if 'sentence' in cols: cols.remove('sentence')
+            if 'token_results' in cols: cols.remove('token_results')
+            if 'chunk_results' in cols: cols.remove('chunk_results')
+            if 'sentence_results' in cols: cols.remove('sentence_results')
 
         return cols
 
@@ -1377,12 +1378,14 @@ class NLUPipeline(BasePipe):
                         "If you use Modin, make sure you have installed 'pip install modin[ray]' or 'pip install modin[dask]' backend for Modin ")
 
             if return_spark_df : return sdf  # Returns RAW result of pipe prediction
-            return self.pythonify_spark_dataframe(sdf, self.output_different_levels,
+            return self.pythonify_spark_dataframe(sdf,
                                                   keep_stranger_features=keep_stranger_features,
-                                                  stranger_features=stranger_features, output_metadata=metadata,
-                                                  index_provided=index_provided,
+                                                  stranger_features=stranger_features,
+                                                  output_metadata=metadata,
                                                   drop_irrelevant_cols=drop_irrelevant_cols
                                                   )
+
+
         except Exception as err :
             import sys
             if multithread == True:
