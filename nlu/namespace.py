@@ -1850,27 +1850,27 @@ class NameSpace():
                 # 'en.embed_sentence.biobert.mednli': 'sent_biobert_base_uncased_mednli',  # broken
 
                 # resolve sentence cpt
-                'en.resolve_sentence': 'sbiobertresolve_cpt',
-                'en.resolve_sentence.cpt': 'sbiobertresolve_cpt',
-                'en.resolve_sentence.cpt.augmented': 'sbiobertresolve_cpt_augmented',
-                'en.resolve_sentence.cpt.procedures_augmented': 'sbiobertresolve_cpt_procedures_augmented',
+                'en.resolve': 'sbiobertresolve_cpt',
+                'en.resolve.cpt': 'sbiobertresolve_cpt',
+                'en.resolve.cpt.augmented': 'sbiobertresolve_cpt_augmented',
+                'en.resolve.cpt.procedures_augmented': 'sbiobertresolve_cpt_procedures_augmented',
                 # resolve sentence hcc
-                'en.resolve_sentence.hcc.augmented': 'sbiobertresolve_hcc_augmented',
+                'en.resolve.hcc.augmented': 'sbiobertresolve_hcc_augmented',
                 # resolve sentence icd
-                'en.resolve_sentence.icd10cm': 'sbiobertresolve_icd10cm',
-                'en.resolve_sentence.icd10cm.augmented': 'sbiobertresolve_icd10cm_augmented',
-                'en.resolve_sentence.icd10cm.augmented_billable': 'sbiobertresolve_icd10cm_augmented_billable_hcc',
-                'en.resolve_sentence.icd10pcs': 'sbiobertresolve_icd10pcs',
-                'en.resolve_sentence.icdo': 'sbiobertresolve_icdo',
+                'en.resolve.icd10cm': 'sbiobertresolve_icd10cm',
+                'en.resolve.icd10cm.augmented': 'sbiobertresolve_icd10cm_augmented',
+                'en.resolve.icd10cm.augmented_billable': 'sbiobertresolve_icd10cm_augmented_billable_hcc',
+                'en.resolve.icd10pcs': 'sbiobertresolve_icd10pcs',
+                'en.resolve.icdo': 'sbiobertresolve_icdo',
                 # rewsolve sentence rx
-                'en.resolve_sentence.rxcui': 'sbiobertresolve_rxcui',
-                'en.resolve_sentence.rxnorm': 'sbiobertresolve_rxnorm',
+                'en.resolve.rxcui': 'sbiobertresolve_rxcui',
+                'en.resolve.rxnorm': 'sbiobertresolve_rxnorm',
                 # resolve sentence snomed s
-                'en.resolve_sentence.snomed': 'sbiobertresolve_snomed_auxConcepts',  # alias
-                'en.resolve_sentence.snomed.aux_concepts': 'sbiobertresolve_snomed_auxConcepts',
-                'en.resolve_sentence.snomed.aux_concepts_int': 'sbiobertresolve_snomed_auxConcepts_int',
-                'en.resolve_sentence.snomed.findings': 'sbiobertresolve_snomed_findings',
-                'en.resolve_sentence.snomed.findings_int': 'sbiobertresolve_snomed_findings_int',
+                'en.resolve.snomed': 'sbiobertresolve_snomed_auxConcepts',  # alias
+                'en.resolve.snomed.aux_concepts': 'sbiobertresolve_snomed_auxConcepts',
+                'en.resolve.snomed.aux_concepts_int': 'sbiobertresolve_snomed_auxConcepts_int',
+                'en.resolve.snomed.findings': 'sbiobertresolve_snomed_findings',
+                'en.resolve.snomed.findings_int': 'sbiobertresolve_snomed_findings_int',
 
                 # Greedy Relation extracction
                 'en.relation.posology': 'posology_re',  # TODo OCRASHES SOME STRINGS!
