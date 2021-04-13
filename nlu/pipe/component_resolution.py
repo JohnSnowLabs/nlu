@@ -131,18 +131,9 @@ def resolve_storage_ref(lang, storage_ref):
     nlu_ref,nlp_ref,is_licensed = None,None,False
     # get nlu ref
 
-    # check if storage_ref matches nlu_ref
-    if lang in nlu.NameSpace.licensed_storage_ref_2_nlu_ref.keys():
-        if storage_ref in nlu.NameSpace.licensed_storage_ref_2_nlu_ref[lang].keys():
-            nlu_ref = storage_ref
-            nlp_ref = nlu.NameSpace.licensed_storage_ref_2_nlu_ref[lang][nlu_ref]
-    elif lang in nlu.NameSpace.pretrained_models_references.keys():
-        if storage_ref in nlu.NameSpace.pretrained_models_references[lang].keys():
-            nlu_ref = storage_ref
-            nlp_ref = nlu.NameSpace.pretrained_models_references[lang][nlu_ref]
 
     # check if storage_ref is hardcoded
-    elif lang in nlu.NameSpace.licensed_storage_ref_2_nlu_ref.keys():
+    if lang in nlu.NameSpace.licensed_storage_ref_2_nlu_ref.keys():
         if storage_ref in nlu.NameSpace.licensed_storage_ref_2_nlu_ref[lang].keys():
             nlu_ref = nlu.NameSpace.licensed_storage_ref_2_nlu_ref[lang][storage_ref]
             is_licensed = False
@@ -155,6 +146,18 @@ def resolve_storage_ref(lang, storage_ref):
     elif nlu_ref in nlu.NameSpace.pretrained_healthcare_model_references[lang].keys():
         nlp_ref = nlu.NameSpace.pretrained_healthcare_model_references[lang][nlu_ref]
         is_licensed = True
+
+    # check if storage_ref matches nlu_ref
+    elif lang in nlu.NameSpace.licensed_storage_ref_2_nlu_ref.keys():
+        if storage_ref in nlu.NameSpace.licensed_storage_ref_2_nlu_ref[lang].keys():
+            nlu_ref = storage_ref
+            nlp_ref = nlu.NameSpace.licensed_storage_ref_2_nlu_ref[lang][nlu_ref]
+    elif lang in nlu.NameSpace.pretrained_models_references.keys():
+        if storage_ref in nlu.NameSpace.pretrained_models_references[lang].keys():
+            nlu_ref = storage_ref
+            nlp_ref = nlu.NameSpace.pretrained_models_references[lang][nlu_ref]
+
+
 
     if nlu_ref == None and nlp_ref == None :
         logger.info("COULD NOT RESOLVE STORAGE_REF")
