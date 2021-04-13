@@ -38,6 +38,10 @@ def get_sample_spark_dataframe():
     text_df = pd.DataFrame(data)
     return text_df
 
+def get_sample_pdf_with_extra_cols_and_entities():
+    data = {"text": ['Pater says this day sucks. He lives in America. He likes Angela Merkel from Germany', 'I love burgers from Burger King', 'I dont like Sami, he lives in Asia'], "random_feature1": [1, 1, 0], "random_feature2": ['d','a' , '3']}
+    text_df = pd.DataFrame(data)
+    return text_df
 
 
 from os.path import expanduser

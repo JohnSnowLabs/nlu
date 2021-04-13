@@ -4,14 +4,16 @@ import nlu
 import sparknlp_jsl
 from sparknlp.annotator import BertSentenceEmbeddings
 from sparknlp_jsl.annotator import *
+import tests.nlu_hc_tests.secrets as sct
 
 class DeidentificationTests(unittest.TestCase):
     def test_generic_classifier(self):
 
-        SPARK_NLP_LICENSE     = ''
-        AWS_ACCESS_KEY_ID     = ''
-        AWS_SECRET_ACCESS_KEY = ''
-        JSL_SECRET            = ''
+        SPARK_NLP_LICENSE     = sct.SPARK_NLP_LICENSE
+        AWS_ACCESS_KEY_ID     = sct.AWS_ACCESS_KEY_ID
+        AWS_SECRET_ACCESS_KEY = sct.AWS_SECRET_ACCESS_KEY
+        JSL_SECRET            = sct.JSL_SECRET
+
         nlu.auth(SPARK_NLP_LICENSE,AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY,JSL_SECRET)
 #
 
