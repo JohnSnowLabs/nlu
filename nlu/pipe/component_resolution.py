@@ -107,11 +107,10 @@ def get_default_component_of_type(missing_component_type,language='en',is_licens
             else :  nlu_ref,nlp_ref, is_licensed =  resolve_storage_ref(language,storage_ref)
 
             if 'chunk_embeddings' in missing_component_type: return  set_storage_ref_and_resolution_on_component_info(embeddings_chunker.EmbeddingsChunker(nlu_ref=nlu_ref,nlp_ref=nlp_ref),storage_ref)
-
             else : return set_storage_ref_and_resolution_on_component_info(construct_component_from_identifier(language=language, component_type='embed', nlu_ref=nlu_ref,nlp_ref=nlp_ref, is_licensed=is_licensed), storage_ref,)
+
         if 'pos' in missing_component_type or 'ner' in missing_component_type:
-            return construct_component_from_identifier(language=language, component_type='classifier',
-                                                       nlp_ref=storage_ref)
+            return construct_component_from_identifier(language=language, component_type='classifier',nlp_ref=storage_ref)
         if 'unlabeled_dependency' in missing_component_type or 'dep.untyped' in missing_component_type:
             return UnlabledDepParser('dep.untyped')
         if 'labled_dependency' in missing_component_type or 'dep.typed' in missing_component_type:
@@ -131,15 +130,25 @@ def resolve_storage_ref(lang, storage_ref):
     """Returns a nlp_ref, nlu_ref and wether it is a licensed model or not"""
     nlu_ref,nlp_ref,is_licensed = None,None,False
     # get nlu ref
+
+    # check if storage_ref matches nlu_ref
     if lang in nlu.NameSpace.licensed_storage_ref_2_nlu_ref.keys():
+        if storage_ref in nlu.NameSpace.licensed_storage_ref_2_nlu_ref[lang].keys():
+            nlu_ref = storage_ref
+            nlp_ref = nlu.NameSpace.licensed_storage_ref_2_nlu_ref[lang][nlu_ref]
+    elif lang in nlu.NameSpace.pretrained_models_references.keys():
+        if storage_ref in nlu.NameSpace.pretrained_models_references[lang].keys():
+            nlu_ref = storage_ref
+            nlp_ref = nlu.NameSpace.pretrained_models_references[lang][nlu_ref]
+
+    # check if storage_ref is hardcoded
+    elif lang in nlu.NameSpace.licensed_storage_ref_2_nlu_ref.keys():
         if storage_ref in nlu.NameSpace.licensed_storage_ref_2_nlu_ref[lang].keys():
             nlu_ref = nlu.NameSpace.licensed_storage_ref_2_nlu_ref[lang][storage_ref]
             is_licensed = False
     elif lang in nlu.NameSpace.storage_ref_2_nlu_ref.keys():
         if storage_ref in nlu.NameSpace.storage_ref_2_nlu_ref[lang].keys():
             nlu_ref = nlu.NameSpace.storage_ref_2_nlu_ref[lang][storage_ref] # a HC model may use OS storage_ref_provider, so we dont know yet if it is licensed or not
-
-    # get nlp ref
 
     if nlu_ref in nlu.NameSpace.pretrained_models_references[lang].keys():
         nlp_ref = nlu.NameSpace.pretrained_models_references[lang][nlu_ref]
