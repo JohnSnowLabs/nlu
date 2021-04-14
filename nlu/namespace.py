@@ -1877,8 +1877,7 @@ class NameSpace():
 
                 # RelationExtractionModel
 
-                # todo random crashes for some strings
-                # KEEP THOSE TAHT DONT HAVE A DL/BERT VERSION - > check if bert avaiable
+                # These biobert analogus models which are better or some are broken
                 # 'en.relation':'re_clinical',
                 # 'en.relation.bodypart.direction':'re_bodypart_directions',
                 # 'en.relation.bodypart.problem':'re_bodypart_problem',
@@ -1905,7 +1904,6 @@ class NameSpace():
 
                 # PartOfSpeechModels
                 'en.pos.clinical': 'pos_clinical',  # DEFAULT POS HC|| RELATION EXTRACTION TRAIN ON THIS!
-                'en.pos.fast': 'pos_fast_med',
 
                 # NERDLModels
                 # 'en.med_ner.ade.biobert':'ner_ade_biobert', # Todo error param pooling layer does not exist
@@ -2036,7 +2034,36 @@ class NameSpace():
                 # 'en.classify.icd10.use':'useclassifier_icd10cm_hcc', buggy
 
 
-            }
+            },
+
+        'de' :
+            {
+                'de.embed' :'w2v_cc_300d',
+                'de.embed.w2v' :'w2v_cc_300d',
+                'de.resolve_chunk' :'chunkresolve_ICD10GM',
+                'de.resolve_chunk.icd10gm' :'chunkresolve_ICD10GM',
+                'de.resolve_chunk.icd10gm.2021' :'chunkresolve_ICD10GM_2021',
+                'de.med_ner.legal' :'ner_legal',
+                'de.med_ner' :'ner_healthcare',
+                'de.med_ner.healthcare' :'ner_healthcare',
+                'de.med_ner.healthcare_slim' :'ner_healthcare_slim',
+                'de.med_ner.traffic' :'ner_traffic',
+            },
+
+        'es' :{
+            'es.embed.scielo.150d':'embeddings_scielo_150d',
+            'es.embed.scielo.300d':'embeddings_scielo_300d',
+            'es.embed.scielo.50d':'embeddings_scielo_50d',
+            'es.embed.scielowiki.150d':'embeddings_scielowiki_150d',
+            'es.embed.scielowiki.300d':'embeddings_scielowiki_300d',
+            'es.embed.scielowiki.50d':'embeddings_scielowiki_50d',
+            'es.embed.sciwiki.150d':'embeddings_sciwiki_150d',
+            'es.embed.sciwiki.300d':'embeddings_sciwiki_300d',
+            'es.embed.sciwiki.50d':'embeddings_sciwiki_50d',
+            'es.med_ner' : 'ner_diag_proc',
+            'es.med_ner.neoplasm' : 'ner_neoplasms',
+            'es.med_ner.diag_proc' : 'ner_diag_proc',
+        }
     }
     pretrained_healthcare_pipe_references = {}
     healthcare_component_alias_references = {}
@@ -2054,7 +2081,7 @@ class NameSpace():
     licensed_storage_ref_2_nlu_ref = {
         'en': {
             'clinical': 'en.embed.glove.clinical',
-            'biobert_pubmed_base_cased': 'biobert_clinical_base_cased',
+            'biobert_pubmed_base_cased': 'biobert',
 
             # 'embeddings_healthcare100' : 'en.embed.glove.clinical',
             'embeddings_healthcare100': 'en.embed.glove.healthcare_100d',
