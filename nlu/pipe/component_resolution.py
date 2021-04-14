@@ -104,7 +104,7 @@ def get_default_component_of_type(missing_component_type,language='en',is_licens
         if 'embed' in missing_component_type:
             # TODO RESOLVE MULTI LANG EMBEDS
             if language in multi_lang : storage_ref = resolve_multi_lang_embed(language,storage_ref) # todo this should be hdled  better
-            else :  nlu_ref,nlp_ref, is_licensed =  resolve_storage_ref(language,storage_ref)
+            else :  nlu_ref,nlp_ref, is_licensed =  resolve_storage_ref(language,storage_ref,missing_component_type)
 
             if 'chunk_embeddings' in missing_component_type: return  set_storage_ref_and_resolution_on_component_info(embeddings_chunker.EmbeddingsChunker(nlu_ref=nlu_ref,nlp_ref=nlp_ref),storage_ref)
             else : return set_storage_ref_and_resolution_on_component_info(construct_component_from_identifier(language=language, component_type='embed', nlu_ref=nlu_ref,nlp_ref=nlp_ref, is_licensed=is_licensed), storage_ref,)
@@ -126,7 +126,7 @@ def set_storage_ref_and_resolution_on_component_info(c,storage_ref):
     c.info.storage_ref = storage_ref
 
     return c
-def resolve_storage_ref(lang, storage_ref):
+def resolve_storage_ref(lang, storage_ref,missing_component_type):
     """Returns a nlp_ref, nlu_ref and wether it is a licensed model or not"""
     nlu_ref,nlp_ref,is_licensed = None,None,False
     # get nlu ref
@@ -162,10 +162,17 @@ def resolve_storage_ref(lang, storage_ref):
     if nlu_ref == None and nlp_ref == None :
         logger.info("COULD NOT RESOLVE STORAGE_REF")
         if storage_ref =='' :
-            logger.info("Using default storage_ref USE, assuming training mode")
-            storage_ref = 'en.embed_sentence.use' # this enables default USE embeds for traianble components
-            nlp_ref = 'tfhub_use'
-            nlu_ref = storage_ref
+            if missing_component_type =='sentence_embeddings':
+                logger.info("Using default storage_ref USE, assuming training mode")
+                storage_ref = 'en.embed_sentence.use' # this enables default USE embeds for traianble components
+                nlp_ref = 'tfhub_use'
+                nlu_ref = storage_ref
+            elif missing_component_type =='word_embeddings':
+                logger.info("Using default storage_ref GLOVE, assuming training mode")
+                storage_ref = 'en.glove' # this enables default USE embeds for traianble components
+                nlp_ref = 'glove_100d'
+                nlu_ref = storage_ref
+
         else :
             nlp_ref = storage_ref
             nlu_ref = storage_ref
@@ -644,7 +651,7 @@ def construct_component_from_identifier(language, component_type='', dataset='',
 
 
         elif any(x in NameSpace.word_embeddings and x not in NameSpace.classifiers for x in
-               [nlp_ref, nlu_ref, dataset, component_type, ] + dataset.split('_')):
+                 [nlp_ref, nlu_ref, dataset, component_type, ] + dataset.split('_')):
             return Embeddings(get_default=False, nlp_ref=nlp_ref, nlu_ref=nlu_ref, lang=language, is_licensed=is_licensed)
 
         # elif any([component_type in NameSpace.sentence_embeddings,dataset in NameSpace.sentence_embeddings, nlu_ref in NameSpace.sentence_embeddings, nlp_ref in NameSpace.sentence_embeddings]):
@@ -698,10 +705,12 @@ def construct_component_from_identifier(language, component_type='', dataset='',
         logger.exception('EXCEPTION: Could not resolve singular Component for type=%s and nlp_ref=%s and nlu_ref=%s',
                          component_type, nlp_ref, nlu_ref)
         return None
+        # raise ValueError
     except:  # if reference is not in namespace and not a component it will cause a unrecoverable crash
         logger.exception('EXCEPTION: Could not resolve singular Component for type=%s and nlp_ref=%s and nlu_ref=%s',
                          component_type, nlp_ref, nlu_ref)
         return None
+        # raise ValueError
 
 
 def extract_classifier_metadata_from_nlu_ref(nlu_ref):

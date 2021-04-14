@@ -1071,7 +1071,10 @@ class NLUPipeline(BasePipe):
             if 'token_results' in cols: cols.remove('token_results')
             if 'chunk_results' in cols: cols.remove('chunk_results')
             if 'sentence_results' in cols: cols.remove('sentence_results')
-
+        if self.output_level == 'relation':
+            if 'token_results' in cols: cols.remove('token_results')
+            if 'chunk_results' in cols: cols.remove('chunk_results')
+            if 'sentence_results' in cols: cols.remove('sentence_results')
         return cols
 
 
@@ -1229,10 +1232,10 @@ class NLUPipeline(BasePipe):
         # if not self.is_fitted: self.fit()
 
         # currently have to always fit, otherwise parameter changes wont take effect
-        if output_level == 'sentence' or output_level == 'document':
+        # if output_level == 'sentence' or output_level == 'document':
             # self = PipeUtils.configure_component_output_levels(self)
             # self = PipeUtils.check_and_fix_nlu_pipeline(self)
-            1 # todo
+            # 1 # todo
 
         if not self.is_fitted :
             if self.has_trainable_components :

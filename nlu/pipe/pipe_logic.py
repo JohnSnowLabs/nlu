@@ -108,6 +108,7 @@ class PipelineQueryVerifier():
         for c in pipe.components:
             for feat in c.info.inputs:
                 if 'embed' in feat :
+                    # if StorageRefUtils.extract_storage_ref(c) !='':  # special edge case, some components might not have a storage ref set
                     if '@' not in feat : provided_features_ref.append(feat +"@"+ StorageRefUtils.extract_storage_ref(c))
                     else  : provided_features_ref.append(feat)
 
