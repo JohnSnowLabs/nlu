@@ -18,6 +18,7 @@ from sparknlp_jsl.annotator  import *
 HC_anno2config = {
     MedicalNerModel : {
         'default': default_ner_config,
+        'meta': meta_NER_config,
         'default_full'  : default_full_config,
     },
     NerConverterInternal : {

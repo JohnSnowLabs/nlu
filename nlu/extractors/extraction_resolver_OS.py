@@ -124,6 +124,7 @@ OS_anno2config = {
     },
     NerDLModel : {
         'default': default_NER_config,
+        'meta': meta_NER_config,
         'default_full'  : default_full_config,
     },
     NerCrfModel : {

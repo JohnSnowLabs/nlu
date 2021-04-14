@@ -52,12 +52,24 @@ def default_NER_config(output_col_prefix='NER'):
     """Extracts NER tokens withouth positions, just the IOB tags,confidences and classified tokens """
     return SparkNLPExtractorConfig(
         output_col_prefix   = output_col_prefix,
+        # get_result          = True,
+        # get_meta            = True,
+        meta_white_list     = ['confidence'],
+        name                = 'default_ner',
+        description         = 'NER with IOB tags and confidences for them',
+    )
+
+def meta_NER_config(output_col_prefix='NER'):
+    """Extracts NER tokens withouth positions, just the IOB tags,confidences and classified tokens """
+    return SparkNLPExtractorConfig(
+        output_col_prefix   = output_col_prefix,
         get_result          = True,
         get_meta            = True,
         meta_white_list     = ['confidence'],
         name                = 'default_ner',
         description         = 'NER with IOB tags and confidences for them',
     )
+
 
 def default_language_classifier_config(output_col_prefix='language'):
     return SparkNLPExtractorConfig(
