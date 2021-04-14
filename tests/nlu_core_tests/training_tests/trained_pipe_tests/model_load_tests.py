@@ -1,10 +1,11 @@
 import tests.test_utils as t
 import unittest
 from nlu import *
+import pandas as pd
 class PipelineLoadingTests(unittest.TestCase):
 
 
-    def test_pipeline_load_from_hdd(self):
+    def test_pipeline_load_from_hdd_after_training(self):
         train_df = self.load_classifier_dl_dataset()
         train_df.columns = ['y','text']
         pipe = nlu.load('train.classifier',verbose=True,)
@@ -16,6 +17,17 @@ class PipelineLoadingTests(unittest.TestCase):
         # pipe = nlu.load(path=store_path)
         # print(pipe.predict('I Love offline mode!'))
 
+    def test_pipeline_load_from_hdd_from_spark_nlp(self):
+        p_path = '/home/ckl/Downloads/tmp/analyze_sentiment_en_3.0.0_3.0_1616544471011'
+        p = nlu.load(path=p_path)
+        res = p.predict("I love offline mode")
+        for c in res : print(res[c])
+
+    def test_model_load_from_hdd_from_spark_nlp(self):
+        m_path = '/home/ckl/Downloads/tmp/pos_afribooms_af_3.0.0_3.0_1617749039095'
+        p = nlu.load(path=m_path)
+        res = p.predict("I love offline mode")
+        for c in res : print(res[c])
     def load_classifier_dl_dataset(self):
         output_file_name = 'news_category_test.csv'
         output_folder = 'classifier_dl/'
