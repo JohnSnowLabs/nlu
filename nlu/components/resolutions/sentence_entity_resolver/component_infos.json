@@ -1,7 +1,7 @@
 {
   "name": "sentence_resolver",
   "description": "todo",
-  "output_level": "input_dependent",
+  "output_level": "chunk",
   "trainable": true,
   "outputs": [
     "sentence_resolution"
