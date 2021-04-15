@@ -4,14 +4,14 @@ class RelationExtractionDL:
     @staticmethod
     def get_default_model():
         return RelationExtractionDLModel.pretrained(name = 'redl_bodypart_direction_biobert') \
-                   .setInputCols(["entities", "document"]) \
+                   .setInputCols(["entities", "sentence"]) \
                    .setOutputCol("relations")
 
 
     @staticmethod
     def get_pretrained_model(name, language, bucket='clinical/models'):
         return RelationExtractionDLModel.pretrained(name, language,bucket) \
-            .setInputCols(["entities", "document"]) \
+            .setInputCols(["entities", "sentence"]) \
             .setOutputCol("relations")
 
     # def get_default_trainable_model():

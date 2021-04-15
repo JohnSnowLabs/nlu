@@ -11,10 +11,10 @@ class Util(SparkNLUComponent):
             if annotator_class == 'document_assembler':
                 from nlu import SparkNlpDocumentAssembler
                 self.model =  SparkNlpDocumentAssembler.get_default_model()
+            elif annotator_class == 'deep_sentence_detector' :
+                from nlu import SentenceDetectorDeep
+                self.model =  SentenceDetectorDeep.get_default_model()
             elif annotator_class == 'sentence_detector' :
-                from nlu import SparkNLPSentenceDetector
-                self.model =  SparkNLPSentenceDetector.get_default_model()
-            elif annotator_class == 'sentence_detector_deep' :
                 from nlu import SparkNLPSentenceDetector
                 self.model =  SparkNLPSentenceDetector.get_default_model()
             elif annotator_class == 'ner_to_chunk_converter' :

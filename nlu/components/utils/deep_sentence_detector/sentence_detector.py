@@ -1,9 +1,9 @@
 from sparknlp.annotator import *
 
-class SparkNLPSentenceDetector:
+class SparkNLPDeepSentenceDetector:
     @staticmethod
     def get_default_model():
-        return SentenceDetector() \
+        return SentenceDetectorDLModel.pretrained() \
             .setInputCols(["document"]) \
             .setOutputCol("sentence")
 
