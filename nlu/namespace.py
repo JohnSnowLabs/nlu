@@ -1451,6 +1451,8 @@ class NameSpace():
             'xx.embed': 'glove_840B_300',
 
             'xx.embed.glove.840B_300': 'glove_840B_300',
+
+            # 'xx.embed.glove.840B_300': 'glove_840B_300',
             'xx.embed.glove.6B_300': 'glove_6B_300',
             'xx.embed.bert_multi_cased': 'bert_multi_cased',
             'xx.embed.bert': 'bert_multi_cased',
@@ -1815,6 +1817,16 @@ class NameSpace():
 
         'en':
             {
+                # clinical spellchecker
+                'en.spell.clinical':'spellcheck_clinical',
+                'en.spell.med':'context_spell_med',
+                'en.spell.context.med':'context_spell_med',
+
+                'en.detect_sentence.clinical' : 'sentence_detector_dl_healthcare',
+
+                # T5
+                'en.t5.mediqa' : 't5_base_mediqa_mnli',
+
                 # AssertionDLModel
                 'en.assert': 'assertion_dl',
                 'en.assert.biobert': 'assertion_dl_biobert',

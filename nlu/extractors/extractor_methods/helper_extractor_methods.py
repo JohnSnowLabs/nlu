@@ -59,7 +59,7 @@ def extract_maximum_confidence(row, configs):
             }
         else :
             return {
-                **{'meta_' + configs.output_col_prefix + '_confidence': [ max(z )for z in zipp (list(map(float,row[k])) for k in confidences_keys)]    } ,
+                **{'meta_' + configs.output_col_prefix + '_confidence': [ max(z )for z in zipp (list(map(float,row[k])) for k in confidences_keys)]} ,
                 **({'meta_' + configs.output_col_prefix + '_sentence' : row[meta_sent_key]} if configs.get_sentence_origin else {})
             }
 

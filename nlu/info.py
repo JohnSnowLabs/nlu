@@ -52,7 +52,6 @@ class AllComponentsInfo:
             if component.type == 'stemmer' : self.stemmers[component.name] = component
             if component.type == 'tokenizer' : self.tokenizers[component.name] = component
             if component.type == 'util' : self.utils[component.name] = component
-            # todo labled dependecy, unlabled dep, CHunk, Date, categoryu, sentence detector
 
 
 
@@ -106,7 +105,7 @@ class ComponentInfo:
         """
         if not component_info_dir:
             raise ValueError("Calling DatasetInfo.from_directory() with undefined dataset_info_dir.")
-
+        component_info_dir = component_info_dir.replace('//','/')
         with open(os.path.join(component_info_dir, COMPONENT_INFO_FILE_NAME), "r") as f:
             dataset_info_dict = json.load(f)
 
