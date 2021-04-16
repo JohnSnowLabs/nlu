@@ -74,7 +74,7 @@ def get_default_component_of_type(missing_component_type,language='en',is_licens
     if not '@' in missing_component_type:
         # get default models if there is no @ in the model name included
         if missing_component_type == 'document': return Util('document_assembler')
-        if missing_component_type == 'sentence': return Util('sentence_detector')
+        if missing_component_type == 'sentence': return Util('deep_sentence_detector')
         if missing_component_type == 'sentence_embeddings': return Embeddings('use')
         if 'token' in missing_component_type: return nlu.components.tokenizer.Tokenizer("default_tokenizer", language=language)
         if missing_component_type == 'word_embeddings': return Embeddings(nlu_ref='glove')
@@ -128,6 +128,7 @@ def set_storage_ref_and_resolution_on_component_info(c,storage_ref):
     return c
 def resolve_storage_ref(lang, storage_ref,missing_component_type):
     """Returns a nlp_ref, nlu_ref and wether it is a licensed model or not"""
+    logger.info(f"Resolving storage_ref={storage_ref} for lang={lang} and missing_component_type={missing_component_type}")
     nlu_ref,nlp_ref,is_licensed = None,None,False
     # get nlu ref
 
