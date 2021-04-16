@@ -23,6 +23,13 @@ extractors defined in extractor_methods.py.
 
 """
 from nlu.extractors.extractor_methods.base_extractor_methods import *
+
+def default_get_nothing(output_col_prefix):
+    return SparkNLPExtractorConfig(
+        output_col_prefix   = output_col_prefix,
+        name                = 'nothing_extractor',
+        description         = 'Extracts nothing. Useful for annotators with irrelevant data'
+    )
 def default_only_result_config(output_col_prefix):
     return SparkNLPExtractorConfig(
         output_col_prefix   = output_col_prefix,
@@ -67,8 +74,7 @@ def default_chunk_resolution_config(output_col_prefix='resolved_entities'):
         output_col_prefix   = output_col_prefix,
         get_result          = True,
         get_meta            = True,
-        meta_white_list     = ['all_k_resolutions','all_k_distances', 'all_k_results','confidence','distance','target_text','all_k_aux_labels',
-                               ], #sentence, chunk
+        meta_white_list     = ['all_k_resolutions','all_k_distances', 'all_k_results','confidence','distance','target_text','all_k_aux_labels','all_k_cosine_distances'], #sentence, chunk
         name                = 'default_ner',
         description         = 'Converts IOB-NER representation into entity representation and generates confidences for the entire entity chunk',
     )
@@ -118,3 +124,6 @@ def default_assertion_config(output_col_prefix='assertion'):
 
 def default_ner_config(output_col_prefix='med_ner'):
     return default_only_result_config(output_col_prefix)
+
+def default_ner_config(output_col_prefix='med_ner'):
+    return default_get_nothing(output_col_prefix)

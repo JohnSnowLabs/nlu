@@ -80,7 +80,7 @@ OS_anno2config = {
     },
     DocumentAssembler : {
         'default': default_document_config,
-          'default_full'  : default_full_config,
+        'default_full'  : default_full_config,
     },
     SentenceDetectorDLModel : {
         'default': default_sentence_detector_DL_config,

@@ -8,7 +8,6 @@ HC_anno2output_level = {
 
                  ],
     'sentence': [
-        SentenceEntityResolverModel
          ],
     'chunk': [
         NerOverwriter,
@@ -19,6 +18,8 @@ HC_anno2output_level = {
         DeIdentificationModel,
         AssertionDLModel,
         AssertionLogRegModel,
+        SentenceEntityResolverModel
+
 
     ],
     'token': [
@@ -32,10 +33,14 @@ HC_anno2output_level = {
     'leveless': [
         ContextualParserModel,
         ContextualParserModel,
-        RelationExtractionModel,
-        RelationExtractionDLModel,
+
         ContextualParserModel,
 
+    ],
+    'relation':[
+        RelationExtractionModel,
+        PosologyREModel,
+        RelationExtractionDLModel,
     ]
 
 }

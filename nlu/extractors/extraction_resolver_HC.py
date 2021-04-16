@@ -35,6 +35,7 @@ HC_anno2config = {
     },
     SentenceEntityResolverModel : {
         'default': default_chunk_resolution_config,
+        'default': default_chunk_resolution_config,
         'default_full'  : default_full_config,
     },
     ChunkEntityResolverModel : {
@@ -99,6 +100,12 @@ HC_anno2config = {
         'default': '',# TODO
         'default_full'  : default_full_config,
     },
+    PosologyREModel : {
+        # 'default': '',# TODO
+        'default': default_relation_extraction_positional_config,
+        'default_full'  : default_full_config,
+
+    }
 
 }
 
