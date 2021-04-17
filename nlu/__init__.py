@@ -238,10 +238,13 @@ def load(request ='from_disk', path=None,verbose=False, gpu=False):
     is_authenticated = True
     gc.collect()
     # if version_checks : check_pyspark_install()
+
+    auth() # check if secets are in default loc, if yes load them and create licensed context automatically
+
+
     spark = get_open_source_spark_context(gpu)
     spark.catalog.clearCache()
     if verbose:enable_verbose()
-    auth() # check if secets are in default loc, if yes load them and create licensed context automatically
 
     if path != None :
         logger.info(f'Trying to load nlu pipeline from local hard drive, located at {path}')
