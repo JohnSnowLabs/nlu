@@ -58,7 +58,7 @@ def default_full_config(output_col_prefix='DEFAULT'):
 
 
 def default_NER_converter_licensed_config(output_col_prefix='entities'):
-    """Extracts NER tokens withouth positions, just the IOB tags,confidences and classified tokens """
+    """Extracts NER tokens withouth positions, just the converted IOB tags,confidences and classified tokens """
     return SparkNLPExtractorConfig(
         output_col_prefix   = output_col_prefix,
         get_result          = True,

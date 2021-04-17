@@ -8,8 +8,6 @@ They expect dictionaries which represent the metadata field extracted from Spark
 
 """
 import numpy as np
-import pandas as pd
-import numpy as np
 def meta_extract_language_classifier_max_confidence(row,configs):
     ''' Extract the language classificationw ith highest confidence and drop the others '''
     # # todo Get the best, but what about TOP K!  conditional sentence extraction and mroe docs

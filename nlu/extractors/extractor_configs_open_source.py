@@ -190,8 +190,7 @@ def default_chunker_config(output_col_prefix='matched_chunk'):
     return default_only_result_config(output_col_prefix)
 
 
-def default_ner_converter_config(output_col_prefix='ner_chunk'):
-    return default_only_result_config(output_col_prefix)
+
 
 def default_T5_config(output_col_prefix='T5'):
     return default_only_result_config(output_col_prefix)
@@ -260,7 +259,7 @@ def default_chunk_config(output_col_prefix='matched_chunk'):
 
 
 def default_yake_config(output_col_prefix='keywords'):
-    """Extracts NER tokens withouth positions, just the IOB tags,confidences and classified tokens """
+    """Extracts YAKE keywords with confidences """
     return SparkNLPExtractorConfig(
         output_col_prefix   = output_col_prefix,
         get_result          = True,
@@ -268,4 +267,19 @@ def default_yake_config(output_col_prefix='keywords'):
         get_meta            = True,
         meta_white_list     = ['score'],
         description         = 'Get all keywords and their confidences',
+    )
+
+
+
+
+
+def default_ner_converter_config(output_col_prefix='ner_chunk'):
+    """Extracts the Entity Labels, which are derived from the IOB Tags """
+    return SparkNLPExtractorConfig(
+        output_col_prefix   = output_col_prefix,
+        get_result          = True,
+        name                = 'default_ner',
+        get_meta            = True,
+        meta_white_list     = ['entity'],
+        description         = 'Converts IOB-NER representation into entity representation and generates confidences for the entire entity chunk',
     )
