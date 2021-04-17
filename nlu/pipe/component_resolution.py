@@ -212,7 +212,7 @@ def nlu_ref_to_component(nlu_reference, detect_lang=False, authenticated=False):
     infos = nlu_reference.split('.')
 
     if len(infos) < 0:
-        logger.exception("EXCEPTION: Could not create a component for nlu reference=%s", nlu_reference)
+        logger.exception(f"EXCEPTION: Could not create a component for nlu reference={nlu_reference}", )
         return nlu.NluError()
     language = ''
     component_type = ''
@@ -559,48 +559,48 @@ def construct_component_from_pipe_identifier(language, nlp_ref, nlu_ref,path=Non
 
 
         elif isinstance(component, RegexMatcherModel) or parsed == 'match':
-            constructed_components.append(nlu.Matcher(model=component, annotator_class='regex',))
+            constructed_components.append(nlu.Matcher(model=component, annotator_class='regex',nlu_ref=nlu_ref))
         elif isinstance(component, TextMatcherModel):
-            constructed_components.append(nlu.Matcher(model=component, annotator_class='text'))
+            constructed_components.append(nlu.Matcher(model=component, annotator_class='text',nlu_ref=nlu_ref))
         elif isinstance(component, DateMatcher):
-            constructed_components.append(nlu.Matcher(model=component, annotator_class='date'))
+            constructed_components.append(nlu.Matcher(model=component, annotator_class='date',nlu_ref=nlu_ref))
         elif isinstance(component, ContextSpellCheckerModel):
-            constructed_components.append(nlu.SpellChecker(model=component, annotator_class='context'))
+            constructed_components.append(nlu.SpellChecker(model=component, annotator_class='context',nlu_ref=nlu_ref))
         elif isinstance(component, SymmetricDeleteModel):
-            constructed_components.append(nlu.SpellChecker(model=component, annotator_class='symmetric'))
+            constructed_components.append(nlu.SpellChecker(model=component, annotator_class='symmetric',nlu_ref=nlu_ref))
         elif isinstance(component, NorvigSweetingModel):
-            constructed_components.append(nlu.SpellChecker(model=component, annotator_class='norvig'))
+            constructed_components.append(nlu.SpellChecker(model=component, annotator_class='norvig',nlu_ref=nlu_ref))
         elif isinstance(component, LemmatizerModel):
-            constructed_components.append(nlu.lemmatizer.Lemmatizer(model=component))
+            constructed_components.append(nlu.lemmatizer.Lemmatizer(model=component,nlu_ref=nlu_ref))
         elif isinstance(component, NormalizerModel):
-            constructed_components.append(nlu.normalizer.Normalizer(model=component))
+            constructed_components.append(nlu.normalizer.Normalizer(model=component,nlu_ref=nlu_ref))
         elif isinstance(component, Stemmer):
-            constructed_components.append(nlu.stemmer.Stemmer(model=component))
+            constructed_components.append(nlu.stemmer.Stemmer(model=component,nlu_ref=nlu_ref))
         elif isinstance(component, (NerDLModel, NerCrfModel)):
             constructed_components.append(nlu.Classifier(model=component, annotator_class='ner',lang=language, nlu_ref=nlu_ref,nlp_ref=nlp_ref,loaded_from_pretrained_pipe=True))
         elif isinstance(component, LanguageDetectorDL):
-            constructed_components.append(nlu.Classifier(model=component, annotator_class='language_detector'))
+            constructed_components.append(nlu.Classifier(model=component, annotator_class='language_detector',nlu_ref=nlu_ref))
         elif isinstance(component, DependencyParserModel):
-            constructed_components.append(UnlabledDepParser(model=component))
+            constructed_components.append(UnlabledDepParser(model=component,nlu_ref=nlu_ref))
         elif isinstance(component, TypedDependencyParserModel):
-            constructed_components.append(LabledDepParser(model=component))
+            constructed_components.append(LabledDepParser(model=component,nlu_ref=nlu_ref))
         elif isinstance(component, MultiClassifierDLModel):
-            constructed_components.append(nlu.Classifier(model=component, nlp_ref='multiclassifierdl'))
+            constructed_components.append(nlu.Classifier(model=component, nlp_ref='multiclassifierdl',nlu_ref=nlu_ref))
         elif isinstance(component, (SentimentDetectorModel,SentimentDLModel)):
-            constructed_components.append(nlu.Classifier(model=component, nlp_ref='sentimentdl'))
+            constructed_components.append(nlu.Classifier(model=component, nlp_ref='sentimentdl',nlu_ref=nlu_ref))
         elif isinstance(component, (SentimentDetectorModel,ViveknSentimentModel)):
-            constructed_components.append(nlu.Classifier(model=component, nlp_ref='vivekn'))
+            constructed_components.append(nlu.Classifier(model=component, nlp_ref='vivekn',nlu_ref=nlu_ref))
 
         elif isinstance(component, NGram):
-            constructed_components.append(nlu.chunker.Chunker(model=component))
+            constructed_components.append(nlu.chunker.Chunker(model=component,nlu_ref=nlu_ref))
         elif isinstance(component, StopWordsCleaner):
-            constructed_components.append(nlu.StopWordsCleaner(model=component))
+            constructed_components.append(nlu.StopWordsCleaner(model=component,nlu_ref=nlu_ref))
         elif isinstance(component, (TextMatcherModel, RegexMatcherModel, DateMatcher,MultiDateMatcher)) or parsed == 'match':
-            constructed_components.append(nlu.Matcher(model=component))
+            constructed_components.append(nlu.Matcher(model=component,nlu_ref=nlu_ref))
         elif isinstance(component,(T5Transformer)):
-            constructed_components.append(nlu.Seq2Seq(annotator_class='t5', model=component))
+            constructed_components.append(nlu.Seq2Seq(annotator_class='t5', model=component,nlu_ref=nlu_ref))
         elif isinstance(component,(MarianTransformer)):
-            constructed_components.append(nlu.Seq2Seq(annotator_class='marian', model=component))
+            constructed_components.append(nlu.Seq2Seq(annotator_class='marian', model=component,nlu_ref=nlu_ref))
         else:
             logger.exception(
                 f"EXCEPTION: Could not infer component type for lang={language} and nlp_ref={nlp_ref} and model {component} during pipeline conversion,")
@@ -629,6 +629,8 @@ def construct_component_from_identifier(language, component_type='', dataset='',
     :param nlp_ref: Full Spark NLP reference
     :return: Returns a NLU component which embelished the Spark NLP pretrained model and class for that model
     '''
+
+
     logger.info(f'Creating singular NLU component for type={component_type} sparknlp_ref={nlp_ref} , nlu_ref={nlu_ref} dataset={dataset}, language={language} ' )
     try:
         if 'assert' in component_type:

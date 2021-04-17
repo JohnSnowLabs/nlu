@@ -79,10 +79,7 @@ class PipelineQueryVerifier():
         for c in pipe.components:
             for feat in c.info.inputs:
                 if 'embed' not in feat : provided_features_no_ref.append(feat)
-
-
-
-        return  ComponentUtils.clean_irrelevant_features(provided_features_no_ref)
+        return ComponentUtils.clean_irrelevant_features(provided_features_no_ref)
     @staticmethod
     def extract_provided_features_refless_from_pipe(pipe: NLUPipeline):
         """Extract provided features from pipe, which have no storage ref"""
@@ -126,13 +123,14 @@ class PipelineQueryVerifier():
         return conversion_candidates_data
     @staticmethod
     def get_missing_required_features(pipe: NLUPipeline):
-        provided_features_no_ref                = PipelineQueryVerifier.extract_provided_features_refless_from_pipe(pipe)
-        required_features_no_ref                = PipelineQueryVerifier.extract_required_features_refless_from_pipe(pipe)
-        provided_features_ref                   = PipelineQueryVerifier.extract_provided_features_ref_from_pipe(pipe)
-        required_features_ref                   = PipelineQueryVerifier.extract_required_features_ref_from_pipe(pipe)
+        provided_features_no_ref                = ComponentUtils.clean_irrelevant_features(PipelineQueryVerifier.extract_provided_features_refless_from_pipe(pipe))
+        required_features_no_ref                = ComponentUtils.clean_irrelevant_features(PipelineQueryVerifier.extract_required_features_refless_from_pipe(pipe))
+        provided_features_ref                   = ComponentUtils.clean_irrelevant_features(PipelineQueryVerifier.extract_provided_features_ref_from_pipe(pipe))
+        required_features_ref                   = ComponentUtils.clean_irrelevant_features(PipelineQueryVerifier.extract_required_features_ref_from_pipe(pipe))
         is_trainable                            = PipeUtils.is_trainable_pipe(pipe)
         conversion_candidates                   = PipelineQueryVerifier.extract_sentence_embedding_conversion_candidates(pipe)
         pipe.has_trainable_components           = is_trainable
+        if is_trainable : required_features_ref = []
         components_for_ner_conversion = [] # todo?
 
         missing_features_no_ref                 = set(required_features_no_ref) - set(provided_features_no_ref)# - set(['text','label'])
@@ -409,13 +407,14 @@ class PipelineQueryVerifier():
         logger.info('Fixing column names')
         pipe = PipelineQueryVerifier.check_and_fix_component_output_column_name_satisfaction(pipe)
 
-        #4.   fix order
+
+
+        #4. Set on every NLP Annotator the output columns
+        pipe = PipeUtils.enforce_NLU_columns_to_NLP_columns(pipe)
+
+        #5.   fix order
         logger.info('Optimizing pipe component order')
         pipe = PipelineQueryVerifier.check_and_fix_component_order(pipe)
-
-
-        #5. Set on every NLP Annotator the output columns
-        pipe = PipeUtils.enforce_NLU_columns_to_NLP_columns(pipe)
 
         # 6. Check if output column names overlap, if yes, fix
         # pipe = PipelineQueryVerifier.check_and_fix_component_order(pipe)
@@ -444,13 +443,13 @@ class PipelineQueryVerifier():
             else : update_last_type = True
             for component in all_components:
                 logger.info(f"Optimizing order for component {component.info.name}")
-                input_columns = ComponentUtils.clean_irrelevant_features(component.info.spark_input_column_names, True)
+                input_columns = ComponentUtils.clean_irrelevant_features(component.info.spark_input_column_names, False)
                 if last_type_sorted is None or component.info.type == last_type_sorted:
                     if set(input_columns).issubset(provided_features):
                         correct_order_component_pipeline.append(component)
                         if component in all_components: all_components.remove(component)
                         # for feature in component.info.spark_output_column_names: provided_features.append(feature)
-                        provided_features += ComponentUtils.clean_irrelevant_features(component.info.spark_output_column_names,True)
+                        provided_features += ComponentUtils.clean_irrelevant_features(component.info.spark_output_column_names,False)
                         last_type_sorted = component.info.type
                         update_last_type = False
                         break

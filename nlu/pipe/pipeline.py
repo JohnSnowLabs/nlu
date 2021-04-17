@@ -176,7 +176,7 @@ class NLUPipeline(BasePipe):
         self.annotator_levels_model_based = {
             'document': [],
             'sentence': [SentenceDetectorDLModel, ],
-            'chunk': [ChunkTokenizerModel, ChunkTokenizerModel, ],
+            'chunk': [ChunkTokenizerModel, ChunkTokenizerModel,  ],
             'token': [ContextSpellCheckerModel, AlbertEmbeddings, BertEmbeddings, ElmoEmbeddings, WordEmbeddings,
                       XlnetEmbeddings, WordEmbeddingsModel,
                       # NER models are token level, they give IOB predictions and cofidences for EVERY token!
@@ -303,7 +303,6 @@ class NLUPipeline(BasePipe):
                     return self.resolve_type_to_output_level(component.info.type)
 
 
-    #todo rm
     def resolve_type_to_output_level(self, field_type, field_name):
         '''
         This checks the levels dict for what the output level is for the input annotator type.

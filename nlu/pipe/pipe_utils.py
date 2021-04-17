@@ -245,4 +245,31 @@ class PipeUtils():
                     if f in features : return True
 
         return False
-        
+
+    @staticmethod
+    def is_leaf_node(c,pipe)-> bool:
+        """Check if a component is a leaf in the DAG.
+        We verify by checking if any other_c is feeding from c.
+        If yes, it is not a leaf. If nobody feeds from c, it's a leaf.
+        """
+        inputs = c.info.inputs
+        for other_c in pipe.components:
+            if c is not other_c :
+                for f in other_c.info.inputs :1
+
+
+        return False
+
+
+
+    @staticmethod
+    def subsitute_leaf_output_names(pipe):
+        """Change all output column names of leaves to something nicer, if they not already
+        use AT notation"""
+
+        for c in pipe.components:
+            if PipeUtils.is_leaf_node(c,pipe) and not ComponentUtils.has_AT_notation():
+                # update name
+                1
+
+        return pipe

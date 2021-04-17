@@ -21,8 +21,6 @@ class ComponentUtils():
 
 
         return converter
-    # @staticmethod
-    # def update_outputs(component:SparkNLUComponent)->SparkNLUComponent:
 
 
     @staticmethod
@@ -35,10 +33,10 @@ class ComponentUtils():
         :return: list with only relevant feature names
         '''
         # remove irrelevant missing features for pretrained models
-        if 'text' in feature_list: feature_list.remove('text')
-        if 'raw_text' in feature_list: feature_list.remove('raw_text')
-        if 'raw_texts' in feature_list: feature_list.remove('raw_texts')
-        if 'label' in feature_list: feature_list.remove('label')
+        if 'text'            in feature_list: feature_list.remove('text')
+        if 'raw_text'        in feature_list: feature_list.remove('raw_text')
+        if 'raw_texts'       in feature_list: feature_list.remove('raw_texts')
+        if 'label'           in feature_list: feature_list.remove('label')
         if 'sentiment_label' in feature_list: feature_list.remove('sentiment_label')
         if remove_AT_notation:
             new_cs = []
