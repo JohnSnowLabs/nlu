@@ -298,7 +298,7 @@ class NameSpace():
 
             'en.sentiment.imdb': 'analyze_sentimentdl_use_imdb',
             'en.sentiment.imdb.use': 'analyze_sentimentdl_use_imdb',
-            'en.sentiment.twitter.use': 'analyze_sentimentdl_use_twitter',
+            # 'en.sentiment.twitter.use': 'analyze_sentimentdl_use_twitter',
             'en.sentiment.twitter': 'analyze_sentimentdl_use_twitter',
             'en.dependency': 'dependency_parse',
 
@@ -1868,7 +1868,7 @@ class NameSpace():
                 'en.resolve.cpt.procedures_augmented': 'sbiobertresolve_cpt_procedures_augmented',
                 # resolve sentence hcc
                 'en.resolve.hcc.augmented': 'sbiobertresolve_hcc_augmented',
-                # resolve sentence icd
+                # resolve sentence icdf
                 'en.resolve.icd10cm': 'sbiobertresolve_icd10cm',
                 'en.resolve.icd10cm.augmented': 'sbiobertresolve_icd10cm_augmented',
                 'en.resolve.icd10cm.augmented_billable': 'sbiobertresolve_icd10cm_augmented_billable_hcc',
