@@ -189,7 +189,7 @@ def resolve_multi_lang_embed(language,sparknlp_reference):
     if language == 'ar' and 'glove' in sparknlp_reference : return 'arabic_w2v_cc_300d'
     else : return sparknlp_reference
 
-def nlu_ref_to_component(nlu_reference, detect_lang=False, authenticated=False):
+def nlu_ref_to_component(nlu_reference, detect_lang=False, authenticated=False, is_recursive_call=False):
     '''
     This method implements the main namespace for all component names. It parses the input request and passes the data to a resolver method which searches the namespace for a Component for the input request
     It returns a list of NLU.component objects or just one NLU.component object alone if just one component was specified.
@@ -281,14 +281,14 @@ def nlu_ref_to_component(nlu_reference, detect_lang=False, authenticated=False):
     logger.info(
         'For input nlu_ref %s detected : \n lang: %s  , component type: %s , component dataset: %s , component embeddings  %s  ',
         nlu_reference, language, component_type, dataset, component_embeddings)
-    resolved_component = resolve_component_from_parsed_query_data(language, component_type, dataset,component_embeddings, nlu_reference, trainable,authenticated=authenticated)
+    resolved_component = resolve_component_from_parsed_query_data(language, component_type, dataset,component_embeddings, nlu_reference, trainable,authenticated=authenticated, is_recursive_call=is_recursive_call)
     if resolved_component is None:
         logger.exception("EXCEPTION: Could not create a component for nlu reference=%s", nlu_reference)
         return nlu.NluError()
     return resolved_component
 
 
-def resolve_component_from_parsed_query_data(language, component_type, dataset, component_embeddings, nlu_ref,trainable=False,path=None,authenticated=False,recurisve_resolve=False):
+def resolve_component_from_parsed_query_data(language, component_type, dataset, component_embeddings, nlu_ref,trainable=False,path=None,authenticated=False,is_recursive_call=False):
     '''
     Searches the NLU name spaces for a matching NLU reference. From that NLU reference, a SparkNLP reference will be aquired which resolved to a SparkNLP pretrained model or pipeline
     :param nlu_ref: Full request which was passed to nlu.load()
@@ -350,6 +350,8 @@ def resolve_component_from_parsed_query_data(language, component_type, dataset, 
             resolved = True
             is_licensed = True
 
+
+
     # 5. Check Healthcare Model Namespace
     if resolved == False and language in NameSpace.pretrained_healthcare_model_references.keys():
         if nlu_ref in NameSpace.pretrained_healthcare_model_references[language].keys():
@@ -393,10 +395,11 @@ def resolve_component_from_parsed_query_data(language, component_type, dataset, 
               f"NLU will ignore this error and continue running, but you will encounter errors most likely. ")
 
 
-    if nlp_ref == '' and not recurisve_resolve and not trainable and 'en.' not in nlu_ref and language in ['','en']:
+    if nlp_ref == '' and not is_recursive_call and not trainable and 'en.' not in nlu_ref and language in ['','en']:
         # logger.info('')
         #Search again but with en. prefixed, enables all refs to work withouth en prefix
-        return resolve_component_from_parsed_query_data(language, component_type, dataset, component_embeddings, 'en.'+nlu_ref,trainable,path,authenticated,True)
+        # return nlu_ref_to_component(language, component_type, dataset, component_embeddings, 'en.'+nlu_ref,trainable,path,authenticated,True)
+        return nlu_ref_to_component('en.'+nlu_ref,is_recursive_call=True)
 
     # Convert references into NLU Component object which embelishes NLP annotators
     if component_kind == 'pipe':

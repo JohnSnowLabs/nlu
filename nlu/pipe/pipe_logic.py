@@ -130,7 +130,7 @@ class PipelineQueryVerifier():
         is_trainable                            = PipeUtils.is_trainable_pipe(pipe)
         conversion_candidates                   = PipelineQueryVerifier.extract_sentence_embedding_conversion_candidates(pipe)
         pipe.has_trainable_components           = is_trainable
-        if is_trainable : required_features_ref = []
+        if is_trainable : required_features_ref = [] # special case, if training we can reset this
         components_for_ner_conversion = [] # todo?
 
         missing_features_no_ref                 = set(required_features_no_ref) - set(provided_features_no_ref)# - set(['text','label'])
@@ -415,9 +415,10 @@ class PipelineQueryVerifier():
         #5.   fix order
         logger.info('Optimizing pipe component order')
         pipe = PipelineQueryVerifier.check_and_fix_component_order(pipe)
+        # enfore again because trainable pipes might mutate pipe cols
+        pipe = PipeUtils.enforce_NLU_columns_to_NLP_columns(pipe)
 
         # 6. Check if output column names overlap, if yes, fix
-        # pipe = PipelineQueryVerifier.check_and_fix_component_order(pipe)
         logger.info('Done with pipe optimizing')
 
         return pipe
@@ -438,6 +439,7 @@ class PipelineQueryVerifier():
         provided_features = []
         update_last_type = False
         last_type_sorted = None
+        trainable_updated = False
         while all_components_orderd == False:
             if update_last_type : last_type_sorted = None
             else : update_last_type = True
@@ -454,6 +456,19 @@ class PipelineQueryVerifier():
                         update_last_type = False
                         break
             if len(all_components) == 0: all_components_orderd = True
+
+            if len(all_components) == 1 and pipe.has_trainable_components and not trainable_updated  and 'approach' in str(all_components[0].model).lower() and 'sentence_embeddings@' in all_components[0].info.inputs:
+                # special case, if trainable then we feed embed consumers on the first sentence embed provider
+                # 1. Find first sent embed provider
+                # 2. substitute any 'sent_embed@' consumer inputs for the provider col
+                for f in provided_features:
+                    if 'sentence_embeddings' in f and not trainable_updated  :
+                        all_components[0].info.spark_input_column_names.remove('sentence_embeddings@')
+                        if 'sentence_embeddings@' in  all_components[0].info.inputs :  all_components[0].info.inputs.remove('sentence_embeddings@')
+                        all_components[0].info.spark_input_column_names.append(f)
+                        if f not in all_components[0].info.inputs :  all_components[0].info.inputs.append(f)
+                        trainable_updated = True
+
 
         pipe.components = correct_order_component_pipeline
 

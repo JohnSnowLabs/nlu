@@ -1289,8 +1289,7 @@ class NLUPipeline(BasePipe):
                 if self.raw_text_column not in data.columns and len(data.columns) == 1:
                     data['text'] = data[data.columns[0]]
                 else:
-                    logger.info('INFO: NLU will assume', data.columns[0],
-                          'as label column since default text column could not be find')
+                    logger.info(f'INFO: NLU will assume {data.columns[0]} as label column since default text column could not be find')
                     data['text'] = data[data.columns[0]]
 
                 data['origin_index'] = data.index
