@@ -273,3 +273,17 @@ class PipeUtils():
                 1
 
         return pipe
+
+
+
+    @staticmethod
+    def clean_AT_storage_refs(pipe):
+        """Removes AT notation from all columns. Useful to reset pipe back to default state"""
+
+        for c in pipe.components:
+            c.info.inputs  = [f.split('@')[0] for f in c.info.inputs]
+            c.info.outputs = [f.split('@')[0] for f in c.info.outputs]
+
+            c.info.spark_input_column_names  = [f.split('@')[0] for f in c.info.spark_input_column_names]
+            c.info.spark_output_column_names = [f.split('@')[0] for f in c.info.spark_output_column_names]
+        return pipe

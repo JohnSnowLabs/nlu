@@ -395,6 +395,11 @@ class PipelineQueryVerifier():
         # main entry point for Model stacking withouth pretrained pipelines
         # requirements and provided features will be lists of lists
 
+        #0. Clean old @AT storage ref from all columns
+        logger.info('Cleaning old AT refs')
+        pipe = PipeUtils.clean_AT_storage_refs(pipe)
+
+
         #1. Resolve dependencies, builds a DAG in reverse and satisfies dependencies with a Breadth-First-Search approach
         logger.info('Satisfying dependencies')
         pipe = PipelineQueryVerifier.satisfy_dependencies(pipe)

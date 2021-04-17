@@ -669,7 +669,7 @@ def construct_component_from_identifier(language, component_type='', dataset='',
 
 
         elif any('spell' in x for x in [nlp_ref, nlu_ref, dataset, component_type]):
-            return SpellChecker(annotator_class=component_type, language=language, get_default=True, nlp_ref=nlp_ref,
+            return SpellChecker(annotator_class=component_type, language=language, get_default=True, nlp_ref=nlp_ref,nlu_ref=nlu_ref,
                                 dataset=dataset, is_licensed=is_licensed)
 
         elif any('dep' in x and not 'untyped' in x for x in [nlp_ref, nlu_ref, dataset, component_type]):

@@ -224,3 +224,4 @@ class ComponentUtils():
         if tail == '' :
             raise ValueError
         return tail
+
