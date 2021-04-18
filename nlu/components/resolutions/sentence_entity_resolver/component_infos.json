@@ -12,8 +12,8 @@
   ],
   "type": "resolver",
   "spark_input_column_names": [
-    "entities",
-    "sentence_embeddings"
+    "sentence_embeddings",
+    "entities"
   ],
   "spark_output_column_names": [
     "resolution"

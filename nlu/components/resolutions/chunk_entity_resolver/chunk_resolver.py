@@ -6,7 +6,6 @@ class ChunkResolver:
         return ChunkEntityResolverModel.pretrained(name, language,bucket) \
             .setInputCols(["token","chunk_embeddings"]) \
             .setDistanceFunction("COSINE") \
-            .set("COSINE") \
             .setNeighbours(1) \
             .setOutputCol("chunk_resolution")
 
