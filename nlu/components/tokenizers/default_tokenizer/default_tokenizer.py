@@ -4,7 +4,7 @@ class DefaultTokenizer:
     @staticmethod
     def get_default_model():
         return Tokenizer()\
-            .setInputCols(["document"]) \
+            .setInputCols(["sentence"]) \
             .setOutputCol("token")
 
 

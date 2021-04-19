@@ -10,7 +10,6 @@
     "sentence"
   ],
   "type": "sentence_embeddings",
-  "file_dependencies": {},
   "spark_input_column_names": [
     "sentence"
   ],

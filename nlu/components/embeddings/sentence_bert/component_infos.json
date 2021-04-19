@@ -10,12 +10,11 @@
     "sentence"
   ],
   "type": "sentence_embeddings",
-  "file_dependencies": {},
   "spark_input_column_names": [
     "sentence"
   ],
   "spark_output_column_names": [
-    "bert_sentence"
+    "sentence_embeddings"
   ],
   "provider": "sparknlp",
   "license": "open source",

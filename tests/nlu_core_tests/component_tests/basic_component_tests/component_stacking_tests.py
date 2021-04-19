@@ -4,27 +4,14 @@ import pandas as pd
 import numpy as np
 
 class ComponentStackigntests(unittest.TestCase):
-    def test_bad_ref(self):
-        r1 = 'en.ner.onto.sm'
-        r2 = 'en.ner.dl.bert'
-        df = nlu.load(r1).predict('Hello world')
-
-        print(df)
-        print(df.columns)
-
-        nlu.load(r2).predict('Hello world')
-        print(df)
-        print(df.columns)
 
     def test_sentiment_stack(self):
         # df = nlu.load('sentiment elmo',verbose=True).predict('Hello world', output_level='document')
         # df = nlu.load('sentiment elmo',verbose=True).predict('Hello world', output_level='sentence')
 
         df = nlu.load('sentiment elmo',verbose=True).predict('Hello world', output_level='token')
+        for c in df.columns: print(df[c])
 
-        print(df)
-        print(df.columns)
-        print(df['sentiment'])
 
 
     def test_emotion_stack(self):
@@ -32,10 +19,7 @@ class ComponentStackigntests(unittest.TestCase):
         # df = nlu.load('sentiment elmo',verbose=True).predict('Hello world', output_level='sentence')
 
         df = nlu.load('emotion elmo',verbose=True).predict('Hello world', output_level='token')
-
-        print(df)
-        print(df.columns)
-        print(df['emotion'])
+        for c in df.columns:print(df[c])
 
 
     def test_sarcasm_stack(self):
@@ -43,10 +27,8 @@ class ComponentStackigntests(unittest.TestCase):
         # df = nlu.load('sentiment elmo',verbose=True).predict('Hello world', output_level='sentence')
 
         df = nlu.load('sarcasm elmo',verbose=True).predict('Hello world', output_level='token')
-
-        print(df)
-        print(df.columns)
-        print(df['sarcasm'])
+        for c in df.columns:print(df[c])
+        # print(df['sarcasm'])
 
     #
     # def test_component_stack(self):

@@ -1,5 +1,3 @@
-import nlu.pipe_components
-import sparknlp
 from sparknlp.annotator import *
 
 class NERDL:
@@ -11,9 +9,10 @@ class NERDL:
             .setIncludeConfidence(True)
 
 
+
     @staticmethod
-    def get_pretrained_model(name, language):
-        return NerDLModel.pretrained(name,language) \
+    def get_pretrained_model(name, language, bucket=None):
+        return NerDLModel.pretrained(name,language,bucket) \
             .setInputCols(["sentence", "token", "word_embeddings"]) \
             .setOutputCol("ner") \
             .setIncludeConfidence(True)

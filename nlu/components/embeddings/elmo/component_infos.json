@@ -7,18 +7,16 @@
     "word_embeddings"
   ],
   "inputs": [
-    "document",
     "sentence",
     "token"
   ],
   "type": "word_embeddings",
-  "file_dependencies": {},
   "spark_input_column_names": [
     "sentence",
     "token"
   ],
   "spark_output_column_names": [
-    "elmo"
+    "word_embeddings"
   ],
   "provider": "sparknlp",
   "license": "open source",

@@ -13,13 +13,10 @@ class TestLanguage(unittest.TestCase):
                 'NLU ist eine Open-Source Text verarbeitungs Software fuer fortgeschrittene natuerlich sprachliche Textverarbeitung in der Python Sprache '
                 ]
         df = pipe.predict(data, output_level='sentence')
-        print(df.columns)
-        print(df['sentence'], df[['language','language_confidence']])
-        self.assertIsInstance(df.iloc[0]['language'],str )
+        for c in df.columns: print(df[c])
         df = pipe.predict(data, output_level='document')
-        print(df.columns)
-        print(df['document'], df[['language','language_confidence']])
-        self.assertIsInstance(df.iloc[0]['language'], str)
+        for c in df.columns: print(df[c])
+
 
 if __name__ == '__main__':
     unittest.main()

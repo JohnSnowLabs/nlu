@@ -1,4 +1,5 @@
-from nlu import *
+# from nlu import *
+import nlu
 class NLUComponent():
     '''
         This class loads all the components in the components folder.
@@ -12,7 +13,7 @@ class NLUComponent():
         # when NLU might support 3rd party models we should rework this
         # self.model = None  # Either Spark NLP model or some 3rd party custom model. Reference to a model
         self.component_path = nlu.nlu_package_location + 'components/' + component_type + 's/' + component_name + '/'
-        self.component_info = nlu.ComponentInfo.from_directory(component_info_dir=self.component_path)
+        self.info = nlu.ComponentInfo.from_directory(component_info_dir=self.component_path)
 
     def print_parameters_explanation(self):
         pass
@@ -21,21 +22,20 @@ class NLUComponent():
         pass
 
     def info(self):
-        print(self.component_info['info'])
+        print(self.info['info'])
         self.print_parameters_explanation()
         self.print_parameters()
 
 
 class  SparkNLUComponent(NLUComponent):
-    def __init__(self, component_name, component_type):
-        # super().__init__(annotator_class, component_type)
-        # super(SparkNLUComponent,self).__init__(annotator_class, component_type)
+    def __init__(self, component_name, component_type, nlu_ref='', nlp_ref='',lang='',loaded_from_pretrained_pipe=False, is_licensed=False):
         NLUComponent.__init__(self, component_name, component_type)
-        self.spark = nlu.sparknlp.start()
-        nlu.spark = self.spark
-        nlu.spark_started = True
+        self.info.nlu_ref = nlu_ref
+        self.info.nlp_ref = nlp_ref
+        self.info.lang    = lang
+        self.info.loaded_from_pretrained_pipe = loaded_from_pretrained_pipe
         self.__set_missing_model_attributes__()
-    # def __postinit__(self):
+        if is_licensed : self.info.license = 'healthcare'
 
     def __set_missing_model_attributes__(self):
         '''
@@ -47,14 +47,34 @@ class  SparkNLUComponent(NLUComponent):
         for k in self.model.extractParamMap():
             if "inputCol" in str(k):
                 if isinstance(self.model.extractParamMap()[k], str) :
-                    self.component_info.spark_input_column_names =  [self.model.extractParamMap()[k]]
+                    if self.model.extractParamMap()[k] == 'embeddings': # swap name so we have uniform col names
+                        self.model.setInputCols( 'word_embeddings')
+                    self.info.spark_input_column_names =  [self.model.extractParamMap()[k]]
                 else :
-                    self.component_info.spark_input_column_names =  self.model.extractParamMap()[k]
+                    if 'embeddings' in self.model.extractParamMap()[k]: # swap name so we have uniform col names
+                        new_cols = self.model.extractParamMap()[k]
+                        new_cols.remove("embeddings")
+                        new_cols.append("word_embeddings")
+                        self.model.setInputCols(new_cols)
+                    self.info.spark_input_column_names =  self.model.extractParamMap()[k]
+
             if "outputCol" in str(k):
                 if isinstance(self.model.extractParamMap()[k], str) :
-                    self.component_info.spark_output_column_names =  [self.model.extractParamMap()[k]]
+                    if self.model.extractParamMap()[k] == 'embeddings': # swap name so we have uniform col names
+                        self.model.setOutputCol( 'word_embeddings')
+                    self.info.spark_output_column_names =  [self.model.extractParamMap()[k]]
                 else :
-                    self.component_info.spark_output_column_names =  self.model.extractParamMap()[k]
+                    if 'embeddings' in self.model.extractParamMap()[k]: # swap name so we have uniform col names
+                        new_cols = self.model.extractParamMap()[k]
+                        new_cols.remove("embeddings")
+                        new_cols.append("word_embeddings")
+                        self.model.setOutputCol(new_cols)
+                    self.info.spark_output_column_names =  self.model.extractParamMap()[k]
+
+
+
+
+
             # if "labelCol" in str(k):
             #     if isinstance(self.model.extractParamMap()[k], str) :
             #         self.component_info['spark_label_column_names'] =  [self.model.extractParamMap()[k]]

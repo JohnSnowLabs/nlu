@@ -1,12 +1,11 @@
-from nlu.pipe_components import SparkNLUComponent, NLUComponent
+from nlu.pipe.pipe_components import SparkNLUComponent
 import nlu
 class Tokenizer(SparkNLUComponent):
 
-    def __init__(self, annotator_class='default_tokenizer', language='en', component_type='tokenizer', get_default = True, nlp_ref='', nlu_ref='', model=None):
+    def __init__(self, annotator_class='default_tokenizer', language='en', component_type='tokenizer', get_default = True, nlp_ref='', nlu_ref='',lang='en', model=None, is_licensed=False,loaded_from_pretrained_pipe=False):
 
         if 'segment_words' in nlu_ref : annotator_class = 'word_segmenter'
-        elif 'token' in annotator_class and  language in nlu.AllComponentsInfo().all_right_to_left_langs_with_pretrained_tokenizer : annotator_class = 'word_segmenter'
-        elif 'token' in annotator_class and not 'regex'  in annotator_class: annotator_class = 'default_tokenizer'
+        elif 'token' in annotator_class and language in nlu.AllComponentsInfo().all_right_to_left_langs_with_pretrained_tokenizer : annotator_class = 'word_segmenter'
 
 
         if model != None : self.model = model
@@ -22,4 +21,4 @@ class Tokenizer(SparkNLUComponent):
 
 
 
-        SparkNLUComponent.__init__(self, annotator_class, component_type)
+        SparkNLUComponent.__init__(self, annotator_class, component_type,nlu_ref=nlu_ref,nlp_ref=nlp_ref,loaded_from_pretrained_pipe=True,lang=lang)

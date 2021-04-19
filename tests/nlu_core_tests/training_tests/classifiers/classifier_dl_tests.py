@@ -6,6 +6,7 @@ import unittest
 from nlu import *
 import tests.test_utils as t
 
+import pandas as pd
 
 class ClassifierDlTests(unittest.TestCase):
 
@@ -18,13 +19,17 @@ class ClassifierDlTests(unittest.TestCase):
         pipe['classifier_dl'].setMaxEpochs(2)
         pipe = pipe.fit(train_df)
         df = pipe.predict(train_df)
-        print(df[['category','y']])
+
+        #
+        # print(df[['category','y']])
 
         df = pipe.predict(test_df)
+        pipe.print_info()
         print(df.columns)
-        print(df[['category','y']])
-        print (classification_report(df['y'], df['category']))
-        pipe.save('/home/loan/Documents/freelance/jsl/nlu/nlu4realgit/tests/trained_models/quick_classifi')
+        # print(df[['category','y']])
+        # print (classification_report(df['y'], df['category']))
+        for c in df.columns : print (df[c])
+        # pipe.save('/home/loan/Documents/freelance/jsl/nlu/nlu4realgit/tests/trained_models/quick_classifi')
 # Too heavy running on github actions
     # def test_classifier_dl_custom_embeds_doc_level(self):
     #     test_df = self.load_classifier_dl_dataset()

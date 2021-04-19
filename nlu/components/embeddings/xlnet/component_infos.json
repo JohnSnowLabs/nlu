@@ -11,13 +11,12 @@
     "token"
   ],
   "type": "word_embeddings",
-  "file_dependencies": {},
   "spark_input_column_names": [
     "sentence",
     "token"
   ],
   "spark_output_column_names": [
-    "xlnet_embeddings"
+    "word_embeddings"
   ],
   "provider": "sparknlp",
   "license": "open source",

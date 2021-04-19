@@ -1,5 +1,3 @@
-import nlu.pipe_components
-import sparknlp
 from sparknlp.annotator import *
 
 
@@ -11,8 +9,8 @@ class SparkNLPBert:
         .setOutputCol("bert")
 
     @staticmethod
-    def get_pretrained_model(name, language):
-        return   BertEmbeddings.pretrained(name,language) \
+    def get_pretrained_model(name, language, bucket=None):
+        return   BertEmbeddings.pretrained(name,language,bucket) \
             .setInputCols("sentence", "token") \
             .setOutputCol("bert")
 

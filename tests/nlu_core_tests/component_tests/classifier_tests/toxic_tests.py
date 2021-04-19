@@ -12,20 +12,10 @@ class TestToxic(unittest.TestCase):
         pipe = nlu.load('toxic',verbose=True)
         data = ['You are so dumb you goofy dummy', 'You stupid person with an identity that shall remain unnamed, such a filthy identity that you have go to a bad place you person!']
         df = pipe.predict(data, output_level='sentence')
-        print(df)
-        print(df.columns)
+        for c in df.columns: print(df[c])
 
-        print(df['sentence'], df[['toxic_classes']])
-        print(df['sentence'], df[['toxic_confidences']])
         df = pipe.predict(data, output_level='document',metadata=True)
-
-
-        print(df)
-        print(df.columns)
-        print(df['document'], df[['toxic_obscene_confidence']])
-        print(df['toxic_severe_toxic_confidence'], df[['toxic_insult_confidence']])
-        print(df['toxic_toxic_confidence'], df[['toxic_obscene_confidence']])
-
+        for c in df.columns: print(df[c])
 
 
 

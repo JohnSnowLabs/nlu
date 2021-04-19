@@ -1,0 +1,29 @@
+{
+  "name": "relation_extractor",
+  "description": "todo",
+  "output_level": "relation",
+  "trainable": true,
+  "outputs": [
+    "relation"
+  ],
+  "inputs": [
+    "word_embeddings",
+    "pos",
+    "entities",
+    "unlabeled_dependency"
+  ],
+  "type": "asserter",
+  "spark_input_column_names": [
+    "word_embeddings",
+    "pos",
+    "entities",
+    "unlabeled_dependency"
+  ],
+  "spark_output_column_names": [
+    "relation"
+  ],
+  "provider": "sparknlp healthcare",
+  "license": "licensed",
+  "computation_context": "spark",
+  "output_context": "spark"
+}

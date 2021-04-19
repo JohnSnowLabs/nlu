@@ -8,9 +8,8 @@ class TestNormalize(unittest.TestCase):
         pipe = nlu.load('norm_document', verbose=True )
         data = '<!DOCTYPE html> <html> <head> <title>Example</title> </head> <body> <p>This is an example of a simple HTML page with one paragraph.</p> </body> </html>'
         df = pipe.predict(data)
-        pipe.print_info()
-        print(df['normalized_document'])
-        print(df.iloc['normalized_document'].iloc[0])
+        for c in df.columns: print(df[c])
+
 
 if __name__ == '__main__':
     unittest.main()

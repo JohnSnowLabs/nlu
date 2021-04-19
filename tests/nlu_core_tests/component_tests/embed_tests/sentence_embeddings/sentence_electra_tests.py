@@ -8,24 +8,19 @@ from nlu import *
 class TestElectraSentenceEmbeddings(unittest.TestCase):
 
     def test_electra_sentence_embeds(self):
-        df = nlu.load('embed_sentence.electra',verbose=True).predict('Am I the muppet or are you the muppet?')
+        res = nlu.load('embed_sentence.electra',verbose=True).predict('Am I the muppet or are you the muppet?')
         # df = nlu.load('en.classify.sarcasm',verbose=True).predict(sarcasm_df['text'])
-        print(df.columns)
-        print(df)
-        print(df['embed_sentence_electra_embeddings'])
+        for c in res :print(res[c])
 
-        df = nlu.load('en.embed_sentence.electra',verbose=True).predict('Am I the muppet or are you the muppet?')
+        res = nlu.load('en.embed_sentence.electra',verbose=True).predict('Am I the muppet or are you the muppet?')
         # df = nlu.load('en.classify.sarcasm',verbose=True).predict(sarcasm_df['text'])
-        print(df.columns)
-        print(df)
-        print(df['en_embed_sentence_electra_embeddings'])
+        for c in res :print(res[c])
 
 
         # df = nlu.load('en.embed.bert.small_L4_128', verbose=True).predict("No you are the muppet!")
         # print(df.columns)
         # print(df)
         # print(df['bert_embeddings'])
-
 
 
 

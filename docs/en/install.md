@@ -17,14 +17,7 @@ If you work on a fresh Notebook on Kaggle or Google colab, you can just copy pas
 will automatically setup Java, nlu and import nlu, so you are good to go right away!
 
 ```bash
-import os
-! apt-get update -qq > /dev/null   
-# Install java
-! apt-get install -y openjdk-8-jdk-headless -qq > /dev/null
-os.environ["JAVA_HOME"] = "/usr/lib/jvm/java-8-openjdk-amd64"
-os.environ["PATH"] = os.environ["JAVA_HOME"] + "/bin:" + os.environ["PATH"]
-! pip install nlu pyspark==2.4.7
-import nlu
+!wget https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/scripts/colab_setup.sh -O - | bash
 ```
 You can test it out right away with :
 ```python

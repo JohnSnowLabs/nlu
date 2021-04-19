@@ -25,7 +25,8 @@ class posTrainingTests(unittest.TestCase):
 
         df = pipe.predict('I love to go to the super market when there are great offers!')
         print(df.columns)
-        print(df.pos)
+        for c in df.columns : print (df[c])
+
 
 
     def load_pos_train_dataset_and_get_path(self):
@@ -34,8 +35,6 @@ class posTrainingTests(unittest.TestCase):
         data_url = 'https://s3.amazonaws.com/auxdata.johnsnowlabs.com/public/resources/fr/pos/UD_French/UD_French-GSD_2.3.txt '
         return t.download_dataset(data_url,output_file_name,output_folder)
 
-
-        return pd.DataFrame(path)
 if __name__ == '__main__':
     unittest.main()
 

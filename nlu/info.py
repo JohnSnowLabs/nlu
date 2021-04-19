@@ -40,7 +40,7 @@ class AllComponentsInfo:
 
         for path in all_component_paths :
             if '__py' in path : continue
-            logger.info('Loading info dict @ path'+ path)
+            # logger.info('Loading info dict @ path'+ path)
             component = ComponentInfo.from_directory(path)
             self.all_components[component.name] = component
             if component.type == 'classifier' : self.classifiers[component.name] = component
@@ -52,7 +52,6 @@ class AllComponentsInfo:
             if component.type == 'stemmer' : self.stemmers[component.name] = component
             if component.type == 'tokenizer' : self.tokenizers[component.name] = component
             if component.type == 'util' : self.utils[component.name] = component
-            # todo labled dependecy, unlabled dep, CHunk, Date, categoryu, sentence detector
 
 
 
@@ -86,7 +85,6 @@ class ComponentInfo:
     outputs: list  # this is which columns/output types this component is providing
     inputs: list  # this tells us which columns/input types the component is depending on
     type: str  # this tells us which kind of component this is
-    file_dependencies: dict  # Dict, where keys are file name identifiers and value is a dict of attributes (Where to download file, whats the size, etc..) (( MAYBE EMBELISH IN A CLASS?)
     output_level : str # document, sentence, token, chunk, input_dependent or model_dependent
     spark_input_column_names: list  # default expected name for input columns when forking with spark nlp annotators on spark DFs
     spark_output_column_names: list  # default expected name for output columns when forking with spark nlp annotators on spark DFs
@@ -107,7 +105,7 @@ class ComponentInfo:
         """
         if not component_info_dir:
             raise ValueError("Calling DatasetInfo.from_directory() with undefined dataset_info_dir.")
-
+        component_info_dir = component_info_dir.replace('//','/')
         with open(os.path.join(component_info_dir, COMPONENT_INFO_FILE_NAME), "r") as f:
             dataset_info_dict = json.load(f)
 
@@ -116,7 +114,3 @@ class ComponentInfo:
         except :
             print (" Exception Occured! For Path",component_info_dir , " Json file most likely has missing  features. Todo nicer output error info", sys.exc_info()[0])
             raise
-
-    @classmethod
-    def preprocess_path_string(cls): pass
-    # removes all double / and makes class name lowercase

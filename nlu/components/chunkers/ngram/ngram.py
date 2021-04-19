@@ -1,4 +1,3 @@
-import nlu.pipe_components
 from sparknlp.annotator import *
 
 class NGram:
@@ -8,4 +7,4 @@ class NGram:
             .setInputCols(["token"]) \
             .setOutputCol("ngrams") \
             .setN(2) \
-            .setEnableCumulative(False) \
+            .setEnableCumulative(False)

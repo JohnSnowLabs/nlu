@@ -10,7 +10,6 @@
     "chunk_output"
   ],
   "type": "util",
-  "file_dependencies": {},
   "spark_input_column_names": [
     "chunk_output"
   ],

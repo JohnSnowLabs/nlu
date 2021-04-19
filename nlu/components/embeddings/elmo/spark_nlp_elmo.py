@@ -1,5 +1,3 @@
-import nlu.pipe_components
-import sparknlp
 from sparknlp.annotator import *
 
 class SparkNLPElmo:
@@ -7,7 +5,7 @@ class SparkNLPElmo:
     def get_default_model():
         return   ElmoEmbeddings.pretrained() \
         .setInputCols("sentence", "token") \
-        .setOutputCol("elmo")
+        .setOutputCol("word_embeddings")
 
 
 
@@ -15,5 +13,5 @@ class SparkNLPElmo:
     def get_pretrained_model(name, language):
         return   ElmoEmbeddings.pretrained(name,language) \
             .setInputCols("sentence", "token") \
-            .setOutputCol("elmo")
+            .setOutputCol("word_embeddings")
 

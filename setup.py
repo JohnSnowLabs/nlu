@@ -19,7 +19,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 
 REQUIRED_PKGS = [
     # 'pyspark>=2.4.0,<2.5',
-    'spark-nlp>=2.7.1,<2.8',
+    'spark-nlp>=3.0.0,<3.1.0',
     'numpy',
     'pyarrow>=0.16.0',
     'pandas',
@@ -47,12 +47,13 @@ setup(
     # For a discussion on single-sourcing the version across setup.py and the
     # project code, see
     # https://packaging.python.org/en/latest/single_source_version.html
-    version='1.1.3',  # Required
+    version='3.0.0',  # Required
 
     # This is a one-line description or tagline of what your project does. This
     # corresponds to the "Summary" metadata field:
     # https://packaging.python.org/specifications/core-metadata/#summary
     description='John Snow Labs NLU provides state of the art algorithms for NLP&NLU with hundreds of pretrained models in 60+ languages. It enables swift and simple development and research with its powerful Pythonic and Keras inspired API. It is powerd by John Snow Labs powerful Spark NLP library.',
+
     # This is an optional longer description of your project that represents
     # the body of text which users will see when they visit PyPI.
     #
@@ -212,6 +213,16 @@ setup(
         ('', ['nlu/components/utils/ner_to_chunk_converter/component_infos.json']),
 
         ('', ['nlu/components/utils/token_assembler/component_infos.json']),
+        ('', ['nlu/components/deidentifiers/deidentifier/component_infos.json']),
+        ('', ['nlu/components/relation_extractors/relation_extractor/component_infos.json']),
+        ('', ['nlu/components/relation_extractors/relation_extractor_dl/component_infos.json']),
+        ('', ['nlu/components/resolutions/chunk_entity_resolver/component_infos.json']),
+        ('', ['nlu/components/resolutions/sentence_entity_resolver/component_infos.json']),
+        ('', ['nlu/components/assertions/assertion_dl/component_infos.json']),
+        ('', ['nlu/components/classifiers/generic_classifier/component_infos.json']),
+        ('', ['nlu/components/utils/feature_assembler/component_infos.json']),
+        ('', ['nlu/components/classifiers/ner_healthcare/component_infos.json']),
+        ('', ['nlu/components/utils/ner_to_chunk_converter_licensed/component_infos.json']),
 
     ],
 

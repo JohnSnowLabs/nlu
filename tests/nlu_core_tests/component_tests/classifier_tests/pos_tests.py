@@ -8,10 +8,8 @@ class TestPOS(unittest.TestCase):
 
     def test_pos_model(self):
         df = nlu.load('pos',verbose=True).predict('Women belong in the kitchen')
-        # df = nlu.load('en.classify.sarcasm',verbose=True).predict(sarcasm_df['text'])
+        for c in df.columns: print(df[c])
 
-        print(df.columns)
-        print(df[['pos','token']])
 
 
 

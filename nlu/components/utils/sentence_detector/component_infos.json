@@ -10,7 +10,6 @@
     "document"
   ],
   "type": "util",
-  "file_dependencies": {},
   "spark_input_column_names": [
     "document"
   ],

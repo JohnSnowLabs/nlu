@@ -1,0 +1,25 @@
+{
+  "name": "sentence_resolver",
+  "description": "todo",
+  "output_level": "chunk",
+  "trainable": true,
+  "outputs": [
+    "sentence_resolution"
+  ],
+  "inputs": [
+    "entities",
+    "sentence_embeddings"
+  ],
+  "type": "resolver",
+  "spark_input_column_names": [
+    "sentence_embeddings",
+    "entities"
+  ],
+  "spark_output_column_names": [
+    "resolution"
+  ],
+  "provider": "spark nlp healthcare",
+  "license": "licensed",
+  "computation_context": "spark",
+  "output_context": "spark"
+}

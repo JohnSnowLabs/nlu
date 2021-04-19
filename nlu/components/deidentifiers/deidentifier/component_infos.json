@@ -1,0 +1,27 @@
+{
+  "name": "deidentifier",
+  "description": "todo",
+  "output_level": "chunk",
+  "trainable": true,
+  "outputs": [
+    "deidentified"
+  ],
+  "inputs": [
+    "entities",
+    "sentence",
+    "token"
+  ],
+  "type": "deidentification",
+  "spark_input_column_names": [
+    "entities",
+    "sentence",
+    "token"
+  ],
+  "spark_output_column_names": [
+    "deidentified"
+  ],
+  "provider": "sparknlp healthcare",
+  "license": "licensed",
+  "computation_context": "spark",
+  "output_context": "spark"
+}

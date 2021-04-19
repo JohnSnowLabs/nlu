@@ -7,11 +7,9 @@
     "ngrams"
   ],
   "inputs": [
-    "token",
-    "pos"
+    "token"
   ],
   "type": "chunker",
-  "file_dependencies": {},
   "spark_input_column_names": [
     "token"
   ],

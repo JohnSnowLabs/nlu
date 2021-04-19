@@ -7,19 +7,18 @@
     "unlabeled_dependency"
   ],
   "inputs": [
-    "document",
+    "sentence",
     "pos",
     "token"
   ],
   "type": "dependency",
-  "file_dependencies": {},
   "spark_input_column_names": [
-    "document",
+    "sentence",
     "pos",
     "token"
   ],
   "spark_output_column_names": [
-    "dependency"
+    "unlabeled_dependency"
   ],
   "provider": "sparknlp",
   "license": "open source",

@@ -1,0 +1,27 @@
+{
+  "name": "named_entity_recognizer_dl_healthcare",
+  "output_level": "token",
+  "description": "todo",
+  "trainable": true,
+  "outputs": [
+    "ner"
+  ],
+  "inputs": [
+    "sentence",
+    "token",
+    "word_embeddings"
+  ],
+  "type": "classifier",
+  "spark_input_column_names": [
+    "sentence",
+    "token",
+    "word_embeddings"
+  ],
+  "spark_output_column_names": [
+    "ner"
+  ],
+  "provider": "sparknlp",
+  "license": "open source",
+  "computation_context": "spark",
+  "output_context": "spark"
+}

@@ -1,6 +1,3 @@
-import nlu.pipe_components
-import sparknlp
-from sparknlp.base import *
 from sparknlp.annotator import *
 
 class SentenceDetectorDeep:
@@ -9,7 +6,7 @@ class SentenceDetectorDeep:
         return SentenceDetectorDLModel\
             .pretrained()\
             .setInputCols(["document"]) \
-            .setOutputCol("sentence") \
+            .setOutputCol("sentence")
 
 
     @staticmethod
@@ -17,11 +14,11 @@ class SentenceDetectorDeep:
         return SentenceDetectorDLModel.pretrained(name,lang) \
             .pretrained() \
             .setInputCols(["document"]) \
-            .setOutputCol("sentence") \
+            .setOutputCol("sentence")
 
 
     @staticmethod
     def get_trainable_model():
         return SentenceDetectorDLApproach \
             .setInputCol("document") \
-            .setOutputCol("sentence") \
+            .setOutputCol("sentence")

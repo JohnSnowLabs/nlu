@@ -1,0 +1,25 @@
+{
+  "name": "chunk_resolver",
+  "description": "todo",
+  "output_level": "chunk",
+  "trainable": true,
+  "outputs": [
+    "chunk_resolution"
+  ],
+  "inputs": [
+    "token",
+    "chunk_embeddings"
+  ],
+  "type": "resolver",
+  "spark_input_column_names": [
+    "token",
+    "chunk_embeddings"
+  ],
+  "spark_output_column_names": [
+    "chunk_resolution"
+  ],
+  "provider": "spark nlp healthcare",
+  "license": "licensed",
+  "computation_context": "spark",
+  "output_context": "spark"
+}

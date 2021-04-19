@@ -1,5 +1,3 @@
-import nlu.pipe_components
-import sparknlp
 from sparknlp.annotator import *
 
 class SparkNLPXlnet:
@@ -7,7 +5,7 @@ class SparkNLPXlnet:
     def get_default_model():
         return   XlnetEmbeddings.pretrained() \
         .setInputCols("sentence", "token") \
-        .setOutputCol("xlnet_embeddings")
+        .setOutputCol("word_embeddings")
 
 
 
@@ -15,4 +13,4 @@ class SparkNLPXlnet:
     def get_pretrained_model(name, language):
         return   XlnetEmbeddings.pretrained(name,language) \
             .setInputCols("sentence", "token") \
-            .setOutputCol("xlnet_embeddings")
+            .setOutputCol("word_embeddings")

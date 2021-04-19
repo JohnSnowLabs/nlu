@@ -30,6 +30,15 @@ class TestComponentInfo(unittest.TestCase):
         print(pd.DataFrame(rows).to_markdown())
 
 
+    def test_print_all_HC_models_as_markdown(self):
+        rows = []
+        for lang in nlu.NameSpace.pretrained_healthcare_model_references.keys():
+            for nlu_reference in nlu.NameSpace.pretrained_models_references[lang].keys():
+                rows.append((lang,nlu_reference,nlu.NameSpace.pretrained_models_references[lang][nlu_reference]))
+
+        print(pd.DataFrame(rows).to_markdown())
+
+
     def test_get_count_for_every_component_type(self):
         component_counts = {}
         for lang in nlu.NameSpace.pretrained_models_references:

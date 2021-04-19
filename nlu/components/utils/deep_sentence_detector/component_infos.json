@@ -7,16 +7,11 @@
     "sentence"
   ],
   "inputs": [
-    "document",
-    "token",
-    "ner_con"
+    "document"
   ],
   "type": "util",
-  "file_dependencies": {},
   "spark_input_column_names": [
-    "document",
-    "token",
-    "ner_con"
+    "document"
   ],
   "spark_output_column_names": [
     "sentence"

@@ -10,14 +10,11 @@ class TestE2E(unittest.TestCase):
     def test_e2e_model(self):
         df = nlu.load('en.classify.e2e',verbose=True).predict('You are so stupid', output_level='document')
 
-        print(df.columns)
-        print(df['document'], df[['e2e_classes','e2e_confidences']])
+        for c in df.columns: print(df[c])
 
         df = nlu.load('e2e',verbose=True).predict('You are so stupid', output_level='sentence')
-        # df = nlu.load('en.classify.sarcasm',verbose=True).predict(sarcasm_df['text'])
+        for c in df.columns: print(df[c])
 
-        print(df.columns)
-        print(df['sentence'], df[['e2e_classes','e2e_confidences']])
 
 
 

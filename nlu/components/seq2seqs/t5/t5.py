@@ -1,5 +1,3 @@
-import nlu.pipe_components
-import sparknlp
 from sparknlp.annotator import *
 
 class T5:
@@ -21,8 +19,8 @@ class T5:
         .setOutputCol("T5")
 
     @staticmethod
-    def get_pretrained_model(name, language):
-        return   T5Transformer.pretrained(name, language) \
+    def get_pretrained_model(name, language,bucket=None):
+        return   T5Transformer.pretrained(name, language,bucket) \
             .setInputCols("document") \
             .setOutputCol("T5")
 

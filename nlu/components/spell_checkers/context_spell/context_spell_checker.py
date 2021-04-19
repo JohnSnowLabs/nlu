@@ -7,8 +7,8 @@ class ContextSpellChecker:
             .setInputCols(["token"]) \
             .setOutputCol("spell")
     @staticmethod
-    def get_pretrained_model(name, language):
-        return ContextSpellCheckerModel.pretrained(name, language) \
+    def get_pretrained_model(name, language,bucket=None):
+        return ContextSpellCheckerModel.pretrained(name, language,bucket) \
             .setInputCols(["token"]) \
             .setOutputCol("spell")
 

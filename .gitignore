@@ -4,7 +4,8 @@ dist
 nlu.egg-info
 .sass-cache
 personal_notes.md
-
+/tests/nlu_hc_tests/secrets.py
+/tests/nlu_hc_tests/spark_nlp_for_healthcare.json
 
 # Created by https://www.gitignore.io/api/sbt,java,scala,python,eclipse,intellij,intellij+all
 

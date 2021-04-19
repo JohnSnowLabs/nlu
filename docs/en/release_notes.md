@@ -11,6 +11,296 @@ modify_date: "2020-06-12"
 <div class="main-docs" markdown="1">
 
 
+
+<div class="h3-box" markdown="1">
+
+## 200+ State of the Art Medical Models for NER, Entity Resolution, Relation Extraction, Assertion, Spark 3 and Python 3.8 support in  NLU 3.0 Release and much more
+We are incredible excited to announce the release of `NLU 3.0.0` which makes most of John Snow Labs medical healthcare model available in just 1 line of code in NLU.
+These models are the most accurate in their domains and highly scalable in Spark clusters.  
+In addition, `Spark 3.0.X`  and `Spark 3.1.X ` is now supported, together with Python3.8
+
+This is enabled by the the amazing [Spark NLP3.0.1](https://nlp.johnsnowlabs.com/docs/en/release_notes#300) and [Spark NLP for Healthcare 3.0.1](https://nlp.johnsnowlabs.com/docs/en/licensed_release_notes#301) releases.
+
+# New Features
+- Over 200 new models for the `healthcare` domain
+- 6 new classes of models, Assertion, Sentence/Chunk Resolvers, Relation Extractors, Medical NER models, De-Identificator Models
+- Spark 3.0.X and 3.1.X support
+- Python 3.8 Support
+- New Output level `relation`
+- 1 Line to install NLU  just run `!wget https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/scripts/colab_setup.sh -O - | bash`
+- [Various new EMR and Databricks versions supported](https://github.com/JohnSnowLabs/spark-nlp/releases/tag/3.0.0)
+- GPU Mode, more then 600% speedup by enabling GPU mode.
+- Authorized mode for licensed features
+
+## New Documentation
+- [NLU for Healthcare Examples](https://nlu.johnsnowlabs.com/docs/en/examples_hc#usage-examples-of-nluload)
+- [Instrunctions to authorize your environment to use Licensed features](https://nlu.johnsnowlabs.com/docs/en/examples_hc#authorize-access-to-licensed-features-and-install-healthcare-dependencies)
+
+
+## New Notebooks
+- [Medical Named Entity Extraction (NER) notebook](https://colab.research.google.com/github/JohnSnowLabs/nlu/blob/master/examples/colab/healthcare/medical_named_entity_recognition/overview_medical_entity_recognizers.ipynb)
+- [Relation extraction notebook](https://colab.research.google.com/github/JohnSnowLabs/nlu/blob/master/examples/colab/healthcare/relation_extraction/overview_relation.ipynb)
+- [Entity Resolution overview notebook](https://colab.research.google.com/github/JohnSnowLabs/nlu/blob/master/examples/colab/healthcare/entity_resolution/entity_resolvers_overview.ipynb)
+- [Assertion overview notebook](https://colab.research.google.com/github/JohnSnowLabs/nlu/blob/master/examples/colab/healthcare/assertion/assertion_overview.ipynb)
+- [De-Identification overview notebook](https://colab.research.google.com/github/JohnSnowLabs/nlu/blob/master/examples/colab/healthcare/de_identification/DeIdentification_model_overview.ipynb)
+- [Graph NLU tutorial](https://colab.research.google.com/github/JohnSnowLabs/nlu/blob/master/examples/webinars_conferences_etc/graph_ai_summit/Healthcare_Graph_NLU_COVID_Tigergraph.ipynb) for the  [GRAPH+AI Summit hosted by Tigergraph ](https://www.tigergraph.com/graphaisummit/)
+
+
+## AssertionDLModels
+
+| Language | nlu.load() reference                                         | Spark NLP Model reference          |
+| -------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| English  | [assert](https://nlp.johnsnowlabs.com/2021/01/26/assertion_dl_en.html) | [assertion_dl](https://nlp.johnsnowlabs.com/2021/01/26/assertion_dl_en.html)                   |
+| English  | [assert.biobert](https://nlp.johnsnowlabs.com/2021/01/26/assertion_dl_biobert_en.html) | [assertion_dl_biobert](https://nlp.johnsnowlabs.com/2021/01/26/assertion_dl_biobert_en.html)                   |
+| English  | [assert.healthcare](https://nlp.johnsnowlabs.com/2020/09/23/assertion_dl_healthcare_en.html) | [assertion_dl_healthcare](https://nlp.johnsnowlabs.com/2020/09/23/assertion_dl_healthcare_en.html)                   |
+| English  | [assert.large](https://nlp.johnsnowlabs.com/2020/05/21/assertion_dl_large_en.html) | [assertion_dl_large](https://nlp.johnsnowlabs.com/2020/05/21/assertion_dl_large_en.html)                   |
+
+##  New Word Embeddings
+
+| Language | nlu.load() reference                                         | Spark NLP Model reference          |
+| -------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| English  | [embed.glove.clinical](https://nlp.johnsnowlabs.com/2021/03/31/ner_anatomy_coarse_en.html) | [embeddings_clinical](https://nlp.johnsnowlabs.com/2021/03/31/ner_anatomy_coarse_en.html)                   |
+| English  | [embed.glove.biovec](https://nlp.johnsnowlabs.com/2020/06/02/embeddings_biovec_en.html) | [embeddings_biovec](https://nlp.johnsnowlabs.com/2020/06/02/embeddings_biovec_en.html)                   |
+| English  | [embed.glove.healthcare](https://nlp.johnsnowlabs.com/2020/03/26/embeddings_healthcare_en.html) | [embeddings_healthcare](https://nlp.johnsnowlabs.com/2020/03/26/embeddings_healthcare_en.html)                   |
+| English  | [embed.glove.healthcare_100d](https://nlp.johnsnowlabs.com/2020/05/29/embeddings_healthcare_100d_en.html) | [embeddings_healthcare_100d](https://nlp.johnsnowlabs.com/2020/05/29/embeddings_healthcare_100d_en.html)                   |
+| English  | en.embed.glove.icdoem | embeddings_icdoem          |
+| English  | en.embed.glove.icdoem_2ng | embeddings_icdoem_2ng          |
+
+## Sentence Entity resolvers
+
+| Language | nlu.load() reference                                         | Spark NLP Model reference          |
+| -------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| English  | embed_sentence.biobert.mli | sbiobert_base_cased_mli          |
+| English  | resolve | sbiobertresolve_cpt          |
+| English  | resolve.cpt | sbiobertresolve_cpt          |
+| English  | resolve.cpt.augmented | sbiobertresolve_cpt_augmented          |
+| English  | resolve.cpt.procedures_augmented | sbiobertresolve_cpt_procedures_augmented          |
+| English  | resolve.hcc.augmented | sbiobertresolve_hcc_augmented          |
+| English  | [resolve.icd10cm](https://nlp.johnsnowlabs.com/2020/11/27/sbiobertresolve_icd10cm_en.html) | [sbiobertresolve_icd10cm](https://nlp.johnsnowlabs.com/2020/11/27/sbiobertresolve_icd10cm_en.html)                   |
+| English  | [resolve.icd10cm.augmented](https://nlp.johnsnowlabs.com/2020/12/13/sbiobertresolve_icd10cm_augmented_en.html) | [sbiobertresolve_icd10cm_augmented](https://nlp.johnsnowlabs.com/2020/12/13/sbiobertresolve_icd10cm_augmented_en.html)                   |
+| English  | [resolve.icd10cm.augmented_billable](https://nlp.johnsnowlabs.com/2021/02/06/sbiobertresolve_icd10cm_augmented_billable_hcc_en.html) | [sbiobertresolve_icd10cm_augmented_billable_hcc](https://nlp.johnsnowlabs.com/2021/02/06/sbiobertresolve_icd10cm_augmented_billable_hcc_en.html)                   |
+| English  | [resolve.icd10pcs](https://nlp.johnsnowlabs.com/2020/11/27/sbiobertresolve_icd10pcs_en.html) | [sbiobertresolve_icd10pcs](https://nlp.johnsnowlabs.com/2020/11/27/sbiobertresolve_icd10pcs_en.html)                   |
+| English  | [resolve.icdo](https://nlp.johnsnowlabs.com/2020/11/27/sbiobertresolve_icdo_en.html) | [sbiobertresolve_icdo](https://nlp.johnsnowlabs.com/2020/11/27/sbiobertresolve_icdo_en.html)                   |
+| English  | [resolve.rxcui](https://nlp.johnsnowlabs.com/2020/12/11/sbiobertresolve_rxcui_en.html) | [sbiobertresolve_rxcui](https://nlp.johnsnowlabs.com/2020/12/11/sbiobertresolve_rxcui_en.html)                   |
+| English  | [resolve.rxnorm](https://nlp.johnsnowlabs.com/2020/11/27/sbiobertresolve_rxnorm_en.html) | [sbiobertresolve_rxnorm](https://nlp.johnsnowlabs.com/2020/11/27/sbiobertresolve_rxnorm_en.html)                   |
+| English  | [resolve.snomed](https://nlp.johnsnowlabs.com/2020/11/27/sbiobertresolve_snomed_auxConcepts_en.html) | [sbiobertresolve_snomed_auxConcepts](https://nlp.johnsnowlabs.com/2020/11/27/sbiobertresolve_snomed_auxConcepts_en.html)                   |
+| English  | [resolve.snomed.aux_concepts](https://nlp.johnsnowlabs.com/2020/11/27/sbiobertresolve_snomed_auxConcepts_en.html) | [sbiobertresolve_snomed_auxConcepts](https://nlp.johnsnowlabs.com/2020/11/27/sbiobertresolve_snomed_auxConcepts_en.html)                   |
+| English  | [resolve.snomed.aux_concepts_int](https://nlp.johnsnowlabs.com/2020/11/27/sbiobertresolve_snomed_auxConcepts_int_en.html) | [sbiobertresolve_snomed_auxConcepts_int](https://nlp.johnsnowlabs.com/2020/11/27/sbiobertresolve_snomed_auxConcepts_int_en.html)                   |
+| English  | [resolve.snomed.findings](https://nlp.johnsnowlabs.com/2020/11/27/sbiobertresolve_snomed_findings_en.html) | [sbiobertresolve_snomed_findings](https://nlp.johnsnowlabs.com/2020/11/27/sbiobertresolve_snomed_findings_en.html)                   |
+| English  | [resolve.snomed.findings_int](https://nlp.johnsnowlabs.com/2020/11/27/sbiobertresolve_snomed_findings_int_en.html) | [sbiobertresolve_snomed_findings_int](https://nlp.johnsnowlabs.com/2020/11/27/sbiobertresolve_snomed_findings_int_en.html)                   |
+
+## RelationExtractionModel
+
+| Language | nlu.load() reference                                         | Spark NLP Model reference          |
+| -------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| English  | relation.posology | posology_re          |
+| English  | [relation](https://nlp.johnsnowlabs.com/2021/02/04/redl_bodypart_direction_biobert_en.html) | [redl_bodypart_direction_biobert](https://nlp.johnsnowlabs.com/2021/02/04/redl_bodypart_direction_biobert_en.html)                   |
+| English  | [relation.bodypart.direction](https://nlp.johnsnowlabs.com/2021/02/04/redl_bodypart_direction_biobert_en.html) | [redl_bodypart_direction_biobert](https://nlp.johnsnowlabs.com/2021/02/04/redl_bodypart_direction_biobert_en.html)                   |
+| English  | [relation.bodypart.problem](https://nlp.johnsnowlabs.com/2021/02/04/redl_bodypart_problem_biobert_en.html) | [redl_bodypart_problem_biobert](https://nlp.johnsnowlabs.com/2021/02/04/redl_bodypart_problem_biobert_en.html)                   |
+| English  | [relation.bodypart.procedure](https://nlp.johnsnowlabs.com/2021/02/04/redl_bodypart_procedure_test_biobert_en.html) | [redl_bodypart_procedure_test_biobert](https://nlp.johnsnowlabs.com/2021/02/04/redl_bodypart_procedure_test_biobert_en.html)                   |
+| English  | [relation.chemprot](https://nlp.johnsnowlabs.com/2021/02/04/redl_chemprot_biobert_en.html) | [redl_chemprot_biobert](https://nlp.johnsnowlabs.com/2021/02/04/redl_chemprot_biobert_en.html)                   |
+| English  | [relation.clinical](https://nlp.johnsnowlabs.com/2021/02/04/redl_clinical_biobert_en.html) | [redl_clinical_biobert](https://nlp.johnsnowlabs.com/2021/02/04/redl_clinical_biobert_en.html)                   |
+| English  | [relation.date](https://nlp.johnsnowlabs.com/2021/02/04/redl_date_clinical_biobert_en.htmls) | [redl_date_clinical_biobert](https://nlp.johnsnowlabs.com/2021/02/04/redl_date_clinical_biobert_en.htmls)                   |
+| English  | [relation.drug_drug_interaction](https://nlp.johnsnowlabs.com/2021/02/04/redl_drug_drug_interaction_biobert_en.html) | [redl_drug_drug_interaction_biobert](https://nlp.johnsnowlabs.com/2021/02/04/redl_drug_drug_interaction_biobert_en.html)                   |
+| English  | [relation.humen_phenotype_gene](https://nlp.johnsnowlabs.com/2021/02/04/redl_human_phenotype_gene_biobert_en.html) | [redl_human_phenotype_gene_biobert](https://nlp.johnsnowlabs.com/2021/02/04/redl_human_phenotype_gene_biobert_en.html)                   |
+| English  | [relation.temporal_events](https://nlp.johnsnowlabs.com/2021/02/04/redl_temporal_events_biobert_en.html) | [redl_temporal_events_biobert](https://nlp.johnsnowlabs.com/2021/02/04/redl_temporal_events_biobert_en.html)                   |
+
+
+
+## NERDLModels
+
+| Language | nlu.load() reference                                         | Spark NLP Model reference          |
+| -------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
+|English  | [med_ner.ade.clinical](https://nlp.johnsnowlabs.com/2021/04/01/ner_ade_clinical_en.html) | [ner_ade_clinical](https://nlp.johnsnowlabs.com/2021/04/01/ner_ade_clinical_en.html)                   |
+| English  | [med_ner.ade.clinical_bert](https://nlp.johnsnowlabs.com/2021/04/01/ner_ade_clinicalbert_en.html) | [ner_ade_clinicalbert](https://nlp.johnsnowlabs.com/2021/04/01/ner_ade_clinicalbert_en.html)                   |
+| English  | [med_ner.ade.ade_healthcare](https://nlp.johnsnowlabs.com/2021/04/01/ner_ade_healthcare_en.html) | [ner_ade_healthcare](https://nlp.johnsnowlabs.com/2021/04/01/ner_ade_healthcare_en.html)                   |
+| English  | [med_ner.anatomy](https://nlp.johnsnowlabs.com/2021/03/31/ner_anatomy_en.html) | [ner_anatomy](https://nlp.johnsnowlabs.com/2021/03/31/ner_anatomy_en.html)                   |
+| English  | [med_ner.anatomy.biobert](https://nlp.johnsnowlabs.com/2021/04/01/ner_anatomy_biobert_en.html) | [ner_anatomy_biobert](https://nlp.johnsnowlabs.com/2021/04/01/ner_anatomy_biobert_en.html)                   |
+| English  | [med_ner.anatomy.coarse](https://nlp.johnsnowlabs.com/2021/03/31/ner_anatomy_coarse_en.html) | [ner_anatomy_coarse](https://nlp.johnsnowlabs.com/2021/03/31/ner_anatomy_coarse_en.html)                   |
+| English  | [med_ner.anatomy.coarse_biobert](https://nlp.johnsnowlabs.com/2021/03/31/ner_anatomy_coarse_biobert_en.html) | [ner_anatomy_coarse_biobert](https://nlp.johnsnowlabs.com/2021/03/31/ner_anatomy_coarse_biobert_en.html)                   |
+| English  | [med_ner.aspect_sentiment](https://nlp.johnsnowlabs.com/2021/03/31/ner_aspect_based_sentiment_en.html) | [ner_aspect_based_sentiment](https://nlp.johnsnowlabs.com/2021/03/31/ner_aspect_based_sentiment_en.html)                   |
+| English  | [med_ner.bacterial_species](https://nlp.johnsnowlabs.com/2021/04/01/ner_bacterial_species_en.html) | [ner_bacterial_species](https://nlp.johnsnowlabs.com/2021/04/01/ner_bacterial_species_en.html)                   |
+| English  | [med_ner.bionlp](https://nlp.johnsnowlabs.com/2021/03/31/ner_bionlp_en.html) | [ner_bionlp](https://nlp.johnsnowlabs.com/2021/03/31/ner_bionlp_en.html)                   |
+| English  | [med_ner.bionlp.biobert](https://nlp.johnsnowlabs.com/2021/04/01/ner_bionlp_biobert_en.html) | [ner_bionlp_biobert](https://nlp.johnsnowlabs.com/2021/04/01/ner_bionlp_biobert_en.html)                   |
+| English  | [med_ner.cancer](https://nlp.johnsnowlabs.com/2021/03/31/ner_cancer_genetics_en.html) | [ner_cancer_genetics](https://nlp.johnsnowlabs.com/2021/03/31/ner_cancer_genetics_en.html)                   |
+| Englishs | [med_ner.cellular](https://nlp.johnsnowlabs.com/2021/03/31/ner_cellular_en.html) | [ner_cellular](https://nlp.johnsnowlabs.com/2021/03/31/ner_cellular_en.html)                   |
+| English  | [med_ner.cellular.biobert](https://nlp.johnsnowlabs.com/2021/04/01/ner_cellular_biobert_en.html) | [ner_cellular_biobert](https://nlp.johnsnowlabs.com/2021/04/01/ner_cellular_biobert_en.html)                   |
+| English  | [med_ner.chemicals](https://nlp.johnsnowlabs.com/2021/04/01/ner_chemicals_en.html) | [ner_chemicals](https://nlp.johnsnowlabs.com/2021/04/01/ner_chemicals_en.html)                   |
+| English  | [med_ner.chemprot](https://nlp.johnsnowlabs.com/2021/04/01/ner_chemprot_biobert_en.html) | [ner_chemprot_biobert](https://nlp.johnsnowlabs.com/2021/04/01/ner_chemprot_biobert_en.html)           |
+| English  | [med_ner.chemprot.clinical](https://nlp.johnsnowlabs.com/2021/03/31/ner_chemprot_clinical_en.html) | [ner_chemprot_clinical](https://nlp.johnsnowlabs.com/2021/03/31/ner_chemprot_clinical_en.html)           |
+| English  | [med_ner.clinical](https://nlp.johnsnowlabs.com/2020/01/30/ner_clinical_en.html) | [ner_clinical](https://nlp.johnsnowlabs.com/2020/01/30/ner_clinical_en.html)           |
+| English  | [med_ner.clinical.biobert](https://nlp.johnsnowlabs.com/2021/04/01/ner_clinical_biobert_en.html) | [ner_clinical_biobert](https://nlp.johnsnowlabs.com/2021/04/01/ner_clinical_biobert_en.html)           |
+| English  | med_ner.clinical.noncontrib | ner_clinical_noncontrib          |
+| English  | [med_ner.diseases](https://nlp.johnsnowlabs.com/2021/03/31/ner_diseases_en.html) | [ner_diseases](https://nlp.johnsnowlabs.com/2021/03/31/ner_diseases_en.html)           |
+| English  | [med_ner.diseases.biobert](https://nlp.johnsnowlabs.com/2021/04/01/ner_diseases_biobert_en.html) | [ner_diseases_biobert](https://nlp.johnsnowlabs.com/2021/04/01/ner_diseases_biobert_en.html)           |
+| English  | [med_ner.diseases.large](https://nlp.johnsnowlabs.com/2021/04/01/ner_diseases_large_en.html) | [ner_diseases_large](https://nlp.johnsnowlabs.com/2021/04/01/ner_diseases_large_en.html)           |
+| English  | [med_ner.drugs](https://nlp.johnsnowlabs.com/2021/03/31/ner_drugs_en.html) | [ner_drugs](https://nlp.johnsnowlabs.com/2021/03/31/ner_drugs_en.html)           |
+| English  | [med_ner.drugsgreedy](https://nlp.johnsnowlabs.com/2021/03/31/ner_drugs_greedy_en.html) | [ner_drugs_greedy](https://nlp.johnsnowlabs.com/2021/03/31/ner_drugs_greedy_en.html)           |
+| English  | [med_ner.drugs.large](https://nlp.johnsnowlabs.com/2021/03/31/ner_drugs_large_en.html) | [ner_drugs_large](https://nlp.johnsnowlabs.com/2021/03/31/ner_drugs_large_en.html)           |
+| English  | [med_ner.events_biobert](https://nlp.johnsnowlabs.com/2021/04/01/ner_events_biobert_en.html) | [ner_events_biobert](https://nlp.johnsnowlabs.com/2021/04/01/ner_events_biobert_en.html)           |
+| English  | [med_ner.events_clinical](https://nlp.johnsnowlabs.com/2021/03/31/ner_events_clinical_en.html) | [ner_events_clinical](https://nlp.johnsnowlabs.com/2021/03/31/ner_events_clinical_en.html)           |
+| English  | [med_ner.events_healthcre](https://nlp.johnsnowlabs.com/2021/04/01/ner_events_healthcare_en.html) | [ner_events_healthcare](https://nlp.johnsnowlabs.com/2021/04/01/ner_events_healthcare_en.html)           |
+| English  | [med_ner.financial_contract](https://nlp.johnsnowlabs.com/2021/04/01/ner_financial_contract_en.html) | [ner_financial_contract](https://nlp.johnsnowlabs.com/2021/04/01/ner_financial_contract_en.html)           |
+| English  | [med_ner.healthcare](https://nlp.johnsnowlabs.com/2021/03/31/ner_healthcare_de.html) | [ner_healthcare](https://nlp.johnsnowlabs.com/2021/03/31/ner_healthcare_de.html)           |
+| English  | [med_ner.human_phenotype.gene_biobert](https://nlp.johnsnowlabs.com/2021/04/01/ner_human_phenotype_gene_biobert_en.html) | [ner_human_phenotype_gene_biobert](https://nlp.johnsnowlabs.com/2021/04/01/ner_human_phenotype_gene_biobert_en.html)           |
+| English  | [med_ner.human_phenotype.gene_clinical](https://nlp.johnsnowlabs.com/2021/03/31/ner_human_phenotype_gene_clinical_en.html) | [ner_human_phenotype_gene_clinical](https://nlp.johnsnowlabs.com/2021/03/31/ner_human_phenotype_gene_clinical_en.html)           |
+| English  | [med_ner.human_phenotype.go_biobert](https://nlp.johnsnowlabs.com/2021/04/01/ner_human_phenotype_go_biobert_en.html) | [ner_human_phenotype_go_biobert](https://nlp.johnsnowlabs.com/2021/04/01/ner_human_phenotype_go_biobert_en.html)           |
+| English  | [med_ner.human_phenotype.go_clinical](https://nlp.johnsnowlabs.com/2021/03/31/ner_human_phenotype_go_clinical_en.html) | [ner_human_phenotype_go_clinical](https://nlp.johnsnowlabs.com/2021/03/31/ner_human_phenotype_go_clinical_en.html)           |
+| English  | [med_ner.jsl](https://nlp.johnsnowlabs.com/2021/03/31/ner_jsl_en.html) | [ner_jsl](https://nlp.johnsnowlabs.com/2021/03/31/ner_jsl_en.html)           |
+| English  | [med_ner.jsl.biobert](https://nlp.johnsnowlabs.com/2021/04/01/ner_jsl_biobert_en.html) | [ner_jsl_biobert](https://nlp.johnsnowlabs.com/2021/04/01/ner_jsl_biobert_en.html)           |
+| English  | [med_ner.jsl.enriched](https://nlp.johnsnowlabs.com/2021/03/31/ner_jsl_enriched_en.html) | [ner_jsl_enriched](https://nlp.johnsnowlabs.com/2021/03/31/ner_jsl_enriched_en.html)           |
+| English  | [med_ner.jsl.enriched_biobert](https://nlp.johnsnowlabs.com/2021/04/01/ner_jsl_enriched_biobert_en.html) | [ner_jsl_enriched_biobert](https://nlp.johnsnowlabs.com/2021/04/01/ner_jsl_enriched_biobert_en.html)           |
+| English  | [med_ner.measurements](https://nlp.johnsnowlabs.com/2021/04/01/ner_measurements_clinical_en.html) | [ner_measurements_clinical](https://nlp.johnsnowlabs.com/2021/04/01/ner_measurements_clinical_en.html)           |
+| English  | [med_ner.medmentions](https://nlp.johnsnowlabs.com/2021/04/01/ner_medmentions_coarse_en.html) | [ner_medmentions_coarse](https://nlp.johnsnowlabs.com/2021/04/01/ner_medmentions_coarse_en.html)           |
+| English  | [med_ner.posology](https://nlp.johnsnowlabs.com/2020/04/15/ner_posology_en.html) | [ner_posology](https://nlp.johnsnowlabs.com/2020/04/15/ner_posology_en.html)           |
+| English  | [med_ner.posology.biobert](https://nlp.johnsnowlabs.com/2021/04/01/ner_posology_biobert_en.html) | [ner_posology_biobert](https://nlp.johnsnowlabs.com/2021/04/01/ner_posology_biobert_en.html)           |
+| English  | [med_ner.posology.greedy](https://nlp.johnsnowlabs.com/2021/03/31/ner_posology_greedy_en.html) | [ner_posology_greedy](https://nlp.johnsnowlabs.com/2021/03/31/ner_posology_greedy_en.html)           |
+| English  | [med_ner.posology.healthcare](https://nlp.johnsnowlabs.com/2021/04/01/ner_posology_healthcare_en.html) | [ner_posology_healthcare](https://nlp.johnsnowlabs.com/2021/04/01/ner_posology_healthcare_en.html)           |
+| English  | [med_ner.posology.large](https://nlp.johnsnowlabs.com/2021/03/31/ner_posology_large_en.html) | [ner_posology_large](https://nlp.johnsnowlabs.com/2021/03/31/ner_posology_large_en.html)           |
+| English  | [med_ner.posology.large_biobert](https://nlp.johnsnowlabs.com/2021/04/01/ner_posology_large_biobert_en.html) | [ner_posology_large_biobert](https://nlp.johnsnowlabs.com/2021/04/01/ner_posology_large_biobert_en.html)           |
+| English  | [med_ner.posology.small](https://nlp.johnsnowlabs.com/2021/03/31/ner_posology_small_en.html) | [ner_posology_small](https://nlp.johnsnowlabs.com/2021/03/31/ner_posology_small_en.html)           |
+| English  | [med_ner.radiology](https://nlp.johnsnowlabs.com/2021/03/31/ner_radiology_en.html) | [ner_radiology](https://nlp.johnsnowlabs.com/2021/03/31/ner_radiology_en.html)           |
+| English  | [med_ner.radiology.wip_clinical](https://nlp.johnsnowlabs.com/2021/04/01/ner_radiology_wip_clinical_en.html) | [ner_radiology_wip_clinical](https://nlp.johnsnowlabs.com/2021/04/01/ner_radiology_wip_clinical_en.html)           |
+| English  | [med_ner.risk_factors](https://nlp.johnsnowlabs.com/2021/03/31/ner_risk_factors_en.html) | [ner_risk_factors](https://nlp.johnsnowlabs.com/2021/03/31/ner_risk_factors_en.html)           |
+| English  | [med_ner.risk_factors.biobert](https://nlp.johnsnowlabs.com/2021/04/01/ner_risk_factors_biobert_en.html) | [ner_risk_factors_biobert](https://nlp.johnsnowlabs.com/2021/04/01/ner_risk_factors_biobert_en.html)           |
+| English  | med_ner.i2b2 | nerdl_i2b2          |
+| English  | [med_ner.tumour](https://nlp.johnsnowlabs.com/2021/04/01/nerdl_tumour_demo_en.html) | [nerdl_tumour_demo](https://nlp.johnsnowlabs.com/2021/04/01/nerdl_tumour_demo_en.html)           |
+| English  | med_ner.jsl.wip.clinical | jsl_ner_wip_clinical          |
+| English  | [med_ner.jsl.wip.clinical.greedy](https://nlp.johnsnowlabs.com/2021/03/31/jsl_ner_wip_clinical_en.html) | [jsl_ner_wip_greedy_clinical](https://nlp.johnsnowlabs.com/2021/03/31/jsl_ner_wip_clinical_en.html)           |
+| English  | [med_ner.jsl.wip.clinical.modifier](https://nlp.johnsnowlabs.com/2021/04/01/jsl_ner_wip_modifier_clinical_en.html) | [jsl_ner_wip_modifier_clinical](https://nlp.johnsnowlabs.com/2021/04/01/jsl_ner_wip_modifier_clinical_en.html)           |
+| English  | [med_ner.jsl.wip.clinical.rd](https://nlp.johnsnowlabs.com/2021/04/01/jsl_rd_ner_wip_greedy_clinical_en.html) | [jsl_rd_ner_wip_greedy_clinical](https://nlp.johnsnowlabs.com/2021/04/01/jsl_rd_ner_wip_greedy_clinical_en.html)           |
+
+
+## De-Identification Models
+
+| Language | nlu.load() reference                                         | Spark NLP Model reference          |
+| -------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| English  | [med_ner.deid.augmented](https://nlp.johnsnowlabs.com/2021/03/31/ner_deid_augmented_en.html) | [ner_deid_augmented](https://nlp.johnsnowlabs.com/2021/03/31/ner_deid_augmented_en.html)           |
+| English  | [med_ner.deid.biobert](https://nlp.johnsnowlabs.com/2021/04/01/ner_deid_biobert_en.html) | [ner_deid_biobert](https://nlp.johnsnowlabs.com/2021/04/01/ner_deid_biobert_en.html)           |
+| English  | [med_ner.deid.enriched](https://nlp.johnsnowlabs.com/2021/03/31/ner_deid_enriched_en.html) | [ner_deid_enriched](https://nlp.johnsnowlabs.com/2021/03/31/ner_deid_enriched_en.html)           |
+| English  | [med_ner.deid.enriched_biobert](https://nlp.johnsnowlabs.com/2021/04/01/ner_deid_enriched_biobert_en.html) | [ner_deid_enriched_biobert](https://nlp.johnsnowlabs.com/2021/04/01/ner_deid_enriched_biobert_en.html)           |
+| English  | [med_ner.deid.large](https://nlp.johnsnowlabs.com/2021/03/31/ner_deid_large_en.html) | [ner_deid_large](https://nlp.johnsnowlabs.com/2021/03/31/ner_deid_large_en.html)           |
+| English  | [med_ner.deid.sd](https://nlp.johnsnowlabs.com/2021/04/01/ner_deid_sd_en.html) | [ner_deid_sd](https://nlp.johnsnowlabs.com/2021/04/01/ner_deid_sd_en.html)           |
+| English  | [med_ner.deid.sd_large](https://nlp.johnsnowlabs.com/2021/04/01/ner_deid_sd_large_en.html) | [ner_deid_sd_large](https://nlp.johnsnowlabs.com/2021/04/01/ner_deid_sd_large_en.html)           |
+| English  | med_ner.deid | nerdl_deid          |
+| English  | med_ner.deid.synthetic | ner_deid_synthetic          |
+| English  | [med_ner.deid.dl](https://nlp.johnsnowlabs.com/2021/03/31/ner_deidentify_dl_en.html) | [ner_deidentify_dl](https://nlp.johnsnowlabs.com/2021/03/31/ner_deidentify_dl_en.html)           |
+| English  | [en.de_identify](https://nlp.johnsnowlabs.com/2019/06/04/deidentify_rb_en.html) | [deidentify_rb](https://nlp.johnsnowlabs.com/2019/06/04/deidentify_rb_en.html)           |
+| English  | de_identify.rules | deid_rules          |
+| English  | [de_identify.clinical](https://nlp.johnsnowlabs.com/2021/01/29/deidentify_enriched_clinical_en.html) | [deidentify_enriched_clinical](https://nlp.johnsnowlabs.com/2021/01/29/deidentify_enriched_clinical_en.html)           |
+| English  | [de_identify.large](https://nlp.johnsnowlabs.com/2020/08/04/deidentify_large_en.html) | [deidentify_large](https://nlp.johnsnowlabs.com/2020/08/04/deidentify_large_en.html)           |
+| English  | [de_identify.rb](https://nlp.johnsnowlabs.com/2019/06/04/deidentify_rb_en.html) | [deidentify_rb](https://nlp.johnsnowlabs.com/2019/06/04/deidentify_rb_en.html)           |
+| English  | de_identify.rb_no_regex | deidentify_rb_no_regex          |
+
+
+
+# Chunk resolvers
+
+| Language | nlu.load() reference                                         | Spark NLP Model reference          |
+| -------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| English  | [resolve_chunk.athena_conditions](https://nlp.johnsnowlabs.com/2020/09/16/chunkresolve_athena_conditions_healthcare_en.html) | [chunkresolve_athena_conditions_healthcare](https://nlp.johnsnowlabs.com/2020/09/16/chunkresolve_athena_conditions_healthcare_en.html)           |
+| English  | [resolve_chunk.cpt_clinical](https://nlp.johnsnowlabs.com/2021/04/02/chunkresolve_cpt_clinical_en.html) | [chunkresolve_cpt_clinical](https://nlp.johnsnowlabs.com/2021/04/02/chunkresolve_cpt_clinical_en.html)           |
+| English  | [resolve_chunk.icd10cm.clinical](https://nlp.johnsnowlabs.com/2021/04/02/chunkresolve_icd10cm_clinical_en.html) | [chunkresolve_icd10cm_clinical](https://nlp.johnsnowlabs.com/2021/04/02/chunkresolve_icd10cm_clinical_en.html)           |
+| English  | [resolve_chunk.icd10cm.diseases_clinical](https://nlp.johnsnowlabs.com/2021/04/02/chunkresolve_icd10cm_diseases_clinical_en.html) | [chunkresolve_icd10cm_diseases_clinical](https://nlp.johnsnowlabs.com/2021/04/02/chunkresolve_icd10cm_diseases_clinical_en.html)           |
+| English  | resolve_chunk.icd10cm.hcc_clinical | chunkresolve_icd10cm_hcc_clinical          |
+| English  | resolve_chunk.icd10cm.hcc_healthcare | chunkresolve_icd10cm_hcc_healthcare          |
+| English  | [resolve_chunk.icd10cm.injuries](https://nlp.johnsnowlabs.com/2021/04/02/chunkresolve_icd10cm_injuries_clinical_en.html) | [chunkresolve_icd10cm_injuries_clinical](https://nlp.johnsnowlabs.com/2021/04/02/chunkresolve_icd10cm_injuries_clinical_en.html)           |
+| English  | [resolve_chunk.icd10cm.musculoskeletal](https://nlp.johnsnowlabs.com/2021/04/02/chunkresolve_icd10cm_musculoskeletal_clinical_en.html) | [chunkresolve_icd10cm_musculoskeletal_clinical](https://nlp.johnsnowlabs.com/2021/04/02/chunkresolve_icd10cm_musculoskeletal_clinical_en.html)           |
+| English  | [resolve_chunk.icd10cm.neoplasms](https://nlp.johnsnowlabs.com/2021/04/02/chunkresolve_icd10cm_neoplasms_clinical_en.html) | [chunkresolve_icd10cm_neoplasms_clinical](https://nlp.johnsnowlabs.com/2021/04/02/chunkresolve_icd10cm_neoplasms_clinical_en.html)           |
+| English  | [resolve_chunk.icd10cm.poison](https://nlp.johnsnowlabs.com/2020/04/28/chunkresolve_icd10cm_poison_ext_clinical_en.html) | [chunkresolve_icd10cm_poison_ext_clinical](https://nlp.johnsnowlabs.com/2020/04/28/chunkresolve_icd10cm_poison_ext_clinical_en.html)           |
+| English  | [resolve_chunk.icd10cm.puerile](https://nlp.johnsnowlabs.com/2020/04/28/chunkresolve_icd10cm_puerile_clinical_en.html) | [chunkresolve_icd10cm_puerile_clinical](https://nlp.johnsnowlabs.com/2020/04/28/chunkresolve_icd10cm_puerile_clinical_en.html)           |
+| English  | resolve_chunk.icd10pcs.clinical | chunkresolve_icd10pcs_clinical          |
+| English  | [resolve_chunk.icdo.clinical](https://nlp.johnsnowlabs.com/2021/04/02/chunkresolve_icd10pcs_clinical_en.html) | [chunkresolve_icdo_clinical](https://nlp.johnsnowlabs.com/2021/04/02/chunkresolve_icd10pcs_clinical_en.html)           |
+| English  | [resolve_chunk.loinc](https://nlp.johnsnowlabs.com/2021/04/02/chunkresolve_loinc_clinical_en.html) | [chunkresolve_loinc_clinical](https://nlp.johnsnowlabs.com/2021/04/02/chunkresolve_loinc_clinical_en.html)           |
+| English  | [resolve_chunk.rxnorm.cd](https://nlp.johnsnowlabs.com/2020/07/27/chunkresolve_rxnorm_cd_clinical_en.html) | [chunkresolve_rxnorm_cd_clinical](https://nlp.johnsnowlabs.com/2020/07/27/chunkresolve_rxnorm_cd_clinical_en.html)           |
+| English  | resolve_chunk.rxnorm.in | chunkresolve_rxnorm_in_clinical          |
+| English  | resolve_chunk.rxnorm.in_healthcare | chunkresolve_rxnorm_in_healthcare          |
+| English  | [resolve_chunk.rxnorm.sbd](https://nlp.johnsnowlabs.com/2020/07/27/chunkresolve_rxnorm_sbd_clinical_en.html) | [chunkresolve_rxnorm_sbd_clinical](https://nlp.johnsnowlabs.com/2020/07/27/chunkresolve_rxnorm_sbd_clinical_en.html)           |
+| English  | [resolve_chunk.rxnorm.scd](https://nlp.johnsnowlabs.com/2020/07/27/chunkresolve_rxnorm_scd_clinical_en.html) | [chunkresolve_rxnorm_scd_clinical](https://nlp.johnsnowlabs.com/2020/07/27/chunkresolve_rxnorm_scd_clinical_en.html)           |
+| English  | resolve_chunk.rxnorm.scdc | chunkresolve_rxnorm_scdc_clinical          |
+| English  | resolve_chunk.rxnorm.scdc_healthcare | chunkresolve_rxnorm_scdc_healthcare          |
+| English  | [resolve_chunk.rxnorm.xsmall.clinical](https://nlp.johnsnowlabs.com/2020/06/24/chunkresolve_rxnorm_xsmall_clinical_en.html) | [chunkresolve_rxnorm_xsmall_clinical](https://nlp.johnsnowlabs.com/2020/06/24/chunkresolve_rxnorm_xsmall_clinical_en.html)           |
+| English  | [resolve_chunk.snomed.findings](https://nlp.johnsnowlabs.com/2020/06/20/chunkresolve_snomed_findings_clinical_en.html) | [chunkresolve_snomed_findings_clinical](https://nlp.johnsnowlabs.com/2020/06/20/chunkresolve_snomed_findings_clinical_en.html)           |
+
+
+# New Classifiers
+
+| Language | nlu.load() reference                                         | Spark NLP Model reference          |
+| -------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| English  | classify.icd10.clinical | classifier_icd10cm_hcc_clinical          |
+| English  | classify.icd10.healthcare | classifier_icd10cm_hcc_healthcare          |
+| English  | [classify.ade.biobert](https://nlp.johnsnowlabs.com/2021/01/21/classifierdl_ade_biobert_en.html) | [classifierdl_ade_biobert](https://nlp.johnsnowlabs.com/2021/01/21/classifierdl_ade_biobert_en.html)           |
+| English  | [classify.ade.clinical](https://nlp.johnsnowlabs.com/2021/01/21/classifierdl_ade_clinicalbert_en.html) | [classifierdl_ade_clinicalbert](https://nlp.johnsnowlabs.com/2021/01/21/classifierdl_ade_clinicalbert_en.html)           |
+| English  | [classify.ade.conversational](https://nlp.johnsnowlabs.com/2021/01/21/classifierdl_ade_conversational_biobert_en.html) | [classifierdl_ade_conversational_biobert](https://nlp.johnsnowlabs.com/2021/01/21/classifierdl_ade_conversational_biobert_en.html)           |
+| English  | [classify.gender.biobert](https://nlp.johnsnowlabs.com/2021/01/21/classifierdl_gender_biobert_en.html) | [classifierdl_gender_biobert](https://nlp.johnsnowlabs.com/2021/01/21/classifierdl_gender_biobert_en.html)           |
+| English  | [classify.gender.sbert](https://nlp.johnsnowlabs.com/2021/01/21/classifierdl_gender_sbert_en.html) | [classifierdl_gender_sbert](https://nlp.johnsnowlabs.com/2021/01/21/classifierdl_gender_sbert_en.html)           |
+| English  | classify.pico | classifierdl_pico_biobert          |
+
+
+# German Medical models
+
+| nlu.load() reference                                         | Spark NLP Model reference          |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
+| [embed]    | w2v_cc_300d|
+| [embed.w2v]    | w2v_cc_300d|
+| [resolve_chunk]    | chunkresolve_ICD10GM|
+| [resolve_chunk.icd10gm]    | chunkresolve_ICD10GM|
+| resolve_chunk.icd10gm.2021    | chunkresolve_ICD10GM_2021|
+| med_ner.legal   | ner_legal|
+| med_ner    | ner_healthcare|
+| med_ner.healthcare    | ner_healthcare|
+| med_ner.healthcare_slim    | ner_healthcare_slim|
+| med_ner.traffic    | ner_traffic|
+
+# Spanish Medical models
+| nlu.load() reference                                         | Spark NLP Model reference          |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
+| [embed.scielo.150d](https://nlp.johnsnowlabs.com/2020/05/26/embeddings_scielo_150d_es.html) | [embeddings_scielo_150d](https://nlp.johnsnowlabs.com/2020/05/26/embeddings_scielo_150d_es.html)| 
+| [embed.scielo.300d](https://nlp.johnsnowlabs.com/2020/05/26/embeddings_scielo_300d_es.html)   | [embeddings_scielo_300d](https://nlp.johnsnowlabs.com/2020/05/26/embeddings_scielo_300d_es.html)| 
+| [embed.scielo.50d](https://nlp.johnsnowlabs.com/2020/05/26/embeddings_scielo_50d_es.html)  | [embeddings_scielo_50d](https://nlp.johnsnowlabs.com/2020/05/26/embeddings_scielo_50d_es.html)| 
+| [embed.scielowiki.150d](https://nlp.johnsnowlabs.com/2020/05/26/embeddings_scielowiki_150d_es.html)   | [embeddings_scielowiki_150d](https://nlp.johnsnowlabs.com/2020/05/26/embeddings_scielowiki_150d_es.html)| 
+| [embed.scielowiki.300d](https://nlp.johnsnowlabs.com/2020/05/26/embeddings_scielowiki_300d_es.html)   | [embeddings_scielowiki_300d](https://nlp.johnsnowlabs.com/2020/05/26/embeddings_scielowiki_300d_es.html)| 
+| [embed.scielowiki.50d](https://nlp.johnsnowlabs.com/2020/05/26/embeddings_scielowiki_50d_es.html)   | [embeddings_scielowiki_50d](https://nlp.johnsnowlabs.com/2020/05/26/embeddings_scielowiki_50d_es.html)| 
+| [embed.sciwiki.150d](https://nlp.johnsnowlabs.com/2020/05/27/embeddings_sciwiki_150d_es.html)   | [embeddings_sciwiki_150d](https://nlp.johnsnowlabs.com/2020/05/27/embeddings_sciwiki_150d_es.html)| 
+| [embed.sciwiki.300d](https://nlp.johnsnowlabs.com/2020/05/27/embeddings_sciwiki_300d_es.html)   | [embeddings_sciwiki_300d](https://nlp.johnsnowlabs.com/2020/05/27/embeddings_sciwiki_300d_es.html)| 
+| [embed.sciwiki.50d](https://nlp.johnsnowlabs.com/2020/05/27/embeddings_sciwiki_50d_es.html)   | [embeddings_sciwiki_50d](https://nlp.johnsnowlabs.com/2020/05/27/embeddings_sciwiki_50d_es.html)| 
+| [med_ner](https://nlp.johnsnowlabs.com/2021/03/31/ner_diag_proc_es.html)   |  [ner_diag_proc](https://nlp.johnsnowlabs.com/2021/03/31/ner_diag_proc_es.html)| 
+| [med_ner.neoplasm](https://nlp.johnsnowlabs.com/2021/03/31/ner_neoplasms_es.html)  | [ner_neoplasms](https://nlp.johnsnowlabs.com/2021/03/31/ner_neoplasms_es.html)| 
+| [med_ner.diag_proc](https://nlp.johnsnowlabs.com/2021/03/31/ner_diag_proc_es.html)  | [ner_diag_proc](https://nlp.johnsnowlabs.com/2021/03/31/ner_diag_proc_es.html)| 
+
+# GPU Mode
+You can now enable NLU GPU mode by setting `gpu=true` while loading a model. I.e. `nlu.load('train.sentiment' gpu=True)` . If must resart you kernel, if you already loaded a nlu pipeline withouth GPU mode.
+
+# Output Level Relation
+This new output level is used for relation extractors and will give you 1 row per relation extracted.
+
+
+# Bug fixes
+- Fixed a bug that caused loading NLU models in offline mode not to work in some occasions
+
+
+# 1 line Install NLU
+```!wget https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/scripts/colab_setup.sh -O - | bash```
+
+# Install via PIP 
+```! pip install nlu pyspark==3.0.1```
+
+
+## Additional NLU ressources
+
+- [NLU Website](https://nlu.johnsnowlabs.com/)
+- [All NLU Tutorial Notebooks](https://nlu.johnsnowlabs.com/docs/en/notebooks)
+- [NLU Videos and Blogposts on NLU](https://nlp.johnsnowlabs.com/learn#pythons-nlu-library)
+- [NLU on Github](https://github.com/JohnSnowLabs/nlu)
+- [Suggestions or Questions? Contact us in Slack!](https://join.slack.com/t/spark-nlp/shared_invite/zt-lutct9gm-kuUazcyFKhuGY3_0AMkxqA)
+
+
+
+
+
+
+
+
 <div class="h3-box" markdown="1">
 
 # Intent and Action Classification,  analyze Chinese News and the Crypto market, train a classifier that understands 100+ languages, translate between 200 + languages, answer questions, summarize text, and much more in NLU 1.1.3

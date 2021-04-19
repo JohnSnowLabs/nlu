@@ -11,7 +11,6 @@
     "sentence"
   ],
   "type": "pos",
-  "file_dependencies": {},
   "spark_input_column_names": [
     "token",
     "sentence"

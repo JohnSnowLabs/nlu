@@ -14,7 +14,6 @@
     "word_embeddings"
   ],
   "type": "classifier",
-  "file_dependencies": {},
   "spark_input_column_names": [
     "sentence",
     "token",

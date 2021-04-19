@@ -1,8 +1,8 @@
-from nlu.pipe_components import SparkNLUComponent
+from nlu.pipe.pipe_components import SparkNLUComponent
 
 class Lemmatizer(SparkNLUComponent):
 
-    def __init__(self, annotator_class='lemmatizer', language='en', component_type='lemmatizer', get_default=False, model = None, nlp_ref='', nlu_ref =''):
+    def __init__(self, annotator_class='lemmatizer', language='en', component_type='lemmatizer', get_default=False, model = None, nlp_ref='', nlu_ref ='', is_licensed=False):
 
         if model != None : self.model = model
         else :

@@ -1,7 +1,7 @@
-from nlu.pipe_components import SparkNLUComponent
+from nlu.pipe.pipe_components import SparkNLUComponent
 
 class Normalizer(SparkNLUComponent):
-    def __init__(self, annotator_class='normalizer', language='en', component_type='normalizer', get_default=True, nlp_ref='',nlu_ref='',model=None):
+    def __init__(self, annotator_class='normalizer', language='en', component_type='normalizer', get_default=True, nlp_ref='',nlu_ref='',model=None, is_licensed=False):
         if model != None :self.model = model
         else :
             if 'norm_document' in nlu_ref : annotator_class = 'document_normalizer'
