@@ -43,9 +43,8 @@ This is enabled by the the amazing [Spark NLP3.0.1](https://nlp.johnsnowlabs.com
 - [Entity Resolution overview notebook](https://colab.research.google.com/github/JohnSnowLabs/nlu/blob/master/examples/colab/healthcare/entity_resolution/entity_resolvers_overview.ipynb)
 - [Assertion overview notebook](https://colab.research.google.com/github/JohnSnowLabs/nlu/blob/master/examples/colab/healthcare/assertion/assertion_overview.ipynb)
 - [De-Identification overview notebook](https://colab.research.google.com/github/JohnSnowLabs/nlu/blob/master/examples/colab/healthcare/de_identification/DeIdentification_model_overview.ipynb)
+- [Graph NLU tutorial](https://colab.research.google.com/github/JohnSnowLabs/nlu/blob/master/examples/webinars_conferences_etc/graph_ai_summit/Healthcare_Graph_NLU_COVID_Tigergraph.ipynb) for the  [GRAPH+AI Summit hosted by Tigergraph ](https://www.tigergraph.com/graphaisummit/)
 
-
-# New Models
 
 ## AssertionDLModels
 
