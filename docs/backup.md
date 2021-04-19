@@ -25,7 +25,7 @@ data:
     - title: 
       children:
         - title: Powerful One-Liners
-          excerpt: Hundreds of NLP models in tens of languages are at your fingertips with just one line of code
+          excerpt: Over a thousand NLP models in hundreds of languages are at your fingertips with just one line of code
         - title: Elegant Python
           excerpt: Directly read and write pandas dataframes for frictionless integration with other libraries and existing ML pipelines   
         - title: 100% Open Source

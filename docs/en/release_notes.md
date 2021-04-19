@@ -13,26 +13,182 @@ modify_date: "2020-06-12"
 
 <div class="h3-box" markdown="1">
 
+# Intent and Action Classification,  analyze Chinese News and the Crypto market, train a classifier that understands 100+ languages, translate between 200 + languages, answer questions, summarize text, and much more in NLU 1.1.3
+
 ## NLU 1.1.3 Release Notes
+We are very excited to announce that the latest NLU release comes with a new pretrained Intent Classifier and NER Action Extractor for text related to
+music, restaurants, and movies trained on the SNIPS dataset. Make sure to check out the models hub and the easy 1-liners for more info!
+
+In addition to that, new NER and Embedding models for Bengali are now available
+
+Finally, there is a new NLU Webinar with 9 accompanying tutorial notebooks which teach you  a lot of things and is segmented into the following parts :
+
+- Part1: Easy 1 Liners
+  - Spell checking/Sentiment/POS/NER/ BERTtology embeddings
+- Part2: Data analysis and NLP tasks on [Crypto News Headline dataset](https://www.kaggle.com/kashnitsky/news-about-major-cryptocurrencies-20132018-40k)
+  - Preprocessing and extracting Emotions, Keywords, Named Entities and visualize them
+- Part3: NLU Multi-Lingual 1 Liners with [Microsoft's Marian Models](https://marian-nmt.github.io/publications/)
+  - Translate between 200+ languages (and classify lang afterward)
+- Part 4: Data analysis and NLP tasks on [Chinese News Article Dataset](https://github.com/JohnSnowLabs/nlu/blob/master/examples/webinars_conferences_etc/multi_lingual_webinar/4_Unsupervise_Chinese_Keyword_Extraction_NER_and_Translation_from_Chinese_News.ipynb)
+  - Word Segmentation, Lemmatization, Extract Keywords, Named Entities and translate to english
+- Part 5: Train a sentiment Classifier that understands 100+ Languages
+  - Train on a french sentiment dataset and predict the sentiment of 100+ languages with [language-agnostic BERT Sentence Embedding](https://arxiv.org/abs/2007.01852)
+- Part 6: Question answering, Summarization, Squad and more with [Google's T5](https://arxiv.org/abs/1910.10683)
+  - T5 Question answering and 18 + other NLP tasks ([SQUAD](https://arxiv.org/abs/1606.05250) / [GLUE](https://arxiv.org/abs/1804.07461) / [SUPER GLUE](https://super.gluebenchmark.com/))
+
+
+### New Models
+
+#### NLU 1.1.3 New Non-English Models
+
+| Language | nlu.load() reference                                         | Spark NLP Model reference                                    | Type                  |
+| -------- | ------------------------------------------------------------ | ------------------------------------------------------------ | --------------------- |
+| Bengali  | [bn.ner.cc_300d](https://nlp.johnsnowlabs.com/2021/02/10/bengali_cc_300d_bn.html) | [ bengaliner_cc_300d](https://nlp.johnsnowlabs.com/2021/02/10/bengali_cc_300d_bn.html) | NerDLModel    |
+| Bengali  | [bn.embed](https://nlp.johnsnowlabs.com/2021/02/10/bengaliner_cc_300d_bn.html) | [bengali_cc_300d](https://nlp.johnsnowlabs.com/2021/02/10/bengaliner_cc_300d_bn.html) | NerDLModel            |
+| Bengali  | [bn.embed.cc_300d](https://nlp.johnsnowlabs.com/2021/02/10/bengaliner_cc_300d_bn.html) | [bengali_cc_300d](https://nlp.johnsnowlabs.com/2021/02/10/bengaliner_cc_300d_bn.html) | Word Embeddings Model (Alias)    |
+| Bengali  | [bn.embed.glove](https://nlp.johnsnowlabs.com/2021/02/10/bengaliner_cc_300d_bn.html) | [bengali_cc_300d](https://nlp.johnsnowlabs.com/2021/02/10/bengaliner_cc_300d_bn.html) |  Word Embeddings Model (Alias)|
+
+
+
+
+
+#### NLU 1.1.3 New English Models
+
+|Language | nlu.load() reference | Spark NLP Model reference | Type |
+|---------|---------------------|----------------------------|------|
+| English | [en.classify.snips](https://nlp.johnsnowlabs.com/2021/02/15/nerdl_snips_100d_en.html) |[nerdl_snips_100d](https://nlp.johnsnowlabs.com/2021/02/15/nerdl_snips_100d_en.html)     | NerDLModel |
+| English | [en.ner.snips](https://nlp.johnsnowlabs.com/2021/02/15/classifierdl_use_snips_en.html) |[classifierdl_use_snips](https://nlp.johnsnowlabs.com/2021/02/15/classifierdl_use_snips_en.html)|ClassifierDLModel|
+
+
 
 
 ### New NLU Webinar
+#### [State-of-the-art Natural Language Processing for 200+ Languages with 1 Line of code](https://events.johnsnowlabs.com/state-of-the-art-natural-language-processing-for-200-languages-with-1-line-of-code)
+
+
+##### Talk Abstract
+Learn to harness the power of 1,000+ production-grade & scalable NLP models for 200+ languages - all available with just 1 line of Python code by leveraging the open-source NLU library, which is powered by the widely popular Spark NLP.
+
+John Snow Labs has delivered over 80 releases of Spark NLP to date, making it the most widely used NLP library in the enterprise and providing the AI community with state-of-the-art accuracy and scale for a variety of common NLP tasks. The most recent releases include pre-trained models for over 200 languages - including languages that do not use spaces for word segmentation algorithms like Chinese, Japanese, and Korean, and languages written from right to left like Arabic, Farsi, Urdu, and Hebrew. All software and models are free and open source under an Apache 2.0 license.
+
+This webinar will show you how to leverage the multi-lingual capabilities of Spark NLP & NLU - including automated language detection for up to 375 languages, and the ability to perform translation, named entity recognition, stopword removal, lemmatization, and more in a variety of language families. We will create Python code in real-time and solve these problems in just 30 minutes. The notebooks will then be made freely available online.
+
+You can watch the [video here,](https://events.johnsnowlabs.com/state-of-the-art-natural-language-processing-for-200-languages-with-1-line-of-code)
+
+### NLU 1.1.3 New Notebooks and tutorials
+
+
+#### New Webinar Notebooks
+
+1. [NLU basics, easy 1-liners (Spellchecking, sentiment, NER, POS, BERT](https://github.com/JohnSnowLabs/nlu/blob/master/examples/webinars_conferences_etc/multi_lingual_webinar/0_liners_intro.ipynb)
+2. [Analyze Crypto News dataset with Keyword extraction, NER, Emotional distribution, and stemming](https://github.com/JohnSnowLabs/nlu/blob/master/examples/webinars_conferences_etc/multi_lingual_webinar/1_NLU_base_features_on_dataset_with_YAKE_Lemma_Stemm_classifiers_NER_.ipynb)
+3. [Translate Crypto News dataset between 300 Languages with the Marian Model (German, French, Hebrew examples)](https://github.com/JohnSnowLabs/nlu/blob/master/examples/webinars_conferences_etc/multi_lingual_webinar/2_multilingual_translation_with_marian_intro.ipynb)
+4. [Translate Crypto News dataset between 300 Languages with the Marian Model (Hindi, Russian, Chinese examples)](https://github.com/JohnSnowLabs/nlu/blob/master/examples/webinars_conferences_etc/multi_lingual_webinar/3_more_multi_lingual_NLP_translation_Asian_languages_with_Marian.ipynb)
+5. [Analyze Chinese News Headlines with Chinese Word Segmentation, Lemmatization, NER, and Keyword extraction](https://github.com/JohnSnowLabs/nlu/blob/master/examples/webinars_conferences_etc/multi_lingual_webinar/4_Unsupervise_Chinese_Keyword_Extraction_NER_and_Translation_from_Chinese_News.ipynb)
+6. [Train a Sentiment Classifier that will understand 100+ languages on just a French Dataset with the powerful Language Agnostic Bert Embeddings](https://github.com/JohnSnowLabs/nlu/blob/master/examples/webinars_conferences_etc/multi_lingual_webinar/5_multi_lingual_sentiment_classifier_training_for_over_100_languages.ipynb)
+7. [Summarize text and Answer Questions with T5](https://github.com/JohnSnowLabs/nlu/blob/master/examples/webinars_conferences_etc/multi_lingual_webinar/6_T5_question_answering_and_Text_summarization.ipynb)
+8. [Solve any task in 1 line from SQUAD, GLUE and SUPER GLUE with T5](https://github.com/JohnSnowLabs/nlu/blob/master/examples/webinars_conferences_etc/multi_lingual_webinar/7_T5_SQUAD_GLUE_SUPER_GLUE_TASKS.ipynb)
+9. [Overview of models for various languages](https://github.com/JohnSnowLabs/nlu/blob/master/examples/webinars_conferences_etc/multi_lingual_webinar/8_Multi_lingual_ner_pos_stop_words_sentiment_pretrained.ipynb)
+
+
+
+
+
+#### New easy NLU 1-liners in NLU 1.1.3
+
+####  [Detect actions in general commands related to music, restaurant, movies.](https://nlp.johnsnowlabs.com/2021/02/15/nerdl_snips_100d_en.html)
+
+
+```python
+nlu.load("en.classify.snips").predict("book a spot for nona gray  myrtle and alison at a top-rated brasserie that is distant from wilson av on nov  the 4th  2030 that serves ouzeri",output_level = "document")
+```
+
+outputs :
+
+|                                               ner_confidence | entities                                                     | document                                                     | Entities_Classes                                             |
+| -----------------------------------------------------------: | :----------------------------------------------------------- | :----------------------------------------------------------- | :----------------------------------------------------------- |
+| [1.0, 1.0, 0.9997000098228455, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.9990000128746033, 1.0, 1.0, 1.0, 0.9965000152587891, 0.9998999834060669, 0.9567000269889832, 1.0, 1.0, 1.0, 0.9980000257492065, 0.9991999864578247, 0.9988999962806702, 1.0, 1.0, 0.9998999834060669] | ['nona gray myrtle and alison', 'top-rated', 'brasserie', 'distant', 'wilson av', 'nov the 4th 2030', 'ouzeri'] | book a spot for nona gray myrtle and alison at a top-rated brasserie that is distant from wilson av on nov the 4th 2030 that serves ouzeri | ['party_size_description', 'sort', 'restaurant_type', 'spatial_relation', 'poi', 'timeRange', 'cuisine'] |
+
+####  [Named Entity Recognition (NER) Model in Bengali (bengaliner_cc_300d)](https://nlp.johnsnowlabs.com/2021/02/10/bengaliner_cc_300d_bn.html)
+
+
+```python
+# Bengali for: 'Iajuddin Ahmed passed Matriculation from Munshiganj High School in 1947 and Intermediate from Munshiganj Horganga College in 1950.'
+nlu.load("bn.ner.cc_300d").predict("১৯৪৮ সালে ইয়াজউদ্দিন আহম্মেদ মুন্সিগঞ্জ উচ্চ বিদ্যালয় থেকে মেট্রিক পাশ করেন এবং ১৯৫০ সালে মুন্সিগঞ্জ হরগঙ্গা কলেজ থেকে ইন্টারমেডিয়েট পাশ করেন",output_level = "document")
+```
+
+outputs :
+
+| ner_confidence                                                                                                                                                                                                                                                                                                                                                                                                                       | entities                                                                           | Entities_Classes   | document                                                                                                                         |
+|---------------:|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:-----------------------------------------------------------------------------------|:--------------------------------------|
+| [0.9987999796867371, 0.9854000210762024, 0.8604000210762024, 0.6686999797821045, 0.5289999842643738, 0.7009999752044678, 0.7684999704360962, 0.9979000091552734, 0.9976000189781189, 0.9930999875068665, 0.9994000196456909, 0.9879000186920166, 0.7407000064849854, 0.9215999841690063, 0.7657999992370605, 0.39419999718666077, 0.9124000072479248, 0.9932000041007996, 0.9919999837875366, 0.995199978351593, 0.9991999864578247] | ['সালে', 'ইয়াজউদ্দিন আহম্মেদ', 'মুন্সিগঞ্জ উচ্চ বিদ্যালয়', 'সালে', 'মুন্সিগঞ্জ হরগঙ্গা কলেজ'] | ['TIME', 'PER', 'ORG', 'TIME', 'ORG'] | ১৯৪৮ সালে ইয়াজউদ্দিন আহম্মেদ মুন্সিগঞ্জ উচ্চ বিদ্যালয় থেকে মেট্রিক পাশ করেন এবং ১৯৫০ সালে মুন্সিগঞ্জ হরগঙ্গা কলেজ থেকে ইন্টারমেডিয়েট পাশ করেন |
+
+#### [Identify intent in general text - SNIPS dataset](https://nlp.johnsnowlabs.com/2021/02/15/classifierdl_use_snips_en.html)
+
+
+```python
+nlu.load("en.ner.snips").predict("I want to bring six of us to a bistro in town that serves hot chicken sandwich that is within the same area",output_level = "document")
+```
+
+outputs :
+
+
+| document | snips | snips_confidence|
+|----------|------|------------------|
+| I want to bring six of us to a bistro in town that serves hot chicken sandwich that is within the same area | BookRestaurant |                  1 |
+
+
+#### [Word Embeddings for Bengali (bengali_cc_300d)](https://nlp.johnsnowlabs.com/2021/02/10/bengali_cc_300d_bn.html)
+
+
+
+
+```python
+# Bengali for : 'Iajuddin Ahmed passed Matriculation from Munshiganj High School in 1947 and Intermediate from Munshiganj Horganga College in 1950.'
+nlu.load("bn.embed").predict("১৯৪৮ সালে ইয়াজউদ্দিন আহম্মেদ মুন্সিগঞ্জ উচ্চ বিদ্যালয় থেকে মেট্রিক পাশ করেন এবং ১৯৫০ সালে মুন্সিগঞ্জ হরগঙ্গা কলেজ থেকে ইন্টারমেডিয়েট পাশ করেন",output_level = "document")
+```
+
+outputs :
+
+|                                                     document | bn_embed_embeddings                                          |
+| -----------------------------------------------------------: | :----------------------------------------------------------- |
+| ১৯৪৮ সালে ইয়াজউদ্দিন আহম্মেদ মুন্সিগঞ্জ উচ্চ বিদ্যালয় থেকে মেট্রিক পাশ করেন এবং ১৯৫০ সালে মুন্সিগঞ্জ হরগঙ্গা কলেজ থেকে ইন্টারমেডিয়েট পাশ করেন | [-0.0828      0.0683      0.0215     ...  0.0679     -0.0484...] |
+
+
 
 ### NLU 1.1.3 Enhancements
 - Added automatic conversion  to Sentence Embeddings of Word Embeddings when there is no Sentence Embedding Avaiable and a model needs the converted version to run.
-
 
 
 ### NLU 1.1.3 Bug Fixes
 - Fixed a bug that caused `ur.sentiment` NLU pipeline to build incorrectly
 - Fixed a bug that caused `sentiment.imdb.glove` NLU pipeline to build incorrectly
 - Fixed a bug that caused `en.sentiment.glove.imdb` NLU pipeline to build incorrectly
+- Fixed a bug that caused Spark 2.3.X environments to crash.
+
+### NLU Installation
+
+```bash
+# PyPi
+!pip install nlu pyspark==2.4.7
+#Conda
+# Install NLU from Anaconda/Conda
+conda install -c johnsnowlabs nlu
+```
+
+### Additional NLU ressources
+
+- [NLU Website](https://nlu.johnsnowlabs.com/)
+- [All NLU Tutorial Notebooks](https://nlu.johnsnowlabs.com/docs/en/notebooks)
+- [NLU Videos and Blogposts on NLU](https://nlp.johnsnowlabs.com/learn#pythons-nlu-library)
+- [NLU on Github](https://github.com/JohnSnowLabs/nlu)
+- [Suggestions or Questions? Contact us in Slack!](https://join.slack.com/t/spark-nlp/shared_invite/zt-lutct9gm-kuUazcyFKhuGY3_0AMkxqA)
 
 
 
-### New  Easy NLU 1-liners in 1.1.2
 
 ## NLU 1.1.2 Release Notes
+### Hindi  WordEmbeddings , Bengali Named Entity Recognition (NER), 30+ new models, analyze Crypto news with John Snow Labs NLU 1.1.2 
 
 We are very happy to announce NLU 1.1.2 has been released with the integration of 30+ models and pipelines Bengali Named Entity Recognition, Hindi Word Embeddings,
 and state-of-the-art transformer based OntoNotes models and pipelines from the [incredible Spark NLP 2.7.3 Release](https://github.com/JohnSnowLabs/spark-nlp/releases/tag/2.7.3) in addition to a few bugfixes.  
@@ -99,7 +255,7 @@ We'll also cover some of the algorithms and models that are included. The code n
 - [NYC/DC NLP Meetup Webinar video analyze Crypto News, Unsupervised Keywords, Translate between 300 Languages, Question Answering, Summerization, POS, NER in 1 line of code in almost just 20 minutes](https://www.youtube.com/watch?t=2141&v=hJR9m3NYnwk&feature=youtu.be)
 - [NLU basics POS/NER/Sentiment Classification/BERTology Embeddings](https://github.com/JohnSnowLabs/nlu/blob/master/examples/webinars_conferences_etc/NYC_DC_NLP_MEETUP/0_liners_intro.ipynb)
 - [Explore Crypto Newsarticle dataset, unsupervised Keyword extraction, Stemming, Emotion/Sentiment distribution Analysis](https://github.com/JohnSnowLabs/nlu/blob/master/examples/webinars_conferences_etc/NYC_DC_NLP_MEETUP/1_NLU_base_features_on_dataset_with_YAKE_Lemma_Stemm_classifiers_NER_.ipynb)
-- [Translate between more than 300 Languages in 1 line of code with the Marian Models](https://github.com/JohnSnowLabs/nlu/blob/master/examples/webinars_conferences_etc/NYC_DC_NLP_MEETUP/2_multilingual_translation_and_othr_stuff_with_marian.ipynb)
+- [Translate between more than 300 Languages in 1 line of code with the Marian Models](https://github.com/JohnSnowLabs/nlu/blob/master/examples/webinars_conferences_etc/NYC_DC_NLP_MEETUP/2_multilingual_translation_with_marian.ipynb)
 - [New NLU 1.1.2 Models Showcase Notebooks, Bengali NER, Hindi Embeddings, 30 new_models](https://colab.research.google.com/github/JohnSnowLabs/nlu/blob/master/examples/release_notebooks/NLU1.1.2_Bengali_ner_Hindi_Embeddings_30_new_models.ipynb)
 
 
@@ -730,7 +886,7 @@ Output:
 ```python
 
 # 'The people of Ohu know that the foundation of Bhojpuri was shaken' in Bengali
-nlu.load('bh.pos').predict("ओहु लोग के मालूम बा कि श्लील होखते भोजपुरी के नींव हिल जाई").to_markdown()
+nlu.load('bh.pos').predict("ओहु लोग के मालूम बा कि श्लील होखते भोजपुरी के नींव हिल जाई")
 ```
 
 Output:
@@ -755,7 +911,7 @@ Output:
 #### Amharic Part of Speech (POS)
 ```python
 # ' "Son, finish the job," he said.' in Amharic
-nlu.load('am.pos').predict('ልጅ ኡ ን ሥራ ው ን አስጨርስ ኧው ኣል ኧሁ ።"').to_markdown()
+nlu.load('am.pos').predict('ልጅ ኡ ን ሥራ ው ን አስጨርስ ኧው ኣል ኧሁ ።"')
 ```
 
 Output:
@@ -779,7 +935,7 @@ Output:
 #### Thai Sentiment Classification
 ```python
 #  'I love peanut butter and jelly!' in thai
-nlu.load('th.classify.sentiment').predict('ฉันชอบเนยถั่วและเยลลี่!')[['sentiment','sentiment_confidence']].to_markdown()
+nlu.load('th.classify.sentiment').predict('ฉันชอบเนยถั่วและเยลลี่!')[['sentiment','sentiment_confidence']]
 ```
 
 Output:
@@ -792,7 +948,7 @@ Output:
 #### Arabic Named Entity Recognition (NER)
 ```python
 # 'In 1918, the forces of the Arab Revolt liberated Damascus with the help of the British' in Arabic
-nlu.load('ar.ner').predict('في عام 1918 حررت قوات الثورة العربية دمشق بمساعدة من الإنكليز',output_level='chunk')[['entities_confidence','ner_confidence','entities']].to_markdown()
+nlu.load('ar.ner').predict('في عام 1918 حررت قوات الثورة العربية دمشق بمساعدة من الإنكليز',output_level='chunk')[['entities_confidence','ner_confidence','entities']]
 ```
 
 Output:
