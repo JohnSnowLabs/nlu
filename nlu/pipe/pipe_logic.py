@@ -130,7 +130,10 @@ class PipelineQueryVerifier():
         is_trainable                            = PipeUtils.is_trainable_pipe(pipe)
         conversion_candidates                   = PipelineQueryVerifier.extract_sentence_embedding_conversion_candidates(pipe)
         pipe.has_trainable_components           = is_trainable
-        if is_trainable : required_features_ref = [] # special case, if training we can reset this
+        if is_trainable and len(provided_features_ref) ==0 :
+            required_features_ref = [] # ['sentence_embedding@u'] # special case, if training we can reset this
+            required_features_no_ref.append('sentence_embeddings') # special case, if training we can reset this
+
         components_for_ner_conversion = [] # todo?
 
         missing_features_no_ref                 = set(required_features_no_ref) - set(provided_features_no_ref)# - set(['text','label'])
