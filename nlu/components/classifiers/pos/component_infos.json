@@ -1,1 +1,25 @@
-{"name": "pos", "description": "todo", "output_level": "token", "trainable": true, "outputs": ["pos"], "inputs": ["token", "sentence"], "type": "pos", "spark_input_column_names": ["token", "sentence"], "spark_output_column_names": ["pos"], "provider": "sparknlp", "license": "open source", "computation_context": "spark", "output_context": "spark"}
+{
+  "name": "pos",
+  "description": "todo",
+  "output_level": "token",
+  "trainable": true,
+  "outputs": [
+    "pos"
+  ],
+  "inputs": [
+    "token",
+    "sentence"
+  ],
+  "type": "pos",
+  "spark_input_column_names": [
+    "token",
+    "sentence"
+  ],
+  "spark_output_column_names": [
+    "pos"
+  ],
+  "provider": "sparknlp",
+  "license": "open source",
+  "computation_context": "spark",
+  "output_context": "spark"
+}

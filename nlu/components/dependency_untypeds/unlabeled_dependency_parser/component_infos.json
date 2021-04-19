@@ -7,13 +7,13 @@
     "unlabeled_dependency"
   ],
   "inputs": [
-    "document",
+    "sentence",
     "pos",
     "token"
   ],
   "type": "dependency",
   "spark_input_column_names": [
-    "document",
+    "sentence",
     "pos",
     "token"
   ],

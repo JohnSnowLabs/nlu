@@ -1818,9 +1818,9 @@ class NameSpace():
         'en':
             {
                 # clinical spellchecker
-                'en.spell.clinical':'spellcheck_clinical',
-                'en.spell.med':'context_spell_med',
-                'en.spell.context.med':'context_spell_med',
+                # 'en.spell.clinical':   'spellcheck_clinical',  #todo crashing
+                # 'en.spell.med':        'context_spell_med', #todo crashing
+                # 'en.spell.context.med':'context_spell_med', #todo crashing Byteerror
 
                 'en.detect_sentence.clinical' : 'sentence_detector_dl_healthcare',
 
@@ -2033,7 +2033,18 @@ class NameSpace():
                 'en.resolve_chunk.rxnorm.scdc_healthcare': 'chunkresolve_rxnorm_scdc_healthcare',
                 'en.resolve_chunk.rxnorm.xsmall.clinical': 'chunkresolve_rxnorm_xsmall_clinical',
                 'en.resolve_chunk.snomed.findings': 'chunkresolve_snomed_findings_clinical',
+"""
 
+rxnom      = medicne ID/
+snomed     =????
+icd10      =
+icd10pcs   = PROCEDURES
+icd10cm    =
+icdoem
+athena     =  ??
+"""
+# snomed???, 
+                # rxnorm
 
                 'en.classify.icd10.clinical':'classifier_icd10cm_hcc_clinical',      #  WHCIH CLASS? # TODO NOT LAODING
                 'en.classify.icd10.healthcare':'classifier_icd10cm_hcc_healthcare', # TODO NOT LOADING CORRECt

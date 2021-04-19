@@ -74,7 +74,7 @@ def default_chunk_resolution_config(output_col_prefix='resolved_entities'):
         output_col_prefix   = output_col_prefix,
         get_result          = True,
         get_meta            = True,
-        meta_white_list     = ['all_k_resolutions','all_k_distances', 'all_k_results','confidence','distance','target_text','all_k_aux_labels','all_k_cosine_distances'], #sentence, chunk
+        meta_white_list     = ['all_k_distances', 'all_k_results','confidence','distance','target_text','all_k_aux_labels','all_k_cosine_distances'], #sentence, chunk
         name                = 'default_ner',
         description         = 'Converts IOB-NER representation into entity representation and generates confidences for the entire entity chunk',
     )

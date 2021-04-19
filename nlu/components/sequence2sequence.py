@@ -12,9 +12,11 @@ class Seq2Seq(SparkNLUComponent):
         else :
             if 't5' in annotator_class :
                 from nlu import T5
-                if get_default: self.model =  T5.get_default_model()
+                if is_licensed : self.model = T5.get_pretrained_model(nlp_ref, language, bucket='clinical/models')
+                elif get_default: self.model =  T5.get_default_model()
                 elif configs !='' : self.model = T5.get_preconfigured_model(nlp_ref,language,configs)
                 else : self.model = T5.get_pretrained_model(nlp_ref, language)
+
             elif 'marian' in annotator_class  :
                 from nlu import Marian
                 if get_default : self.model =  Marian.get_default_model()

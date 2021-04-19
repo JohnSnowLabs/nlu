@@ -196,7 +196,14 @@ def apply_extractors_and_merge(df, column_to_extractor_map,  keep_stranger_featu
 #     # df.explode
 #     # index_sizes = [d.groupby(d.index).size() for d in exploded_df_list]
 #     # index_df = pd.concat(index_sizes, axis=1)
-
+#
+# def store_idx_and_explode(df):
+#     # index rest and re-merging for concat
+#     df = df.explode(next(filter(lambda c : 'origin' not in c, list(df.columns))))
+#     df.index.name = "old_idx"
+#     df["num"] = range(0, len(df.index))
+#     df = df.set_index("num", append=True)
+#     return df
 
 # def zip_and_explode(df:pd.DataFrame, cols_to_explode:List[str], output_level, lower_output_level, higher_output_level, same_output_level):
 def zip_and_explode(df:pd.DataFrame,origin_cols_to_explode, origin_cols_not_to_explode):
@@ -219,6 +226,44 @@ def zip_and_explode(df:pd.DataFrame,origin_cols_to_explode, origin_cols_not_to_e
     # not_same_level_cols_filter  = lambda c : any( og_c in c  for og_c in origin_cols_not_to_explode)
     # not_same_level_cols         = list(filter(not_same_level_cols_filter,df.columns))
 
+
+    pd_col_extractor_generator = lambda col : lambda x :  df[col]
+    explode_series  = lambda s : s.explode().reset_index()#.reset_index(drop=True)#.rename({'index':'origin_index'})#(drop=True)
+    # explode_series_with_index  = store_idx_and_explode # call method that stores idx and explodes
+
+    pd_col_extractors = list(map(pd_col_extractor_generator,cols_to_explode))
+    # We call the pd series generator that needs a dummy call
+    call = lambda x : x(0)
+    list_of_pd_series_to_explod = list(map(call,pd_col_extractors))
+    # Call explode on every series object, returns a list of pd.Series objects, which have been exploded
+    exploded_series_list = list(map(explode_series,list_of_pd_series_to_explod))
+    # Create pd.Dataframes from the pd.Series
+    exploded_df_list = list(map(pd.DataFrame,exploded_series_list))
+    # merge results into final pd.DataFrame
+
+
+    # merged_explosions = pd.concat([df.drop(cols_to_explode,axis=1)] +  exploded_df_list,axis=1) #,on='outer')
+    # merged_explosions = df.reset_index()
+    # merged_explosions = df.sort_index(by=["date", "num"], ascending=[False, True])
+    # merged_explosions = df.set_index(["date", "num"])
+    # merged_explosions.index = df.index.droplevel(1)
+    # from functools import reduce
+    # df2 = reduce(lambda df1,df2: pd.merge(df1,df2,on='id'), dfList)
+    #
+    # df2 = reduce(lambda df1,df2: pd.merge(df1,df2 , left_on ='origin_index', right_on='index'), [df.drop(cols_to_explode,axis=1)] + exploded_df_list )
+    # merged_explosions = pd.merge(left = df.drop(cols_to_explode,axis=1), right=  exploded_df_list[0], left_on ='origin_index', right_on='index') #,on='outer')
+    # dfss = exploded_df_list # [df.drop(cols_to_explode,axis=1)] + exploded_df_list
+    # dd = df.drop(cols_to_explode,axis=1)
+    # for expdf in exploded_df_list :dfm = pd.merge(dfm,expdf , left_on ='origin_index', right_on='index', how='inner')
+
+
+
+    # Some queries will result in index duplication
+    same_level_cols_filter      = lambda c : any( og_c in c  for og_c in origin_cols_to_explode)
+    cols_to_explode             = list(filter(same_level_cols_filter,df.columns))
+    # not_same_level_cols_filter  = lambda c : any( og_c in c  for og_c in origin_cols_not_to_explode)
+    # not_same_level_cols         = list(filter(not_same_level_cols_filter,df.columns))
+
     pd_col_extractor_generator = lambda col : lambda x :  df[col]
     explode_series  = lambda s : s.explode()#.reset_index(drop=True)#.rename({'index':'origin_index'})#(drop=True)
     pd_col_extractors = list(map(pd_col_extractor_generator,cols_to_explode))
@@ -233,6 +278,8 @@ def zip_and_explode(df:pd.DataFrame,origin_cols_to_explode, origin_cols_not_to_e
     merged_explosions = pd.concat([df.drop(cols_to_explode,axis=1)] +  exploded_df_list,axis=1)
 
     return merged_explosions
+
+
 
 
 """

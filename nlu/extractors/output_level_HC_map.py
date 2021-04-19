@@ -8,7 +8,9 @@ HC_anno2output_level = {
 
                  ],
     'sentence': [
-         ],
+        SentenceEntityResolverModel
+
+    ],
     'chunk': [
         NerOverwriter,
         NerDisambiguatorModel,
@@ -18,7 +20,6 @@ HC_anno2output_level = {
         DeIdentificationModel,
         AssertionDLModel,
         AssertionLogRegModel,
-        SentenceEntityResolverModel
 
 
     ],

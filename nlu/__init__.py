@@ -150,9 +150,9 @@ import  json
 import sparknlp
 
 
-def auth(SPARK_NLP_LICENSE_OR_JSON_PATH='/content/secret.json',AWS_ACCESS_KEY_ID='',AWS_SECRET_ACCESS_KEY='',JSL_SECRET='', gpu=False):
+def auth(SPARK_NLP_LICENSE_OR_JSON_PATH='/content/spark_nlp_for_healthcare.json',AWS_ACCESS_KEY_ID='',AWS_SECRET_ACCESS_KEY='',JSL_SECRET='', gpu=False):
     """ Authenticate enviroment for JSL Liscensed models. Installs NLP-Healthcare if not in enviroment detected
-    Either provide path to secret.json file as first param or manually enter them, SPARK_NLP_LICENSE_OR_JSON_PATH,AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY,JSL_SECRET .
+    Either provide path to spark_nlp_for_healthcare.json file as first param or manually enter them, SPARK_NLP_LICENSE_OR_JSON_PATH,AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY,JSL_SECRET .
     Set gpu=true if you want to enable GPU mode
     """
     if os.path.exists(SPARK_NLP_LICENSE_OR_JSON_PATH):

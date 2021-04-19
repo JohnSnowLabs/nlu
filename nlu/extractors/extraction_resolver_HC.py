@@ -18,7 +18,7 @@ from sparknlp_jsl.annotator  import *
 HC_anno2config = {
     MedicalNerModel : {
         'default': default_ner_config,
-        'meta': meta_NER_config,
+        # 'meta': meta_NER_config,
         'default_full'  : default_full_config,
     },
     NerConverterInternal : {
@@ -34,7 +34,6 @@ HC_anno2config = {
         'default_full'  : default_full_config,
     },
     SentenceEntityResolverModel : {
-        'default': default_chunk_resolution_config,
         'default': default_chunk_resolution_config,
         'default_full'  : default_full_config,
     },
