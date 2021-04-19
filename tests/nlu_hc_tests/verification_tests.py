@@ -11,8 +11,10 @@ import tests.nlu_hc_tests.secrets as sct
 class TestAuthentification(unittest.TestCase):
 
     def test_auth_via_file(self):
-        secrets_json_path = '/home/ckl/Downloads/tmp/spark_nlp_for_healthcare.json'
+
+        secrets_json_path = '/home/ckl/old_home/Documents/freelance/jsl/tigerGraph/Presentation_2_graph_Summit/secrets.json'
         res = nlu.auth(secrets_json_path).load('en.med_ner.diseases',verbose=True).predict("He has cancer")
+        # res = nlu.load('en.med_ner.diseases',verbose=True).predict("He has cancer")
         for c in res.columns:print(res[c])
 if __name__ == '__main__':
     unittest.main()

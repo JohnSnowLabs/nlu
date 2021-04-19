@@ -21,7 +21,7 @@ class SentimentTrainingTests(unittest.TestCase):
         df_train.y = df_train.y.astype(str)
         df_train.y = df_train.y.str.replace('-1','negative')
         df_train.y = df_train.y.str.replace('1','positive')
-        df_train=df_train.iloc[0:4000]
+        df_train=df_train.iloc[0:100]
         pipe = nlu.load('train.sentiment',verbose=True)
         pipe = pipe.fit(df_train)
 

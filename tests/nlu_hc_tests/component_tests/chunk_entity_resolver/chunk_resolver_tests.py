@@ -5,42 +5,6 @@ import tests.nlu_hc_tests.secrets as sct
 
 class ChunkResolverTests(unittest.TestCase):
 
-
-
-    def test_quiczzzzzk(self):
-        p_path = '/home/ckl/Downloads/tmp/analyze_sentiment_en_3.0.0_3.0_1616544471011'
-
-
-        # res = nlu.load(path=p_path,verbose=True).predict('Am I the muppet or are you the muppet?')
-        data = ['What is love?', 'Am Donald trump likes to party harty!I the muppet or are you the muppet?. I like to party party. Every day and night ','THis is the 3rd sent','this is 44.']
-
-        SPARK_NLP_LICENSE     = sct.SPARK_NLP_LICENSE
-        AWS_ACCESS_KEY_ID     = sct.AWS_ACCESS_KEY_ID
-        AWS_SECRET_ACCESS_KEY = sct.AWS_SECRET_ACCESS_KEY
-        JSL_SECRET            = sct.JSL_SECRET
-
-        nlu.auth(SPARK_NLP_LICENSE,AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY,JSL_SECRET)
-        # ref = 'en.classify.icd10.clinical'
-        ref = p_path # 'en.classify.icd10.clinical'
-
-
-        # res = nlu.load(path = f'{ref}' ,verbose=True).predict(data, output_level='document')
-        # res = nlu.load(path = f'{ref}' ,verbose=True)#.predict(data, output_level='document')
-        # res = nlu.load('en.med_ner.posology en.relation.drug_drug_interaction',verbose=True).predict(data, output_level='document')
-        # res = nlu.load('en.med_ner.deid.large en.de_identify').predict('DR Johnson administerd to the patient Peter Parker last week 30 MG of penicilin on Friday 25. March 1999')
-        s1='The patient has COVID. He got very sick with it.'
-        s2='Peter got the Corona Virus!'
-        s3='COVID 21 has been diagnosed on the patient'
-        s4 = """This is an 82 - year-old male with a history of prior tobacco use , hypertension , chronic renal insufficiency , COPD , gastritis , and TIA who initially presented to Braintree with a non-ST elevation MI and Guaiac positive stools , transferred to St . Margaret's Center for Women & Infants for cardiac catheterization with PTCA to mid LAD lesion complicated by hypotension and bradycardia requiring Atropine , IV fluids and transient dopamine possibly secondary to vagal reaction , subsequently transferred to CCU for close monitoring , hemodynamically stable at the time of admission to the CCU"""
-        s5 = "The patient has cancer and high fever and will die from Leukemia"
-        data = [s1,s2,s3,s4,s5]
-        res = nlu.load('en.med_ner.posology en.relation.drug_drug_interaction').predict(data)
-        # data = """The patient is a 21-day-old Caucasian male here for 2 days of congestion - mom has been suctioning yellow discharge from the patient's nares, plus she has noticed some mild problems with his breathing while feeding (but negative for any perioral cyanosis or retractions). One day ago, mom also noticed a tactile temperature and gave the patient Tylenol. Baby also has had some decreased p.o. intake. His normal breast-feeding is down from 20 minutes q.2h. to 5 to 10 minutes secondary to his respiratory congestion. He sleeps well, but has been more tired and has been fussy over the past 2 days. The parents noticed no improvement with albuterol treatments given in the ER. His urine output has also decreased; normally he has 8 to 10 wet and 5 dirty diapers per 24 hours, now he has down to 4 wet diapers per 24 hours. Mom denies any diarrhea. His bowel movements are yellow colored and soft in nature"""
-        # data = """Blunting of the left costophrenic angle on the lateral view posteriorly suggests a small left pleural effusion. No right-sided pleural effusion or pneumothorax is definitively seen. There are mildly displaced fractures of the left lateral 8th and likely 9th ribs."""
-        # res = nlu.load('en.med_ner.diseases en.resolve.snomed ', verbose=True).predict(data,output_level='chunk')
-        res
-        for c in res :print(res[c])
-
     def test_chunk_resolver(self):
 
         SPARK_NLP_LICENSE     = sct.SPARK_NLP_LICENSE
@@ -55,15 +19,29 @@ class ChunkResolverTests(unittest.TestCase):
         s3='COVID 21 has been diagnosed on the patient'
         s4 = """This is an 82 - year-old male with a history of prior tobacco use , hypertension , chronic renal insufficiency , COPD , gastritis , and TIA who initially presented to Braintree with a non-ST elevation MI and Guaiac positive stools , transferred to St . Margaret's Center for Women & Infants for cardiac catheterization with PTCA to mid LAD lesion complicated by hypotension and bradycardia requiring Atropine , IV fluids and transient dopamine possibly secondary to vagal reaction , subsequently transferred to CCU for close monitoring , hemodynamically stable at the time of admission to the CCU"""
         s5 = "The patient has cancer and high fever and will die from Leukemia"
-        data = [s1,s2,s3,s4,s5]
-
-        res = nlu.load('en.resolve_sentence.hcc.augmented', verbose=True).predict(data, drop_irrelevant_cols=False, metadata=True, )
-
-        print(res.columns)
-        for c in res :
-            print(res[c])
+        text = [s1,s2,s3,s4,s5]
+        #
+        # by specifying output_level=chunk you will get one row per entity
+        # https://nlp.johnsnowlabs.com/2021/02/04/redl_temporal_events_biobert_en.html
+        data = """She is diagnosed with cancer in 1991.Then she was admitted to Mayo Clinic in May 2000 and discharged in October 2001"""
+        # data = ["She is diagnosed with cancer in 1991.","Then she was admitted to Mayo Clinic in May 2000 and discharged in October 2001"]
+        data = ["""DIAGNOSIS: Left breast adenocarcinoma stage T3 N1b M0, stage IIIA.
+        She has been found more recently to have stage IV disease with metastatic deposits and recurrence involving the chest wall and lower left neck lymph nodes.
+        PHYSICAL EXAMINATION
+        NECK: On physical examination palpable lymphadenopathy is present in the left lower neck and supraclavicular area. No other cervical lymphadenopathy or supraclavicular lymphadenopathy is present.
+        RESPIRATORY: Good air entry bilaterally. Examination of the chest wall reveals a small lesion where the chest wall recurrence was resected. No lumps, bumps or evidence of disease involving the right breast is present.
+        ABDOMEN: Normal bowel sounds, no hepatomegaly. No tenderness on deep palpation. She has just started her last cycle of chemotherapy today, and she wishes to visit her daughter in Brooklyn, New York. After this she will return in approximately 3 to 4 weeks and begin her radiotherapy treatment at that time."""]
+        data = ' Hello Peter how are you I like Angela Merkel from germany'
+        # res= nlu.load('en.resolve_chunk.cpt_clinical').predict(data, output_level='chunk')
+        # res= nlu.load('med_ner.jsl.wip.clinical en.resolve_chunk.cpt_clinical').predict(data, output_level='chunk')
+        # data ="""The patient is a 5-month-old infant who presented initially on Monday with a cold, cough, and runny nose for 2 days. Mom states she had no fever. Her appetite was good but she was spitting up a lot. She had no difficulty breathing and her cough was described as dry and hacky. At that time, physical exam showed a right TM, which was red. Left TM was okay. She was fairly congested but looked happy and playful. She was started on Amoxil and Aldex and we told to recheck in 2 weeks to recheck her ear. Mom returned to clinic again today because she got much worse overnight. She was having difficulty breathing. She was much more congested and her appetite had decreased significantly today. She also spiked a temperature yesterday of 102.6 and always having trouble sleeping secondary to congestion."""
+        # res= nlu.load('med_ner.jsl.wip.clinical en.resolve_chunk.cpt_clinical').predict(data, output_level='chunk')
+        #
+        data = 'This is an 11-year-old female who comes in for two different things. 1. She was seen by the allergist. No allergies present, so she stopped her Allegra, but she is still real congested and does a lot of snorting. They do not notice a lot of snoring at night though, but she seems to be always like that. 2. On her right great toe, she has got some redness and erythema. Her skin is kind of peeling a little bit, but it has been like that for about a week and a half now. General: Well-developed female, in no acute distress, afebrile. HEENT: Sclerae and conjunctivae clear. Extraocular muscles intact. TMs clear. Nares patent. A little bit of swelling of the turbinates on the left. Oropharynx is essentially clear. Mucous membranes are moist. Neck: No lymphadenopathy. Chest: Clear. Abdomen: Positive bowel sounds and soft. Dermatologic: She has got redness along the lateral portion of her right great toe, but no bleeding or oozing. Some dryness of her skin. Her toenails themselves are very short and even on her left foot and her left great toe the toenails are very short.'
+        df = nlu.load('en.med_ner.ade.clinical').predict(data, output_level =  "chunk")
 
         print(res)
+        for c in res.columns: print(res[c])
 if __name__ == '__main__':
     ChunkResolverTests().test_entities_config()
 

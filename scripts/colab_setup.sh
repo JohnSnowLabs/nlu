@@ -14,7 +14,7 @@ do
  esac
 done
 
-echo "setup  Colab for NLU$NLU with  PySpark $PYSPARK and Spark NLP $SPARKNLP"
+echo "Installing  NLU $NLU with  PySpark $PYSPARK and Spark NLP $SPARKNLP for Google Colab ..."
 
 apt-get purge -y openjdk-11* -qq > /dev/null && sudo apt-get autoremove -y -qq > /dev/null
 apt-get install -y openjdk-8-jdk-headless -qq > /dev/null

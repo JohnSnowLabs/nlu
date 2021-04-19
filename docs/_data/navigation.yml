@@ -23,11 +23,13 @@ docs-en:
         url:    /docs/en/install
       - title:  General Concepts
         url:    /docs/en/concepts
-      - title:  Simple Examples
+      - title:  Examples
+        url:    /docs/en/examples_hc
+      - title:  NLU for Healthcare Examples
         url:    /docs/en/examples
       - title:  Training Models
         url:    /docs/en/training
-      - title:  Notebooks
+      - title:  Notebook tutorials
         url:    /docs/en/notebooks
       - title:  Visualization Examples
         url:    /docs/en/viz_examples
