@@ -24,9 +24,9 @@ docs-en:
       - title:  General Concepts
         url:    /docs/en/concepts
       - title:  Examples
-        url:    /docs/en/examples_hc
-      - title:  NLU for Healthcare Examples
         url:    /docs/en/examples
+      - title:  NLU for Healthcare Examples
+        url:    /docs/en/examples_hc
       - title:  Training Models
         url:    /docs/en/training
       - title:  Notebook tutorials
