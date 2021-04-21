@@ -23,7 +23,7 @@ You can also pass multiple whitespace separated references.
 
 
 ## Medical Named Entity Recognition (NER) 
-[NER ONTO tutorial notebook](TODO)    
+[Medical NER tutorial notebook](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/healthcare/medical_named_entity_recognition/overview_medical_entity_recognizers.ipynb)    
 
 NLU provided a seperate and highly tuned **medical NER** models for various Healthcare domains.    
 These medical NER models are trained to extract various `medical named entities`.
@@ -31,7 +31,7 @@ These medical NER models are trained to extract various `medical named entities`
 
 ``` python
 data ="""The patient is a 5-month-old infant who presented initially on Monday with a cold, cough, and runny nose for 2 days."""
-df = nlu.load('med_ner.jsl.wip.clinical en.resolve_chunk.cpt_clinical').predict(data, output_level='chunk')
+df = nlu.load('med_ner.jsl.wip.clinical en.resolve_chunk.cpt_clinical').predict(data)
 ```
 
 | entities@clinical_results   | meta_entities@clinical_entity   |   meta_entities@clinical_confidence |   chunk_resolution_results | meta_chunk_resolution_all_k_aux_labels   | meta_chunk_resolution_target_text   |   meta_chunk_resolution_distance |   meta_chunk_resolution_confidence |   meta_chunk_resolution_all_k_results |   meta_chunk_resolution_all_k_distances |   meta_chunk_resolution_all_k_cosine_distances |
@@ -49,21 +49,21 @@ df = nlu.load('med_ner.jsl.wip.clinical en.resolve_chunk.cpt_clinical').predict(
 See the [Models Hub for all avaiable Entity Resolution Models](https://nlp.johnsnowlabs.com/models?task=Named+Entity+Recognition)
 
 ## Entity Resolution (for sentences)
-[Entity Resolution tutorial notebook](TODO)
+[Entity Resolution tutorial notebook](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/healthcare/entity_resolution/entity_resolvers_overview.ipynb)
 
 Classify each `sentence` extracted by a `sentence detector` into one of `C` resolvable classes.
 These classes usually are international `disease` , `medicine` , or `procedure` **codes** based on ICD standards.
 
 ```python
 data = ["""He has a starvation ketosis but nothing found for significant for dry oral mucosa"""]
- nlu.load('med_ner.jsl.wip.clinical resolve.icd10pcs').predict(data, output_level='sentence')
+ nlu.load('med_ner.jsl.wip.clinical resolve.icd10pcs').predict(data)
 ```
 
-|    | sentence_results                                                                                                     | sentence_resolution_results   | entities@clinical_results                                                                                                                  | meta_entities@clinical_entity                                                                                                                | meta_entities@clinical_confidence                                                                                                      |
-|---:|:---------------------------------------------------------------------------------------------------------------------|:------------------------------|:-------------------------------------------------------------------------------------------------------------------------------------------|:---------------------------------------------------------------------------------------------------------------------------------------------|:---------------------------------------------------------------------------------------------------------------------------------------|
-|  0 | The patient is a 5-month-old infant who presented initially on Monday with a cold, cough, and runny nose for 2 days. | DU12BBZ                       | ['5-month-old', 'infant', 'Monday', 'cold', 'cough', 'runny nose', 'for 2 days', 'Mom', 'she', 'fever', 'Her', 'she', 'spitting up a lot'] | ['Age', 'Age', 'RelativeDate', 'Symptom', 'Symptom', 'Symptom', 'Duration', 'Gender', 'Gender', 'VS_Finding', 'Gender', 'Gender', 'Symptom'] | ['0.9982', '0.9999', '0.9983', '0.7517', '0.9969', '0.7796', '0.5479', '0.9427', '0.9994', '0.9975', '0.9996', '0.9985', '0.30217502'] |
-|  0 | Mom states she had no fever.                                                                                         | F00ZNQZ                       | ['5-month-old', 'infant', 'Monday', 'cold', 'cough', 'runny nose', 'for 2 days', 'Mom', 'she', 'fever', 'Her', 'she', 'spitting up a lot'] | ['Age', 'Age', 'RelativeDate', 'Symptom', 'Symptom', 'Symptom', 'Duration', 'Gender', 'Gender', 'VS_Finding', 'Gender', 'Gender', 'Symptom'] | ['0.9982', '0.9999', '0.9983', '0.7517', '0.9969', '0.7796', '0.5479', '0.9427', '0.9994', '0.9975', '0.9996', '0.9985', '0.30217502'] |
-|  0 | Her appetite was good but she was spitting up a lot.                                                                 | F08Z3YZ                       | ['5-month-old', 'infant', 'Monday', 'cold', 'cough', 'runny nose', 'for 2 days', 'Mom', 'she', 'fever', 'Her', 'she', 'spitting up a lot'] | ['Age', 'Age', 'RelativeDate', 'Symptom', 'Symptom', 'Symptom', 'Duration', 'Gender', 'Gender', 'VS_Finding', 'Gender', 'Gender', 'Symptom'] | ['0.9982', '0.9999', '0.9983', '0.7517', '0.9969', '0.7796', '0.5479', '0.9427', '0.9994', '0.9975', '0.9996', '0.9985', '0.30217502'] |
+| sentence_results                                                                                                     | sentence_resolution_results   | entities@clinical_results                                                                                                                  | meta_entities@clinical_entity                                                                                                                | meta_entities@clinical_confidence                                                                                                      |
+|:---------------------------------------------------------------------------------------------------------------------|:------------------------------|:-------------------------------------------------------------------------------------------------------------------------------------------|:---------------------------------------------------------------------------------------------------------------------------------------------|:---------------------------------------------------------------------------------------------------------------------------------------|
+| The patient is a 5-month-old infant who presented initially on Monday with a cold, cough, and runny nose for 2 days. | DU12BBZ                       | ['5-month-old', 'infant', 'Monday', 'cold', 'cough', 'runny nose', 'for 2 days', 'Mom', 'she', 'fever', 'Her', 'she', 'spitting up a lot'] | ['Age', 'Age', 'RelativeDate', 'Symptom', 'Symptom', 'Symptom', 'Duration', 'Gender', 'Gender', 'VS_Finding', 'Gender', 'Gender', 'Symptom'] | ['0.9982', '0.9999', '0.9983', '0.7517', '0.9969', '0.7796', '0.5479', '0.9427', '0.9994', '0.9975', '0.9996', '0.9985', '0.30217502'] |
+| Mom states she had no fever.                                                                                         | F00ZNQZ                       | ['5-month-old', 'infant', 'Monday', 'cold', 'cough', 'runny nose', 'for 2 days', 'Mom', 'she', 'fever', 'Her', 'she', 'spitting up a lot'] | ['Age', 'Age', 'RelativeDate', 'Symptom', 'Symptom', 'Symptom', 'Duration', 'Gender', 'Gender', 'VS_Finding', 'Gender', 'Gender', 'Symptom'] | ['0.9982', '0.9999', '0.9983', '0.7517', '0.9969', '0.7796', '0.5479', '0.9427', '0.9994', '0.9975', '0.9996', '0.9985', '0.30217502'] |
+| Her appetite was good but she was spitting up a lot.                                                                 | F08Z3YZ                       | ['5-month-old', 'infant', 'Monday', 'cold', 'cough', 'runny nose', 'for 2 days', 'Mom', 'she', 'fever', 'Her', 'she', 'spitting up a lot'] | ['Age', 'Age', 'RelativeDate', 'Symptom', 'Symptom', 'Symptom', 'Duration', 'Gender', 'Gender', 'VS_Finding', 'Gender', 'Gender', 'Symptom'] | ['0.9982', '0.9999', '0.9983', '0.7517', '0.9969', '0.7796', '0.5479', '0.9427', '0.9994', '0.9975', '0.9996', '0.9985', '0.30217502'] |
 
 See the [Models Hub for all avaiable Entity Resolution Models](https://nlp.johnsnowlabs.com/models?task=Entity+Resolution)
 
@@ -71,9 +71,7 @@ See the [Models Hub for all avaiable Entity Resolution Models](https://nlp.johns
 
 
 ## Entity Resolution (for chunks)
-
-
-
+[Entity Resolution tutorial notebook](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/healthcare/entity_resolution/entity_resolvers_overview.ipynb)
 
 Classify each `entitiy` extracted by a `Named Entity Recognizer` into one out of `C` classes. 
 These classes usually are  international `disease` , `medicine` , or `procedure` **codes** based on ICD standards.
@@ -83,7 +81,7 @@ A simplified example would be
 
 ``` python
 data ="""The patient is a 5-month-old infant who presented initially on Monday with a cold, cough, and runny nose for 2 days."""
-df = nlu.load('med_ner.jsl.wip.clinical en.resolve_chunk.cpt_clinical').predict(data, output_level='chunk')
+df = nlu.load('med_ner.jsl.wip.clinical en.resolve_chunk.cpt_clinical').predict(data)
 ```
 
 | entities@clinical_results   | meta_entities@clinical_entity   |   meta_entities@clinical_confidence |   chunk_resolution_results |meta_chunk_resolution_target_text   |   meta_chunk_resolution_distance |   meta_chunk_resolution_confidence |   meta_chunk_resolution_all_k_results |   meta_chunk_resolution_all_k_distances |   meta_chunk_resolution_all_k_cosine_distances |
@@ -103,7 +101,7 @@ See the [Models Hub for all avaiable Entity Resolution Models](https://nlp.johns
 
 
 ## Relation Extraction
-[Relation Extraction tutorial notebook](TODO)
+[Relation Extraction tutorial notebook](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/healthcare/relation_extraction/overview_relation.ipynb)
 
 Classify for pairs of entities what kind of `relation` exists between them.       
 It classifies for every  `named entity` , which type of `relationship` exists to the `other entities`.        
@@ -118,7 +116,7 @@ See the [Models Hub for all avaiable Relation Extractor Models](https://nlp.john
 
 ``` python
 data = 'MRI demonstrated infarction in the upper brain stem , left cerebellum and  right basil ganglia'
-df = nlu.load('en.med_ner.jsl.wip.clinical.greedy en.relation').predict(data, output_level='relation')
+df = nlu.load('en.med_ner.jsl.wip.clinical.greedy en.relation').predict(data)
 ```
 
 | document_results                                                                               |   relation_results | meta_relation_entity1       | meta_relation_entity2       | meta_relation_chunk1   | meta_relation_chunk2   |   meta_relation_confidence | entities@greedy_results                                                                      | meta_entities@greedy_entity                                                                                                                                               | meta_entities@greedy_confidence                                                  |
@@ -160,14 +158,14 @@ df = nlu.load('en.med_ner.jsl.wip.clinical.greedy en.relation').predict(data, ou
 
 
 ## Assertion
-[Assertion tutorial notebook](TODO)
+[Assertion tutorial notebook](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/healthcare/assertion/assertion_overview.ipynb)
 
 
 `Assert` for each `entity` the status into one out of `C` classes.  These classes usually are : ``hypothetical``, ``present``, ``absent``, ``possible``, ``conditional``, ``associated_with_someone_else``.
 
 ``` python
 data = "He has a starvation ketosis but nothing found for significant for dry oral mucosa"
-assert_df = nlu.load('en.med_ner.clinical en.assert ').predict(data, output_level='chunk')
+assert_df = nlu.load('en.med_ner.clinical en.assert ').predict(data)
 ```
 | entities@clinical_results   | meta_entities@clinical_entity   |   meta_entities@clinical_confidence | assertion_results   |   meta_assertion_confidence |
 |:----------------------------|:--------------------------------|------------------------------------:|:--------------------|----------------------------:|
@@ -178,13 +176,13 @@ See the [Models Hub for all avaiable Assertion Models](https://nlp.johnsnowlabs.
 
 
 ## De-Identification
-[De-Identification tutorial notebook](TODO)
+[De-Identification tutorial notebook](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/healthcare/de_identification/DeIdentification_model_overview.ipynb)
 
 Detect sensitive information in a string and replace the sensitive data with anonymized labels
 
 ``` python
 data= 'DR Johnson administerd to the patient Peter Parker last week 30 MG of penicilin on Friday 25. March 1999'
-df = nlu.load('de_identify').predict(data, output_level='chunk')
+df = nlu.load('de_identify').predict(data)
 ```
 
 | deidentified_results                                                                                     | entities@ner_results   | meta_entities@ner_entity   |
