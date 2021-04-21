@@ -451,7 +451,7 @@ def construct_trainable_component_from_identifier(nlu_ref,nlp_ref):
     try:
         if nlu_ref in ['train.deep_sentence_detector','train.sentence_detector']:
             #no label col but trainable?
-            return  nlu.NLUSentenceDetector(annotator_class = 'deep_sentence_detector', trainable='True')
+            return  nlu.NLUSentenceDetector(annotator_class = 'deep_sentence_detector', trainable='True',nlu_ref=nlu_ref,)
         if nlu_ref in ['train.context_spell','train.spell'] :
             pass
         if nlu_ref in ['train.symmetric_spell'] :
@@ -463,19 +463,19 @@ def construct_trainable_component_from_identifier(nlu_ref,nlp_ref):
         if nlu_ref in ['train.labeled_dependency_parser'] :
             pass
         if nlu_ref in ['train.classifier_dl','train.classifier'] :
-            return nlu.Classifier(annotator_class = 'classifier_dl', trainable=True)
+            return nlu.Classifier(annotator_class = 'classifier_dl', trainable=True, nlu_ref=nlu_ref,)
         if nlu_ref in ['train.ner','train.named_entity_recognizer_dl'] :
-            return nlu.Classifier(annotator_class = 'ner', trainable=True)
+            return nlu.Classifier(annotator_class = 'ner', trainable=True,nlu_ref=nlu_ref,)
         if nlu_ref in ['train.sentiment_dl','train.sentiment'] :
-            return nlu.Classifier(annotator_class = 'sentiment_dl', trainable=True)
+            return nlu.Classifier(annotator_class = 'sentiment_dl', trainable=True,nlu_ref=nlu_ref,)
         if nlu_ref in ['train.vivekn_sentiment'] :
             pass
         if nlu_ref in ['train.pos'] :
-            return nlu.Classifier(annotator_class = 'pos', trainable=True)
+            return nlu.Classifier(annotator_class = 'pos', trainable=True,nlu_ref=nlu_ref,)
         if nlu_ref in ['train.multi_classifier'] :
-            return nlu.Classifier(annotator_class = 'multi_classifier', trainable=True)
+            return nlu.Classifier(annotator_class = 'multi_classifier', trainable=True,nlu_ref=nlu_ref,)
         if nlu_ref in ['train.word_seg','train.word_segmenter'] :
-            return nlu.Tokenizer(annotator_class = 'word_segmenter', trainable=True)
+            return nlu.Tokenizer(annotator_class = 'word_segmenter', trainable=True,nlu_ref=nlu_ref,)
 
 
     except:  # if reference is not in namespace and not a component it will cause a unrecoverable crash
