@@ -2,7 +2,7 @@ import logging
 logger = logging.getLogger('nlu')
 import inspect
 from nlu.pipe.pipe_components import SparkNLUComponent
-from nlu.pipe.storage_ref_utils import StorageRefUtils
+from nlu.pipe.utils.storage_ref_utils import StorageRefUtils
 
 """Component and Column Level logic operations and utils"""
 class ComponentUtils():
