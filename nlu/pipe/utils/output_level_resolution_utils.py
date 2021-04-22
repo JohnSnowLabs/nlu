@@ -2,9 +2,82 @@
 from  typing import List, Dict
 import logging
 logger = logging.getLogger('nlu')
+from sparknlp.base import *
+from sparknlp.annotator import *
 
 """Component and Column Level logic operations and utils"""
 class OutputLevelUtils():
+    levels = {
+        'token': ['token', 'pos', 'ner', 'lemma', 'lem', 'stem', 'stemm', 'word_embeddings', 'named_entity',
+                  'entity', 'dependency',
+                  'labeled_dependency', 'dep', 'dep.untyped', 'dep.typed'],
+        'sentence': ['sentence', 'sentence_embeddings', ] + ['sentiment', 'classifer', 'category'],
+        'chunk': ['chunk', 'embeddings_chunk', 'chunk_embeddings'],
+        'document': ['document', 'language'],
+        'embedding_level': []
+        # ['sentiment', 'classifer'] # WIP, wait for Spark NLP Getter/Setter fixes to implement this properly
+        # embedding level  annotators output levels depend on the level of the embeddings they are fed. If we have Doc/Chunk/Word/Sentence embeddings, those annotators output at the same level.
+
+    }
+    annotator_levels_approach_based = {
+        'document': [DocumentAssembler, Chunk2Doc,
+                     YakeModel,
+                     ],
+        'sentence': [SentenceDetector, SentenceDetectorDLApproach, ],
+        'chunk': [Chunker, ChunkEmbeddings,  ChunkTokenizer, Token2Chunk, TokenAssembler,
+                  NerConverter, Doc2Chunk,NGramGenerator],
+        'token': [ NerCrfApproach, NerDLApproach,
+                   PerceptronApproach,
+                   Stemmer,
+                   ContextSpellCheckerApproach,
+                   WordSegmenterApproach,
+                   Lemmatizer,LemmatizerModel, TypedDependencyParserApproach, DependencyParserApproach,
+                   Tokenizer, RegexTokenizer, RecursiveTokenizer
+            , DateMatcher, TextMatcher, BigTextMatcher, MultiDateMatcher,
+                   WordSegmenterApproach
+                   ],
+        # 'sub_token': [StopWordsCleaner, DateMatcher, TextMatcher, BigTextMatcher, MultiDateMatcher],
+        # these can be document or sentence
+        'input_dependent': [ViveknSentimentApproach, SentimentDLApproach, ClassifierDLApproach,
+                            LanguageDetectorDL,
+                            MultiClassifierDLApproach,  SentenceEmbeddings, NorvigSweetingApproach,
+                            ],
+
+        # 'unclassified': [Yake, Ngram]
+    }
+    annotator_levels_model_based = {
+        'document': [],
+        'sentence': [SentenceDetectorDLModel, ],
+        'chunk': [ChunkTokenizerModel, ChunkTokenizerModel,  ],
+        'token': [ContextSpellCheckerModel, AlbertEmbeddings, BertEmbeddings, ElmoEmbeddings, WordEmbeddings,
+                  XlnetEmbeddings, WordEmbeddingsModel,
+                  # NER models are token level, they give IOB predictions and cofidences for EVERY token!
+                  NerDLModel, NerCrfModel, PerceptronModel, SymmetricDeleteModel, NorvigSweetingModel,
+                  ContextSpellCheckerModel,
+                  TypedDependencyParserModel, DependencyParserModel,
+                  RecursiveTokenizerModel,
+                  TextMatcherModel, BigTextMatcherModel, RegexMatcherModel,
+                  WordSegmenterModel, TokenizerModel
+                  ],
+        # 'sub_token': [TextMatcherModel, BigTextMatcherModel, RegexMatcherModel, ],
+        # sub token is when annotator is token based but some tokens may be missing since dropped/cleanes
+
+        'sub_token' : [
+            StopWordsCleaner
+
+        ] ,
+        'input_dependent': [BertSentenceEmbeddings, UniversalSentenceEncoder, ViveknSentimentModel,
+                            SentimentDLModel, MultiClassifierDLModel, MultiClassifierDLModel, ClassifierDLModel,
+                            MarianTransformer,T5Transformer
+
+                            ],
+    }
+    all_embeddings = {
+        'token' : [AlbertEmbeddings, BertEmbeddings, ElmoEmbeddings, WordEmbeddings,
+                   XlnetEmbeddings,WordEmbeddingsModel],
+        'input_dependent' : [SentenceEmbeddings, UniversalSentenceEncoder,BertSentenceEmbeddings]
+
+    }
 
     @staticmethod
     def infer_output_level(pipe):
@@ -110,7 +183,7 @@ class OutputLevelUtils():
         # We iterate over the pipe and check which Embed component is feeding the classifier and what the input that embed annotator is (sent or doc)
         for c in pipe.components:
             # check if c is of sentence embedding class  which is always input dependent
-            if any ( isinstance(c.model, e ) for e in pipe.all_embeddings['input_dependent']  ) :
+            if any ( isinstance(c.model, e ) for e in OutputLevelUtils.all_embeddings['input_dependent']  ) :
                 if 'document' in c.info.spark_input_column_names :  return 'document'
                 if 'sentence' in c.info.spark_input_column_names :  return 'sentence'
     @staticmethod
@@ -121,13 +194,13 @@ class OutputLevelUtils():
         :param component:  to resolve
         :return: resolve component
         '''
-        for level in pipe.annotator_levels_model_based.keys():
-            for t in pipe.annotator_levels_model_based[level]:
+        for level in OutputLevelUtils.annotator_levels_model_based.keys():
+            for t in OutputLevelUtils.annotator_levels_model_based[level]:
                 if isinstance(component.model,t) :
                     if level == 'input_dependent' : return OutputLevelUtils.resolve_input_dependent_component_to_output_level(pipe,component)
                     else : return level
-        for level in pipe.annotator_levels_approach_based.keys():
-            for t in pipe.annotator_levels_approach_based[level]:
+        for level in OutputLevelUtils.annotator_levels_approach_based.keys():
+            for t in OutputLevelUtils.annotator_levels_approach_based[level]:
                 if isinstance(component.model,t) :
                     if level == 'input_dependent' : return pipe.resolve_input_dependent_component_to_output_level(component)
                     else : return level
@@ -152,3 +225,5 @@ class OutputLevelUtils():
         """Get List of cols which are not at same output level as the pipe is currently configured to"""
         # return [c.info.outputs[0]  for c in pipe.components if not pipe.resolve_component_to_output_level(c) == pipe.output_level ]
         return [c.info.outputs[0]  for c in pipe.components if not col2output_level[c.info.outputs[0]] == pipe.output_level ]
+
+
