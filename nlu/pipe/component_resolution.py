@@ -42,8 +42,8 @@ from nlu import logger, Util, Embeddings, Classifier, NameSpace, ClassifierDl, \
 from nlu.components import embeddings_chunker
 from nlu.components.labeled_dependency_parser import LabeledDependencyParser as LabledDepParser
 from nlu.components.unlabeled_dependency_parser import UnlabeledDependencyParser as UnlabledDepParser
-from nlu.pipe.pipe_utils import PipeUtils
-from nlu.pipe.component_utils import ComponentUtils
+from nlu.pipe.utils.pipe_utils import PipeUtils
+from nlu.pipe.utils.component_utils import ComponentUtils
 
 def load_offline_model(path):
     c = offline_utils.verify_model(path)

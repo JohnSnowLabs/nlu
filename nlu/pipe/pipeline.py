@@ -23,6 +23,7 @@ from nlu.pipe.component_resolution import extract_classifier_metadata_from_nlu_r
 from nlu.pipe.utils.storage_ref_utils import StorageRefUtils
 from nlu.pipe.utils.component_utils import ComponentUtils
 from nlu.pipe.utils.output_level_resolution_utils import OutputLevelUtils
+from nlu.pipe.utils.data_conversion_utils import DataConversionUtils
 
 from typing import Union,TypeVar
 
@@ -54,7 +55,6 @@ class BasePipe(dict):
         return isinstance(model, (
             ClassifierDLModel, ClassifierDLModel, MultiClassifierDLModel, MultiClassifierDLApproach, SentimentDLModel,
             SentimentDLApproach))
-
     def configure_outputs(self, component, nlu_reference, name_to_add=''):
         '''
         Configure output column names of classifiers from category to something more meaningful
@@ -83,7 +83,6 @@ class BasePipe(dict):
         logger.info(f"Configured output columns name to {new_output_name} for classifier in {nlu_reference}")
         component.model.setOutputCol(new_output_name)
         component.info.spark_output_column_names = [new_output_name]
-
     def add(self, component, nlu_reference="default_name", pretrained_pipe_component=False, name_to_add=''):
         '''
 
@@ -92,9 +91,7 @@ class BasePipe(dict):
         :return:
         '''
         if hasattr(component.info,'nlu_ref'): nlu_reference = component.info.nlu_ref
-
         # self.nlu_reference = component.info.nlu_ref if component.info
-
         self.components.append(component)
         # ensure that input/output cols are properly set
         # Spark NLP model reference shortcut
@@ -104,8 +101,6 @@ class BasePipe(dict):
         if StorageRefUtils.has_storage_ref(component):
             name = name +'@' + StorageRefUtils.extract_storage_ref(component)
         logger.info(f"Adding {name} to internal pipe")
-
-
 
         # Configure output column names of classifiers from category to something more meaningful
         if self.isInstanceOfNlpClassifer(component.model): self.configure_outputs(component, nlu_reference)
@@ -131,18 +126,12 @@ class NLUPipeline(BasePipe):
         self.provider = 'sparknlp'
         self.pipe_ready = False  # ready when we have created a spark df
         # The NLU pipeline uses  types of Spark NLP annotators to identify how to handle different columns
-
-
-
     def get_sample_spark_dataframe(self):
         data = {"text": ['This day sucks', 'I love this day', 'I dont like Sami']}
         text_df = pd.DataFrame(data)
         return sparknlp.start().createDataFrame(data=text_df)
-
-
     def verify_all_labels_exist(self,dataset:Union[pyspark.sql.DataFrame, pd.DataFrame] ):
         return 'label'  in dataset.columns
-
     def fit(self, dataset=None, dataset_path=None, label_seperator=','):
         # if dataset is  string with '/' in it, its dataset path!
         '''
@@ -194,8 +183,6 @@ class NLUPipeline(BasePipe):
 
         return self
 
-
-
     def get_annotator_extraction_configs(self,full_meta):
         """Search first OC namespace and if not found the HC Namespace for each Annotator Class in pipeline and get corrosponding config
         Returns a dictionary of methods, where keys are column names values are methods  that are applied to extract and represent the data in these
@@ -232,7 +219,9 @@ class NLUPipeline(BasePipe):
                                   keep_stranger_features=True,
                                   stranger_features=[],
                                   drop_irrelevant_cols=True,
-                                  output_metadata=False):
+                                  output_metadata=False,
+                                  positions = False
+                                  ):
         '''
         This functions takes in a spark dataframe with Spark NLP annotations in it and transforms it into a Pandas Dataframe with common feature types for further NLP/NLU downstream tasks.
         It will recylce Indexes from Pandas DataFrames and Series if they exist, otherwise a custom id column will be created which is used as inex later on
@@ -255,7 +244,6 @@ class NLUPipeline(BasePipe):
         '''
         stranger_features += ['origin_index']
 
-        # self.infer_and_set_output_level()
         if self.output_level == '' : self.output_level = OutputLevelUtils.infer_output_level(self)
         col2output_level                 = OutputLevelUtils.get_output_level_mapping(self)
         same_output_level                = OutputLevelUtils.get_cols_at_same_output_level(self,col2output_level)
@@ -279,14 +267,25 @@ class NLUPipeline(BasePipe):
 # pretty_df =  self.finalize_retur_datatype(pretty_df)
 
 
-
-
-
-
-
-
-
-
+    def print_exception_info(self,err):
+        logger.exception('Exception occured')
+        e = sys.exc_info()
+        print("No accepted Data type or usable columns found or applying the NLU models failed. ")
+        print(
+            "Make sure that the first column you pass to .predict() is the one that nlu should predict on OR rename the column you want to predict on to 'text'  ")
+        print(
+            "If you are on Google Collab, click on Run time and try factory reset Runtime run the setup script again, you might have used too much memory")
+        print(
+            "On Kaggle try to reset restart session and run the setup script again, you might have used too much memory")
+        print('Full Stacktrace was', e)
+        print('Additional info:')
+        exc_type, exc_obj, exc_tb = sys.exc_info()
+        import os
+        fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+        print(exc_type, fname, exc_tb.tb_lineno)
+        err = sys.exc_info()[1]
+        print(str(err))
+        print('Stuck? Contact us on Slack! https://join.slack.com/t/spark-nlp/shared_invite/zt-j5ttxh0z-Fn3lQSG1Z0KpOs_SRxjdyw0196BQCDPY')
 
 
 
@@ -303,8 +302,6 @@ class NLUPipeline(BasePipe):
             if 'embed' in col:
                 pdf[col] = pdf[col].apply(lambda x: np.array(x))
         return pdf
-
-
     def finalize_return_datatype(self, df):
         '''
         Take in a Spark dataframe with only relevant columns remaining.
@@ -312,7 +309,6 @@ class NLUPipeline(BasePipe):
         :param df:
         :return: The predicted Data as datatype dependign on self.output_datatype
         '''
-
         if self.output_datatype == 'spark':
             return df # todo
         elif self.output_datatype == 'pandas':
@@ -328,8 +324,6 @@ class NLUPipeline(BasePipe):
         elif self.output_datatype == 'numpy':
             return df.to_numpy()
         return df
-
-
     def drop_irrelevant_cols(self, cols):
         '''
         Takes in a list of column names removes the elements which are irrelevant to the current output level.
@@ -348,7 +342,7 @@ class NLUPipeline(BasePipe):
             if 'chunk_results' in cols: cols.remove('chunk_results')
             if 'document_results' in cols: cols.remove('document_results')
         if self.output_level == 'chunk':
-            if 'document_results' in cols: cols.remove('document_results')
+            # if 'document_results' in cols: cols.remove('document_results')
             if 'token_results' in cols: cols.remove('token_results')
             if 'sentence_results' in cols: cols.remove('sentence_results')
         if self.output_level == 'document':
@@ -360,8 +354,6 @@ class NLUPipeline(BasePipe):
             if 'chunk_results' in cols: cols.remove('chunk_results')
             if 'sentence_results' in cols: cols.remove('sentence_results')
         return cols
-
-
     def configure_light_pipe_usage(self, data_instances, use_multi=True):
         logger.info("Configuring Light Pipeline Usage")
         if data_instances > 50000 or use_multi == False:
@@ -383,7 +375,6 @@ class NLUPipeline(BasePipe):
         for c in self.components:
             if 'sentence' in c.info.spark_output_column_names : return True
         return False
-
     def add_missing_sentence_component(self):
         '''
         Add Sentence Detector to pipeline and Run it thorugh the Query Verifiyer again.
@@ -400,39 +391,10 @@ class NLUPipeline(BasePipe):
         f = open(os.path.join(path,'nlu_info.txt'), "w")
         f.write(self.nlu_ref)
         f.close()
-        #1. Write all primitive pipe attributes to dict
-        # pipe_data = {
-        #     'has_trainable_components': self.has_trainable_components,
-        #     'is_fitted' : self.is_fitted,
-        #     'light_pipe_configured' : self.light_pipe_configured,
-        #     'needs_fitting':self.needs_fitting,
-        #     'nlu_reference':self.nlu_reference,
-        #     'output_datatype':self.output_datatype,
-        #     'output_different_levels':self.output_different_levels,
-        #     'output_level': self.output_level,
-        #     'output_positions': self.output_positions,
-        #     'pipe_componments': {},
-        #     'pipe_ready':self.pipe_ready,
-        #     'provider': self.provider,
-        #     'raw_text_column': self.raw_text_column,
-        #     'raw_text_matrix_slice': self.raw_text_matrix_slice,
-        #     'spark_nlp_pipe': self.spark_nlp_pipe,
-        #     'spark_non_light_transformer_pipe': self.spark_non_light_transformer_pipe,
-        #     'component_count': len(self)
-        #
-        # }
-
-        #2. Write all component/component_info to dict
-        # for c in self.pipe_components:
-        #     pipe_data['pipe_componments'][c.ma,e]
-        #3. Any additional stuff
-
         return True
-
     def add_missing_component_if_missing_for_output_level(self):
         '''
         Check that for currently configured self.output_level one annotator for that level exists, i.e a Sentence Detetor for outpul tevel sentence, Tokenizer for level token etc..
-
         :return: None
         '''
 
@@ -442,7 +404,6 @@ class NLUPipeline(BasePipe):
                 logger.info('Adding missing sentence Dependency because it is missing for outputlevel=Sentence')
                 self.add_missing_sentence_component()
     def save(self, path, component='entire_pipeline', overwrite=False):
-
         if nlu.is_running_in_databricks() :
             if path.startswith('/dbfs/') or path.startswith('dbfs/'):
                 nlu_path = path
@@ -450,7 +411,6 @@ class NLUPipeline(BasePipe):
                     nlp_path =  path.replace('/dbfs','')
                 else :
                     nlp_path =  path.replace('dbfs','')
-
             else :
                 nlu_path = 'dbfs/' + path
                 if path.startswith('/') : nlp_path = path
@@ -462,13 +422,9 @@ class NLUPipeline(BasePipe):
             if component == 'entire_pipeline':
                 self.spark_transformer_pipe.save(nlp_path)
                 self.write_nlu_pipe_info(nlu_path)
-
-
         if overwrite and not nlu.is_running_in_databricks():
             import shutil
             shutil.rmtree(path,ignore_errors=True)
-
-
         if not self.is_fitted :
             self.fit()
             self.is_fitted = True
@@ -478,13 +434,10 @@ class NLUPipeline(BasePipe):
         else:
             if component in self.keys():
                 self[component].save(path)
-            # else :
-            #     print(f"Error during saving,{component} does not exist in the pipeline.\nPlease use pipe.print_info() to see the references you need to pass save()")
-
         print(f'Stored model in {path}')
-        # else : print('Please fit untrained pipeline first or predict on a String to save it')
+
     def predict(self, data, output_level='', positions=False, keep_stranger_features=True, metadata=False,
-                multithread=True, drop_irrelevant_cols=True, verbose=False, return_spark_df = False):
+                multithread=True, drop_irrelevant_cols=True, return_spark_df = False):
         '''
         Annotates a Pandas Dataframe/Pandas Series/Numpy Array/Spark DataFrame/Python List strings /Python String
 
@@ -501,210 +454,50 @@ class NLUPipeline(BasePipe):
 
         if output_level != '': self.output_level = output_level
 
-        self.output_positions = positions
-
-        # if output_level == 'chunk':
-        #     # If no chunk output component in pipe we must add it and run the query PipelineQueryVerifier again
-        #     chunk_provided = False
-        #     for component in self.components:
-        #         if component.info.output_level == 'chunk': chunk_provided = True
-        #     if chunk_provided == False:
-        #         self.components.append(nlu.pipe.component_resolution.get_default_component_of_type('chunk'))
-        #         # this could break indexing..
-        #
-        #         self = nlu.pipe.pipeline_logic.PipelineQueryVerifier.check_and_fix_nlu_pipeline(self)
-        # if not self.is_fitted: self.fit()
-
-        # currently have to always fit, otherwise parameter changes wont take effect
         # if output_level == 'sentence' or output_level == 'document':
-            # self = PipeUtils.configure_component_output_levels(self)
-            # self = PipeUtils.check_and_fix_nlu_pipeline(self)
-            # 1 # todo
-
+        #     self = PipeUtils.configure_component_output_levels(self)
+        #     self = PipeUtils.check_and_fix_nlu_pipeline(self)
         if not self.is_fitted :
             if self.has_trainable_components :
                 self.fit(data)
             else : self.fit()
-        # self.configure_light_pipe_usage(len(data), multithread)
-
-        sdf = None
-        stranger_features = []
-        index_provided = False
-        infered_text_col = False
+        self.configure_light_pipe_usage(len(data), multithread)
 
         try:
-            if isinstance(data,pyspark.sql.dataframe.DataFrame):  # casting follows spark->pd
-                self.output_datatype = 'spark'
-                data = data.withColumn('origin_index',monotonically_increasing_id().alias('origin_index'))
-                index_provided = True
-
-                if self.raw_text_column in data.columns:
-                    # store all stranger features
-                    if len(data.columns) > 1:
-                        stranger_features = list(set(data.columns) - set(self.raw_text_column))
-                    sdf = self.spark_transformer_pipe.transform(data)
-                else:
-                    print(
-                        'Could not find column named "text" in input Pandas Dataframe. Please ensure one column named such exists. Columns in DF are : ',
-                        data.columns)
-            elif isinstance(data,pd.DataFrame):  # casting follows pd->spark->pd
-                self.output_datatype = 'pandas'
-
-                # set first col as text column if there is none
-                if self.raw_text_column not in data.columns:
-                    data.rename(columns={data.columns[0]: 'text'}, inplace=True)
-                data['origin_index'] = data.index
-                index_provided = True
-                if self.raw_text_column in data.columns:
-                    if len(data.columns) > 1:
-                        data = data.where(pd.notnull(data), None)  # make  Nans to None, or spark will crash
-                        data = data.dropna(axis=1, how='all')
-                        stranger_features = list(set(data.columns) - set(self.raw_text_column))
-                    sdf = self.spark_transformer_pipe.transform(self.spark.createDataFrame(data))
-
-                else:
-                    logger.info(
-                        'Could not find column named "text" in input Pandas Dataframe. Please ensure one column named such exists. Columns in DF are : ',
-                        data.columns)
-            elif isinstance(data,pd.Series):  # for df['text'] colum/series passing casting follows pseries->pdf->spark->pd
-                self.output_datatype = 'pandas_series'
-                data = pd.DataFrame(data).dropna(axis=1, how='all')
-                index_provided = True
-                # If series from a column is passed, its column name will be reused.
-                if self.raw_text_column not in data.columns and len(data.columns) == 1:
-                    data['text'] = data[data.columns[0]]
-                else:
-                    logger.info(f'INFO: NLU will assume {data.columns[0]} as label column since default text column could not be find')
-                    data['text'] = data[data.columns[0]]
-
-                data['origin_index'] = data.index
-
-                if self.raw_text_column in data.columns:
-                    sdf = self.spark_transformer_pipe.transform(self.spark.createDataFrame(data), )
-
-                else:
-                    print(
-                        'Could not find column named "text" in  Pandas Dataframe generated from input  Pandas Series. Please ensure one column named such exists. Columns in DF are : ',
-                        data.columns)
-
-            elif isinstance(data,np.ndarray):
-                # This is a bit inefficient. Casting follow  np->pd->spark->pd. We could cut out the first pd step
-                self.output_datatype = 'numpy_array'
-                if len(data.shape) != 1:
-                    print("Exception : Input numpy array must be 1 Dimensional for prediction.. Input data shape is",
-                          data.shape)
-                    return nlu.NluError
-                sdf = self.spark_transformer_pipe.transform(self.spark.createDataFrame(
-                    pd.DataFrame({self.raw_text_column: data, 'origin_index': list(range(len(data)))})))
-                index_provided = True
-
-            elif isinstance(data,np.matrix):  # assumes default axis for raw texts
-                print(
-                    'Predicting on np matrices currently not supported. Please input either a Pandas Dataframe with a string column named "text"  or a String or a list of strings. ')
-                return nlu.NluError
-            elif isinstance(data,str):  # inefficient, str->pd->spark->pd , we can could first pd
-                self.output_datatype = 'string'
-                sdf = self.spark_transformer_pipe.transform(self.spark.createDataFrame(
-                    pd.DataFrame({self.raw_text_column: data, 'origin_index': [0]}, index=[0])))
-                index_provided = True
-
-            elif isinstance(data,list):  # inefficient, list->pd->spark->pd , we can could first pd
-                self.output_datatype = 'string_list'
-                if all(type(elem) == str for elem in data):
-                    sdf = self.spark_transformer_pipe.transform(self.spark.createDataFrame(pd.DataFrame(
-                        {self.raw_text_column: pd.Series(data), 'origin_index': list(range(len(data)))})))
-                    index_provided = True
-
-                else:
-                    print("Exception: Not all elements in input list are of type string.")
-            elif isinstance(data,dict):  # Assumes values should be predicted
-                print(
-                    'Predicting on dictionaries currently not supported. Please input either a Pandas Dataframe with a string column named "text"  or a String or a list of strings. ')
-                return ''
-            else:  # Modin tests, This could crash if Modin not installed
-                try:
-                    import modin.pandas as mpd
-                    if isinstance(data, mpd.DataFrame):
-                        data = pd.DataFrame(data.to_dict())  # create pandas to support type inference
-                        self.output_datatype = 'modin'
-                        data['origin_index'] = data.index
-                        index_provided = True
-
-                    if self.raw_text_column in data.columns:
-                        if len(data.columns) > 1:
-                            data = data.where(pd.notnull(data), None)  # make  Nans to None, or spark will crash
-                            data = data.dropna(axis=1, how='all')
-                            stranger_features = list(set(data.columns) - set(self.raw_text_column))
-                        sdf = self.spark_transformer_pipe.transform(
-                            # self.spark.createDataFrame(data[['text']]), ) # this takes text column as series and makes it DF
-                            self.spark.createDataFrame(data))
-                    else:
-                        print(
-                            'Could not find column named "text" in input Pandas Dataframe. Please ensure one column named such exists. Columns in DF are : ',
-                            data.columns)
-
-                    if isinstance(data, mpd.Series):
-                        self.output_datatype = 'modin_series'
-                        data = pd.Series(data.to_dict())  # create pandas to support type inference
-                        data = pd.DataFrame(data).dropna(axis=1, how='all')
-                        data['origin_index'] = data.index
-                        index_provided = True
-                        if self.raw_text_column in data.columns:
-                            sdf = \
-                                self.spark_transformer_pipe.transform(
-                                    self.spark.createDataFrame(data[['text']]), )
-                        else:
-                            print(
-                                'Could not find column named "text" in  Pandas Dataframe generated from input  Pandas Series. Please ensure one column named such exists. Columns in DF are : ',
-                                data.columns)
-
-
-                except:
-                    print(
-                        "If you use Modin, make sure you have installed 'pip install modin[ray]' or 'pip install modin[dask]' backend for Modin ")
+            #1. Convert data to Spark DF
+            sdf, stranger_features, output_datatype = DataConversionUtils.to_spark_df(data, self.spark, self.raw_text_column)
+            #2. Apply Spark Pipeline
+            sdf = self.spark_transformer_pipe.transform(sdf)
+            #2. Convert resulting spark DF into nicer format and by default into pandas.
 
             if return_spark_df : return sdf  # Returns RAW result of pipe prediction
+
+
+
             return self.pythonify_spark_dataframe(sdf,
                                                   keep_stranger_features=keep_stranger_features,
                                                   stranger_features=stranger_features,
                                                   output_metadata=metadata,
-                                                  drop_irrelevant_cols=drop_irrelevant_cols
+                                                  drop_irrelevant_cols=drop_irrelevant_cols,
+                                                  positions=positions
                                                   )
 
 
         except Exception as err :
+
             import sys
             if multithread == True:
                 logger.warning("Multithreaded mode failed. trying to predict again with non multithreaded mode ")
-                return self.predict(data, output_level=output_level, positions=positions,
-                                    keep_stranger_features=keep_stranger_features, metadata=metadata, multithread=False)
-            logger.exception('Exception occured')
-            e = sys.exc_info()
-            print("No accepted Data type or usable columns found or applying the NLU models failed. ")
-            print(
-                "Make sure that the first column you pass to .predict() is the one that nlu should predict on OR rename the column you want to predict on to 'text'  ")
-            print(
-                "If you are on Google Collab, click on Run time and try factory reset Runtime run the setup script again, you might have used too much memory")
-            print(
-                "On Kaggle try to reset restart session and run the setup script again, you might have used too much memory")
-
-            print('Full Stacktrace was', e)
-            print('Additional info:')
-            exc_type, exc_obj, exc_tb = sys.exc_info()
-            import os
-            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-            print(exc_type, fname, exc_tb.tb_lineno)
-            print(
-                'Stuck? Contact us on Slack! https://join.slack.com/t/spark-nlp/shared_invite/zt-j5ttxh0z-Fn3lQSG1Z0KpOs_SRxjdyw0196BQCDPY')
-            if verbose :
-                err = sys.exc_info()[1]
-                print(str(err))
-            return None
+                return self.predict(data, output_level=output_level, positions=positions,keep_stranger_features=keep_stranger_features, metadata=metadata, multithread=False)
+            else: self.print_exception_err(err)
 
 
-    def print_info(self, ):
+
+
+    def print_info(self,minimal=True):
         '''
-        Print out information about every component currently loaded in the pipe and their configurable parameters
+        Print out information about every component currently loaded in the pipe and their configurable parameters.
+        If minimal is false, all Spark NLP Model parameters will be printed, including output/label/input cols and other attributes a NLU user should not touch. Useful for debugging.
         :return: None
         '''
 
@@ -719,7 +512,9 @@ class NLUPipeline(BasePipe):
             component_outputs = []
             max_len = 0
             for key in p_map.keys():
-                if "outputCol" in key.name or "labelCol" in key.name or "inputCol" in key.name or "labelCol" in key.name or 'lazyAnnotator' in key.name or 'storageref' in key.name: continue
+                if minimal:
+                    if "outputCol" in key.name or "labelCol" in key.name or "inputCol" in key.name or "labelCol" in key.name or 'lazyAnnotator' in key.name or 'storageref' in key.name: continue
+
                 # print("pipe['"+ component_key +"'].set"+ str( key.name[0].capitalize())+ key.name[1:]+"("+str(p_map[key])+")" + " | Info: " + str(key.doc)+ " currently Configured as : "+str(p_map[key]) )
                 # print("Param Info: " + str(key.doc)+ " currently Configured as : "+str(p_map[key]) )
 
@@ -746,4 +541,29 @@ class NLUPipeline(BasePipe):
                     print(form.format(o_parm[0]) + o_parm[1])
                 else:
                     print(o_parm[0] + o_parm[1])
+    def print_exception_err(self,err):
+        '''
+        Print information about exception
+        :return: None
+        '''
+        import sys
+        logger.exception('Exception occured')
+        e = sys.exc_info()
+        print("No accepted Data type or usable columns found or applying the NLU models failed. ")
+        print(
+            "Make sure that the first column you pass to .predict() is the one that nlu should predict on OR rename the column you want to predict on to 'text'  ")
+        print(
+            "If you are on Google Collab, click on Run time and try factory reset Runtime run the setup script again, you might have used too much memory")
+        print(
+            "On Kaggle try to reset restart session and run the setup script again, you might have used too much memory")
 
+        print('Full Stacktrace was', e)
+        print('Additional info:')
+        exc_type, exc_obj, exc_tb = sys.exc_info()
+        import os
+        fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+        print(exc_type, fname, exc_tb.tb_lineno)
+        print(
+            'Stuck? Contact us on Slack! https://join.slack.com/t/spark-nlp/shared_invite/zt-j5ttxh0z-Fn3lQSG1Z0KpOs_SRxjdyw0196BQCDPY')
+        err = sys.exc_info()[1]
+        print(str(err))
