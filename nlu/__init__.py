@@ -2,7 +2,6 @@ __version__ = '3.0.0'
 #
 # from nlu.component_resolution import parse_language_from_nlu_ref, nlu_ref_to_component, \
 #     construct_component_from_pipe_identifier
-import sys
 
 
 import nlu.environment.env_utils as env_utils
@@ -130,7 +129,7 @@ from nlu.components.seq2seqs.t5.t5 import T5
 from nlu.components.sequence2sequence import Seq2Seq
 
 from nlu.pipe.pipeline import NLUPipeline
-from nlu.pipe.pipe_utils import PipeUtils
+from nlu.pipe.utils.pipe_utils import PipeUtils
 from nlu.pipe.pipe_logic import PipelineQueryVerifier
 from nlu.pipe.component_resolution import *
 global spark, all_components_info, nlu_package_location,authorized
@@ -145,7 +144,6 @@ from nlu.discovery import Discoverer
 all_components_info = nlu.AllComponentsInfo()
 discoverer = nlu.Discoverer()
 
-import os
 import  json
 import sparknlp
 
@@ -218,7 +216,7 @@ from nlu.environment.env_utils import *
 def get_open_source_spark_context(gpu):
     if is_env_pyspark_2_3(): return sparknlp.start(spark23=True, gpu=gpu)
     if is_env_pyspark_2_4(): return sparknlp.start(spark24=True, gpu=gpu)
-    if is_env_pyspark_3_0() or is_env_pyspark_3_1(): return sparknlp.start(gpu=gpu)
+    if is_env_pyspark_3_0()  or is_env_pyspark_3_1(): return sparknlp.start(gpu=gpu)
     print(f"Current Spark version {get_pyspark_version()} not supported!")
     raise ValueError
 
@@ -237,10 +235,8 @@ def load(request ='from_disk', path=None,verbose=False, gpu=False):
     global is_authenticated
     is_authenticated = True
     gc.collect()
-    # if version_checks : check_pyspark_install()
 
-    auth() # check if secets are in default loc, if yes load them and create licensed context automatically
-
+    auth(gpu=gpu) # check if secets are in default loc, if yes load them and create licensed context automatically
 
     spark = get_open_source_spark_context(gpu)
     spark.catalog.clearCache()
