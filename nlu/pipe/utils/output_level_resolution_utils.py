@@ -202,14 +202,14 @@ class OutputLevelUtils():
         for level in OutputLevelUtils.annotator_levels_approach_based.keys():
             for t in OutputLevelUtils.annotator_levels_approach_based[level]:
                 if isinstance(component.model,t) :
-                    if level == 'input_dependent' : return pipe.resolve_input_dependent_component_to_output_level(component)
+                    if level == 'input_dependent' : return OutputLevelUtils.resolve_input_dependent_component_to_output_level(pipe,component)
                     else : return level
         if pipe.has_licensed_components:
             from  nlu.extractors.output_level_HC_map import HC_anno2output_level
             for level in HC_anno2output_level.keys():
                 for t in HC_anno2output_level[level]:
                     if isinstance(component.model,t) :
-                        if level == 'input_dependent' : return pipe.resolve_input_dependent_component_to_output_level(component)
+                        if level == 'input_dependent' : return OutputLevelUtils.resolve_input_dependent_component_to_output_level(pipe,component)
                         else : return level
     @staticmethod
     def get_output_level_mapping(pipe)->Dict[str,str]:
