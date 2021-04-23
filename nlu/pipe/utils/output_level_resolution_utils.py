@@ -94,7 +94,7 @@ class OutputLevelUtils():
             for c in pipe.components[::-1]:
                 if any (t in  c.info.type for t in bad_types) : continue
                 if any (n in  c.info.name for n in bad_names) : continue
-                pipe.output_level = pipe.resolve_component_to_output_level(c)
+                pipe.output_level = OutputLevelUtils.resolve_component_to_output_level(pipe,c)
                 logger.info(f'Inferred and set output level of pipeline to {pipe.output_level}', )
                 break
             # Voodo Normalizer bug that does not happen in debugger bugfix
