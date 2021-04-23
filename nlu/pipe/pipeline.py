@@ -13,9 +13,6 @@ from sparknlp.base import *
 from sparknlp.base import LightPipeline
 from sparknlp.annotator import *
 import pyspark
-from pyspark.sql.types import ArrayType, FloatType, DoubleType
-from pyspark.sql.functions import col as pyspark_col
-from pyspark.sql.functions import monotonically_increasing_id, greatest, expr,udf
 import pandas as pd
 import numpy as np
 from pyspark.sql.types import StructType,StructField, StringType, IntegerType
@@ -24,8 +21,7 @@ from nlu.pipe.utils.storage_ref_utils import StorageRefUtils
 from nlu.pipe.utils.component_utils import ComponentUtils
 from nlu.pipe.utils.output_level_resolution_utils import OutputLevelUtils
 from nlu.pipe.utils.data_conversion_utils import DataConversionUtils
-
-from typing import Union,TypeVar
+from nlu.pipe.utils.pipe_utils import PipeUtils
 
 class BasePipe(dict):
     # we inherhit from dict so the pipe is indexable and we have a nice shortcut for accessing the spark nlp model
@@ -45,6 +41,9 @@ class BasePipe(dict):
         self.components = []  # orderd list of nlu_component objects
         self.output_datatype = 'pandas'  # What data type should be returned after predict either spark, pandas, modin, numpy, string or array
         self.lang = 'en'
+        self.spark_transformer_pipe = None
+        self.spark_estimator_pipe_pipe = None
+        self.has_licensed_components = False
     def isInstanceOfNlpClassifer(self, model):
         '''
         Check for a given Spark NLP model if it is an instance of a classifier , either approach or already fitted transformer will return true
@@ -130,8 +129,8 @@ class NLUPipeline(BasePipe):
         data = {"text": ['This day sucks', 'I love this day', 'I dont like Sami']}
         text_df = pd.DataFrame(data)
         return sparknlp.start().createDataFrame(data=text_df)
-    def verify_all_labels_exist(self,dataset:Union[pyspark.sql.DataFrame, pd.DataFrame] ):
-        return 'label'  in dataset.columns
+    def verify_all_labels_exist(self,dataset):
+        return 'y'  in dataset.columns or 'label' in dataset.columns or 'labels' in dataset.columns
     def fit(self, dataset=None, dataset_path=None, label_seperator=','):
         # if dataset is  string with '/' in it, its dataset path!
         '''
@@ -143,8 +142,7 @@ class NLUPipeline(BasePipe):
         '''
         self.is_fitted = True
         stages = []
-        for component in self.components:
-            stages.append(component.model)
+        for component in self.components:stages.append(component.model)
         self.spark_estimator_pipe = Pipeline(stages=stages)
 
         if dataset_path != None and 'ner' in self.nlu_ref:
@@ -168,12 +166,12 @@ class NLUPipeline(BasePipe):
             self.spark_transformer_pipe = self.spark_estimator_pipe.fit(df)
 
         elif isinstance(dataset,pd.DataFrame):
-            if not self.verify_all_labels_exist(dataset) : return nlu.NluError()
-            self.spark_transformer_pipe = self.spark_estimator_pipe.fit(self.convert_pd_dataframe_to_spark(dataset))
+            if not self.verify_all_labels_exist(dataset) : raise ValueError(f"Could not detect label in provided columns={dataset.columns}\nMake sure a column named label, labels or y exists in your dataset.")
+            self.spark_transformer_pipe = self.spark_estimator_pipe.fit(DataConversionUtils.pdf_to_sdf(dataset,self.spark)[0])
 
-        elif isinstance(dataset,pd.DataFrame) :
-            if not self.verify_all_labels_exist(dataset) : return nlu.NluError()
-            self.spark_transformer_pipe = self.spark_estimator_pipe.fit(self.convert_pd_dataframe_to_spark(dataset))
+        elif isinstance(dataset,pyspark.sql.DataFrame) :
+            if not self.verify_all_labels_exist(dataset) : raise ValueError(f"Could not detect label in provided columns={dataset.columns}\nMake sure a column named label, labels or y exists in your dataset.")
+            self.spark_transformer_pipe = self.spark_estimator_pipe.fit(DataConversionUtils.sdf_to_sdf(dataset,self.spark))
 
         else :
             # fit on empty dataframe since no data provided
@@ -256,15 +254,33 @@ class NLUPipeline(BasePipe):
         pretty_df = self.convert_embeddings_to_np(pretty_df)
         if  drop_irrelevant_cols : return pretty_df[self.drop_irrelevant_cols(list(pretty_df.columns))]
         return pretty_df
+    # pretty_df =  self.finalize_retur_datatype(pretty_df)
 
-    def viz(self, text:str):
+    def viz(self, text_to_viz:str, viz_type='', labels_to_viz=[],viz_colors={},):
         """Visualize predictions of a Pipeline, using Spark-NLP-Display"""
         from nlu.environment.env_utils import install_and_import_package
-        install_and_import_package('spark-nlp-display')
+        install_and_import_package('spark-nlp-display',import_name='sparknlp_display')
+        if self.spark_transformer_pipe is None : self.fit()
+
+        self.configure_light_pipe_usage(1)
+        from nlu.pipe.viz.vis_utils import VizUtils
+
+        if viz_type == '' : viz_type  = VizUtils.infer_viz_type(self)
+        anno_res = self.spark_transformer_pipe.fullAnnotate(text_to_viz)[0]
+        if self.has_licensed_components==False :
+            VizUtils.viz_OS(anno_res, self, viz_type)
+        else :
+            VizUtils.viz_HC(anno_res, self, viz_type)
 
 
 
-# pretty_df =  self.finalize_retur_datatype(pretty_df)
+
+
+
+
+
+
+
 
 
     def print_exception_info(self,err):
@@ -453,27 +469,23 @@ class NLUPipeline(BasePipe):
         '''
 
         if output_level != '': self.output_level = output_level
-
+        #
         # if output_level == 'sentence' or output_level == 'document':
-        #     self = PipeUtils.configure_component_output_levels(self)
+        #     self = PipeUtils.configure_component_output_levels(output_level,self.components)
         #     self = PipeUtils.check_and_fix_nlu_pipeline(self)
         if not self.is_fitted :
             if self.has_trainable_components :
                 self.fit(data)
             else : self.fit()
-        self.configure_light_pipe_usage(len(data), multithread)
+        self.configure_light_pipe_usage(len(data), multithread) # Todo data size usage
 
         try:
             #1. Convert data to Spark DF
             sdf, stranger_features, output_datatype = DataConversionUtils.to_spark_df(data, self.spark, self.raw_text_column)
             #2. Apply Spark Pipeline
             sdf = self.spark_transformer_pipe.transform(sdf)
-            #2. Convert resulting spark DF into nicer format and by default into pandas.
-
-            if return_spark_df : return sdf  # Returns RAW result of pipe prediction
-
-
-
+            #3. Convert resulting spark DF into nicer format and by default into pandas.
+            if return_spark_df : return sdf  # Returns RAW  Spark Dataframe result of pipe prediction
             return self.pythonify_spark_dataframe(sdf,
                                                   keep_stranger_features=keep_stranger_features,
                                                   stranger_features=stranger_features,
@@ -490,6 +502,7 @@ class NLUPipeline(BasePipe):
                 logger.warning("Multithreaded mode failed. trying to predict again with non multithreaded mode ")
                 return self.predict(data, output_level=output_level, positions=positions,keep_stranger_features=keep_stranger_features, metadata=metadata, multithread=False)
             else: self.print_exception_err(err)
+
 
 
 
@@ -542,10 +555,7 @@ class NLUPipeline(BasePipe):
                 else:
                     print(o_parm[0] + o_parm[1])
     def print_exception_err(self,err):
-        '''
-        Print information about exception
-        :return: None
-        '''
+        '''Print information about exception during converting or transforming dataframe'''
         import sys
         logger.exception('Exception occured')
         e = sys.exc_info()
@@ -563,7 +573,6 @@ class NLUPipeline(BasePipe):
         import os
         fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
         print(exc_type, fname, exc_tb.tb_lineno)
-        print(
-            'Stuck? Contact us on Slack! https://join.slack.com/t/spark-nlp/shared_invite/zt-j5ttxh0z-Fn3lQSG1Z0KpOs_SRxjdyw0196BQCDPY')
         err = sys.exc_info()[1]
         print(str(err))
+        print('Stuck? Contact us on Slack! https://join.slack.com/t/spark-nlp/shared_invite/zt-lutct9gm-kuUazcyFKhuGY3_0AMkxqA')
