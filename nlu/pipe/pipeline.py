@@ -158,7 +158,7 @@ class NLUPipeline(BasePipe):
             schema = StructType([
                 StructField("y", StringType(), True),
                 StructField("text", StringType(), True)
-                ])
+            ])
             from pyspark.sql import functions as F
             df = self.spark.createDataFrame(data=dataset).withColumn('y',F.split('y',label_seperator))
             # df = self.spark.createDataFrame(data=dataset, schema=schema).withColumn('y',F.split('y',label_seperator))
@@ -268,9 +268,9 @@ class NLUPipeline(BasePipe):
         if viz_type == '' : viz_type  = VizUtils.infer_viz_type(self)
         anno_res = self.spark_transformer_pipe.fullAnnotate(text_to_viz)[0]
         if self.has_licensed_components==False :
-            VizUtils.viz_OS(anno_res, self, viz_type)
+            VizUtils.viz_OS(anno_res, self, viz_type,viz_colors)
         else :
-            VizUtils.viz_HC(anno_res, self, viz_type)
+            VizUtils.viz_HC(anno_res, self, viz_type,viz_colors)
 
 
 

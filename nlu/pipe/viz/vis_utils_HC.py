@@ -1,4 +1,5 @@
 from sparknlp_jsl.annotator import *
+from sparknlp.base import *
 from sparknlp_display import *
 class VizUtilsHC():
     """Utils for interfacing with the Spark-NLP-Display lib"""
@@ -23,10 +24,6 @@ class VizUtilsHC():
         ner_vis = NerVisualizer()
         if len(viz_colors) > 0 : ner_vis.set_label_colors(viz_colors)
         ner_vis.display(anno_res,label_col=entities_col,document_col=document_col, labels=labels )
-
-
-
-
 
 
 
@@ -82,7 +79,7 @@ class VizUtilsHC():
 
     @staticmethod
     def infer_resolution_dependencies(pipe):
-        """Finds entities,pos,dep_typed,dep_untyped and  doc cols for dep viz viz"""
+        """Finds entities_col,resolution_col,doc_col cols for resolution viz viz"""
         entities_component,resolution_component,doc_component = None, None, None
         for c in pipe.components:
             if isinstance(c.model, DocumentAssembler) :              doc_component  = c
@@ -93,5 +90,53 @@ class VizUtilsHC():
         resolution_col   = resolution_component.info.outputs[0]
         doc_col = doc_component.info.outputs[0]
         return entities_col,resolution_col,doc_col
+
+
+
+    @staticmethod
+    def viz_relation(anno_res,pipe):
+        """Viz relation result. Set label colors by specifying hex codes, i.e. viz_colors={'TREATMENT':'#800080', 'PROBLEM':'#77b5fe'} """
+        relation_col,document_col = VizUtilsHC.infer_relation_dependencies(pipe)
+        re_vis = RelationExtractionVisualizer()
+        re_vis.display(anno_res,relation_col = relation_col,document_col = document_col, show_relations=True)
+
+    @staticmethod
+    def infer_relation_dependencies(pipe):
+        """Finds relation_col,document_col  cols for relation viz viz"""
+        relation_component,doc_component = None, None
+        for c in pipe.components:
+            if isinstance(c.model, DocumentAssembler) :              doc_component  = c
+            if isinstance(c.model, (RelationExtractionDLModel,RelationExtractionModel)) :   relation_component  = c
+        relation_col       = relation_component.info.outputs[0]
+        document_col = doc_component.info.outputs[0]
+        return relation_col,document_col
+
+
+
+
+
+
+    @staticmethod
+    def viz_assertion(anno_res,pipe,viz_colors={}):
+        """Viz relation result. Set label colors by specifying hex codes, i.e. viz_colors={'TREATMENT':'#008080', 'problem':'#800080'} """
+        entities_col,assertion_col, doc_col = VizUtilsHC.infer_assertion_dependencies(pipe)
+        assertion_vis = AssertionVisualizer()
+        assertion_vis.display(anno_res,label_col = entities_col,assertion_col = assertion_col ,document_col = doc_col)
+        if len(viz_colors) > 0 : assertion_vis.set_label_colors(viz_colors)
+
+
+    @staticmethod
+    def infer_assertion_dependencies(pipe):
+        """Finds relation_col,document_col  cols for relation viz viz"""
+        entities_component,assert_component, doc_component = None, None,None
+        for c in pipe.components:
+            if isinstance(c.model, DocumentAssembler) :              doc_component  = c
+            if isinstance(c.model, (AssertionDLModel,AssertionLogRegModel)) :   assert_component  = c
+            if isinstance(c.model, (NerConverter,NerConverterInternal)) :   entities_component  = c
+
+        entities_col       = entities_component.info.outputs[0]
+        assertion_col       = assert_component.info.outputs[0]
+        doc_col = doc_component.info.outputs[0]
+        return entities_col,assertion_col, doc_col
 
 

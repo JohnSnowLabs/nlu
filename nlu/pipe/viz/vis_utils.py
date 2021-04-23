@@ -27,8 +27,8 @@ class VizUtils():
         elif viz_type == 'dep' : VizUtilsHC.viz_dep(anno_res, pipe)
         elif viz_type == 'resolution' : VizUtilsHC.viz_resolution(anno_res, pipe,viz_colors)
         elif viz_type == 'relation' : VizUtilsHC.viz_relation(anno_res, pipe)
-        elif viz_type == 'assert' : VizUtilsHC.viz_assertion(anno_res, pipe)
-        elif viz_type == 'dep' : VizUtilsHC.viz_dependency(anno_res, pipe)
+        elif viz_type == 'assert' : VizUtilsHC.viz_assertion(anno_res, pipe,viz_colors)
+        elif viz_type == 'dep' : VizUtilsHC.viz_dep(anno_res, pipe)
         else : raise ValueError("Could not find applicable viz_type. Please make sure you specify either ner, dep, resolution, relation, assert or dep and have loaded corrosponding components")
 
 """Define whiche annotators model are definable by which vizualizer. There are 5 in total, 2 open source and 5 HC"""
