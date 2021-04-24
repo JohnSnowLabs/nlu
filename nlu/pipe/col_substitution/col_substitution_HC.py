@@ -1,0 +1,1 @@
+"""Collection of methods to substitute cols of licensed component results"""
