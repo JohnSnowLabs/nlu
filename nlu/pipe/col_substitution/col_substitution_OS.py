@@ -152,21 +152,21 @@ def substitute_word_embed_cols(c, cols, is_unique=True):
     Substitute col name for Word Embeddings. For Word_Embeddings, some name will be infered, and word_embedding_<name> will become the base name schema
     """
     new_cols = []
-    c_name   = extract_nlu_identifier()
+    c_name   = extract_nlu_identifier(c)
     new_base_name = f'word_embedding_{c_name}'# if is_unique else f'document_{nlu_identifier}'
     for col in cols :
-        if '_results'    in col     :# new_cols[col] = new_base_name can be omitted for word_embeddings, maps to the origin token, which will be in the tokenizer col anyways
-        if '_beginnings' in col     : new_cols[col] = f'{new_base_name}_begin'
-        if '_endings'    in col     : new_cols[col] = f'{new_base_name}_end'
-        if '_embeddings' in col     : continue # Token never stores Embeddings  new_cols[col] = f'{new_base_name}_embedding'
+        if '_results'    in col     : # new_cols[col] = new_base_name can be omitted for word_embeddings, maps to the origin token, which will be in the tokenizer col anyways
+        if '_beginnings' in col     : new_cols[col]  = f'{new_base_name}_begin'
+        if '_endings'    in col     : new_cols[col]  = f'{new_base_name}_end'
+        if '_embeddings' in col     : new_cols[col] = new_base_name # stores the embeds and represents basically the main result
         if '_types' in col          : continue # new_cols[col] = f'{new_base_name}_type'
         if 'meta' in col:
             if '_sentence' in col  : new_cols[col] = f'{new_base_name}_origin_sentence'  # maps to which sentence token comes from
             elif 'OOV'     in col  : new_cols[col] = f'{new_base_name}_is_OOV'  # maps to which sentence token comes from
             elif 'isWordStart' in col  : new_cols[col] = f'{new_base_name}_is_word_start'  # maps to which sentence token comes from
             elif 'pieceId' in col  : new_cols[col] = f'{new_base_name}_piece_id'  # maps to which sentence token comes from
+            elif '_token' in col  :  continue  # Can be omited, is the same as _result, just maps to origin_token
             else : logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
-            # new_cols[col]= f"{new_base_name}_confidence"
     return new_cols
 
 

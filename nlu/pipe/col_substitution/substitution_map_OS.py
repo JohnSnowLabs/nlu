@@ -29,19 +29,19 @@ OS_anno2config = {
         'default': 'TODO',
     },
     BertEmbeddings : {
-        'default': 'TODO',
+        'default': substitute_word_embed_cols,
     },
     AlbertEmbeddings : {
-        'default': 'TODO',
+        'default': substitute_word_embed_cols,
     },
     XlnetEmbeddings : {
-        'default': 'TODO',
+        'default': substitute_word_embed_cols,
     },
     WordEmbeddingsModel : {
-        'default': 'TODO',
+        'default': substitute_word_embed_cols,
     },
     ElmoEmbeddings : {
-        'default': 'TODO',
+        'default': substitute_word_embed_cols,
     },
     BertSentenceEmbeddings : {
         'default': 'TODO',
