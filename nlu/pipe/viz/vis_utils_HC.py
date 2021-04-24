@@ -6,16 +6,18 @@ class VizUtilsHC():
     @staticmethod
     def infer_viz_licensed(pipe)->str:
         """For a given NLUPipeline with licensed components, infers which visualizations are applicable. """
-        for c in pipe.components:
-            if isinstance(c.model, (NerConverter,NerConverter)) : return 'ner'
+        # we go in reverse, which makes NER always take lowest priority and NER feeder annotators have higher priority
+        for c in pipe.components[::-1]:
+
             if isinstance(c.model, TypedDependencyParserModel) : return 'dep'
             if isinstance(c.model, (SentenceEntityResolverModel,ChunkEntityResolverModel)) : return 'resolution'
             if isinstance(c.model, (RelationExtractionDLModel,RelationExtractionDLModel)) : return 'relation'
-            if isinstance(c.model, (AssertionDLModel,AssertionDLModel)) : return 'assertion'
+            if isinstance(c.model, (AssertionDLModel,AssertionLogRegModel)) : return 'assert'
+            if isinstance(c.model, (NerConverter,NerConverterInternal)) : return 'ner'
 
 
     @staticmethod
-    def viz_ner(anno_res, pipe,labels = [] ,  viz_colors={}, ):
+    def viz_ner(anno_res, pipe,labels = [] ,  viz_colors={},is_databricks_env =False):
         """Infer columns required for ner viz and then viz it.
         viz_colors :  set label colors by specifying hex codes , i.e. viz_colors =  {'LOC':'#800080', 'PER':'#77b5fe'}
         labels : only allow these labels to be displayed. (default: [] - all labels will be displayed)
@@ -42,7 +44,7 @@ class VizUtilsHC():
 
 
     @staticmethod
-    def viz_dep(anno_res,pipe):
+    def viz_dep(anno_res,pipe,is_databricks_env):
         """Viz dep result"""
         pos_col,dep_typ_col,dep_untyp_col  = VizUtilsHC.infer_dep_dependencies(pipe)
         dependency_vis = DependencyParserVisualizer()
@@ -69,7 +71,7 @@ class VizUtilsHC():
 
 
     @staticmethod
-    def viz_resolution(anno_res,pipe,viz_colors={}):
+    def viz_resolution(anno_res,pipe,viz_colors={},is_databricks_env=False):
         """Viz dep result. Set label colors by specifying hex codes, i.e. viz_colors={'TREATMENT':'#800080', 'PROBLEM':'#77b5fe'} """
         entities_col,resolution_col,doc_col  = VizUtilsHC.infer_resolution_dependencies(pipe)
         er_vis = EntityResolverVisualizer()
@@ -91,10 +93,8 @@ class VizUtilsHC():
         doc_col = doc_component.info.outputs[0]
         return entities_col,resolution_col,doc_col
 
-
-
     @staticmethod
-    def viz_relation(anno_res,pipe):
+    def viz_relation(anno_res,pipe,is_databricks_env):
         """Viz relation result. Set label colors by specifying hex codes, i.e. viz_colors={'TREATMENT':'#800080', 'PROBLEM':'#77b5fe'} """
         relation_col,document_col = VizUtilsHC.infer_relation_dependencies(pipe)
         re_vis = RelationExtractionVisualizer()
@@ -112,18 +112,13 @@ class VizUtilsHC():
         return relation_col,document_col
 
 
-
-
-
-
     @staticmethod
-    def viz_assertion(anno_res,pipe,viz_colors={}):
+    def viz_assertion(anno_res,pipe,viz_colors={},is_databricks_env=False):
         """Viz relation result. Set label colors by specifying hex codes, i.e. viz_colors={'TREATMENT':'#008080', 'problem':'#800080'} """
         entities_col,assertion_col, doc_col = VizUtilsHC.infer_assertion_dependencies(pipe)
         assertion_vis = AssertionVisualizer()
         assertion_vis.display(anno_res,label_col = entities_col,assertion_col = assertion_col ,document_col = doc_col)
         if len(viz_colors) > 0 : assertion_vis.set_label_colors(viz_colors)
-
 
     @staticmethod
     def infer_assertion_dependencies(pipe):

@@ -10,14 +10,13 @@ class VizUtilsOS():
             if isinstance(c.model, NerConverter) : return 'ner'
             if isinstance(c.model, DependencyParserModel) : return 'dep'
     @staticmethod
-    def viz_ner(anno_res, pipe,labels = [] ,  viz_colors={}, ):
+    def viz_ner(anno_res, pipe,labels = None ,  viz_colors={},is_databricks_env=False ):
         """Infer columns required for ner viz and then viz it.
         viz_colors :  set label colors by specifying hex codes , i.e. viz_colors =  {'LOC':'#800080', 'PER':'#77b5fe'}
         labels : only allow these labels to be displayed. (default: [] - all labels will be displayed)
         """
         document_col,entities_col =  VizUtilsOS.infer_ner_dependencies(pipe)
         ner_vis = NerVisualizer()
-        if len(viz_colors) > 0 : ner_vis.set_label_colors(viz_colors)
         ner_vis.display(anno_res,label_col=entities_col,document_col=document_col, labels=labels )
 
 
@@ -41,7 +40,7 @@ class VizUtilsOS():
 
 
     @staticmethod
-    def viz_dep(anno_res,pipe):
+    def viz_dep(anno_res,pipe,is_databricks_env):
         """Viz dep result"""
         pos_col,dep_typ_col,dep_untyp_col  = VizUtilsOS.infer_dep_dependencies(pipe)
         dependency_vis = DependencyParserVisualizer()
