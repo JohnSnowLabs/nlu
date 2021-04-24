@@ -1,7 +1,7 @@
 import logging
 
-from nlu.extractors.extraction_resolver_OS import OS_anno2config
-from nlu.extractors.extractor_methods.base_extractor_methods import *
+from nlu.pipe.extractors.extraction_resolver_OS import OS_anno2config
+from nlu.pipe.extractors.extractor_methods.base_extractor_methods import *
 
 logger = logging.getLogger('nlu')
 import nlu
@@ -21,7 +21,7 @@ from nlu.pipe.utils.storage_ref_utils import StorageRefUtils
 from nlu.pipe.utils.component_utils import ComponentUtils
 from nlu.pipe.utils.output_level_resolution_utils import OutputLevelUtils
 from nlu.pipe.utils.data_conversion_utils import DataConversionUtils
-from nlu.pipe.utils.pipe_utils import PipeUtils
+from nlu.environment.env_utils import is_running_in_databricks
 
 class BasePipe(dict):
     # we inherhit from dict so the pipe is indexable and we have a nice shortcut for accessing the spark nlp model
@@ -197,19 +197,17 @@ class NLUPipeline(BasePipe):
             else:
                 from nlu.extractors.extraction_resolver_HC import HC_anno2config
                 if HC_anno2config[type(c.model)]['default'] == '' or full_meta :
-                    logger.info(f'could not find default configs in hc resolver space, using full default for model ={c.model}')
+                    if not full_meta : logger.info(f'could not find default configs in hc resolver space, using full default for model ={c.model}')
                     anno_2_ex_config[c.info.spark_output_column_names[0]] = HC_anno2config[type(c.model)]['default_full'](output_col_prefix=c.info.outputs[0])
                 else :
                     anno_2_ex_config[c.info.spark_output_column_names[0]] = HC_anno2config[type(c.model)]['default'](output_col_prefix=c.info.outputs[0])
         return anno_2_ex_config
 
-    def unpack_and_apply_extractors(self,sdf:pyspark.sql.DataFrame, full_meta=False, keep_stranger_features=True, stranger_features=[])-> pd.DataFrame:
+    def unpack_and_apply_extractors(self,sdf:pyspark.sql.DataFrame, keep_stranger_features=True, stranger_features=[],anno_2_ex_config={})-> pd.DataFrame:
         """1. Unpack SDF to PDF with Spark NLP Annotator Dictionaries
            2. Get the extractor configs for the corrosponding Annotator classes
            3. Apply The extractor configs with the extractor methods to each column and merge back with zip/explode"""
-        anno_2_ex_config = self.get_annotator_extraction_configs(full_meta,)
         unpack_df = sdf.toPandas().applymap(extract_pyspark_rows)
-
         return apply_extractors_and_merge(unpack_df,anno_2_ex_config, keep_stranger_features,stranger_features)
 
 
@@ -249,28 +247,39 @@ class NLUPipeline(BasePipe):
 
         logger.info(f"Extracting for same_level_cols = {same_output_level}\nand different_output_level_cols = {not_same_output_level}")
 
-        pretty_df = self.unpack_and_apply_extractors(processed, output_metadata, keep_stranger_features, stranger_features)
+        anno_2_ex_config = self.get_annotator_extraction_configs(output_metadata)
+        pretty_df = self.unpack_and_apply_extractors(processed, keep_stranger_features, stranger_features,anno_2_ex_config)
         pretty_df = zip_and_explode(pretty_df, same_output_level, not_same_output_level)
         pretty_df = self.convert_embeddings_to_np(pretty_df)
         if  drop_irrelevant_cols : return pretty_df[self.drop_irrelevant_cols(list(pretty_df.columns))]
         return pretty_df
     # pretty_df =  self.finalize_retur_datatype(pretty_df)
 
-    def viz(self, text_to_viz:str, viz_type='', labels_to_viz=[],viz_colors={},):
-        """Visualize predictions of a Pipeline, using Spark-NLP-Display"""
+    def viz(self, text_to_viz:str, viz_type='', labels_to_viz=None,viz_colors={},):
+        """Visualize predictions of a Pipeline, using Spark-NLP-Display
+        text_to_viz : String to viz
+        labels_to_viz : Defines a subset of NER labels to viz i.e. ['PER'] , by default=[] which will display all labels. Applicable only for NER viz
+        viz_type    :  Viz type, one of [ner,dep,resolution,relation,assert]
+        viz_colors  : Applicable for [ner, resolution, assert ] key = label, value=hex color, i.e. viz_colors={'TREATMENT':'#008080', 'problem':'#800080'}
+
+        """
+
+        """        # TODO DATABRICKS HANDLING!
+                configure return_html=True on visualizers and then Pipe HTML into displayHTML(vis_html)
+        """
         from nlu.environment.env_utils import install_and_import_package
         install_and_import_package('spark-nlp-display',import_name='sparknlp_display')
         if self.spark_transformer_pipe is None : self.fit()
-
+        is_databricks_env = is_running_in_databricks()
         self.configure_light_pipe_usage(1)
         from nlu.pipe.viz.vis_utils import VizUtils
 
         if viz_type == '' : viz_type  = VizUtils.infer_viz_type(self)
         anno_res = self.spark_transformer_pipe.fullAnnotate(text_to_viz)[0]
         if self.has_licensed_components==False :
-            VizUtils.viz_OS(anno_res, self, viz_type,viz_colors)
+            VizUtils.viz_OS(anno_res, self, viz_type,viz_colors,labels_to_viz,is_databricks_env)
         else :
-            VizUtils.viz_HC(anno_res, self, viz_type,viz_colors)
+            VizUtils.viz_HC(anno_res, self, viz_type,viz_colors,labels_to_viz,is_databricks_env)
 
 
 
