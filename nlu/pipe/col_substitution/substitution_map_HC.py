@@ -14,95 +14,71 @@ from nlu.pipe.extractors.extractor_configs_healthcare import *
 
 from sparknlp_jsl.annotator  import *
 
-HC_anno2config = {
+HC_anno2substitution_fn = {
     MedicalNerModel : {
-        'default': default_ner_config,
-        # 'meta': meta_NER_config,
-        'default_full'  : default_full_config,
+        'default': 'TODO',
     },
     NerConverterInternal : {
-        'default': default_NER_converter_licensed_config,
-        'default_full'  : default_full_config,
+        'default': 'TODO',
     },
     AssertionDLModel : {
-        'default': default_assertion_config,
-        'default_full'  : default_full_config,
+        'default': 'TODO',
     },
     AssertionLogRegModel : {
-        'default': default_assertion_config,
-        'default_full'  : default_full_config,
+        'default': 'TODO',
     },
     SentenceEntityResolverModel : {
-        'default': default_chunk_resolution_config,
-        'default_full'  : default_full_config,
+        'default': 'TODO',
     },
     ChunkEntityResolverModel : {
-        'default': default_chunk_resolution_config,
-        'default_full'  : default_full_config,
-        # Todo instead of topK return Best and pre-rpcoess results, i.e. splti on :::
+        'default': 'TODO',
     },
 
     DeIdentificationModel : {
-        'default': default_de_identification_config,
-        'default_full'  : default_full_config,
+        'default': 'TODO',
     },
     RelationExtractionModel : {
-        'default': default_relation_extraction_positional_config,
-        'positional': positional_relation_extraction_config,
-        'default_full'  : default_full_config,
+        'default': 'TODO',
     },
 
     RelationExtractionDLModel : {
-        'default': default_relation_extraction_positional_config,
-        'positional': positional_relation_extraction_config,
-        'default_full'  : default_full_config,
+        'default': 'TODO',
     },
     Chunk2Token : {
         'default': '',# TODO
-        'default_full'  : default_full_config,
     },
 
     ContextualParserModel : {
         'default': '',# TODO
-        'default_full'  : default_full_config,
 
     },
 
     DrugNormalizer : {
         'default': '',# TODO
-        'default_full'  : default_full_config,
     },
 
     GenericClassifierModel : {
         'default': '',# TODO
-        'default_full'  : default_full_config,
     },
 
 
     ChunkMergeModel : {
         'default': '',# TODO
-        'default_full'  : default_full_config,
     },
 
     NerDisambiguatorModel : {
         'default': '',# TODO
-        'default_full'  : default_full_config,
     },
 
     RENerChunksFilter : {
         'default': '',# TODO
-        'default_full'  : default_full_config,
     },
 
     NerOverwriter : {
         'default': '',# TODO
-        'default_full'  : default_full_config,
     },
     PosologyREModel : {
-        # 'default': '',# TODO
-        'default': default_relation_extraction_positional_config,
-        'default_full'  : default_full_config,
-
+        'default': 'TODO',
     }
 
 }

@@ -9,6 +9,11 @@ IF there is only 1 component of <type> in the pipe, the <type> will/can be ommit
 
 from sparknlp.annotator import *
 from nlu.pipe.viz.vis_utils_OS import VizUtilsOS
+from nlu.pipe.col_substitution import substitution_map_OS
+from nlu.pipe.col_substitution import col_substitution_OS
+import logging
+logger = logging.getLogger('nlu')
+
 """ NAMING SCHEMAS after pythonify procedure : 
 ### NAMING RESULT SCHEMA: 
 
@@ -32,14 +37,37 @@ class ColSubstitutionUtils():
     Uses custom rename methods for either PySpark or Pandas
     """
     @staticmethod
-    def substitute_col_names(df,anno_2_ex): pass
-    """
-    0. Get list of annotator classes that are duplicates. Check inside the NLU Component Embelishment
-    1. Get list of cols derived by component
-    2. Substitute list of cols in DF with custom logic
-    """
-        # for conf in anno_2_ex :
-        # for c in df.columns :
+    def substitute_col_names(df,anno_2_ex,pipe,drop_debug_cols=True):
+        """
+        Some truly irrelevant cols might be dropped, regardless of anno Extractor config
+        Some truly irrelevant cols might be dropped, regardless of anno Extractor config
+        0. Get list of annotator classes that are duplicates. Check inside the NLU Component Embelishment
+        1. Get list of cols derived by component
+        2. Substitute list of cols in DF with custom logic
+        """
+        substitution_fn = 'TODO'
+        new_cols = {}
+        if pipe.has_licensed_components :
+            from nlu.pipe.col_substitution import col_substitution_HC
+            from nlu.pipe.col_substitution import substitution_map_HC
+
+        for c in pipe.components :
+            is_unique = True # TODO infer this properly
+            cols_to_substitute = ColSubstitutionUtils.get_final_output_cols_of_component(c,df,anno_2_ex)
+
+            if type(c.model) in substitution_map_OS.OS_anno2substitution_fn.keys():
+                substitution_fn = substitution_map_OS.OS_anno2substitution_fn[type(c.model)]['default']
+            if pipe.has_licensed_components and substitution_fn != 'TODO':
+                if type(c.model) in substitution_map_HC.HC_anno2substitution_fn.keys():
+                    substitution_fn = substitution_map_HC.HC_anno2substitution_fn[type(c.model)]['default']
+            if substitution_fn =='TODO':
+                logger.info(f"Could not find substitution function for c={c}, leaving col names untouched")
+                new_cols.update(dict(zip(cols_to_substitute,cols_to_substitute)))
+                continue
+            # dic, key=old_col, value=new_col. Some cols may be omitted and missing from the dic which are deemed irrelevant. Behaivour can be disabled by setting drop_debug_cols=False
+            new_cols = {**new_cols, **(substitution_fn(c,cols_to_substitute,is_unique))}
+
+        return df.rename(columns = new_cols)[new_cols.values] if drop_debug_cols else df.rename(columns = new_cols)
 
 
     @staticmethod

@@ -14,7 +14,7 @@ from sparknlp.base import *
 from nlu.pipe.extractors.extractor_configs_open_source import *
 from nlu.pipe.col_substitution.col_substitution_OS import *
 
-OS_anno2config = {
+OS_anno2substitution_fn = {
     NerConverter : {
         'default': substitute_ner_converter_cols ,
     },
