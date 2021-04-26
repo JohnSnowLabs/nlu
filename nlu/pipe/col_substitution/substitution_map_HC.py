@@ -40,11 +40,11 @@ HC_anno2substitution_fn = {
         'default': substitute_de_identification_cols,
     },
     RelationExtractionModel : {
-        'default': 'TODO',
+        'default': substitute_relation_cols,
     },
 
     RelationExtractionDLModel : {
-        'default': 'TODO',
+        'default': substitute_relation_cols,
     },
     Chunk2Token : {
         'default': '',# TODO
@@ -80,7 +80,7 @@ HC_anno2substitution_fn = {
         'default': '',# TODO
     },
     PosologyREModel : {
-        'default': 'TODO',
+        'default': substitute_relation_cols,
     }
 
 }

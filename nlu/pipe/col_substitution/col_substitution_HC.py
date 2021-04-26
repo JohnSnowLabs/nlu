@@ -185,3 +185,46 @@ def substitute_de_identification_cols(c, cols, is_unique=True):
     return new_cols
 
 def extract_nlu_identifier(c):return "<name>"
+
+
+def substitute_relation_cols(c, cols, is_unique=True):
+    """
+    Substitute col name for de-identification. For de-identification, some name will be infered, and de_identified_<sub_field> defines the base name schema
+    de_identify should always be unique
+
+              metadata = Map(
+                "entity1" -> relation.entity1,
+                "entity2" -> relation.entity2,
+                "entity1_begin" -> relation.entity1_begin.toString,
+                "entity1_end" -> relation.entity1_end.toString,
+                "entity2_begin" -> relation.entity2_begin.toString,
+                "entity2_end" -> relation.entity2_end.toString,
+                "chunk1" -> relation.chunk1,
+                "chunk2" -> relation.chunk2,
+                "confidence" -> result._2.toString
+              ),
+
+    """
+    new_cols = {}
+    c_name   = extract_nlu_identifier(c)
+    new_base_name = f'relation' if is_unique else f'relation_{c_name}'
+    for col in cols :
+        if '_results'      in col     : new_cols[col]  = f'{new_base_name}' # resolved code
+        elif '_beginnings' in col     : new_cols[col]  = f'{new_base_name}_begin'
+        elif '_endings'    in col     : new_cols[col]  = f'{new_base_name}_end'
+        elif '_types'      in col     : continue # new_cols[col] = f'{new_base_name}_type'
+        elif '_embeddings' in col     : continue # omit , no data
+        elif 'meta' in col:
+            if   '_sentence'       in col  : new_cols[col] = f'{new_base_name}_origin_sentence'  # maps to which sentence token comes from
+            elif   'entity1_begin' in col  : new_cols[col] = f'{new_base_name}_entity1_begin'  # maps to which sentence token comes from
+            elif   'entity2_begin' in col  : new_cols[col] = f'{new_base_name}_entity2_begin'  # maps to which sentence token comes from
+            elif   'entity1_end'   in col  : new_cols[col] = f'{new_base_name}_entity1_end'  # maps to which sentence token comes from
+            elif   'entity2_end'   in col  : new_cols[col] = f'{new_base_name}_entity2_end'  # maps to which sentence token comes from
+            elif   'confidence'    in col  : new_cols[col] = f'{new_base_name}_confidence'  # maps to which sentence token comes from
+            elif   'entity1'       in col  : new_cols[col] = f'{new_base_name}_entity1_class'  # maps to which sentence token comes from
+            elif   'entity2'       in col  : new_cols[col] = f'{new_base_name}_entity2_class'  # maps to which sentence token comes from
+            elif   'chunk1'        in col  : new_cols[col] = f'{new_base_name}_entity1'  # maps to which sentence token comes from
+            elif   'chunk2'        in col  : new_cols[col] = f'{new_base_name}_entity2'  # maps to which sentence token comes from
+
+            else : logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
+    return new_cols
