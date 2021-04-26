@@ -37,7 +37,7 @@ HC_anno2substitution_fn = {
     },
 
     DeIdentificationModel : {
-        'default': 'TODO',
+        'default': substitute_de_identification_cols,
     },
     RelationExtractionModel : {
         'default': 'TODO',
