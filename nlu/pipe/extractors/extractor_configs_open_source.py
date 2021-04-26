@@ -10,8 +10,9 @@ extractors defined in helper_extractor_methods.py.
 
 """
 
-from nlu.extractors.extractor_base_data_classes import SparkNLPExtractor,SparkNLPExtractorConfig
-from nlu.extractors.extractor_methods.helper_extractor_methods import *
+from nlu.pipe.extractors.extractor_base_data_classes import SparkNLPExtractor,SparkNLPExtractorConfig
+from nlu.pipe.extractors.extractor_methods.helper_extractor_methods import *
+
 """
 This file contains methods to get pre-defined configurations for every annotator.
 Extractor_resolver.py should be used to resolve SparkNLP Annotator classes to methods 
@@ -22,7 +23,6 @@ This file is where all the in extractor_base_data_classes.py Dataclasses are com
 extractors defined in extractor_methods.py.
 
 """
-from nlu.extractors.extractor_methods.base_extractor_methods import *
 
 
 def default_full_config(output_col_prefix='DEFAULT'):

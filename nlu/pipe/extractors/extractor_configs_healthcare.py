@@ -1,17 +1,8 @@
-"""
-This file contains methods to get pre-defined configurations for every annotator.
-Extractor_resolver.py should be used to resolve SparkNLP Annotator classes to methods
-in this file, which return the corrosponding configs that need to be passed to
-the master_extractor() call.
 
-This file is where all the in extractor_base_data_classes.py Dataclasses are combined with the
-extractors defined in helper_extractor_methods.py.
+from nlu.pipe.extractors.extractor_base_data_classes import SparkNLPExtractor,SparkNLPExtractorConfig
+from nlu.pipe.extractors.extractor_methods.helper_extractor_methods import *
+from nlu.pipe.extractors.extractor_methods.base_extractor_methods import *
 
-
-"""
-
-from nlu.extractors.extractor_base_data_classes import SparkNLPExtractor,SparkNLPExtractorConfig
-from nlu.extractors.extractor_methods.helper_extractor_methods import *
 """
 This file contains methods to get pre-defined configurations for every annotator.
 Extractor_resolver.py should be used to resolve SparkNLP Annotator classes to methods 
@@ -22,7 +13,6 @@ This file is where all the in extractor_base_data_classes.py Dataclasses are com
 extractors defined in extractor_methods.py.
 
 """
-from nlu.extractors.extractor_methods.base_extractor_methods import *
 
 def default_get_nothing(output_col_prefix):
     return SparkNLPExtractorConfig(
@@ -74,7 +64,7 @@ def default_chunk_resolution_config(output_col_prefix='resolved_entities'):
         output_col_prefix   = output_col_prefix,
         get_result          = True,
         get_meta            = True,
-        meta_white_list     = ['all_k_distances', 'all_k_results','confidence','distance','target_text','all_k_aux_labels','all_k_cosine_distances'], #sentence, chunk
+        meta_white_list     = ['confidence','resolved_text'], #sentence, chunk
         name                = 'default_ner',
         description         = 'Converts IOB-NER representation into entity representation and generates confidences for the entire entity chunk',
     )

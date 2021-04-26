@@ -9,11 +9,10 @@ Every Annotator should have 2 configs. Some might offor multuple configs/method 
                                 If a document has multi-sentences, this will map a label back to a corrosponding sentence
 
 """
-from nlu.extractors.extractor_configs_open_source import *
-from nlu.extractors.extractor_configs_healthcare import *
+from nlu.pipe.extractors.extractor_configs_open_source import *
+from nlu.pipe.extractors.extractor_configs_healthcare import *
 
 from sparknlp_jsl.annotator  import *
-# Todo one dict for Spark2 and one for Spark3, because medical NER will give errors when importing in Spark 2
 
 HC_anno2config = {
     MedicalNerModel : {
@@ -40,7 +39,6 @@ HC_anno2config = {
     ChunkEntityResolverModel : {
         'default': default_chunk_resolution_config,
         'default_full'  : default_full_config,
-        # Todo instead of topK return Best and pre-rpcoess results, i.e. splti on :::
     },
 
     DeIdentificationModel : {

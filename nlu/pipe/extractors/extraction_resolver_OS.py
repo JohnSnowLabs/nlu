@@ -10,12 +10,9 @@ Every Annotator should have 2 configs. Some might offor multuple configs/method 
 
 """
 from sparknlp.annotator import *
-import sparknlp as sp
 from sparknlp.base import *
+from nlu.pipe.extractors.extractor_configs_open_source import *
 
-# from sparknlp.annotator import DocumentAssembler
-
-from nlu.extractors.extractor_configs_open_source import *
 OS_anno2config = {
     NerConverter : {
         'default': default_ner_converter_config ,
