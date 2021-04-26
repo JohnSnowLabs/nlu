@@ -85,7 +85,7 @@ def extract_base_sparknlp_features(row:pd.Series, configs:SparkNLPExtractorConfi
     if configs.pop_end_list:
         endings         = { configs.output_col_prefix+'_endings'    : next(map(unpack_end,row))} if configs.get_end or configs.get_positions else {}
     else:
-        endings         = { configs.output_col_prefix+'_endings'    : next(map(unpack_end,row))} if configs.get_end or configs.get_positions else {}
+        endings         = { configs.output_col_prefix+'_endings'    : list(map(unpack_end,row))} if configs.get_end or configs.get_positions else {}
 
     if configs.pop_embeds_list:
         embeddings      = { configs.output_col_prefix+'_embeddings' : next(map(unpack_embeddings,row))} if configs.get_embeds else {}
