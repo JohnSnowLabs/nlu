@@ -125,7 +125,7 @@ OS_anno2substitution_fn = {
         'default': 'TODO',
     },
     ChunkEmbeddings : {
-        'default': 'TODO',
+        'default': substitute_chunk_embed_cols,
     },
     StopWordsCleaner : {
         'default': 'TODO',

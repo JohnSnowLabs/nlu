@@ -11,15 +11,17 @@ Every Annotator should have 2 configs. Some might offor multuple configs/method 
 """
 from nlu.pipe.extractors.extractor_configs_open_source import *
 from nlu.pipe.extractors.extractor_configs_healthcare import *
+from nlu.pipe.col_substitution.col_substitution_HC import *
+from nlu.pipe.col_substitution.col_substitution_OS import *
 
 from sparknlp_jsl.annotator  import *
 
 HC_anno2substitution_fn = {
     MedicalNerModel : {
-        'default': 'TODO',
+        'default': substitute_ner_dl_cols ,
     },
     NerConverterInternal : {
-        'default': 'TODO',
+        'default': substitute_ner_internal_converter_cols,
     },
     AssertionDLModel : {
         'default': 'TODO',
@@ -28,10 +30,10 @@ HC_anno2substitution_fn = {
         'default': 'TODO',
     },
     SentenceEntityResolverModel : {
-        'default': 'TODO',
+        'default': substitute_sentence_resolution_cols,
     },
     ChunkEntityResolverModel : {
-        'default': 'TODO',
+        'default': substitute_chunk_resolution_cols,
     },
 
     DeIdentificationModel : {
