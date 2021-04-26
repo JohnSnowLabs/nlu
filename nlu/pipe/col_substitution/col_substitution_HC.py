@@ -138,4 +138,27 @@ token -> Token index
     return new_cols
 
 
+
+def substitute_assertion_cols(c, cols, is_unique=True):
+    """
+    Substitute col name for Assertion. For Assertion, some name will be infered, and assertion_<sub_field> defines the base name schema
+    Assert should always be unique
+    """
+    new_cols = {}
+    c_name   = extract_nlu_identifier(c)
+    new_base_name = f'assertion'# if is_unique else f'sentence_resolution_{c_name}'
+    for col in cols :
+        if '_results'      in col     :  new_cols[col] = f'{new_base_name}' # resolved code
+        elif '_beginnings' in col     : new_cols[col]  = f'{new_base_name}_begin'
+        elif '_endings'    in col     : new_cols[col]  = f'{new_base_name}_end'
+        elif '_types'      in col     : continue # new_cols[col] = f'{new_base_name}_type'
+        elif '_embeddings' in col     : continue # omit , no data
+        elif 'meta' in col:
+            if   '_sentence' in col  : new_cols[col] = f'{new_base_name}_origin_sentence'  # maps to which sentence token comes from
+            elif 'chunk' in col : new_cols[col] = f'{new_base_name}_origin_chunk'  # maps to which sentence token comes from
+            elif 'confidence' in col  : new_cols[col] = f'{new_base_name}' #The most likely resolution
+            else : logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
+
+    return new_cols
+
 def extract_nlu_identifier(c):return "<name>"

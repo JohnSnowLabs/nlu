@@ -24,10 +24,10 @@ HC_anno2substitution_fn = {
         'default': substitute_ner_internal_converter_cols,
     },
     AssertionDLModel : {
-        'default': 'TODO',
+        'default': substitute_assertion_cols,
     },
     AssertionLogRegModel : {
-        'default': 'TODO',
+        'default': substitute_assertion_cols,
     },
     SentenceEntityResolverModel : {
         'default': substitute_sentence_resolution_cols,
