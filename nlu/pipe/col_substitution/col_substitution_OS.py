@@ -173,7 +173,7 @@ def substitute_word_embed_cols(c, cols, is_unique=True):
 
 def substitute_chunk_embed_cols(c, cols, is_unique=True):
     """
-    Substitute col name for Word Embeddings. For Word_Embeddings, some name will be infered, and word_embedding_<name> will become the base name schema
+    Substitute col name for chunk Embeddings. For Word_Embeddings, some name will be infered, and chunk_embedding_<name> will become the base name schema
     """
     new_cols = {}
     c_name   = extract_nlu_identifier(c)
@@ -195,6 +195,90 @@ def substitute_chunk_embed_cols(c, cols, is_unique=True):
 
 
 
+def substitute_classifier_dl_cols(c, cols, is_unique=True):
+    # TODO
+    """
+    Substitute col name for Word Embeddings. For Word_Embeddings, some name will be infered, and word_embedding_<name> will become the base name schema
+    """
+    new_cols = {}
+    c_name   = extract_nlu_identifier(c)
+    new_base_name = f'{c_name}'# if is_unique else f'document_{nlu_identifier}'
+    for col in cols :
+        if '_results'    in col     : continue  # new_cols[col] = new_base_name can be omitted for chunk_embeddings, maps to the origin chunk, which will be in the tokenizer col anyways
+        elif '_beginnings' in col     : new_cols[col]  = f'{new_base_name}_begin'
+        elif '_endings'    in col     : new_cols[col]  = f'{new_base_name}_end'
+        elif '_types' in col          : continue #
+        elif '_embeddings' in col     : continue #
+        elif 'meta' in col:
+            old_base_name = f'meta_{c.info.outputs[0]}'
+            metadata = col.split(old_base_name)[-1]
+            if '_sentence' in col  : new_cols[col] = f'{new_base_name}_origin_sentence'  # maps to which sentence token comes from
+            elif metadata =='confidence'  :  new_cols[col] = f'{new_base_name}_confidence'  # max confidence over al classes
+            else :                   new_cols[col] = f'{new_base_name}{metadata}_confidence'  # confidence field
+            # else : logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
 
+    return new_cols
+
+
+
+def substitute_ngram_cols(c, cols, is_unique=True):
+    """
+    Substitute col name for Word Embeddings. ngram will be the new base name
+    """
+    new_cols = {}
+    c_name   = extract_nlu_identifier(c)
+    new_base_name = f'ngram'# if is_unique else f'document_{nlu_identifier}'
+    for col in cols :
+        if '_results'    in col       : new_cols[col]  = f'{new_base_name}'
+        elif '_beginnings' in col     : new_cols[col]  = f'{new_base_name}_begin'
+        elif '_endings'    in col     : new_cols[col]  = f'{new_base_name}_end'
+        elif '_types' in col          : continue #
+        elif '_embeddings' in col     : continue #
+        elif 'meta' in col:
+            if '_sentence' in col  : new_cols[col] = f'{new_base_name}_origin_sentence'  # maps to which sentence token comes from
+            else : logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
+
+    return new_cols
+
+def substitute_labled_dependency_cols(c, cols, is_unique=True):
+    """
+    Substitute col name for Labled dependenecy labeled_dependency will become the base name schema
+    """
+    new_cols = {}
+    c_name   = extract_nlu_identifier(c)
+    new_base_name = f'labeled_dependency'# if is_unique else f'document_{nlu_identifier}'
+    for col in cols :
+        if '_results'    in col       : new_cols[col]  = f'{new_base_name}'
+        elif '_beginnings' in col     : new_cols[col]  = f'{new_base_name}_begin'
+        elif '_endings'    in col     : new_cols[col]  = f'{new_base_name}_end'
+        elif '_types' in col          : continue #
+        elif '_embeddings' in col     : continue #
+        elif 'meta' in col:
+            if '_sentence' in col  : new_cols[col] = f'{new_base_name}_origin_sentence'  # maps to which sentence token comes from
+            else : logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
+
+    return new_cols
+
+def substitute_un_labled_dependency_cols(c, cols, is_unique=True):
+    """
+    Substitute col name for Labled dependenecy unlabeled_dependency will become the base name schema
+    """
+    new_cols = {}
+    c_name   = extract_nlu_identifier(c)
+    new_base_name = f'unlabeled_dependency'# if is_unique else f'document_{nlu_identifier}'
+    for col in cols :
+        if '_results'    in col       : new_cols[col]  = f'{new_base_name}'
+        elif '_beginnings' in col     : new_cols[col]  = f'{new_base_name}_begin'
+        elif '_endings'    in col     : new_cols[col]  = f'{new_base_name}_end'
+        elif '_types' in col          : continue #
+        elif '_embeddings' in col     : continue #
+        elif 'meta' in col:
+            if '_sentence' in col  : new_cols[col] = f'{new_base_name}_origin_sentence'
+            elif '_head.begin' in col  : new_cols[col] = f'{new_base_name}_head_begin'
+            elif 'head.end' in col  : new_cols[col] = f'{new_base_name}_head_end'
+            elif 'head' in col  : new_cols[col] = f'{new_base_name}_head'
+            else : logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
+
+    return new_cols
 
 def extract_nlu_identifier(c):return "<name>"

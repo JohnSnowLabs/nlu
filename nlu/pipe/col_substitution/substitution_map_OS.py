@@ -26,7 +26,7 @@ OS_anno2substitution_fn = {
         'default': 'TODO',
     },
     ClassifierDLModel : {
-        'default': 'TODO',
+        'default': substitute_classifier_dl_cols,
     },
     BertEmbeddings : {
         'default': substitute_word_embed_cols,
@@ -104,10 +104,10 @@ OS_anno2substitution_fn = {
         'default': 'TODO',
     },
     DependencyParserModel : {
-        'default': 'TODO',
+        'default': substitute_un_labled_dependency_cols,
     },
     TypedDependencyParserModel : {
-        'default': 'TODO',
+        'default': substitute_labled_dependency_cols,
     },
     SentimentDLModel : {
         'default': 'TODO',
@@ -122,7 +122,7 @@ OS_anno2substitution_fn = {
         'default': 'TODO',
     },
     NGramGenerator : {
-        'default': 'TODO',
+        'default': substitute_ngram_cols,
     },
     ChunkEmbeddings : {
         'default': substitute_chunk_embed_cols,
@@ -158,17 +158,13 @@ OS_anno2substitution_fn = {
 
 
     # approaches
-    ViveknSentimentApproach    :{'default':'' , 'default_full'  : default_full_config,},
-    SentimentDLApproach        :{'default':default_sentiment_dl_config , 'default_full'  : default_full_config,},
-    ClassifierDLApproach        :{'default':default_multi_classifier_dl_config , 'default_full'  : default_full_config,},
-    MultiClassifierDLApproach  :{'default':default_multi_classifier_dl_config, 'default_full'  : default_full_config,},
-    NerDLApproach              :{'default':default_NER_config , 'default_full'  : default_full_config,},
-    PerceptronApproach         :{'default':default_POS_config , 'default_full'  : default_full_config,},
+    ViveknSentimentApproach    :{'default':'TODO' , 'default_full'  : default_full_config,},
+    SentimentDLApproach        :{'default':'TODO' , 'default_full'  : default_full_config,},
+    ClassifierDLApproach        :{'default':'TODO' , 'default_full'  : default_full_config,},
+    MultiClassifierDLApproach  :{'default':'TODO', 'default_full'  : default_full_config,},
+    NerDLApproach              :{'default':'TODO' , 'default_full'  : default_full_config,},
+    PerceptronApproach         :{'default':'TODO' , 'default_full'  : default_full_config,},
 
-
-    # PretrainedPipeline : {
-    #     'default' : '',
-    # }
 }
 
 

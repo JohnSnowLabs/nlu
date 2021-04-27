@@ -9,8 +9,6 @@ Every Annotator should have 2 configs. Some might offor multuple configs/method 
                                 If a document has multi-sentences, this will map a label back to a corrosponding sentence
 
 """
-from nlu.pipe.extractors.extractor_configs_open_source import *
-from nlu.pipe.extractors.extractor_configs_healthcare import *
 from nlu.pipe.col_substitution.col_substitution_HC import *
 from nlu.pipe.col_substitution.col_substitution_OS import *
 

@@ -8,7 +8,6 @@ IF there is only 1 component of <type> in the pipe, the <type> will/can be ommit
 """
 
 from sparknlp.annotator import *
-from nlu.pipe.viz.vis_utils_OS import VizUtilsOS
 from nlu.pipe.col_substitution import substitution_map_OS
 from nlu.pipe.col_substitution import col_substitution_OS
 import logging
