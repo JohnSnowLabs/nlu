@@ -13,7 +13,6 @@ from sparknlp.annotator import *
 from sparknlp.base import *
 from nlu.pipe.extractors.extractor_configs_open_source import *
 from nlu.pipe.col_substitution.col_substitution_OS import *
-
 OS_anno2substitution_fn = {
     NerConverter : {
         'default': substitute_ner_converter_cols ,
@@ -44,13 +43,13 @@ OS_anno2substitution_fn = {
         'default': substitute_word_embed_cols,
     },
     BertSentenceEmbeddings : {
-        'default': 'TODO',
+        'default': substitute_sent_embed_cols,
     },
     UniversalSentenceEncoder : {
-        'default': 'TODO',
+        'default': substitute_sent_embed_cols,
     },
     SentenceEmbeddings : {
-        'default': 'TODO',
+        'default': substitute_sent_embed_cols,
     },
     Tokenizer : {
         'default': substitute_tokenizer_cols,
@@ -68,7 +67,7 @@ OS_anno2substitution_fn = {
         'default': substitute_sentence_detector_dl_cols,
     },
     SentenceDetector : {
-        'default': 'TODO',
+        'default': substitute_sentence_detector_pragmatic_cols,
     },
     ContextSpellCheckerModel : {
         'default': substitute_spell_context_cols,
@@ -80,7 +79,7 @@ OS_anno2substitution_fn = {
         'default': substitute_spell_norvig_cols,
     },
     LemmatizerModel : {
-        'default': 'TODO',
+        'default': substitute_lem_cols,
     },
     Normalizer : {
         'default': substitute_norm_cols,
@@ -92,7 +91,7 @@ OS_anno2substitution_fn = {
         'default':substitute_doc_norm_cols,
     },
     Stemmer : {
-        'default': 'TODO',
+        'default': substitute_stem_cols,
     },
     NerDLModel : {
         'default': substitute_ner_dl_cols,
@@ -128,7 +127,7 @@ OS_anno2substitution_fn = {
         'default': substitute_chunk_embed_cols,
     },
     StopWordsCleaner : {
-        'default': 'TODO',
+        'default': substitute_stopwords_cols,
     },
     TextMatcherModel : {
         'default': '',# TODO
@@ -152,7 +151,7 @@ OS_anno2substitution_fn = {
         'default': 'TODO',
     },
     WordSegmenterModel : {
-        'default': 'TODO',
+        'default': substitute_word_seg_cols,
     },
 
 
