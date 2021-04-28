@@ -71,13 +71,13 @@ OS_anno2substitution_fn = {
         'default': 'TODO',
     },
     ContextSpellCheckerModel : {
-        'default': 'TODO',
+        'default': substitute_spell_context_cols,
     },
     SymmetricDeleteModel : {
-        'default': 'TODO',
+        'default': substitute_spell_symm_cols,
     },
     NorvigSweetingModel : {
-        'default': 'TODO',
+        'default': substitute_spell_norvig_cols,
     },
     LemmatizerModel : {
         'default': 'TODO',
@@ -89,7 +89,7 @@ OS_anno2substitution_fn = {
         'default': substitute_norm_cols,
     },
     DocumentNormalizer : {
-        'default':'TODO',
+        'default':substitute_doc_norm_cols,
     },
     Stemmer : {
         'default': 'TODO',

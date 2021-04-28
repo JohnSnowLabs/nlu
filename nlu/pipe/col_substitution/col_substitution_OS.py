@@ -339,4 +339,67 @@ def substitute_doc_norm_cols(c, cols, is_unique=True):
             else : logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
     return new_cols
 
+
+
+def substitute_spell_context_cols(c, cols, is_unique=True):
+    """
+    Substitute col name for normalized,  <spell> will be new base col namem
+    1 spell checker is assumed per pipe for now
+    """
+    new_cols = {}
+    c_name   = extract_nlu_identifier(c)
+    new_base_name = f'spell' if is_unique else f'spell_dl'
+    for col in cols :
+        if '_results'    in col       : new_cols[col]  = f'{new_base_name}'
+        elif '_beginnings' in col     : new_cols[col]  = f'{new_base_name}_begin'
+        elif '_endings'    in col     : new_cols[col]  = f'{new_base_name}_end'
+        elif '_types' in col          : continue #
+        elif '_embeddings' in col     : continue #
+        elif 'meta' in col:
+            if   '_sentence' in col   : new_cols[col] = f'{new_base_name}_origin_sentence'
+            if   '_cost' in col   : new_cols[col] = f'{new_base_name}_cost'
+            else : logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
+    return new_cols
+
+
+def substitute_spell_symm_cols(c, cols, is_unique=True):
+    """
+    Substitute col name for sym,  <spell> will be new base col name
+    1 spell checker is assumed per pipe for now
+    """
+    new_cols = {}
+    c_name   = extract_nlu_identifier(c)
+    new_base_name = f'spell' if is_unique else f'spell_sym'
+    for col in cols :
+        if '_results'    in col       : new_cols[col]  = f'{new_base_name}'
+        elif '_beginnings' in col     : new_cols[col]  = f'{new_base_name}_begin'
+        elif '_endings'    in col     : new_cols[col]  = f'{new_base_name}_end'
+        elif '_types' in col          : continue #
+        elif '_embeddings' in col     : continue #
+        elif 'meta' in col:
+            if   '_sentence' in col   : new_cols[col] = f'{new_base_name}_origin_sentence'
+            if   '_confidence' in col   : new_cols[col] = f'{new_base_name}_confidence'
+            else : logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
+    return new_cols
+def substitute_spell_norvig_cols(c, cols, is_unique=True):
+    """
+    Substitute col name for spell,  <spell> will be new base col name
+    1 spell checker is assumed per pipe for now
+    """
+    new_cols = {}
+    c_name   = extract_nlu_identifier(c)
+    new_base_name = f'spell' if is_unique else f'spell_norvig'
+    for col in cols :
+        if '_results'    in col       : new_cols[col]  = f'{new_base_name}'
+        elif '_beginnings' in col     : new_cols[col]  = f'{new_base_name}_begin'
+        elif '_endings'    in col     : new_cols[col]  = f'{new_base_name}_end'
+        elif '_types' in col          : continue #
+        elif '_embeddings' in col     : continue #
+        elif 'meta' in col:
+            if   '_sentence' in col   : new_cols[col] = f'{new_base_name}_origin_sentence'
+            if   '_confidence' in col   : new_cols[col] = f'{new_base_name}_confidence'
+            else : logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
+    return new_cols
+
+
 def extract_nlu_identifier(c):return "<name>" # todo
