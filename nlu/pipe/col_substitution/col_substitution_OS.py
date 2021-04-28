@@ -281,4 +281,62 @@ def substitute_un_labled_dependency_cols(c, cols, is_unique=True):
 
     return new_cols
 
-def extract_nlu_identifier(c):return "<name>"
+def substitute_pos_cols(c, cols, is_unique=True):
+    """
+    Substitute col name for Labled dependenecy unlabeled_dependency will become the base name schema
+    """
+    new_cols = {}
+    c_name   = extract_nlu_identifier(c)
+    new_base_name = f'pos'# if is_unique else f'document_{nlu_identifier}'
+    for col in cols :
+        if '_results'    in col       : new_cols[col]  = f'{new_base_name}'
+        elif '_beginnings' in col     : new_cols[col]  = f'{new_base_name}_begin'
+        elif '_endings'    in col     : new_cols[col]  = f'{new_base_name}_end'
+        elif '_types' in col          : continue #
+        elif '_embeddings' in col     : continue #
+        elif 'meta' in col:
+            if   '_sentence' in col   : new_cols[col] = f'{new_base_name}_origin_sentence'
+            elif '_word' in col       : continue # can be omitted, is jsut the token
+            elif 'confidence' in col  : new_cols[col] = f'{new_base_name}_confidence'
+            else : logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
+    return new_cols
+
+
+
+def substitute_norm_cols(c, cols, is_unique=True):
+    """
+    Substitute col name for normalized,  <norm> will be new base col name
+    """
+    new_cols = {}
+    c_name   = extract_nlu_identifier(c)
+    new_base_name = f'norm'# if is_unique else f'document_{nlu_identifier}'
+    for col in cols :
+        if '_results'    in col       : new_cols[col]  = f'{new_base_name}'
+        elif '_beginnings' in col     : new_cols[col]  = f'{new_base_name}_begin'
+        elif '_endings'    in col     : new_cols[col]  = f'{new_base_name}_end'
+        elif '_types' in col          : continue #
+        elif '_embeddings' in col     : continue #
+        elif 'meta' in col:
+            if   '_sentence' in col   : new_cols[col] = f'{new_base_name}_origin_sentence'
+            else : logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
+    return new_cols
+
+def substitute_doc_norm_cols(c, cols, is_unique=True):
+    """
+    Substitute col name for normalized,  <norm> will be new base col name
+    """
+    new_cols = {}
+    c_name   = extract_nlu_identifier(c)
+    new_base_name = f'doc_norm'# if is_unique else f'document_{nlu_identifier}'
+    for col in cols :
+        if '_results'    in col       : new_cols[col]  = f'{new_base_name}'
+        elif '_beginnings' in col     : new_cols[col]  = f'{new_base_name}_begin'
+        elif '_endings'    in col     : new_cols[col]  = f'{new_base_name}_end'
+        elif '_types' in col          : continue #
+        elif '_embeddings' in col     : continue #
+        elif 'meta' in col:
+            if   '_sentence' in col   : new_cols[col] = f'{new_base_name}_origin_sentence'
+            else : logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
+    return new_cols
+
+def extract_nlu_identifier(c):return "<name>" # todo

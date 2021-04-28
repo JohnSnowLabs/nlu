@@ -23,7 +23,7 @@ OS_anno2substitution_fn = {
 
     },
     PerceptronModel : {
-        'default': 'TODO',
+        'default': substitute_pos_cols,
     },
     ClassifierDLModel : {
         'default': substitute_classifier_dl_cols,
@@ -83,10 +83,10 @@ OS_anno2substitution_fn = {
         'default': 'TODO',
     },
     Normalizer : {
-        'default': 'TODO',
+        'default': substitute_norm_cols,
     },
     NormalizerModel : {
-        'default': 'TODO',
+        'default': substitute_norm_cols,
     },
     DocumentNormalizer : {
         'default':'TODO',
