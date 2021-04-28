@@ -97,7 +97,7 @@ OS_anno2substitution_fn = {
         'default': substitute_ner_dl_cols,
     },
     NerCrfModel : {
-        'default': '',# TODO
+        'default': 'TODO',
     },
     LanguageDetectorDL : {
         'default': 'TODO',
@@ -118,7 +118,7 @@ OS_anno2substitution_fn = {
         'default': 'TODO',
     },
     Chunker : {
-        'default': 'TODO',
+        'default': substitute_chunk_cols,
     },
     NGramGenerator : {
         'default': substitute_ngram_cols,
@@ -145,10 +145,10 @@ OS_anno2substitution_fn = {
         'default': 'TODO',
     },
     MarianTransformer : {
-        'default': 'TODO',
+        'default': substitute_marian_cols,
     },
     YakeModel : {
-        'default': 'TODO',
+        'default': substitute_YAKE_cols,
     },
     WordSegmenterModel : {
         'default': substitute_word_seg_cols,
@@ -159,8 +159,8 @@ OS_anno2substitution_fn = {
     # approaches
     ViveknSentimentApproach    :{'default':'TODO' , 'default_full'  : default_full_config,},
     SentimentDLApproach        :{'default':'TODO' , 'default_full'  : default_full_config,},
-    ClassifierDLApproach        :{'default':'TODO' , 'default_full'  : default_full_config,},
-    MultiClassifierDLApproach  :{'default':'TODO', 'default_full'  : default_full_config,},
+    ClassifierDLApproach       :{'default':'TODO' , 'default_full'  : default_full_config,},
+    MultiClassifierDLApproach  :{'default':'TODO' , 'default_full'  : default_full_config,},
     NerDLApproach              :{'default':'TODO' , 'default_full'  : default_full_config,},
     PerceptronApproach         :{'default':'TODO' , 'default_full'  : default_full_config,},
 
