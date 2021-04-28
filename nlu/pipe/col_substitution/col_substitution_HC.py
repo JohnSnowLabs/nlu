@@ -225,6 +225,5 @@ def substitute_relation_cols(c, cols, is_unique=True):
             elif   'entity2'       in col  : new_cols[col] = f'{new_base_name}_entity2_class'  # maps to which sentence token comes from
             elif   'chunk1'        in col  : new_cols[col] = f'{new_base_name}_entity1'  # maps to which sentence token comes from
             elif   'chunk2'        in col  : new_cols[col] = f'{new_base_name}_entity2'  # maps to which sentence token comes from
-
             else : logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
     return new_cols
