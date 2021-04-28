@@ -1,9 +1,10 @@
 import logging
+logger = logging.getLogger('nlu')
 
 from nlu.pipe.extractors.extraction_resolver_OS import OS_anno2config
 from nlu.pipe.extractors.extractor_methods.base_extractor_methods import *
+from nlu.pipe.pipe_logic import PipeUtils
 
-logger = logging.getLogger('nlu')
 import nlu
 import nlu.pipe.pipe_components
 import sparknlp
@@ -22,7 +23,7 @@ from nlu.pipe.utils.component_utils import ComponentUtils
 from nlu.pipe.utils.output_level_resolution_utils import OutputLevelUtils
 from nlu.pipe.utils.data_conversion_utils import DataConversionUtils
 from nlu.environment.env_utils import is_running_in_databricks
-
+from nlu.pipe.col_substitution.col_name_substitution_utils import ColSubstitutionUtils
 class BasePipe(dict):
     # we inherhit from dict so the pipe is indexable and we have a nice shortcut for accessing the spark nlp model
     def __init__(self):
@@ -116,7 +117,6 @@ class BasePipe(dict):
                 component.info.nlu_ref = nlu_reference
                 self[component.info.name +"@"+ nlu_identifier] = component.model
         else :self[name_to_add] = component.model
-
 class NLUPipeline(BasePipe):
     def __init__(self):
         super().__init__()
@@ -180,37 +180,34 @@ class NLUPipeline(BasePipe):
 
 
         return self
-
     def get_annotator_extraction_configs(self,full_meta):
         """Search first OC namespace and if not found the HC Namespace for each Annotator Class in pipeline and get corrosponding config
         Returns a dictionary of methods, where keys are column names values are methods  that are applied to extract and represent the data in these
         these columns in a more pythonic and panda-esque way
         """
+        # tood doc level annos and same level annos can be popped always.
         anno_2_ex_config = {}
         for c in self.components:
             if type(c.model) in OS_anno2config.keys():
                 if OS_anno2config[type(c.model)]['default'] == '' or full_meta:
-                    logger.info(f'could not find default configs, using full default for model ={c.model}')
+                    if not full_meta : logger.info(f'could not find default configs, using full default for model ={c.model}')
                     anno_2_ex_config[c.info.spark_output_column_names[0]] = OS_anno2config[type(c.model)]['default_full'](output_col_prefix=c.info.outputs[0])
                 else :
                     anno_2_ex_config[c.info.spark_output_column_names[0]] = OS_anno2config[type(c.model)]['default'](output_col_prefix=c.info.outputs[0])
             else:
-                from nlu.extractors.extraction_resolver_HC import HC_anno2config
+                from nlu.pipe.extractors.extraction_resolver_HC import HC_anno2config
                 if HC_anno2config[type(c.model)]['default'] == '' or full_meta :
                     if not full_meta : logger.info(f'could not find default configs in hc resolver space, using full default for model ={c.model}')
                     anno_2_ex_config[c.info.spark_output_column_names[0]] = HC_anno2config[type(c.model)]['default_full'](output_col_prefix=c.info.outputs[0])
                 else :
                     anno_2_ex_config[c.info.spark_output_column_names[0]] = HC_anno2config[type(c.model)]['default'](output_col_prefix=c.info.outputs[0])
         return anno_2_ex_config
-
     def unpack_and_apply_extractors(self,sdf:pyspark.sql.DataFrame, keep_stranger_features=True, stranger_features=[],anno_2_ex_config={})-> pd.DataFrame:
         """1. Unpack SDF to PDF with Spark NLP Annotator Dictionaries
            2. Get the extractor configs for the corrosponding Annotator classes
            3. Apply The extractor configs with the extractor methods to each column and merge back with zip/explode"""
         unpack_df = sdf.toPandas().applymap(extract_pyspark_rows)
         return apply_extractors_and_merge(unpack_df,anno_2_ex_config, keep_stranger_features,stranger_features)
-
-
     def pythonify_spark_dataframe(self, processed,
                                   keep_stranger_features=True,
                                   stranger_features=[],
@@ -252,9 +249,9 @@ class NLUPipeline(BasePipe):
         pretty_df = zip_and_explode(pretty_df, same_output_level, not_same_output_level)
         pretty_df = self.convert_embeddings_to_np(pretty_df)
         if  drop_irrelevant_cols : return pretty_df[self.drop_irrelevant_cols(list(pretty_df.columns))]
+        pretty_df = ColSubstitutionUtils.substitute_col_names(pretty_df,anno_2_ex_config,self)
+        if  drop_irrelevant_cols :  pretty_df = pretty_df[self.drop_irrelevant_cols(list(pretty_df.columns))]
         return pretty_df
-    # pretty_df =  self.finalize_retur_datatype(pretty_df)
-
     def viz(self, text_to_viz:str, viz_type='', labels_to_viz=None,viz_colors={},):
         """Visualize predictions of a Pipeline, using Spark-NLP-Display
         text_to_viz : String to viz
@@ -280,41 +277,6 @@ class NLUPipeline(BasePipe):
             VizUtils.viz_OS(anno_res, self, viz_type,viz_colors,labels_to_viz,is_databricks_env)
         else :
             VizUtils.viz_HC(anno_res, self, viz_type,viz_colors,labels_to_viz,is_databricks_env)
-
-
-
-
-
-
-
-
-
-
-
-
-    def print_exception_info(self,err):
-        logger.exception('Exception occured')
-        e = sys.exc_info()
-        print("No accepted Data type or usable columns found or applying the NLU models failed. ")
-        print(
-            "Make sure that the first column you pass to .predict() is the one that nlu should predict on OR rename the column you want to predict on to 'text'  ")
-        print(
-            "If you are on Google Collab, click on Run time and try factory reset Runtime run the setup script again, you might have used too much memory")
-        print(
-            "On Kaggle try to reset restart session and run the setup script again, you might have used too much memory")
-        print('Full Stacktrace was', e)
-        print('Additional info:')
-        exc_type, exc_obj, exc_tb = sys.exc_info()
-        import os
-        fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-        print(exc_type, fname, exc_tb.tb_lineno)
-        err = sys.exc_info()[1]
-        print(str(err))
-        print('Stuck? Contact us on Slack! https://join.slack.com/t/spark-nlp/shared_invite/zt-j5ttxh0z-Fn3lQSG1Z0KpOs_SRxjdyw0196BQCDPY')
-
-
-
-
 
     def convert_embeddings_to_np(self, pdf):
         '''
@@ -422,7 +384,6 @@ class NLUPipeline(BasePipe):
         Check that for currently configured self.output_level one annotator for that level exists, i.e a Sentence Detetor for outpul tevel sentence, Tokenizer for level token etc..
         :return: None
         '''
-
         if self.output_level =='sentence':
             if self.check_if_sentence_level_requirements_met(): return
             else :
@@ -478,15 +439,18 @@ class NLUPipeline(BasePipe):
         '''
 
         if output_level != '': self.output_level = output_level
-        #
-        # if output_level == 'sentence' or output_level == 'document':
-        #     self = PipeUtils.configure_component_output_levels(output_level,self.components)
-        #     self = PipeUtils.check_and_fix_nlu_pipeline(self)
+        if output_level == 'sentence' or output_level == 'document':
+            # TODO, check if SENT in pipe, if not ADD IT! to position [1] , because doc always [1] so it fits fine
+            self.is_fitted=False
+            self.components = PipeUtils.configure_component_output_levels(self)
         if not self.is_fitted :
             if self.has_trainable_components :
                 self.fit(data)
             else : self.fit()
-        self.configure_light_pipe_usage(len(data), multithread) # Todo data size usage
+
+
+
+        # self.configure_light_pipe_usage(len(data), multithread) # Todo data size usage
 
         try:
             #1. Convert data to Spark DF
@@ -511,9 +475,6 @@ class NLUPipeline(BasePipe):
                 logger.warning("Multithreaded mode failed. trying to predict again with non multithreaded mode ")
                 return self.predict(data, output_level=output_level, positions=positions,keep_stranger_features=keep_stranger_features, metadata=metadata, multithread=False)
             else: self.print_exception_err(err)
-
-
-
 
 
     def print_info(self,minimal=True):
@@ -563,19 +524,19 @@ class NLUPipeline(BasePipe):
                     print(form.format(o_parm[0]) + o_parm[1])
                 else:
                     print(o_parm[0] + o_parm[1])
+
+
+
+
+
     def print_exception_err(self,err):
         '''Print information about exception during converting or transforming dataframe'''
         import sys
         logger.exception('Exception occured')
         e = sys.exc_info()
         print("No accepted Data type or usable columns found or applying the NLU models failed. ")
-        print(
-            "Make sure that the first column you pass to .predict() is the one that nlu should predict on OR rename the column you want to predict on to 'text'  ")
-        print(
-            "If you are on Google Collab, click on Run time and try factory reset Runtime run the setup script again, you might have used too much memory")
-        print(
-            "On Kaggle try to reset restart session and run the setup script again, you might have used too much memory")
-
+        print("Make sure that the first column you pass to .predict() is the one that nlu should predict on OR rename the column you want to predict on to 'text'  ")
+        print("On try to reset restart Jupyter session and run the setup script again, you might have used too much memory")
         print('Full Stacktrace was', e)
         print('Additional info:')
         exc_type, exc_obj, exc_tb = sys.exc_info()
@@ -585,3 +546,4 @@ class NLUPipeline(BasePipe):
         err = sys.exc_info()[1]
         print(str(err))
         print('Stuck? Contact us on Slack! https://join.slack.com/t/spark-nlp/shared_invite/zt-lutct9gm-kuUazcyFKhuGY3_0AMkxqA')
+

@@ -1,7 +1,6 @@
 import nlu
 import logging
 logger = logging.getLogger('nlu')
-from nlu.pipe.pipeline import NLUPipeline
 
 from nlu.pipe.pipe_components import SparkNLUComponent
 from nlu.pipe.utils.pipe_utils import PipeUtils
@@ -29,7 +28,7 @@ class PipelineQueryVerifier():
         4. Check wether pipeline needs to be fitted
     '''
     @staticmethod
-    def check_if_storage_ref_is_satisfied_or_get_conversion_candidate(component_to_check:SparkNLUComponent, pipe:NLUPipeline, storage_ref_to_find:str):
+    def check_if_storage_ref_is_satisfied_or_get_conversion_candidate(component_to_check:SparkNLUComponent, pipe, storage_ref_to_find:str):
         """Check if any other component in the pipeline has same storage ref as the input component..
         Returns 1. If
         If there is a candiate but it has different level, it will be returned as candidate
@@ -73,7 +72,7 @@ class PipelineQueryVerifier():
         logger.info(f'No matching storage ref found')
         return True, StorageRefConversionResolutionData(storage_ref_to_find, conversion_candidate, conversion_type)
     @staticmethod
-    def extract_required_features_refless_from_pipe(pipe: NLUPipeline):
+    def extract_required_features_refless_from_pipe(pipe):
         """Extract provided features from pipe, which have no storage ref"""
         provided_features_no_ref = []
         for c in pipe.components:
@@ -81,7 +80,7 @@ class PipelineQueryVerifier():
                 if 'embed' not in feat : provided_features_no_ref.append(feat)
         return ComponentUtils.clean_irrelevant_features(provided_features_no_ref)
     @staticmethod
-    def extract_provided_features_refless_from_pipe(pipe: NLUPipeline):
+    def extract_provided_features_refless_from_pipe(pipe):
         """Extract provided features from pipe, which have no storage ref"""
         provided_features_no_ref = []
         for c in pipe.components:
@@ -89,7 +88,7 @@ class PipelineQueryVerifier():
                 if 'embed' not in feat : provided_features_no_ref.append(feat)
         return  ComponentUtils.clean_irrelevant_features(provided_features_no_ref)
     @staticmethod
-    def extract_provided_features_ref_from_pipe(pipe: NLUPipeline):
+    def extract_provided_features_ref_from_pipe(pipe):
         """Extract provided features from pipe, which have  storage ref"""
         provided_features_ref = []
         for c in pipe.components:
@@ -99,7 +98,7 @@ class PipelineQueryVerifier():
                     else  : provided_features_ref.append(feat)
         return ComponentUtils.clean_irrelevant_features(provided_features_ref)
     @staticmethod
-    def extract_required_features_ref_from_pipe(pipe: NLUPipeline):
+    def extract_required_features_ref_from_pipe(pipe):
         """Extract provided features from pipe, which have  storage ref"""
         provided_features_ref = []
         for c in pipe.components:
@@ -122,7 +121,7 @@ class PipelineQueryVerifier():
 
         return conversion_candidates_data
     @staticmethod
-    def get_missing_required_features(pipe: NLUPipeline):
+    def get_missing_required_features(pipe):
         provided_features_no_ref                = ComponentUtils.clean_irrelevant_features(PipelineQueryVerifier.extract_provided_features_refless_from_pipe(pipe))
         required_features_no_ref                = ComponentUtils.clean_irrelevant_features(PipelineQueryVerifier.extract_required_features_refless_from_pipe(pipe))
         provided_features_ref                   = ComponentUtils.clean_irrelevant_features(PipelineQueryVerifier.extract_provided_features_ref_from_pipe(pipe))
@@ -130,11 +129,12 @@ class PipelineQueryVerifier():
         is_trainable                            = PipeUtils.is_trainable_pipe(pipe)
         conversion_candidates                   = PipelineQueryVerifier.extract_sentence_embedding_conversion_candidates(pipe)
         pipe.has_trainable_components           = is_trainable
-        if is_trainable and len(provided_features_ref) ==0 :
-            required_features_ref = [] # ['sentence_embedding@u'] # special case, if training we can reset this
-            required_features_no_ref.append('sentence_embeddings') # special case, if training we can reset this
+        if is_trainable:
+            required_features_ref = []
+            if len(provided_features_ref) == 0 : required_features_no_ref.append('sentence_embeddings') # special case, if training we can reset this
 
-        components_for_ner_conversion = [] # todo?
+
+        components_for_ner_conversion = [] #
 
         missing_features_no_ref                 = set(required_features_no_ref) - set(provided_features_no_ref)# - set(['text','label'])
         missing_features_ref                    = set(required_features_ref)    - set(provided_features_ref)
@@ -148,7 +148,7 @@ class PipelineQueryVerifier():
 
 
     @staticmethod
-    def with_missing_ner_converters(pipe: NLUPipeline) -> NLUPipeline:
+    def with_missing_ner_converters(pipe) :
         '''
 
         :param pipe: The pipeline wea dd NER converters to
@@ -238,13 +238,13 @@ class PipelineQueryVerifier():
 
 
     @staticmethod
-    def has_licensed_components(pipe: NLUPipeline) -> bool:
+    def has_licensed_components(pipe) -> bool:
         """Check if any licensed components in pipe"""
         for c in pipe.components :
             if c.info.license =='healthcare' : return True
         return False
     @staticmethod
-    def satisfy_dependencies(pipe: NLUPipeline) -> NLUPipeline:
+    def satisfy_dependencies(pipe):
         """Dependency Resolution Algorithm.
         For a given pipeline with N components, builds a DAG in reverse and satisfiy each of their dependencies and child dependencies
          with a BFS approach and returns the resulting pipeline"""
@@ -298,7 +298,7 @@ class PipelineQueryVerifier():
         return pipe
 
     @staticmethod
-    def check_and_fix_component_output_column_name_satisfaction(pipe: NLUPipeline):
+    def check_and_fix_component_output_column_name_satisfaction(pipe):
         '''
         This function verifies that every input and output column name of a component is satisfied.
         If some output names are missing, it will be added by this methods.
@@ -382,7 +382,7 @@ class PipelineQueryVerifier():
 
 
     @staticmethod
-    def check_and_fix_nlu_pipeline(pipe: NLUPipeline) -> NLUPipeline:
+    def check_and_fix_nlu_pipeline(pipe):
         """Check if the NLU pipeline is ready to transform data and return it.
         If all dependencies not satisfied, returns a new NLU pipeline where dependencies and sub-dependencies are satisfied.
         Checks and resolves in the following order :
@@ -435,7 +435,7 @@ class PipelineQueryVerifier():
 
 
     @staticmethod
-    def check_and_fix_component_order(pipe: NLUPipeline):
+    def check_and_fix_component_order(pipe):
         '''
         This method takes care that the order of components is the correct in such a way,that the pipeline can be iteratively processed by spark NLP.
         Column Names will not be touched. DAG Task Sort basically.
@@ -542,7 +542,7 @@ class PipelineQueryVerifier():
 
 
     @staticmethod
-    def check_and_fix_component_output_column_name_overlap(pipe: NLUPipeline):
+    def check_and_fix_component_output_column_name_overlap(pipe):
         '''
         This method enforces that every component has a unique output column name.
         Especially for classifiers or bert_embeddings this issue might occur,
