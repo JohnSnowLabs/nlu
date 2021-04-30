@@ -9,7 +9,7 @@
   "inputs": [
     "token"
   ],
-  "type": "chunker",
+  "type": "ngram_chunker",
   "spark_input_column_names": [
     "token"
   ],

@@ -402,7 +402,6 @@ class PipelineQueryVerifier():
         logger.info('Cleaning old AT refs')
         pipe = PipeUtils.clean_AT_storage_refs(pipe)
 
-
         #1. Resolve dependencies, builds a DAG in reverse and satisfies dependencies with a Breadth-First-Search approach
         logger.info('Satisfying dependencies')
         pipe = PipelineQueryVerifier.satisfy_dependencies(pipe)
@@ -415,18 +414,20 @@ class PipelineQueryVerifier():
         logger.info('Fixing column names')
         pipe = PipelineQueryVerifier.check_and_fix_component_output_column_name_satisfaction(pipe)
 
-
-
         #4. Set on every NLP Annotator the output columns
         pipe = PipeUtils.enforce_NLU_columns_to_NLP_columns(pipe)
 
-        #5.   fix order
+        #5. fix order
         logger.info('Optimizing pipe component order')
         pipe = PipelineQueryVerifier.check_and_fix_component_order(pipe)
-        # enfore again because trainable pipes might mutate pipe cols
+
+        #6. Rename overlapping/duplicate leaf columns in the DAG
+        logger.info('Renaming duplicates cols')
+        pipe = PipeUtils.rename_duplicate_cols(pipe)
+
+        #7. enfore again because trainable pipes might mutate pipe cols
         pipe = PipeUtils.enforce_NLU_columns_to_NLP_columns(pipe)
 
-        # 6. Check if output column names overlap, if yes, fix
         logger.info('Done with pipe optimizing')
 
         return pipe
@@ -500,12 +501,6 @@ class PipelineQueryVerifier():
 
 
 
-
-
-
-
-
-
     @staticmethod
     def is_storage_ref_match(embedding_consumer, embedding_provider,pipe):
         """Check for 2 components, if one provides the embeddings for the other. Makes sure that output_level matches up (chunk/sent/tok/embeds)"""
@@ -540,49 +535,6 @@ class PipelineQueryVerifier():
 
 
 
-
-    @staticmethod
-    def check_and_fix_component_output_column_name_overlap(pipe):
-        '''
-        This method enforces that every component has a unique output column name.
-        Especially for classifiers or bert_embeddings this issue might occur,
-
-
-        1. For each component we veryify that all input column names are satisfied  by checking all other components output names
-        2. When a input column is missing we do the following :
-        2.1 Figure out the type of the missing input column. The name of the missing column should be equal to the type
-        2.2 Check if there is already a component in the pipe, which provides this input (It should)
-        2.3. When the providing component is found, update its output name, or update the original coponents input name
-        :return: NLU pipeline where the output and input column names of the models have been adjusted to each other
-        '''
-
-        all_names_provided = False
-
-        for component_to_check in pipe.components:
-            all_names_provided_for_component = False
-            input_columns = set(component_to_check.info.spark_input_column_names)
-            logger.info(
-                f'Checking for component {component_to_check.info.name} wether input {input_columns} is satisfied by another component in the pipe')
-            for other_component in pipe.components:
-                if component_to_check.info.name == other_component.info.name: continue
-                output_columns = set(other_component.info.spark_output_column_names)
-                input_columns -= output_columns  # set substraction
-
-            input_columns = ComponentUtils.clean_irrelevant_features(input_columns)
-
-            if len(input_columns) != 0:  # fix missing column name
-                for missing_column in input_columns:
-                    for other_component in pipe.components:
-                        if component_to_check.info.name == other_component.info.name: continue
-                        if other_component.info.type == missing_column:
-                            # resolve which setter to use ...
-                            # We update the output name for the component which provides our feature
-                            other_component.info.spark_output_column_names = [missing_column]
-                            logger.info(
-                                f'Setting output columns for component {other_component.info.name} to {missing_column} ')
-                            other_component.model.setOutputCol(missing_column)
-
-        return pipe
     @staticmethod
     def is_matching_level(embedding_consumer, embedding_provider):
         """Check for embedding consumer if input level matches up outputlevel of consumer

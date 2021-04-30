@@ -437,19 +437,12 @@ class NLUPipeline(BasePipe):
         :param return_spark_df: Prediction results will be returned right after transforming with the Spark NLP pipeline
         :return:
         '''
-
         if output_level != '': self.output_level = output_level
-        if output_level == 'sentence' or output_level == 'document':
-            # TODO, check if SENT in pipe, if not ADD IT! to position [1] , because doc always [1] so it fits fine
-            self.is_fitted=False
-            self.components = PipeUtils.configure_component_output_levels(self)
+        if output_level == 'sentence' or output_level == 'document': self.components = PipeUtils.configure_component_output_levels(self)
         if not self.is_fitted :
             if self.has_trainable_components :
                 self.fit(data)
             else : self.fit()
-
-
-
         # self.configure_light_pipe_usage(len(data), multithread) # Todo data size usage
 
         try:

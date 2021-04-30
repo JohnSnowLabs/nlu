@@ -73,22 +73,21 @@ def get_default_component_of_type(missing_component_type,language='en',is_licens
     logger.info(f'Getting default for missing_component_type={ missing_component_type}')
     if not '@' in missing_component_type:
         # get default models if there is no @ in the model name included
-        if missing_component_type == 'document': return Util('document_assembler')
-        if missing_component_type == 'sentence': return Util('deep_sentence_detector')
-        if missing_component_type == 'sentence_embeddings': return Embeddings('use')
-        if 'token' in missing_component_type: return nlu.components.tokenizer.Tokenizer("default_tokenizer", language=language)
-        if missing_component_type == 'word_embeddings': return Embeddings(nlu_ref='glove')
+        if missing_component_type == 'document': return Util('document_assembler', nlu_ref='document')
+        if missing_component_type == 'sentence': return Util('deep_sentence_detector', nlu_ref='sentence')
+        if missing_component_type == 'sentence_embeddings': return Embeddings('use',nlu_ref='embed_sentence.use')
+        if 'token' in missing_component_type: return nlu.components.tokenizer.Tokenizer("default_tokenizer", nlu_ref = 'tokenize', language=language)
+        if missing_component_type == 'word_embeddings': return Embeddings(annotator_class='glove', nlu_ref='embed.glove')
         if missing_component_type == 'pos':   return Classifier(nlu_ref='pos')
         if missing_component_type == 'ner':   return Classifier(nlu_ref='ner')
-        if missing_component_type == 'ner_converter':   return Util('ner_converter')
-        if missing_component_type == 'chunk': return nlu.chunker.Chunker()
+        if missing_component_type == 'ner_converter':   return Util('ner_converter', nlu_ref='entity')
+        if missing_component_type == 'chunk': return nlu.chunker.Chunker(nlu_ref='chunker')
         if missing_component_type == 'ngram': return nlu.chunker.Chunker(nlu_ref='ngram')
-        if missing_component_type == 'chunk_embeddings': return embeddings_chunker.EmbeddingsChunker()
-        if missing_component_type == 'unlabeled_dependency': return UnlabledDepParser()
-        if missing_component_type == 'labled_dependency': return LabledDepParser('dep')
-        if missing_component_type == 'date': return nlu.Matcher('date')
-        if missing_component_type == 'ner_converter': return Util('ner_converter')
-        if missing_component_type == 'ner_chunk': return Util('ner_converter')
+        if missing_component_type == 'chunk_embeddings': return embeddings_chunker.EmbeddingsChunker(nlu_ref='chunk_embeddings')
+        if missing_component_type == 'unlabeled_dependency': return UnlabledDepParser(nlu_ref='dep.untyped')
+        if missing_component_type == 'labled_dependency': return LabledDepParser('dep',nlu_ref='dep.typed')
+        if missing_component_type == 'date': return nlu.Matcher('date', nlu_ref='match.date')
+        if missing_component_type == 'ner_chunk': return Util('ner_converter',nlu_ref='entitiy')
         if missing_component_type == 'entities' and is_licensed: return Util('ner_to_chunk_converter_licensed')
         if missing_component_type == 'entities': return Util('ner_converter')
         if missing_component_type == 'feature_vector': return Util('feature_assembler')
@@ -102,8 +101,8 @@ def get_default_component_of_type(missing_component_type,language='en',is_licens
 
 
         if 'embed' in missing_component_type:
-            # TODO RESOLVE MULTI LANG EMBEDS
-            if language in multi_lang : storage_ref = resolve_multi_lang_embed(language,storage_ref) # todo this should be hdled  better
+            # TODO RESOLVE MULTI LANG EMBEDS , this should be hdled  better
+            if language in multi_lang : storage_ref = resolve_multi_lang_embed(language,storage_ref)
             else :  nlu_ref,nlp_ref, is_licensed =  resolve_storage_ref(language,storage_ref,missing_component_type)
 
             if 'chunk_embeddings' in missing_component_type: return  set_storage_ref_and_resolution_on_component_info(embeddings_chunker.EmbeddingsChunker(nlu_ref=nlu_ref,nlp_ref=nlp_ref),storage_ref)
@@ -111,12 +110,12 @@ def get_default_component_of_type(missing_component_type,language='en',is_licens
 
         if 'pos' in missing_component_type or 'ner' in missing_component_type:
             return construct_component_from_identifier(language=language, component_type='classifier',nlp_ref=storage_ref)
-        if 'unlabeled_dependency' in missing_component_type or 'dep.untyped' in missing_component_type:
-            return UnlabledDepParser('dep.untyped')
-        if 'labled_dependency' in missing_component_type or 'dep.typed' in missing_component_type:
-            return LabledDepParser('dep.typed')
-        if 'date' in missing_component_type:
-            return None
+        # if 'unlabeled_dependency' in missing_component_type or 'dep.untyped' in missing_component_type:
+        #     return UnlabledDepParser('dep.untyped')
+        # if 'labled_dependency' in missing_component_type or 'dep.typed' in missing_component_type:
+        #     return LabledDepParser('dep.typed')
+        # if 'date' in missing_component_type:
+        #     return None
 
         logger.exception("Could not resolve default component type for missing type=%s", missing_component_type)
 

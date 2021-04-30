@@ -2,7 +2,7 @@ from sparknlp_jsl.annotator import *
 from sparknlp.base import *
 from sparknlp_display import *
 class VizUtilsHC():
-    """Utils for interfacing with the Spark-NLP-Display lib"""
+    """Utils for interfacing with the Spark-NLP-Display lib - licensed Viz"""
     @staticmethod
     def infer_viz_licensed(pipe)->str:
         """For a given NLUPipeline with licensed components, infers which visualizations are applicable. """

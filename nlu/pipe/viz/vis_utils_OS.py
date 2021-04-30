@@ -2,7 +2,7 @@ from sparknlp_display import NerVisualizer,DependencyParserVisualizer
 from sparknlp.annotator import NerConverter,DependencyParserModel, TypedDependencyParserModel, PerceptronModel
 from sparknlp.base import  DocumentAssembler
 class VizUtilsOS():
-    """Utils for interfacing with the Spark-NLP-Display lib and vizzing Open Source Components"""
+    """Utils for interfacing with the Spark-NLP-Display lib and vizzing Open Source Components - Open source"""
     @staticmethod
     def infer_viz_open_source(pipe)->str:
         """For a given NLUPipeline with only open source components, infers which visualizations are applicable. """
@@ -18,12 +18,6 @@ class VizUtilsOS():
         document_col,entities_col =  VizUtilsOS.infer_ner_dependencies(pipe)
         ner_vis = NerVisualizer()
         ner_vis.display(anno_res,label_col=entities_col,document_col=document_col, labels=labels )
-
-
-
-
-
-
 
     @staticmethod
     def infer_ner_dependencies(pipe):

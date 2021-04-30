@@ -242,6 +242,7 @@ def load(request ='from_disk', path=None,verbose=False, gpu=False):
     spark.catalog.clearCache()
     if verbose:enable_verbose()
 
+
     if path != None :
         logger.info(f'Trying to load nlu pipeline from local hard drive, located at {path}')
         return load_nlu_pipe_from_hdd(path)
@@ -273,6 +274,9 @@ def load(request ='from_disk', path=None,verbose=False, gpu=False):
     #         "Something went wrong during loading and fitting the pipe. Check the other prints for more information and also verbose mode. Did you use a correct model reference?")
     #
     #     return NluError()
+
+    for c in pipe.components :
+        if c.info.license == 'licensed' : pipe.has_licensed_components=True
     return pipe
 
 class NluError:

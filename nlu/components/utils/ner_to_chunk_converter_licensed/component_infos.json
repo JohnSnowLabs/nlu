@@ -11,7 +11,7 @@
     "token",
     "ner"
   ],
-  "type": "util",
+  "type": "ner_to_chunk_converter",
   "spark_input_column_names": [
     "sentence",
     "token",

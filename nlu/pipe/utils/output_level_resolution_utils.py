@@ -60,10 +60,9 @@ class OutputLevelUtils():
                   WordSegmenterModel, TokenizerModel
                   ],
         # 'sub_token': [TextMatcherModel, BigTextMatcherModel, RegexMatcherModel, ],
-        # sub token is when annotator is token based but some tokens may be missing since dropped/cleanes
-
+        # sub token is when annotator is token based but some tokens may be missing since dropped/cleaned
         'sub_token' : [
-            StopWordsCleaner
+            StopWordsCleaner, NormalizerModel
 
         ] ,
         'input_dependent': [BertSentenceEmbeddings, UniversalSentenceEncoder, ViveknSentimentModel,
@@ -205,7 +204,7 @@ class OutputLevelUtils():
                     if level == 'input_dependent' : return OutputLevelUtils.resolve_input_dependent_component_to_output_level(pipe,component)
                     else : return level
         if pipe.has_licensed_components:
-            from  nlu.extractors.output_level_HC_map import HC_anno2output_level
+            from nlu.pipe.extractors.output_level_HC_map import HC_anno2output_level
             for level in HC_anno2output_level.keys():
                 for t in HC_anno2output_level[level]:
                     if isinstance(component.model,t) :

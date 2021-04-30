@@ -6,7 +6,7 @@ class SentenceResolver:
         return SentenceEntityResolverModel.pretrained(name, language,bucket) \
             .setInputCols(['entities',"sentence_embeddings"]) \
             .setDistanceFunction("COSINE") \
-            .setNeighbours(1) \
+            .setNeighbours(3) \
             .setOutputCol("sentence_resolution")
 
     @staticmethod

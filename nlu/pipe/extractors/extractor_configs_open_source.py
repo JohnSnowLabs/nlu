@@ -118,7 +118,7 @@ def default_sentiment_dl_config(output_col_prefix='sentiment_dl'):
         output_col_prefix   = output_col_prefix,
         get_result          = True,
         get_full_meta       = True,
-        # pop_result_list     = True,#todo?
+        # pop_result_list     = True,
         name                = 'Only keep maximum sentiment confidence ',
         description         = 'Instead of r eturning the confidence for Postive and Negative, only the confidence of the more likely class will be returned in the confidence column',
         meta_data_extractor = SparkNLPExtractor(extract_maximum_confidence,
@@ -171,8 +171,12 @@ def default_multi_classifier_dl_config(output_col_prefix='classifier_dl'):
         output_col_prefix   = output_col_prefix,
         get_result          = True,
         get_full_meta       = True,
-        name                = 'default_multi_classifier_dl',
+        name                = 'default_classifier_dl',
         description         = 'Get all predicted confidences and labels',
+        meta_data_extractor = SparkNLPExtractor(extract_maximum_confidence,
+                                                'Instead returning confidence for each class, only return max confidence',
+                                                'Max confidence')
+
     )
 
 

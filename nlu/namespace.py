@@ -154,8 +154,6 @@ class NameSpace():
         'bert': ('small_bert_L2_128', 'model'),  # default bert
         'covidbert': ('covidbert_large_uncased', 'model'),
 
-        'en.toxic': ('multiclassifierdl_use_toxic', 'model'),
-        'en.e2e': ('multiclassifierdl_use_e2e', 'model'),
         'embed.bert': ('bert_base_uncased', 'model'),  # default bert
         'embed.bert_base_uncased': ('bert_base_uncased', 'model'),
         'embed.bert_base_cased': ('bert_base_cased', 'model'),
@@ -2033,18 +2031,6 @@ class NameSpace():
                 'en.resolve_chunk.rxnorm.scdc_healthcare': 'chunkresolve_rxnorm_scdc_healthcare',
                 'en.resolve_chunk.rxnorm.xsmall.clinical': 'chunkresolve_rxnorm_xsmall_clinical',
                 'en.resolve_chunk.snomed.findings': 'chunkresolve_snomed_findings_clinical',
-"""
-
-rxnom      = medicne ID/
-snomed     =????
-icd10      =
-icd10pcs   = PROCEDURES
-icd10cm    =
-icdoem
-athena     =  ??
-"""
-# snomed???, 
-                # rxnorm
 
                 'en.classify.icd10.clinical':'classifier_icd10cm_hcc_clinical',      #  WHCIH CLASS? # TODO NOT LAODING
                 'en.classify.icd10.healthcare':'classifier_icd10cm_hcc_healthcare', # TODO NOT LOADING CORRECt
@@ -2093,10 +2079,14 @@ athena     =  ??
     # map storage ref to nlu ref
 
     storage_ref_2_nlu_ref = {
-        'en': {},
+        'en': {
+            'tfhub_use'         : 'en.embed_sentence.use',
+            'glove_100d'        : 'en.embed.glove.100d',
+
+
+        },
         'zh': {
             'bert_base_chinese' : 'zh.embed',
-
         }
 
     }  #

@@ -55,7 +55,6 @@ class ColSubstitutionUtils():
             from nlu.pipe.col_substitution import substitution_map_HC
         deducted_component_names = ColSubstitutionUtils.deduct_component_names(pipe)
         for c in pipe.components :
-            is_unique = True # TODO infer this properly
             cols_to_substitute = ColSubstitutionUtils.get_final_output_cols_of_component(c,df,anno_2_ex)
 
             if type(c.model) in substitution_map_OS.OS_anno2substitution_fn.keys():
@@ -70,6 +69,10 @@ class ColSubstitutionUtils():
             # dic, key=old_col, value=new_col. Some cols may be omitted and missing from the dic which are deemed irrelevant. Behaivour can be disabled by setting drop_debug_cols=False
             new_cols = {**new_cols, **(substitution_fn(c,cols_to_substitute,deducted_component_names[c]))}
 
+        cols_to_rename = list(new_cols.keys() )
+        for k in cols_to_rename:
+            # some cols might not exist because no annotations generated, so we need to double check it really exists
+            if k not in df.columns: del new_cols[k]
         return df.rename(columns = new_cols)[new_cols.values()] if drop_debug_cols else df.rename(columns = new_cols)
 
 

@@ -63,3 +63,40 @@ def is_running_in_databricks():
         if 'DATABRICKS' in k :
             return True
     return False
+
+def install_and_import_package(pkg_name,version='', import_name='sparknlp_display'):
+    """ Install Spark-NLP-Healthcare PyPI Package in current enviroment if it cannot be imported and liscense provided"""
+    import importlib
+    try:
+        importlib.import_module(pkg_name)
+    except ImportError:
+
+
+        import pip
+        if version == '':
+            print(f"{pkg_name} could not be imported. Running 'pip install {pkg_name}'...")
+        else :
+            print(f"{pkg_name} could not be imported. Running 'pip install {pkg_name}=={version}'...")
+
+        pip_major_version = int(pip.__version__.split('.')[0])
+        if pip_major_version in [10, 18, 19,20]:
+            # for these versions pip module does not support installing, we install via OS command.
+            os.system(f'pip install {pkg_name}=={version} ')
+            if version == '':
+                # todo, we should get location of py executable and call python -m pip install {pkg_name}
+                os.system(f'pip install {pkg_name}=={version} ')
+            else :
+                os.system(f'pip install {pkg_name} ')
+        else:
+            if version == '':
+                pip.main(['install', f'{pkg_name}'])
+            else :
+                pip.main(['install', f'{pkg_name}=={version}'])
+    finally:
+
+        import site
+        from importlib import reload
+        reload(site)
+        # import name is not always the same name we want to import, so it must be specified via import name
+        if import_name != '' : globals()[import_name] = importlib.import_module(import_name)
+        else :globals()[pkg_name] = importlib.import_module(pkg_name)
