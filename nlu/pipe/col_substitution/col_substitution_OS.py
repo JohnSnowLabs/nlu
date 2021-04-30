@@ -199,7 +199,7 @@ def substitute_classifier_dl_cols(c, cols, nlu_identifier=True):
     new_cols = {}
     new_base_name = f'{nlu_identifier}'# if is_unique else f'document_{nlu_identifier}'
     for col in cols :
-        if '_results'    in col     : continue  # new_cols[col] = new_base_name can be omitted for chunk_embeddings, maps to the origin chunk, which will be in the tokenizer col anyways
+        if '_results'       in col     :   new_cols[col] = new_base_name #can be omitted for chunk_embeddings, maps to the origin chunk, which will be in the tokenizer col anyways
         elif '_beginnings' in col     : new_cols[col]  = f'{new_base_name}_begin'
         elif '_endings'    in col     : new_cols[col]  = f'{new_base_name}_end'
         elif '_types' in col          : continue #
