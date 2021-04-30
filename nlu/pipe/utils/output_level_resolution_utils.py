@@ -4,6 +4,7 @@ import logging
 logger = logging.getLogger('nlu')
 from sparknlp.base import *
 from sparknlp.annotator import *
+from nlu.pipe.col_substitution.col_name_substitution_utils import  ColSubstitutionUtils
 
 """Component and Column Level logic operations and utils"""
 class OutputLevelUtils():
@@ -211,16 +212,32 @@ class OutputLevelUtils():
                         if level == 'input_dependent' : return OutputLevelUtils.resolve_input_dependent_component_to_output_level(pipe,component)
                         else : return level
     @staticmethod
-    def get_output_level_mapping(pipe)->Dict[str,str]:
-        """Get a dict where key=colname and val=output_level, inferred from processed dataframe and pipe that is currently running"""
-        return {c.info.outputs[0] :OutputLevelUtils.resolve_component_to_output_level(pipe,c)  for c in pipe.components}
+    def get_output_level_mappings(pipe,df,anno_2_ex_config):
+        """Get a dict where key=spark_colname and val=output_level, inferred from processed dataframe and pipe that is currently running"""
+        output_level_map = {}
+        same_output_level_map = {}
+        not_same_output_level_map = {}
+        for c in pipe.components:
+            generated_cols = ColSubstitutionUtils.get_final_output_cols_of_component(c,df,anno_2_ex_config)
+            output_level = OutputLevelUtils.resolve_component_to_output_level(pipe,c)
+            if output_level == pipe.output_level :
+                for g_c in generated_cols: same_output_level_map[g_c]=output_level
+            else :
+                for g_c in generated_cols: not_same_output_level_map[g_c]=output_level
+            for g_c in generated_cols: output_level_map[g_c]=output_level
+        return output_level_map,same_output_level_map,not_same_output_level_map
+        # return {c.info.outputs[0] :OutputLevelUtils.resolve_component_to_output_level(pipe,c)  for c in pipe.components}
     @staticmethod
-    def get_cols_at_same_output_level(pipe,col2output_level:Dict[str,str])->List[str]:
+    def get_cols_at_same_output_level(pipe,df,anno_2_ex_config,col2output_level:Dict[str,str])->List[str]:
         """Get List of cols which are at same output level as the pipe is currently configured to"""
         # return [c.info.outputs[0]  for c in pipe.components if pipe.resolve_component_to_output_level(c) == pipe.output_level ]
-        return [c.info.outputs[0]  for c in pipe.components if col2output_level[c.info.outputs[0]] == pipe.output_level ]
+        same_output_level_cols = []
+        for c in pipe.components:
+            if col2output_level[c.info.outputs[0]] == pipe.output_level:
+                same_output_level_cols + ColSubstitutionUtils.get_final_output_cols_of_component(c,df,anno_2_ex_config)
+        return same_output_level_cols
     @staticmethod
-    def get_cols_not_at_same_output_level(pipe,col2output_level:Dict[str,str])->List[str]:
+    def get_cols_not_at_same_output_level(pipe,df,anno_2_ex_config,col2output_level:Dict[str,str])->List[str]:
         """Get List of cols which are not at same output level as the pipe is currently configured to"""
         # return [c.info.outputs[0]  for c in pipe.components if not pipe.resolve_component_to_output_level(c) == pipe.output_level ]
         return [c.info.outputs[0]  for c in pipe.components if not col2output_level[c.info.outputs[0]] == pipe.output_level ]
