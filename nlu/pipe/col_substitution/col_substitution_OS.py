@@ -6,31 +6,7 @@ Some make an exception and need special names derives, i.e. ClassifierDl/MultiCl
 import logging
 logger = logging.getLogger('nlu')
 
-def substitute_base(c, cols, is_unique):
-    """ Re-usable substitution method for, applicable to most annotators results.
-    Exceptions are Annotators like ClassifierDl/MultiClassifierDl/ etc.. which should not be used with this method
-
-    Fetched fields are:
-    - entities@<storage_ref>_results
-    - entities@<storage_ref>_<metadata>
-        - entities@<storage_ref>_entity
-        - entities@<storage_ref>_confidence
-    """
-    new_cols = {}
-    nlu_identifier = extract_nlu_identifier(c)
-    new_base_name = '???TODO???' if is_unique else f'entities_{nlu_identifier}'
-    for col in cols :
-        if 'results'     in col     : new_cols[col] = new_base_name
-        elif '_beginnings' in col     : new_cols[col] = f'{new_base_name}_begin'
-        elif '_endings'    in col     : new_cols[col] = f'{new_base_name}_end'
-        elif '_embeddings' in col     : new_cols[col] = f'{new_base_name}_embedding'
-        elif 'meta' in col:
-            if 'confidence' in col: new_cols[col]= f"{new_base_name}_confidence"
-            elif 'entity' in     col: new_cols[col]= f"{new_base_name}_class"
-            else : logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
-    return new_cols
-
-def substitute_ner_converter_cols(c, cols, is_unique):
+def substitute_ner_converter_cols(c, cols, nlu_identifier):
     """
     Fetched fields are:
     - entities@<storage_ref>_results
@@ -39,8 +15,7 @@ def substitute_ner_converter_cols(c, cols, is_unique):
         - entities@<storage_ref>_confidence
     """
     new_cols = {}
-    nlu_identifier = extract_nlu_identifier(c)
-    new_base_name = 'entities' if is_unique else f'entities_{nlu_identifier}'
+    new_base_name = 'entities' if nlu_identifier == 'UNIQUE' else f'entities_{nlu_identifier}'
     for col in cols :
         if 'results'     in col     : new_cols[col] = new_base_name
         elif '_beginnings' in col     : new_cols[col] = f'{new_base_name}_begin'
@@ -54,7 +29,7 @@ def substitute_ner_converter_cols(c, cols, is_unique):
             else : logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
     return new_cols
 
-def substitute_ner_dl_cols(c, cols, is_unique):
+def substitute_ner_dl_cols(c, cols, nlu_identifier):
     """
     Fetched fields are:
     - entities@<storage_ref>_results
@@ -63,8 +38,7 @@ def substitute_ner_dl_cols(c, cols, is_unique):
         - entities@<storage_ref>_confidence
     """
     new_cols = {}
-    nlu_identifier =  extract_nlu_identifier(c)
-    new_base_name = 'ner_iob' if is_unique else f'ner_iob_{nlu_identifier}'
+    new_base_name = 'ner_iob' if nlu_identifier=='UNIQUE' else f'ner_iob_{nlu_identifier}'
     for col in cols :
         if 'results'     in col       : new_cols[col] = new_base_name
         elif '_beginnings' in col     : new_cols[col] = f'{new_base_name}_begin'
@@ -100,12 +74,12 @@ def substitute_doc_assembler_cols(c, cols, is_unique=True):
             # new_cols[col]= f"{new_base_name}_confidence"
     return new_cols
 
-def substitute_sentence_detector_dl_cols(c, cols, is_unique=True):
+def substitute_sentence_detector_dl_cols(c, cols, nlu_identifier=True):
     """
     Sent detector is always unique
     """
     new_cols = {}
-    new_base_name = 'sentence' if is_unique else f'sentence_dl'
+    new_base_name = 'sentence' if nlu_identifier=='UNIQUE' else f'sentence_dl'
     for col in cols :
         if '_results'    in col       : new_cols[col] = new_base_name
         elif '_beginnings' in col     : new_cols[col] = f'{new_base_name}_begin'
@@ -118,12 +92,12 @@ def substitute_sentence_detector_dl_cols(c, cols, is_unique=True):
             # new_cols[col]= f"{new_base_name}_confidence"
     return new_cols
 
-def substitute_sentence_detector_pragmatic_cols(c, cols, is_unique=True):
+def substitute_sentence_detector_pragmatic_cols(c, cols, nlu_identifier=True):
     """
     Sent detector is always unique
     """
     new_cols = {}
-    new_base_name = 'sentence' if is_unique else f'sentence_pragmatic'
+    new_base_name = 'sentence' if nlu_identifier=='UNIQUE' else f'sentence_pragmatic'
     for col in cols :
         if '_results'    in col       : new_cols[col] = new_base_name
         elif '_beginnings' in col     : new_cols[col] = f'{new_base_name}_begin'
@@ -156,13 +130,12 @@ def substitute_tokenizer_cols(c, cols, is_unique=True):
 
 
 
-def substitute_word_embed_cols(c, cols, is_unique=True):
+def substitute_word_embed_cols(c, cols, nlu_identifier=True):
     """
     Substitute col name for Word Embeddings. For Word_Embeddings, some name will be infered, and word_embedding_<name> will become the base name schema
     """
     new_cols = {}
-    c_name   = extract_nlu_identifier(c)
-    new_base_name = f'word_embedding_{c_name}'# if is_unique else f'document_{nlu_identifier}'
+    new_base_name = f'word_embedding_{nlu_identifier}'# if is_unique else f'document_{nlu_identifier}'
     for col in cols :
         if '_results'    in col     : continue  # new_cols[col] = new_base_name can be omitted for word_embeddings, maps to the origin token, which will be in the tokenizer col anyways
         elif '_beginnings' in col     : new_cols[col]  = f'{new_base_name}_begin'
@@ -178,35 +151,33 @@ def substitute_word_embed_cols(c, cols, is_unique=True):
         elif '_embeddings' in col     : new_cols[col] = new_base_name # stores the embeds and represents basically the main result
 
     return new_cols
-def substitute_sent_embed_cols(c, cols, is_unique=True):
+def substitute_sent_embed_cols(c, cols, nlu_identifier=True):
     """
     Substitute col name for Word Embeddings. For Word_Embeddings, some name will be infered, and word_embedding_<name> will become the base name schema
     """
     new_cols = {}
-    c_name   = extract_nlu_identifier(c)
-    new_base_name = f'sentence_embedding_{c_name}'# if is_unique else f'document_{nlu_identifier}'
+    new_base_name = f'sentence_embedding_{nlu_identifier}'# if is_unique else f'document_{nlu_identifier}'
     for col in cols :
         if '_results'    in col     : continue  # new_cols[col] = new_base_name can be omitted for word_embeddings, maps to the origin token, which will be in the tokenizer col anyways
         elif '_beginnings' in col     : new_cols[col]  = f'{new_base_name}_begin'
         elif '_endings'    in col     : new_cols[col]  = f'{new_base_name}_end'
         elif '_types' in col          : continue # new_cols[col] = f'{new_base_name}_type'
         elif 'meta' in col:
-            if '_sentence' in col  : new_cols[col] = f'{new_base_name}_origin_sentence'  # maps to which sentence token comes from
-            elif 'OOV'     in col  : new_cols[col] = f'{new_base_name}_is_OOV'  # maps to which sentence token comes from
+            if 'OOV'     in col  : new_cols[col] = f'{new_base_name}_is_OOV'  # maps to which sentence token comes from
             elif 'isWordStart' in col  : new_cols[col] = f'{new_base_name}_is_word_start'  # maps to which sentence token comes from
             elif 'pieceId' in col  : new_cols[col] = f'{new_base_name}_piece_id'  # maps to which sentence token comes from
             elif '_token' in col  :  continue  # Can be omited, is the same as _result, just maps to origin_token
             else : logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
         elif '_embeddings' in col     : new_cols[col] = new_base_name # stores the embeds and represents basically the main result
+        elif '_sentence' in col and 'meta' in col  : new_cols[col] = f'{new_base_name}_origin_sentence'  # maps to which sentence token comes from
 
     return new_cols
-def substitute_chunk_embed_cols(c, cols, is_unique=True):
+def substitute_chunk_embed_cols(c, cols, nlu_identifier=True):
     """
     Substitute col name for chunk Embeddings. For Word_Embeddings, some name will be infered, and chunk_embedding_<name> will become the base name schema
     """
     new_cols = {}
-    c_name   = extract_nlu_identifier(c)
-    new_base_name = f'chunk_embedding_{c_name}'# if is_unique else f'document_{nlu_identifier}'
+    new_base_name = f'chunk_embedding_{nlu_identifier}'# if is_unique else f'document_{nlu_identifier}'
     for col in cols :
         if '_results'    in col     : continue  # new_cols[col] = new_base_name can be omitted for chunk_embeddings, maps to the origin chunk, which will be in the tokenizer col anyways
         elif '_beginnings' in col     : new_cols[col]  = f'{new_base_name}_begin'
@@ -221,14 +192,12 @@ def substitute_chunk_embed_cols(c, cols, is_unique=True):
         elif '_embeddings' in col     : new_cols[col] = new_base_name # stores the embeds and represents basically the main result
 
     return new_cols
-def substitute_classifier_dl_cols(c, cols, is_unique=True):
-    # TODO
+def substitute_classifier_dl_cols(c, cols, nlu_identifier=True):
     """
     Substitute col name for Word Embeddings. For Word_Embeddings, some name will be infered, and word_embedding_<name> will become the base name schema
     """
     new_cols = {}
-    c_name   = extract_nlu_identifier(c)
-    new_base_name = f'{c_name}'# if is_unique else f'document_{nlu_identifier}'
+    new_base_name = f'{nlu_identifier}'# if is_unique else f'document_{nlu_identifier}'
     for col in cols :
         if '_results'    in col     : continue  # new_cols[col] = new_base_name can be omitted for chunk_embeddings, maps to the origin chunk, which will be in the tokenizer col anyways
         elif '_beginnings' in col     : new_cols[col]  = f'{new_base_name}_begin'
@@ -239,17 +208,16 @@ def substitute_classifier_dl_cols(c, cols, is_unique=True):
             old_base_name = f'meta_{c.info.outputs[0]}'
             metadata = col.split(old_base_name)[-1]
             if '_sentence' in col  : new_cols[col] = f'{new_base_name}_origin_sentence'  # maps to which sentence token comes from
-            elif metadata =='confidence'  :  new_cols[col] = f'{new_base_name}_confidence'  # max confidence over al classes
+            elif metadata =='confidence'  :  new_cols[col] = f'{new_base_name}_confidence'  # max confidence over all classes
             else :                   new_cols[col] = f'{new_base_name}{metadata}_confidence'  # confidence field
             # else : logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
 
     return new_cols
-def substitute_ngram_cols(c, cols, is_unique=True):
+def substitute_ngram_cols(c, cols, nlu_identifier=True):
     """
     Substitute col name for Word Embeddings. ngram will be the new base name
     """
     new_cols = {}
-    c_name   = extract_nlu_identifier(c)
     new_base_name = f'ngram'# if is_unique else f'document_{nlu_identifier}'
     for col in cols :
         if '_results'    in col       : new_cols[col]  = f'{new_base_name}'
@@ -262,12 +230,11 @@ def substitute_ngram_cols(c, cols, is_unique=True):
             else : logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
 
     return new_cols
-def substitute_labled_dependency_cols(c, cols, is_unique=True):
+def substitute_labled_dependency_cols(c, cols, nlu_identifier=True):
     """
     Substitute col name for Labled dependenecy labeled_dependency will become the base name schema
     """
     new_cols = {}
-    c_name   = extract_nlu_identifier(c)
     new_base_name = f'labeled_dependency'# if is_unique else f'document_{nlu_identifier}'
     for col in cols :
         if '_results'    in col       : new_cols[col]  = f'{new_base_name}'
@@ -280,12 +247,11 @@ def substitute_labled_dependency_cols(c, cols, is_unique=True):
             else : logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
 
     return new_cols
-def substitute_un_labled_dependency_cols(c, cols, is_unique=True):
+def substitute_un_labled_dependency_cols(c, cols, nlu_identifier=True):
     """
     Substitute col name for Labled dependenecy unlabeled_dependency will become the base name schema
     """
     new_cols = {}
-    c_name   = extract_nlu_identifier(c)
     new_base_name = f'unlabeled_dependency'# if is_unique else f'document_{nlu_identifier}'
     for col in cols :
         if '_results'    in col       : new_cols[col]  = f'{new_base_name}'
@@ -301,12 +267,11 @@ def substitute_un_labled_dependency_cols(c, cols, is_unique=True):
             else : logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
 
     return new_cols
-def substitute_pos_cols(c, cols, is_unique=True):
+def substitute_pos_cols(c, cols, nlu_identifier=True):
     """
     Substitute col name for Labled dependenecy unlabeled_dependency will become the base name schema
     """
     new_cols = {}
-    c_name   = extract_nlu_identifier(c)
     new_base_name = f'pos'# if is_unique else f'document_{nlu_identifier}'
     for col in cols :
         if '_results'    in col       : new_cols[col]  = f'{new_base_name}'
@@ -320,12 +285,11 @@ def substitute_pos_cols(c, cols, is_unique=True):
             elif 'confidence' in col  : new_cols[col] = f'{new_base_name}_confidence'
             else : logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
     return new_cols
-def substitute_norm_cols(c, cols, is_unique=True):
+def substitute_norm_cols(c, cols, nlu_identifier=True):
     """
     Substitute col name for normalized,  <norm> will be new base col name
     """
     new_cols = {}
-    c_name   = extract_nlu_identifier(c)
     new_base_name = f'norm'# if is_unique else f'document_{nlu_identifier}'
     for col in cols :
         if '_results'    in col       : new_cols[col]  = f'{new_base_name}'
@@ -337,12 +301,11 @@ def substitute_norm_cols(c, cols, is_unique=True):
             if   '_sentence' in col   : new_cols[col] = f'{new_base_name}_origin_sentence'
             else : logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
     return new_cols
-def substitute_doc_norm_cols(c, cols, is_unique=True):
+def substitute_doc_norm_cols(c, cols, nlu_identifier=True):
     """
     Substitute col name for normalized,  <norm> will be new base col name
     """
     new_cols = {}
-    c_name   = extract_nlu_identifier(c)
     new_base_name = f'doc_norm'# if is_unique else f'document_{nlu_identifier}'
     for col in cols :
         if '_results'    in col       : new_cols[col]  = f'{new_base_name}'
@@ -354,14 +317,13 @@ def substitute_doc_norm_cols(c, cols, is_unique=True):
             if   '_sentence' in col   : new_cols[col] = f'{new_base_name}_origin_sentence'
             else : logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
     return new_cols
-def substitute_spell_context_cols(c, cols, is_unique=True):
+def substitute_spell_context_cols(c, cols, nlu_identifier=True):
     """
     Substitute col name for normalized,  <spell> will be new base col namem
     1 spell checker is assumed per pipe for now
     """
     new_cols = {}
-    c_name   = extract_nlu_identifier(c)
-    new_base_name = f'spell' if is_unique else f'spell_dl'
+    new_base_name = f'spell' if nlu_identifier=='UNIQUE' else f'spell_dl'
     for col in cols :
         if '_results'    in col       : new_cols[col]  = f'{new_base_name}'
         elif '_beginnings' in col     : new_cols[col]  = f'{new_base_name}_begin'
@@ -373,14 +335,13 @@ def substitute_spell_context_cols(c, cols, is_unique=True):
             if   '_cost' in col   : new_cols[col] = f'{new_base_name}_cost'
             else : logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
     return new_cols
-def substitute_spell_symm_cols(c, cols, is_unique=True):
+def substitute_spell_symm_cols(c, cols, nlu_identifier=True):
     """
     Substitute col name for sym,  <spell> will be new base col name
     1 spell checker is assumed per pipe for now
     """
     new_cols = {}
-    c_name   = extract_nlu_identifier(c)
-    new_base_name = f'spell' if is_unique else f'spell_sym'
+    new_base_name = f'spell' if nlu_identifier=='UNIQUE' else f'spell_sym'
     for col in cols :
         if '_results'    in col       : new_cols[col]  = f'{new_base_name}'
         elif '_beginnings' in col     : new_cols[col]  = f'{new_base_name}_begin'
@@ -392,14 +353,13 @@ def substitute_spell_symm_cols(c, cols, is_unique=True):
             if   '_confidence' in col   : new_cols[col] = f'{new_base_name}_confidence'
             else : logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
     return new_cols
-def substitute_spell_norvig_cols(c, cols, is_unique=True):
+def substitute_spell_norvig_cols(c, cols, nlu_identifier=True):
     """
     Substitute col name for spell,  <spell> will be new base col name
     1 spell checker is assumed per pipe for now
     """
     new_cols = {}
-    c_name   = extract_nlu_identifier(c)
-    new_base_name = f'spell' if is_unique else f'spell_norvig'
+    new_base_name = f'spell' if nlu_identifier=='UNIQUE' else f'spell_norvig'
     for col in cols :
         if '_results'    in col       : new_cols[col]  = f'{new_base_name}'
         elif '_beginnings' in col     : new_cols[col]  = f'{new_base_name}_begin'
@@ -411,7 +371,7 @@ def substitute_spell_norvig_cols(c, cols, is_unique=True):
             if   '_confidence' in col   : new_cols[col] = f'{new_base_name}_confidence'
             else : logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
     return new_cols
-def substitute_word_seg_cols(c, cols, is_unique=True):
+def substitute_word_seg_cols(c, cols, nlu_identifier=True):
     """
     Word_seg is always unique
     """
@@ -428,7 +388,7 @@ def substitute_word_seg_cols(c, cols, is_unique=True):
             else : logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
             # new_cols[col]= f"{new_base_name}_confidence"
     return new_cols
-def substitute_stem_cols(c, cols, is_unique=True):
+def substitute_stem_cols(c, cols, nlu_identifier=True):
     """
     stem is always unique
     """
@@ -445,7 +405,7 @@ def substitute_stem_cols(c, cols, is_unique=True):
             else : logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
             # new_cols[col]= f"{new_base_name}_confidence"
     return new_cols
-def substitute_lem_cols(c, cols, is_unique=True):
+def substitute_lem_cols(c, cols, nlu_identifier=True):
     """
     stem is always unique
     """
@@ -462,7 +422,7 @@ def substitute_lem_cols(c, cols, is_unique=True):
             else : logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
             # new_cols[col]= f"{new_base_name}_confidence"
     return new_cols
-def substitute_stopwords_cols(c, cols, is_unique=True):
+def substitute_stopwords_cols(c, cols, nlu_identifier=True):
     """
     stem is always unique
     """
@@ -479,7 +439,7 @@ def substitute_stopwords_cols(c, cols, is_unique=True):
             else : logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
             # new_cols[col]= f"{new_base_name}_confidence"
     return new_cols
-def substitute_chunk_cols(c, cols, is_unique=True):
+def substitute_chunk_cols(c, cols, nlu_identifier=True):
     """
     stem is always unique
     """
@@ -496,7 +456,7 @@ def substitute_chunk_cols(c, cols, is_unique=True):
             else : logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
             # new_cols[col]= f"{new_base_name}_confidence"
     return new_cols
-def substitute_YAKE_cols(c, cols, is_unique=True):
+def substitute_YAKE_cols(c, cols, nlu_identifier=True):
     """
     stem is always unique
     """
@@ -514,14 +474,12 @@ def substitute_YAKE_cols(c, cols, is_unique=True):
             else : logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
             # new_cols[col]= f"{new_base_name}_confidence"
     return new_cols
-
-def substitute_marian_cols(c, cols, is_unique=True):
+def substitute_marian_cols(c, cols, nlu_identifier=True):
     """
     rename cols with base name either <translated> or if not unique <translated_<lang>>
     """
     new_cols = {}
-    nlu_identifier = extract_nlu_identifier(c)
-    new_base_name = 'translated' if is_unique else f'translated_{nlu_identifier}'
+    new_base_name = 'translated' if nlu_identifier=='UNIQUE' else f'translated_{nlu_identifier}'
     for col in cols :
         if '_results'    in col       : new_cols[col] = new_base_name
         elif '_beginnings' in col     : new_cols[col] = f'{new_base_name}_begin'
@@ -533,13 +491,12 @@ def substitute_marian_cols(c, cols, is_unique=True):
             else : logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
             # new_cols[col]= f"{new_base_name}_confidence"
     return new_cols
-def substitute_T5_cols(c, cols, is_unique=True):
+def substitute_T5_cols(c, cols, nlu_identifier=True):
     """
     rename cols with base name either <t5> or if not unique <t5_<task>>
     """
     new_cols = {}
-    nlu_identifier = extract_nlu_identifier(c)
-    new_base_name = 't5' if is_unique else f't5_{nlu_identifier}'
+    new_base_name = 't5' if nlu_identifier=='UNIQUE' else f't5_{nlu_identifier}'
     for col in cols :
         if '_results'    in col       : new_cols[col] = new_base_name
         elif '_beginnings' in col     : new_cols[col] = f'{new_base_name}_begin'
@@ -552,7 +509,35 @@ def substitute_T5_cols(c, cols, is_unique=True):
             # new_cols[col]= f"{new_base_name}_confidence"
     return new_cols
 
+def substitute_sentiment_vivk_cols(c, cols, nlu_identifier=True):
+    new_cols = {}
+    new_base_name = 'sentiment' if nlu_identifier=='UNIQUE' else f'sentiment_{nlu_identifier}'
+    for col in cols :
+        if '_results'    in col       : new_cols[col] = new_base_name
+        elif '_beginnings' in col     : new_cols[col] = f'{new_base_name}_begin'
+        elif '_endings'    in col     : new_cols[col] = f'{new_base_name}_end'
+        elif '_embeddings' in col     : continue # Token never stores Embeddings  new_cols[col] = f'{new_base_name}_embedding'
+        elif '_types' in col          : continue # new_cols[col] = f'{new_base_name}_type'
+        elif 'meta' in col:
+            if '_sentence' in col  : new_cols[col] = f'{new_base_name}_origin_sentence'  # maps to which sentence token comes from
+            elif '_confidence' in col  : new_cols[col] = f'{new_base_name}_confidence'  # maps to which sentence token comes from
+            else : logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
+            # new_cols[col]= f"{new_base_name}_confidence"
+    return new_cols
+def substitute_sentiment_dl_cols(c, cols, nlu_identifier=True):
+    new_cols = {}
+    new_base_name = 'sentiment' if  nlu_identifier=='UNIQUE' else f'sentiment_{nlu_identifier}'
+    for col in cols :
+        if '_results'    in col       : new_cols[col] = new_base_name
+        elif '_beginnings' in col     : new_cols[col] = f'{new_base_name}_begin'
+        elif '_endings'    in col     : new_cols[col] = f'{new_base_name}_end'
+        elif '_embeddings' in col     : continue # Token never stores Embeddings  new_cols[col] = f'{new_base_name}_embedding'
+        elif '_types' in col          : continue # new_cols[col] = f'{new_base_name}_type'
+        elif 'meta' in col:
+            if '_sentence' in col  : new_cols[col] = f'{new_base_name}_origin_sentence'  # maps to which sentence token comes from
+            elif '_confidence' in col  : new_cols[col] = f'{new_base_name}_confidence'  # maps to which sentence token comes from
+            elif '_negative' in col  : new_cols[col] = f'{new_base_name}_negative'  # maps to which sentence token comes from
+            elif '_positive' in col  : new_cols[col] = f'{new_base_name}_positive'  # maps to which sentence token comes from
+            else : logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
+    return new_cols
 
-
-
-def extract_nlu_identifier(c):return "<name>" # todo

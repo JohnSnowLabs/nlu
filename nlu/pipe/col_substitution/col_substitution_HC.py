@@ -2,7 +2,7 @@
 import logging
 logger = logging.getLogger('nlu')
 
-def substitute_ner_internal_converter_cols(c, cols, is_unique):
+def substitute_ner_internal_converter_cols(c, cols, nlu_identifier):
     """
     Fetched fields are:
     - entities@<storage_ref>_results
@@ -11,8 +11,7 @@ def substitute_ner_internal_converter_cols(c, cols, is_unique):
         - entities@<storage_ref>_confidence
     """
     new_cols = {}
-    nlu_identifier = extract_nlu_identifier(c)
-    new_base_name = 'entities' if is_unique else f'entities_{nlu_identifier}'
+    new_base_name = 'entities' if nlu_identifier=='UNIQUE' else f'entities_{nlu_identifier}'
     for col in cols :
         if 'results'     in col     : new_cols[col] = new_base_name
         elif '_beginnings' in col     : new_cols[col] = f'{new_base_name}_begin'
@@ -30,7 +29,7 @@ def substitute_ner_internal_converter_cols(c, cols, is_unique):
 
 
 
-def substitute_chunk_resolution_cols(c, cols, is_unique=True):
+def substitute_chunk_resolution_cols(c, cols, nlu_identifier=True):
     """
     Substitute col name for Resolution. For Resolution, some name will be infered, and entity_resolution_<name> will become the base name schema
 all_k_results -> Sorted ResolverLabels in the top `alternatives` that match the distance `threshold`
@@ -52,8 +51,7 @@ chunk -> Chunk Index
 token -> Token index
     """
     new_cols = {}
-    c_name   = extract_nlu_identifier(c)
-    new_base_name = f'entity_resolution' if is_unique else f'entity_resolution_{c_name}'
+    new_base_name = f'entity_resolution' if nlu_identifier=='UNIQUE'  else f'entity_resolution_{nlu_identifier}'
     for col in cols :
         if '_results'      in col    and 'all_k' not in col :  new_cols[col] = f'{new_base_name}_code' # resolved code
         elif '_beginnings' in col     : new_cols[col]  = f'{new_base_name}_begin'
@@ -84,7 +82,7 @@ token -> Token index
     return new_cols
 
 
-def substitute_sentence_resolution_cols(c, cols, is_unique=True):
+def substitute_sentence_resolution_cols(c, cols, nlu_identifier=True):
     """
     Substitute col name for Resolution. For Resolution, some name will be infered, and sentence_resolution_<name> will become the base name schema
 all_k_results -> Sorted ResolverLabels in the top `alternatives` that match the distance `threshold`
@@ -106,8 +104,7 @@ chunk -> Chunk Index
 token -> Token index
     """
     new_cols = {}
-    c_name   = extract_nlu_identifier(c)
-    new_base_name = f'sentence_resolution' if is_unique else f'sentence_resolution_{c_name}'
+    new_base_name = f'sentence_resolution' if nlu_identifier=='UNIQUE' else f'sentence_resolution_{nlu_identifier}'
     for col in cols :
         if '_results'      in col    and 'all_k' not in col :  new_cols[col] = f'{new_base_name}_code' # resolved code
         elif '_beginnings' in col     : new_cols[col]  = f'{new_base_name}_begin'
@@ -139,13 +136,13 @@ token -> Token index
 
 
 
-def substitute_assertion_cols(c, cols, is_unique=True):
+def substitute_assertion_cols(c, cols, nlu_identifier=True):
     """
     Substitute col name for Assertion. For Assertion, some name will be infered, and assertion_<sub_field> defines the base name schema
     Assert should always be unique
     """
     new_cols = {}
-    c_name   = extract_nlu_identifier(c)
+    # c_name   = extract_nlu_identifier(c)
     new_base_name = f'assertion'# if is_unique else f'sentence_resolution_{c_name}'
     for col in cols :
         if '_results'      in col     :  new_cols[col] = f'{new_base_name}' # resolved code
@@ -170,7 +167,6 @@ def substitute_de_identification_cols(c, cols, is_unique=True):
     de_identify should always be unique
     """
     new_cols = {}
-    c_name   = extract_nlu_identifier(c)
     new_base_name = f'de_identified'# if is_unique else f'sentence_resolution_{c_name}'
     for col in cols :
         if '_results'      in col     :  new_cols[col] = f'{new_base_name}' # resolved code
@@ -184,10 +180,9 @@ def substitute_de_identification_cols(c, cols, is_unique=True):
 
     return new_cols
 
-def extract_nlu_identifier(c):return "<name>"
 
 
-def substitute_relation_cols(c, cols, is_unique=True):
+def substitute_relation_cols(c, cols, nlu_identifier=True):
     """
     Substitute col name for de-identification. For de-identification, some name will be infered, and de_identified_<sub_field> defines the base name schema
     de_identify should always be unique
@@ -206,8 +201,7 @@ def substitute_relation_cols(c, cols, is_unique=True):
 
     """
     new_cols = {}
-    c_name   = extract_nlu_identifier(c)
-    new_base_name = f'relation' if is_unique else f'relation_{c_name}'
+    new_base_name = f'relation' if nlu_identifier=='UNIQUE' else f'relation_{nlu_identifier}'
     for col in cols :
         if '_results'      in col     : new_cols[col]  = f'{new_base_name}' # resolved code
         elif '_beginnings' in col     : new_cols[col]  = f'{new_base_name}_begin'

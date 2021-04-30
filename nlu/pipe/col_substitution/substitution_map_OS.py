@@ -17,15 +17,8 @@ OS_anno2substitution_fn = {
     NerConverter : {
         'default': substitute_ner_converter_cols ,
     },
-    MultiClassifierDLModel : {
-        'default': 'TODO' ,
-
-    },
     PerceptronModel : {
         'default': substitute_pos_cols,
-    },
-    ClassifierDLModel : {
-        'default': substitute_classifier_dl_cols,
     },
     BertEmbeddings : {
         'default': substitute_word_embed_cols,
@@ -109,14 +102,21 @@ OS_anno2substitution_fn = {
         'default': substitute_labled_dependency_cols,
     },
     SentimentDLModel : {
-        'default': 'TODO',
+        'default': substitute_sentiment_dl_cols,
     },
     SentimentDetectorModel : {
-        'default': 'TODO',
+        'default': substitute_sentiment_dl_cols,
     },
     ViveknSentimentModel : {
-        'default': 'TODO',
+        'default': substitute_sentiment_vivk_cols,
     },
+    MultiClassifierDLModel : {
+        'default': 'TODO' ,
+    },
+    ClassifierDLModel : {
+        'default': substitute_classifier_dl_cols,
+    },
+
     Chunker : {
         'default': substitute_chunk_cols,
     },
@@ -142,7 +142,7 @@ OS_anno2substitution_fn = {
         'default': '',# TODO
     },
     T5Transformer : {
-        'default': 'TODO',
+        'default': substitute_T5_cols,
     },
     MarianTransformer : {
         'default': substitute_marian_cols,
