@@ -58,7 +58,7 @@ class DataConversionUtils():
             data['text'] = data[data.columns[0]]
         data['origin_index'] = data.index
         if raw_text_column in data.columns:
-            sdf = spark_sess.spark.createDataFrame(data)
+            sdf = spark_sess.createDataFrame(data)
         else: DataConversionUtils.except_text_col_not_found(data.columns)
         return sdf, [], output_datatype
 
@@ -125,7 +125,7 @@ class DataConversionUtils():
         try :
             if   isinstance(data,pyspark.sql.dataframe.DataFrame): return DataConversionUtils.sdf_to_sdf(data,spark_sess,raw_text_column)
             elif isinstance(data,pd.DataFrame):  return DataConversionUtils.pdf_to_sdf(data,spark_sess,raw_text_column)
-            elif isinstance(data,pd.Series):     return DataConversionUtils.pdf_to_sdf(data,spark_sess,raw_text_column)
+            elif isinstance(data,pd.Series):     return DataConversionUtils.pds_to_sdf(data,spark_sess,raw_text_column)
             elif isinstance(data,np.ndarray):  return DataConversionUtils.np_to_sdf(data,spark_sess,raw_text_column)
             elif isinstance(data,str): return DataConversionUtils.str_to_sdf(data,spark_sess,raw_text_column)
             elif isinstance(data,list): return DataConversionUtils.str_list_to_sdf(data,spark_sess,raw_text_column)
