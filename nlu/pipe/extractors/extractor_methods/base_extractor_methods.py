@@ -7,7 +7,7 @@ They expect dictionaries which represent the metadata field extracted from Spark
 
 
 """
-
+import numpy as np
 from pyspark.sql import Row as PysparkRow
 from nlu.pipe.extractors.extractor_base_data_classes import *
 from functools import reduce, partial
@@ -206,7 +206,7 @@ def apply_extractors_and_merge(df, column_to_extractor_map,  keep_stranger_featu
 #     return df
 
 # def zip_and_explode(df:pd.DataFrame, cols_to_explode:List[str], output_level, lower_output_level, higher_output_level, same_output_level):
-def zip_and_explode(df:pd.DataFrame,origin_cols_to_explode, origin_cols_not_to_explode):
+def zip_and_explode(df:pd.DataFrame,origin_cols_to_explode, origin_cols_not_to_explode, output_level):
     """ returns a NEW dataframe where cols_to_explode are all exploded together
 
     Used to extract SAME OUTPUT LEVEL annotator outputs.
@@ -227,6 +227,11 @@ def zip_and_explode(df:pd.DataFrame,origin_cols_to_explode, origin_cols_not_to_e
     # not_same_level_cols_filter  = lambda c : any( og_c in c  for og_c in origin_cols_not_to_explode)
     # not_same_level_cols         = list(filter(not_same_level_cols_filter,df.columns))
 
+
+    # if NUM component at same output level >1 and outputlevel is CHUNK we need the following padding logick
+    if output_level == 'chunk' and len(cols_to_explode)>2:
+        df[cols_to_explode] = df[cols_to_explode].apply(pad_same_level_cols,axis=1)
+
     pd_col_extractor_generator = lambda col : lambda x :  df[col]
     explode_series  = lambda s : s.explode()#.reset_index(drop=True)#.rename({'index':'origin_index'})#(drop=True)
     pd_col_extractors = list(map(pd_col_extractor_generator,cols_to_explode))
@@ -244,6 +249,25 @@ def zip_and_explode(df:pd.DataFrame,origin_cols_to_explode, origin_cols_not_to_e
 
 
 
+def pad_same_level_cols(row ):
+    """We must ensure that the cols which are going to be exploded have all the same amount of elements.
+    To ensure this,w e aply this methods on the cols we wish to explode. It ensures, they have all the same
+    length and can be exploded eronous free
+    """
+    max_len = 0
+    lens = {}
+    for c in row.index :
+        if isinstance(row[c],list):
+            lens[c] = len(row[c])
+            if lens[c] > max_len : max_len = lens[c]
+        if isinstance(row[c],float):
+            lens[c] = 1
+            row[c]  = [row[c]]
+
+    for c, lenght in lens.items():
+        if lenght < max_len :
+            row[c] += [np.nan] * (max_len-lenght)
+    return row
 
 """
  We basically need to know the longest series for each Column and Index in the exploded serieses
