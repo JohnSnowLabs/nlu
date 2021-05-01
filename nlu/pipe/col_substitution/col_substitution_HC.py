@@ -112,8 +112,7 @@ token -> Token index
         elif '_types'      in col          : continue # new_cols[col] = f'{new_base_name}_type'
         elif '_embeddings' in col     : continue # omit , no data
         elif 'meta' in col:
-            if   '_sentence' in col  : new_cols[col] = f'{new_base_name}_origin_sentence'  # maps to which sentence token comes from
-            elif 'all_k_aux_labels' in col  : new_cols[col] = f'{new_base_name}_k_aux_labels'  # maps to which sentence token comes from
+            if 'all_k_aux_labels' in col  : new_cols[col] = f'{new_base_name}_k_aux_labels'  # maps to which sentence token comes from
             elif 'resolved_text' in col  : new_cols[col] = f'{new_base_name}' #The most likely resolution
             elif 'target_text' in col  : continue # Can be omitted, origin chunk basically, which will be included in the nerConverterInternal result
             elif 'all_k_confidences' in col  : new_cols[col] = f'{new_base_name}_k_confidences'  # confidences of the k resolutions
@@ -130,6 +129,7 @@ token -> Token index
             elif 'all_k_levenshtein_distances' in col  : new_cols[col] = f'{new_base_name}_k_levenshtein_distances'
             elif 'distance' in col  : new_cols[col] = f'{new_base_name}_distance'
             elif 'chunk' in col  : continue # Omit, irreleant new_cols[col] = f'{new_base_name}_confidence'
+            elif   '_sentence' in col  : new_cols[col] = f'{new_base_name}_origin_sentence'  # maps to which sentence token comes from
             else : logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
 
     return new_cols
@@ -167,7 +167,7 @@ def substitute_de_identification_cols(c, cols, is_unique=True):
     de_identify should always be unique
     """
     new_cols = {}
-    new_base_name = f'de_identified'# if is_unique else f'sentence_resolution_{c_name}'
+    new_base_name = f'de_identified'#
     for col in cols :
         if '_results'      in col     :  new_cols[col] = f'{new_base_name}' # resolved code
         elif '_beginnings' in col     : new_cols[col]  = f'{new_base_name}_begin'
