@@ -180,7 +180,8 @@ class NLUPipeline(BasePipe):
 
 
         return self
-    def get_annotator_extraction_configs(self,full_meta):
+    def get_annotator_extraction_configs(self,full_meta,c_level_mapping,positions):
+
         """Search first OC namespace and if not found the HC Namespace for each Annotator Class in pipeline and get corrosponding config
         Returns a dictionary of methods, where keys are column names values are methods  that are applied to extract and represent the data in these
         these columns in a more pythonic and panda-esque way
@@ -201,6 +202,13 @@ class NLUPipeline(BasePipe):
                     anno_2_ex_config[c.info.spark_output_column_names[0]] = HC_anno2config[type(c.model)]['default_full'](output_col_prefix=c.info.outputs[0])
                 else :
                     anno_2_ex_config[c.info.spark_output_column_names[0]] = HC_anno2config[type(c.model)]['default'](output_col_prefix=c.info.outputs[0])
+
+            if c_level_mapping[c] == 'document' :
+                anno_2_ex_config[c.info.spark_output_column_names[0]].pop_meta_list = True
+                anno_2_ex_config[c.info.spark_output_column_names[0]].pop_result_list = True
+            if positions :
+                anno_2_ex_config[c.info.spark_output_column_names[0]].get_positions = True
+
         return anno_2_ex_config
     def unpack_and_apply_extractors(self,sdf:pyspark.sql.DataFrame, keep_stranger_features=True, stranger_features=[],anno_2_ex_config={})-> pd.DataFrame:
         """1. Unpack SDF to PDF with Spark NLP Annotator Dictionaries
@@ -238,20 +246,19 @@ class NLUPipeline(BasePipe):
         stranger_features += ['origin_index']
 
         if self.output_level == '' : self.output_level = OutputLevelUtils.infer_output_level(self)
-        col2output_level                 = OutputLevelUtils.get_output_level_mapping(self)
-        same_output_level                = OutputLevelUtils.get_cols_at_same_output_level(self,col2output_level)
-        not_same_output_level            = OutputLevelUtils.get_cols_not_at_same_output_level(self,col2output_level)
+        c_level_mapping =OutputLevelUtils.get_output_level_mapping_by_component(self)
 
-        logger.info(f"Extracting for same_level_cols = {same_output_level}\nand different_output_level_cols = {not_same_output_level}")
-
-        anno_2_ex_config = self.get_annotator_extraction_configs(output_metadata)
+        anno_2_ex_config                                                          = self.get_annotator_extraction_configs(output_metadata,c_level_mapping,positions)
         pretty_df = self.unpack_and_apply_extractors(processed, keep_stranger_features, stranger_features,anno_2_ex_config)
-        pretty_df = zip_and_explode(pretty_df, same_output_level, not_same_output_level)
+        col2output_level,same_output_level,not_same_output_level                  = OutputLevelUtils.get_output_level_mappings(self,pretty_df,anno_2_ex_config)
+        logger.info(f"Extracting for same_level_cols = {same_output_level}\nand different_output_level_cols = {not_same_output_level}")
+        pretty_df = zip_and_explode(pretty_df, same_output_level, not_same_output_level, self.output_level)
         pretty_df = self.convert_embeddings_to_np(pretty_df)
-        if  drop_irrelevant_cols : return pretty_df[self.drop_irrelevant_cols(list(pretty_df.columns))]
+        if  drop_irrelevant_cols : pretty_df =  pretty_df[self.drop_irrelevant_cols(list(pretty_df.columns))]
         pretty_df = ColSubstitutionUtils.substitute_col_names(pretty_df,anno_2_ex_config,self)
         if  drop_irrelevant_cols :  pretty_df = pretty_df[self.drop_irrelevant_cols(list(pretty_df.columns))]
         return pretty_df
+
     def viz(self, text_to_viz:str, viz_type='', labels_to_viz=None,viz_colors={},):
         """Visualize predictions of a Pipeline, using Spark-NLP-Display
         text_to_viz : String to viz
@@ -438,21 +445,25 @@ class NLUPipeline(BasePipe):
         :return:
         '''
         if output_level != '': self.output_level = output_level
-        if output_level == 'sentence' or output_level == 'document': self.components = PipeUtils.configure_component_output_levels(self)
-        if not self.is_fitted :
-            if self.has_trainable_components :
-                self.fit(data)
-            else : self.fit()
-        # self.configure_light_pipe_usage(len(data), multithread) # Todo data size usage
+        if output_level == 'sentence' or output_level == 'document':self.components = PipeUtils.configure_component_output_levels(self)
+        if output_level in ['token', 'chunk','relation']:self.components = PipeUtils.configure_component_output_levels(self,'document')
 
         try:
             #1. Convert data to Spark DF
-            sdf, stranger_features, output_datatype = DataConversionUtils.to_spark_df(data, self.spark, self.raw_text_column)
-            #2. Apply Spark Pipeline
-            sdf = self.spark_transformer_pipe.transform(sdf)
-            #3. Convert resulting spark DF into nicer format and by default into pandas.
-            if return_spark_df : return sdf  # Returns RAW  Spark Dataframe result of pipe prediction
-            return self.pythonify_spark_dataframe(sdf,
+            data, stranger_features, output_datatype = DataConversionUtils.to_spark_df(data, self.spark, self.raw_text_column)
+
+            #2. configure Lightpipline usage
+            self.configure_light_pipe_usage(data.count(), multithread)
+            # 3. Fit
+            if not self.is_fitted :
+                if self.has_trainable_components:self.fit(data)
+                else : self.fit()
+
+            #4. Apply Spark Pipeline
+            data = self.spark_transformer_pipe.transform(data)
+            #5. Convert resulting spark DF into nicer format and by default into pandas.
+            if return_spark_df : return data  # Returns RAW  Spark Dataframe result of pipe prediction
+            return self.pythonify_spark_dataframe(data,
                                                   keep_stranger_features=keep_stranger_features,
                                                   stranger_features=stranger_features,
                                                   output_metadata=metadata,
