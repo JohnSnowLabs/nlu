@@ -5,7 +5,6 @@ class Embeddings(SparkNLUComponent):
 
     def __init__(self, annotator_class='glove', lang ='en', component_type='embedding', get_default=True, model = None, nlp_ref ='', nlu_ref ='', is_licensed=False, resolution_ref='',loaded_from_pretrained_pipe=False,do_ref_checks=True ):
         if do_ref_checks:
-
             if 'use' in nlu_ref or 'tfhub_use' in nlp_ref: annotator_class = 'use'
             # first check for sentence then token embeddings.
             elif 'bert' in nlp_ref and 'albert' not in nlp_ref and 'sent' in nlp_ref : annotator_class= 'sentence_bert'
@@ -36,7 +35,6 @@ class Embeddings(SparkNLUComponent):
             elif 'embed' in nlu_ref          : annotator_class = 'glove'
 
         if model != None : self.model = model
-
         else :
 
             # Check if this lang has embeddings, if NOT set to multi lang xx!

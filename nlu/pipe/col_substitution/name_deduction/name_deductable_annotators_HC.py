@@ -3,7 +3,6 @@ from nlu.pipe.col_substitution.col_substitution_HC import *
 from nlu.pipe.col_substitution.col_substitution_OS import *
 
 from sparknlp_jsl.annotator  import *
-from nlu.pipe.col_substitution.name_deduction.deduct_name_HC import *
 
 
 name_deductable_HC=[

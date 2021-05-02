@@ -200,7 +200,7 @@ class PipeUtils():
         return False
 
     @staticmethod
-    def configure_component_output_levels(pipe):
+    def configure_component_output_levels(pipe, force_level=''):
         '''
         This method configures sentenceEmbeddings and Classifier components to output at a specific level
         This method is called the first time .predit() is called and every time the output_level changed
@@ -212,13 +212,13 @@ class PipeUtils():
 
         from nlu import Util
 
-        if pipe.output_level == 'sentence':
+        if pipe.output_level == 'sentence' or force_level=='sentence':
             if not PipeUtils.has_sentence_detector(pipe) :
                 logger.info("Adding missing Sentence Detector")
                 pipe.is_fitted=False
                 pipe.components.insert(1,Util('deep_sentence_detector', nlu_ref='sentence'))
             return PipeUtils.configure_component_output_levels_to_sentence(pipe)
-        elif pipe.output_level == 'document':
+        elif pipe.output_level == 'document' or force_level=='document' :
             return PipeUtils.configure_component_output_levels_to_document(pipe)
 
 

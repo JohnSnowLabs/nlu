@@ -243,3 +243,9 @@ class OutputLevelUtils():
         return [c.info.outputs[0]  for c in pipe.components if not col2output_level[c.info.outputs[0]] == pipe.output_level ]
 
 
+
+    @staticmethod
+    def get_output_level_mapping_by_component(pipe)->Dict[str,str]:
+        """Get a dict where key=colname and val=output_level, inferred from processed dataframe and pipe that is currently running"""
+        return {c :OutputLevelUtils.resolve_component_to_output_level(pipe,c)  for c in pipe.components}
+

@@ -5,6 +5,7 @@ import pyspark
 from pyspark.sql.functions import monotonically_increasing_id
 import numpy as np
 import pandas as pd
+from pyspark.sql.types import StringType, StructType,StructField
 
 class DataConversionUtils():
     # Modin aswell but optional, so we dont import the type yet
@@ -49,16 +50,17 @@ class DataConversionUtils():
         """Casting pandas series to spark and add index col.  # for df['text'] colum/series passing casting follows pseries->pdf->spark->pd """
         output_datatype = 'pandas_series'
         sdf=None
+        schema = StructType([StructField(raw_text_column,StringType(),True)])
         data = pd.DataFrame(data).dropna(axis=1, how='all')
         # If series from a column is passed, its column name will be reused.
         if raw_text_column not in data.columns and len(data.columns) == 1:
-            data['text'] = data[data.columns[0]]
+            data[raw_text_column] = data[data.columns[0]]
         else:
             logger.info(f'INFO: NLU will assume {data.columns[0]} as label column since default text column could not be find')
-            data['text'] = data[data.columns[0]]
+            data[raw_text_column] = data[data.columns[0]]
         data['origin_index'] = data.index
         if raw_text_column in data.columns:
-            sdf = spark_sess.createDataFrame(data)
+            sdf = spark_sess.createDataFrame(pd.DataFrame(data[raw_text_column]),schema=schema)
         else: DataConversionUtils.except_text_col_not_found(data.columns)
         return sdf, [], output_datatype
 

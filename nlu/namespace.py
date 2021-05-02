@@ -2087,7 +2087,12 @@ class NameSpace():
         },
         'zh': {
             'bert_base_chinese' : 'zh.embed',
+        },
+        'th':{
+            'tfhub_use_multi_lg' :'xx.use.multi'
+
         }
+
 
     }  #
 
