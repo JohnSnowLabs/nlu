@@ -117,12 +117,14 @@ class ColSubstitutionUtils():
         for c in pipe.components :
             result_names[c]='UNIQUE' # assuemd uniqe, if not updated in followign steps
             is_always_name_deductable_component = False
+            hc_deducted = False
             if pipe.has_licensed_components :
                 import nlu.pipe.col_substitution.name_deduction.name_deductable_annotators_HC as deductable_HC
-                if type(c.model) not in deductable_HC.name_deductable_HC: continue
+                if type(c.model) not in deductable_HC.name_deductable_HC and type(c.model) not in deductable_OS.name_deductable_OS: continue
+                else : hc_deducted = True
                 if type(c.model) in deductable_HC.always_name_deductable_HC: is_always_name_deductable_component=True
 
-            if type(c.model) not in deductable_OS.name_deductable_OS: continue
+            if type(c.model) not in deductable_OS.name_deductable_OS and not hc_deducted : continue
             if type(c.model) in deductable_OS.always_name_deductable_OS: is_always_name_deductable_component=True
 
             same_components = []
@@ -148,8 +150,10 @@ class ColSubstitutionUtils():
         if isinstance(c.model, MarianTransformer): return c.info.nlu_ref.split('xx.')[-1].replace('marian.','')
         splits = c.info.nlu_ref.split('.')
         #remove all name irrelevant splits
-        while splits[0] in ColSubstitutionUtils.all_langs or splits[0] in ColSubstitutionUtils.cleanable_splits: splits.pop(0)
-        if len(splits)==0: return c.info.nlu_ref
+        while  len(splits) >1 and (splits[0] in ColSubstitutionUtils.all_langs or splits[0] in ColSubstitutionUtils.cleanable_splits): splits.pop(0)
+        if len(splits)==0:
+            if isinstance(c.model,(NerDLModel,NerConverter)): return 'ner'
+            return c.info.nlu_ref.replace("@","_")
         else : return '_'.join(splits[:depth])
 
 
