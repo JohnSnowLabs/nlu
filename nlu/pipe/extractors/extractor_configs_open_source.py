@@ -172,6 +172,7 @@ def default_multi_classifier_dl_config(output_col_prefix='classifier_dl'):
         get_full_meta       = True,
         name                = 'default_classifier_dl',
         description         = 'Get all predicted confidences and labels',
+        pop_never           = True,
         meta_data_extractor = SparkNLPExtractor(extract_maximum_confidence,
                                                 'Instead returning confidence for each class, only return max confidence',
                                                 'Max confidence')
@@ -270,6 +271,7 @@ def default_yake_config(output_col_prefix='keywords'):
         get_meta            = True,
         meta_white_list     = ['score'],
         description         = 'Get all keywords and their confidences',
+        pop_never           = True
     )
 
 

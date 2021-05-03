@@ -111,7 +111,7 @@ OS_anno2substitution_fn = {
         'default': substitute_sentiment_vivk_cols,
     },
     MultiClassifierDLModel : {
-        'default': 'TODO' ,
+        'default': substitute_multi_classifier_dl_cols ,
     },
     ClassifierDLModel : {
         'default': substitute_classifier_dl_cols,

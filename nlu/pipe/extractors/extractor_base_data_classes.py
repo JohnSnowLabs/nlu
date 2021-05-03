@@ -124,6 +124,7 @@ class SparkNLPExtractorConfig:
     pop_end_list        :bool              = field(default = False) # TODO implement in ex
     pop_embeds_list     :bool              = field(default = False) # TODO implement in ex
     pop_meta_list       :bool              = field(default = False) # TODO implement in ex
+    pop_never           :bool              = field(default = False) # never ever pop
     meta_black_list     :List[str]         = field(default = list)
     meta_white_list     :List[str]         = field(default = list)
     meta_data_extractor :SparkNLPExtractor = field(default = SparkNLPExtractor())
