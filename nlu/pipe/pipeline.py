@@ -254,10 +254,9 @@ class NLUPipeline(BasePipe):
         logger.info(f"Extracting for same_level_cols = {same_output_level}\nand different_output_level_cols = {not_same_output_level}")
         pretty_df = zip_and_explode(pretty_df, same_output_level, not_same_output_level, self.output_level)
         pretty_df = self.convert_embeddings_to_np(pretty_df)
-        if  drop_irrelevant_cols : pretty_df =  pretty_df[self.drop_irrelevant_cols(list(pretty_df.columns))]
-        pretty_df = ColSubstitutionUtils.substitute_col_names(pretty_df,anno_2_ex_config,self)
+        pretty_df = ColSubstitutionUtils.substitute_col_names(pretty_df,anno_2_ex_config,self, stranger_features)
         if  drop_irrelevant_cols :  pretty_df = pretty_df[self.drop_irrelevant_cols(list(pretty_df.columns))]
-        return pretty_df
+        return pretty_df.loc[:,~pretty_df.columns.duplicated()]
 
     def viz(self, text_to_viz:str, viz_type='', labels_to_viz=None,viz_colors={},):
         """Visualize predictions of a Pipeline, using Spark-NLP-Display

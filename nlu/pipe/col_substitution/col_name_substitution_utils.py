@@ -40,7 +40,7 @@ class ColSubstitutionUtils():
     cleanable_splits = ['ner_converter','spell','ner_to_chunk_converter','train','classify','ner','med_ner','dl','match','clean','sentiment','embed','embed_sentence','embed_chunk','explain','pos','resolve_chunk','resolve',]
     all_langs        = ['en','et','bh','am','da','fr','de','it','nb','no','nn','pl','pt','ru','es','af','ar','hy','eu','bn','br','bg','ca','cs','eo','fi','gl','el','ha','he','hi','hu','id','ga','ja','la','lv','mr','fa','ro','sk','sl','so','st','sw','sv','th','tr','uk','yo','zu','zh','xx','ur','ko']
     @staticmethod
-    def substitute_col_names(df,anno_2_ex,pipe,drop_debug_cols=True):
+    def substitute_col_names(df,anno_2_ex,pipe, stranger_cols=[],drop_debug_cols=True,):
         """
         Some truly irrelevant cols might be dropped, regardless of anno Extractor config
         Some truly irrelevant cols might be dropped, regardless of anno Extractor config
@@ -73,7 +73,7 @@ class ColSubstitutionUtils():
         for k in cols_to_rename:
             # some cols might not exist because no annotations generated, so we need to double check it really exists
             if k not in df.columns: del new_cols[k]
-        return df.rename(columns = new_cols)[new_cols.values()] if drop_debug_cols else df.rename(columns = new_cols)
+        return df.rename(columns = new_cols)[set(new_cols.values()).union(set(stranger_cols))] if drop_debug_cols else df.rename(columns = new_cols)
 
 
     @staticmethod
