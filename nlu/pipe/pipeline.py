@@ -421,8 +421,9 @@ class NLUPipeline(BasePipe):
             self.fit()
             self.is_fitted = True
         if component == 'entire_pipeline':
-            self.spark_transformer_pipe.save(path)
-            self.write_nlu_pipe_info(path)
+            if isinstance(self.spark_transformer_pipe, LightPipeline):
+                self.spark_transformer_pipe.pipeline_model.save(path)
+            else: self.spark_transformer_pipe.save(path)
         else:
             if component in self.keys():
                 self[component].save(path)
