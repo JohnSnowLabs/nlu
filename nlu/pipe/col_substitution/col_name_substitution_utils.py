@@ -154,6 +154,7 @@ class ColSubstitutionUtils():
         if len(splits)==0:
             if isinstance(c.model,(NerDLModel,NerConverter)): return 'ner'
             return c.info.nlu_ref.replace("@","_")
+        elif splits[0] == 'sentiment' and len(splits) == 1 : return 'UNIQUE'
         else : return '_'.join(splits[:depth])
 
 
