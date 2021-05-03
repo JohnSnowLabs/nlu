@@ -211,6 +211,13 @@ def enable_verbose():
     ch.setLevel(logging.INFO)
     logger.addHandler(ch)
 
+def disable_verbose(): # TODO
+    logger.setLevel(logging.ERROR)
+    ch = logging.StreamHandler()
+    ch.setLevel(logging.ERROR)
+    logger.addHandler(ch)
+
+
 from nlu.environment.env_utils import *
 
 def get_open_source_spark_context(gpu):
@@ -241,6 +248,7 @@ def load(request ='from_disk', path=None,verbose=False, gpu=False):
     spark = get_open_source_spark_context(gpu)
     spark.catalog.clearCache()
     if verbose:enable_verbose()
+    else: disable_verbose()
 
 
     if path != None :
