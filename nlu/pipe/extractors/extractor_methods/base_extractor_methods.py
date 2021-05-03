@@ -243,7 +243,23 @@ def zip_and_explode(df:pd.DataFrame,origin_cols_to_explode, origin_cols_not_to_e
     # Create pd.Dataframes from the pd.Series
     exploded_df_list = list(map(pd.DataFrame,exploded_series_list))
     # merge results into final pd.DataFrame
-    merged_explosions = pd.concat([df.drop(cols_to_explode,axis=1)] +  exploded_df_list,axis=1)
+    try :
+        merged_explosions = pd.concat([df.drop(cols_to_explode,axis=1)] +  exploded_df_list,axis=1)
+    except:
+        # if fails, try again but with  padding
+        df[cols_to_explode] = df[cols_to_explode].apply(pad_same_level_cols,axis=1)
+        pd_col_extractor_generator = lambda col : lambda x :  df[col]
+        explode_series  = lambda s : s.explode()#.reset_index(drop=True)#.rename({'index':'origin_index'})#(drop=True)
+        pd_col_extractors = list(map(pd_col_extractor_generator,cols_to_explode))
+        # We call the pd series generator that needs a dummy call
+        call = lambda x : x(0)
+        list_of_pd_series_to_explod = list(map(call,pd_col_extractors))
+        # Call explode on every series object, returns a list of pd.Series objects, which have been exploded
+        exploded_series_list = list(map(explode_series,list_of_pd_series_to_explod))
+        # Create pd.Dataframes from the pd.Series
+        exploded_df_list = list(map(pd.DataFrame,exploded_series_list))
+        # merge results into final pd.DataFrame
+        merged_explosions = pd.concat([df.drop(cols_to_explode,axis=1)] +  exploded_df_list,axis=1)
 
     return merged_explosions
 
