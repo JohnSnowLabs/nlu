@@ -1,7 +1,7 @@
 import nlu
 import logging
 logger = logging.getLogger('nlu')
-
+from sparknlp.annotator import *
 from nlu.pipe.pipe_components import SparkNLUComponent
 from nlu.pipe.utils.pipe_utils import PipeUtils
 from nlu.pipe.utils.component_utils import ComponentUtils
@@ -131,7 +131,8 @@ class PipelineQueryVerifier():
         pipe.has_trainable_components           = is_trainable
         if is_trainable:
             required_features_ref = []
-            if len(provided_features_ref) == 0 : required_features_no_ref.append('sentence_embeddings') # special case, if training we can reset this
+            if len(provided_features_ref) == 0 and not isinstance(pipe.components[0].model, NerDLApproach) : required_features_no_ref.append('sentence_embeddings') # special case, if training we can reset this
+            if len(provided_features_ref) == 0 and     isinstance(pipe.components[0].model, NerDLApproach) : required_features_no_ref.append('word_embeddings') # special case, if training we can reset this
 
 
         components_for_ner_conversion = [] #
@@ -466,7 +467,7 @@ class PipelineQueryVerifier():
                         break
             if len(all_components) == 0: all_components_orderd = True
 
-            if len(all_components) == 1 and pipe.has_trainable_components and not trainable_updated  and 'approach' in str(all_components[0].model).lower() and 'sentence_embeddings@' in all_components[0].info.inputs:
+            if len(all_components) == 2 and pipe.has_trainable_components and not trainable_updated  and 'approach' in str(all_components[0].model).lower() and 'sentence_embeddings@' in all_components[0].info.inputs:
                 # special case, if trainable then we feed embed consumers on the first sentence embed provider
                 # 1. Find first sent embed provider
                 # 2. substitute any 'sent_embed@' consumer inputs for the provider col
@@ -474,6 +475,18 @@ class PipelineQueryVerifier():
                     if 'sentence_embeddings' in f and not trainable_updated  :
                         all_components[0].info.spark_input_column_names.remove('sentence_embeddings@')
                         if 'sentence_embeddings@' in  all_components[0].info.inputs :  all_components[0].info.inputs.remove('sentence_embeddings@')
+                        all_components[0].info.spark_input_column_names.append(f)
+                        if f not in all_components[0].info.inputs :  all_components[0].info.inputs.append(f)
+                        trainable_updated = True
+
+            if len(all_components) <= 2 and pipe.has_trainable_components and not trainable_updated  and 'approach' in str(all_components[0].model).lower() and 'word_embeddings@' in all_components[0].info.inputs:
+                # special case, if trainable then we feed embed consumers on the first sentence embed provider
+                # 1. Find first sent embed provider
+                # 2. substitute any 'sent_embed@' consumer inputs for the provider col
+                for f in provided_features:
+                    if 'word_embeddings' in f and not trainable_updated  :
+                        all_components[0].info.spark_input_column_names.remove('word_embeddings@')
+                        if 'word_embeddings@' in  all_components[0].info.inputs :  all_components[0].info.inputs.remove('word_embeddings@')
                         all_components[0].info.spark_input_column_names.append(f)
                         if f not in all_components[0].info.inputs :  all_components[0].info.inputs.append(f)
                         trainable_updated = True
