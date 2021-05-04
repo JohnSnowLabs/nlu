@@ -43,7 +43,7 @@ class OutputLevelUtils():
                             LanguageDetectorDL,
                             MultiClassifierDLApproach,  SentenceEmbeddings, NorvigSweetingApproach,
                             ],
-
+        'multi' : [MultiClassifierDLApproach,  SentenceEmbeddings, NorvigSweetingApproach,]
         # 'unclassified': [Yake, Ngram]
     }
     annotator_levels_model_based = {
@@ -67,10 +67,11 @@ class OutputLevelUtils():
 
         ] ,
         'input_dependent': [BertSentenceEmbeddings, UniversalSentenceEncoder, ViveknSentimentModel,
-                            SentimentDLModel, MultiClassifierDLModel, MultiClassifierDLModel, ClassifierDLModel,
+                            SentimentDLModel,  ClassifierDLModel,
                             MarianTransformer,T5Transformer
 
                             ],
+        'multi' : [MultiClassifierDLModel, MultiClassifierDLModel,]
     }
     all_embeddings = {
         'token' : [AlbertEmbeddings, BertEmbeddings, ElmoEmbeddings, WordEmbeddings,
