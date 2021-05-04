@@ -28,7 +28,7 @@ OS_anno2config = {
         'default_full'  : default_full_config,
     },
     ClassifierDLModel : {
-        'default': default_multi_classifier_dl_config,
+        'default': default_classifier_dl_config,
         'default_full'  : default_full_config,
     },
     BertEmbeddings : {
@@ -205,7 +205,7 @@ OS_anno2config = {
     # approaches
     ViveknSentimentApproach    :{'default':'' , 'default_full'  : default_full_config,},
     SentimentDLApproach        :{'default':default_sentiment_dl_config , 'default_full'  : default_full_config,},
-    ClassifierDLApproach        :{'default':default_multi_classifier_dl_config , 'default_full'  : default_full_config,},
+    ClassifierDLApproach        :{'default':default_classifier_dl_config , 'default_full'  : default_full_config,},
     MultiClassifierDLApproach  :{'default':default_multi_classifier_dl_config, 'default_full'  : default_full_config,},
     NerDLApproach              :{'default':default_NER_config , 'default_full'  : default_full_config,},
     PerceptronApproach         :{'default':default_POS_config , 'default_full'  : default_full_config,},

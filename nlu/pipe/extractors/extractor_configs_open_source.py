@@ -179,6 +179,19 @@ def default_multi_classifier_dl_config(output_col_prefix='classifier_dl'):
 
     )
 
+def default_classifier_dl_config(output_col_prefix='classifier_dl'):
+    return SparkNLPExtractorConfig(
+        output_col_prefix   = output_col_prefix,
+        get_result          = True,
+        get_full_meta       = True,
+        name                = 'default_classifier_dl',
+        description         = 'Get all predicted confidences and labels',
+        meta_data_extractor = SparkNLPExtractor(extract_maximum_confidence,
+                                                'Instead returning confidence for each class, only return max confidence',
+                                                'Max confidence')
+
+    )
+
 
 def default_tokenizer_config(output_col_prefix='token'):
     return default_only_result_config(output_col_prefix)
