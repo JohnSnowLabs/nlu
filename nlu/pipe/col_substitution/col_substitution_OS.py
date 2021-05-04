@@ -563,3 +563,139 @@ def substitute_multi_classifier_dl_cols(c, cols, nlu_identifier=True):
             # else : logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
 
     return new_cols
+
+
+
+
+
+
+
+
+
+
+
+
+
+## Trainable
+def substitute_classifier_dl_approach_cols(c, cols, nlu_identifier=True):
+    """
+    Substitute col name for Word Embeddings. For Word_Embeddings, some name will be infered, and word_embedding_<name> will become the base name schema
+    """
+    new_cols = {}
+    new_base_name = f'trained_classifier'# if is_unique else f'document_{nlu_identifier}'
+    for col in cols :
+        if '_results'       in col     :   new_cols[col] = new_base_name #can be omitted for chunk_embeddings, maps to the origin chunk, which will be in the tokenizer col anyways
+        elif '_beginnings' in col     : new_cols[col]  = f'{new_base_name}_begin'
+        elif '_endings'    in col     : new_cols[col]  = f'{new_base_name}_end'
+        elif '_types' in col          : continue #
+        elif '_embeddings' in col     : continue #
+        elif 'meta' in col:
+            old_base_name = f'meta_{c.info.outputs[0]}'
+            metadata = col.split(old_base_name)[-1]
+            if '_sentence' in col  : new_cols[col] = f'{new_base_name}_origin_sentence'  # maps to which sentence token comes from
+            elif metadata =='confidence'  :  new_cols[col] = f'{new_base_name}_confidence'  # max confidence over all classes
+            else :                   new_cols[col] = f'{new_base_name}{metadata}_confidence'  # confidence field
+            # else : logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
+    return new_cols
+
+
+def substitute_sentiment_vivk_approach_cols(c, cols, nlu_identifier=True):
+    new_cols = {}
+    new_base_name = 'trained_sentiment'
+    for col in cols :
+        if '_results'    in col       : new_cols[col] = new_base_name
+        elif '_beginnings' in col     : new_cols[col] = f'{new_base_name}_begin'
+        elif '_endings'    in col     : new_cols[col] = f'{new_base_name}_end'
+        elif '_embeddings' in col     : continue # Token never stores Embeddings  new_cols[col] = f'{new_base_name}_embedding'
+        elif '_types' in col          : continue # new_cols[col] = f'{new_base_name}_type'
+        elif 'meta' in col:
+            if '_sentence' in col  : new_cols[col] = f'{new_base_name}_origin_sentence'  # maps to which sentence token comes from
+            elif '_confidence' in col  : new_cols[col] = f'{new_base_name}_confidence'  # maps to which sentence token comes from
+            else : logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
+            # new_cols[col]= f"{new_base_name}_confidence"
+    return new_cols
+
+
+def substitute_sentiment_dl_approach_cols(c, cols, nlu_identifier=True):
+    new_cols = {}
+    new_base_name = 'trained_sentiment'
+    for col in cols :
+        if '_results'    in col       : new_cols[col] = new_base_name
+        elif '_beginnings' in col     : new_cols[col] = f'{new_base_name}_begin'
+        elif '_endings'    in col     : new_cols[col] = f'{new_base_name}_end'
+        elif '_embeddings' in col     : continue # Token never stores Embeddings  new_cols[col] = f'{new_base_name}_embedding'
+        elif '_types' in col          : continue # new_cols[col] = f'{new_base_name}_type'
+        elif 'meta' in col:
+            if '_sentence' in col  : new_cols[col] = f'{new_base_name}_origin_sentence'  # maps to which sentence token comes from
+            elif '_confidence' in col  : new_cols[col] = f'{new_base_name}_confidence'  # maps to which sentence token comes from
+            elif '_negative' in col  : new_cols[col] = f'{new_base_name}_negative'  # maps to which sentence token comes from
+            elif '_positive' in col  : new_cols[col] = f'{new_base_name}_positive'  # maps to which sentence token comes from
+            else : logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
+    return new_cols
+
+
+def substitute_multi_classifier_dl_approach_cols(c, cols, nlu_identifier=True):
+    """
+    Substitute col name for Word Embeddings. For Word_Embeddings, some name will be infered, and word_embedding_<name> will become the base name schema
+    """
+    new_cols = {}
+    new_base_name = f'trained_multi_classifier'# if is_unique else f'document_{nlu_identifier}'
+    for col in cols :
+        if '_results'       in col     :   new_cols[col] = new_base_name #can be omitted for chunk_embeddings, maps to the origin chunk, which will be in the tokenizer col anyways
+        elif '_beginnings' in col     : new_cols[col]  = f'{new_base_name}_begin'
+        elif '_endings'    in col     : new_cols[col]  = f'{new_base_name}_end'
+        elif '_types' in col          : continue #
+        elif '_embeddings' in col     : continue #
+        elif 'meta' in col:
+            old_base_name = f'meta_{c.info.outputs[0]}'
+            metadata = col.split(old_base_name)[-1]
+            if '_sentence' in col  : new_cols[col] = f'{new_base_name}_origin_sentence'  # maps to which sentence token comes from
+            elif metadata =='confidence'  :  new_cols[col] = f'{new_base_name}_confidence'  # max confidence over all classes
+            else :                   new_cols[col] = f'{new_base_name}{metadata}_confidence'  # confidence field
+            # else : logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
+
+    return new_cols
+
+
+
+def substitute_ner_dl_approach_cols(c, cols, nlu_identifier):
+    """
+    Fetched fields are:
+    - entities@<storage_ref>_results
+    - entities@<storage_ref>_<metadata>
+        - entities@<storage_ref>_entity
+        - entities@<storage_ref>_confidence
+    """
+    new_cols = {}
+    new_base_name = 'trained_ner_iob'
+    for col in cols :
+        if 'results'     in col       : new_cols[col] = new_base_name
+        elif '_beginnings' in col     : new_cols[col] = f'{new_base_name}_begin'
+        elif '_endings'    in col     : new_cols[col] = f'{new_base_name}_end'
+        elif '_embeddings' in col     : continue # always empty and irrelevant new_cols[col] = f'{new_base_name}_embedding'
+        elif '_types' in col          : continue # new_cols[col] = f'{new_base_name}_type'
+        elif 'meta' in col:
+            if 'confidence' in col: new_cols[col]= f"{new_base_name}_confidence"
+            elif 'word' in     col: continue # is the same as token col, can be omitted
+            else : logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
+    return new_cols
+
+
+def substitute_pos_approach_cols(c, cols, nlu_identifier=True):
+    """
+    Substitute col name for Labled dependenecy unlabeled_dependency will become the base name schema
+    """
+    new_cols = {}
+    new_base_name = f'trained_pos'# if is_unique else f'document_{nlu_identifier}'
+    for col in cols :
+        if '_results'    in col       : new_cols[col]  = f'{new_base_name}'
+        elif '_beginnings' in col     : new_cols[col]  = f'{new_base_name}_begin'
+        elif '_endings'    in col     : new_cols[col]  = f'{new_base_name}_end'
+        elif '_types' in col          : continue #
+        elif '_embeddings' in col     : continue #
+        elif 'meta' in col:
+            if   '_sentence' in col   : new_cols[col] = f'{new_base_name}_origin_sentence'
+            elif '_word' in col       : continue # can be omitted, is jsut the token
+            elif 'confidence' in col  : new_cols[col] = f'{new_base_name}_confidence'
+            else : logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
+    return new_cols

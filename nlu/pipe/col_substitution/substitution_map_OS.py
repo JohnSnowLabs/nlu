@@ -157,12 +157,12 @@ OS_anno2substitution_fn = {
 
 
     # approaches
-    ViveknSentimentApproach    :{'default':'TODO' , 'default_full'  : default_full_config,},
-    SentimentDLApproach        :{'default':'TODO' , 'default_full'  : default_full_config,},
-    ClassifierDLApproach       :{'default':'TODO' , 'default_full'  : default_full_config,},
-    MultiClassifierDLApproach  :{'default':'TODO' , 'default_full'  : default_full_config,},
-    NerDLApproach              :{'default':'TODO' , 'default_full'  : default_full_config,},
-    PerceptronApproach         :{'default':'TODO' , 'default_full'  : default_full_config,},
+    ViveknSentimentApproach    :{'default':substitute_sentiment_vivk_approach_cols , 'default_full'  : default_full_config,},
+    SentimentDLApproach        :{'default':substitute_sentiment_dl_approach_cols , 'default_full'  : default_full_config,},
+    ClassifierDLApproach       :{'default':substitute_classifier_dl_approach_cols , 'default_full'  : default_full_config,},
+    MultiClassifierDLApproach  :{'default':substitute_multi_classifier_dl_approach_cols , 'default_full'  : default_full_config,},
+    NerDLApproach              :{'default':substitute_ner_dl_approach_cols , 'default_full'  : default_full_config,},
+    PerceptronApproach         :{'default':substitute_pos_approach_cols , 'default_full'  : default_full_config,},
 
 }
 
