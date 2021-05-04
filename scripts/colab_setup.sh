@@ -41,4 +41,4 @@ export SPARK_HOME=$SPARKHOME
 export JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64"
 
 # Install pyspark spark-nlp
-! pip install --upgrade -q pyspark==$PYSPARK spark-nlp==$SPARKNLP findspark nlu
+! pip install --upgrade -q pyspark==$PYSPARK spark-nlp==$SPARKNLP findspark nlu==$NLU
