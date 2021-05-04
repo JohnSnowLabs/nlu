@@ -10,6 +10,19 @@ import pandas as pd
 
 class ClassifierDlTests(unittest.TestCase):
 
+    def test_classifier_dl_training_labse(self):
+        test_df = self.load_classifier_dl_dataset()
+        train_df = test_df
+        train_df.columns = ['y','text']
+        test_df.columns = ['y','text']
+        pipe = nlu.load('xx.embed_sentence.labse train.classifier',verbose=True,)
+        pipe['classifier_dl'].setMaxEpochs(2)
+        pipe = pipe.fit(train_df)
+        df = pipe.predict(test_df)
+        pipe.print_info()
+        print(df.columns)
+        for c in df.columns : print (df[c])
+
     def test_classifier_dl_training(self):
         test_df = self.load_classifier_dl_dataset()
         train_df = test_df
@@ -19,8 +32,6 @@ class ClassifierDlTests(unittest.TestCase):
         pipe['classifier_dl'].setMaxEpochs(2)
         pipe = pipe.fit(train_df)
         df = pipe.predict(train_df)
-
-        #
         # print(df[['category','y']])
 
         df = pipe.predict(test_df)

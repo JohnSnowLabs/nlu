@@ -8,7 +8,7 @@ from nlu import *
 class TestBertSentenceEmbeddings(unittest.TestCase):
 
     def test_bert_sentence_embeds(self):
-        df = nlu.load('embed_sentence.bert',verbose=True).predict('Am I the muppet or are you the muppet?')
+        df = nlu.load('embed_sentence.bert',verbose=True).predict('Am I the muppet or are you the muppet?', output_level='sentence',drop_irrelevant_cols=False, metadata=True, )
         # df = nlu.load('en.classify.sarcasm',verbose=True).predict(sarcasm_df['text'])
         for c in df.columns: print(df[c])
 

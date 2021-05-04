@@ -16,22 +16,8 @@ class TestNGram(unittest.TestCase):
                      "Organisations consisting of multiple tokens like JP Morgan",
                      "Locations consiting of multiple tokens like Los Angeles",
                      "Anything else made up of multiple tokens like Super Nintendo",]
-
-        print('OUTPUT LEVEL TOKEN')
-        df = nlu.load('ngram', verbose=True).predict(example_text, output_level='sentence',drop_irrelevant_cols=False, metadata=True, )
-        for c in df.columns: print(df[c])
-
-        print('OUTPUT LEVEL CHUNK')
-        df = nlu.load('ngram',verbose=True).predict(example_text, output_level='chunk')
-        for c in df.columns: print(df[c])
-
-        print('OUTPUT LEVEL SENTENCE')
-        df = nlu.load('ngram',verbose=True).predict(example_text, output_level='sentence')
-        for c in df.columns: print(df[c])
-
-        print('OUTPUT LEVEL DOCUMENT')
-        df = nlu.load('ngram',verbose=True).predict(example_text, output_level='document')
-        for c in df.columns: print(df[c])
+        res = nlu.load('chunk').predict(example_text, output_level='sentence',drop_irrelevant_cols=False, metadata=True, )
+        for c in res.columns : print(res[c])
 
 if __name__ == '__main__':
     unittest.main()

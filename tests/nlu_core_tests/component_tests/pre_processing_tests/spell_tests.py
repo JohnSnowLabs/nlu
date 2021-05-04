@@ -8,16 +8,16 @@ class TestSpellCheckers (unittest.TestCase):
         pipe = nlu.load('spell', verbose=True )
         df = pipe.predict('I liek penut butter and jellli', output_level='sentence',drop_irrelevant_cols=False, metadata=True, )
         for c in df.columns: print(df[c])
-
-    def test_spell_sym(self):
-        pipe = nlu.load('spell.symmetric', verbose=True )
-        df = pipe.predict('I liek penut butter and jellli', output_level='sentence',drop_irrelevant_cols=False, metadata=True, )
-        for c in df.columns: print(df[c])
-
-    def test_spell_norvig(self):
-        pipe = nlu.load('spell.norvig', verbose=True )
-        df = pipe.predict('I liek penut butter and jellli', output_level='sentence',drop_irrelevant_cols=False, metadata=True, )
-        for c in df.columns: print(df[c])
+    #
+    # def test_spell_sym(self):
+    #     pipe = nlu.load('spell.symmetric', verbose=True )
+    #     df = pipe.predict('I liek penut butter and jellli', output_level='sentence',drop_irrelevant_cols=False, metadata=True, )
+    #     for c in df.columns: print(df[c])
+    #
+    # def test_spell_norvig(self):
+    #     pipe = nlu.load('spell.norvig', verbose=True )
+    #     df = pipe.predict('I liek penut butter and jellli', output_level='sentence',drop_irrelevant_cols=False, metadata=True, )
+    #     for c in df.columns: print(df[c])
 
 
 if __name__ == '__main__':

@@ -90,7 +90,7 @@ class TestT5(unittest.TestCase):
 
 
         pipe['t5'].setTask('cola sentence:')
-        res = pipe.predict(data)
+        res = pipe.predict(data, output_level='document',drop_irrelevant_cols=False, metadata=True, )
         print('TEST Task 1 : Sentence acceptability judgment,CoLA')
         print(res['T5'])
 
@@ -318,7 +318,7 @@ class TestT5(unittest.TestCase):
 
         pipe = nlu.load('en.t5.base',verbose=True)
         pipe['t5'].setTask('multirc question: ')
-        res = pipe.predict(data, output_level='document')
+        res = pipe.predict(data, output_level='document',drop_irrelevant_cols=False, metadata=True, )
         print('TEST Task 11 : MultiRC - Question Answering ')
         print(res.columns)
         print(res[['T5','document']])
