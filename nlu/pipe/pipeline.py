@@ -206,6 +206,7 @@ class NLUPipeline(BasePipe):
             if c_level_mapping[c] == 'document' and  not anno_2_ex_config[c.info.spark_output_column_names[0]].pop_never :
                 anno_2_ex_config[c.info.spark_output_column_names[0]].pop_meta_list = True
                 anno_2_ex_config[c.info.spark_output_column_names[0]].pop_result_list = True
+            # if c_level_mapping[c] == 'relation' and  not anno_2_ex_config[c.info.spark_output_column_names[0]].pop_never :
             if positions :
                 anno_2_ex_config[c.info.spark_output_column_names[0]].get_positions = True
 
