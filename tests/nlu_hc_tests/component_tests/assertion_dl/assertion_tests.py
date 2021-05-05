@@ -6,11 +6,6 @@ from sparknlp.annotator import *
 class AssertionTests(unittest.TestCase):
 
 
-    def test_quick(self):
-        res = nlu.load('en.sentiment.imdb.glove').predict("I LOVE NLU")
-        print(res)
-
-
     def test_assertion_dl_model(self):
 
         SPARK_NLP_LICENSE     = sct.SPARK_NLP_LICENSE
@@ -20,7 +15,7 @@ class AssertionTests(unittest.TestCase):
         nlu.auth(SPARK_NLP_LICENSE,AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY,JSL_SECRET)
 
         data = 'Patient has a headache for the last 2 weeks and appears anxious when she walks fast. No alopecia noted. She denies pain'
-        res = nlu.load('en.ner.clinical en.assert').predict(data)
+        res = nlu.load('en.med_ner.clinical en.assert').predict(data, drop_irrelevant_cols=False, metadata=True, ) # .predict(data)
 
         print(res.columns)
         for c in res :

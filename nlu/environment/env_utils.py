@@ -1,4 +1,6 @@
 import os,sys
+import logging
+logger = logging.getLogger('nlu')
 
 def get_pyspark_version():
     import pyspark
@@ -63,3 +65,36 @@ def is_running_in_databricks():
         if 'DATABRICKS' in k :
             return True
     return False
+
+def install_and_import_package(pkg_name,version='', import_name='sparknlp_display'):
+    """ Install Spark-NLP-Healthcare PyPI Package in current enviroment if it cannot be imported and liscense provided"""
+    import importlib
+    try:
+        importlib.import_module(pkg_name)
+    except ImportError:
+        import pip
+        if version == '':
+            logger.info(f"{pkg_name} could not be imported. Running 'pip install {pkg_name}'...")
+        else :
+            logger.info(f"{pkg_name} could not be imported. Running 'pip install {pkg_name}=={version}'...")
+        pip_major_version = int(pip.__version__.split('.')[0])
+        if pip_major_version in [10, 18, 19,20]:
+            # for these versions pip module does not support installing, we install via OS command straight into pip module
+            py_path = sys.executable
+            if version == '':
+                os.system(f'{py_path} -m pip install {pkg_name}')
+            else :
+                os.system(f'{py_path} -m pip install {pkg_name}=={version}')
+        else:
+            if version == '':
+                pip.main(['install', f'{pkg_name}'])
+            else :
+                pip.main(['install', f'{pkg_name}=={version}'])
+    finally:
+
+        import site
+        from importlib import reload
+        reload(site)
+        # import name is not always the same name as pkg_name we want to import, so it must be specified via import name
+        if import_name != '' : globals()[import_name] = importlib.import_module(import_name)
+        else :globals()[pkg_name] = importlib.import_module(pkg_name)

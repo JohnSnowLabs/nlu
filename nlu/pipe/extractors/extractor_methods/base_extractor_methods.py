@@ -7,9 +7,9 @@ They expect dictionaries which represent the metadata field extracted from Spark
 
 
 """
-
+import numpy as np
 from pyspark.sql import Row as PysparkRow
-from nlu.extractors.extractor_base_data_classes import *
+from nlu.pipe.extractors.extractor_base_data_classes import *
 from functools import reduce, partial
 import pandas as pd
 
@@ -30,7 +30,6 @@ def extract_pyspark_rows(r:pd.Series,)-> pd.Series:
             # return next(map(pyspark_row_to_list,r))
             # WE MUST MAKE THIS LIST! A aNNOTATOR MAY RETURN MULTIPLE aNNOTATIONS per Row! Cannnot use next()
             return list(map(pyspark_row_to_list,r))
-
     return r
 
 
@@ -86,7 +85,7 @@ def extract_base_sparknlp_features(row:pd.Series, configs:SparkNLPExtractorConfi
     if configs.pop_end_list:
         endings         = { configs.output_col_prefix+'_endings'    : next(map(unpack_end,row))} if configs.get_end or configs.get_positions else {}
     else:
-        endings         = { configs.output_col_prefix+'_endings'    : next(map(unpack_end,row))} if configs.get_end or configs.get_positions else {}
+        endings         = { configs.output_col_prefix+'_endings'    : list(map(unpack_end,row))} if configs.get_end or configs.get_positions else {}
 
     if configs.pop_embeds_list:
         embeddings      = { configs.output_col_prefix+'_embeddings' : next(map(unpack_embeddings,row))} if configs.get_embeds else {}
@@ -147,6 +146,7 @@ def extract_master(row:pd.Series ,configs:SparkNLPExtractorConfig ) -> pd.Series
     extract_universal/?/Better name?
     row = a list or Spark-NLP annotations as dictionary
     """
+    if len(row) == 0 : return pd.Series({})
     # Get base annotations
     base_annos = extract_base_sparknlp_features(row,configs)
     # Get Metadata
@@ -159,7 +159,7 @@ def extract_master(row:pd.Series ,configs:SparkNLPExtractorConfig ) -> pd.Series
     # Apply Finishers on metadata/additional fields
     return pd.Series(
         {
-            **base_annos,
+            ** base_annos,
             ** all_metas
         })
 
@@ -173,14 +173,14 @@ def apply_extractors_and_merge(df, column_to_extractor_map,  keep_stranger_featu
     columns_to_extractor_map Map column names to extractor configs. Columns which are not in these keys will be ignored These configs will be passed to master_extractor for every column
     """
     # keep df and ex_resolver in closure and apply base extractor with configs for each col
-    extractor     = lambda c : df[c].apply(extract_master, configs = column_to_extractor_map[c])
-    keep_stragers = lambda c : df[c]
+    extractor      = lambda c : df[c].apply(extract_master, configs = column_to_extractor_map[c])
+    keep_strangers = lambda c : df[c]
 
     # merged_extraction_df
     # apply the extract_master together with it's configs to every column and geenrate a list of output DF's, one per Spark NLP COL
     return pd.concat(
         list(map(extractor,column_to_extractor_map.keys())) +
-        list(map(keep_stragers,stranger_features)) if keep_stranger_features else [],
+        list(map(keep_strangers,stranger_features)) if keep_stranger_features else [],
         axis=1)
     # return zip_and_explode(
     #         pd.concat(
@@ -188,6 +188,14 @@ def apply_extractors_and_merge(df, column_to_extractor_map,  keep_stranger_featu
     #             list(map(keep_stragers,stranger_features)) if keep_stranger_features else [],
     #             axis=1))
 
+# !wget https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/scripts/colab_setup.sh -O - | bash
+# ! pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple peanut_butter_data_time==3.0.1rc56 > /dev/null
+# ! pip install spark-nlp-display
+
+# !wget https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/scripts/colab_setup.sh -O - | bash
+# ! pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple peanut_butter_data_time==3.0.1rc71 > /dev/null
+# import nlu
+# import nlu
 
 
 # def pad_series_for_multi_pad(s):
@@ -206,8 +214,7 @@ def apply_extractors_and_merge(df, column_to_extractor_map,  keep_stranger_featu
 #     return df
 
 # def zip_and_explode(df:pd.DataFrame, cols_to_explode:List[str], output_level, lower_output_level, higher_output_level, same_output_level):
-def zip_and_explode(df:pd.DataFrame,origin_cols_to_explode, origin_cols_not_to_explode):
-
+def zip_and_explode(df:pd.DataFrame,origin_cols_to_explode, origin_cols_not_to_explode, output_level):
     """ returns a NEW dataframe where cols_to_explode are all exploded together
 
     Used to extract SAME OUTPUT LEVEL annotator outputs.
@@ -220,49 +227,18 @@ def zip_and_explode(df:pd.DataFrame,origin_cols_to_explode, origin_cols_not_to_e
     2. What are  columns higher than those at zip level. They will be unpacked from list
     3. What are columns below zip level? They will be left unotuched
     """
+
+
     # Some queries will result in index duplication
-    same_level_cols_filter      = lambda c : any( og_c in c  for og_c in origin_cols_to_explode)
+    same_level_cols_filter      = lambda c : any( og_c == c  for og_c in origin_cols_to_explode)
     cols_to_explode             = list(filter(same_level_cols_filter,df.columns))
     # not_same_level_cols_filter  = lambda c : any( og_c in c  for og_c in origin_cols_not_to_explode)
     # not_same_level_cols         = list(filter(not_same_level_cols_filter,df.columns))
 
 
-    pd_col_extractor_generator = lambda col : lambda x :  df[col]
-    explode_series  = lambda s : s.explode().reset_index()#.reset_index(drop=True)#.rename({'index':'origin_index'})#(drop=True)
-    # explode_series_with_index  = store_idx_and_explode # call method that stores idx and explodes
-
-    pd_col_extractors = list(map(pd_col_extractor_generator,cols_to_explode))
-    # We call the pd series generator that needs a dummy call
-    call = lambda x : x(0)
-    list_of_pd_series_to_explod = list(map(call,pd_col_extractors))
-    # Call explode on every series object, returns a list of pd.Series objects, which have been exploded
-    exploded_series_list = list(map(explode_series,list_of_pd_series_to_explod))
-    # Create pd.Dataframes from the pd.Series
-    exploded_df_list = list(map(pd.DataFrame,exploded_series_list))
-    # merge results into final pd.DataFrame
-
-
-    # merged_explosions = pd.concat([df.drop(cols_to_explode,axis=1)] +  exploded_df_list,axis=1) #,on='outer')
-    # merged_explosions = df.reset_index()
-    # merged_explosions = df.sort_index(by=["date", "num"], ascending=[False, True])
-    # merged_explosions = df.set_index(["date", "num"])
-    # merged_explosions.index = df.index.droplevel(1)
-    # from functools import reduce
-    # df2 = reduce(lambda df1,df2: pd.merge(df1,df2,on='id'), dfList)
-    #
-    # df2 = reduce(lambda df1,df2: pd.merge(df1,df2 , left_on ='origin_index', right_on='index'), [df.drop(cols_to_explode,axis=1)] + exploded_df_list )
-    # merged_explosions = pd.merge(left = df.drop(cols_to_explode,axis=1), right=  exploded_df_list[0], left_on ='origin_index', right_on='index') #,on='outer')
-    # dfss = exploded_df_list # [df.drop(cols_to_explode,axis=1)] + exploded_df_list
-    # dd = df.drop(cols_to_explode,axis=1)
-    # for expdf in exploded_df_list :dfm = pd.merge(dfm,expdf , left_on ='origin_index', right_on='index', how='inner')
-
-
-
-    # Some queries will result in index duplication
-    same_level_cols_filter      = lambda c : any( og_c in c  for og_c in origin_cols_to_explode)
-    cols_to_explode             = list(filter(same_level_cols_filter,df.columns))
-    # not_same_level_cols_filter  = lambda c : any( og_c in c  for og_c in origin_cols_not_to_explode)
-    # not_same_level_cols         = list(filter(not_same_level_cols_filter,df.columns))
+    # if NUM component at same output level >1 and outputlevel is CHUNK we need the following padding logick
+    if output_level == 'chunk' and len(cols_to_explode)>2:
+        df[cols_to_explode] = df[cols_to_explode].apply(pad_same_level_cols,axis=1)
 
     pd_col_extractor_generator = lambda col : lambda x :  df[col]
     explode_series  = lambda s : s.explode()#.reset_index(drop=True)#.rename({'index':'origin_index'})#(drop=True)
@@ -275,12 +251,47 @@ def zip_and_explode(df:pd.DataFrame,origin_cols_to_explode, origin_cols_not_to_e
     # Create pd.Dataframes from the pd.Series
     exploded_df_list = list(map(pd.DataFrame,exploded_series_list))
     # merge results into final pd.DataFrame
-    merged_explosions = pd.concat([df.drop(cols_to_explode,axis=1)] +  exploded_df_list,axis=1)
+    try :
+        merged_explosions = pd.concat([df.drop(cols_to_explode,axis=1)] +  exploded_df_list,axis=1)
+    except:
+        # if fails, try again but with  padding
+        df[cols_to_explode] = df[cols_to_explode].apply(pad_same_level_cols,axis=1)
+        pd_col_extractor_generator = lambda col : lambda x :  df[col]
+        explode_series  = lambda s : s.explode()#.reset_index(drop=True)#.rename({'index':'origin_index'})#(drop=True)
+        pd_col_extractors = list(map(pd_col_extractor_generator,cols_to_explode))
+        # We call the pd series generator that needs a dummy call
+        call = lambda x : x(0)
+        list_of_pd_series_to_explod = list(map(call,pd_col_extractors))
+        # Call explode on every series object, returns a list of pd.Series objects, which have been exploded
+        exploded_series_list = list(map(explode_series,list_of_pd_series_to_explod))
+        # Create pd.Dataframes from the pd.Series
+        exploded_df_list = list(map(pd.DataFrame,exploded_series_list))
+        # merge results into final pd.DataFrame
+        merged_explosions = pd.concat([df.drop(cols_to_explode,axis=1)] +  exploded_df_list,axis=1)
 
     return merged_explosions
 
 
 
+def pad_same_level_cols(row ):
+    """We must ensure that the cols which are going to be exploded have all the same amount of elements.
+    To ensure this,w e aply this methods on the cols we wish to explode. It ensures, they have all the same
+    length and can be exploded eronous free
+    """
+    max_len = 0
+    lens = {}
+    for c in row.index :
+        if isinstance(row[c],list):
+            lens[c] = len(row[c])
+            if lens[c] > max_len : max_len = lens[c]
+        if isinstance(row[c],float):
+            lens[c] = 1
+            row[c]  = [row[c]]
+
+    for c, lenght in lens.items():
+        if lenght < max_len :
+            row[c] += [np.nan] * (max_len-lenght)
+    return row
 
 """
  We basically need to know the longest series for each Column and Index in the exploded serieses

@@ -11,10 +11,10 @@ class TestNer(unittest.TestCase):
     #     print(d.columns)
 
 
-    def test_ner_pipe(self):
-        print("CHUNK")
-        df = nlu.load('en.ner.onto.glove.6B_100d', verbose=True ).predict('Donald Trump from America and Angela Merkal from Germany dont share many oppinions.', output_level='chunk' ,metadata=True)
-        for c in df.columns: print(df[c])
+    # def test_ner_pipe(self):
+    #     print("CHUNK")
+    #     df = nlu.load('en.ner.onto.glove.6B_100d', verbose=True ).predict('Donald Trump from America and Angela Merkal from Germany dont share many oppinions.', output_level='chunk' ,metadata=True)
+    #     for c in df.columns: print(df[c])
 
         #
         # print("DOCUMENT")

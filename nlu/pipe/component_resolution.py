@@ -42,8 +42,8 @@ from nlu import logger, Util, Embeddings, Classifier, NameSpace, ClassifierDl, \
 from nlu.components import embeddings_chunker
 from nlu.components.labeled_dependency_parser import LabeledDependencyParser as LabledDepParser
 from nlu.components.unlabeled_dependency_parser import UnlabeledDependencyParser as UnlabledDepParser
-from nlu.pipe.pipe_utils import PipeUtils
-from nlu.pipe.component_utils import ComponentUtils
+from nlu.pipe.utils.pipe_utils import PipeUtils
+from nlu.pipe.utils.component_utils import ComponentUtils
 
 def load_offline_model(path):
     c = offline_utils.verify_model(path)
@@ -73,22 +73,21 @@ def get_default_component_of_type(missing_component_type,language='en',is_licens
     logger.info(f'Getting default for missing_component_type={ missing_component_type}')
     if not '@' in missing_component_type:
         # get default models if there is no @ in the model name included
-        if missing_component_type == 'document': return Util('document_assembler')
-        if missing_component_type == 'sentence': return Util('deep_sentence_detector')
-        if missing_component_type == 'sentence_embeddings': return Embeddings('use')
-        if 'token' in missing_component_type: return nlu.components.tokenizer.Tokenizer("default_tokenizer", language=language)
-        if missing_component_type == 'word_embeddings': return Embeddings(nlu_ref='glove')
+        if missing_component_type == 'document': return Util('document_assembler', nlu_ref='document')
+        if missing_component_type == 'sentence': return Util('deep_sentence_detector', nlu_ref='sentence')
+        if missing_component_type == 'sentence_embeddings': return Embeddings('use',nlu_ref='embed_sentence.use')
+        if 'token' in missing_component_type: return nlu.components.tokenizer.Tokenizer("default_tokenizer", nlu_ref = 'tokenize', language=language)
+        if missing_component_type == 'word_embeddings': return Embeddings(annotator_class='glove', nlu_ref='embed.glove')
         if missing_component_type == 'pos':   return Classifier(nlu_ref='pos')
         if missing_component_type == 'ner':   return Classifier(nlu_ref='ner')
-        if missing_component_type == 'ner_converter':   return Util('ner_converter')
-        if missing_component_type == 'chunk': return nlu.chunker.Chunker()
+        if missing_component_type == 'ner_converter':   return Util('ner_converter', nlu_ref='entity')
+        if missing_component_type == 'chunk': return nlu.chunker.Chunker(nlu_ref='chunker')
         if missing_component_type == 'ngram': return nlu.chunker.Chunker(nlu_ref='ngram')
-        if missing_component_type == 'chunk_embeddings': return embeddings_chunker.EmbeddingsChunker()
-        if missing_component_type == 'unlabeled_dependency': return UnlabledDepParser()
-        if missing_component_type == 'labled_dependency': return LabledDepParser('dep')
-        if missing_component_type == 'date': return nlu.Matcher('date')
-        if missing_component_type == 'ner_converter': return Util('ner_converter')
-        if missing_component_type == 'ner_chunk': return Util('ner_converter')
+        if missing_component_type == 'chunk_embeddings': return embeddings_chunker.EmbeddingsChunker(nlu_ref='chunk_embeddings')
+        if missing_component_type == 'unlabeled_dependency': return UnlabledDepParser(nlu_ref='dep.untyped')
+        if missing_component_type == 'labled_dependency': return LabledDepParser('dep',nlu_ref='dep.typed')
+        if missing_component_type == 'date': return nlu.Matcher('date', nlu_ref='match.date')
+        if missing_component_type == 'ner_chunk': return Util('ner_converter',nlu_ref='entitiy')
         if missing_component_type == 'entities' and is_licensed: return Util('ner_to_chunk_converter_licensed')
         if missing_component_type == 'entities': return Util('ner_converter')
         if missing_component_type == 'feature_vector': return Util('feature_assembler')
@@ -102,8 +101,8 @@ def get_default_component_of_type(missing_component_type,language='en',is_licens
 
 
         if 'embed' in missing_component_type:
-            # TODO RESOLVE MULTI LANG EMBEDS
-            if language in multi_lang : storage_ref = resolve_multi_lang_embed(language,storage_ref) # todo this should be hdled  better
+            # TODO RESOLVE MULTI LANG EMBEDS , this should be hdled  better
+            if language in multi_lang : storage_ref = resolve_multi_lang_embed(language,storage_ref)
             else :  nlu_ref,nlp_ref, is_licensed =  resolve_storage_ref(language,storage_ref,missing_component_type)
 
             if 'chunk_embeddings' in missing_component_type: return  set_storage_ref_and_resolution_on_component_info(embeddings_chunker.EmbeddingsChunker(nlu_ref=nlu_ref,nlp_ref=nlp_ref),storage_ref)
@@ -111,12 +110,12 @@ def get_default_component_of_type(missing_component_type,language='en',is_licens
 
         if 'pos' in missing_component_type or 'ner' in missing_component_type:
             return construct_component_from_identifier(language=language, component_type='classifier',nlp_ref=storage_ref)
-        if 'unlabeled_dependency' in missing_component_type or 'dep.untyped' in missing_component_type:
-            return UnlabledDepParser('dep.untyped')
-        if 'labled_dependency' in missing_component_type or 'dep.typed' in missing_component_type:
-            return LabledDepParser('dep.typed')
-        if 'date' in missing_component_type:
-            return None
+        # if 'unlabeled_dependency' in missing_component_type or 'dep.untyped' in missing_component_type:
+        #     return UnlabledDepParser('dep.untyped')
+        # if 'labled_dependency' in missing_component_type or 'dep.typed' in missing_component_type:
+        #     return LabledDepParser('dep.typed')
+        # if 'date' in missing_component_type:
+        #     return None
 
         logger.exception("Could not resolve default component type for missing type=%s", missing_component_type)
 
@@ -141,14 +140,16 @@ def resolve_storage_ref(lang, storage_ref,missing_component_type):
     elif lang in nlu.NameSpace.storage_ref_2_nlu_ref.keys():
         if storage_ref in nlu.NameSpace.storage_ref_2_nlu_ref[lang].keys():
             nlu_ref = nlu.NameSpace.storage_ref_2_nlu_ref[lang][storage_ref] # a HC model may use OS storage_ref_provider, so we dont know yet if it is licensed or not
+    if nlu_ref is not None and 'xx.' in nlu_ref : lang = 'xx'
 
-    if nlu_ref in nlu.NameSpace.pretrained_models_references[lang].keys():
+    if lang in nlu.NameSpace.pretrained_models_references.keys() and nlu_ref in nlu.NameSpace.pretrained_models_references[lang].keys():
         nlp_ref = nlu.NameSpace.pretrained_models_references[lang][nlu_ref]
-    elif nlu_ref in nlu.NameSpace.pretrained_healthcare_model_references[lang].keys():
+    elif lang in nlu.NameSpace.pretrained_healthcare_model_references.keys() and nlu_ref in nlu.NameSpace.pretrained_healthcare_model_references[lang].keys():
         nlp_ref = nlu.NameSpace.pretrained_healthcare_model_references[lang][nlu_ref]
         is_licensed = True
 
-    # check if storage_ref matches nlu_ref
+
+    # check if storage_ref matches nlu_ref and get NLP_ref
     elif lang in nlu.NameSpace.licensed_storage_ref_2_nlu_ref.keys():
         if storage_ref in nlu.NameSpace.licensed_storage_ref_2_nlu_ref[lang].keys():
             nlu_ref = storage_ref
@@ -451,7 +452,7 @@ def construct_trainable_component_from_identifier(nlu_ref,nlp_ref):
     try:
         if nlu_ref in ['train.deep_sentence_detector','train.sentence_detector']:
             #no label col but trainable?
-            return  nlu.NLUSentenceDetector(annotator_class = 'deep_sentence_detector', trainable='True')
+            return  nlu.NLUSentenceDetector(annotator_class = 'deep_sentence_detector', trainable='True',nlu_ref=nlu_ref,)
         if nlu_ref in ['train.context_spell','train.spell'] :
             pass
         if nlu_ref in ['train.symmetric_spell'] :
@@ -463,19 +464,19 @@ def construct_trainable_component_from_identifier(nlu_ref,nlp_ref):
         if nlu_ref in ['train.labeled_dependency_parser'] :
             pass
         if nlu_ref in ['train.classifier_dl','train.classifier'] :
-            return nlu.Classifier(annotator_class = 'classifier_dl', trainable=True)
+            return nlu.Classifier(annotator_class = 'classifier_dl', trainable=True, nlu_ref=nlu_ref,)
         if nlu_ref in ['train.ner','train.named_entity_recognizer_dl'] :
-            return nlu.Classifier(annotator_class = 'ner', trainable=True)
+            return nlu.Classifier(annotator_class = 'ner', trainable=True,nlu_ref=nlu_ref,)
         if nlu_ref in ['train.sentiment_dl','train.sentiment'] :
-            return nlu.Classifier(annotator_class = 'sentiment_dl', trainable=True)
+            return nlu.Classifier(annotator_class = 'sentiment_dl', trainable=True,nlu_ref=nlu_ref,)
         if nlu_ref in ['train.vivekn_sentiment'] :
             pass
         if nlu_ref in ['train.pos'] :
-            return nlu.Classifier(annotator_class = 'pos', trainable=True)
+            return nlu.Classifier(annotator_class = 'pos', trainable=True,nlu_ref=nlu_ref,)
         if nlu_ref in ['train.multi_classifier'] :
-            return nlu.Classifier(annotator_class = 'multi_classifier', trainable=True)
+            return nlu.Classifier(annotator_class = 'multi_classifier', trainable=True,nlu_ref=nlu_ref,)
         if nlu_ref in ['train.word_seg','train.word_segmenter'] :
-            return nlu.Tokenizer(annotator_class = 'word_segmenter', trainable=True)
+            return nlu.Tokenizer(annotator_class = 'word_segmenter', trainable=True,nlu_ref=nlu_ref,)
 
 
     except:  # if reference is not in namespace and not a component it will cause a unrecoverable crash
@@ -520,8 +521,6 @@ def construct_component_from_pipe_identifier(language, nlp_ref, nlu_ref,path=Non
         c_name = component.__class__.__name__
         if isinstance(component, NerConverter):
             constructed_components.append(Util(annotator_class='ner_converter', model=component, lang=language, nlu_ref=nlu_ref,nlp_ref=nlp_ref,loaded_from_pretrained_pipe=True))
-        elif parsed in NameSpace.word_embeddings + NameSpace.sentence_embeddings:
-            constructed_components.append(nlu.Embeddings(model=component, lang=language, nlu_ref=nlu_ref,nlp_ref=nlp_ref,loaded_from_pretrained_pipe=True))
         elif parsed in NameSpace.classifiers:
             constructed_components.append(nlu.Classifier(model=component, lang=language, nlu_ref=nlu_ref,nlp_ref=nlp_ref,loaded_from_pretrained_pipe=True))
         elif isinstance(component, MultiClassifierDLModel):
@@ -543,7 +542,7 @@ def construct_component_from_pipe_identifier(language, nlp_ref, nlu_ref,path=Non
         elif isinstance(component, ElmoEmbeddings):
             constructed_components.append(nlu.Embeddings(model=component, annotator_class='elmo',lang=language, nlu_ref=nlu_ref,nlp_ref=nlp_ref,loaded_from_pretrained_pipe=True,do_ref_checks=False))
         elif isinstance(component, BertSentenceEmbeddings):
-            constructed_components.append(nlu.Embeddings(model=component, annotator_class='bert_sentence',lang=language, nlu_ref=nlu_ref,nlp_ref=nlp_ref,loaded_from_pretrained_pipe=True,do_ref_checks=False))
+            constructed_components.append(nlu.Embeddings(model=component, annotator_class='sentence_bert',lang=language, nlu_ref=nlu_ref,nlp_ref=nlp_ref,loaded_from_pretrained_pipe=True,do_ref_checks=False))
         elif isinstance(component, TokenizerModel):
             constructed_components.append(nlu.Tokenizer(model=component, annotator_class='default_tokenizer',lang=language, nlu_ref=nlu_ref,nlp_ref=nlp_ref,loaded_from_pretrained_pipe=True))
         elif isinstance(component, DocumentAssembler):
@@ -604,6 +603,9 @@ def construct_component_from_pipe_identifier(language, nlp_ref, nlu_ref,path=Non
             constructed_components.append(nlu.Seq2Seq(annotator_class='t5', model=component,nlu_ref=nlu_ref))
         elif isinstance(component,(MarianTransformer)):
             constructed_components.append(nlu.Seq2Seq(annotator_class='marian', model=component,nlu_ref=nlu_ref))
+        elif parsed in NameSpace.word_embeddings + NameSpace.sentence_embeddings:
+             constructed_components.append(nlu.Embeddings(model=component, lang=language, nlu_ref=nlu_ref,nlp_ref=nlp_ref,loaded_from_pretrained_pipe=True))
+
         else:
             logger.exception(
                 f"EXCEPTION: Could not infer component type for lang={language} and nlp_ref={nlp_ref} and model {component} during pipeline conversion,")

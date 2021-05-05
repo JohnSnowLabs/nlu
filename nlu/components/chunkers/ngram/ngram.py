@@ -8,3 +8,4 @@ class NGram:
             .setOutputCol("ngrams") \
             .setN(2) \
             .setEnableCumulative(False)
+

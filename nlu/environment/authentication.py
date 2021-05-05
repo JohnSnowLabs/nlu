@@ -1,6 +1,12 @@
 import os
 from nlu.environment.env_utils import *
 
+
+
+
+
+
+
 def install_and_import_healthcare(JSL_SECRET):
     """ Install Spark-NLP-Healthcare PyPI Package in current enviroment if it cannot be imported and liscense provided"""
     import importlib
@@ -22,6 +28,12 @@ def install_and_import_healthcare(JSL_SECRET):
         from importlib import reload
         reload(site)
         globals()['sparknlp_jsl'] = importlib.import_module('sparknlp_jsl')
+
+
+
+
+
+
 
 def authenticate_enviroment(SPARK_NLP_LICENSE,AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY):
     """Set Secret environ variables for Spark Context"""

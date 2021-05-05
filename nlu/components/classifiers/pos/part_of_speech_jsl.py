@@ -8,6 +8,7 @@ class PartOfSpeechJsl:
             .setInputCols(["token", "sentence"]) \
             .setOutputCol("pos")
 
+
     @staticmethod
     def get_pretrained_model(name, language, bucket=None):
         return PerceptronModel.pretrained(name,language,bucket) \

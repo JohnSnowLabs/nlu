@@ -2,7 +2,7 @@
 #default values for pyspark, spark-nlp, and SPARK_HOME
 SPARKNLP="3.0.1"
 PYSPARK="3.0.2"
-NLU="3.0.0"
+NLU="3.0.1"
 SPARKHOME="/content/spark-3.1.1-bin-hadoop2.7"
 
 while getopts s:p: option
@@ -15,7 +15,7 @@ do
 done
 
 echo "Installing  NLU $NLU with  PySpark $PYSPARK and Spark NLP $SPARKNLP for Google Colab ..."
-apt-get update -qq > /dev/null
+
 apt-get purge -y openjdk-11* -qq > /dev/null && sudo apt-get autoremove -y -qq > /dev/null
 apt-get install -y openjdk-8-jdk-headless -qq > /dev/null
 
@@ -41,4 +41,4 @@ export SPARK_HOME=$SPARKHOME
 export JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64"
 
 # Install pyspark spark-nlp
-! pip install --upgrade -q pyspark==$PYSPARK spark-nlp==$SPARKNLP findspark nlu
+! pip install --upgrade -q pyspark==$PYSPARK spark-nlp==$SPARKNLP findspark nlu==$NLU

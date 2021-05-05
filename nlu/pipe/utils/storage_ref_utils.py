@@ -1,8 +1,6 @@
 import logging
 logger = logging.getLogger('nlu')
 
-import inspect
-from nlu.pipe.pipe_components import SparkNLUComponent
 
 """Storage Ref logic operations and utils"""
 class StorageRefUtils():

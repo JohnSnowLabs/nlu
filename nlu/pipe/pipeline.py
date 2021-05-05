@@ -1,28 +1,29 @@
 import logging
-
-from nlu.extractors.extraction_resolver_OS import OS_anno2config
-from nlu.extractors.extractor_methods.base_extractor_methods import *
-
 logger = logging.getLogger('nlu')
+
+from nlu.pipe.extractors.extraction_resolver_OS import OS_anno2config
+from nlu.pipe.extractors.extractor_methods.base_extractor_methods import *
+from nlu.pipe.pipe_logic import PipeUtils
+
 import nlu
 import nlu.pipe.pipe_components
 import sparknlp
+from  typing import List, Dict
+
 from sparknlp.base import *
 from sparknlp.base import LightPipeline
 from sparknlp.annotator import *
 import pyspark
-from pyspark.sql.types import ArrayType, FloatType, DoubleType
-from pyspark.sql.functions import col as pyspark_col
-from pyspark.sql.functions import monotonically_increasing_id, greatest, expr,udf
 import pandas as pd
 import numpy as np
-from  typing import List
-from nlu.pipe.pipe_utils import PipeUtils
 from pyspark.sql.types import StructType,StructField, StringType, IntegerType
 from nlu.pipe.component_resolution import extract_classifier_metadata_from_nlu_ref
-from nlu.pipe.storage_ref_utils import StorageRefUtils
-from nlu.pipe.component_utils import ComponentUtils
-
+from nlu.pipe.utils.storage_ref_utils import StorageRefUtils
+from nlu.pipe.utils.component_utils import ComponentUtils
+from nlu.pipe.utils.output_level_resolution_utils import OutputLevelUtils
+from nlu.pipe.utils.data_conversion_utils import DataConversionUtils
+from nlu.environment.env_utils import is_running_in_databricks
+from nlu.pipe.col_substitution.col_name_substitution_utils import ColSubstitutionUtils
 class BasePipe(dict):
     # we inherhit from dict so the pipe is indexable and we have a nice shortcut for accessing the spark nlp model
     def __init__(self):
@@ -41,6 +42,9 @@ class BasePipe(dict):
         self.components = []  # orderd list of nlu_component objects
         self.output_datatype = 'pandas'  # What data type should be returned after predict either spark, pandas, modin, numpy, string or array
         self.lang = 'en'
+        self.spark_transformer_pipe = None
+        self.spark_estimator_pipe_pipe = None
+        self.has_licensed_components = False
     def isInstanceOfNlpClassifer(self, model):
         '''
         Check for a given Spark NLP model if it is an instance of a classifier , either approach or already fitted transformer will return true
@@ -51,10 +55,6 @@ class BasePipe(dict):
         return isinstance(model, (
             ClassifierDLModel, ClassifierDLModel, MultiClassifierDLModel, MultiClassifierDLApproach, SentimentDLModel,
             SentimentDLApproach))
-
-
-
-
     def configure_outputs(self, component, nlu_reference, name_to_add=''):
         '''
         Configure output column names of classifiers from category to something more meaningful
@@ -83,7 +83,6 @@ class BasePipe(dict):
         logger.info(f"Configured output columns name to {new_output_name} for classifier in {nlu_reference}")
         component.model.setOutputCol(new_output_name)
         component.info.spark_output_column_names = [new_output_name]
-
     def add(self, component, nlu_reference="default_name", pretrained_pipe_component=False, name_to_add=''):
         '''
 
@@ -92,9 +91,7 @@ class BasePipe(dict):
         :return:
         '''
         if hasattr(component.info,'nlu_ref'): nlu_reference = component.info.nlu_ref
-
         # self.nlu_reference = component.info.nlu_ref if component.info
-
         self.components.append(component)
         # ensure that input/output cols are properly set
         # Spark NLP model reference shortcut
@@ -104,8 +101,6 @@ class BasePipe(dict):
         if StorageRefUtils.has_storage_ref(component):
             name = name +'@' + StorageRefUtils.extract_storage_ref(component)
         logger.info(f"Adding {name} to internal pipe")
-
-
 
         # Configure output column names of classifiers from category to something more meaningful
         if self.isInstanceOfNlpClassifer(component.model): self.configure_outputs(component, nlu_reference)
@@ -122,7 +117,6 @@ class BasePipe(dict):
                 component.info.nlu_ref = nlu_reference
                 self[component.info.name +"@"+ nlu_identifier] = component.model
         else :self[name_to_add] = component.model
-
 class NLUPipeline(BasePipe):
     def __init__(self):
         super().__init__()
@@ -131,93 +125,12 @@ class NLUPipeline(BasePipe):
         self.provider = 'sparknlp'
         self.pipe_ready = False  # ready when we have created a spark df
         # The NLU pipeline uses  types of Spark NLP annotators to identify how to handle different columns
-        self.levels = {
-            'token': ['token', 'pos', 'ner', 'lemma', 'lem', 'stem', 'stemm', 'word_embeddings', 'named_entity',
-                      'entity', 'dependency',
-                      'labeled_dependency', 'dep', 'dep.untyped', 'dep.typed'],
-            'sentence': ['sentence', 'sentence_embeddings', ] + ['sentiment', 'classifer', 'category'],
-            'chunk': ['chunk', 'embeddings_chunk', 'chunk_embeddings'],
-            'document': ['document', 'language'],
-            'embedding_level': []
-            # ['sentiment', 'classifer'] # WIP, wait for Spark NLP Getter/Setter fixes to implement this properly
-            # embedding level  annotators output levels depend on the level of the embeddings they are fed. If we have Doc/Chunk/Word/Sentence embeddings, those annotators output at the same level.
-
-        }
-
-
-        self.annotator_levels_approach_based = {
-            'document': [DocumentAssembler, Chunk2Doc,
-                         YakeModel,
-                         ],
-            'sentence': [SentenceDetector, SentenceDetectorDLApproach, ],
-            'chunk': [Chunker, ChunkEmbeddings,  ChunkTokenizer, Token2Chunk, TokenAssembler,
-                      NerConverter, Doc2Chunk,NGramGenerator],
-            'token': [ NerCrfApproach, NerDLApproach,
-                       PerceptronApproach,
-                       Stemmer,
-                       ContextSpellCheckerApproach,
-                       nlu.WordSegmenter,
-                       Lemmatizer,LemmatizerModel, TypedDependencyParserApproach, DependencyParserApproach,
-                       Tokenizer, RegexTokenizer, RecursiveTokenizer
-                , DateMatcher, TextMatcher, BigTextMatcher, MultiDateMatcher,
-                       WordSegmenterApproach
-                       ],
-            # 'sub_token': [StopWordsCleaner, DateMatcher, TextMatcher, BigTextMatcher, MultiDateMatcher],
-            # these can be document or sentence
-            'input_dependent': [ViveknSentimentApproach, SentimentDLApproach, ClassifierDLApproach,
-                                LanguageDetectorDL,
-                                MultiClassifierDLApproach,  SentenceEmbeddings, NorvigSweetingApproach,
-                                ],
-
-            # 'unclassified': [Yake, Ngram]
-        }
-
-
-        self.annotator_levels_model_based = {
-            'document': [],
-            'sentence': [SentenceDetectorDLModel, ],
-            'chunk': [ChunkTokenizerModel, ChunkTokenizerModel,  ],
-            'token': [ContextSpellCheckerModel, AlbertEmbeddings, BertEmbeddings, ElmoEmbeddings, WordEmbeddings,
-                      XlnetEmbeddings, WordEmbeddingsModel,
-                      # NER models are token level, they give IOB predictions and cofidences for EVERY token!
-                      NerDLModel, NerCrfModel, PerceptronModel, SymmetricDeleteModel, NorvigSweetingModel,
-                      ContextSpellCheckerModel,
-                      TypedDependencyParserModel, DependencyParserModel,
-                      RecursiveTokenizerModel,
-                      TextMatcherModel, BigTextMatcherModel, RegexMatcherModel,
-                      WordSegmenterModel, TokenizerModel
-                      ],
-            # 'sub_token': [TextMatcherModel, BigTextMatcherModel, RegexMatcherModel, ],
-            # sub token is when annotator is token based but some tokens may be missing since dropped/cleanes
-
-            'sub_token' : [
-                StopWordsCleaner
-
-            ] ,
-            'input_dependent': [BertSentenceEmbeddings, UniversalSentenceEncoder, ViveknSentimentModel,
-                                SentimentDLModel, MultiClassifierDLModel, MultiClassifierDLModel, ClassifierDLModel,
-                                MarianTransformer,T5Transformer
-
-                                ],
-        }
-
-        self.all_embeddings = {
-            'token' : [AlbertEmbeddings, BertEmbeddings, ElmoEmbeddings, WordEmbeddings,
-                       XlnetEmbeddings,WordEmbeddingsModel],
-            'input_dependent' : [SentenceEmbeddings, UniversalSentenceEncoder,BertSentenceEmbeddings]
-
-        }
-
     def get_sample_spark_dataframe(self):
         data = {"text": ['This day sucks', 'I love this day', 'I dont like Sami']}
         text_df = pd.DataFrame(data)
         return sparknlp.start().createDataFrame(data=text_df)
-
     def verify_all_labels_exist(self,dataset):
-        #todo
-        return True
-        # pass
-
+        return 'y'  in dataset.columns or 'label' in dataset.columns or 'labels' in dataset.columns
     def fit(self, dataset=None, dataset_path=None, label_seperator=','):
         # if dataset is  string with '/' in it, its dataset path!
         '''
@@ -229,8 +142,7 @@ class NLUPipeline(BasePipe):
         '''
         self.is_fitted = True
         stages = []
-        for component in self.components:
-            stages.append(component.model)
+        for component in self.components:stages.append(component.model)
         self.spark_estimator_pipe = Pipeline(stages=stages)
 
         if dataset_path != None and 'ner' in self.nlu_ref:
@@ -246,7 +158,7 @@ class NLUPipeline(BasePipe):
             schema = StructType([
                 StructField("y", StringType(), True),
                 StructField("text", StringType(), True)
-                ])
+            ])
             from pyspark.sql import functions as F
             df = self.spark.createDataFrame(data=dataset).withColumn('y',F.split('y',label_seperator))
             # df = self.spark.createDataFrame(data=dataset, schema=schema).withColumn('y',F.split('y',label_seperator))
@@ -254,12 +166,12 @@ class NLUPipeline(BasePipe):
             self.spark_transformer_pipe = self.spark_estimator_pipe.fit(df)
 
         elif isinstance(dataset,pd.DataFrame):
-            if not self.verify_all_labels_exist(dataset) : return nlu.NluError()
-            self.spark_transformer_pipe = self.spark_estimator_pipe.fit(self.convert_pd_dataframe_to_spark(dataset))
+            if not self.verify_all_labels_exist(dataset) : raise ValueError(f"Could not detect label in provided columns={dataset.columns}\nMake sure a column named label, labels or y exists in your dataset.")
+            self.spark_transformer_pipe = self.spark_estimator_pipe.fit(DataConversionUtils.pdf_to_sdf(dataset,self.spark)[0])
 
-        elif isinstance(dataset,pd.DataFrame) :
-            if not self.verify_all_labels_exist(dataset) : return nlu.NluError()
-            self.spark_transformer_pipe = self.spark_estimator_pipe.fit(self.convert_pd_dataframe_to_spark(dataset))
+        elif isinstance(dataset,pyspark.sql.DataFrame) :
+            if not self.verify_all_labels_exist(dataset) : raise ValueError(f"Could not detect label in provided columns={dataset.columns}\nMake sure a column named label, labels or y exists in your dataset.")
+            self.spark_transformer_pipe = self.spark_estimator_pipe.fit(DataConversionUtils.sdf_to_sdf(dataset,self.spark))
 
         else :
             # fit on empty dataframe since no data provided
@@ -268,693 +180,50 @@ class NLUPipeline(BasePipe):
 
 
         return self
-    def convert_pd_dataframe_to_spark(self, data):
-        #optimize
-        return self.spark.createDataFrame(data)
-    #todo rm
-    def get_output_level_of_embeddings_provider(self, field_type, field_name):
-        '''
-        This function will go through all components to find the component which  generate @component_output_column_name.
-        Then it will go gain through all components to find the component, from which @component_output_column_name is taking its inputs
-        Then it will return the type of the provider component. This result isused to resolve the output level of the component that depends on the inpit for the output level
-        :param field_type: The type of the field we want to resolve the input level for
-        :param field_name: The name of the field we want to resolve the input level for
+    def get_annotator_extraction_configs(self,full_meta,c_level_mapping,positions):
 
-        :return:
-        '''
-        # find the component. Column output name should be unique
-        component_inputs = []
-        for component in self.components:
-            if field_name == component.info.name:
-                component_inputs = component.info.spark_input_column_names
-
-        # get the embedding feature name
-        target_output_component = ''
-        for input_name in component_inputs:
-            if 'embed' in input_name: target_output_component = input_name
-
-        # get the model that outputs that feature
-        for component in self.components:
-            component_outputs = component.info.spark_output_column_names
-            for input_name in component_outputs:
-                if target_output_component == input_name:
-                    # this is the component that feeds into the component we are trying to resolve the output  level for.
-                    # That is so, because the output of this component matches the input of the component we are resolving
-                    return self.resolve_type_to_output_level(component.info.type)
-
-
-    def resolve_type_to_output_level(self, field_type, field_name):
-        '''
-        This checks the levels dict for what the output level is for the input annotator type.
-        If the annotator type depends on the embedding level, we need further checking.
-        @ param field_type : type of the spark field
-        @ param name : name of thhe spark field
-        @ return : String, which corrosponds to the output level of this Component.
-        '''
-        logger.info('Resolving output level for field_type=%s and field_name=%s', field_type, field_name)
-        if field_name == 'sentence':
-            logger.info('Resolved output level for field_type=%s and field_name=%s to Sentence level', field_type,
-                        field_name)
-            return 'sentence'
-        if field_type in self.levels['token']:
-            logger.info('Resolved output level for field_type=%s and field_name=%s to Token level ', field_type,
-                        field_name)
-            return 'token'
-        if field_type in self.levels['sentence']:
-            logger.info('Resolved output level for field_type=%s and field_name=%s to sentence level', field_type,
-                        field_name)
-            return 'sentence'
-        if field_type in self.levels['chunk']:
-            logger.info('Resolved output level for field_type=%s and field_name=%s to Chunk level ', field_type,
-                        field_name)
-            return 'chunk'
-        if field_type in self.levels['document']:
-            logger.info('Resolved output level for field_type=%s and field_name=%s to document level', field_type,
-                        field_name)
-            return 'document'
-        if field_type in self.levels['embedding_level']:
-            logger.info('Resolved output level for field_type=%s and field_name=%s to embeddings level', field_type,
-                        field_name)
-            return self.get_output_level_of_embeddings_provider(field_type, field_name)  # recursive resolution
-
-
-    def get_field_types_dict(self, sdf, stranger_features, keep_stranger_features=True):
-        """
-        @ param sdf: Spark Dataframe which a NLU/SparkNLP pipeline has transformed.
-        This function returns a dictionary that maps column names to their spark annotator types.
-        @return : Dictionary, Keys are spark column column names, value is the type of annotator
-        """
-        logger.info('Getting field types for output SDF')
-        field_types_dict = {}
-
-        for field in sdf.schema.fieldNames():
-            logger.info(f'Parsing field for {field}')
-
-            if not keep_stranger_features and field in stranger_features: continue
-            elif field in stranger_features :
-                field_types_dict[field] = 'document'
-                continue
-            if field == 'origin_index':
-                field_types_dict[field] = 'document'
-                continue
-
-            if field == self.raw_text_column: continue
-            # if 'label' in field: continue  # speciel case for input lables
-            # For empty DF this will crash
-            a_row = sdf.select(field + '.annotatorType').take(1)[0]['annotatorType']
-            if len(a_row) > 0:
-                a_type = a_row[0]
-            else:
-                logger.exception(
-                    'Error there are no rows for this Component in the final Dataframe. For field=%s. It will be dropped in the final dataset',
-                    field)
-                a_type = 'Error'  # (no results)
-            field_types_dict[field] = a_type
-            logger.info('Parsed type=%s  for field=%s', a_type, field)
-        logger.info('Parsing field types done, parsed=%s', field_types_dict)
-        return field_types_dict
-
-    def reorder_column_names(self, fields_to_rename:List[str]) -> List[str]:
-        '''
-        Edge case swap. We must rename .metadata fields before we get the .result fields or there will be errors because of column name overwrites.. So we swap position of them
-        and second analogus edge case for positional fields (.begin and .end) and .result. We will put every rseult column into the end of the list and thus avoid the erronous case always
-        :param column_names:
-        :return:
-        '''
-        # edge case swap. We must rename .metadata fields before we get the .result fields or there will be errors because of column name overwrites.. So we swap position of them
-        cols_to_swap = [field for field in fields_to_rename if '.metadata' in field]
-        reorderd_fields_to_rename = fields_to_rename.copy()
-        for swap in cols_to_swap:
-            name = swap.split('.')[0] + '.result'
-
-            if 'ar_embed_aner_300d' in name : # AR ANER edge edge case
-                reorderd_fields_to_rename.append(swap)
-                continue
-            reorderd_fields_to_rename[reorderd_fields_to_rename.index(swap)], reorderd_fields_to_rename[
-                reorderd_fields_to_rename.index(name)] = reorderd_fields_to_rename[
-                                                             reorderd_fields_to_rename.index(name)], \
-                                                         reorderd_fields_to_rename[
-                                                             reorderd_fields_to_rename.index(swap)]
-            logger.info('Swapped selection order for  %s and %s before renaming ', swap, name)
-
-        # second analogus edge case for positional fields (.begin and .end) and .result. We will put every rseult column into the end of the list and thus avoid the erronous case always
-        for col in reorderd_fields_to_rename:
-            if '.result' in col: reorderd_fields_to_rename.append(
-                reorderd_fields_to_rename.pop(reorderd_fields_to_rename.index(col)))
-
-        return reorderd_fields_to_rename
-    def rename_columns_and_extract_map_values_same_level(self, ptmp, fields_to_rename, same_output_level,stranger_features=[], meta=False):
-        '''
-        Extract features of Spark DF after they where exploded it was exploded
-        :param ptmp: The dataframe which contains the columns wto be renamed
-        :param fields_to_rename: A list of field names that will be renamed in the dataframe.
-        :param same_output_level: Wether the fields that are going to be renamed are at the same output level as the pipe or at a different one.
-        :param stranger_features:
-        :param meta: Wether  to get meta data like prediction confidence or not
-        :return: Returns tuple (list, SparkDataFrame), where the first element is a list with all the new names and the second element is a new Spark Dataframe which contains all the renamed and also old columns
-        '''
-
-        logger.info(
-            'Renaming columns and extracting meta data for  outputlevel_same=%s and fields_to_rename=%s and get_meta=%s',
-            same_output_level, fields_to_rename, meta)
-        columns_for_select = []
-        reorderd_fields_to_rename = self.reorder_column_names(fields_to_rename)
-
-
-        # fields that are at the same output level have been exploded.
-        # thus we ened to use the res.1 etc.. reference to get the map values and keys
-        for i, field in enumerate(reorderd_fields_to_rename):
-            if field in stranger_features: continue
-            if self.raw_text_column in field: continue
-            new_field = field.replace('.', '_').replace('_result', '').replace('_embeddings_embeddings', '_embeddings')
-            logger.info('Renaming Fields for old name=%s and new name=%s', field, new_field)
-            if new_field == 'embeddings_embeddings': new_field = 'embeddings'
-            if 'metadata' in field:  # rename metadata to something more meaningful
-                logger.info('Getting Meta Data for   : nr=%s , name=%s with new_name=%s and original', i, field,
-                            new_field)
-                new_fields = []
-                # we iterate over the keys in the metadata and use them as new column names. The values will become the values in the columns.
-                keys_in_metadata = self.extract_keys_in_metadata(ptmp,field)
-
-                # no resulting values for this column, we wont include it in the final output
-                if len( keys_in_metadata) == 0: continue
-                logger.info('Extracting Meta Keys=%s for field=%s', keys_in_metadata, new_field)
-                if meta == True or 'entities' in field:  # get all meta data
-                    for key in keys_in_metadata:
-                        logger.info('Extracting key=%s', key)
-                        # drop sentences keys from Lang detector, they seem irrelevant. same for NER chunk map keys
-                        if key == 'sentence' and 'language' in field: continue
-                        if key == 'chunk' and 'entities' in field: continue
-                        if key == 'sentence' and 'entities' in field: continue
-                        if field == 'entities.metadata' or field =='ner.metadata': new_fields.append(new_field.replace('metadata','confidence'))
-                        else : new_fields.append(new_field.replace('metadata', key + '_confidence'))
-                        if new_fields[-1] == 'entities_entity': new_fields[-1] = 'ner_tag'
-                        ptmp = ptmp.withColumn(new_fields[-1],pyspark_col(('res.' + str(fields_to_rename.index(field)) + '.' + key)))
-
-                        columns_for_select.append(new_fields[-1])
-
-                        logger.info(
-                            'Created Meta Data for : nr=%s , original Meta Data key name=%s and new  new_name=%s ', i,
-                            key, new_fields[-1])
-                else:
-                    # Get only meta data with greatest value (highest prob)
-
-                    cols_to_max = []
-                    for key in keys_in_metadata:
-                        if 'sentence' == key and field == 'sentiment.metadata':continue
-
-                        cols_to_max.append('res.' + str(fields_to_rename.index(field)) + '.' + key)
-
-                    # For Sentiment the sentence.result contains irrelevant Metadata and is not part of the confidence we want. So we remove it here
-
-                    # sadly because the Spark SQL method 'greatest()' does not work properly on scientific notation, we must cast our metadata to decimal with limited precision
-                    # scientific notation starts after 6 decimal places, so we can have at most exactly 6
-                    # since greatest() breaks the dataframe Schema, we must rename the columns first or run into issues with PySpark Struct queriying
-
-                    for key in cols_to_max: ptmp = ptmp.withColumn(key.replace('.', '_'),pyspark_col(key).cast('decimal(7,6)'))
-                    # casted = ptmp.select(*(pyspark_col(c).cast("decimal(6,6)").alias(c.replace('.','_')) for c in cols_to_max))
-
-                    max_confidence_name = field.split('.')[0] + '_confidence'
-                    renamed_cols_to_max = [col.replace('.', '_') for col in cols_to_max]
-
-                    if len(cols_to_max) > 1:
-                        ptmp = ptmp.withColumn(max_confidence_name, greatest(*renamed_cols_to_max))
-                        columns_for_select.append(max_confidence_name)
-                    else:
-                        ptmp = ptmp.withColumnRenamed(renamed_cols_to_max[0], max_confidence_name)
-                        columns_for_select.append(max_confidence_name)
-                continue
-            # get th e output level results row by row (could be parallelized via mapping for each annotator)
-            ptmp = ptmp.withColumn(new_field, ptmp['res.' + str(fields_to_rename.index(field))])
-            columns_for_select.append(new_field)
-            logger.info('Renaming exploded field  : nr=%s , name=%s to new_name=%s', i, field, new_field)
-        return ptmp, columns_for_select
-
-    def extract_keys_in_metadata(self,ptmp:pyspark.sql.DataFrame,field:str) -> [str] :
-        '''
-        Extract keys in the metadata of the output of a annotator and returns them as a str list
-        :param ptmp: Spark dataframe with outputs of an Spark NLP annotator
-        :param field: Name of the field for which to find the keys in the metadata. Field should be suffixed with .metadata
-        :return: Str list of keys in the metadata for the given field
-        '''
-        keys_in_metadata = list(ptmp.select(field).take(1))
-        try_filter = False
-        if len(keys_in_metadata) == 0: try_filter = True # return []
-        if len(keys_in_metadata[0].asDict()['metadata']) == 0:  try_filter = True # return []
-        if try_filter:
-            # Filter for first with list bigger 0 to get metadata
-            slen = udf(lambda s: len(s), IntegerType())
-            t = ptmp.withColumn('lens', slen(ptmp[field]))
-            keys_in_metadata = list(t.filter(t.lens > 0 ).select(field).take(1))
-            if len(keys_in_metadata) == 0: return []
-            if len(keys_in_metadata[0].asDict()['metadata']) == 0: return []
-
-        keys_in_metadata = list(keys_in_metadata[0].asDict()['metadata'][0].keys())
-        if 'sentence' in keys_in_metadata : keys_in_metadata.remove('sentence')
-        logger.info(f'Field={field} has keys in metadata={keys_in_metadata}')
-
-        return keys_in_metadata
-
-
-    def rename_columns_and_extract_map_values_different_level(self, ptmp, fields_to_rename, same_output_level,
-                                                              stranger_features=[], meta=True):
-        '''
-        This method takes in a Spark dataframe that is the result not exploded on, after applying a Spark NLP pipeline to it.
-        It will peform the following transformations on the dataframe:
-        1. Rename the exploded columns to something more meaningful
-        2. Extract Meta data values of columns that contain maps if the data is relevant
-        3. Store the new names
-        :param ptmp: The dataframe which contains the columns wto be renamed
-        :param fields_to_rename: A list of field names that will be renamed in the dataframe.
-        :param same_output_level: Wether the fields that are going to be renamed are at the same output level as the pipe or at a different one.
-        :param stranger_features:
-        :param meta: Wether  to get meta data like prediction confidence or not
-        :return: Returns tuple (list, SparkDataFrame), where the first element is a list with all the new names and the second element is a new Spark Dataframe which contains all the renamed and also old columns
-        '''
-
-        logger.info(
-            f'Renaming columns and extracting meta data for  outputlevel_same={same_output_level} and fields_to_rename={fields_to_rename} and get_meta={meta}')
-        columns_for_select = []
-
-        reorderd_fields_to_rename = self.reorder_column_names(fields_to_rename)
-
-
-        for i, field in enumerate(reorderd_fields_to_rename):
-            if self.raw_text_column in field: continue
-            new_field = field.replace('.', '_').replace('_result', '').replace('_embeddings_embeddings', '_embeddings')
-            if new_field == 'embeddings_embeddings': new_field = 'embeddings'
-            logger.info('Renaming Fields for old name=%s and new name=%s', field, new_field)
-            if 'metadata' in field:
-                # since the have a field with metadata, the values of the original data for which we have metadata for must exist in the dataframe as singular elements inside of a list
-                # by applying the expr method, we unpack the elements from the list
-                unpack_name = field.split('.')[0]
-                ## ONLY for NER or Keywordswe actually expect array type output for different output levels and must do proper casting
-                if field == 'entities.metadata':
-                    pass  # ner result wil be fatched later
-                elif field == 'keywords.metadata':
-                    ptmp = ptmp.withColumn(unpack_name + '_result', ptmp[unpack_name + '.result'])
-                else:
-                    ptmp = ptmp.withColumn(unpack_name + '_result', expr(unpack_name + '.result[0]'))
-
-                reorderd_fields_to_rename[reorderd_fields_to_rename.index(unpack_name + '.result')] = unpack_name + '_result'
-                logger.info(f'Getting Meta Data for   : nr={i} , original_name={field} with new_name={new_field} and original')
-                # we iterate over the keys in the metadata and use them as new column names. The values will become the values in the columns.
-                keys_in_metadata = self.extract_keys_in_metadata(ptmp,field)
-                if len(keys_in_metadata) == 0: continue
-
-                if 'sentence' in keys_in_metadata: keys_in_metadata.remove('sentence')
-                if 'chunk' in keys_in_metadata and field == 'entities.metadata': keys_in_metadata.remove('chunk')
-
-                new_fields = []
-                logger.info('Extracting Meta Keys=%s for field=%s', keys_in_metadata, new_field)
-
-                for key in keys_in_metadata:
-                    # we cant skip getting  key values for everything, even if meta=false. This is because we need to get the greatest of all confidence values , for this we must unpack them first..
-                    if key =='word' and field =='ner.metadata' : continue # irrelevant metadata in the for the word key
-                    if field == 'entities.metadata' or field == 'sentiment.metadata' or field =='ner.metadata': new_fields.append(new_field.replace('metadata','confidence'))
-                    else : new_fields.append(new_field.replace('metadata', key + '_confidence'))
-                    # entities_entity
-                    if new_fields[-1] == 'entities_entity': new_fields[-1] = 'ner_tag'
-                    logger.info(f'Extracting meta data for key={key} and column name={new_fields[-1]}')
-
-                    # These Pyspark UDF extracts from a list of maps all the map values for positive and negative confidence and also spell costs
-                    def extract_map_values_float(x): return [float(sentence[key]) for sentence in x]
-                    def extract_map_values_str(x): return [str(sentence[key]) for sentence in x]
-
-                    # extract map values for list of maps
-                    # Since ner is only component  wit string metadata, we have this simple conditional
-                    if field == 'entities.metadata':
-                        array_map_values = udf(lambda z: extract_map_values_str(z), ArrayType(StringType()))
-                        ptmp.withColumn(new_fields[-1], array_map_values(field)).select(expr(f'{new_fields[-1]}[0]'))
-                        ptmp = ptmp.withColumn(new_fields[-1], array_map_values(field))
-                    elif field == 'ner.metadata' and key =='confidence' :
-                        array_map_values = udf(lambda z: extract_map_values_float(z), ArrayType(FloatType()))
-                        ptmp.withColumn(new_fields[-1], array_map_values(field)).select(f'{new_fields[-1]}')
-                        ptmp = ptmp.withColumn(new_fields[-1], array_map_values(field))
-                        # ptmp = ptmp.withColumn(new_fields[-1], expr(new_fields[-1] + '[0]'))
-                    else :
-                        # EXPERIMENTAL extraction, should work for all FloatTypes?
-                        # We apply Expr here because all result ing meta data is inside of a list and just a single element, which we can take out
-                        # Exceptions to this rule are entities and metadata, this are scenarios wehre we want all elements from the predictions array ( since it could be multiple keywords/entities)
-                        array_map_values = udf(lambda z: extract_map_values_float(z), ArrayType(FloatType()))
-                        ptmp.withColumn(new_fields[-1], array_map_values(field)).select(expr(f'{new_fields[-1]}[0]'))
-                        ptmp = ptmp.withColumn(new_fields[-1], array_map_values(field))
-                        ptmp = ptmp.withColumn(new_fields[-1], expr(new_fields[-1] + '[0]'))
-                    logger.info(f'Created Meta Data for   : nr={i} , original_name={field} with new_name={new_fields[-1]}')
-                    columns_for_select.append(new_fields[-1])
-
-                if meta == True:
-                    continue  # If we dont max, we will see the confidence for all other classes. by continuing here, we will leave all the confidences for the other classes in the DF.
-                else:
-                    # If meta == false we need to find the meta data col umn with the HIGHEST confidence and only keep that!
-                    # Assuming we have only 1 confidence value per Column. If here are Multiple then...(?)
-                    # We gotta get the max confidence column, remove all other cols for selection
-                    if field == 'entities.metadata': continue
-                    if field == 'ner.metadata': continue
-                    if field == 'keywords.metadata': continue  # We dont want to max for multiple keywords. Also it will change the name from score to confidence of the final column
-                    # if field in multi_level_fields : continue # multi_classifier_dl, YAKE
-                    # if field ==
-                    cols_to_max = []
-                    prefix = field.split('.')[0]
-                    for key in keys_in_metadata: cols_to_max.append(prefix + '_' + key +'_confidence')
-
-                    # cast all the types to decimal, remove scientific notation
-                    for key in new_fields: ptmp = ptmp.withColumn(key, pyspark_col(key).cast('decimal(7,6)'))
-
-                    max_confidence_name = field.split('.')[0] + '_confidence'
-                    if len(cols_to_max) > 1:
-                        ptmp = ptmp.withColumn(max_confidence_name, greatest(*cols_to_max))
-                        columns_for_select.append(max_confidence_name)
-                    else:
-                        ptmp = ptmp.withColumnRenamed(cols_to_max[0], max_confidence_name)
-                        columns_for_select.append(max_confidence_name)
-
-                    for f in new_fields:
-                        # we remove the new fields becasue they duplicate the infomration of max confidence field
-                        if f in columns_for_select: columns_for_select.remove(f)
-
-                continue  # end of special meta data case
-
-            if field == 'entities_result':
-                ptmp = ptmp.withColumn('entities_result', ptmp['entities.result'].cast(ArrayType(StringType())))  #
-
-
-
-            ptmp = ptmp.withColumn(new_field, ptmp[field])  # get the outputlevel results row by row
-            # ptmp = ptmp.withColumnRenamed(field,new_field)  # EXPERIMENTAL engine test, only works sometimes since it can break dataframe struct
-            logger.info(f'Renaming non exploded field  : nr={i} , original_name={field} to new_name={new_field}')
-            columns_for_select.append(new_field)
-        return ptmp, columns_for_select
-
-    def extract_multi_level_outputs(self,ptmp:pyspark.sql.DataFrame, multi_level_col_names:List[str],meta:bool) -> (pyspark.sql.DataFrame,List[str]):
-        '''
-        Extract the columns for toPandas conversion from a Pyspark dataframe. Applicable to outputs of MultiClassifierDL/Yake or other MultiLevel Output level NLU components
-        for field.result we can just extract the raw column and rename it to smth nice
-        for field.metadata  there are 2 cases
-        1. if metadata==true then we want one column per key in metadata. Each column has the corrosponding confidence. In adition, we have a result column for field with conf<0.5 (except key==sentence)
-        2. if metadata==false then we want just one column with the confidences which are above 0.5
-        :param ptmp: spark dataframe with the output columns of a Multi-Outputlevel Annotator
-        :param multi_level_col_names: The columns which are outputs of the multi_level component
-        :param meta: Wether to return all additional metadata or not ( i.e. return probabilities for all classes, even if their probability is below classification threshold which is usually 0.5.
-        :return: Spark Dataframe with new columns ready for toPandas conversion and also a list with all column names which should be used for Pandas conversion.
-        '''
-        columns_for_select = []
-        logger.info(f"Extracting multi level fields={multi_level_col_names}")
-
-        def extract_classnames_and_confidences(x,keys_in_metadata, threshold=0.5):
-            ## UDF for extracting confidences and their class names as struct types if the confidence is larger than threshold
-            confidences = []
-            classes = []
-            if not isinstance(x,dict) : return [[],[]]#[[0.0],['No Classes Detected']]
-            for key in keys_in_metadata :
-                if key =='sentence' : continue     # irrelevant metadata
-                if float(x[key]) >= threshold :
-                    confidences.append(float(x[key]))
-                    classes.append(key)
-            return [confidences, classes]
-        schema = StructType([
-            StructField("confidences", ArrayType(DoubleType()), False),
-            StructField("classes", ArrayType(StringType()), False)
-        ])
-        def extract_map_values_float(x,key): return [float(sentence[key]) for sentence in x]
-
-            # we dont care about .result col, we get all from metadarta
-        for field in multi_level_col_names:
-            base_field_name = field.split('.')[0]
-            confidence_field_name = base_field_name+'_confidences'
-            class_field_name = base_field_name+'_classes'
-            if 'metadata' in field :
-
-                keys_in_metadata = self.extract_keys_in_metadata(ptmp,field)
-                if len(keys_in_metadata) == 0: continue
-                if not meta:
-                    if 'keyword' in field: # yake handling
-                        array_map_values = udf(lambda z: extract_map_values_float(z,'score'), ArrayType(FloatType()))
-                        ptmp = ptmp.withColumn(confidence_field_name, array_map_values(field))
-                        columns_for_select += [confidence_field_name]
-                    else :
-                        # create a confidence and class column which both contain a list of predicted classes/confidences
-                        # we apply the  UDF only to the first element because metadata is duplicated for multi classifier dl and all relevent info is in the first element of the metadata col list
-                        #todo extract thresold
-                        extract_classnames_and_confidences_udf = udf(lambda z: extract_classnames_and_confidences(z, keys_in_metadata, threshold=0.5), schema)
-                        ptmp = ptmp.withColumn('multi_level_extract_result', extract_classnames_and_confidences_udf(expr(f'{field}[0]')))
-                        ptmp = ptmp.withColumn(confidence_field_name , ptmp['multi_level_extract_result.confidences'])
-                        ptmp = ptmp.withColumn(class_field_name, ptmp['multi_level_extract_result.classes'])
-                        columns_for_select += [confidence_field_name, class_field_name]
-
-                else :
-                    confidence_field_names = []
-                    for key in keys_in_metadata :
-                        #create one col per confidence and only get those
-                        if key =='sentence':continue
-                        new_confidence_field_name = base_field_name + '_' +key +'_confidence'
-                        if 'keyword' in field: # yake handling
-                            array_map_values = udf(lambda z: extract_map_values_float(z,'score'), ArrayType(FloatType()))
-                            ptmp = ptmp.withColumn(new_confidence_field_name, array_map_values(field))
-                            confidence_field_names.append(new_confidence_field_name)
-
-                        else:
-                            ptmp = ptmp.withColumn(new_confidence_field_name, expr(f'{field}[0]["{key}"]'))
-                            confidence_field_names.append(new_confidence_field_name)
-
-
-                    columns_for_select += confidence_field_names
-
-            else :
-                base_field_name = field.split('.')[0]
-                class_field_name = base_field_name+'_classes'
-                ptmp = ptmp.withColumn(class_field_name,ptmp[field])
-                columns_for_select += [class_field_name]
-
-        return ptmp, columns_for_select
-
-    def resolve_input_dependent_component_to_output_level(self, component):
-        '''
-        For a given NLU component  which is input dependent , resolve its output level by checking if it's input stem from document or sentence based annotators
-        :param component:  to resolve
-        :return: resolve component
-        '''
-        # (1.) A classifier, which is using sentence/document. We just check input cols
-
-        if 'document' in component.info.spark_input_column_names :  return 'document'
-        if 'sentence' in component.info.spark_input_column_names :  return 'sentence'
-
-        # (2.) A classifier, which is using sentence/doc embeddings.
-        # We iterate over the pipe and check which Embed component is feeding the classifier and what the input that embed annotator is (sent or doc)
-        for c in self.components:
-            # check if c is of sentence embedding class  which is always input dependent
-            if any ( isinstance(c.model, e ) for e in self.all_embeddings['input_dependent']  ) :
-                if 'document' in c.info.spark_input_column_names :  return 'document'
-                if 'sentence' in c.info.spark_input_column_names :  return 'sentence'
-
-
-    def resolve_component_to_output_level(self,component):
-        '''
-        For a given NLU component, resolve its output level, by checking annotator_levels dicts for approaches and models
-        If output level is input dependent, resolve_input_dependent_component_to_output_level will resolve it
-        :param component:  to resolve
-        :return: resolve component
-        '''
-        for level in self.annotator_levels_model_based.keys():
-            for t in self.annotator_levels_model_based[level]:
-                if isinstance(component.model,t) :
-                    if level == 'input_dependent' : return self.resolve_input_dependent_component_to_output_level(component)
-                    else : return level
-
-        for level in self.annotator_levels_approach_based.keys():
-            for t in self.annotator_levels_approach_based[level]:
-                if isinstance(component.model,t) :
-                    if level == 'input_dependent' : return self.resolve_input_dependent_component_to_output_level(component)
-                    else : return level
-
-
-        
-        if self.has_licensed_components:
-            from  nlu.extractors.output_level_HC_map import HC_anno2output_level
-            for level in HC_anno2output_level.keys():
-                for t in HC_anno2output_level[level]:
-                    if isinstance(component.model,t) :
-                        if level == 'input_dependent' : return self.resolve_input_dependent_component_to_output_level(component)
-                        else : return level
-            
-
-
-    def infer_and_set_output_level(self):
-        '''
-        This function checks the LAST  component of the NLU pipeline and infers
-        and infers from that the output level via checking the components info.
-        It sets the output level of the pipe accordingly
-        param sdf : Spark dataframe after transformations
-        '''
-        if self.output_level == '' :
-            # Loop in reverse over pipe and get first non util/sentence_detecotr/tokenizer/doc_assember. If there is non, take last
-            bad_types = [ 'util','document','sentence']
-            bad_names = ['token']
-            for c in self.components[::-1]:
-                if any (t in  c.info.type for t in bad_types) : continue
-                if any (n in  c.info.name for n in bad_names) : continue
-                self.output_level = self.resolve_component_to_output_level(c)
-                logger.info(f'Inferred and set output level of pipeline to {self.output_level}', )
-                break
-            if self.output_level == None  or self.output_level == '': self.output_level = 'document' # Voodo Normalizer bug that does not happen in debugger bugfix
-            logger.info(f'Inferred and set output level of pipeline to {self.output_level}' )
-
-        else : return
-    def get_chunk_col_name(self):
-        '''
-        This methdo checks wether there is a chunk component in the pipelien.
-        If there is, it will return the name of the output columns for that component
-        :return: Name of the chunk type column in the dataset
-        '''
-
-        for component in self.components:
-            if component.info.output_level == 'chunk':
-                # Usually al chunk components ahve only one output and that is the cunk col so we can safely just pass the first element of the output list to the caller
-                logger.info("Detected %s as chunk output column for later zipping", component.info.name)
-                return component.info.spark_output_column_names[0]
-
-    def resolve_field_to_output_level(self, field,f_type):
-        '''
-        For a given field from resulting datafarme, search find the component that generated that field and returns it's output level
-        :param field: The field to find the output_level for
-        :param f_type: The type of the field to fint the output level for
-        :return: The output level of the field
-        '''
-        target = field.split('.')[0]
-        for c in self.components:
-            if target in c.info.spark_output_column_names:
-                # MultiClassifier outputs should never be at same output level as pipe, returning special_case takes care of this
-                if isinstance(c.model, (MultiClassifierDLModel, MultiClassifierDLApproach,YakeModel)): return "multi_level"
-                return self.resolve_component_to_output_level(c)
-
-
-
-    def select_features_from_result(self, field_dict, processed, stranger_features, same_output_level_fields,
-                                    not_at_same_output_level_fields):
-        '''
-        loop over all fields and decide which ones to keep and also if there are at the current output level or at a different one .
-        We sort the fields by output level. If they are at the same as the current output level and will be exploded
-        Or they are at a different level, in which case they will be left as is and not zipped before explode
-
-        :param field_dict: field dict generated by get_field_types_dict
-        :param processed:  Spark dataframe generated by transformer pipeline
-        :param stranger_features: Features in the dataframe, which where not generated by NLU
-        :param at_same_output_level_fields:  Features which are deemed at the same output level of the pipeline
-        :param not_at_same_output_level_fields: Features which are not deemed at the same output level of the pipeline
-        :return: Tuple (at_same_output_level_fields, not_at_same_output_level_fields)
-        '''
-        multi_level_fields=[]
-        for field in processed.schema.fieldNames():
-            if field in stranger_features: continue
-            if field == self.raw_text_column: continue
-            if field == self.output_level: continue
-            # if 'label' in field and 'dependency' not in field: continue  # specal case for input labels
-
-            f_type = field_dict[field]
-            logger.info('Selecting Columns for field=%s of type=%s', field, f_type)
-            inferred_output_level = self.resolve_field_to_output_level( field,f_type)
-
-            if inferred_output_level == 'multi_level' :
-                if self.output_positions:
-                    multi_level_fields.append(field + '.begin')
-                    multi_level_fields.append(field + '.end')
-                multi_level_fields.append(field + '.metadata')
-                multi_level_fields.append(field + '.result')
-
-            elif inferred_output_level == self.output_level:
-                logger.info(f'Setting field for field={field} of type={f_type} to output level={inferred_output_level} which is SAME LEVEL')
-                if 'embeddings' not in field and 'embeddings' not in f_type: same_output_level_fields.append(
-                    field + '.result')  # result of embeddigns is just the word/sentence
-                if self.output_positions:
-                    same_output_level_fields.append(field + '.begin')
-                    same_output_level_fields.append(field + '.end')
-                if 'embeddings' in f_type:
-                    same_output_level_fields.append(field + '.embeddings')
-                if 'entities' in field:
-                    same_output_level_fields.append(field + '.metadata')
-                if 'ner' in field:
-                    same_output_level_fields.append(field + '.metadata')
-                if 'category' in f_type or 'spell' in f_type or 'sentiment' in f_type or 'class' in f_type or 'language' in f_type or 'keyword' in f_type:
-                    same_output_level_fields.append(field + '.metadata')
-            else:
-                logger.info(f'Setting field for field={field} of type={f_type} to output level={inferred_output_level} which is NOT SAME LEVEL')
-
-                if 'embeddings' not in field and 'embeddings' not in f_type: not_at_same_output_level_fields.append(
-                    field + '.result')  # result of embeddigns is just the word/sentence
-                if self.output_positions:
-                    not_at_same_output_level_fields.append(field + '.begin')
-                    not_at_same_output_level_fields.append(field + '.end')
-                if 'embeddings' in f_type:
-                    not_at_same_output_level_fields.append(field + '.embeddings')
-                if 'category' in f_type or 'spell' in f_type or 'sentiment' in f_type or 'class' in f_type or 'keyword' in f_type:
-                    not_at_same_output_level_fields.append(field + '.metadata')
-                if 'entities' in field:
-                    not_at_same_output_level_fields.append(field + '.metadata')
-                if 'ner' in field:
-                    not_at_same_output_level_fields.append(field + '.metadata')
-        if self.output_level == 'document':
-            # explode stranger features if output level is document
-            # same_output_level_fields =list(set( same_output_level_fields + stranger_features))
-            same_output_level_fields = list(set(same_output_level_fields))
-            # same_output_level_fields.remove('origin_index')
-        return same_output_level_fields, not_at_same_output_level_fields,multi_level_fields
-
-
-    def get_annotator_extraction_configs(self,full_meta):
         """Search first OC namespace and if not found the HC Namespace for each Annotator Class in pipeline and get corrosponding config
         Returns a dictionary of methods, where keys are column names values are methods  that are applied to extract and represent the data in these
         these columns in a more pythonic and panda-esque way
         """
+        # tood doc level annos and same level annos can be popped always.
         anno_2_ex_config = {}
         for c in self.components:
             if type(c.model) in OS_anno2config.keys():
                 if OS_anno2config[type(c.model)]['default'] == '' or full_meta:
-                    logger.info(f'could not find default configs, using full default for model ={c.model}')
+                    if not full_meta : logger.info(f'could not find default configs, using full default for model ={c.model}')
                     anno_2_ex_config[c.info.spark_output_column_names[0]] = OS_anno2config[type(c.model)]['default_full'](output_col_prefix=c.info.outputs[0])
                 else :
                     anno_2_ex_config[c.info.spark_output_column_names[0]] = OS_anno2config[type(c.model)]['default'](output_col_prefix=c.info.outputs[0])
             else:
-                from nlu.extractors.extraction_resolver_HC import HC_anno2config
+                from nlu.pipe.extractors.extraction_resolver_HC import HC_anno2config
                 if HC_anno2config[type(c.model)]['default'] == '' or full_meta :
-                    logger.info(f'could not find default configs in hc resolver space, using full default for model ={c.model}')
+                    if not full_meta : logger.info(f'could not find default configs in hc resolver space, using full default for model ={c.model}')
                     anno_2_ex_config[c.info.spark_output_column_names[0]] = HC_anno2config[type(c.model)]['default_full'](output_col_prefix=c.info.outputs[0])
                 else :
                     anno_2_ex_config[c.info.spark_output_column_names[0]] = HC_anno2config[type(c.model)]['default'](output_col_prefix=c.info.outputs[0])
-        return anno_2_ex_config
 
-    def unpack_and_apply_extractors(self,sdf:pyspark.sql.DataFrame, full_meta=False, keep_stranger_features=True, stranger_features=[])-> pd.DataFrame:
-        # todo here user either Spark/Modin/Some other Backend
+            if c_level_mapping[c] == 'document' and  not anno_2_ex_config[c.info.spark_output_column_names[0]].pop_never :
+                anno_2_ex_config[c.info.spark_output_column_names[0]].pop_meta_list = True
+                anno_2_ex_config[c.info.spark_output_column_names[0]].pop_result_list = True
+            # if c_level_mapping[c] == 'relation' and  not anno_2_ex_config[c.info.spark_output_column_names[0]].pop_never :
+            if positions :
+                anno_2_ex_config[c.info.spark_output_column_names[0]].get_positions = True
+
+        return anno_2_ex_config
+    def unpack_and_apply_extractors(self,sdf:pyspark.sql.DataFrame, keep_stranger_features=True, stranger_features=[],anno_2_ex_config={})-> pd.DataFrame:
         """1. Unpack SDF to PDF with Spark NLP Annotator Dictionaries
            2. Get the extractor configs for the corrosponding Annotator classes
            3. Apply The extractor configs with the extractor methods to each column and merge back with zip/explode"""
-        anno_2_ex_config = self.get_annotator_extraction_configs(full_meta,)
         unpack_df = sdf.toPandas().applymap(extract_pyspark_rows)
-
         return apply_extractors_and_merge(unpack_df,anno_2_ex_config, keep_stranger_features,stranger_features)
-
-
-    def get_output_level_mapping(self)->Dict[str,str]:
-        """Get a dict where key=colname and val=output_level, inferred from processed dataframe and pipe that is currently running"""
-        return {c.info.outputs[0] :self.resolve_component_to_output_level(c)  for c in self.components}
-
-    def get_cols_at_same_output_level(self,col2output_level:Dict[str,str])->List[str]:
-        """Get List of cols which are at same output level as the pipe is currently configured to"""
-        # return [c.info.outputs[0]  for c in self.components if self.resolve_component_to_output_level(c) == self.output_level ]
-        return [c.info.outputs[0]  for c in self.components if col2output_level[c.info.outputs[0]] == self.output_level ]
-
-    def get_cols_not_at_same_output_level(self,col2output_level:Dict[str,str])->List[str]:
-        """Get List of cols which are not at same output level as the pipe is currently configured to"""
-        # return [c.info.outputs[0]  for c in self.components if not self.resolve_component_to_output_level(c) == self.output_level ]
-        return [c.info.outputs[0]  for c in self.components if not col2output_level[c.info.outputs[0]] == self.output_level ]
-
-
-
     def pythonify_spark_dataframe(self, processed,
                                   keep_stranger_features=True,
                                   stranger_features=[],
                                   drop_irrelevant_cols=True,
-                                  output_metadata=False):
-
+                                  output_metadata=False,
+                                  positions = False
+                                  ):
         '''
         This functions takes in a spark dataframe with Spark NLP annotations in it and transforms it into a Pandas Dataframe with common feature types for further NLP/NLU downstream tasks.
         It will recylce Indexes from Pandas DataFrames and Series if they exist, otherwise a custom id column will be created which is used as inex later on
@@ -976,36 +245,40 @@ class NLUPipeline(BasePipe):
         :return: Pandas dataframe which easy accessable features
         '''
         stranger_features += ['origin_index']
-        self.infer_and_set_output_level()
-        col2output_level                 = self.get_output_level_mapping()
-        same_output_level                = self.get_cols_at_same_output_level(col2output_level)
-        not_same_output_level            = self.get_cols_not_at_same_output_level(col2output_level)
 
+        if self.output_level == '' : self.output_level = OutputLevelUtils.infer_output_level(self)
+        c_level_mapping =OutputLevelUtils.get_output_level_mapping_by_component(self)
+
+        anno_2_ex_config                                                          = self.get_annotator_extraction_configs(output_metadata,c_level_mapping,positions)
+        pretty_df = self.unpack_and_apply_extractors(processed, keep_stranger_features, stranger_features,anno_2_ex_config)
+        col2output_level,same_output_level,not_same_output_level                  = OutputLevelUtils.get_output_level_mappings(self,pretty_df,anno_2_ex_config)
         logger.info(f"Extracting for same_level_cols = {same_output_level}\nand different_output_level_cols = {not_same_output_level}")
-
-        pretty_df = self.unpack_and_apply_extractors(processed, output_metadata, keep_stranger_features, stranger_features)
-        pretty_df = zip_and_explode(pretty_df, same_output_level, not_same_output_level)
+        pretty_df = zip_and_explode(pretty_df, same_output_level, not_same_output_level, self.output_level)
         pretty_df = self.convert_embeddings_to_np(pretty_df)
-        if  drop_irrelevant_cols : return pretty_df[self.drop_irrelevant_cols(list(pretty_df.columns))]
-        return pretty_df
+        pretty_df = ColSubstitutionUtils.substitute_col_names(pretty_df,anno_2_ex_config,self, stranger_features)
+        if  drop_irrelevant_cols :  pretty_df = pretty_df[self.drop_irrelevant_cols(list(pretty_df.columns))]
+        return pretty_df.loc[:,~pretty_df.columns.duplicated()]
 
+    def viz(self, text_to_viz:str, viz_type='', labels_to_viz=None,viz_colors={},):
+        """Visualize predictions of a Pipeline, using Spark-NLP-Display
+        text_to_viz : String to viz
+        viz_type    : Viz type, one of [ner,dep,resolution,relation,assert]
+        labels_to_viz : Defines a subset of NER labels to viz i.e. ['PER'] , by default=[] which will display all labels. Applicable only for NER viz
+        viz_colors  : Applicable for [ner, resolution, assert ] key = label, value=hex color, i.e. viz_colors={'TREATMENT':'#008080', 'problem':'#800080'}
+        """
+        from nlu.environment.env_utils import install_and_import_package
+        install_and_import_package('spark-nlp-display',import_name='sparknlp_display')
+        if self.spark_transformer_pipe is None : self.fit()
+        is_databricks_env = is_running_in_databricks()
+        self.configure_light_pipe_usage(1)
+        from nlu.pipe.viz.vis_utils import VizUtils
 
-# pretty_df =  self.finalize_retur_datatype(pretty_df)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        if viz_type == '' : viz_type  = VizUtils.infer_viz_type(self)
+        anno_res = self.spark_transformer_pipe.fullAnnotate(text_to_viz)[0]
+        if self.has_licensed_components==False :
+            VizUtils.viz_OS(anno_res, self, viz_type,viz_colors,labels_to_viz,is_databricks_env)
+        else :
+            VizUtils.viz_HC(anno_res, self, viz_type,viz_colors,labels_to_viz,is_databricks_env)
 
     def convert_embeddings_to_np(self, pdf):
         '''
@@ -1018,8 +291,6 @@ class NLUPipeline(BasePipe):
             if 'embed' in col:
                 pdf[col] = pdf[col].apply(lambda x: np.array(x))
         return pdf
-
-
     def finalize_return_datatype(self, df):
         '''
         Take in a Spark dataframe with only relevant columns remaining.
@@ -1027,7 +298,6 @@ class NLUPipeline(BasePipe):
         :param df:
         :return: The predicted Data as datatype dependign on self.output_datatype
         '''
-
         if self.output_datatype == 'spark':
             return df # todo
         elif self.output_datatype == 'pandas':
@@ -1043,8 +313,6 @@ class NLUPipeline(BasePipe):
         elif self.output_datatype == 'numpy':
             return df.to_numpy()
         return df
-
-
     def drop_irrelevant_cols(self, cols):
         '''
         Takes in a list of column names removes the elements which are irrelevant to the current output level.
@@ -1063,7 +331,7 @@ class NLUPipeline(BasePipe):
             if 'chunk_results' in cols: cols.remove('chunk_results')
             if 'document_results' in cols: cols.remove('document_results')
         if self.output_level == 'chunk':
-            if 'document_results' in cols: cols.remove('document_results')
+            # if 'document_results' in cols: cols.remove('document_results')
             if 'token_results' in cols: cols.remove('token_results')
             if 'sentence_results' in cols: cols.remove('sentence_results')
         if self.output_level == 'document':
@@ -1075,8 +343,6 @@ class NLUPipeline(BasePipe):
             if 'chunk_results' in cols: cols.remove('chunk_results')
             if 'sentence_results' in cols: cols.remove('sentence_results')
         return cols
-
-
     def configure_light_pipe_usage(self, data_instances, use_multi=True):
         logger.info("Configuring Light Pipeline Usage")
         if data_instances > 50000 or use_multi == False:
@@ -1098,7 +364,6 @@ class NLUPipeline(BasePipe):
         for c in self.components:
             if 'sentence' in c.info.spark_output_column_names : return True
         return False
-
     def add_missing_sentence_component(self):
         '''
         Add Sentence Detector to pipeline and Run it thorugh the Query Verifiyer again.
@@ -1115,49 +380,18 @@ class NLUPipeline(BasePipe):
         f = open(os.path.join(path,'nlu_info.txt'), "w")
         f.write(self.nlu_ref)
         f.close()
-        #1. Write all primitive pipe attributes to dict
-        # pipe_data = {
-        #     'has_trainable_components': self.has_trainable_components,
-        #     'is_fitted' : self.is_fitted,
-        #     'light_pipe_configured' : self.light_pipe_configured,
-        #     'needs_fitting':self.needs_fitting,
-        #     'nlu_reference':self.nlu_reference,
-        #     'output_datatype':self.output_datatype,
-        #     'output_different_levels':self.output_different_levels,
-        #     'output_level': self.output_level,
-        #     'output_positions': self.output_positions,
-        #     'pipe_componments': {},
-        #     'pipe_ready':self.pipe_ready,
-        #     'provider': self.provider,
-        #     'raw_text_column': self.raw_text_column,
-        #     'raw_text_matrix_slice': self.raw_text_matrix_slice,
-        #     'spark_nlp_pipe': self.spark_nlp_pipe,
-        #     'spark_non_light_transformer_pipe': self.spark_non_light_transformer_pipe,
-        #     'component_count': len(self)
-        #
-        # }
-
-        #2. Write all component/component_info to dict
-        # for c in self.pipe_components:
-        #     pipe_data['pipe_componments'][c.ma,e]
-        #3. Any additional stuff
-
         return True
-
     def add_missing_component_if_missing_for_output_level(self):
         '''
         Check that for currently configured self.output_level one annotator for that level exists, i.e a Sentence Detetor for outpul tevel sentence, Tokenizer for level token etc..
-
         :return: None
         '''
-
         if self.output_level =='sentence':
             if self.check_if_sentence_level_requirements_met(): return
             else :
                 logger.info('Adding missing sentence Dependency because it is missing for outputlevel=Sentence')
                 self.add_missing_sentence_component()
     def save(self, path, component='entire_pipeline', overwrite=False):
-
         if nlu.is_running_in_databricks() :
             if path.startswith('/dbfs/') or path.startswith('dbfs/'):
                 nlu_path = path
@@ -1165,7 +399,6 @@ class NLUPipeline(BasePipe):
                     nlp_path =  path.replace('/dbfs','')
                 else :
                     nlp_path =  path.replace('dbfs','')
-
             else :
                 nlu_path = 'dbfs/' + path
                 if path.startswith('/') : nlp_path = path
@@ -1177,29 +410,23 @@ class NLUPipeline(BasePipe):
             if component == 'entire_pipeline':
                 self.spark_transformer_pipe.save(nlp_path)
                 self.write_nlu_pipe_info(nlu_path)
-
-
         if overwrite and not nlu.is_running_in_databricks():
             import shutil
             shutil.rmtree(path,ignore_errors=True)
-
-
         if not self.is_fitted :
             self.fit()
             self.is_fitted = True
         if component == 'entire_pipeline':
-            self.spark_transformer_pipe.save(path)
-            self.write_nlu_pipe_info(path)
+            if isinstance(self.spark_transformer_pipe, LightPipeline):
+                self.spark_transformer_pipe.pipeline_model.save(path)
+            else: self.spark_transformer_pipe.save(path)
         else:
             if component in self.keys():
                 self[component].save(path)
-            # else :
-            #     print(f"Error during saving,{component} does not exist in the pipeline.\nPlease use pipe.print_info() to see the references you need to pass save()")
-
         print(f'Stored model in {path}')
-        # else : print('Please fit untrained pipeline first or predict on a String to save it')
+
     def predict(self, data, output_level='', positions=False, keep_stranger_features=True, metadata=False,
-                multithread=True, drop_irrelevant_cols=True, verbose=False, return_spark_df = False):
+                multithread=True, drop_irrelevant_cols=True, return_spark_df = False):
         '''
         Annotates a Pandas Dataframe/Pandas Series/Numpy Array/Spark DataFrame/Python List strings /Python String
 
@@ -1213,213 +440,47 @@ class NLUPipeline(BasePipe):
         :param return_spark_df: Prediction results will be returned right after transforming with the Spark NLP pipeline
         :return:
         '''
-
         if output_level != '': self.output_level = output_level
-
-        self.output_positions = positions
-
-        # if output_level == 'chunk':
-        #     # If no chunk output component in pipe we must add it and run the query PipelineQueryVerifier again
-        #     chunk_provided = False
-        #     for component in self.components:
-        #         if component.info.output_level == 'chunk': chunk_provided = True
-        #     if chunk_provided == False:
-        #         self.components.append(nlu.pipe.component_resolution.get_default_component_of_type('chunk'))
-        #         # this could break indexing..
-        #
-        #         self = nlu.pipe.pipeline_logic.PipelineQueryVerifier.check_and_fix_nlu_pipeline(self)
-        # if not self.is_fitted: self.fit()
-
-        # currently have to always fit, otherwise parameter changes wont take effect
-        # if output_level == 'sentence' or output_level == 'document':
-            # self = PipeUtils.configure_component_output_levels(self)
-            # self = PipeUtils.check_and_fix_nlu_pipeline(self)
-            # 1 # todo
-
-        if not self.is_fitted :
-            if self.has_trainable_components :
-                self.fit(data)
-            else : self.fit()
-        # self.configure_light_pipe_usage(len(data), multithread)
-
-        sdf = None
-        stranger_features = []
-        index_provided = False
-        infered_text_col = False
+        if output_level == 'sentence' or output_level == 'document':self.components = PipeUtils.configure_component_output_levels(self)
+        if output_level in ['token', 'chunk','relation']:self.components = PipeUtils.configure_component_output_levels(self,'document')
 
         try:
-            if isinstance(data,pyspark.sql.dataframe.DataFrame):  # casting follows spark->pd
-                self.output_datatype = 'spark'
-                data = data.withColumn('origin_index',monotonically_increasing_id().alias('origin_index'))
-                index_provided = True
+            #1. Convert data to Spark DF
+            data, stranger_features, output_datatype = DataConversionUtils.to_spark_df(data, self.spark, self.raw_text_column)
 
-                if self.raw_text_column in data.columns:
-                    # store all stranger features
-                    if len(data.columns) > 1:
-                        stranger_features = list(set(data.columns) - set(self.raw_text_column))
-                    sdf = self.spark_transformer_pipe.transform(data)
-                else:
-                    print(
-                        'Could not find column named "text" in input Pandas Dataframe. Please ensure one column named such exists. Columns in DF are : ',
-                        data.columns)
-            elif isinstance(data,pd.DataFrame):  # casting follows pd->spark->pd
-                self.output_datatype = 'pandas'
+            #2. configure Lightpipline usage
+            self.configure_light_pipe_usage(data.count(), multithread)
+            # 3. Fit
+            if not self.is_fitted :
+                if self.has_trainable_components:self.fit(data)
+                else : self.fit()
 
-                # set first col as text column if there is none
-                if self.raw_text_column not in data.columns:
-                    data.rename(columns={data.columns[0]: 'text'}, inplace=True)
-                data['origin_index'] = data.index
-                index_provided = True
-                if self.raw_text_column in data.columns:
-                    if len(data.columns) > 1:
-                        data = data.where(pd.notnull(data), None)  # make  Nans to None, or spark will crash
-                        data = data.dropna(axis=1, how='all')
-                        stranger_features = list(set(data.columns) - set(self.raw_text_column))
-                    sdf = self.spark_transformer_pipe.transform(self.spark.createDataFrame(data))
-
-                else:
-                    logger.info(
-                        'Could not find column named "text" in input Pandas Dataframe. Please ensure one column named such exists. Columns in DF are : ',
-                        data.columns)
-            elif isinstance(data,pd.Series):  # for df['text'] colum/series passing casting follows pseries->pdf->spark->pd
-                self.output_datatype = 'pandas_series'
-                data = pd.DataFrame(data).dropna(axis=1, how='all')
-                index_provided = True
-                # If series from a column is passed, its column name will be reused.
-                if self.raw_text_column not in data.columns and len(data.columns) == 1:
-                    data['text'] = data[data.columns[0]]
-                else:
-                    logger.info(f'INFO: NLU will assume {data.columns[0]} as label column since default text column could not be find')
-                    data['text'] = data[data.columns[0]]
-
-                data['origin_index'] = data.index
-
-                if self.raw_text_column in data.columns:
-                    sdf = self.spark_transformer_pipe.transform(self.spark.createDataFrame(data), )
-
-                else:
-                    print(
-                        'Could not find column named "text" in  Pandas Dataframe generated from input  Pandas Series. Please ensure one column named such exists. Columns in DF are : ',
-                        data.columns)
-
-            elif isinstance(data,np.ndarray):
-                # This is a bit inefficient. Casting follow  np->pd->spark->pd. We could cut out the first pd step
-                self.output_datatype = 'numpy_array'
-                if len(data.shape) != 1:
-                    print("Exception : Input numpy array must be 1 Dimensional for prediction.. Input data shape is",
-                          data.shape)
-                    return nlu.NluError
-                sdf = self.spark_transformer_pipe.transform(self.spark.createDataFrame(
-                    pd.DataFrame({self.raw_text_column: data, 'origin_index': list(range(len(data)))})))
-                index_provided = True
-
-            elif isinstance(data,np.matrix):  # assumes default axis for raw texts
-                print(
-                    'Predicting on np matrices currently not supported. Please input either a Pandas Dataframe with a string column named "text"  or a String or a list of strings. ')
-                return nlu.NluError
-            elif isinstance(data,str):  # inefficient, str->pd->spark->pd , we can could first pd
-                self.output_datatype = 'string'
-                sdf = self.spark_transformer_pipe.transform(self.spark.createDataFrame(
-                    pd.DataFrame({self.raw_text_column: data, 'origin_index': [0]}, index=[0])))
-                index_provided = True
-
-            elif isinstance(data,list):  # inefficient, list->pd->spark->pd , we can could first pd
-                self.output_datatype = 'string_list'
-                if all(type(elem) == str for elem in data):
-                    sdf = self.spark_transformer_pipe.transform(self.spark.createDataFrame(pd.DataFrame(
-                        {self.raw_text_column: pd.Series(data), 'origin_index': list(range(len(data)))})))
-                    index_provided = True
-
-                else:
-                    print("Exception: Not all elements in input list are of type string.")
-            elif isinstance(data,dict):  # Assumes values should be predicted
-                print(
-                    'Predicting on dictionaries currently not supported. Please input either a Pandas Dataframe with a string column named "text"  or a String or a list of strings. ')
-                return ''
-            else:  # Modin tests, This could crash if Modin not installed
-                try:
-                    import modin.pandas as mpd
-                    if isinstance(data, mpd.DataFrame):
-                        data = pd.DataFrame(data.to_dict())  # create pandas to support type inference
-                        self.output_datatype = 'modin'
-                        data['origin_index'] = data.index
-                        index_provided = True
-
-                    if self.raw_text_column in data.columns:
-                        if len(data.columns) > 1:
-                            data = data.where(pd.notnull(data), None)  # make  Nans to None, or spark will crash
-                            data = data.dropna(axis=1, how='all')
-                            stranger_features = list(set(data.columns) - set(self.raw_text_column))
-                        sdf = self.spark_transformer_pipe.transform(
-                            # self.spark.createDataFrame(data[['text']]), ) # this takes text column as series and makes it DF
-                            self.spark.createDataFrame(data))
-                    else:
-                        print(
-                            'Could not find column named "text" in input Pandas Dataframe. Please ensure one column named such exists. Columns in DF are : ',
-                            data.columns)
-
-                    if isinstance(data, mpd.Series):
-                        self.output_datatype = 'modin_series'
-                        data = pd.Series(data.to_dict())  # create pandas to support type inference
-                        data = pd.DataFrame(data).dropna(axis=1, how='all')
-                        data['origin_index'] = data.index
-                        index_provided = True
-                        if self.raw_text_column in data.columns:
-                            sdf = \
-                                self.spark_transformer_pipe.transform(
-                                    self.spark.createDataFrame(data[['text']]), )
-                        else:
-                            print(
-                                'Could not find column named "text" in  Pandas Dataframe generated from input  Pandas Series. Please ensure one column named such exists. Columns in DF are : ',
-                                data.columns)
-
-
-                except:
-                    print(
-                        "If you use Modin, make sure you have installed 'pip install modin[ray]' or 'pip install modin[dask]' backend for Modin ")
-
-            if return_spark_df : return sdf  # Returns RAW result of pipe prediction
-            return self.pythonify_spark_dataframe(sdf,
+            #4. Apply Spark Pipeline
+            data = self.spark_transformer_pipe.transform(data)
+            #5. Convert resulting spark DF into nicer format and by default into pandas.
+            if return_spark_df : return data  # Returns RAW  Spark Dataframe result of pipe prediction
+            return self.pythonify_spark_dataframe(data,
                                                   keep_stranger_features=keep_stranger_features,
                                                   stranger_features=stranger_features,
                                                   output_metadata=metadata,
-                                                  drop_irrelevant_cols=drop_irrelevant_cols
+                                                  drop_irrelevant_cols=drop_irrelevant_cols,
+                                                  positions=positions
                                                   )
 
 
         except Exception as err :
+
             import sys
             if multithread == True:
                 logger.warning("Multithreaded mode failed. trying to predict again with non multithreaded mode ")
-                return self.predict(data, output_level=output_level, positions=positions,
-                                    keep_stranger_features=keep_stranger_features, metadata=metadata, multithread=False)
-            logger.exception('Exception occured')
-            e = sys.exc_info()
-            print("No accepted Data type or usable columns found or applying the NLU models failed. ")
-            print(
-                "Make sure that the first column you pass to .predict() is the one that nlu should predict on OR rename the column you want to predict on to 'text'  ")
-            print(
-                "If you are on Google Collab, click on Run time and try factory reset Runtime run the setup script again, you might have used too much memory")
-            print(
-                "On Kaggle try to reset restart session and run the setup script again, you might have used too much memory")
-
-            print('Full Stacktrace was', e)
-            print('Additional info:')
-            exc_type, exc_obj, exc_tb = sys.exc_info()
-            import os
-            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-            print(exc_type, fname, exc_tb.tb_lineno)
-            print(
-                'Stuck? Contact us on Slack! https://join.slack.com/t/spark-nlp/shared_invite/zt-j5ttxh0z-Fn3lQSG1Z0KpOs_SRxjdyw0196BQCDPY')
-            if verbose :
-                err = sys.exc_info()[1]
-                print(str(err))
-            return None
+                return self.predict(data, output_level=output_level, positions=positions,keep_stranger_features=keep_stranger_features, metadata=metadata, multithread=False)
+            else: self.print_exception_err(err)
 
 
-    def print_info(self, ):
+    def print_info(self,minimal=True):
         '''
-        Print out information about every component currently loaded in the pipe and their configurable parameters
+        Print out information about every component currently loaded in the pipe and their configurable parameters.
+        If minimal is false, all Spark NLP Model parameters will be printed, including output/label/input cols and other attributes a NLU user should not touch. Useful for debugging.
         :return: None
         '''
 
@@ -1434,7 +495,9 @@ class NLUPipeline(BasePipe):
             component_outputs = []
             max_len = 0
             for key in p_map.keys():
-                if "outputCol" in key.name or "labelCol" in key.name or "inputCol" in key.name or "labelCol" in key.name or 'lazyAnnotator' in key.name or 'storageref' in key.name: continue
+                if minimal:
+                    if "outputCol" in key.name or "labelCol" in key.name or "inputCol" in key.name or "labelCol" in key.name or 'lazyAnnotator' in key.name or 'storageref' in key.name: continue
+
                 # print("pipe['"+ component_key +"'].set"+ str( key.name[0].capitalize())+ key.name[1:]+"("+str(p_map[key])+")" + " | Info: " + str(key.doc)+ " currently Configured as : "+str(p_map[key]) )
                 # print("Param Info: " + str(key.doc)+ " currently Configured as : "+str(p_map[key]) )
 
@@ -1461,4 +524,26 @@ class NLUPipeline(BasePipe):
                     print(form.format(o_parm[0]) + o_parm[1])
                 else:
                     print(o_parm[0] + o_parm[1])
+
+
+
+
+
+    def print_exception_err(self,err):
+        '''Print information about exception during converting or transforming dataframe'''
+        import sys
+        logger.exception('Exception occured')
+        e = sys.exc_info()
+        print("No accepted Data type or usable columns found or applying the NLU models failed. ")
+        print("Make sure that the first column you pass to .predict() is the one that nlu should predict on OR rename the column you want to predict on to 'text'  ")
+        print("On try to reset restart Jupyter session and run the setup script again, you might have used too much memory")
+        print('Full Stacktrace was', e)
+        print('Additional info:')
+        exc_type, exc_obj, exc_tb = sys.exc_info()
+        import os
+        fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+        print(exc_type, fname, exc_tb.tb_lineno)
+        err = sys.exc_info()[1]
+        print(str(err))
+        print('Stuck? Contact us on Slack! https://join.slack.com/t/spark-nlp/shared_invite/zt-lutct9gm-kuUazcyFKhuGY3_0AMkxqA')
 

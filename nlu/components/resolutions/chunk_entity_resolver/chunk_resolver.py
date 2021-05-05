@@ -5,7 +5,7 @@ class ChunkResolver:
     def get_pretrained_model(name, language, bucket='clinical/models'):
         return ChunkEntityResolverModel.pretrained(name, language,bucket) \
             .setInputCols(["token","chunk_embeddings"]) \
-            .setNeighbours(1) \
+            .setNeighbours(3) \
             .setOutputCol("chunk_resolution")
 
     @staticmethod

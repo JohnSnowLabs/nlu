@@ -10,12 +10,9 @@ Every Annotator should have 2 configs. Some might offor multuple configs/method 
 
 """
 from sparknlp.annotator import *
-import sparknlp as sp
 from sparknlp.base import *
+from nlu.pipe.extractors.extractor_configs_open_source import *
 
-# from sparknlp.annotator import DocumentAssembler
-
-from nlu.extractors.extractor_configs_open_source import *
 OS_anno2config = {
     NerConverter : {
         'default': default_ner_converter_config ,
@@ -31,7 +28,7 @@ OS_anno2config = {
         'default_full'  : default_full_config,
     },
     ClassifierDLModel : {
-        'default': default_multi_classifier_dl_config,
+        'default': default_classifier_dl_config,
         'default_full'  : default_full_config,
     },
     BertEmbeddings : {
@@ -208,7 +205,7 @@ OS_anno2config = {
     # approaches
     ViveknSentimentApproach    :{'default':'' , 'default_full'  : default_full_config,},
     SentimentDLApproach        :{'default':default_sentiment_dl_config , 'default_full'  : default_full_config,},
-    ClassifierDLApproach        :{'default':default_multi_classifier_dl_config , 'default_full'  : default_full_config,},
+    ClassifierDLApproach        :{'default':default_classifier_dl_config , 'default_full'  : default_full_config,},
     MultiClassifierDLApproach  :{'default':default_multi_classifier_dl_config, 'default_full'  : default_full_config,},
     NerDLApproach              :{'default':default_NER_config , 'default_full'  : default_full_config,},
     PerceptronApproach         :{'default':default_POS_config , 'default_full'  : default_full_config,},

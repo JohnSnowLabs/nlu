@@ -16,9 +16,6 @@ class TestQuestions(unittest.TestCase):
 
 
 
-    def test_quick(self):
-        r = nlu.load('en.classify.questions').predict('How expensive is the Watch?')
-        print(r)
 
 
 if __name__ == '__main__':

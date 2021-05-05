@@ -1,8 +1,7 @@
-__version__ = '3.0.0'
+__version__ = '3.0.1'
 #
 # from nlu.component_resolution import parse_language_from_nlu_ref, nlu_ref_to_component, \
 #     construct_component_from_pipe_identifier
-import sys
 
 
 import nlu.environment.env_utils as env_utils
@@ -130,7 +129,7 @@ from nlu.components.seq2seqs.t5.t5 import T5
 from nlu.components.sequence2sequence import Seq2Seq
 
 from nlu.pipe.pipeline import NLUPipeline
-from nlu.pipe.pipe_utils import PipeUtils
+from nlu.pipe.utils.pipe_utils import PipeUtils
 from nlu.pipe.pipe_logic import PipelineQueryVerifier
 from nlu.pipe.component_resolution import *
 global spark, all_components_info, nlu_package_location,authorized
@@ -145,7 +144,6 @@ from nlu.discovery import Discoverer
 all_components_info = nlu.AllComponentsInfo()
 discoverer = nlu.Discoverer()
 
-import os
 import  json
 import sparknlp
 
@@ -170,7 +168,7 @@ def read_nlu_info(path):
     f.close()
     return nlu_ref
 
-def load_nlu_pipe_from_hdd(pipe_path):
+def load_nlu_pipe_from_hdd(pipe_path,request):
     """Either there is a pipeline of models in the path or just one singular model.
     If it is a pipe,  load the pipe and return it.
     If it is a singular model, load it to the correct AnnotatorClass and NLU component and then generate pipeline for it
@@ -187,10 +185,12 @@ def load_nlu_pipe_from_hdd(pipe_path):
     #         nlu_path = 'dbfs/' + pipe_path
     #         if pipe_path.startswith('/') : nlp_path = pipe_path
     #         else : nlp_path = '/' + pipe_path
-    nlu_ref=pipe_path # todo better
+    nlu_ref=request# pipe_path
     if os.path.exists(pipe_path):
         if offline_utils.is_pipe(pipe_path):
-            pipe_components = construct_component_from_pipe_identifier(nlu_ref, nlu_ref, 'hdd', path=pipe_path)
+            # language, nlp_ref, nlu_ref,path=None, is_licensed=False
+            # todo deduct lang and if Licensed or not
+            pipe_components = construct_component_from_pipe_identifier('en', nlu_ref, nlu_ref, pipe_path, False)
         elif offline_utils.is_model(pipe_path):
             c = offline_utils.verify_model(pipe_path)
             pipe.add(c, nlu_ref, pretrained_pipe_component=True)
@@ -213,12 +213,19 @@ def enable_verbose():
     ch.setLevel(logging.INFO)
     logger.addHandler(ch)
 
+def disable_verbose(): # TODO
+    logger.setLevel(logging.ERROR)
+    ch = logging.StreamHandler()
+    ch.setLevel(logging.ERROR)
+    logger.addHandler(ch)
+
+
 from nlu.environment.env_utils import *
 
 def get_open_source_spark_context(gpu):
     if is_env_pyspark_2_3(): return sparknlp.start(spark23=True, gpu=gpu)
     if is_env_pyspark_2_4(): return sparknlp.start(spark24=True, gpu=gpu)
-    if is_env_pyspark_3_0() or is_env_pyspark_3_1(): return sparknlp.start(gpu=gpu)
+    if is_env_pyspark_3_0()  or is_env_pyspark_3_1(): return sparknlp.start(gpu=gpu)
     print(f"Current Spark version {get_pyspark_version()} not supported!")
     raise ValueError
 
@@ -237,18 +244,18 @@ def load(request ='from_disk', path=None,verbose=False, gpu=False):
     global is_authenticated
     is_authenticated = True
     gc.collect()
-    # if version_checks : check_pyspark_install()
 
-    auth() # check if secets are in default loc, if yes load them and create licensed context automatically
-
+    auth(gpu=gpu) # check if secets are in default loc, if yes load them and create licensed context automatically
 
     spark = get_open_source_spark_context(gpu)
     spark.catalog.clearCache()
     if verbose:enable_verbose()
+    else: disable_verbose()
+
 
     if path != None :
         logger.info(f'Trying to load nlu pipeline from local hard drive, located at {path}')
-        return load_nlu_pipe_from_hdd(path)
+        return PipelineQueryVerifier.check_and_fix_nlu_pipeline(load_nlu_pipe_from_hdd(path,request))
     components_requested = request.split(' ')
     pipe = NLUPipeline()
     language = parse_language_from_nlu_ref(request)
@@ -277,6 +284,9 @@ def load(request ='from_disk', path=None,verbose=False, gpu=False):
     #         "Something went wrong during loading and fitting the pipe. Check the other prints for more information and also verbose mode. Did you use a correct model reference?")
     #
     #     return NluError()
+
+    for c in pipe.components :
+        if c.info.license == 'licensed' : pipe.has_licensed_components=True
     return pipe
 
 class NluError:

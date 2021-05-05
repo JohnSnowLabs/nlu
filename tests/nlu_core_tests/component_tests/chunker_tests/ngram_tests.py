@@ -18,7 +18,7 @@ class TestNGram(unittest.TestCase):
                      "Anything else made up of multiple tokens like Super Nintendo",]
 
         print('OUTPUT LEVEL TOKEN')
-        df = nlu.load('ngram', verbose=True).predict(example_text, output_level='token')
+        df = nlu.load('ngram', verbose=True).predict(example_text, output_level='sentence',drop_irrelevant_cols=False, metadata=True, )
         for c in df.columns: print(df[c])
 
         print('OUTPUT LEVEL CHUNK')
