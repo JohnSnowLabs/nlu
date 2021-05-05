@@ -521,8 +521,6 @@ def construct_component_from_pipe_identifier(language, nlp_ref, nlu_ref,path=Non
         c_name = component.__class__.__name__
         if isinstance(component, NerConverter):
             constructed_components.append(Util(annotator_class='ner_converter', model=component, lang=language, nlu_ref=nlu_ref,nlp_ref=nlp_ref,loaded_from_pretrained_pipe=True))
-        elif parsed in NameSpace.word_embeddings + NameSpace.sentence_embeddings:
-            constructed_components.append(nlu.Embeddings(model=component, lang=language, nlu_ref=nlu_ref,nlp_ref=nlp_ref,loaded_from_pretrained_pipe=True))
         elif parsed in NameSpace.classifiers:
             constructed_components.append(nlu.Classifier(model=component, lang=language, nlu_ref=nlu_ref,nlp_ref=nlp_ref,loaded_from_pretrained_pipe=True))
         elif isinstance(component, MultiClassifierDLModel):
@@ -544,7 +542,7 @@ def construct_component_from_pipe_identifier(language, nlp_ref, nlu_ref,path=Non
         elif isinstance(component, ElmoEmbeddings):
             constructed_components.append(nlu.Embeddings(model=component, annotator_class='elmo',lang=language, nlu_ref=nlu_ref,nlp_ref=nlp_ref,loaded_from_pretrained_pipe=True,do_ref_checks=False))
         elif isinstance(component, BertSentenceEmbeddings):
-            constructed_components.append(nlu.Embeddings(model=component, annotator_class='bert_sentence',lang=language, nlu_ref=nlu_ref,nlp_ref=nlp_ref,loaded_from_pretrained_pipe=True,do_ref_checks=False))
+            constructed_components.append(nlu.Embeddings(model=component, annotator_class='sentence_bert',lang=language, nlu_ref=nlu_ref,nlp_ref=nlp_ref,loaded_from_pretrained_pipe=True,do_ref_checks=False))
         elif isinstance(component, TokenizerModel):
             constructed_components.append(nlu.Tokenizer(model=component, annotator_class='default_tokenizer',lang=language, nlu_ref=nlu_ref,nlp_ref=nlp_ref,loaded_from_pretrained_pipe=True))
         elif isinstance(component, DocumentAssembler):
@@ -605,6 +603,9 @@ def construct_component_from_pipe_identifier(language, nlp_ref, nlu_ref,path=Non
             constructed_components.append(nlu.Seq2Seq(annotator_class='t5', model=component,nlu_ref=nlu_ref))
         elif isinstance(component,(MarianTransformer)):
             constructed_components.append(nlu.Seq2Seq(annotator_class='marian', model=component,nlu_ref=nlu_ref))
+        elif parsed in NameSpace.word_embeddings + NameSpace.sentence_embeddings:
+             constructed_components.append(nlu.Embeddings(model=component, lang=language, nlu_ref=nlu_ref,nlp_ref=nlp_ref,loaded_from_pretrained_pipe=True))
+
         else:
             logger.exception(
                 f"EXCEPTION: Could not infer component type for lang={language} and nlp_ref={nlp_ref} and model {component} during pipeline conversion,")

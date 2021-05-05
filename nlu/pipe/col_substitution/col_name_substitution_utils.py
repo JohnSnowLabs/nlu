@@ -38,7 +38,7 @@ class ColSubstitutionUtils():
     """
     from sparknlp.annotator import MarianTransformer
     cleanable_splits = ['ner_converter','spell','ner_to_chunk_converter','train','classify','ner','med_ner','dl','match','clean','sentiment','embed','embed_sentence','embed_chunk','explain','pos','resolve_chunk','resolve',]
-    all_langs        = ['en','et','bh','am','da','fr','de','it','nb','no','nn','pl','pt','ru','es','af','ar','hy','eu','bn','br','bg','ca','cs','eo','fi','gl','el','ha','he','hi','hu','id','ga','ja','la','lv','mr','fa','ro','sk','sl','so','st','sw','sv','th','tr','uk','yo','zu','zh','xx','ur','ko']
+    all_langs        = ['vi','mt','ta','af','cy','et','en','et','bh','am','da','fr','de','it','nb','no','nn','pl','pt','ru','es','af','ar','hy','eu','bn','br','bg','ca','cs','eo','fi','gl','el','ha','he','hi','hu','id','ga','ja','la','lv','mr','fa','ro','sk','sl','so','st','sw','sv','th','tr','uk','yo','zu','zh','xx','ur','ko']
     @staticmethod
     def substitute_col_names(df,anno_2_ex,pipe, stranger_cols=[],drop_debug_cols=True,):
         """

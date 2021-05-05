@@ -262,14 +262,9 @@ class NLUPipeline(BasePipe):
     def viz(self, text_to_viz:str, viz_type='', labels_to_viz=None,viz_colors={},):
         """Visualize predictions of a Pipeline, using Spark-NLP-Display
         text_to_viz : String to viz
+        viz_type    : Viz type, one of [ner,dep,resolution,relation,assert]
         labels_to_viz : Defines a subset of NER labels to viz i.e. ['PER'] , by default=[] which will display all labels. Applicable only for NER viz
-        viz_type    :  Viz type, one of [ner,dep,resolution,relation,assert]
         viz_colors  : Applicable for [ner, resolution, assert ] key = label, value=hex color, i.e. viz_colors={'TREATMENT':'#008080', 'problem':'#800080'}
-
-        """
-
-        """        # TODO DATABRICKS HANDLING!
-                configure return_html=True on visualizers and then Pipe HTML into displayHTML(vis_html)
         """
         from nlu.environment.env_utils import install_and_import_package
         install_and_import_package('spark-nlp-display',import_name='sparknlp_display')

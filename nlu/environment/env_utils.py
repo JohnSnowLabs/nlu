@@ -1,4 +1,6 @@
 import os,sys
+import logging
+logger = logging.getLogger('nlu')
 
 def get_pyspark_version():
     import pyspark
@@ -72,9 +74,9 @@ def install_and_import_package(pkg_name,version='', import_name='sparknlp_displa
     except ImportError:
         import pip
         if version == '':
-            print(f"{pkg_name} could not be imported. Running 'pip install {pkg_name}'...")
+            logger.info(f"{pkg_name} could not be imported. Running 'pip install {pkg_name}'...")
         else :
-            print(f"{pkg_name} could not be imported. Running 'pip install {pkg_name}=={version}'...")
+            logger.info(f"{pkg_name} could not be imported. Running 'pip install {pkg_name}=={version}'...")
         pip_major_version = int(pip.__version__.split('.')[0])
         if pip_major_version in [10, 18, 19,20]:
             # for these versions pip module does not support installing, we install via OS command straight into pip module

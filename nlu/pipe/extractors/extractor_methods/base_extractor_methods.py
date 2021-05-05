@@ -188,6 +188,14 @@ def apply_extractors_and_merge(df, column_to_extractor_map,  keep_stranger_featu
     #             list(map(keep_stragers,stranger_features)) if keep_stranger_features else [],
     #             axis=1))
 
+# !wget https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/scripts/colab_setup.sh -O - | bash
+# ! pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple peanut_butter_data_time==3.0.1rc56 > /dev/null
+# ! pip install spark-nlp-display
+
+# !wget https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/scripts/colab_setup.sh -O - | bash
+# ! pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple peanut_butter_data_time==3.0.1rc71 > /dev/null
+# import nlu
+# import nlu
 
 
 # def pad_series_for_multi_pad(s):

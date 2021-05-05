@@ -17,7 +17,10 @@ class VizUtilsOS():
         """
         document_col,entities_col =  VizUtilsOS.infer_ner_dependencies(pipe)
         ner_vis = NerVisualizer()
-        ner_vis.display(anno_res,label_col=entities_col,document_col=document_col, labels=labels )
+        if not is_databricks_env:
+            ner_vis.display(anno_res,label_col=entities_col,document_col=document_col, labels=labels )
+        else :
+            ner_vis.display(anno_res,label_col=entities_col,document_col=document_col, labels=labels, return_html=True )
 
     @staticmethod
     def infer_ner_dependencies(pipe):
@@ -38,7 +41,10 @@ class VizUtilsOS():
         """Viz dep result"""
         pos_col,dep_typ_col,dep_untyp_col  = VizUtilsOS.infer_dep_dependencies(pipe)
         dependency_vis = DependencyParserVisualizer()
-        dependency_vis.display(anno_res,pos_col =pos_col,dependency_col =  dep_untyp_col ,dependency_type_col = dep_typ_col)
+        if not is_databricks_env:
+            dependency_vis.display(anno_res,pos_col =pos_col,dependency_col =  dep_untyp_col ,dependency_type_col = dep_typ_col)
+        else:
+            dependency_vis.display(anno_res,pos_col =pos_col,dependency_col =  dep_untyp_col ,dependency_type_col = dep_typ_col,return_html=True)
 
     @staticmethod
     def infer_dep_dependencies(pipe):

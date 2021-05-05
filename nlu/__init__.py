@@ -168,7 +168,7 @@ def read_nlu_info(path):
     f.close()
     return nlu_ref
 
-def load_nlu_pipe_from_hdd(pipe_path):
+def load_nlu_pipe_from_hdd(pipe_path,request):
     """Either there is a pipeline of models in the path or just one singular model.
     If it is a pipe,  load the pipe and return it.
     If it is a singular model, load it to the correct AnnotatorClass and NLU component and then generate pipeline for it
@@ -185,10 +185,12 @@ def load_nlu_pipe_from_hdd(pipe_path):
     #         nlu_path = 'dbfs/' + pipe_path
     #         if pipe_path.startswith('/') : nlp_path = pipe_path
     #         else : nlp_path = '/' + pipe_path
-    nlu_ref=pipe_path # todo better
+    nlu_ref=request# pipe_path
     if os.path.exists(pipe_path):
         if offline_utils.is_pipe(pipe_path):
-            pipe_components = construct_component_from_pipe_identifier(nlu_ref, nlu_ref, 'hdd', path=pipe_path)
+            # language, nlp_ref, nlu_ref,path=None, is_licensed=False
+            # todo deduct lang and if Licensed or not
+            pipe_components = construct_component_from_pipe_identifier('en', nlu_ref, nlu_ref, pipe_path, False)
         elif offline_utils.is_model(pipe_path):
             c = offline_utils.verify_model(pipe_path)
             pipe.add(c, nlu_ref, pretrained_pipe_component=True)
@@ -253,7 +255,7 @@ def load(request ='from_disk', path=None,verbose=False, gpu=False):
 
     if path != None :
         logger.info(f'Trying to load nlu pipeline from local hard drive, located at {path}')
-        return load_nlu_pipe_from_hdd(path)
+        return PipelineQueryVerifier.check_and_fix_nlu_pipeline(load_nlu_pipe_from_hdd(path,request))
     components_requested = request.split(' ')
     pipe = NLUPipeline()
     language = parse_language_from_nlu_ref(request)

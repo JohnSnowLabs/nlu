@@ -21,5 +21,5 @@ class SentimentDl:
             .setInputCols("sentence_embeddings") \
             .setOutputCol("category") \
             .setLabelColumn("y") \
-            .setMaxEpochs(2) \
+            .setMaxEpochs(1) \
             .setEnableOutputLogs(True)
