@@ -70,23 +70,19 @@ def install_and_import_package(pkg_name,version='', import_name='sparknlp_displa
     try:
         importlib.import_module(pkg_name)
     except ImportError:
-
-
         import pip
         if version == '':
             print(f"{pkg_name} could not be imported. Running 'pip install {pkg_name}'...")
         else :
             print(f"{pkg_name} could not be imported. Running 'pip install {pkg_name}=={version}'...")
-
         pip_major_version = int(pip.__version__.split('.')[0])
         if pip_major_version in [10, 18, 19,20]:
-            # for these versions pip module does not support installing, we install via OS command.
-            os.system(f'pip install {pkg_name}=={version} ')
+            # for these versions pip module does not support installing, we install via OS command straight into pip module
+            py_path = sys.executable
             if version == '':
-                # todo, we should get location of py executable and call python -m pip install {pkg_name}
-                os.system(f'pip install {pkg_name}=={version} ')
+                os.system(f'{py_path} -m pip install {pkg_name}')
             else :
-                os.system(f'pip install {pkg_name} ')
+                os.system(f'{py_path} -m pip install {pkg_name}=={version}')
         else:
             if version == '':
                 pip.main(['install', f'{pkg_name}'])
@@ -97,6 +93,6 @@ def install_and_import_package(pkg_name,version='', import_name='sparknlp_displa
         import site
         from importlib import reload
         reload(site)
-        # import name is not always the same name we want to import, so it must be specified via import name
+        # import name is not always the same name as pkg_name we want to import, so it must be specified via import name
         if import_name != '' : globals()[import_name] = importlib.import_module(import_name)
         else :globals()[pkg_name] = importlib.import_module(pkg_name)
