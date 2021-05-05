@@ -771,6 +771,22 @@ class NameSpace():
 
     }
     pretrained_models_references = {
+        'vi' : {
+                'vi.lemma':'lemma',
+                },
+        'mt' : {
+            'mt.lemma':'lemma',
+        },
+
+        'ta' : {
+            'ta.lemma':'lemma',
+        },
+
+        'cy' : {
+            'cy.lemma':'lemma',
+        },
+
+
         'nl': {
             'nl.lemma': 'lemma',  # default lemma, dataset unknown
             'nl.pos': 'pos_ud_alpino',  # default pos nl
@@ -1114,7 +1130,10 @@ class NameSpace():
             'es.stopwords_es': 'stopwords_es',
         },
         'af': {
-            'af.stopwords': 'stopwords_af'
+            'af.stopwords': 'stopwords_af',
+            'af.lemma':'lemma',
+            'af.pos':'pos_afribooms',
+
 
         },
         'ar': {
