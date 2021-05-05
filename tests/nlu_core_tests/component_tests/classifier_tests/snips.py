@@ -16,14 +16,7 @@ class TestCyber(unittest.TestCase):
         print(df.columns)
         for c in df.columns:print(c,df[c])
 
-    def test_quick(self):
-        # pipe = nlu.load('bn.ner.cc_300d',verbose=True)
-        # pipe = nlu.load('bn.embed',verbose=True)
-        pipe = nlu.load('en.ner.snips',verbose=True)
 
-        df = pipe.predict(['I love pancaces. I hate Mondays', 'I love Fridays'])
-        print(df.columns)
-        for c in df.columns:print(c,df[c])
 
 if __name__ == '__main__':
     unittest.main()

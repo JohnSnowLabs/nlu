@@ -19,8 +19,8 @@ class DeidentificationTests(unittest.TestCase):
 #
         # res = nlu.load('en.ner.deid.augmented  en.de_identify', verbose=True).predict('DR Johnson administerd to the patient Peter Parker last week 30 MG of penicilin', return_spark_df=True)
 
-        res = nlu.load('en.de_identify', verbose=True).predict('DR Johnson administerd to the patient Peter Parker last week 30 MG of penicilin')
-        # res = nlu.load('zh.segment_words pos', verbose=True)#.predict('DR Johnson administerd to the patient Peter Parker last week 30 MG of penicilin', return_spark_df=True)
+        res = nlu.load('en.de_identify', verbose=True).predict('DR Johnson administerd to the patient Peter Parker last week 30 MG of penicilin', drop_irrelevant_cols=False, metadata=True, )
+                                                               # res = nlu.load('zh.segment_words pos', verbose=True)#.predict('DR Johnson administerd to the patient Peter Parker last week 30 MG of penicilin', return_spark_df=True)
 
 
         for c in res :

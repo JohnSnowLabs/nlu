@@ -26,8 +26,11 @@ class posTrainingTests(unittest.TestCase):
         df = pipe.predict('I love to go to the super market when there are great offers!')
         print(df.columns)
         for c in df.columns : print (df[c])
-
-
+        p='/home/ckl/Documents/freelance/jsl/nlu/nlu4realgit/tmp/dump/123123'
+        pipe.save(p)
+        pipe = nlu.load(path=p)
+        df = pipe.predict('lol123 fuck')
+        for c in df.columns : print (df[c])
 
     def load_pos_train_dataset_and_get_path(self):
         output_file_name = 'ud_french.txt'
