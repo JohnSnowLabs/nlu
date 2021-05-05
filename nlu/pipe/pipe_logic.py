@@ -467,7 +467,7 @@ class PipelineQueryVerifier():
                         break
             if len(all_components) == 0: all_components_orderd = True
 
-            if len(all_components) == 2 and pipe.has_trainable_components and not trainable_updated  and 'approach' in str(all_components[0].model).lower() and 'sentence_embeddings@' in all_components[0].info.inputs:
+            if not all_components_orderd  and len(all_components) <= 2 and pipe.has_trainable_components and not trainable_updated  and 'approach' in str(all_components[0].model).lower() and 'sentence_embeddings@' in all_components[0].info.inputs:
                 # special case, if trainable then we feed embed consumers on the first sentence embed provider
                 # 1. Find first sent embed provider
                 # 2. substitute any 'sent_embed@' consumer inputs for the provider col
@@ -479,7 +479,7 @@ class PipelineQueryVerifier():
                         if f not in all_components[0].info.inputs :  all_components[0].info.inputs.append(f)
                         trainable_updated = True
 
-            if len(all_components) <= 2 and pipe.has_trainable_components and not trainable_updated  and 'approach' in str(all_components[0].model).lower() and 'word_embeddings@' in all_components[0].info.inputs:
+            if not all_components_orderd and len(all_components) <= 2 and pipe.has_trainable_components and not trainable_updated  and 'approach' in str(all_components[0].model).lower() and 'word_embeddings@' in all_components[0].info.inputs:
                 # special case, if trainable then we feed embed consumers on the first sentence embed provider
                 # 1. Find first sent embed provider
                 # 2. substitute any 'sent_embed@' consumer inputs for the provider col
