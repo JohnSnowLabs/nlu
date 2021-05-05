@@ -10,6 +10,201 @@ modify_date: "2020-06-12"
 
 <div class="main-docs" markdown="1">
 
+# NLU 3.0.1 Release Notes
+We are very excited to announce NLU 3.0.1 has been released!
+This is one of the most visually appealing releases, with the integration of the [Spark-NLP-Display](https://nlp.johnsnowlabs.com/docs/en/display) library and visualizations for `dependency trees`, `entity resolution`, `entity assertion`, `relationship between entities` and `named 
+entity recognition`. In addition to this, the schema of how columns are named by NLU has been reworked and all 140+ tutorial notebooks have been updated to reflect the latest changes in NLU 3.0.0+
+Finally, new multilingual models for `Afrikaans`, `Welsh`, `Maltese`, `Tamil`, and`Vietnamese` are now available.
+
+
+
+
+# New Features and Enhancements
+- 1 line to visualization for `NER`, `Dependency`, `Resolution`, `Assertion` and `Relation` via [Spark-NLP-Display](https://nlp.johnsnowlabs.com/docs/en/display) integration
+- Improved column naming schema
+- [Over 140 + NLU tutorial Notebooks updated](https://github.com/JohnSnowLabs/nlu/tree/master/examples) and improved to reflect latest changes in NLU 3.0.0 +
+- New multilingual models for `Afrikaans`, `Welsh`, `Maltese`, `Tamil`, and`Vietnamese`
+ 
+
+## Improved Column Name generation
+- NLU categorized each internal component now with boolean labels for `name_deductable` and `always_name_deductable` .
+- Before generating column names, NLU checks wether each component is of unique in the pipeline or not. If a component is not unique in the
+  pipe and there are multiple components of same type, i.e. multiple `NER` models, NLU will deduct a base name for the final output columns from the
+  NLU reference each NER model is pointing to.
+- If on the other hand, there is only one `NER` model in the pipeline, only the default `ner` column prefixed will be generated.
+- For some components, like `embeddings` and `classifiers` are now defined as `always_name_deductable`, for those NLU will always try to infer a meaningful base name for the output columns.
+- Newly trained component output columns will now be prefixed with `trained_<type>` , for types `pos` , `ner`, `cLassifier`, `sentiment` and `multi_classifier`
+
+## Enhanced offline mode
+- You can still load a model from a path as usual with `nlu.load(path=model_path)` and output columns will be suffixed with `from_disk`
+- You can now optionally also specify `request` parameter during  load a model from HDD, it will be used to deduct more meaningful column name suffixes, instead of `from_disk`, i.e. by calling `nlu.load(request ='en.embed_sentence.biobert.pubmed_pmc_base_cased', path=model_path)`
+
+## NLU visualization
+The latest NLU release integrated the beautiful Spark-NLP-Display package visualizations. You do not need to worry about installing it, when you try to visualize something, NLU will check if
+Spark-NLP-Display is installed, if it is missing it will be dynamically installed into your python executable environment, so you don't need to worry about anything!
+
+See the [visualization tutorial notebook](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/visualization/NLU_visualizations_tutorial.ipynb)  and [visualization docs](https://nlu.johnsnowlabs.com/docs/en/viz_examples) for more info.
+
+![Cheat Sheet visualization](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docshttps://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/images/nlu/VizExamples/viz_module/cheat_sheet.png)
+
+## NER visualization
+Applicable to any of the [100+ NER models! See here for an overview](https://nlp.johnsnowlabs.com/models?task=Named+Entity+Recognition)
+```python
+nlu.load('ner').viz("Donald Trump from America and Angela Merkel from Germany don't share many oppinions.")
+```
+![NER visualization](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docshttps://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/images/nlu/VizExamples/viz_module/NER.png)
+
+## Dependency tree visualization
+Visualizes the structure of the labeled dependency tree and part of speech tags
+```python
+nlu.load('dep.typed').viz("Billy went to the mall")
+```
+
+![Dependency Tree visualization](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docshttps://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/images/nlu/VizExamples/viz_module/NER_bug.png)
+
+```python
+#Bigger Example
+nlu.load('dep.typed').viz("Donald Trump from America and Angela Merkel from Germany don't share many oppinions but they both love John Snow Labs software")
+```
+![Dependency Tree visualization](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docshttps://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/images/nlu/VizExamples/viz_module/DEP_big.png)
+
+## Assertion status visualization
+Visualizes asserted statuses and entities.        
+Applicable to any of the [10 + Assertion models! See here for an overview](https://nlp.johnsnowlabs.com/models?task=Assertion+Status)
+```python
+nlu.load('med_ner.clinical assert').viz("The MRI scan showed no signs of cancer in the left lung")
+```
+
+
+![Assert visualization](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docshttps://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/images/nlu/VizExamples/viz_module/assertion.png)
+
+```python
+#bigger example
+data ='This is the case of a very pleasant 46-year-old Caucasian female, seen in clinic on 12/11/07 during which time MRI of the left shoulder showed no evidence of rotator cuff tear. She did have a previous MRI of the cervical spine that did show an osteophyte on the left C6-C7 level. Based on this, negative MRI of the shoulder, the patient was recommended to have anterior cervical discectomy with anterior interbody fusion at C6-C7 level. Operation, expected outcome, risks, and benefits were discussed with her. Risks include, but not exclusive of bleeding and infection, bleeding could be soft tissue bleeding, which may compromise airway and may result in return to the operating room emergently for evacuation of said hematoma. There is also the possibility of bleeding into the epidural space, which can compress the spinal cord and result in weakness and numbness of all four extremities as well as impairment of bowel and bladder function. However, the patient may develop deeper-seated infection, which may require return to the operating room. Should the infection be in the area of the spinal instrumentation, this will cause a dilemma since there might be a need to remove the spinal instrumentation and/or allograft. There is also the possibility of potential injury to the esophageus, the trachea, and the carotid artery. There is also the risks of stroke on the right cerebral circulation should an undiagnosed plaque be propelled from the right carotid. She understood all of these risks and agreed to have the procedure performed.'
+nlu.load('med_ner.clinical assert').viz(data)
+```
+![Assert visualization](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docshttps://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/images/nlu/VizExamples/viz_module/assertion_big.png)
+
+
+## Relationship between entities visualization
+Visualizes the extracted entities between relationship.    
+Applicable to any of the [20 + Relation Extractor models See here for an overview](https://nlp.johnsnowlabs.com/models?task=Relation+Extraction)
+```python
+nlu.load('med_ner.jsl.wip.clinical relation.temporal_events').viz('The patient developed cancer after a mercury poisoning in 1999 ')
+```
+![Entity Relation visualization](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/images/nlu/VizExamples/viz_module/relation.png)
+
+```python
+# bigger example
+data = 'This is the case of a very pleasant 46-year-old Caucasian female, seen in clinic on 12/11/07 during which time MRI of the left shoulder showed no evidence of rotator cuff tear. She did have a previous MRI of the cervical spine that did show an osteophyte on the left C6-C7 level. Based on this, negative MRI of the shoulder, the patient was recommended to have anterior cervical discectomy with anterior interbody fusion at C6-C7 level. Operation, expected outcome, risks, and benefits were discussed with her. Risks include, but not exclusive of bleeding and infection, bleeding could be soft tissue bleeding, which may compromise airway and may result in return to the operating room emergently for evacuation of said hematoma. There is also the possibility of bleeding into the epidural space, which can compress the spinal cord and result in weakness and numbness of all four extremities as well as impairment of bowel and bladder function. However, the patient may develop deeper-seated infection, which may require return to the operating room. Should the infection be in the area of the spinal instrumentation, this will cause a dilemma since there might be a need to remove the spinal instrumentation and/or allograft. There is also the possibility of potential injury to the esophageus, the trachea, and the carotid artery. There is also the risks of stroke on the right cerebral circulation should an undiagnosed plaque be propelled from the right carotid. She understood all of these risks and agreed to have the procedure performed'
+pipe = nlu.load('med_ner.jsl.wip.clinical relation.clinical').viz(data)
+```
+![Entity Relation visualization](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/images/nlu/VizExamples/viz_module/relation_big.png)
+
+
+## Entity Resolution visualization for chunks
+Visualizes resolutions of entities
+Applicable to any of the [100+ Resolver models See here for an overview](https://nlp.johnsnowlabs.com/models?task=Entity+Resolution)
+```python
+nlu.load('med_ner.jsl.wip.clinical resolve_chunk.rxnorm.in').viz("He took Prevacid 30 mg  daily")
+```
+![Chunk Resolution visualization](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/images/nlu/VizExamples/viz_module/resolve_chunk.png)
+
+```python
+# bigger example
+data = "This is an 82 - year-old male with a history of prior tobacco use , hypertension , chronic renal insufficiency , COPD , gastritis , and TIA who initially presented to Braintree with a non-ST elevation MI and Guaiac positive stools , transferred to St . Margaret\'s Center for Women & Infants for cardiac catheterization with PTCA to mid LAD lesion complicated by hypotension and bradycardia requiring Atropine , IV fluids and transient dopamine possibly secondary to vagal reaction , subsequently transferred to CCU for close monitoring , hemodynamically stable at the time of admission to the CCU ."
+nlu.load('med_ner.jsl.wip.clinical resolve_chunk.rxnorm.in').viz(data)
+```
+
+![Chunk Resolution visualization](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/images/nlu/VizExamples/viz_module/resolve_chunk_big.png)
+
+
+## Entity Resolution visualization for sentences
+Visualizes resolutions of entities in sentences
+Applicable to any of the [100+ Resolver models See here for an overview](https://nlp.johnsnowlabs.com/models?task=Entity+Resolution)
+```python
+nlu.load('med_ner.jsl.wip.clinical resolve.icd10cm').viz('She was diagnosed with a respiratory congestion')
+```
+![Sentence Resolution visualization](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/images/nlu/VizExamples/viz_module/resolve_sentence.png)
+
+```python
+# bigger example
+data = 'The patient is a 5-month-old infant who presented initially on Monday with a cold, cough, and runny nose for 2 days. Mom states she had no fever. Her appetite was good but she was spitting up a lot. She had no difficulty breathing and her cough was described as dry and hacky. At that time, physical exam showed a right TM, which was red. Left TM was okay. She was fairly congested but looked happy and playful. She was started on Amoxil and Aldex and we told to recheck in 2 weeks to recheck her ear. Mom returned to clinic again today because she got much worse overnight. She was having difficulty breathing. She was much more congested and her appetite had decreased significantly today. She also spiked a temperature yesterday of 102.6 and always having trouble sleeping secondary to congestion'
+nlu.load('med_ner.jsl.wip.clinical resolve.icd10cm').viz(data)
+```
+![Sentence Resolution visualization](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/images/nlu/VizExamples/viz_module/resolve_sentence_big.png)
+
+## Configure visualizations
+### Define custom colors for labels
+Some entity and relation labels will be highlighted with a pre-defined color, which you [can find here](https://github.com/JohnSnowLabs/spark-nlp-display/tree/main/sparknlp_display/label_colors).    
+For labels that have no color defined, a random color will be generated.     
+You can define colors for labels manually, by specifying via the `viz_colors` parameter
+and defining `hex color codes` in a dictionary that maps `labels` to `colors` .
+```python
+data = 'Dr. John Snow suggested that Fritz takes 5mg penicilin for his cough'
+# Define custom colors for labels
+viz_colors={'STRENGTH':'#800080', 'DRUG_BRANDNAME':'#77b5fe', 'GENDER':'#77ffe'}
+nlu.load('med_ner.jsl.wip.clinical').viz(data,viz_colors =viz_colors)
+```
+![define colors labels](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/images/nlu/VizExamples/viz_module/define_colors.png)
+
+
+### Filter entities that get highlighted
+By default every entity class will be visualized.    
+The `labels_to_viz` can be used to define a set of labels to highlight.       
+Applicable for ner, resolution and assert.
+```python
+data = 'Dr. John Snow suggested that Fritz takes 5mg penicilin for his cough'
+# Filter wich NER label to viz
+labels_to_viz=['SYMPTOM']
+nlu.load('med_ner.jsl.wip.clinical').viz(data,labels_to_viz=labels_to_viz)
+```
+![filter labels](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/images/nlu/VizExamples/viz_module/filter_labels.png)
+
+
+## New models
+New multilingual models for `Afrikaans`, `Welsh`, `Maltese`, `Tamil`, and`Vietnamese`
+
+| nlu.load() Refrence                                          | Spark NLP Refrence                                           |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
+| [vi.lemma](https://nlp.johnsnowlabs.com/2021/04/02/lemma_vi.html) | [lemma](https://nlp.johnsnowlabs.com/2021/04/02/lemma_vi.html) |
+| [mt.lemma](https://nlp.johnsnowlabs.com/2021/04/02/lemma_mt.html) | [lemma](https://nlp.johnsnowlabs.com/2021/04/02/lemma_mt.html) |
+| [ta.lemma](https://nlp.johnsnowlabs.com/2021/04/02/lemma_ta.html) | [lemma](https://nlp.johnsnowlabs.com/2021/04/02/lemma_ta.html) |
+| [af.lemma](https://nlp.johnsnowlabs.com/2021/04/02/lemma_af.html) | [lemma](https://nlp.johnsnowlabs.com/2021/04/02/lemma_af.html) |
+| [af.pos](https://nlp.johnsnowlabs.com/2021/04/06/pos_afribooms_af.html) | [pos_afribooms](https://nlp.johnsnowlabs.com/2021/04/06/pos_afribooms_af.html) |
+| [cy.lemma](https://nlp.johnsnowlabs.com/2021/04/02/lemma_cy.html) | [lemma](https://nlp.johnsnowlabs.com/2021/04/02/lemma_cy.html) |
+
+## Reworked and updated NLU tutorial notebooks
+
+All of the [140+ NLU tutorial Notebooks](https://github.com/JohnSnowLabs/nlu/tree/master/examples) have been updated and reworked to reflect the latest changes in NLU 3.0.0+
+
+
+
+### Bugfixes
+- Fixed a bug that caused  resolution algorithms output level to be inferred incorrectly
+- Fixed a bug that caused stranger cols got dropped
+- Fixed a bug that caused endings to miss when  .predict(position=True) was specified
+- Fixed a bug that caused pd.Series to be converted incorrectly internally
+- Fixed a bug that caused output level transformations to crash
+- Fixed a bug that caused verbose mode not to turn of properly after turning it on.
+- fixed a bug that caused some models to crash when loaded for HDD
+
+* [140+ updates tutorials](https://github.com/JohnSnowLabs/nlu/tree/master/examples)
+* [Updated visualization docs](https://nlu.johnsnowlabs.com/docs/en/viz_examples)
+* [Models Hub](https://nlp.johnsnowlabs.com/models) with new models
+* [Spark NLP publications](https://medium.com/spark-nlp)
+* [NLU in Action](https://nlp.johnsnowlabs.com/demo)
+* [NLU documentation](https://nlu.johnsnowlabs.com/docs/en/install)
+* [Discussions](https://github.com/JohnSnowLabs/spark-nlp/discussions) Engage with other community members, share ideas, and show off how you use Spark NLP and NLU!
+
+# 1 line Install NLU on Google Colab
+```!wget https://setup.johnsnowlabs.com/nlu/colab.sh  -O - | bash```
+# 1 line Install NLU on Kaggle
+```!wget https://setup.johnsnowlabs.com/nlu/kaggle.sh  -O - | bash```
+# Install via PIP
+```! pip install nlu pyspark==3.0.1```
+
+
 
 
 <div class="h3-box" markdown="1">

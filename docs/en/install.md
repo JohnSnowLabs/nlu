@@ -16,9 +16,14 @@ header: true
 If you work on a fresh Notebook on Kaggle or Google colab, you can just copy paste the following commands into your first cell which 
 will automatically setup Java, nlu and import nlu, so you are good to go right away!
 
-```bash
-!wget https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/scripts/colab_setup.sh -O - | bash
-```
+
+### 1 line Install NLU on Google Colab
+```!wget https://setup.johnsnowlabs.com/nlu/colab.sh  -O - | bash```
+### 1 line Install NLU on Kaggle
+```!wget https://setup.johnsnowlabs.com/nlu/kaggle.sh  -O - | bash```
+### Install via PIP
+```! pip install nlu pyspark==3.0.1```
+
 You can test it out right away with :
 ```python
 nlu.load('emotion').predict('wow that was easy')
