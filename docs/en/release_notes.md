@@ -45,14 +45,14 @@ Spark-NLP-Display is installed, if it is missing it will be dynamically installe
 
 See the [visualization tutorial notebook](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/visualization/NLU_visualizations_tutorial.ipynb)  and [visualization docs](https://nlu.johnsnowlabs.com/docs/en/viz_examples) for more info.
 
-![Cheat Sheet visualization](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docshttps://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/images/nlu/VizExamples/viz_module/cheat_sheet.png)
+![Cheat Sheet visualization](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/images/nlu/VizExamples/viz_module/cheat_sheet.png)
 
 ## NER visualization
 Applicable to any of the [100+ NER models! See here for an overview](https://nlp.johnsnowlabs.com/models?task=Named+Entity+Recognition)
 ```python
 nlu.load('ner').viz("Donald Trump from America and Angela Merkel from Germany don't share many oppinions.")
 ```
-![NER visualization](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docshttps://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/images/nlu/VizExamples/viz_module/NER.png)
+![NER visualization](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/images/nlu/VizExamples/viz_module/NER.png)
 
 ## Dependency tree visualization
 Visualizes the structure of the labeled dependency tree and part of speech tags
@@ -60,13 +60,13 @@ Visualizes the structure of the labeled dependency tree and part of speech tags
 nlu.load('dep.typed').viz("Billy went to the mall")
 ```
 
-![Dependency Tree visualization](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docshttps://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/images/nlu/VizExamples/viz_module/NER_bug.png)
+![Dependency Tree visualization](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/images/nlu/VizExamples/viz_module/DEP.png)
 
 ```python
 #Bigger Example
 nlu.load('dep.typed').viz("Donald Trump from America and Angela Merkel from Germany don't share many oppinions but they both love John Snow Labs software")
 ```
-![Dependency Tree visualization](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docshttps://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/images/nlu/VizExamples/viz_module/DEP_big.png)
+![Dependency Tree visualization](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/images/nlu/VizExamples/viz_module/DEP_big.png)
 
 ## Assertion status visualization
 Visualizes asserted statuses and entities.        
@@ -76,14 +76,14 @@ nlu.load('med_ner.clinical assert').viz("The MRI scan showed no signs of cancer 
 ```
 
 
-![Assert visualization](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docshttps://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/images/nlu/VizExamples/viz_module/assertion.png)
+![Assert visualization](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/images/nlu/VizExamples/viz_module/assertion.png)
 
 ```python
 #bigger example
 data ='This is the case of a very pleasant 46-year-old Caucasian female, seen in clinic on 12/11/07 during which time MRI of the left shoulder showed no evidence of rotator cuff tear. She did have a previous MRI of the cervical spine that did show an osteophyte on the left C6-C7 level. Based on this, negative MRI of the shoulder, the patient was recommended to have anterior cervical discectomy with anterior interbody fusion at C6-C7 level. Operation, expected outcome, risks, and benefits were discussed with her. Risks include, but not exclusive of bleeding and infection, bleeding could be soft tissue bleeding, which may compromise airway and may result in return to the operating room emergently for evacuation of said hematoma. There is also the possibility of bleeding into the epidural space, which can compress the spinal cord and result in weakness and numbness of all four extremities as well as impairment of bowel and bladder function. However, the patient may develop deeper-seated infection, which may require return to the operating room. Should the infection be in the area of the spinal instrumentation, this will cause a dilemma since there might be a need to remove the spinal instrumentation and/or allograft. There is also the possibility of potential injury to the esophageus, the trachea, and the carotid artery. There is also the risks of stroke on the right cerebral circulation should an undiagnosed plaque be propelled from the right carotid. She understood all of these risks and agreed to have the procedure performed.'
 nlu.load('med_ner.clinical assert').viz(data)
 ```
-![Assert visualization](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docshttps://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/images/nlu/VizExamples/viz_module/assertion_big.png)
+![Assert visualization](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/images/nlu/VizExamples/viz_module/assertion_big.png)
 
 
 ## Relationship between entities visualization
