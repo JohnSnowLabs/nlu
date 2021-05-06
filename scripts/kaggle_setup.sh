@@ -15,7 +15,7 @@ do
 done
 
 echo "setup Kaggle for PySpark $PYSPARK and Spark NLP $SPARKNLP"
-
+apt-get update
 apt-get install -y openjdk-8-jdk-headless -qq > /dev/null
 
 if [[ "$PYSPARK" == "3.1"* ]]; then
