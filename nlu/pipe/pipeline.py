@@ -259,7 +259,7 @@ class NLUPipeline(BasePipe):
         if  drop_irrelevant_cols :  pretty_df = pretty_df[self.drop_irrelevant_cols(list(pretty_df.columns))]
         return pretty_df.loc[:,~pretty_df.columns.duplicated()]
 
-    def viz(self, text_to_viz:str, viz_type='', labels_to_viz=None,viz_colors={},):
+    def viz(self, text_to_viz:str, viz_type='', labels_to_viz=None,viz_colors={},return_html=False):
         """Visualize predictions of a Pipeline, using Spark-NLP-Display
         text_to_viz : String to viz
         viz_type    : Viz type, one of [ner,dep,resolution,relation,assert]
@@ -270,16 +270,17 @@ class NLUPipeline(BasePipe):
         install_and_import_package('spark-nlp-display',import_name='sparknlp_display')
         if self.spark_transformer_pipe is None : self.fit()
         is_databricks_env = is_running_in_databricks()
+        if return_html : is_databricks_env=True
         self.configure_light_pipe_usage(1)
         from nlu.pipe.viz.vis_utils import VizUtils
 
         if viz_type == '' : viz_type  = VizUtils.infer_viz_type(self)
         anno_res = self.spark_transformer_pipe.fullAnnotate(text_to_viz)[0]
         if self.has_licensed_components==False :
-            VizUtils.viz_OS(anno_res, self, viz_type,viz_colors,labels_to_viz,is_databricks_env)
+            HTML = VizUtils.viz_OS(anno_res, self, viz_type,viz_colors,labels_to_viz,is_databricks_env)
         else :
-            VizUtils.viz_HC(anno_res, self, viz_type,viz_colors,labels_to_viz,is_databricks_env)
-
+            HTML = VizUtils.viz_HC(anno_res, self, viz_type,viz_colors,labels_to_viz,is_databricks_env)
+        if return_html or is_databricks_env : return  HTML
     def convert_embeddings_to_np(self, pdf):
         '''
         convert all the columns in a pandas df to numpy
