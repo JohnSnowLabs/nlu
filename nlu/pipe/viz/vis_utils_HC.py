@@ -8,7 +8,6 @@ class VizUtilsHC():
         """For a given NLUPipeline with licensed components, infers which visualizations are applicable. """
         # we go in reverse, which makes NER always take lowest priority and NER feeder annotators have higher priority
         for c in pipe.components[::-1]:
-
             if isinstance(c.model, TypedDependencyParserModel) : return 'dep'
             if isinstance(c.model, (SentenceEntityResolverModel,ChunkEntityResolverModel)) : return 'resolution'
             if isinstance(c.model, (RelationExtractionDLModel,RelationExtractionDLModel)) : return 'relation'
@@ -17,7 +16,7 @@ class VizUtilsHC():
 
 
     @staticmethod
-    def viz_ner(anno_res, pipe,labels = [] ,  viz_colors={},is_databricks_env =False):
+    def viz_ner(anno_res, pipe,labels = [] ,  viz_colors={},is_databricks_env =False,write_to_streamlit=False):
         """Infer columns required for ner viz and then viz it.
         viz_colors :  set label colors by specifying hex codes , i.e. viz_colors =  {'LOC':'#800080', 'PER':'#77b5fe'}
         labels : only allow these labels to be displayed. (default: [] - all labels will be displayed)
@@ -25,10 +24,18 @@ class VizUtilsHC():
         document_col,entities_col =  VizUtilsHC.infer_ner_dependencies(pipe)
         ner_vis = NerVisualizer()
         if len(viz_colors) > 0 : ner_vis.set_label_colors(viz_colors)
-        if not is_databricks_env:
+        if write_to_streamlit :
+            import streamlit as st
+            HTML = ner_vis.display(anno_res,label_col=entities_col,document_col=document_col, labels=labels, return_html=True )
+            CSS,HTML = HTML.split('</style>')
+            CSS = CSS + '</style>'
+            HTML = f'<div> {HTML} '
+            st.markdown(CSS, unsafe_allow_html=True)
+            st.markdown(HTML, unsafe_allow_html=True)
+        elif not is_databricks_env:
             ner_vis.display(anno_res,label_col=entities_col,document_col=document_col, labels=labels )
         else :
-            ner_vis.display(anno_res,label_col=entities_col,document_col=document_col, labels=labels,return_html=True )
+            return ner_vis.display(anno_res,label_col=entities_col,document_col=document_col, labels=labels,return_html=True )
 
 
     @staticmethod
@@ -46,14 +53,18 @@ class VizUtilsHC():
 
 
     @staticmethod
-    def viz_dep(anno_res,pipe,is_databricks_env):
+    def viz_dep(anno_res,pipe,is_databricks_env,write_to_streamlit=False):
         """Viz dep result"""
         pos_col,dep_typ_col,dep_untyp_col  = VizUtilsHC.infer_dep_dependencies(pipe)
         dependency_vis = DependencyParserVisualizer()
-        if not is_databricks_env:
+        if write_to_streamlit :
+            import streamlit as st
+            SVG = dependency_vis.display(anno_res,pos_col =pos_col,dependency_col =  dep_untyp_col ,dependency_type_col = dep_typ_col,return_html=True)
+            st.markdown(SVG, unsafe_allow_html=True)
+        elif not is_databricks_env:
             dependency_vis.display(anno_res,pos_col =pos_col,dependency_col =  dep_untyp_col ,dependency_type_col = dep_typ_col)
         else:
-            dependency_vis.display(anno_res,pos_col =pos_col,dependency_col =  dep_untyp_col ,dependency_type_col = dep_typ_col,return_html=True)
+            return dependency_vis.display(anno_res,pos_col =pos_col,dependency_col =  dep_untyp_col ,dependency_type_col = dep_typ_col,return_html=True)
 
     @staticmethod
     def infer_dep_dependencies(pipe):
@@ -76,15 +87,24 @@ class VizUtilsHC():
 
 
     @staticmethod
-    def viz_resolution(anno_res,pipe,viz_colors={},is_databricks_env=False):
+    def viz_resolution(anno_res,pipe,viz_colors={},is_databricks_env=False,write_to_streamlit=False):
         """Viz dep result. Set label colors by specifying hex codes, i.e. viz_colors={'TREATMENT':'#800080', 'PROBLEM':'#77b5fe'} """
         entities_col,resolution_col,doc_col  = VizUtilsHC.infer_resolution_dependencies(pipe)
         er_vis = EntityResolverVisualizer()
         if len(viz_colors) > 0 : er_vis.set_label_colors(viz_colors)
-        if not is_databricks_env:
+
+        if write_to_streamlit :
+            import streamlit as st
+            HTML = er_vis.display(anno_res,label_col=entities_col, resolution_col = resolution_col,document_col=doc_col,return_html=True)
+            CSS,HTML = HTML.split('</style>')
+            CSS = CSS + '</style>'
+            HTML = f'<div> {HTML} '
+            st.markdown(CSS, unsafe_allow_html=True)
+            st.markdown(HTML, unsafe_allow_html=True)
+        elif not is_databricks_env:
             er_vis.display(anno_res,label_col=entities_col, resolution_col = resolution_col,document_col=doc_col)
         else:
-            er_vis.display(anno_res,label_col=entities_col, resolution_col = resolution_col,document_col=doc_col,return_html=True)
+            return  er_vis.display(anno_res,label_col=entities_col, resolution_col = resolution_col,document_col=doc_col,return_html=True)
 
 
     @staticmethod
@@ -102,14 +122,20 @@ class VizUtilsHC():
         return entities_col,resolution_col,doc_col
 
     @staticmethod
-    def viz_relation(anno_res,pipe,is_databricks_env):
+    def viz_relation(anno_res,pipe,is_databricks_env,write_to_streamlit=False):
         """Viz relation result. Set label colors by specifying hex codes, i.e. viz_colors={'TREATMENT':'#800080', 'PROBLEM':'#77b5fe'} """
         relation_col,document_col = VizUtilsHC.infer_relation_dependencies(pipe)
         re_vis = RelationExtractionVisualizer()
+        if write_to_streamlit :
+            import streamlit as st
+            HTML = re_vis.display(anno_res,relation_col = relation_col,document_col = document_col, show_relations=True, return_html=True)
+            st.markdown(HTML, unsafe_allow_html=True)
+
+
         if not is_databricks_env:
             re_vis.display(anno_res,relation_col = relation_col,document_col = document_col, show_relations=True)
         else:
-            re_vis.display(anno_res,relation_col = relation_col,document_col = document_col, show_relations=True,return_html=True)
+            return  re_vis.display(anno_res,relation_col = relation_col,document_col = document_col, show_relations=True, return_html=True)
 
     @staticmethod
     def infer_relation_dependencies(pipe):
@@ -124,15 +150,24 @@ class VizUtilsHC():
 
 
     @staticmethod
-    def viz_assertion(anno_res,pipe,viz_colors={},is_databricks_env=False):
+    def viz_assertion(anno_res,pipe,viz_colors={},is_databricks_env=False,write_to_streamlit=False):
         """Viz relation result. Set label colors by specifying hex codes, i.e. viz_colors={'TREATMENT':'#008080', 'problem':'#800080'} """
         entities_col,assertion_col, doc_col = VizUtilsHC.infer_assertion_dependencies(pipe)
         assertion_vis = AssertionVisualizer()
         if len(viz_colors) > 0 : assertion_vis.set_label_colors(viz_colors)
-        if not is_databricks_env:
+        if write_to_streamlit :
+            import streamlit as st
+            HTML = assertion_vis.display(anno_res,label_col = entities_col,assertion_col = assertion_col ,document_col = doc_col,return_html=True)
+            # st.markdown(HTML, unsafe_allow_html=True)
+            CSS,HTML = HTML.split('</style>')
+            CSS = CSS + '</style>'
+            HTML = f'<div> {HTML} '
+            st.markdown(CSS, unsafe_allow_html=True)
+            st.markdown(HTML, unsafe_allow_html=True)
+        elif not is_databricks_env:
             assertion_vis.display(anno_res,label_col = entities_col,assertion_col = assertion_col ,document_col = doc_col)
         else:
-            assertion_vis.display(anno_res,label_col = entities_col,assertion_col = assertion_col ,document_col = doc_col,return_html=True)
+            return  assertion_vis.display(anno_res,label_col = entities_col,assertion_col = assertion_col ,document_col = doc_col,return_html=True)
 
     @staticmethod
     def infer_assertion_dependencies(pipe):

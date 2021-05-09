@@ -259,7 +259,7 @@ class NLUPipeline(BasePipe):
         if  drop_irrelevant_cols :  pretty_df = pretty_df[self.drop_irrelevant_cols(list(pretty_df.columns))]
         return pretty_df.loc[:,~pretty_df.columns.duplicated()]
 
-    def viz(self, text_to_viz:str, viz_type='', labels_to_viz=None,viz_colors={},return_html=False):
+    def viz(self, text_to_viz:str, viz_type='', labels_to_viz=None,viz_colors={},return_html=False, write_to_streamlit=False):
         """Visualize predictions of a Pipeline, using Spark-NLP-Display
         text_to_viz : String to viz
         viz_type    : Viz type, one of [ner,dep,resolution,relation,assert]
@@ -277,9 +277,9 @@ class NLUPipeline(BasePipe):
         if viz_type == '' : viz_type  = VizUtils.infer_viz_type(self)
         anno_res = self.spark_transformer_pipe.fullAnnotate(text_to_viz)[0]
         if self.has_licensed_components==False :
-            HTML = VizUtils.viz_OS(anno_res, self, viz_type,viz_colors,labels_to_viz,is_databricks_env)
+            HTML = VizUtils.viz_OS(anno_res, self, viz_type,viz_colors,labels_to_viz,is_databricks_env,write_to_streamlit)
         else :
-            HTML = VizUtils.viz_HC(anno_res, self, viz_type,viz_colors,labels_to_viz,is_databricks_env)
+            HTML = VizUtils.viz_HC(anno_res, self, viz_type,viz_colors,labels_to_viz,is_databricks_env,write_to_streamlit)
         if return_html or is_databricks_env : return  HTML
     def convert_embeddings_to_np(self, pdf):
         '''
@@ -351,7 +351,7 @@ class NLUPipeline(BasePipe):
             self.fit()
             return
         else:
-            if self.light_pipe_configured == False or force:
+            if self.light_pipe_configured == False or force and not isinstance(self.spark_transformer_pipe, LightPipeline):
                 self.light_pipe_configured = True
                 logger.info("Enabling light pipeline")
                 self.spark_transformer_pipe = LightPipeline(self.spark_transformer_pipe)
