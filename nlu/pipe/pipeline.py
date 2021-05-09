@@ -271,7 +271,7 @@ class NLUPipeline(BasePipe):
         if self.spark_transformer_pipe is None : self.fit()
         is_databricks_env = is_running_in_databricks()
         if return_html : is_databricks_env=True
-        self.configure_light_pipe_usage(1)
+        self.configure_light_pipe_usage(1, force=True)
         from nlu.pipe.viz.vis_utils import VizUtils
 
         if viz_type == '' : viz_type  = VizUtils.infer_viz_type(self)
@@ -344,14 +344,14 @@ class NLUPipeline(BasePipe):
             if 'chunk_results' in cols: cols.remove('chunk_results')
             if 'sentence_results' in cols: cols.remove('sentence_results')
         return cols
-    def configure_light_pipe_usage(self, data_instances, use_multi=True):
+    def configure_light_pipe_usage(self, data_instances, use_multi=True, force = False):
         logger.info("Configuring Light Pipeline Usage")
         if data_instances > 50000 or use_multi == False:
             logger.info("Disabling light pipeline")
             self.fit()
             return
         else:
-            if self.light_pipe_configured == False:
+            if self.light_pipe_configured == False or force:
                 self.light_pipe_configured = True
                 logger.info("Enabling light pipeline")
                 self.spark_transformer_pipe = LightPipeline(self.spark_transformer_pipe)
