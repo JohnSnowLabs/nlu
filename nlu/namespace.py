@@ -155,7 +155,7 @@ class NameSpace():
         'covidbert': ('covidbert_large_uncased', 'model'),
 
         'embed.bert': ('bert_base_uncased', 'model'),  # default bert
-        'embed.bert_base_uncased': ('bert_base_uncased', 'model'),
+        'embed.bert_base_uncased': ('bert_base_u`ncased', 'model'),
         'embed.bert_base_cased': ('bert_base_cased', 'model'),
         'embed.bert_large_uncased': ('bert_large_uncased', 'model'),
         'embed.bert_large_cased': ('bert_large_cased', 'model'),
@@ -1936,6 +1936,7 @@ class NameSpace():
 
                 # NERDLModels
                 # 'en.med_ner.ade.biobert':'ner_ade_biobert', # Todo error param pooling layer does not exist
+                'en.med_ner': 'jsl_ner_wip_clinical',
                 'en.med_ner.ade.clinical': 'ner_ade_clinical',
                 'en.med_ner.ade.clinical_bert': 'ner_ade_clinicalbert',
                 'en.med_ner.ade.ade_healthcare': 'ner_ade_healthcare',
