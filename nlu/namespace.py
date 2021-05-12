@@ -319,7 +319,18 @@ class NameSpace():
             "en.ner.onto.large": "onto_recognize_entities_electra_large",
 
         },
+        'fa':{
+            'fa.ner.dl' : '	recognize_entities_dl',
+        },
+        'he':{
+            'he.explain_document' : '	explain_document_lg',
+            'he.explain_document.lg' : '	explain_document_lg',
+        },
+        'ko':{
+            'ko.explain_document' : '	explain_document_lg',
+            'ko.explain_document.lg' : '	explain_document_lg',
 
+        },
         'sv': {
             'sv.explain': 'explain_document_sm',
             'sv.explain.sm': 'explain_document_sm',
