@@ -1391,8 +1391,8 @@ class NameSpace():
             'tr.pos.ud_imst': 'pos_ud_imst',
             'tr.stopwords': 'stopwords_tr',
             'tr.ner': 'turkish_ner_840B_300',  # ner tr default
-            'tr.ner.bert': 'turkish_ner_bert'  # ner tr default
-
+            'tr.ner.bert': 'turkish_ner_bert' , # ner tr default
+            'tr.classify.news'  : 'classifierdl_bert_news',
         },
         'uk': {
             'uk.lemma': 'lemma',  # default uk lemma
@@ -1510,6 +1510,7 @@ class NameSpace():
             'xx.use.xling_en_es': 'tfhub_use_xling_en_es',
             'xx.use.xling_en_fr': 'tfhub_use_xling_en_fr',
             'xx.use.xling_many': 'tfhub_use_xling_many',
+            'xx.use.multi'
 
             # 2.7.0 marian translate model references
             "xx.swc.marian.translate_to.en": "opus_mt_swc_en",
