@@ -276,8 +276,10 @@ class NLUPipeline(BasePipe):
 
         if viz_type == '' : viz_type  = VizUtils.infer_viz_type(self)
         # anno_res = self.spark_transformer_pipe.fullAnnotate(text_to_viz)[0]
-        anno_res = self.spark.createDataFrame(pd.DataFrame({'text':text_to_viz}))
-        anno_res = self.spark_transformer_pipe.transform(anno_res)
+        # anno_res = self.spark.createDataFrame(pd.DataFrame({'text':text_to_viz}))
+        data, stranger_features, output_datatype = DataConversionUtils.to_spark_df(text_to_viz, self.spark, self.raw_text_column)
+
+        anno_res = self.spark_transformer_pipe.transform(data)
         anno_res = anno_res.collect()[0]
         if self.has_licensed_components==False :
             HTML = VizUtils.viz_OS(anno_res, self, viz_type,viz_colors,labels_to_viz,is_databricks_env,write_to_streamlit)
