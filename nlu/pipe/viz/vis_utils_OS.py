@@ -17,6 +17,7 @@ class VizUtilsOS():
         """
         document_col,entities_col =  VizUtilsOS.infer_ner_dependencies(pipe)
         ner_vis = NerVisualizer()
+        ner_vis.set_label_colors(viz_colors)
         if write_to_streamlit :
             import streamlit as st
             HTML = ner_vis.display(anno_res,label_col=entities_col,document_col=document_col, labels=labels, return_html=True )
