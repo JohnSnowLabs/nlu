@@ -1,5 +1,4 @@
-import os
-from nlu.environment.env_utils import *
+from nlu.utils.environment.env_utils import *
 
 
 
