@@ -4,7 +4,9 @@ import streamlit as st
 from nlu.utils.modelhub.modelhub_utils import ModelHubUtils
 import numpy as np
 import pandas as pd
-
+from sparknlp.annotator import *
+classifers = [ ClassifierDLModel, LanguageDetectorDL, MultiClassifierDLModel, NerDLModel, NerCrfModel, YakeModel, PerceptronModel, SentimentDLModel,
+SentimentDetectorModel, ViveknSentimentModel, DependencyParserModel, TypedDependencyParserModel, T5Transformer, MarianTransformer]
 class VizUtilsStreamlitOS():
     @staticmethod
     def viz_streamlit(
