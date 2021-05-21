@@ -5,9 +5,34 @@ from nlu.utils.modelhub.modelhub_utils import ModelHubUtils
 import numpy as np
 import pandas as pd
 from sparknlp.annotator import *
-classifers = [ ClassifierDLModel, LanguageDetectorDL, MultiClassifierDLModel, NerDLModel, NerCrfModel, YakeModel, PerceptronModel, SentimentDLModel,
-SentimentDetectorModel, ViveknSentimentModel, DependencyParserModel, TypedDependencyParserModel, T5Transformer, MarianTransformer]
+
 class VizUtilsStreamlitOS():
+    classifers_OS = [ ClassifierDLModel, LanguageDetectorDL, MultiClassifierDLModel, NerDLModel, NerCrfModel, YakeModel, PerceptronModel, SentimentDLModel,
+                      SentimentDetectorModel, ViveknSentimentModel, DependencyParserModel, TypedDependencyParserModel, T5Transformer, MarianTransformer, NerConverter]
+    @staticmethod
+    def get_classifier_cols(pipe):
+        classifier_cols = []
+        for c in pipe.components:
+            if type(c.model) in VizUtilsStreamlitOS.classifers_OS :
+                classifier_cols += pipe.anno2final_cols[c.model]
+        return  classifier_cols
+    @staticmethod
+    def visualize_classes(
+            pipe, # nlu pipe
+            text:str='I love NLU and Streamlit and sunny days!',
+            output_level:Optional[str]='document',
+            title: Optional[str] = "Text Classification",
+            metadata : bool = True,
+            )->None:
+        if title:st.header(title)
+        df = pipe.predict(text, output_level=output_level, metadata=metadata)
+        classifier_cols = VizUtilsStreamlitOS.get_classifier_cols(pipe)
+        for c in classifier_cols :
+            if c not in df.columns : classifier_cols.remove(c)
+
+        st.write(df[classifier_cols])
+
+
     @staticmethod
     def viz_streamlit(
 
