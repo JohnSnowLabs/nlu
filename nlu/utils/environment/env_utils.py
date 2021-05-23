@@ -66,11 +66,12 @@ def is_running_in_databricks():
             return True
     return False
 
-def install_and_import_package(pkg_name,version='', import_name='sparknlp_display'):
+def install_and_import_package(pkg_name,version='', import_name=''):
     """ Install Spark-NLP-Healthcare PyPI Package in current enviroment if it cannot be imported and liscense provided"""
     import importlib
     try:
-        importlib.import_module(pkg_name)
+        if import_name == '' : importlib.import_module(pkg_name)
+        else: importlib.import_module(import_name)
     except ImportError:
         import pip
         if version == '':
