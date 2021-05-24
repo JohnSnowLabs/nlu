@@ -1885,7 +1885,7 @@ class NameSpace():
 
                 # BertSEntenceEmbeddings MLI
                 'en.embed_sentence.biobert.mli': 'sbiobert_base_cased_mli',
-                # 'en.embed_sentence.bluebert.mli': 'sbluebert_base_uncased_mli',# Broken
+                'en.embed_sentence.bluebert.mli': 'sbluebert_base_uncased_mli',# Broken
 
                 # 'en.embed_sentence.bluebert.mednli': 'sent_bluebert_base_uncased_mednli', # broken
                 # 'en.embed_sentence.biobert.mednli': 'sent_biobert_base_uncased_mednli',  # broken
@@ -2074,6 +2074,13 @@ class NameSpace():
                 'en.classify.pico':'classifierdl_pico_biobert',
                 # 'en.classify.icd10.use':'useclassifier_icd10cm_hcc', buggy
 
+                # 3.0.3
+                'en.resolve.umls':'sbiobertresolve_umls_major_concepts',
+                'en.resolve.umls.findings':'sbiobertresolve_umls_findings',
+                'en.resolve.loinc':'sbiobertresolve_loinc',
+                'en.resolve.loinc.biobert':'sbiobertresolve_loinc',
+                'en.resolve.loinc.bluebert':'sbluebertresolve_loinc',
+                'en.resolve.HPO':'sbiobertresolve_HPO',
 
             },
 
@@ -2137,7 +2144,7 @@ class NameSpace():
             'embeddings_healthcare100': 'en.embed.glove.healthcare_100d',
             'BERT_SENTENCE_EMBEDDINGS_0bee53f1b2cc': 'en.embed_sentence.biobert.mli',
             # 'BERT_SENTENCE_EMBEDDINGS_0bee53f1b2cc': 'en.embed_sentence.biobert.pubmed_base_cased',
-
+            'BERT_SENTENCE_EMBEDDINGS_59c3cd1e17c4' : 'en.embed_sentence.bluebert.mli',
             'RelationExtractionModel_3ab4750ad5b6': 'en.embed.glove.clinical',
             'RelationExtractionModel_6b61602c8303': 'en.embed.glove.clinical',
             'RelationExtractionModel_9c255241fec3': 'en.embed.glove.clinical',
