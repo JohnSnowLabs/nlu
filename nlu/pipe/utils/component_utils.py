@@ -4,8 +4,8 @@ import inspect
 from nlu.pipe.pipe_components import SparkNLUComponent
 from nlu.pipe.utils.storage_ref_utils import StorageRefUtils
 
-"""Component and Column Level logic operations and utils"""
 class ComponentUtils():
+    """Component and Column Level logic operations and utils"""
     @staticmethod
     def config_chunk_embed_converter(converter:SparkNLUComponent)->SparkNLUComponent:
         '''For a Chunk to be added to a pipeline, configure its input/output and set storage ref to amtch the storage ref and
@@ -215,13 +215,14 @@ class ComponentUtils():
     @staticmethod
     def get_nlu_ref_identifier(component:SparkNLUComponent) -> str:
         """The tail of a NLU ref after splitting on '.' gives a unique identifier for NON-Aliased components
-         If result is '' raises value Error
+         If result is '' , model UID will be used as identifier
          """
         tail = ''
 
         if hasattr(component.info, 'nlu_ref') and component.info.nlu_ref !='':
             tail = component.info.nlu_ref.split('.')[-1].split('@')[-1]
         if tail == '' :
-            raise ValueError
+            logger.warning(f"Could not deduct tail from component={component}. This is intended for CustomModelComponents used in offline mode")
+            tail = str(component.model)
         return tail
 
