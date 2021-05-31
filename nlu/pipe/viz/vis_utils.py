@@ -1,8 +1,12 @@
 from sparknlp.annotator import *
 from nlu.pipe.viz.vis_utils_OS import VizUtilsOS
+import random
 
 class VizUtils():
     """Utils for interfacing with the Spark-NLP-Display lib"""
+    @staticmethod
+    def get_random(): return  random.randint(0,1333333333337)
+
     @staticmethod
     def infer_viz_type(pipe)->str:
         """For a given NLUPipeline, infers which visualizations are applicable. """
@@ -13,10 +17,11 @@ class VizUtils():
 
 
     @staticmethod
-    def viz_OS(anno_res, pipe, viz_type,viz_colors,labels_to_viz,is_databricks_env,write_to_streamlit):
+    def viz_OS(anno_res, pipe, viz_type,viz_colors,labels_to_viz,is_databricks_env,write_to_streamlit,streamlit_key):
         """Vizualize open source component"""
-        if   viz_type == 'ner' : return VizUtilsOS.viz_ner(anno_res, pipe,labels_to_viz,viz_colors,is_databricks_env,write_to_streamlit)
-        elif viz_type == 'dep' : return VizUtilsOS.viz_dep(anno_res, pipe,is_databricks_env,write_to_streamlit)
+        streamlit_key = VizUtils.get_random() if streamlit_key == "RANDOM" else streamlit_key
+        if   viz_type == 'ner' : return VizUtilsOS.viz_ner(anno_res, pipe,labels_to_viz,viz_colors,is_databricks_env,write_to_streamlit,streamlit_key)
+        elif viz_type == 'dep' : return VizUtilsOS.viz_dep(anno_res, pipe,is_databricks_env,write_to_streamlit,streamlit_key)
         else : raise ValueError("Could not find applicable viz_type. Please make sure you specify either ner, dep, resolution, relation, assert or dep and have loaded corrosponding components")
 
     @staticmethod

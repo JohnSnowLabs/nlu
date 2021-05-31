@@ -47,6 +47,10 @@ def _set_block_container_style(
               margin: auto;
 
         }}
+        
+    textarea {{
+        background-color:green;
+    }}
 </style>
 """,
             unsafe_allow_html=True,

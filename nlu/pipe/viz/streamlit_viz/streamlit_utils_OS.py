@@ -5,7 +5,7 @@ from nlu.utils.modelhub.modelhub_utils import ModelHubUtils
 import numpy as np
 import pandas as pd
 from sparknlp.annotator import *
-
+import nlu
 class StreamlitUtilsOS():
     classifers_OS = [ ClassifierDLModel, LanguageDetectorDL, MultiClassifierDLModel, NerDLModel, NerCrfModel, YakeModel, PerceptronModel, SentimentDLModel,
                       SentimentDetectorModel, ViveknSentimentModel, DependencyParserModel, TypedDependencyParserModel, T5Transformer, MarianTransformer, NerConverter]
@@ -17,6 +17,12 @@ class StreamlitUtilsOS():
                 classifier_cols += pipe.anno2final_cols[c.model]
         return  classifier_cols
 
+    @staticmethod
+    def get_embed_cols(pipe):
+        classifier_cols = []
+        embedders = StreamlitUtilsOS.find_all_embed_components(pipe)
+        for c in embedders: classifier_cols += pipe.anno2final_cols[c.model]
+        return  classifier_cols
 
     @staticmethod
     def find_embed_col(df, search_multi=False):
@@ -33,19 +39,36 @@ class StreamlitUtilsOS():
 
     @staticmethod
     def find_embed_component(p):
-        """Find NER component in pipe"""
+        """Find first embed  component in pipe"""
         for c in p.components :
             if 'embed' in c.info.outputs[0] : return c
         st.warning("No Embed model in pipe")
         return None
 
+    @staticmethod
+    def find_all_classifier_components(pipe):
+        """Find ALL classifier component in pipe"""
+        classifier_comps = []
+        for c in pipe.components:
+            if type(c.model) in StreamlitUtilsOS.classifers_OS :classifier_comps.append(c)
+        return  classifier_comps
+    @staticmethod
+    def find_all_embed_components(p):
+        """Find ALL  embed component in pipe"""
+        cs = []
+        for c in p.components :
+            if 'embed' in c.info.outputs[0] and 'chunk' not  in c.info.outputs[0]: cs.append(c)
+        if len(cs) == 0 : st.warning("No Embed model in pipe")
+        return cs
 
     @staticmethod
     def extract_name(component_or_pipe):
         name =''
-        if hasattr(component_or_pipe.info,'nlu_ref') : name = component_or_pipe.info.nlu_ref
-        elif hasattr(component_or_pipe,'storage_ref') : name = component_or_pipe.info.storage_ref
-        elif hasattr(component_or_pipe,'nlp_ref') : name = component_or_pipe.info.nlp_ref
+        if hasattr(component_or_pipe,'info') :
+            if hasattr(component_or_pipe.info,'nlu_ref') : name = component_or_pipe.info.nlu_ref
+            elif hasattr(component_or_pipe,'storage_ref') : name = component_or_pipe.info.storage_ref
+            elif hasattr(component_or_pipe,'nlp_ref') : name = component_or_pipe.info.nlp_ref
+        elif hasattr(component_or_pipe,'nlu_ref') : name = component_or_pipe.nlu_ref
         return name
 
 
@@ -70,3 +93,6 @@ class StreamlitUtilsOS():
         classes_predicted_by_ner_model = list(set(classes_predicted_by_ner_model))
         return classes_predicted_by_ner_model
 
+    @staticmethod
+    @st.cache(allow_output_mutation=True)
+    def get_pipe(model='ner'): return nlu.load(model)

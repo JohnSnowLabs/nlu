@@ -8,7 +8,7 @@ from nlu.pipe.pipe_logic import PipeUtils
 import nlu
 import nlu.pipe.pipe_components
 import sparknlp
-from  typing import List, Dict
+from  typing import List,Union
 
 from sparknlp.base import *
 from sparknlp.base import LightPipeline
@@ -16,13 +16,13 @@ from sparknlp.annotator import *
 import pyspark
 import pandas as pd
 import numpy as np
-from pyspark.sql.types import StructType,StructField, StringType, IntegerType
+from pyspark.sql.types import StructType,StructField, StringType
 from nlu.pipe.component_resolution import extract_classifier_metadata_from_nlu_ref
 from nlu.pipe.utils.storage_ref_utils import StorageRefUtils
 from nlu.pipe.utils.component_utils import ComponentUtils
 from nlu.pipe.utils.output_level_resolution_utils import OutputLevelUtils
 from nlu.pipe.utils.data_conversion_utils import DataConversionUtils
-from nlu.environment.env_utils import is_running_in_databricks
+from nlu.utils.environment.env_utils import is_running_in_databricks
 from nlu.pipe.col_substitution.col_name_substitution_utils import ColSubstitutionUtils
 class BasePipe(dict):
     # we inherhit from dict so the pipe is indexable and we have a nice shortcut for accessing the spark nlp model
@@ -132,8 +132,8 @@ class NLUPipeline(BasePipe):
     def verify_all_labels_exist(self,dataset):
         return 'y'  in dataset.columns or 'label' in dataset.columns or 'labels' in dataset.columns
     def fit(self, dataset=None, dataset_path=None, label_seperator=','):
-        # if dataset is  string with '/' in it, its dataset path!
         '''
+        if dataset is  string with '/' in it, its dataset path!
         Converts the input Pandas Dataframe into a Spark Dataframe and trains a model on it.
         :param dataset: The pandas dataset to train on, should have a y column for label and 'text' column for text features
         :param dataset_path: Path to a CONLL2013 format dataset. It will be read for NER and POS training.
@@ -207,8 +207,11 @@ class NLUPipeline(BasePipe):
                 anno_2_ex_config[c.info.spark_output_column_names[0]].pop_meta_list = True
                 anno_2_ex_config[c.info.spark_output_column_names[0]].pop_result_list = True
             # if c_level_mapping[c] == 'relation' and  not anno_2_ex_config[c.info.spark_output_column_names[0]].pop_never :
-            if positions :
-                anno_2_ex_config[c.info.spark_output_column_names[0]].get_positions = True
+            if positions : anno_2_ex_config[c.info.spark_output_column_names[0]].get_positions = True
+            else :
+                anno_2_ex_config[c.info.spark_output_column_names[0]].get_begin           = False
+                anno_2_ex_config[c.info.spark_output_column_names[0]].get_end             = False
+                anno_2_ex_config[c.info.spark_output_column_names[0]].get_positions = False
 
         return anno_2_ex_config
     def unpack_and_apply_extractors(self,sdf:pyspark.sql.DataFrame, keep_stranger_features=True, stranger_features=[],anno_2_ex_config={})-> pd.DataFrame:
@@ -256,36 +259,12 @@ class NLUPipeline(BasePipe):
         pretty_df = zip_and_explode(pretty_df, same_output_level, not_same_output_level, self.output_level)
         pretty_df = self.convert_embeddings_to_np(pretty_df)
         pretty_df = ColSubstitutionUtils.substitute_col_names(pretty_df,anno_2_ex_config,self, stranger_features)
+        pretty_df = pretty_df.loc[:,~pretty_df.columns.duplicated()]
         if  drop_irrelevant_cols :  pretty_df = pretty_df[self.drop_irrelevant_cols(list(pretty_df.columns))]
-        return pretty_df.loc[:,~pretty_df.columns.duplicated()]
+        return pretty_df
 
-    def viz(self, text_to_viz:str, viz_type='', labels_to_viz=None,viz_colors={},return_html=False, write_to_streamlit=False):
-        """Visualize predictions of a Pipeline, using Spark-NLP-Display
-        text_to_viz : String to viz
-        viz_type    : Viz type, one of [ner,dep,resolution,relation,assert]
-        labels_to_viz : Defines a subset of NER labels to viz i.e. ['PER'] , by default=[] which will display all labels. Applicable only for NER viz
-        viz_colors  : Applicable for [ner, resolution, assert ] key = label, value=hex color, i.e. viz_colors={'TREATMENT':'#008080', 'problem':'#800080'}
-        """
-        from nlu.environment.env_utils import install_and_import_package
-        install_and_import_package('spark-nlp-display',import_name='sparknlp_display')
-        if self.spark_transformer_pipe is None : self.fit()
-        is_databricks_env = is_running_in_databricks()
-        if return_html : is_databricks_env=True
-        # self.configure_light_pipe_usage(1, force=True)
-        from nlu.pipe.viz.vis_utils import VizUtils
 
-        if viz_type == '' : viz_type  = VizUtils.infer_viz_type(self)
-        # anno_res = self.spark_transformer_pipe.fullAnnotate(text_to_viz)[0]
-        # anno_res = self.spark.createDataFrame(pd.DataFrame({'text':text_to_viz}))
-        data, stranger_features, output_datatype = DataConversionUtils.to_spark_df(text_to_viz, self.spark, self.raw_text_column)
 
-        anno_res = self.spark_transformer_pipe.transform(data)
-        anno_res = anno_res.collect()[0]
-        if self.has_licensed_components==False :
-            HTML = VizUtils.viz_OS(anno_res, self, viz_type,viz_colors,labels_to_viz,is_databricks_env,write_to_streamlit)
-        else :
-            HTML = VizUtils.viz_HC(anno_res, self, viz_type,viz_colors,labels_to_viz,is_databricks_env,write_to_streamlit)
-        if return_html or is_databricks_env : return  HTML
     def convert_embeddings_to_np(self, pdf):
         '''
         convert all the columns in a pandas df to numpy
@@ -305,7 +284,7 @@ class NLUPipeline(BasePipe):
         :return: The predicted Data as datatype dependign on self.output_datatype
         '''
         if self.output_datatype == 'spark':
-            return df # todo
+            return df
         elif self.output_datatype == 'pandas':
             return df
         elif self.output_datatype == 'modin':
@@ -319,7 +298,7 @@ class NLUPipeline(BasePipe):
         elif self.output_datatype == 'numpy':
             return df.to_numpy()
         return df
-    def drop_irrelevant_cols(self, cols):
+    def drop_irrelevant_cols(self, cols,  keep_origin_index=False):
         '''
         Takes in a list of column names removes the elements which are irrelevant to the current output level.
         This will be run before returning the final df
@@ -329,25 +308,26 @@ class NLUPipeline(BasePipe):
         :return: list of columns with the irrelevant names removed
         '''
         if self.output_level == 'token':
-            if 'document_results' in cols: cols.remove('document_results')
-            if 'chunk_results' in cols: cols.remove('chunk_results')
-            if 'sentence_results' in cols: cols.remove('sentence_results')
+            if 'document' in cols: cols.remove('document')
+            if 'chunk' in cols: cols.remove('chunk')
+            if 'sentence' in cols: cols.remove('sentence')
         if self.output_level == 'sentence':
-            if 'token_results' in cols: cols.remove('token_results')
-            if 'chunk_results' in cols: cols.remove('chunk_results')
-            if 'document_results' in cols: cols.remove('document_results')
+            if 'token' in cols: cols.remove('token')
+            if 'chunk' in cols: cols.remove('chunk')
+            if 'document' in cols: cols.remove('document')
         if self.output_level == 'chunk':
-            # if 'document_results' in cols: cols.remove('document_results')
-            if 'token_results' in cols: cols.remove('token_results')
-            if 'sentence_results' in cols: cols.remove('sentence_results')
+            # if 'document' in cols: cols.remove('document')
+            if 'token' in cols: cols.remove('token')
+            if 'sentence' in cols: cols.remove('sentence')
         if self.output_level == 'document':
-            if 'token_results' in cols: cols.remove('token_results')
-            if 'chunk_results' in cols: cols.remove('chunk_results')
-            if 'sentence_results' in cols: cols.remove('sentence_results')
+            if 'token' in cols: cols.remove('token')
+            if 'chunk' in cols: cols.remove('chunk')
+            if 'sentence' in cols: cols.remove('sentence')
         if self.output_level == 'relation':
-            if 'token_results' in cols: cols.remove('token_results')
-            if 'chunk_results' in cols: cols.remove('chunk_results')
-            if 'sentence_results' in cols: cols.remove('sentence_results')
+            if 'token' in cols: cols.remove('token')
+            if 'chunk' in cols: cols.remove('chunk')
+            if 'sentence' in cols: cols.remove('sentence')
+        if keep_origin_index == False and 'origin_index' in cols : cols.remove('origin_index')
         return cols
     def configure_light_pipe_usage(self, data_instances, use_multi=True, force = False):
         logger.info("Configuring Light Pipeline Usage")
@@ -489,11 +469,9 @@ class NLUPipeline(BasePipe):
         If minimal is false, all Spark NLP Model parameters will be printed, including output/label/input cols and other attributes a NLU user should not touch. Useful for debugging.
         :return: None
         '''
-
         print('The following parameters are configurable for this NLU pipeline (You can copy paste the examples) :')
         # list of tuples, where first element is component name and second element is list of param tuples, all ready formatted for printing
         all_outputs = []
-
         for i, component_key in enumerate(self.keys()):
             s = ">>> pipe['" + component_key + "'] has settable params:"
             p_map = self[component_key].extractParamMap()
@@ -530,11 +508,6 @@ class NLUPipeline(BasePipe):
                     print(form.format(o_parm[0]) + o_parm[1])
                 else:
                     print(o_parm[0] + o_parm[1])
-
-
-
-
-
     def print_exception_err(self,err):
         '''Print information about exception during converting or transforming dataframe'''
         import sys
@@ -552,4 +525,173 @@ class NLUPipeline(BasePipe):
         err = sys.exc_info()[1]
         print(str(err))
         print('Stuck? Contact us on Slack! https://join.slack.com/t/spark-nlp/shared_invite/zt-lutct9gm-kuUazcyFKhuGY3_0AMkxqA')
+
+
+
+
+
+
+
+
+
+
+
+    def viz(self, text_to_viz:str, viz_type='', labels_to_viz=None,viz_colors={},return_html=False, write_to_streamlit=False, streamlit_key='NLU_streamlit'):
+        """Visualize predictions of a Pipeline, using Spark-NLP-Display
+        text_to_viz : String to viz
+        viz_type    : Viz type, one of [ner,dep,resolution,relation,assert]
+        labels_to_viz : Defines a subset of NER labels to viz i.e. ['PER'] , by default=[] which will display all labels. Applicable only for NER viz
+        viz_colors  : Applicable for [ner, resolution, assert ] key = label, value=hex color, i.e. viz_colors={'TREATMENT':'#008080', 'problem':'#800080'}
+        """
+        from nlu.utils.environment.env_utils import install_and_import_package
+        install_and_import_package('spark-nlp-display',import_name='sparknlp_display')
+        if self.spark_transformer_pipe is None : self.fit()
+        is_databricks_env = is_running_in_databricks()
+        if return_html : is_databricks_env=True
+        # self.configure_light_pipe_usage(1, force=True)
+        from nlu.pipe.viz.vis_utils import VizUtils
+
+        if viz_type == '' : viz_type  = VizUtils.infer_viz_type(self)
+        # anno_res = self.spark_transformer_pipe.fullAnnotate(text_to_viz)[0]
+        # anno_res = self.spark.createDataFrame(pd.DataFrame({'text':text_to_viz}))
+        data, stranger_features, output_datatype = DataConversionUtils.to_spark_df(text_to_viz, self.spark, self.raw_text_column)
+        anno_res = self.spark_transformer_pipe.transform(data)
+        anno_res = anno_res.collect()[0]
+        if self.has_licensed_components==False : HTML = VizUtils.viz_OS(anno_res, self, viz_type,viz_colors,labels_to_viz,is_databricks_env,write_to_streamlit, streamlit_key)
+        else : HTML = VizUtils.viz_HC(anno_res, self, viz_type,viz_colors,labels_to_viz,is_databricks_env,write_to_streamlit)
+        if return_html or is_databricks_env : return  HTML
+
+
+
+
+    def viz_streamlit(self,
+                      # Base Params
+                      text:Union[str, List[str], pd.DataFrame, pd.Series] = 'NLU and Streamlit go together like peanutbutter and jelly',
+                      model_selection:List[str] =[],
+                      # SIMILARITY PARAMS
+                      similarity_texts:Union[List[str],Tuple[str,str]]= ('Donald Trump Likes to part', 'Angela Merkel likes to party'),
+                      title:str = 'NLU ❤️ Streamlit - Prototype your NLP startup in 0 lines of code',
+                      sub_title:str = 'Play with over 1000+ scalable enterprise NLP models',
+                      # UI PARAMS
+                      visualizers:List[str] = ( "dependency_tree", "ner",  "similarity", "token_information", 'classification'),
+                      show_models_info:bool = True,
+                      show_model_select:bool = True,
+                      show_viz_selection:bool = False,
+                      show_logo:bool=True,
+                      set_wide_layout_CSS:bool=True,
+                      show_code_snippets:bool=False,
+                      model_select_position:str = 'side',  # main or side
+                      key:str = "NLU_streamlit",
+                      ) -> None:
+        """Display Viz in streamlit"""
+        try: from nlu.pipe.viz.streamlit_viz.vis_utils_streamlit_OS import VizUtilsStreamlitOS
+        except  ImportError : print("You need to install Streamlit to run this functionality.")
+        VizUtilsStreamlitOS.viz_streamlit(self,
+                                          text,
+                                          model_selection,
+                                          # default_ner_model2viz,
+                                          similarity_texts,
+                                          title,
+                                          sub_title,
+                                          visualizers,
+                                          show_models_info,
+                                          show_model_select,
+                                          show_viz_selection,
+                                          show_logo,
+                                          set_wide_layout_CSS,
+                                          show_code_snippets,
+                                          model_select_position,
+                                          key)
+
+
+
+    def viz_streamlit_token(
+        self,
+        text,
+        title: Optional[str] = "Token attributes",
+        show_feature_select:bool =True,
+        features:Optional[List[str]] = None,
+        metadata: bool = True,
+        output_level:str = 'token',
+        positions:bool = False,
+        set_wide_layout_CSS:bool=True,
+        generate_code_sample=True,
+        key = "NLU_streamlit",
+
+    ):
+        try: from nlu.pipe.viz.streamlit_viz.vis_utils_streamlit_OS import VizUtilsStreamlitOS
+        except  ImportError : print("You need to install Streamlit to run this functionality.")
+        VizUtilsStreamlitOS.visualize_tokens_information(self,text,title,show_feature_select,features,metadata,output_level,positions,set_wide_layout_CSS,generate_code_sample,key)
+
+    def viz_streamlit_classes(
+        self, # nlu pipe
+        text:Union[str,list,pd.DataFrame, pd.Series, pyspark.sql.DataFrame ]='I love NLU and Streamlit and sunny days!',
+        output_level:Optional[str]='document',
+        title: Optional[str] = "Text Classification",
+        metadata : bool = False,
+        positions : bool = False,
+        set_wide_layout_CSS:bool=True,
+        generate_code_sample=True,
+        key = "NLU_streamlit",
+    )->None:
+        try: from nlu.pipe.viz.streamlit_viz.vis_utils_streamlit_OS import VizUtilsStreamlitOS
+        except  ImportError : print("You need to install Streamlit to run this functionality.")
+        VizUtilsStreamlitOS.visualize_classes( self,text,output_level,title,metadata,positions,set_wide_layout_CSS, generate_code_sample,key)
+
+
+    def viz_streamlit_dep_tree(
+        self, #nlu pipe
+        text:str='Billy likes to swim',
+        title: Optional[str] = "Dependency Parse Tree & Part-of-speech tags",
+        set_wide_layout_CSS:bool=True,
+        generate_code_sample=True,
+        key = "NLU_streamlit",
+    )->None:
+        try: from nlu.pipe.viz.streamlit_viz.vis_utils_streamlit_OS import VizUtilsStreamlitOS
+        except  ImportError : print("You need to install Streamlit to run this functionality.")
+        VizUtilsStreamlitOS.visualize_dep_tree( self,text,title,generate_code_sample,key)
+
+    def viz_streamlit_ner(
+            self, # Nlu pipe
+            text:str='Donald Trump from America and Anegela Merkel from Germany do not share many views.',
+            ner_tags: Optional[List[str]] = None,
+            show_label_select: bool = True,
+            show_table: bool = True,
+            title: Optional[str] = "Named Entities",
+            colors: Dict[str, str] = {},
+            show_color_selector: bool = False,
+            set_wide_layout_CSS:bool=True,
+            generate_code_sample=True,
+            key = "NLU_streamlit",
+    ):
+        try: from nlu.pipe.viz.streamlit_viz.vis_utils_streamlit_OS import VizUtilsStreamlitOS
+        except ImportError : print("You need to install Streamlit to run this functionality.")
+        VizUtilsStreamlitOS.visualize_ner(self,text,ner_tags,show_label_select,show_table,title,colors,show_color_selector,set_wide_layout_CSS,generate_code_sample,key)
+
+
+    def viz_streamlit_word_similarity(
+            self, #nlu pipe
+            default_texts: Union[Tuple[str, str], List[str]] = ("Donald Trump likes to party!", "Angela Merkel likes to party!"),
+            threshold: float = 0.5,
+            title: Optional[str] = "Vectors & Scalar Similarity & Vector Similarity & Embedding Visualizations  ",
+            write_raw_pandas : bool = False ,
+            display_embed_information:bool = True,
+            similarity_matrix = True,
+            show_algo_select : bool = True,
+            dist_metrics:List[str]  =('cosine'),
+            set_wide_layout_CSS:bool=True,
+            generate_code_sample:bool = False,
+            key:str = "NLU_streamlit",
+            num_cols:int=2,
+            display_scalar_similarities : bool = False ,
+            display_similarity_summary:bool = False,
+            model_select_position:str = 'side' ,
+
+
+
+    ):
+        try: from nlu.pipe.viz.streamlit_viz.vis_utils_streamlit_OS import VizUtilsStreamlitOS
+        except ImportError : print("You need to install Streamlit to run this functionality.")
+        VizUtilsStreamlitOS.display_word_similarity(self,default_texts,threshold,title,write_raw_pandas,display_embed_information,similarity_matrix,show_algo_select,dist_metrics,set_wide_layout_CSS,generate_code_sample,key,num_cols,display_scalar_similarities,display_similarity_summary,model_select_position)
+
 

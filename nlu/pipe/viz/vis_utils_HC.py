@@ -3,6 +3,7 @@ from sparknlp.base import *
 from sparknlp_display import *
 class VizUtilsHC():
     """Utils for interfacing with the Spark-NLP-Display lib - licensed Viz"""
+    HTML_WRAPPER = """<div class="scroll entities" style="overflow-x: auto; border: 1px solid #e6e9ef; border-radius: 0.25rem; padding: 1rem; margin-bottom: 2.5rem; white-space:pre-wrap">{}</div>"""
     @staticmethod
     def infer_viz_licensed(pipe)->str:
         """For a given NLUPipeline with licensed components, infers which visualizations are applicable. """
@@ -31,7 +32,9 @@ class VizUtilsHC():
             CSS = CSS + '</style>'
             HTML = f'<div> {HTML} '
             st.markdown(CSS, unsafe_allow_html=True)
-            st.markdown(HTML, unsafe_allow_html=True)
+            # st.markdown(HTML, unsafe_allow_html=True)
+            st.markdown(VizUtilsHC.HTML_WRAPPER.format(HTML), unsafe_allow_html=True)
+
         elif not is_databricks_env:
             ner_vis.display(anno_res,label_col=entities_col,document_col=document_col, labels=labels )
         else :
@@ -60,7 +63,8 @@ class VizUtilsHC():
         if write_to_streamlit :
             import streamlit as st
             SVG = dependency_vis.display(anno_res,pos_col =pos_col,dependency_col =  dep_untyp_col ,dependency_type_col = dep_typ_col,return_html=True)
-            st.markdown(SVG, unsafe_allow_html=True)
+            # st.markdown(SVG, unsafe_allow_html=True)
+            st.markdown(VizUtilsHC.HTML_WRAPPER.format(SVG), unsafe_allow_html=True)
         elif not is_databricks_env:
             dependency_vis.display(anno_res,pos_col =pos_col,dependency_col =  dep_untyp_col ,dependency_type_col = dep_typ_col)
         else:
@@ -100,7 +104,10 @@ class VizUtilsHC():
             CSS = CSS + '</style>'
             HTML = f'<div> {HTML} '
             st.markdown(CSS, unsafe_allow_html=True)
-            st.markdown(HTML, unsafe_allow_html=True)
+            # st.markdown(HTML, unsafe_allow_html=True)
+            st.markdown(VizUtilsHC.HTML_WRAPPER.format(HTML), unsafe_allow_html=True)
+
+
         elif not is_databricks_env:
             er_vis.display(anno_res,label_col=entities_col, resolution_col = resolution_col,document_col=doc_col)
         else:
@@ -129,7 +136,9 @@ class VizUtilsHC():
         if write_to_streamlit :
             import streamlit as st
             HTML = re_vis.display(anno_res,relation_col = relation_col,document_col = document_col, show_relations=True, return_html=True)
-            st.markdown(HTML, unsafe_allow_html=True)
+            # st.markdown(HTML, unsafe_allow_html=True)
+            st.markdown(VizUtilsHC.HTML_WRAPPER.format(HTML), unsafe_allow_html=True)
+
 
 
         if not is_databricks_env:
@@ -163,7 +172,8 @@ class VizUtilsHC():
             CSS = CSS + '</style>'
             HTML = f'<div> {HTML} '
             st.markdown(CSS, unsafe_allow_html=True)
-            st.markdown(HTML, unsafe_allow_html=True)
+            # st.markdown(HTML, unsafe_allow_html=True)
+            st.markdown(VizUtilsHC.HTML_WRAPPER.format(HTML), unsafe_allow_html=True)
         elif not is_databricks_env:
             assertion_vis.display(anno_res,label_col = entities_col,assertion_col = assertion_col ,document_col = doc_col)
         else:

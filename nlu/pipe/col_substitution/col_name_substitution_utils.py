@@ -49,6 +49,8 @@ class ColSubstitutionUtils():
         2. Substitute list of cols in DF with custom logic
         """
         substitution_fn = 'TODO'
+
+        anno2final_cols = {}# mapping of final col names to annotator class Key=AnnoModel, Value=List of Result cols
         new_cols = {}
         if pipe.has_licensed_components :
             from nlu.pipe.col_substitution import col_substitution_HC
@@ -64,11 +66,18 @@ class ColSubstitutionUtils():
                     substitution_fn = substitution_map_HC.HC_anno2substitution_fn[type(c.model)]['default']
             if substitution_fn =='TODO':
                 logger.info(f"Could not find substitution function for c={c}, leaving col names untouched")
-                new_cols.update(dict(zip(cols_to_substitute,cols_to_substitute)))
+                old2new_anno_cols = dict(zip(cols_to_substitute,cols_to_substitute))
+                anno2final_cols[c.model] = list(old2new_anno_cols.values())
+                new_cols.update(old2new_anno_cols)
                 continue
             # dic, key=old_col, value=new_col. Some cols may be omitted and missing from the dic which are deemed irrelevant. Behaivour can be disabled by setting drop_debug_cols=False
-            new_cols = {**new_cols, **(substitution_fn(c,cols_to_substitute,deducted_component_names[c]))}
+            old2new_anno_cols = substitution_fn(c,cols_to_substitute,deducted_component_names[c])
+            anno2final_cols[c.model] = list(old2new_anno_cols.values())
+            new_cols = {**new_cols, **(old2new_anno_cols)}
 
+
+
+        pipe.anno2final_cols = anno2final_cols
         cols_to_rename = list(new_cols.keys() )
         for k in cols_to_rename:
             # some cols might not exist because no annotations generated, so we need to double check it really exists
