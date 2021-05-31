@@ -3,11 +3,55 @@ import nlu
 all_components_info = nlu.AllComponentsInfo()
 
 class Discoverer:
+    """Various methods that help discover nlu_refs and functionality"""
     def __init__(self):
         ''' Initialize every NLU component info object and provide access to them'''
         self.nlu_info = {}
 
-    # Functionality discovery methods
+    @staticmethod
+    def get_components(m_type='', include_pipes=False, lang='', licensed=False, get_all=False,include_aliases=True):
+        """Filter all NLU components
+
+        m_type : Component/Model type to filter for
+        include_pipes : Weather to include pipelines in the result or not
+        lang : Which languages to include. By default lang='' will get every lang
+        licensed : Wether to include licensed models or not
+        get_all: If set to true, will ignore other params and gets EVERY NLU_ref from defined name spaces
+        """
+        nlu_refs_of_type = []
+        model_universe = nlu.NameSpace.pretrained_models_references
+        for lang_, models in model_universe.items():
+            if lang != '' :
+                if lang_!= lang : continue
+            for nlu_ref, nlp_ref in model_universe[lang_].items():
+                if m_type in nlu_ref or get_all: nlu_refs_of_type.append(nlu_ref)
+
+        if include_pipes :
+            model_universe = nlu.NameSpace.pretrained_pipe_references
+            for lang_, models in model_universe.items():
+                if lang != '':
+                    if lang_!= lang : continue
+                for nlu_ref, nlp_ref in model_universe[lang_].items():
+                    if m_type in nlu_ref or get_all: nlu_refs_of_type.append(nlu_ref)
+        if include_aliases :
+            model_universe = nlu.NameSpace.component_alias_references
+            for nlu_ref, nlp_ref in model_universe.items():
+                if m_type in nlu_ref or get_all: nlu_refs_of_type.append(nlu_ref)
+
+        if licensed:
+            model_universe = nlu.NameSpace.pretrained_healthcare_model_references
+            for lang_, models in model_universe.items():
+                if lang != '':
+                    if lang_!= lang : continue
+                for nlu_ref, nlp_ref in model_universe[lang_].items():
+                    if m_type in nlu_ref or get_all: nlu_refs_of_type.append(nlu_ref)
+
+        return nlu_refs_of_type
+
+
+
+
+
     @staticmethod
     def print_all_languages():
         ''' Print all languages which are available in NLU Spark NLP pointer '''
