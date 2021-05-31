@@ -883,7 +883,6 @@ class NameSpace():
 
             'en.embed_sentence.use': 'tfhub_use',  # default use
             'en.use': 'tfhub_use',  # alias
-            'en.embed.use': 'tfhub_use',  # alias
             'en.embed_sentence.tfhub_use': 'tfhub_use',
             'en.embed_sentence.use.lg': 'tfhub_use_lg',  # alias
             'en.embed_sentence.tfhub_use.lg': 'tfhub_use_lg',
@@ -2074,6 +2073,8 @@ class NameSpace():
                 'en.classify.pico':'classifierdl_pico_biobert',
                 # 'en.classify.icd10.use':'useclassifier_icd10cm_hcc', buggy
 
+                # 3.0.3
+                # 3.0.3
                 # 3.0.3
                 'en.resolve.umls':'sbiobertresolve_umls_major_concepts',
                 'en.resolve.umls.findings':'sbiobertresolve_umls_findings',
