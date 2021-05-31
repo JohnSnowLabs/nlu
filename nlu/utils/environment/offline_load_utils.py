@@ -5,6 +5,7 @@ from nlu.pipe.pipeline import  *
 from nlu.pipe.pipe_components import SparkNLUComponent
 from pyspark.ml import PipelineModel
 
+from sparknlp.annotator import *
 
 def is_pipe(model_path):
     """Check wether there is a pyspark pipe stored in path"""
@@ -30,32 +31,15 @@ def verify_model(model_path:str,nlu_referenced_requirements = [], nlp_referenced
         class_name = json.load(json_f)['class'].split('.')[-1]
         # The last element in the Class name can be used to just load the model from disk!
         # Just call eval on it, which will give you the actual Python class reference which should have a .load() method
-        m = eval(class_name).load(model_path)
+        try :
+            m = eval(class_name).load(model_path)
+        except:
+            from nlu.utils.environment.offline_load_utils_licensed import verify_model_licensed
+            m = verify_model_licensed(class_name, model_path)
     component_type,nlu_anno_class, = resolve_annotator_class_to_nlu_component_info(class_name)
     # Wrap model with NLU Custom Model class so the NLU pipeline Logic knows what to do with it
     c = CustomModel(annotator_class=nlu_anno_class, component_type=component_type, model=m)
     return c
-    # pipe = NLUPipeline()
-    # pipe.add(c)
-    #
-    # # get requirements
-    # if len(nlu_referenced_requirements)==0 and len(nlp_referenced_requirements) == 0 :
-    #     pipe = PipelineQueryVerifier.check_and_fix_nlu_pipeline(pipe)
-    #     res = pipe.predict(test_data)
-    #     print(res)
-    #     return res
-    # elif len(nlu_referenced_requirements) >0:
-    #     for r in nlu_referenced_requirements:
-    #         pipe.add(nlu.pipe.component_resolution.nlu_ref_to_component(r))
-    # elif len(nlp_referenced_requirements) > 0:
-    #     for r in nlu_referenced_requirements:
-    #         # map back to NLU ref
-    #         pipe.add(nlu.pipe.component_resolution.nlu_ref_to_component(NLP_ref_to_NLU_ref(r)))
-    # # run pipe with dependencies
-    # pipe = PipelineQueryVerifier.check_and_fix_nlu_pipeline(pipe)
-    # res = pipe.predict(test_data)
-    # print(res)
-    # return res
 def resolve_annotator_class_to_nlu_component_info(anno_class ='LemmatizerModel'):
     """
     SparkNLUComponent.__init__(self, annotator_class, component_type)
@@ -63,6 +47,7 @@ def resolve_annotator_class_to_nlu_component_info(anno_class ='LemmatizerModel')
     Find the file, which called <CLASS>.pretrained or just <CLASS> !!!
     In the folder containing that found file there will be the component_json info we need!]\
     """
+    import nlu
     p = nlu.nlu_package_location+'components/'
     anno_class = anno_class+'.'
 
@@ -121,3 +106,25 @@ class CustomModel(SparkNLUComponent):
             model.setOutputCol(self.info.spark_output_column_names)
 
 
+
+    # pipe = NLUPipeline()
+    # pipe.add(c)
+    #
+    # # get requirements
+    # if len(nlu_referenced_requirements)==0 and len(nlp_referenced_requirements) == 0 :
+    #     pipe = PipelineQueryVerifier.check_and_fix_nlu_pipeline(pipe)
+    #     res = pipe.predict(test_data)
+    #     print(res)
+    #     return res
+    # elif len(nlu_referenced_requirements) >0:
+    #     for r in nlu_referenced_requirements:
+    #         pipe.add(nlu.pipe.component_resolution.nlu_ref_to_component(r))
+    # elif len(nlp_referenced_requirements) > 0:
+    #     for r in nlu_referenced_requirements:
+    #         # map back to NLU ref
+    #         pipe.add(nlu.pipe.component_resolution.nlu_ref_to_component(NLP_ref_to_NLU_ref(r)))
+    # # run pipe with dependencies
+    # pipe = PipelineQueryVerifier.check_and_fix_nlu_pipeline(pipe)
+    # res = pipe.predict(test_data)
+    # print(res)
+    # return res
