@@ -17,6 +17,7 @@ class VizUtilsStreamlitOS():
     loaded_embeding_pipes = []
     loaded_classifier_pipes = []
     loaded_token_pipes = []
+    footer_displayed = False
 
 
 
@@ -26,16 +27,22 @@ class VizUtilsStreamlitOS():
             text:Union[str,list,pd.DataFrame, pd.Series, List[str]]=('I love NLU and Streamlit and sunny days!', 'I hate rainy daiys','CALL NOW AND WIN 1000$M'),
             output_level:Optional[str]='document',
             title: Optional[str] = "Text Classification",
+            sub_title: Optional[str] = "Text Classification",
             metadata : bool = False,
             positions : bool = False,
             set_wide_layout_CSS:bool=True,
             generate_code_sample:bool = False,
-            key = "NLU_streamlit",
-            model_select_position:str = 'side' , # main or side
+            key:str = "NLU_streamlit",
+            show_model_selector : bool = True ,
+            model_select_position:str = 'side' ,
+            show_infos:bool = True,
+            show_logo:bool = True,
             )->None:
-        
+        if show_logo :VizUtilsStreamlitOS.show_logo()
         if set_wide_layout_CSS : _set_block_container_style()
         if title:st.header(title)
+        if sub_title:st.subheader(sub_title)
+
         if generate_code_sample: st.code(get_code_for_viz('CLASSES',StreamlitUtilsOS.extract_name(pipe),text))
         if not isinstance(text, (pd.DataFrame, pd.Series)):
             text = st.text_area('Enter N texts, seperated by new lines to view classification results for','\n'.join(text) if isinstance(text,list) else text, key=key)
@@ -51,8 +58,11 @@ class VizUtilsStreamlitOS():
                 loaded_classifier_nlu_refs.remove(l)
                 continue
             if l not in classifier_components_usable : classifier_components_usable.append(l)
-        if model_select_position =='side':classifier_components_selection   = st.sidebar.multiselect("Pick additional Classifiers",options=classifier_components_usable,default=loaded_classifier_nlu_refs,key = key)
-        else:classifier_components_selection   = st.multiselect("Pick additional Classifiers",options=classifier_components_usable,default=loaded_classifier_nlu_refs,key = key)
+        classifier_components_usable.sort()
+        loaded_classifier_nlu_refs.sort()
+        if show_model_selector :
+            if model_select_position =='side':classifier_components_selection   = st.sidebar.multiselect("Pick additional Classifiers",options=classifier_components_usable,default=loaded_classifier_nlu_refs,key = key)
+            else:classifier_components_selection   = st.multiselect("Pick additional Classifiers",options=classifier_components_usable,default=loaded_classifier_nlu_refs,key = key)
         # else : ValueError("Please define model_select_position as main or side")
         classifier_algos_to_load = list(set(classifier_components_selection) - set(loaded_classifier_nlu_refs))
         for classifier in classifier_algos_to_load:classifier_pipes.append(nlu.load(classifier))
@@ -76,32 +86,46 @@ class VizUtilsStreamlitOS():
             if c not in df.columns : all_classifier_cols.remove(c)
         all_classifier_cols = list(set(all_classifier_cols))
 
-        if len(all_classifier_cols) == 0: st.warning('No classes detected')
+        if len(all_classifier_cols) == 0: st.error('No classes detected')
         else :st.write(df[all_classifier_cols],key=key)
-
-
-
-
+        if show_infos :
+            # VizUtilsStreamlitOS.display_infos()
+            VizUtilsStreamlitOS.display_model_info( pipe.nlu_ref, pipes = [pipe])
+            VizUtilsStreamlitOS.display_footer()
 
 
 
 
     @staticmethod
+    def display_infos():
+        FOOTER       = """<span style="font-size: 0.75em">{}</span>"""
+        field_info   = """**INFO:** You can type in the model selection fields to search and filter."""
+        iso_info     = """**INFO:** NLU model references have the structure: `<iso_language_code>.<model_name>.<dataset>` . [Based on the `ISO Language Codes`](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes). If no language defined, `en.` will be assumed as default ' ,"""
+        ISO_FOOTER   = FOOTER.format(field_info)
+        FIELD_FOOTER = FOOTER.format(iso_info)
+        st.sidebar.markdown(ISO_FOOTER, unsafe_allow_html=True)
+        st.sidebar.markdown(FIELD_FOOTER, unsafe_allow_html=True)
+
+    @staticmethod
     def display_footer():
-        nlu_link = 'https://nlu.johnsnowlabs.com/'
-        nlp_link = 'http://nlp.johnsnowlabs.com/'
-        jsl_link = 'https://www.johnsnowlabs.com/'
-        doc_link = 'TODO'
-        powerd_by= f"""Powerd by [`NLU`]({nlu_link }) & [`Spark NLP`]({nlp_link}) from [`John Snow Labs `]({jsl_link}) Checkout [`The Docs`]({doc_link}) for more info"""
-        FOOTER = f"""<span style="font-size: 0.75em">{powerd_by}</span>"""
-        st.sidebar.markdown(FOOTER, unsafe_allow_html=True)
+        if not VizUtilsStreamlitOS.footer_displayed:
+            VizUtilsStreamlitOS.display_infos()
+            nlu_link     = 'https://nlu.johnsnowlabs.com/'
+            nlp_link     = 'http://nlp.johnsnowlabs.com/'
+            jsl_link     = 'https://johnsnowlabs.com/'
+            doc_link     = 'TODO'
+            powerd_by    = f"""Powerd by [`NLU`]({nlu_link }) & [`Spark NLP`]({nlp_link}) from [`John Snow Labs `]({jsl_link}) Checkout [`The Docs`]({doc_link}) for more infos"""
+            FOOTER       = """<span style="font-size: 0.75em">{}</span>"""
+            POWER_FOOTER = FOOTER.format(powerd_by)
+            st.sidebar.markdown(POWER_FOOTER, unsafe_allow_html=True)
+            VizUtilsStreamlitOS.footer_displayed = True
 
 
     @staticmethod
     def visualize_tokens_information(
             pipe, # nlu pipe
-            text,
-            title: Optional[str] = "Token attributes",
+            text:str,
+            title: Optional[str] = "Token Features",
             show_feature_select:bool =True,
             features:Optional[List[str]] = None,
             full_metadata: bool = True,
@@ -114,7 +138,7 @@ class VizUtilsStreamlitOS():
             model_select_position:str = 'side' , # main or side
 
     ) -> None:
-        """Visualizer for token attributes."""
+        """Visualizer for token features."""
         
         if set_wide_layout_CSS : _set_block_container_style()
         if title:st.header(title)
@@ -135,6 +159,8 @@ class VizUtilsStreamlitOS():
             loaded_nlu_refs = list(set(loaded_nlu_refs))
             if '' in loaded_nlu_refs : loaded_nlu_refs.remove('')
             if ' ' in loaded_nlu_refs : loaded_nlu_refs.remove(' ')
+            token_pipes_components_usable.sort()
+            loaded_nlu_refs.sort()
             if model_select_position =='side':model_selection   = st.sidebar.multiselect("Pick any additional models for token features",options=token_pipes_components_usable,default=loaded_nlu_refs,key = key)
             else:model_selection   = st.multiselect("Pick any additional models for token features",options=token_pipes_components_usable,default=loaded_nlu_refs,key = key)
             # else : ValueError("Please define model_select_position as main or side")
@@ -151,9 +177,9 @@ class VizUtilsStreamlitOS():
         df = pd.concat(dfs,axis=1)
         df = df.loc[:,~df.columns.duplicated()]
         if show_feature_select :
-            exp = st.beta_expander("Select token attributes to display")
+            exp = st.beta_expander("Select token features to display")
             features = exp.multiselect(
-                "Token attributes",
+                "Token features",
                 options=list(df.columns),
                 default=list(df.columns)
             )
@@ -172,6 +198,7 @@ class VizUtilsStreamlitOS():
         similarity_texts:Tuple[str,str]= ('Donald Trump Likes to part', 'Angela Merkel likes to party'),
         title:str = 'NLU ❤️ Streamlit - Prototype your NLP startup in 0 lines of code' ,
         sub_title:str = 'Play with over 1000+ SOTA NLP models in 0 lines of code' ,
+        side_info:str = None,
         # UI PARAMS
         visualizers:List[str] = ( "dependency_tree", "ner",  "similarity", "token_information", 'classification'),
         show_models_info:bool = True,
@@ -181,20 +208,24 @@ class VizUtilsStreamlitOS():
         set_wide_layout_CSS:bool=True,
         show_code_snippets:bool=False,
         model_select_position:str = 'side' , # main or side
-        key:str = "NLU_streamlit"
-
+        display_infos:bool=True,
+        key:str = "NLU_streamlit",
+        display_footer :bool =  True ,
     )-> None:
         """Visualize either individual building blocks for streamlit or a full UI to experiment and explore models with"""
+        VizUtilsStreamlitOS.footer_displayed = not display_footer
         if set_wide_layout_CSS : _set_block_container_style()
         if title: st.title(title)
         if sub_title: st.subheader(title)
         if show_logo :VizUtilsStreamlitOS.show_logo()
+        if side_info : st.sidebar.markdown(side_info)
         default_text    = st.text_area("Enter text you want to visualize below", default_text, key=key)
         ner_model_2_viz     = pipe.nlu_ref
         if show_model_select :
             show_code_snippets = st.sidebar.checkbox('Generate code snippets', value=show_code_snippets)
             if model_selection == [] : model_selection = Discoverer.get_components('ner',include_pipes=True)
-            if model_select_position == 'side':ner_model_2_viz = st.sidebar.selectbox("Select a NER model",model_selection,index=model_selection.index(pipe.nlu_ref.split(' ')[0]))
+            model_selection.sort()
+            if model_select_position == 'side':ner_model_2_viz = st.sidebar.selectbox("Select a NER model.",model_selection,index=model_selection.index(pipe.nlu_ref.split(' ')[0]))
             else : ner_model_2_viz = st.selectbox("Select a NER model",model_selection,index=model_selection.index(pipe.nlu_ref.split(' ')[0]))
 
         active_visualizers = visualizers
@@ -204,10 +235,10 @@ class VizUtilsStreamlitOS():
         ner_pipe, tree_pipe =  None,None
         if 'ner' in active_visualizers :
             ner_pipe = pipe if pipe.nlu_ref == ner_model_2_viz else StreamlitUtilsOS.get_pipe(ner_model_2_viz)
-            VizUtilsStreamlitOS.visualize_ner(ner_pipe, default_text,generate_code_sample=show_code_snippets,key=key, show_model_select=False)
+            VizUtilsStreamlitOS.visualize_ner(ner_pipe, default_text,generate_code_sample=show_code_snippets,key=key, show_model_select=False, show_text_input=False, show_logo=False, show_infos=False)
         if 'dependency_tree' in active_visualizers :
             tree_pipe = StreamlitUtilsOS.get_pipe('en.dep.typed') # if not ValidateVizPipe.viz_tree_satisfied(pipe) else pipe
-            VizUtilsStreamlitOS.visualize_dep_tree(tree_pipe, default_text,generate_code_sample=show_code_snippets,key=key)
+            VizUtilsStreamlitOS.visualize_dep_tree(tree_pipe, default_text,generate_code_sample=show_code_snippets,key=key, show_text_input=False)
         if 'token_information' in active_visualizers:
             ner_pipe = pipe if pipe.nlu_ref == ner_model_2_viz else StreamlitUtilsOS.get_pipe(ner_model_2_viz)
             VizUtilsStreamlitOS.visualize_tokens_information(ner_pipe, default_text,generate_code_sample=show_code_snippets,key=key, model_select_position=model_select_position)
@@ -216,9 +247,11 @@ class VizUtilsStreamlitOS():
             VizUtilsStreamlitOS.visualize_classes(ner_pipe, default_text,generate_code_sample=show_code_snippets,key=key,model_select_position=model_select_position)
         if 'similarity' in active_visualizers:
             ner_pipe = pipe if pipe.nlu_ref == ner_model_2_viz else StreamlitUtilsOS.get_pipe(ner_model_2_viz,key=key,model_select_position=model_select_position)
-            VizUtilsStreamlitOS.display_word_similarity(ner_pipe, similarity_texts,generate_code_sample=show_code_snippets, model_select_position=model_select_position)
-        if show_models_info : VizUtilsStreamlitOS.display_model_info(all_models, [ner_pipe, tree_pipe ] , VizUtilsStreamlitOS.loaded_embeding_pipes ,VizUtilsStreamlitOS.loaded_classifier_pipes, VizUtilsStreamlitOS.loaded_token_pipes)
-        VizUtilsStreamlitOS.display_footer()
+            VizUtilsStreamlitOS.display_word_similarity(ner_pipe, similarity_texts,generate_code_sample=show_code_snippets, model_select_position=model_select_position, show_infos=False,show_logo=False)
+        VizUtilsStreamlitOS.display_model_info(all_models, [ner_pipe, tree_pipe ])
+        if show_models_info :
+            pass
+        if display_infos : VizUtilsStreamlitOS.display_footer()
 
     @staticmethod
     def show_logo(sidebar=True):
@@ -246,15 +279,27 @@ class VizUtilsStreamlitOS():
             pipe, #nlu pipe
             text:str = 'Billy likes to swim',
             title: Optional[str] = "Dependency Parse & Part-of-speech tags",
+            sub_title: Optional[str] = "Dependency Parse Tree & Part-of-speech tags",
             set_wide_layout_CSS:bool=True,
             generate_code_sample:bool = False,
-            key = "NLU_streamlit"
+            key = "NLU_streamlit",
+            show_infos:bool = True,
+            show_logo:bool = True,
+            show_text_input:bool = True,
     ):
-        
+        VizUtilsStreamlitOS.footer_displayed=False
+        # TODO text input
+        if show_text_input : text = st.text_area("Enter text you want to visualize below", text, key=key)
+        if show_logo :VizUtilsStreamlitOS.show_logo()
         if set_wide_layout_CSS : _set_block_container_style()
         if title:st.header(title)
+        if sub_title:st.header(sub_title)
         if generate_code_sample: st.code(get_code_for_viz('TREE',StreamlitUtilsOS.extract_name(pipe),text))
         pipe.viz(text,write_to_streamlit=True,viz_type='dep', streamlit_key=key)
+        if show_infos :
+            # VizUtilsStreamlitOS.display_infos()
+            VizUtilsStreamlitOS.display_model_info( pipe.nlu_ref, pipes = [pipe])
+            VizUtilsStreamlitOS.display_footer()
 
 
 
@@ -264,27 +309,35 @@ class VizUtilsStreamlitOS():
             text:str,
             ner_tags: Optional[List[str]] = None,
             show_label_select: bool = True,
-            show_table: bool = True,
+            show_table: bool = False,
             title: Optional[str] = "Named Entities",
+            sub_title: Optional[str] = "Recognize various Named Entities (NER) in text entered and filter them. You can select from over 100 languages in the dropdown.",
             colors: Dict[str, str] = {},
             show_color_selector: bool = False,
             set_wide_layout_CSS:bool=True,
             generate_code_sample:bool = False,
             key = "NLU_streamlit",
-            model_select_position:str = 'side' , # main or side
-            show_model_select = True,
+            model_select_position:str = 'side',
+            show_model_select : bool = True,
+            show_text_input:bool = True,
+            show_infos:bool = True,
+            show_logo:bool = True,
 
     ):
-        
+        VizUtilsStreamlitOS.footer_displayed=False
         if set_wide_layout_CSS : _set_block_container_style()
+        if show_text_input : text = st.text_area("Enter text you want to visualize below", text, key=key)
+        if show_logo :VizUtilsStreamlitOS.show_logo()
         if show_model_select :
             model_selection = Discoverer.get_components('ner',include_pipes=True)
+            model_selection.sort()
             if model_select_position == 'side':ner_model_2_viz = st.sidebar.selectbox("Select a NER model",model_selection,index=model_selection.index(pipe.nlu_ref.split(' ')[0]))
             else : ner_model_2_viz = st.selectbox("Select a NER model",model_selection,index=model_selection.index(pipe.nlu_ref.split(' ')[0]))
             pipe = pipe if pipe.nlu_ref == ner_model_2_viz else StreamlitUtilsOS.get_pipe(ner_model_2_viz)
 
         if not show_color_selector :
             if title: st.header(title)
+            if sub_title : st.subheader(sub_title)
             if generate_code_sample: st.code(get_code_for_viz('NER',StreamlitUtilsOS.extract_name(pipe),text))
             if ner_tags is None: ner_tags = StreamlitUtilsOS.get_NER_tags_in_pipe(pipe)
             if show_label_select:
@@ -303,12 +356,18 @@ class VizUtilsStreamlitOS():
             colors[tag2color]=color
         if show_table : st.write(pipe.predict(text, output_level='chunk'),key = key)
 
+        if show_infos :
+            # VizUtilsStreamlitOS.display_infos()
+            VizUtilsStreamlitOS.display_model_info( pipe.nlu_ref, pipes = [pipe])
+            VizUtilsStreamlitOS.display_footer()
+
     @staticmethod
     def display_word_similarity(
             pipe, #nlu pipe
             default_texts: Tuple[str, str] = ("Donald Trump likes to party!", "Angela Merkel likes to party!"),
             threshold: float = 0.5,
             title: Optional[str] = "Embeddings Similarity Matrix &  Visualizations  ",
+            sub_tile :Optional[str]="Visualize `word-wise similarity matrix` and calculate `similarity scores` for `2 texts` and every `wordembedding` loaded",
             write_raw_pandas : bool = False,
             display_embed_information:bool = True,
             similarity_matrix = True,
@@ -321,8 +380,8 @@ class VizUtilsStreamlitOS():
             display_scalar_similarities : bool = False ,
             display_similarity_summary:bool = False,
             model_select_position:str = 'side' , # main or side
-
-
+            show_infos:bool = True,
+            show_logo:bool = True,
     ):
 
         """We visualize the following cases :
@@ -335,12 +394,16 @@ class VizUtilsStreamlitOS():
         4. Mirrored 3
          """
         # https://scikit-learn.org/stable/modules/classes.html#module-sklearn.metrics.pairwise
+        VizUtilsStreamlitOS.footer_displayed=False
         try :
             import plotly.express as px
             from sklearn.metrics.pairwise import distance_metrics
-        except :st.warning("You need the sklearn and plotly package in your Python environment installed for similarity visualizations. Run <pip install sklearn plotly>")
+        except :st.error("You need the sklearn and plotly package in your Python environment installed for similarity visualizations. Run <pip install sklearn plotly>")
         if set_wide_layout_CSS : _set_block_container_style()
         if title:st.header(title)
+        if show_logo :VizUtilsStreamlitOS.show_logo()
+        if sub_tile : st.subheader(sub_tile)
+
         VizUtilsStreamlitOS.loaded_embeding_pipes = []
         dist_metric_algos =distance_metrics()
         dist_algos = list(dist_metric_algos.keys())
@@ -375,6 +438,10 @@ class VizUtilsStreamlitOS():
                 if l not in emb_components_usable : emb_components_usable.append(l)
             # embed_algo_selection = exp.multiselect("Click to pick additional Embedding Algorithm",options=emb_components_usable,default=loaded_embed_nlu_refs,key = key)
             # dist_algo_selection = exp.multiselect("Click to pick additional Distance Metric", options=dist_algos, default=dist_metrics, key = key)
+            emb_components_usable.sort()
+            loaded_embed_nlu_refs.sort()
+            dist_algos.sort()
+            # dist_metrics.sort()
             if model_select_position =='side':
                 embed_algo_selection   = st.sidebar.multiselect("Pick additional Word Embeddings for the Similarity Matrix",options=emb_components_usable,default=loaded_embed_nlu_refs,key = key)
                 dist_algo_selection =  st.sidebar.multiselect("Pick additional Similarity Metrics ", options=dist_algos, default=dist_metrics, key = key)
@@ -395,10 +462,9 @@ class VizUtilsStreamlitOS():
         cols_full = True
         col_index=0
         for p in embed_pipes :
-            data1 = p.predict(text1,output_level='token')
-            data2 = p.predict(text2,output_level='token')
+            data1 = p.predict(text1,output_level='token').dropna()
+            data2 = p.predict(text2,output_level='token').dropna()
             e_coms = StreamlitUtilsOS.find_all_embed_components(p)
-
             modelhub_links = [ModelHubUtils.get_url_by_nlu_refrence(c.info.nlu_ref) if hasattr(c.info,'nlu_ref') else ModelHubUtils.get_url_by_nlu_refrence('') for c in e_coms]
             e_cols = StreamlitUtilsOS.get_embed_cols(p)
             for num_emb,e_col in enumerate(e_cols):
@@ -444,12 +510,7 @@ class VizUtilsStreamlitOS():
                         else:
                             st.error(f'Scalar Similarity={sim_score} for distance metric={dist_algo}')
                     else :
-                        try :
-                            import plotly.express as px
-                            ploty_avaiable = True
-                        except :
-                            ploty_avaiable = False
-                            st.warning("You need the pyplot package in your Python environment installed for the similarity matrix")
+                        ploty_avaiable = True
                         # for tok emb, sum rows and norm by rows, then sum cols and norm by cols to generate a scalar from matrix
                         scalar_sim_score  = np.sum((np.sum(sim_score,axis=0) / sim_score.shape[0])) / sim_score.shape[1]
                         scalar_sim_score = round(scalar_sim_score,2)
@@ -459,7 +520,7 @@ class VizUtilsStreamlitOS():
                             else: st.error(f'Scalar Similarity :{scalar_sim_score} for embedder={e_col} distance metric={dist_algo}')
                         if similarity_matrix:
                             if ploty_avaiable :
-                                fig = px.imshow(sim_score)#, title=f'Simmilarity Matrix for embedding_model={e_name} distance metric={dist_algo}')
+                                fig = px.imshow(sim_score, labels=dict(color="similarity"))#, title=f'Simmilarity Matrix for embedding_model={e_name} distance metric={dist_algo}')
                                 # st.write(fig,key =key)
                                 similarity_metrics[f'{e_name}_{dist_algo}_similarity']={
                                     'scalar_similarity' : scalar_sim_score,
@@ -479,18 +540,24 @@ class VizUtilsStreamlitOS():
             exp = st.beta_expander("Embedding vector information")
             exp.write(embed_vector_info)
 
+        if show_infos :
+            # VizUtilsStreamlitOS.display_infos()
+            VizUtilsStreamlitOS.display_model_info( pipe.nlu_ref, pipes = [pipe])
+            VizUtilsStreamlitOS.display_footer()
+
+
+
     @staticmethod
     def pad_duplicate_tokens(tokens):
         """For every duplicate token in input list, ads N whitespaces for the Nth duplicate"""
         duplicates = {}
+
         for i,s in enumerate(tokens) :
             if s in duplicates.keys():duplicates[s].append(i)
             else :                    duplicates[s]=[i]
         for i, d in enumerate(duplicates.items()):
             for i,idx in enumerate(d[1]):tokens[idx]=d[0]+' '*i
         return tokens
-
-
     @staticmethod
     def RAW_HTML_link(text,url,CSS_class):return f"""<p class="{CSS_class}" style="padding:0px;" > <a href="{url}">{text}</a> </p>"""
     @staticmethod
@@ -512,7 +579,6 @@ word-wrap: break-word;
 " >
 <a href="{url}">{text}</a> 
 </p>"""
-
     @staticmethod
     def style_model_link(model,text,url, CSS_class):
         return  f"""
@@ -534,17 +600,14 @@ word-wrap: break-word;
 </p>"""
 
 
-
-
-
     @staticmethod
-    def display_model_info(model2viz,pipes, embed_pipes, classifier_pipes, token_pipes, apply_style=True, display_component_wise_info=True,display_component_summary=True):
+    def display_model_info(model2viz=' ',pipes=[],apply_style=True, display_component_wise_info=True,display_component_summary=True):
         """Display Links to Modelhub for every NLU Ref loaded and also every component in pipe"""
         default_modelhub_link = 'https://nlp.johnsnowlabs.com/models'
-
-
         nlu_refs = model2viz.split(' ')
-        for p in classifier_pipes + embed_pipes + token_pipes  :nlu_refs.append(p.nlu_ref)
+        # for p in classifier_pipes + embed_pipes + token_pipes  :nlu_refs.append(p.nlu_ref)
+
+        for p in VizUtilsStreamlitOS.loaded_embeding_pipes + VizUtilsStreamlitOS.loaded_classifier_pipes + VizUtilsStreamlitOS.loaded_token_pipes  : nlu_refs.append(p.nlu_ref)
         nlu_refs = set(nlu_refs)
         st.sidebar.subheader("NLU pipeline components info")
         nlu_ref_infos = []
@@ -553,7 +616,6 @@ word-wrap: break-word;
             model_hub_link = ModelHubUtils.get_url_by_nlu_refrence(nlu_ref)
             link_text =f'JSL Modelhub page for '# {nlu_ref}'
             if model_hub_link is None or model_hub_link == default_modelhub_link :
-                print("NO NLU REF FOR ", nlu_ref)
                 continue
                 # link_text =f'More infos here {nlu_ref}'
                 # model_hub_link = default_modelhub_link
@@ -577,8 +639,9 @@ word-wrap: break-word;
                     c_name = f"`{type(c.model).__name__}`"
                     c_names.append(c_name)
             if model2viz[-1]==' ': model2viz = model2viz[:-1]
-        component_info = f"`nlu.load('{model2viz}')` provides this with a optimized CPU build and components: {', '.join(set(c_names))}"
-
+        FOOTER       = """<span style="font-size: 0.75em">{}</span>"""
+        component_info = f"**Info:** You can load all models active in 1 line via `nlu.load('{' '.join(nlu_refs)}')` which provides this with a optimized CPU build and components: {', '.join(set(c_names))}"
+        component_info = FOOTER.format(component_info)
         st.sidebar.markdown(component_info, unsafe_allow_html=True)
         if display_component_summary:
             parameter_infos = {}
@@ -587,8 +650,6 @@ word-wrap: break-word;
                 parameter_infos[p.nlu_ref]=VizUtilsStreamlitOS.get_pipe_param_dict(p)
             exp = st.beta_expander("NLU Pipeline components and parameters information")
             exp.write(parameter_infos)
-
-
 
 
     @staticmethod
