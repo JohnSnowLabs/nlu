@@ -92,7 +92,6 @@ Ontop of that, there are various visualization methods a NLUPipeline provides ea
 | [`nlu.load('<Model>').viz_streamlit_token(data)`](TODO.com)                         | Display all detected token features and informations in Streamlit |
 | [`nlu.load('<Model>').viz(data, write_to_streamlit=True)`](TODO.com)                | Display the raw visualization without any UI elements. See [viz docs for more info](https://nlu.johnsnowlabs.com/docs/en/viz_examples). By default all aplicable nlu model references will be shown. |
 | [`nlu.enable_streamlit_caching()`](#test)  | Enable caching the `nlu.load()` call. Once enabled, the `nlu.load()` method will automatically cached. **This is recommended** to run first and for large peformance gans |
-<p id="test">TODO ANCHORSZZ</p>
 
 
 # Detailed visualizer information and API docs
