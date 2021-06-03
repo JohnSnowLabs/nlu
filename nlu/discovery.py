@@ -46,7 +46,7 @@ class Discoverer:
                 for nlu_ref, nlp_ref in model_universe[lang_].items():
                     if m_type in nlu_ref or get_all: nlu_refs_of_type.append(nlu_ref)
 
-        return nlu_refs_of_type
+        return list(set(nlu_refs_of_type))
 
 
 

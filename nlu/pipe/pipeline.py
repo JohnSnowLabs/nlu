@@ -566,14 +566,15 @@ class NLUPipeline(BasePipe):
 
     def viz_streamlit(self,
                       # Base Params
-                      text:Union[str, List[str], pd.DataFrame, pd.Series] = 'NLU and Streamlit go together like peanutbutter and jelly',
+                      text:Union[str, List[str], pd.DataFrame, pd.Series] = "Angela Merkel from Germany and Donald Trump from America dont share many opinions",
                       model_selection:List[str] =[],
                       # SIMILARITY PARAMS
-                      similarity_texts:Union[List[str],Tuple[str,str]]= ('Donald Trump Likes to part', 'Angela Merkel likes to party'),
-                      title:str = 'NLU ❤️ Streamlit - Prototype your NLP startup in 0 lines of code',
-                      sub_title:str = 'Play with over 1000+ scalable enterprise NLP models',
+                      similarity_texts:Tuple[str,str]= ('I love NLU <3', 'I love Streamlit <3'),
                       # UI PARAMS
-                      visualizers:List[str] = ( "dependency_tree", "ner",  "similarity", "token_information", 'classification'),
+                      title:str = 'NLU ❤️ Streamlit - Prototype your NLP startup in 0 lines of code🚀',
+                      sub_title:str = 'Play with over 1000+ scalable enterprise NLP models',
+                      side_info:str = None,
+                      visualizers:List[str] = ( "dependency_tree", "ner",  "similarity", "token_features", 'classification'),
                       show_models_info:bool = True,
                       show_model_select:bool = True,
                       show_viz_selection:bool = False,
@@ -581,7 +582,10 @@ class NLUPipeline(BasePipe):
                       set_wide_layout_CSS:bool=True,
                       show_code_snippets:bool=False,
                       model_select_position:str = 'side',  # main or side
+                      display_infos:bool=True,
                       key:str = "NLU_streamlit",
+                      display_footer :bool =  True ,
+                      num_similarity_cols:int=2,
                       ) -> None:
         """Display Viz in streamlit"""
         try: from nlu.pipe.viz.streamlit_viz.vis_utils_streamlit_OS import VizUtilsStreamlitOS
@@ -589,10 +593,10 @@ class NLUPipeline(BasePipe):
         VizUtilsStreamlitOS.viz_streamlit(self,
                                           text,
                                           model_selection,
-                                          # default_ner_model2viz,
                                           similarity_texts,
                                           title,
                                           sub_title,
+                                          side_info,
                                           visualizers,
                                           show_models_info,
                                           show_model_select,
@@ -601,79 +605,117 @@ class NLUPipeline(BasePipe):
                                           set_wide_layout_CSS,
                                           show_code_snippets,
                                           model_select_position,
-                                          key)
+                                          display_infos,
+                                          key,
+                                          display_footer,
+                                          num_similarity_cols
+                                          )
 
 
 
     def viz_streamlit_token(
         self,
-        text,
-        title: Optional[str] = "Token attributes",
+        text:str='NLU and Streamlit go together like peanutbutter and jelly',
+        title: Optional[str] = "Token features",
+        sub_title: Optional[str] ='Pick from `over 1000+ models` on the left and `view the generated features`',
         show_feature_select:bool =True,
         features:Optional[List[str]] = None,
         metadata: bool = True,
         output_level:str = 'token',
         positions:bool = False,
         set_wide_layout_CSS:bool=True,
-        generate_code_sample=True,
+        generate_code_sample:bool = False,
         key = "NLU_streamlit",
+        show_model_select = True,
+        model_select_position:str = 'side' , # main or side
+        show_infos:bool = True,
+        show_logo:bool = True,
+        show_text_input:bool = True,
+
 
     ):
         try: from nlu.pipe.viz.streamlit_viz.vis_utils_streamlit_OS import VizUtilsStreamlitOS
         except  ImportError : print("You need to install Streamlit to run this functionality.")
-        VizUtilsStreamlitOS.visualize_tokens_information(self,text,title,show_feature_select,features,metadata,output_level,positions,set_wide_layout_CSS,generate_code_sample,key)
+        VizUtilsStreamlitOS.visualize_tokens_information(self, text, title,sub_title, show_feature_select, features, metadata, output_level, positions, set_wide_layout_CSS, generate_code_sample, key, show_model_select, model_select_position, show_infos,show_logo,show_text_input)
+
 
     def viz_streamlit_classes(
         self, # nlu pipe
-        text:Union[str,list,pd.DataFrame, pd.Series, pyspark.sql.DataFrame ]='I love NLU and Streamlit and sunny days!',
+        text:Union[str,list,pd.DataFrame, pd.Series, List[str]]=('I love NLU and Streamlit and sunny days!', 'I hate rainy daiys','CALL NOW AND WIN 1000$M'),
         output_level:Optional[str]='document',
         title: Optional[str] = "Text Classification",
+        sub_title: Optional[str] = 'View predicted `classes` and `confidences` for `hundreds of text classifiers` in `over 200 languages`',
         metadata : bool = False,
         positions : bool = False,
         set_wide_layout_CSS:bool=True,
-        generate_code_sample=True,
-        key = "NLU_streamlit",
+        generate_code_sample:bool = False,
+        key:str = "NLU_streamlit",
+        show_model_selector : bool = True ,
+        model_select_position:str = 'side' ,
+        show_infos:bool = True,
+        show_logo:bool = True,
     )->None:
         try: from nlu.pipe.viz.streamlit_viz.vis_utils_streamlit_OS import VizUtilsStreamlitOS
         except  ImportError : print("You need to install Streamlit to run this functionality.")
-        VizUtilsStreamlitOS.visualize_classes( self,text,output_level,title,metadata,positions,set_wide_layout_CSS, generate_code_sample,key)
+        VizUtilsStreamlitOS.visualize_classes( self,text,output_level,title,sub_title,metadata,positions,set_wide_layout_CSS,generate_code_sample,key,show_model_selector,model_select_position,show_infos,show_logo)
+
+
+
+
+
+
+
+
+
 
 
     def viz_streamlit_dep_tree(
         self, #nlu pipe
-        text:str='Billy likes to swim',
-        title: Optional[str] = "Dependency Parse Tree & Part-of-speech tags",
+        text:str = 'Billy likes to swim',
+        title: Optional[str] = "Dependency Parse & Part-of-speech tags",
+        sub_title: Optional[str] = 'POS tags define a `grammatical label` for `each token` and the `Dependency Tree` classifies `Relations between the tokens` ',
         set_wide_layout_CSS:bool=True,
-        generate_code_sample=True,
+        generate_code_sample:bool = False,
         key = "NLU_streamlit",
+        show_infos:bool = True,
+        show_logo:bool = True,
+        show_text_input:bool = True,
     )->None:
         try: from nlu.pipe.viz.streamlit_viz.vis_utils_streamlit_OS import VizUtilsStreamlitOS
         except  ImportError : print("You need to install Streamlit to run this functionality.")
-        VizUtilsStreamlitOS.visualize_dep_tree( self,text,title,generate_code_sample,key)
+        VizUtilsStreamlitOS.visualize_dep_tree( self,text,title,sub_title,set_wide_layout_CSS,generate_code_sample,key,show_infos,show_logo,show_text_input,)
 
     def viz_streamlit_ner(
             self, # Nlu pipe
-            text:str='Donald Trump from America and Anegela Merkel from Germany do not share many views.',
+            text:str='Donald Trump from America and Angela Merkel from Germany do not share many views.',
             ner_tags: Optional[List[str]] = None,
             show_label_select: bool = True,
-            show_table: bool = True,
+            show_table: bool = False,
             title: Optional[str] = "Named Entities",
+            sub_title: Optional[str] = "Recognize various `Named Entities (NER)` in text entered and filter them. You can select from over `100 languages` in the dropdown.",
             colors: Dict[str, str] = {},
             show_color_selector: bool = False,
             set_wide_layout_CSS:bool=True,
-            generate_code_sample=True,
+            generate_code_sample:bool = False,
             key = "NLU_streamlit",
+            model_select_position:str = 'side' , # main or side
+            show_model_select = True,
+            show_infos:bool = True,
+            show_logo:bool = True,
+            show_text_input:bool = True,
+
     ):
         try: from nlu.pipe.viz.streamlit_viz.vis_utils_streamlit_OS import VizUtilsStreamlitOS
         except ImportError : print("You need to install Streamlit to run this functionality.")
-        VizUtilsStreamlitOS.visualize_ner(self,text,ner_tags,show_label_select,show_table,title,colors,show_color_selector,set_wide_layout_CSS,generate_code_sample,key)
+        VizUtilsStreamlitOS.visualize_ner(self,text,ner_tags,show_label_select,show_table,title,sub_title,colors,show_color_selector,set_wide_layout_CSS,generate_code_sample,key,model_select_position,show_model_select,show_infos,show_logo,show_text_input)
 
 
     def viz_streamlit_word_similarity(
             self, #nlu pipe
-            default_texts: Union[Tuple[str, str], List[str]] = ("Donald Trump likes to party!", "Angela Merkel likes to party!"),
+            texts: Union[Tuple[str, str], List[str]] = ("Donald Trump likes to party!", "Angela Merkel likes to party!"),
             threshold: float = 0.5,
             title: Optional[str] = "Vectors & Scalar Similarity & Vector Similarity & Embedding Visualizations  ",
+            sub_tile :Optional[str]="Visualize a `word-wise similarity matrix` and calculate `similarity scores` for `2 texts` and every `word embedding` loaded",
             write_raw_pandas : bool = False ,
             display_embed_information:bool = True,
             similarity_matrix = True,
@@ -686,12 +728,14 @@ class NLUPipeline(BasePipe):
             display_scalar_similarities : bool = False ,
             display_similarity_summary:bool = False,
             model_select_position:str = 'side' ,
+            show_infos:bool = True,
+            show_logo:bool = True,
 
 
 
     ):
         try: from nlu.pipe.viz.streamlit_viz.vis_utils_streamlit_OS import VizUtilsStreamlitOS
         except ImportError : print("You need to install Streamlit to run this functionality.")
-        VizUtilsStreamlitOS.display_word_similarity(self,default_texts,threshold,title,write_raw_pandas,display_embed_information,similarity_matrix,show_algo_select,dist_metrics,set_wide_layout_CSS,generate_code_sample,key,num_cols,display_scalar_similarities,display_similarity_summary,model_select_position)
+        VizUtilsStreamlitOS.display_word_similarity(self, texts, threshold, title,sub_tile, write_raw_pandas, display_embed_information, similarity_matrix, show_algo_select, dist_metrics, set_wide_layout_CSS, generate_code_sample, key, num_cols, display_scalar_similarities, display_similarity_summary, model_select_position,show_infos,show_logo,)
 
 

@@ -4,11 +4,28 @@ __version__ = '3.0.2'
 #     construct_component_from_pipe_identifier
 
 
+# if not check_pyspark_install(): raise Exception()
+def try_import_pyspark_in_streamlit():
+    """Try importing Pyspark or display warn message in streamlit"""
+    try :
+        import pyspark
+        from pyspark.sql import SparkSession
+    except:
+        print("You need Pyspark installed to run NLU. Run <pip install pyspark==3.0.2>")
+
+        try :
+            import streamlit as st
+            st.error("You need Pyspark, Sklearn, Pyplot, Pandas, Numpy installed to run this app. Run <pip install pyspark==3.0.2 sklearn pyplot numpy pandas>")
+        except:
+            return False
+        return False
+    return True
+if not try_import_pyspark_in_streamlit() : raise  ImportError
+st_cache_enabled = False
+
 import nlu.utils.environment.env_utils as env_utils
 import nlu.utils.environment.authentication as auth_utils
-# if not check_pyspark_install(): raise Exception()
 if not env_utils.check_python_version(): raise Exception()
-st_cache_enabled = False
 
 import nlu
 import logging
@@ -244,6 +261,7 @@ def wrap_with_st_cache_if_avaiable(f):
         return st.cache(f, allow_output_mutation=True, show_spinner=False)
     except :
         logger.exception("Could not import streamlit and apply caching")
+        print("You need streamlit to run use this method")
         return f
 
 def load(request ='from_disk', path=None,verbose=False, gpu=False, streamlit_caching=False)->NLUPipeline :
@@ -260,6 +278,7 @@ def load(request ='from_disk', path=None,verbose=False, gpu=False, streamlit_cac
     '''
     if streamlit_caching and not nlu.st_cache_enabled :
         enable_streamlit_caching()
+
         return nlu.load(request, path,verbose, gpu, streamlit_caching)
 
     global is_authenticated

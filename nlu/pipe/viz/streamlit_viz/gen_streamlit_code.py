@@ -36,7 +36,7 @@ def get_code_for_viz(viz_type:str,models:Union[str, List[str]],data:Union[str,Li
             models = f"'{' '.join(models)}'"
             return BASE_CODES[viz_type].format(models, data[0][:max_len], data[1][:max_len])
     else :
-        models = f"'{models}'"
+        models = f"'{models}'" if isinstance(models, str)  else f"'{' '.join(models)}'"
         data = f"'{data[:max_len]}'"
         return  BASE_CODES[viz_type].format(models, data)
 
