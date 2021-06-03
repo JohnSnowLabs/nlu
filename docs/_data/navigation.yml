@@ -4,6 +4,16 @@ header:
   - title: Docs
     url: /docs/en/install
     key: docs
+  - title: Visualizations
+    url:  /docs/en/viz_examples
+    key: viz
+  - title: Streamlit & NLU
+    url: /docs/en/streamlit_viz_examples
+    key: streamlit_viz
+  - title: Tutorial Notebooks
+    url:    /docs/en/notebooks
+    key: tutorial_notebooks
+
 #  - title: Articles
 #    url: /articles
 #    key: articles
