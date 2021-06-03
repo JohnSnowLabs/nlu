@@ -22,8 +22,8 @@ Handler for getting default components, etcc.
 
 # 2. Squeeze in 9 Annotators in old extraction process, most annotators are like old ones
 #
-import nlu.environment.authentication as auth_utils
-import nlu.environment.offline_load_utils as offline_utils
+import nlu.utils.environment.authentication as auth_utils
+import nlu.utils.environment.offline_load_utils as offline_utils
 
 from pyspark.ml import PipelineModel
 from sparknlp import DocumentAssembler

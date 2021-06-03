@@ -155,7 +155,7 @@ class NameSpace():
         'covidbert': ('covidbert_large_uncased', 'model'),
 
         'embed.bert': ('bert_base_uncased', 'model'),  # default bert
-        'embed.bert_base_uncased': ('bert_base_uncased', 'model'),
+        'embed.bert_base_uncased': ('bert_base_u`ncased', 'model'),
         'embed.bert_base_cased': ('bert_base_cased', 'model'),
         'embed.bert_large_uncased': ('bert_large_uncased', 'model'),
         'embed.bert_large_cased': ('bert_large_cased', 'model'),
@@ -319,7 +319,18 @@ class NameSpace():
             "en.ner.onto.large": "onto_recognize_entities_electra_large",
 
         },
+        'fa':{
+            'fa.ner.dl' : '	recognize_entities_dl',
+        },
+        'he':{
+            'he.explain_document' : '	explain_document_lg',
+            'he.explain_document.lg' : '	explain_document_lg',
+        },
+        'ko':{
+            'ko.explain_document' : '	explain_document_lg',
+            'ko.explain_document.lg' : '	explain_document_lg',
 
+        },
         'sv': {
             'sv.explain': 'explain_document_sm',
             'sv.explain.sm': 'explain_document_sm',
@@ -872,7 +883,6 @@ class NameSpace():
 
             'en.embed_sentence.use': 'tfhub_use',  # default use
             'en.use': 'tfhub_use',  # alias
-            'en.embed.use': 'tfhub_use',  # alias
             'en.embed_sentence.tfhub_use': 'tfhub_use',
             'en.embed_sentence.use.lg': 'tfhub_use_lg',  # alias
             'en.embed_sentence.tfhub_use.lg': 'tfhub_use_lg',
@@ -1380,8 +1390,8 @@ class NameSpace():
             'tr.pos.ud_imst': 'pos_ud_imst',
             'tr.stopwords': 'stopwords_tr',
             'tr.ner': 'turkish_ner_840B_300',  # ner tr default
-            'tr.ner.bert': 'turkish_ner_bert'  # ner tr default
-
+            'tr.ner.bert': 'turkish_ner_bert' , # ner tr default
+            'tr.classify.news'  : 'classifierdl_bert_news',
         },
         'uk': {
             'uk.lemma': 'lemma',  # default uk lemma
@@ -1499,6 +1509,7 @@ class NameSpace():
             'xx.use.xling_en_es': 'tfhub_use_xling_en_es',
             'xx.use.xling_en_fr': 'tfhub_use_xling_en_fr',
             'xx.use.xling_many': 'tfhub_use_xling_many',
+            'xx.use.multi'
 
             # 2.7.0 marian translate model references
             "xx.swc.marian.translate_to.en": "opus_mt_swc_en",
@@ -1873,7 +1884,7 @@ class NameSpace():
 
                 # BertSEntenceEmbeddings MLI
                 'en.embed_sentence.biobert.mli': 'sbiobert_base_cased_mli',
-                # 'en.embed_sentence.bluebert.mli': 'sbluebert_base_uncased_mli',# Broken
+                'en.embed_sentence.bluebert.mli': 'sbluebert_base_uncased_mli',# Broken
 
                 # 'en.embed_sentence.bluebert.mednli': 'sent_bluebert_base_uncased_mednli', # broken
                 # 'en.embed_sentence.biobert.mednli': 'sent_biobert_base_uncased_mednli',  # broken
@@ -1936,6 +1947,7 @@ class NameSpace():
 
                 # NERDLModels
                 # 'en.med_ner.ade.biobert':'ner_ade_biobert', # Todo error param pooling layer does not exist
+                'en.med_ner': 'jsl_ner_wip_clinical',
                 'en.med_ner.ade.clinical': 'ner_ade_clinical',
                 'en.med_ner.ade.clinical_bert': 'ner_ade_clinicalbert',
                 'en.med_ner.ade.ade_healthcare': 'ner_ade_healthcare',
@@ -2061,6 +2073,15 @@ class NameSpace():
                 'en.classify.pico':'classifierdl_pico_biobert',
                 # 'en.classify.icd10.use':'useclassifier_icd10cm_hcc', buggy
 
+                # 3.0.3
+                # 3.0.3
+                # 3.0.3
+                'en.resolve.umls':'sbiobertresolve_umls_major_concepts',
+                'en.resolve.umls.findings':'sbiobertresolve_umls_findings',
+                'en.resolve.loinc':'sbiobertresolve_loinc',
+                'en.resolve.loinc.biobert':'sbiobertresolve_loinc',
+                'en.resolve.loinc.bluebert':'sbluebertresolve_loinc',
+                'en.resolve.HPO':'sbiobertresolve_HPO',
 
             },
 
@@ -2124,7 +2145,7 @@ class NameSpace():
             'embeddings_healthcare100': 'en.embed.glove.healthcare_100d',
             'BERT_SENTENCE_EMBEDDINGS_0bee53f1b2cc': 'en.embed_sentence.biobert.mli',
             # 'BERT_SENTENCE_EMBEDDINGS_0bee53f1b2cc': 'en.embed_sentence.biobert.pubmed_base_cased',
-
+            'BERT_SENTENCE_EMBEDDINGS_59c3cd1e17c4' : 'en.embed_sentence.bluebert.mli',
             'RelationExtractionModel_3ab4750ad5b6': 'en.embed.glove.clinical',
             'RelationExtractionModel_6b61602c8303': 'en.embed.glove.clinical',
             'RelationExtractionModel_9c255241fec3': 'en.embed.glove.clinical',
