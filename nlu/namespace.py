@@ -2074,8 +2074,6 @@ class NameSpace():
                 # 'en.classify.icd10.use':'useclassifier_icd10cm_hcc', buggy
 
                 # 3.0.3
-                # 3.0.3
-                # 3.0.3
                 'en.resolve.umls':'sbiobertresolve_umls_major_concepts',
                 'en.resolve.umls.findings':'sbiobertresolve_umls_findings',
                 'en.resolve.loinc':'sbiobertresolve_loinc',

@@ -29,45 +29,45 @@ Problems? [Connect with us on Slack!](https://join.slack.com/t/spark-nlp/shared_
 ## Impatient and want some action?
 Just run this Streamlit app, you can use it to generate python code for each NLU-Streamlit building block
 ```shell
-streamlit run https://raw.githubusercontent.com/JohnSnowLabs/nlu/3.0.2rc1/examples/streamlit/01_dashboard.py
+streamlit run https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/examples/streamlit/01_dashboard.py
 ```
 
 ## Quick Starter cheat sheet - All you need to know in 1 picture for NLU + Streamlit
-For NLU models to load, see [the NLU Namespace](https://nlu.johnsnowlabs.com/docs/en/namespace) or the [John Snow Labs Modelshub](https://modelshub.johnsnowlabs.com/models)  or go [straight to the source](https://github.com/JohnSnowLabs/nlu/blob/3.0.2rc1/nlu/namespace.py).
-![NLU Streamlit Cheatsheet](https://raw.githubusercontent.com/JohnSnowLabs/nlu/3.0.2rc1/docs/assets/streamlit_docs_assets/img/NLU_Streamlit_Cheetsheet.png)
+For NLU models to load, see [the NLU Namespace](https://nlu.johnsnowlabs.com/docs/en/namespace) or the [John Snow Labs Modelshub](https://modelshub.johnsnowlabs.com/models)  or go [straight to the source](https://github.com/JohnSnowLabs/nlu/blob/master/nlu/namespace.py).
+![NLU Streamlit Cheatsheet](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/streamlit_docs_assets/img/NLU_Streamlit_Cheetsheet.png)
 
 
 ## Examples
 Just try out any of these.
 You can use the first example to generate python-code snippets which you can
 recycle as building blocks in your streamlit apps!
-### Example:  [`01_dashboard`](https://raw.githubusercontent.com/JohnSnowLabs/nlu/3.0.2rc1/examples/streamlit/01_dashboard.py)
+### Example:  [`01_dashboard`](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/examples/streamlit/01_dashboard.py)
 ```shell
-streamlit run https://raw.githubusercontent.com/JohnSnowLabs/nlu/3.0.2rc1/examples/streamlit/01_dashboard.py
+streamlit run https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/examples/streamlit/01_dashboard.py
 ```
-### Example:  [`02_NER`](https://raw.githubusercontent.com/JohnSnowLabs/nlu/3.0.2rc1/examples/streamlit/02_NER.py)
+### Example:  [`02_NER`](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/examples/streamlit/02_NER.py)
 ```shell
-streamlit run https://raw.githubusercontent.com/JohnSnowLabs/nlu/3.0.2rc1/examples/streamlit/02_NER.py
+streamlit run https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/examples/streamlit/02_NER.py
 ```
-### Example:  [`03_text_similarity_matrix`](https://raw.githubusercontent.com/JohnSnowLabs/nlu/3.0.2rc1/examples/streamlit/03_text_similarity_matrix.py)
+### Example:  [`03_text_similarity_matrix`](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/examples/streamlit/03_text_similarity_matrix.py)
 ```shell
-streamlit run https://raw.githubusercontent.com/JohnSnowLabs/nlu/3.0.2rc1/examples/streamlit/03_text_similarity_matrix.py
-```
-
-
-### Example:  [`04_dependency_tree`](https://raw.githubusercontent.com/JohnSnowLabs/nlu/3.0.2rc1/examples/streamlit/04_dependency_tree.py)
-```shell
-streamlit run https://raw.githubusercontent.com/JohnSnowLabs/nlu/3.0.2rc1/examples/streamlit/04_dependency_tree.py
+streamlit run https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/examples/streamlit/03_text_similarity_matrix.py
 ```
 
-### Example:  [`05_classifiers`](https://raw.githubusercontent.com/JohnSnowLabs/nlu/3.0.2rc1/examples/streamlit/05_classifiers.py)
+
+### Example:  [`04_dependency_tree`](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/examples/streamlit/04_dependency_tree.py)
 ```shell
-streamlit run https://raw.githubusercontent.com/JohnSnowLabs/nlu/3.0.2rc1/examples/streamlit/05_classifiers.py
+streamlit run https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/examples/streamlit/04_dependency_tree.py
 ```
 
-### Example:  [`06_token_features`](https://raw.githubusercontent.com/JohnSnowLabs/nlu/3.0.2rc1/examples/streamlit/06_token_features.py)
+### Example:  [`05_classifiers`](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/examples/streamlit/05_classifiers.py)
 ```shell
-streamlit run https://raw.githubusercontent.com/JohnSnowLabs/nlu/3.0.2rc1/examples/streamlit/06_token_features.py
+streamlit run https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/examples/streamlit/05_classifiers.py
+```
+
+### Example:  [`06_token_features`](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/examples/streamlit/06_token_features.py)
+```shell
+streamlit run https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/examples/streamlit/06_token_features.py
 ```
 
 ## How to use NLU?
@@ -119,7 +119,7 @@ nlu.load('ner').viz_streamlit(['I love NLU and Streamlit!','I hate buggy softwar
 
 
 
-![NLU Streamlit UI Overview](https://raw.githubusercontent.com/JohnSnowLabs/nlu/3.0.2rc1/docs/assets/streamlit_docs_assets/gif/ui.gif)
+![NLU Streamlit UI Overview](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/streamlit_docs_assets/gif/ui.gif)
 
 ### <kbd>function parameters</kbd> `pipe.viz_streamlit`
 
@@ -127,7 +127,7 @@ nlu.load('ner').viz_streamlit(['I love NLU and Streamlit!','I hate buggy softwar
 |-----------------------|--------------------------------------------------|----------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------|
 | `text`                  |  `Union [str, List[str], pd.DataFrame, pd.Series]` | `'NLU and Streamlit go together like peanutbutter and jelly'`                            | Default text for the `Classification`, `Named Entitiy Recognizer`, `Token Information` and `Dependency Tree` visualizations
 | `similarity_texts`      |  `Union[List[str],Tuple[str,str]]`                 | `('Donald Trump Likes to part', 'Angela Merkel likes to party')`                         | Default texts for the `Text similarity` visualization. Should contain `exactly 2 strings` which will be compared `token embedding wise`. For each embedding active, a `token wise similarity matrix` and a `similarity scalar`
-| `model_selection`       |  `List[str]`                                       | `[]`                                                                                         | List of nlu references to display in the model selector, see [the NLU Namespace](https://nlu.johnsnowlabs.com/docs/en/namespace) or the [John Snow Labs Modelshub](https://modelshub.johnsnowlabs.com/models)  or go [straight to the source](https://github.com/JohnSnowLabs/nlu/blob/3.0.2rc1/nlu/namespace.py) for more info
+| `model_selection`       |  `List[str]`                                       | `[]`                                                                                         | List of nlu references to display in the model selector, see [the NLU Namespace](https://nlu.johnsnowlabs.com/docs/en/namespace) or the [John Snow Labs Modelshub](https://modelshub.johnsnowlabs.com/models)  or go [straight to the source](https://github.com/JohnSnowLabs/nlu/blob/master/nlu/namespace.py) for more info
 | `title`                 |  `str`                                             | `'NLU ❤️ Streamlit - Prototype your NLP startup in 0 lines of code🚀'`                      | Title of the Streamlit app
 | `sub_title`             |  `str`                                             | `'Play with over 1000+ scalable enterprise NLP models'`                                  | Sub title of the Streamlit app
 | `visualizers`           |  `List[str]`                                       | `( "dependency_tree", "ner",  "similarity", "token_information", 'classification')`      | Define which visualizations should be displayed. By default all visualizations are displayed.
@@ -152,7 +152,7 @@ Aplicable with [any of the 100+ classifiers](https://nlp.johnsnowlabs.com/models
 ```python
 nlu.load('sentiment').viz_streamlit_classes(['I love NLU and Streamlit!','I love buggy software', 'Sign up now get a chance to win 1000$ !', 'I am afraid of Snakes','Unicorns have been sighted on Mars!','Where is the next bus stop?'])
 ```
-![text_class1](https://raw.githubusercontent.com/JohnSnowLabs/nlu/3.0.2rc1/docs/assets/streamlit_docs_assets/gif/class.gif)
+![text_class1](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/streamlit_docs_assets/gif/class.gif)
 
 
 ### <kbd>function parameters</kbd> `pipe.viz_streamlit_classes`
@@ -185,14 +185,14 @@ Basic usage
 nlu.load('ner').viz_streamlit_ner('Donald Trump from America and Angela Merkel from Germany dont share many views')
 ```
 
-![NER visualization](https://raw.githubusercontent.com/JohnSnowLabs/nlu/3.0.2rc1/docs/assets/streamlit_docs_assets/gif/NER.gif)
+![NER visualization](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/streamlit_docs_assets/gif/NER.gif)
 
 Example for coloring
 ```python
 # Color all entities of class GPE black
 nlu.load('ner').viz_streamlit_ner('Donald Trump from America and Angela Merkel from Germany dont share many views',colors={'PERSON':'#6e992e', 'GPE':'#000000'})
 ```
-![NER coloring](https://raw.githubusercontent.com/JohnSnowLabs/nlu/3.0.2rc1/docs/assets/streamlit_docs_assets/img/NER_colored.png)
+![NER coloring](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/streamlit_docs_assets/img/NER_colored.png)
 
 ### <kbd>function parameters</kbd> `pipe.viz_streamlit_ner`
 
@@ -224,7 +224,7 @@ Aplicable with [any of the 100+ Part of Speech(POS) models and dep tree model](h
 ```python
 nlu.load('dep.typed').viz_streamlit_dep_tree('POS tags define a grammatical label for each token and the Dependency Tree classifies Relations between the tokens')
 ```
-![Dependency Tree](https://raw.githubusercontent.com/JohnSnowLabs/nlu/3.0.2rc1/docs/assets/streamlit_docs_assets/img/DEP.png)
+![Dependency Tree](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/streamlit_docs_assets/img/DEP.png)
 
 ### <kbd>function parameters</kbd> `pipe.viz_streamlit_dep_tree`
 
@@ -254,7 +254,7 @@ You can use this with [any of the 1000+ models](https://nlp.johnsnowlabs.com/mod
 ```python
 nlu.load('stemm pos spell').viz_streamlit_token('I liek pentut buttr and jelly !')
 ```
-![text_class1](https://raw.githubusercontent.com/JohnSnowLabs/nlu/3.0.2rc1/docs/assets/streamlit_docs_assets/gif/token.gif)
+![text_class1](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/streamlit_docs_assets/gif/token.gif)
 
 
 ### <kbd>function parameters</kbd> `pipe.viz_streamlit_token`
@@ -293,7 +293,7 @@ nlu.load('stemm pos spell').viz_streamlit_token('I liek pentut buttr and jelly !
 ```python
 nlu.load('bert').viz_streamlit_word_similarity(['I love love loooove NLU! <3','I also love love looove  Streamlit! <3'])
 ```
-![text_class1](https://raw.githubusercontent.com/JohnSnowLabs/nlu/3.0.2rc1/docs/assets/streamlit_docs_assets/gif/SIM.gif)
+![text_class1](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/streamlit_docs_assets/gif/SIM.gif)
 
 ### <kbd>function parameters</kbd> `pipe.viz_streamlit_similarity`
 
