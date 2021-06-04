@@ -1,63 +1,61 @@
 
 # NLU: The Power of Spark NLP, the Simplicity of Python
 John Snow Labs' NLU is a Python library for applying state-of-the-art text mining, directly on any dataframe, with a single line of code.
-As a facade of the award-winning Spark NLP library, it comes with hundreds of pretrained models in tens of languages - all production-grade, scalable, and trainable.
-
-## Project's Website
-Take a look at our official Spark NLU page: [https://nlu.johnsnowlabs.com/](https://nlu.johnsnowlabs.com/)  for user documentation and examples
+As a facade of the award-winning Spark NLP library, it comes with **thousands** of pretrained models in **hundreds of languages** - all production-grade, scalable, and trainable and **everything in 1 line of code.**
 
 
 
-## NLU in action 
+## NLU in Action 
+See how easy it is to use any of the **thousands** of models in 1 line of code, there are hundreds of [tutorials](https://nlu.johnsnowlabs.com/docs/en/notebooks) and [simple examples](https://github.com/JohnSnowLabs/nlu/tree/master/examples) you can copy and paste into your projects to achieve State Of The Art easily.
 <img src="http://ckl-it.de/wp-content/uploads/2020/08/My-Video6.gif" width="1800" height="500"/>
 
-## Features
-* Tokenization
-* Trainable Word Segmentation
-* Stop Words Removal
-* Token Normalizer
-* Document Normalizer
-* Stemmer
-* Lemmatizer
-* NGrams
-* Regex Matching
-* Text Matching
-* Chunking
-* Date Matcher
-* Sentence Detector
-* Deep Sentence Detector (Deep learning)
-* Dependency parsing (Labeled/unlabeled)
-* Part-of-speech tagging
-* Sentiment Detection (ML models)
-* Spell Checker (ML and DL models)
-* Word Embeddings (GloVe and Word2Vec)
-* BERT Embeddings (TF Hub models)
-* ELMO Embeddings (TF Hub models)
-* ALBERT Embeddings (TF Hub models)
-* XLNet Embeddings
-* Universal Sentence Encoder (TF Hub models)
-* BERT Sentence Embeddings (42 TF Hub models)
-* Sentence Embeddings
-* Chunk Embeddings
-* Unsupervised keywords extraction
-* Language Detection & Identification (up to 375 languages)
-* Multi-class Sentiment analysis (Deep learning)
-* Multi-label Sentiment analysis (Deep learning)
-* Multi-class Text Classification (Deep learning)
-* Neural Machine Translation
-* Text-To-Text Transfer Transformer (Google T5)
-* Named entity recognition (Deep learning)
-* Easy TensorFlow integration
-* GPU Support
-* Full integration with Spark ML functions
-* +710 pre-trained models in +192 languages!
-* +450 pre-trained pipelines in +192 languages!
-* Multi-lingual NER models: Arabic, Chinese, Danish, Dutch, English, Finnish, French, German, Hewbrew, Italian, Japanese, Korean, Norwegian, Persian, Polish, Portuguese, Russian, Spanish, Swedish, and Urdu.
+## NLU & Streamlit in Action 
+This 1 line let's you visualize and play with **1000+ SOTA NLU & NLP models** in **200** languages 
+for **Named Entitiy Recognition**,  **Dependency Trees & Parts of Speech**, **Classification for 100+ problems**, **Text Summarization & Question Answering using T5** , **Translation with Marian**,  **Text Similarity Matrix** using **BERT, ALBERT, ELMO, XLNET, ELECTRA** with other of the **100+ wordembeddings**  and much more using [Streamlit](http://streamlit.com/) .
+
+```shell
+streamlit run https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/examples/streamlit/01_dashboard.py
+```
+<img  src="https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/streamlit_docs_assets/gif/start.gif">
+
+NLU provides tight and simple integration into Streamlit, which enables building powerful webapps in just 1 line of code which showcase the.
+View the [NLU&Streamlit documentation](https://nlu.johnsnowlabs.com/docs/en/streamlit_viz_examples) or [NLU & Streamlit examples section](https://github.com/JohnSnowLabs/nlu/tree/master/examples/streamlit). 
+The entire GIF demo and 
+
+
+## All NLU ressources overview
+Take a look at our official Spark NLU page: [https://nlu.johnsnowlabs.com/](https://nlu.johnsnowlabs.com/)  for user documentation and examples
+
+| Ressource                                                                  |                                Description|
+|-----------------------------------------------------------------------|-------------------------------------------|
+| [Install NLU](https://nlu.johnsnowlabs.com/docs/en/install)                                                           | Just run `pip install nlu pyspark==3.0.2`   
+| [The NLU Namespace](https://nlu.johnsnowlabs.com/docs/en/namespace)                                                     | Find all the names of models you can load with `nlu.load()`
+| [The `nlu.load(<Model>)` function](https://nlu.johnsnowlabs.com/docs/en/load_api)                                                   | Load any of the **1000+ models in 1 line**
+| [The `nlu.load(<Model>).predict(data)`  function](https://nlu.johnsnowlabs.com/docs/en/predict_api)                                    | Predict on  `Strings`, `List of Strings`, `Numpy Arrays`, `Pandas`, `Modin` and  `Spark Dataframes`
+| [The `nlu.load(<train.Model>).fit(data)`  function](https://nlu.johnsnowlabs.com/docs/en/training)                                  | Train a text classifier for  `2-Class`, `N-Classes` `Multi-N-Classes`, `Named-Entitiy-Recognition` or `Parts of Speech Tagging`
+| [The `nlu.load(<Model>).viz(data)`  function](https://nlu.johnsnowlabs.com/docs/en/viz_examples)                                        | Visualize the results of `Word Embedding Similarity Matrix`, `Named Entity Recognizers`, `Dependency Trees & Parts of Speech`, `Entity Resolution`,`Entity Linking` or `Entity Status Assertion` 
+| [The `nlu.load(<Model>).viz_streamlit(data)`  function](https://nlu.johnsnowlabs.com/docs/en/streamlit_viz_examples)                              | Display an interactive GUI which lets you explore and test every model and feature in NLU in 1 click.
+| [General Concepts](https://nlu.johnsnowlabs.com/docs/en/concepts)                          | General concepts in NLU
+| [The latest release notes](https://nlu.johnsnowlabs.com/docs/en/release_notes)                                              | Newest features added to NLU
+| [Overview NLU 1-liners examples](https://nlu.johnsnowlabs.com/docs/en/examples)                                        | Most common used models and their results
+| [Overview NLU 1-liners examples for healthcare models](https://nlu.johnsnowlabs.com/docs/en/examples_hc)                  | Most common used healthcare models and their results 
+| [Overview of all NLU tutorials and Examples](https://nlu.johnsnowlabs.com/docs/en/notebooks)                            | 100+ tutorials on how to use NLU on text datasets for various problems and from various sources like Twitter, Chinese News, Crypto News Headlines, Airline Traffic communication, Product review classifier training,
+| [Connect with us on Slack](https://join.slack.com/t/spark-nlp/shared_invite/zt-lutct9gm-kuUazcyFKhuGY3_0AMkxqA)                                              | Problems, questions or suggestions? We have a  very active and helpful community of over 2000+ AI enthusiasts putting NLU, Spark NLP & Spark OCR to good use 
+| [Discussion Forum](https://github.com/JohnSnowLabs/spark-nlp/discussions)                                                      | More indepth discussion with the community? Post a thread in our discussion Forum
+| [John Snow Labs Medium](https://medium.com/spark-nlp)                                                 | Articles and Tutorials on the NLU, Spark NLP and Spark OCR
+| [John Snow Labs Youtube](https://www.youtube.com/channel/UCmFOjlpYEhxf_wJUDuz6xxQ/videos)                                                | Videos and Tutorials on the NLU, Spark NLP and Spark OCR
+| [NLU Website](https://nlu.johnsnowlabs.com/)                          | The official NLU website
+|[Github Issues](https://github.com/JohnSnowLabs/nlu/issues)           | Report a bug
+
+
+
+
+
 
 ## Getting Started with NLU 
 To get your hands on the power of NLU, you just need to install it via pip and ensure Java 8 is installed and properly configured. Checkout [Quickstart for more infos](https://nlu.johnsnowlabs.com/docs/en/install)
 ```bash 
-pip install nlu pyspark==2.4.7
+pip install nlu pyspark==3.0.2
 ``` 
 
 ## Loading and predict with any model in 1 line python 
@@ -115,10 +113,8 @@ Working with text data can sometimes be quite a dirty Job. NLU helps you keep yo
 - Pattern Cleaners
 - Slang Cleaner 
 
-## Where can I see NLUs entire offer? 
-Checkout the [NLU Namespace](https://nlu.johnsnowlabs.com/docs/en/namespace) for everything that NLU has to offer! 
-
-
+## Where can I see all models avaiable in NLU? 
+For NLU models to load, see [the NLU Namespace](https://nlu.johnsnowlabs.com/docs/en/namespace) or the [John Snow Labs Modelshub](https://modelshub.johnsnowlabs.com/models)  or go [straight to the source](https://github.com/JohnSnowLabs/nlu/blob/master/nlu/namespace.py).
 
 ## Supported Data Types
 - Pandas DataFrame and Series
@@ -129,8 +125,8 @@ Checkout the [NLU Namespace](https://nlu.johnsnowlabs.com/docs/en/namespace) for
 - Strings and lists of strings 
 
 
-Checkout the following notebooks for examples on how to work with NLU.
 
+# NLU Tutorials : TODO TABLULATEEE
 
 # NLU Demos on Datasets
 - [Kaggle Twitter Airline Sentiment Analysis NLU demo](https://www.kaggle.com/kasimchristianloan/nlu-sentiment-airline-demo)
@@ -280,3 +276,102 @@ The following are Collab examples which showcase each NLU component and some app
 - [NLU different output levels Demo](https://colab.research.google.com/drive/1C4N3wpC17YzZf9fXHDNAJ5JvSmfbq7zT?usp=sharing)
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Features in NLU Overview
+* Tokenization
+* Trainable Word Segmentation
+* Stop Words Removal
+* Token Normalizer
+* Document Normalizer
+* Stemmer
+* Lemmatizer
+* NGrams
+* Regex Matching
+* Text Matching,
+* Chunking
+* Date Matcher
+* Sentence Detector
+* Deep Sentence Detector (Deep learning)
+* Dependency parsing (Labeled/unlabeled)
+* Part-of-speech tagging
+* Sentiment Detection (ML models)
+* Spell Checker (ML and DL models)
+* Word Embeddings (GloVe and Word2Vec)
+* BERT Embeddings (TF Hub models)
+* ELMO Embeddings (TF Hub models)
+* ALBERT Embeddings (TF Hub models)
+* XLNet Embeddings
+* Universal Sentence Encoder (TF Hub models)
+* BERT Sentence Embeddings (42 TF Hub models)
+* Sentence Embeddings
+* Chunk Embeddings
+* Unsupervised keywords extraction
+* Language Detection & Identification (up to 375 languages)
+* Multi-class Sentiment analysis (Deep learning)
+* Multi-label Sentiment analysis (Deep learning)
+* Multi-class Text Classification (Deep learning)
+* Neural Machine Translation
+* Text-To-Text Transfer Transformer (Google T5)
+* Named entity recognition (Deep learning)
+* Easy TensorFlow integration
+* GPU Support
+* Full integration with Spark ML functions
+* 1000 pre-trained models in +200 languages!
+* Multi-lingual NER models: Arabic, Chinese, Danish, Dutch, English, Finnish, French, German, Hewbrew, Italian, Japanese, Korean, Norwegian, Persian, Polish, Portuguese, Russian, Spanish, Swedish, Urdu and more
+* Natural Language inference
+* Coreference resolution
+* Sentence Completion
+* Word sense disambiguation
+* Clinical entity recognition
+* Clinical Entity Linking
+* Entity normalization
+* Assertion Status Detection
+* De-identification
+* Relation Extraction
+* Clinical Entity Resolution
+
+
+## Citation
+
+We have published a [paper](https://www.sciencedirect.com/science/article/pii/S2665963821000063) that you can cite for the NLU library:
+
+```bibtex
+@article{KOCAMAN2021100058,
+    title = {Spark NLP: Natural language understanding at scale},
+    journal = {Software Impacts},
+    pages = {100058},
+    year = {2021},
+    issn = {2665-9638},
+    doi = {https://doi.org/10.1016/j.simpa.2021.100058},
+    url = {https://www.sciencedirect.com/science/article/pii/S2665963821000063},
+    author = {Veysel Kocaman and David Talby},
+    keywords = {Spark, Natural language processing, Deep learning, Tensorflow, Cluster},
+    abstract = {Spark NLP is a Natural Language Processing (NLP) library built on top of Apache Spark ML. It provides simple, performant & accurate NLP annotations for machine learning pipelines that can scale easily in a distributed environment. Spark NLP comes with 1100+ pretrained pipelines and models in more than 192+ languages. It supports nearly all the NLP tasks and modules that can be used seamlessly in a cluster. Downloaded more than 2.7 million times and experiencing 9x growth since January 2020, Spark NLP is used by 54% of healthcare organizations as the world’s most widely used NLP library in the enterprise.}
+    }
+}
+```

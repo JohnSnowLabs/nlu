@@ -43,6 +43,8 @@ docs-en:
         url:    /docs/en/notebooks
       - title:  Visualization Examples
         url:    /docs/en/viz_examples
+      - title:  Streamlit Examples
+        url:    /docs/en/streamlit_viz_examples
 
   - title:      Documentation
     children:
