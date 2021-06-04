@@ -1,24 +1,13 @@
----
-layout: docs
-header: true
-title: NLU& Streamlit visualization Examples
-key: streamlit-viz-examples
-permalink: /docs/en/streamlit_viz_examples
-modify_date: "2019-05-16"
----
+# NLU & Streamlit visualizations
+<img width="65%" align="right" src="https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/streamlit_docs_assets/gif/start.gif">
 
-<div class="main-docs" markdown="1">
-
-
-This page contains examples and tutorials on how to visualize the 1000+ state-of-the-art NLP models provided by NLU in *just 1 line of code* in `streamlit`.
+This folder contains examples and tutorials on how to visualize the 1000+ state-of-the-art NLP models provided by NLU in *just 1 line of code* in `streamlit`.
 It includes simple `1-liners` you can sprinkle into your Streamlit app to for features like **Dependency Trees, Named Entities (NER), text classification results, semantic simmilarity,
-embedding visualizations via ELMO, BERT, ALBERT, XLNET and much more** .  Additionally, improvements for T5 and various resolvers have been added.
+embedding visualizations via ELMO, BERT, ALBERT, XLNET and much more** .  Additionally, improvements for T5, various resolvers have been added and models `Farsi`, `Hebrew`, `Korean`, and `Turkish`
 
 This is the ultimate NLP research tool. You can visualize and compare the results of hundreds of context aware deep learning embeddings and compare them with classical vanilla embeddings like Glove
 and can see with your own eyes how context is encoded by transformer models like `BERT` or `XLNET`and many more !
 Besides that, you can also compare the results of the 200+ NER models John Snow Labs provides and see how peformances changes with varrying ebeddings, like Contextual, Static and Domain Specific Embeddings.
-
-<img src="https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/streamlit_docs_assets/gif/start.gif">
 
 ## Install
 [For detailed instructions refer to the NLU install documentation here](https://nlu.johnsnowlabs.com/docs/en/install)   
@@ -82,7 +71,6 @@ Ontop of that, there are various visualization methods a NLUPipeline provides ea
 
 
 ### Overview of NLU + Streamlit buildingblocks
-
 
 |Method                                                         |               Description                 |
 |---------------------------------------------------------------|-------------------------------------------|
@@ -322,10 +310,4 @@ nlu.load('bert').viz_streamlit_word_similarity(['I love love loooove NLU! <3','I
 | `display_infos`         |  `bool`                             | `False`                                                                                  | Display additonal information about ISO codes and the NLU namespace structure.
 
 
-
-
-
-
-
-</div>
 
