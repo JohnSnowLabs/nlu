@@ -126,7 +126,6 @@ For NLU models to load, see [the NLU Namespace](https://nlu.johnsnowlabs.com/doc
 
 
 
-# NLU Tutorials : TODO TABLULATEEE
 
 # NLU Demos on Datasets
 - [Kaggle Twitter Airline Sentiment Analysis NLU demo](https://www.kaggle.com/kasimchristianloan/nlu-sentiment-airline-demo)
