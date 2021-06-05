@@ -19,6 +19,73 @@ class VizUtilsStreamlitOS():
     loaded_token_pipes = []
     footer_displayed = False
 
+    @staticmethod
+    def viz_streamlit(
+            pipe,
+            # Base Params
+            text:Union[str, List[str], pd.DataFrame, pd.Series],
+            model_selection:List[str]=[],
+            # NER PARAMS
+            # default_ner_model2viz:Union[str, List[str]] = 'en.ner.onto.electra.base',
+            # SIMILARITY PARAMS
+            similarity_texts:Tuple[str,str]= ('I love NLU <3', 'I love Streamlit <3'),
+            title:str = 'NLU ❤️ Streamlit - Prototype your NLP startup in 0 lines of code' ,
+            sub_title:str = 'Play with over 1000+ scalable enterprise NLP models',
+            side_info:str = None,
+            # UI PARAMS
+            visualizers:List[str] = ( "dependency_tree", "ner",  "similarity", "token_features", 'classification'),
+            show_models_info:bool = True,
+            show_model_select:bool = True,
+            show_viz_selection:bool = False,
+            show_logo:bool=True,
+            set_wide_layout_CSS:bool=True,
+            show_code_snippets:bool=False,
+            model_select_position:str = 'side' , # main or side
+            display_infos:bool=True,
+            key:str = "NLU_streamlit",
+            display_footer :bool =  True ,
+            num_similarity_cols:int=2,
+    )-> None:
+        """Visualize either individual building blocks for streamlit or a full UI to experiment and explore models with"""
+        VizUtilsStreamlitOS.footer_displayed = not display_footer
+        if set_wide_layout_CSS : _set_block_container_style()
+        if title: st.title(title)
+        if sub_title: st.subheader(sub_title)
+        if show_logo :VizUtilsStreamlitOS.show_logo()
+        if side_info : st.sidebar.markdown(side_info)
+        text    = st.text_area("Enter text you want to visualize below", text, key=key)
+        ner_model_2_viz     = pipe.nlu_ref
+        if show_model_select :
+            show_code_snippets = st.sidebar.checkbox('Generate code snippets', value=show_code_snippets)
+            if model_selection == [] : model_selection = Discoverer.get_components('ner',include_pipes=True)
+            model_selection.sort()
+            if model_select_position == 'side':ner_model_2_viz = st.sidebar.selectbox("Select a NER model.",model_selection,index=model_selection.index(pipe.nlu_ref.split(' ')[0]))
+            else : ner_model_2_viz = st.selectbox("Select a NER model",model_selection,index=model_selection.index(pipe.nlu_ref.split(' ')[0]))
+
+        active_visualizers = visualizers
+        if show_viz_selection: active_visualizers = st.sidebar.multiselect("Visualizers",options=visualizers,default=visualizers,key=key)
+
+        all_models = ner_model_2_viz + ' en.dep.typed '  if 'dependency_tree' in active_visualizers  else ner_model_2_viz
+        ner_pipe, tree_pipe =  None,None
+        if 'ner' in active_visualizers :
+            ner_pipe = pipe if pipe.nlu_ref == ner_model_2_viz else StreamlitUtilsOS.get_pipe(ner_model_2_viz)
+            VizUtilsStreamlitOS.visualize_ner(ner_pipe, text, generate_code_sample=show_code_snippets, key=key, show_model_select=False, show_text_input=True, show_logo=False, show_infos=False)
+        if 'dependency_tree' in active_visualizers :
+            tree_pipe = StreamlitUtilsOS.get_pipe('en.dep.typed') # if not ValidateVizPipe.viz_tree_satisfied(pipe) else pipe
+            VizUtilsStreamlitOS.visualize_dep_tree(tree_pipe, text, generate_code_sample=show_code_snippets, key=key, show_infos=False, show_logo=False)
+        if 'token_features' in active_visualizers:
+            ner_pipe = pipe if pipe.nlu_ref == ner_model_2_viz else StreamlitUtilsOS.get_pipe(ner_model_2_viz)
+            VizUtilsStreamlitOS.visualize_tokens_information(ner_pipe, text, generate_code_sample=show_code_snippets, key=key, model_select_position=model_select_position, show_infos=False, show_logo=False, )
+        if 'classification' in active_visualizers:
+            ner_pipe = pipe if pipe.nlu_ref == ner_model_2_viz else StreamlitUtilsOS.get_pipe(ner_model_2_viz)
+            VizUtilsStreamlitOS.visualize_classes(ner_pipe, text, generate_code_sample=show_code_snippets, key=key, model_select_position=model_select_position, show_infos=False, show_logo=False)
+        if 'similarity' in active_visualizers:
+            ner_pipe = pipe if pipe.nlu_ref == ner_model_2_viz else StreamlitUtilsOS.get_pipe(ner_model_2_viz)
+            VizUtilsStreamlitOS.display_word_similarity(ner_pipe, similarity_texts,generate_code_sample=show_code_snippets, model_select_position=model_select_position, show_infos=False,show_logo=False, num_cols=num_similarity_cols)
+        VizUtilsStreamlitOS.display_model_info(all_models, [ner_pipe, tree_pipe ])
+        if show_models_info :
+            pass
+        if display_infos : VizUtilsStreamlitOS.display_footer()
 
 
     @staticmethod
@@ -96,32 +163,6 @@ class VizUtilsStreamlitOS():
 
 
 
-
-    @staticmethod
-    def display_infos():
-        FOOTER       = """<span style="font-size: 0.75em">{}</span>"""
-        field_info   = """**INFO:** You can type in the model selection fields to search and filter."""
-        iso_info     = """**INFO:** NLU model references have the structure: `<iso_language_code>.<model_name>.<dataset>` . [Based on the `ISO Language Codes`](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes). If no language defined, `en.` will be assumed as default ' ,"""
-        ISO_FOOTER   = FOOTER.format(field_info)
-        FIELD_FOOTER = FOOTER.format(iso_info)
-        st.sidebar.markdown(ISO_FOOTER, unsafe_allow_html=True)
-        st.sidebar.markdown(FIELD_FOOTER, unsafe_allow_html=True)
-
-    @staticmethod
-    def display_footer():
-        if not VizUtilsStreamlitOS.footer_displayed:
-            VizUtilsStreamlitOS.display_infos()
-            nlu_link     = 'https://nlu.johnsnowlabs.com/'
-            nlp_link     = 'http://nlp.johnsnowlabs.com/'
-            jsl_link     = 'https://johnsnowlabs.com/'
-            doc_link     = 'TODO'
-            powerd_by    = f"""Powerd by [`NLU`]({nlu_link }) & [`Spark NLP`]({nlp_link}) from [`John Snow Labs `]({jsl_link}) Checkout [`The Docs`]({doc_link}) for more infos"""
-            FOOTER       = """<span style="font-size: 0.75em">{}</span>"""
-            POWER_FOOTER = FOOTER.format(powerd_by)
-            st.sidebar.markdown(POWER_FOOTER, unsafe_allow_html=True)
-            VizUtilsStreamlitOS.footer_displayed = True
-
-
     @staticmethod
     def visualize_tokens_information(
             pipe, # nlu pipe
@@ -193,94 +234,7 @@ class VizUtilsStreamlitOS():
             # VizUtilsStreamlitOS.display_infos()
             VizUtilsStreamlitOS.display_model_info( pipe.nlu_ref, pipes = [pipe])
             VizUtilsStreamlitOS.display_footer()
-    @staticmethod
-    def viz_streamlit(
-        pipe,
-        # Base Params
-        text:Union[str, List[str], pd.DataFrame, pd.Series],
-        model_selection:List[str]=[],
-        # NER PARAMS
-       # default_ner_model2viz:Union[str, List[str]] = 'en.ner.onto.electra.base',
-        # SIMILARITY PARAMS
-        similarity_texts:Tuple[str,str]= ('I love NLU <3', 'I love Streamlit <3'),
-        title:str = 'NLU ❤️ Streamlit - Prototype your NLP startup in 0 lines of code' ,
-        sub_title:str = 'Play with over 1000+ scalable enterprise NLP models',
-        side_info:str = None,
-        # UI PARAMS
-        visualizers:List[str] = ( "dependency_tree", "ner",  "similarity", "token_features", 'classification'),
-        show_models_info:bool = True,
-        show_model_select:bool = True,
-        show_viz_selection:bool = False,
-        show_logo:bool=True,
-        set_wide_layout_CSS:bool=True,
-        show_code_snippets:bool=False,
-        model_select_position:str = 'side' , # main or side
-        display_infos:bool=True,
-        key:str = "NLU_streamlit",
-        display_footer :bool =  True ,
-        num_similarity_cols:int=2,
-    )-> None:
-        """Visualize either individual building blocks for streamlit or a full UI to experiment and explore models with"""
-        VizUtilsStreamlitOS.footer_displayed = not display_footer
-        if set_wide_layout_CSS : _set_block_container_style()
-        if title: st.title(title)
-        if sub_title: st.subheader(sub_title)
-        if show_logo :VizUtilsStreamlitOS.show_logo()
-        if side_info : st.sidebar.markdown(side_info)
-        text    = st.text_area("Enter text you want to visualize below", text, key=key)
-        ner_model_2_viz     = pipe.nlu_ref
-        if show_model_select :
-            show_code_snippets = st.sidebar.checkbox('Generate code snippets', value=show_code_snippets)
-            if model_selection == [] : model_selection = Discoverer.get_components('ner',include_pipes=True)
-            model_selection.sort()
-            if model_select_position == 'side':ner_model_2_viz = st.sidebar.selectbox("Select a NER model.",model_selection,index=model_selection.index(pipe.nlu_ref.split(' ')[0]))
-            else : ner_model_2_viz = st.selectbox("Select a NER model",model_selection,index=model_selection.index(pipe.nlu_ref.split(' ')[0]))
 
-        active_visualizers = visualizers
-        if show_viz_selection: active_visualizers = st.sidebar.multiselect("Visualizers",options=visualizers,default=visualizers,key=key)
-
-        all_models = ner_model_2_viz + ' en.dep.typed '  if 'dependency_tree' in active_visualizers  else ner_model_2_viz
-        ner_pipe, tree_pipe =  None,None
-        if 'ner' in active_visualizers :
-            ner_pipe = pipe if pipe.nlu_ref == ner_model_2_viz else StreamlitUtilsOS.get_pipe(ner_model_2_viz)
-            VizUtilsStreamlitOS.visualize_ner(ner_pipe, text, generate_code_sample=show_code_snippets, key=key, show_model_select=False, show_text_input=True, show_logo=False, show_infos=False)
-        if 'dependency_tree' in active_visualizers :
-            tree_pipe = StreamlitUtilsOS.get_pipe('en.dep.typed') # if not ValidateVizPipe.viz_tree_satisfied(pipe) else pipe
-            VizUtilsStreamlitOS.visualize_dep_tree(tree_pipe, text, generate_code_sample=show_code_snippets, key=key, show_infos=False, show_logo=False)
-        if 'token_features' in active_visualizers:
-            ner_pipe = pipe if pipe.nlu_ref == ner_model_2_viz else StreamlitUtilsOS.get_pipe(ner_model_2_viz)
-            VizUtilsStreamlitOS.visualize_tokens_information(ner_pipe, text, generate_code_sample=show_code_snippets, key=key, model_select_position=model_select_position, show_infos=False, show_logo=False, )
-        if 'classification' in active_visualizers:
-            ner_pipe = pipe if pipe.nlu_ref == ner_model_2_viz else StreamlitUtilsOS.get_pipe(ner_model_2_viz)
-            VizUtilsStreamlitOS.visualize_classes(ner_pipe, text, generate_code_sample=show_code_snippets, key=key, model_select_position=model_select_position, show_infos=False, show_logo=False)
-        if 'similarity' in active_visualizers:
-            ner_pipe = pipe if pipe.nlu_ref == ner_model_2_viz else StreamlitUtilsOS.get_pipe(ner_model_2_viz)
-            VizUtilsStreamlitOS.display_word_similarity(ner_pipe, similarity_texts,generate_code_sample=show_code_snippets, model_select_position=model_select_position, show_infos=False,show_logo=False, num_cols=num_similarity_cols)
-        VizUtilsStreamlitOS.display_model_info(all_models, [ner_pipe, tree_pipe ])
-        if show_models_info :
-            pass
-        if display_infos : VizUtilsStreamlitOS.display_footer()
-
-    @staticmethod
-    def show_logo(sidebar=True):
-        HTML_logo = """
-    <div>
-      <a href="https://www.johnsnowlabs.com/">
-         <img src="https://nlp.johnsnowlabs.com/assets/images/logo.png" width="300"  height="100" >
-       </a>
-    </div>
-        """
-        if sidebar : st.sidebar.markdown(HTML_logo, unsafe_allow_html=True)
-        else: st.markdown(HTML_logo, unsafe_allow_html=True)
-
-    @staticmethod
-    def display_embed_vetor_information(embed_component,embed_mat):
-        name = StreamlitUtilsOS.extract_name(embed_component)
-        if name =='': name = 'See modelshub for more details'
-        exp = st.beta_expander("Vector information")
-        exp.code({"Vector Dimension ":embed_mat.shape[1],
-                  "Num Vectors":embed_mat.shape[0] + embed_mat.shape[0],
-                  'Vector Name':name})
 
     @staticmethod
     def visualize_dep_tree(
@@ -554,6 +508,13 @@ class VizUtilsStreamlitOS():
 
 
 
+
+
+
+
+
+
+
     @staticmethod
     def pad_duplicate_tokens(tokens):
         """For every duplicate token in input list, ads N whitespaces for the Nth duplicate"""
@@ -605,8 +566,47 @@ word-wrap: break-word;
 " >
 <a href="{url}">{text}<div style:"color=rgb(246, 51, 102);">{model}</div></a> 
 </p>"""
-
-
+    @staticmethod
+    def display_infos():
+        FOOTER       = """<span style="font-size: 0.75em">{}</span>"""
+        field_info   = """**INFO:** You can type in the model selection fields to search and filter."""
+        iso_info     = """**INFO:** NLU model references have the structure: `<iso_language_code>.<model_name>.<dataset>` . [Based on the `ISO Language Codes`](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes). If no language defined, `en.` will be assumed as default ' ,"""
+        ISO_FOOTER   = FOOTER.format(field_info)
+        FIELD_FOOTER = FOOTER.format(iso_info)
+        st.sidebar.markdown(ISO_FOOTER, unsafe_allow_html=True)
+        st.sidebar.markdown(FIELD_FOOTER, unsafe_allow_html=True)
+    @staticmethod
+    def display_footer():
+        if not VizUtilsStreamlitOS.footer_displayed:
+            VizUtilsStreamlitOS.display_infos()
+            nlu_link     = 'https://nlu.johnsnowlabs.com/'
+            nlp_link     = 'http://nlp.johnsnowlabs.com/'
+            jsl_link     = 'https://johnsnowlabs.com/'
+            doc_link     = 'TODO'
+            powerd_by    = f"""Powerd by [`NLU`]({nlu_link }) & [`Spark NLP`]({nlp_link}) from [`John Snow Labs `]({jsl_link}) Checkout [`The Docs`]({doc_link}) for more infos"""
+            FOOTER       = """<span style="font-size: 0.75em">{}</span>"""
+            POWER_FOOTER = FOOTER.format(powerd_by)
+            st.sidebar.markdown(POWER_FOOTER, unsafe_allow_html=True)
+            VizUtilsStreamlitOS.footer_displayed = True
+    @staticmethod
+    def show_logo(sidebar=True):
+        HTML_logo = """
+    <div>
+      <a href="https://www.johnsnowlabs.com/">
+         <img src="https://nlp.johnsnowlabs.com/assets/images/logo.png" width="300"  height="100" >
+       </a>
+    </div>
+        """
+        if sidebar : st.sidebar.markdown(HTML_logo, unsafe_allow_html=True)
+        else: st.markdown(HTML_logo, unsafe_allow_html=True)
+    @staticmethod
+    def display_embed_vetor_information(embed_component,embed_mat):
+        name = StreamlitUtilsOS.extract_name(embed_component)
+        if name =='': name = 'See modelshub for more details'
+        exp = st.beta_expander("Vector information")
+        exp.code({"Vector Dimension ":embed_mat.shape[1],
+                  "Num Vectors":embed_mat.shape[0] + embed_mat.shape[0],
+                  'Vector Name':name})
     @staticmethod
     def display_model_info(model2viz=' ',pipes=[],apply_style=True, display_component_wise_info=True,display_component_summary=True):
         """Display Links to Modelhub for every NLU Ref loaded and also every component in pipe"""
@@ -657,8 +657,6 @@ word-wrap: break-word;
                 parameter_infos[p.nlu_ref]=VizUtilsStreamlitOS.get_pipe_param_dict(p)
             exp = st.beta_expander("NLU Pipeline components and parameters information")
             exp.write(parameter_infos)
-
-
     @staticmethod
     def get_pipe_param_dict(pipe):
         # loop over ever model in pipeline stages  and then loop over the models params
