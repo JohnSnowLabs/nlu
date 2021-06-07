@@ -588,7 +588,7 @@ class NLUPipeline(BasePipe):
                       num_similarity_cols:int=2,
                       ) -> None:
         """Display Viz in streamlit"""
-        try: from nlu.pipe.viz.streamlit_viz.vis_utils_streamlit_OS import VizUtilsStreamlitOS
+        try: from nlu.pipe.viz.streamlit_viz.viz_utils_streamlit_OS import VizUtilsStreamlitOS
         except  ImportError : print("You need to install Streamlit to run this functionality.")
         VizUtilsStreamlitOS.viz_streamlit(self,
                                           text,
@@ -634,7 +634,7 @@ class NLUPipeline(BasePipe):
 
 
     ):
-        try: from nlu.pipe.viz.streamlit_viz.vis_utils_streamlit_OS import VizUtilsStreamlitOS
+        try: from nlu.pipe.viz.streamlit_viz.viz_utils_streamlit_OS import VizUtilsStreamlitOS
         except  ImportError : print("You need to install Streamlit to run this functionality.")
         VizUtilsStreamlitOS.visualize_tokens_information(self, text, title,sub_title, show_feature_select, features, metadata, output_level, positions, set_wide_layout_CSS, generate_code_sample, key, show_model_select, model_select_position, show_infos,show_logo,show_text_input)
 
@@ -655,7 +655,7 @@ class NLUPipeline(BasePipe):
         show_infos:bool = True,
         show_logo:bool = True,
     )->None:
-        try: from nlu.pipe.viz.streamlit_viz.vis_utils_streamlit_OS import VizUtilsStreamlitOS
+        try: from nlu.pipe.viz.streamlit_viz.viz_utils_streamlit_OS import VizUtilsStreamlitOS
         except  ImportError : print("You need to install Streamlit to run this functionality.")
         VizUtilsStreamlitOS.visualize_classes( self,text,output_level,title,sub_title,metadata,positions,set_wide_layout_CSS,generate_code_sample,key,show_model_selector,model_select_position,show_infos,show_logo)
 
@@ -681,7 +681,7 @@ class NLUPipeline(BasePipe):
         show_logo:bool = True,
         show_text_input:bool = True,
     )->None:
-        try: from nlu.pipe.viz.streamlit_viz.vis_utils_streamlit_OS import VizUtilsStreamlitOS
+        try: from nlu.pipe.viz.streamlit_viz.viz_utils_streamlit_OS import VizUtilsStreamlitOS
         except  ImportError : print("You need to install Streamlit to run this functionality.")
         VizUtilsStreamlitOS.visualize_dep_tree( self,text,title,sub_title,set_wide_layout_CSS,generate_code_sample,key,show_infos,show_logo,show_text_input,)
 
@@ -705,7 +705,7 @@ class NLUPipeline(BasePipe):
             show_text_input:bool = True,
 
     ):
-        try: from nlu.pipe.viz.streamlit_viz.vis_utils_streamlit_OS import VizUtilsStreamlitOS
+        try: from nlu.pipe.viz.streamlit_viz.viz_utils_streamlit_OS import VizUtilsStreamlitOS
         except ImportError : print("You need to install Streamlit to run this functionality.")
         VizUtilsStreamlitOS.visualize_ner(self,text,ner_tags,show_label_select,show_table,title,sub_title,colors,show_color_selector,set_wide_layout_CSS,generate_code_sample,key,model_select_position,show_model_select,show_infos,show_logo,show_text_input)
 
@@ -734,7 +734,7 @@ class NLUPipeline(BasePipe):
 
 
     ):
-        try: from nlu.pipe.viz.streamlit_viz.vis_utils_streamlit_OS import VizUtilsStreamlitOS
+        try: from nlu.pipe.viz.streamlit_viz.viz_utils_streamlit_OS import VizUtilsStreamlitOS
         except ImportError : print("You need to install Streamlit to run this functionality.")
         VizUtilsStreamlitOS.display_word_similarity(self, texts, threshold, title,sub_tile, write_raw_pandas, display_embed_information, similarity_matrix, show_algo_select, dist_metrics, set_wide_layout_CSS, generate_code_sample, key, num_cols, display_scalar_similarities, display_similarity_summary, model_select_position,show_infos,show_logo,)
 
