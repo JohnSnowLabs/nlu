@@ -177,9 +177,8 @@ class NLUPipeline(BasePipe):
             # fit on empty dataframe since no data provided
             logger.info('Fitting on empty Dataframe, could not infer correct training method. This is intended for non-trainable pipelines.')
             self.spark_transformer_pipe = self.spark_estimator_pipe.fit(self.get_sample_spark_dataframe())
-
-
         return self
+
     def get_annotator_extraction_configs(self,full_meta,c_level_mapping,positions):
 
         """Search first OC namespace and if not found the HC Namespace for each Annotator Class in pipeline and get corrosponding config

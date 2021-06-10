@@ -298,6 +298,6 @@ def default_ner_converter_config(output_col_prefix='ner_chunk'):
         get_result          = True,
         name                = 'default_ner',
         get_meta            = True,
-        meta_white_list     = ['entity'],
+        meta_white_list     = ['entity','confidence'],
         description         = 'Converts IOB-NER representation into entity representation and generates confidences for the entire entity chunk',
     )

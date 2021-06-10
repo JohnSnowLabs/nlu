@@ -43,6 +43,20 @@ OS_anno2config = {
         'default': default_word_embedding_config,
         'default_full'  : default_full_config,
     },
+    RoBertaEmbeddings : {
+        'default': default_word_embedding_config,
+        'default_full'  : default_full_config,
+    },
+    XlmRoBertaEmbeddings : {
+        'default': default_word_embedding_config,
+        'default_full'  : default_full_config,
+    },
+
+    DistilBertEmbeddings : {
+        'default': default_word_embedding_config,
+        'default_full'  : default_full_config,
+    },
+
     WordEmbeddingsModel : {
         'default': default_word_embedding_config,
         'default_full'  : default_full_config,

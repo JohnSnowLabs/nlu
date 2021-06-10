@@ -412,7 +412,6 @@ class VizUtilsStreamlitOS():
                 dist_algo_selection =  exp.multiselect("Pick additional Similarity Metrics ", options=dist_algos, default=dist_metrics, key = key)
             embed_algos_to_load = list(set(embed_algo_selection) - set(loaded_embed_nlu_refs))
 
-
         for embedder in embed_algos_to_load:embed_pipes.append(nlu.load(embedder))
 
         if generate_code_sample:st.code(get_code_for_viz('SIMILARITY',[StreamlitUtilsOS.extract_name(p) for p  in embed_pipes],default_texts))
