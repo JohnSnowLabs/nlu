@@ -1,8 +1,8 @@
-class NameSpace():
+class Spellbook():
     # NLU model_base_names =
     # These reference tell NLU to which component resolved to route a request, they help NLU map a NLP reference to the correct class
     word_embeddings = ['embed', 'bert', 'electra', 'albert', 'elmo', 'glove', 'xlnet', 'biobert', 'covidbert',
-                       'tfhub_use']
+                       'tfhub_use', 'distil', 'xlm.py','roberta']
     sentence_embeddings = ['embed_sentence', 'use', 'bert', 'electra', 'tfhub_use']
     classifiers = ['classify', 'e2e', 'emotion', 'sentiment', 'ner',
                    'pos', 'trec6', 'trec50', 'questions',
@@ -2032,7 +2032,17 @@ class NameSpace():
             "en.ner.aspect.atis": "nerdl_atis_840b_300d",
             # 2.7.3 snips
             'en.classify.snips': 'nerdl_snips_100d',
-            'en.ner.snips': 'classifierdl_use_snips'
+            'en.ner.snips': 'classifierdl_use_snips',
+
+            # 3.1
+            "en.embed.distilbert"  :'distilbert_base_cased',
+            "en.embed.distilbert.base"  :'distilbert_base_cased',
+            "en.embed.distilbert.base.uncased"  :'distilbert_base_uncased',
+            "en.embed.distilroberta"  :'distilroberta_base',
+            "en.embed.roberta"  :'roberta_base',
+            "en.embed.roberta.base"  :'roberta_base',
+            "en.embed.roberta.large"  :'roberta_large',
+
 
         },
         'fr': {
@@ -2498,6 +2508,11 @@ class NameSpace():
             'xx.sentence_detector': 'sentence_detector_dl',
             'xx.marian': 'opus_mt_en_fr',
 
+            # 3.1
+            "xx.embed.distilbert."  :'distilbert_base_multilingual_cased',
+            "xx.embed.xlm"  :'xlm_roberta_base',
+            "xx.embed.xlm.base"  :'xlm_roberta_base',
+            "xx.embed.xlm.twitter"  :'twitter_xlm_roberta_base',
             # 2.7
             'xx.use.multi': 'tfhub_use_multi',
             'xx.use.multi_lg': 'tfhub_use_multi_lg',
@@ -4110,8 +4125,30 @@ class NameSpace():
             'es.med_ner.diag_proc' : 'ner_diag_proc',
         }
     }
-    pretrained_healthcare_pipe_references = {}
     healthcare_component_alias_references = {}
+    pretrained_healthcare_pipe_references = {
+        'en': {
+
+            'en.resolve.icd10cm.umls': 'icd10cm_umls_mapping',
+            'en.resolve.mesh.umls' :'mesh_umls_mapping',
+            'en.resolve.rxnorm.umls' :'rxnorm_umls_mapping',
+            'en.resolve.rxnorm.mesh' :'rxnorm_mesh_mapping',
+            'en.resolve.snomed.umls' :'snomed_umls_mapping',
+
+
+            # 'en.test1' :'clinical_analysis', # Not 3+ compatible
+            'en.test2' :'clinical_deidentification',
+            'en.test3' :'clinical_ner_assertion',
+
+
+
+
+
+
+
+
+        },
+    }
     # map storage ref to nlu ref
 
     storage_ref_2_nlu_ref = {
