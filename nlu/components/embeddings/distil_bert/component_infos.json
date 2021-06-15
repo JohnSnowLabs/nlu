@@ -1,0 +1,25 @@
+{
+  "name": "roberta",
+  "output_level": "token",
+  "description": "todo",
+  "trainable": false,
+  "outputs": [
+    "word_embeddings"
+  ],
+  "inputs": [
+    "sentence",
+    "token"
+  ],
+  "type": "word_embeddings",
+  "spark_input_column_names": [
+    "sentence",
+    "token"
+  ],
+  "spark_output_column_names": [
+    "distilbert"
+  ],
+  "provider": "sparknlp",
+  "license": "open source",
+  "computation_context": "spark",
+  "output_context": "spark"
+}
