@@ -94,5 +94,37 @@ class StreamlitUtilsOS():
         return classes_predicted_by_ner_model
 
     @staticmethod
+    def get_manifold_algo(algo,dim):
+        from sklearn.manifold import TSNE, Isomap, LocallyLinearEmbedding, MDS, SpectralEmbedding
+        from sklearn.decomposition import TruncatedSVD,DictionaryLearning, FactorAnalysis, FastICA, KernelPCA, PCA
+        # manifold
+        if algo=='TSNE' : return TSNE(n_components=dim)
+        if algo=='ISOMAP' : return Isomap(n_components=dim)
+        if algo=='LLE' : return LocallyLinearEmbedding(n_components=dim)
+        if algo=='Spectral Embedding' : return  SpectralEmbedding(n_components=dim)
+        if algo=='MDS' : return MDS(n_components=dim)
+        # Matrix Decomposition
+        if algo== 'PCA' : return PCA(n_components=dim)
+        if algo== 'SVD aka LSA' : return TruncatedSVD(n_components=dim)
+        if algo =='DictionaryLearning': return DictionaryLearning(n_components=dim)
+        if algo =='FactorAnalysis': return FactorAnalysis(n_components=dim)
+        if algo =='FastICA': return FastICA(n_components=dim)
+        if algo =='KernelPCA': return KernelPCA(n_components=dim)
+        # not applicable because negative values, todo we could just take absolute values of all embeds..
+        # if algo =='LatentDirichletAllocation': return LatentDirichletAllocation(n_components=dim)
+        # if algo =='NMF': return NMF(n_components=dim)
+
+
+    @staticmethod
     @st.cache(allow_output_mutation=True)
     def get_pipe(model='ner'): return nlu.load(model)
+
+    @staticmethod
+    def merge_token_classifiers_with_embed_pipe(embed_pipe, token_pipe):
+        """Merge token feature generators into embed pipe. i.e. Pos/Dep_depdency/Untyped_dep"""
+        for c in token_pipe.components :
+            if c.info.name == 'pos' : embed_pipe.components.append(c)
+            if c.info.name == 'unlabeled_dependency_parser' : embed_pipe.components.append(c)
+            if c.info.name == 'labeled_dependency_parser' : embed_pipe.components.append(c)
+        return  embed_pipe
+
