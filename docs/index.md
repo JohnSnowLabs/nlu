@@ -906,7 +906,7 @@ nlu.load('match.datetime').predict('In the years 2000/01/01 to 2010/01/01 a lot 
 {:.table2}
 |document |  date|
 |---------|--------|
-|In the years 2000/01/01 to 2010/01/01 a lot of things happened |  [2000/01/01, 2001/01/01] |
+|In the years 2000/01/01 to 2010/01/01 a lot of things happened |  [2000/01/01, 2010/01/01] |
 
 </div></div>
 
