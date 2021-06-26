@@ -3,7 +3,7 @@ layout: docs
 header: true
 title: Developers
 permalink: /docs/en/spellbook
-key: docs-namespace
+key: docs-spellbook
 modify_date: "2020-05-08"
 ---
 

@@ -29,7 +29,7 @@ Each of the components acts as a wrapper around multiple different Spark NLP tra
 
 </div><div class="h3-box" markdown="1">
 
-## NLU Namespace
+## NLU spellbook
 NLU defines a mapping for every of its model references to a specific Spark NLP model, pipeline or annotator.
 You can view the mapping in the [TODO] file .
 If no model is found, NLU will ping the John Snow Labs modelhub for any new models.

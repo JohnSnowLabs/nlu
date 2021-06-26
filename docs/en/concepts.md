@@ -16,7 +16,7 @@ The **load** and **predict** method.
 
 When building a NLU programm you will usually go through the following steps : 
 
-1. Pick a model/pipeline/component you want to create from the [NLU namespace](/docs/en/namespace)
+1. Pick a model/pipeline/component you want to create from the [NLU spellbook](/docs/en/spellbook)
 2. Call the nlu.load(component) method which returns a NLU model pipeline object
 3. Call model.predict() on some String input
 
@@ -46,7 +46,7 @@ A **pipeline** consists of a stack of pretrained models.
 Any of the actions for the component types can be passed as a string to nlu.load() and will return you the default model for that component type for the English language. 
 You can further specify your model selection by placing a '.' behind your component selection.        
 After the '.' you can specify the model you want via specifying a dataset or model version.   
-See [the NLU components namespace](https://nlu.johnsnowlabs.com/docs/en/namespace) and [The load function](https://nlu.johnsnowlabs.com/docs/en/load_api)
+See [the NLU components spellbook](https://nlu.johnsnowlabs.com/docs/en/spellbook) and [The load function](https://nlu.johnsnowlabs.com/docs/en/load_api)
 
 {:.table-model-big}
 |Component type|  nlu.load() action reference  |
@@ -110,7 +110,7 @@ nlu.print_components(lang='en', action='classify')
 
 </div><div class="h3-box" markdown="1">
 
-### Print the entire NLU namespace offering
+### Print the entire NLU spellbook offering
 These are complete NLU references and can be passed to the nlu.load() method right away
 ```python
 nlu.print_components()
