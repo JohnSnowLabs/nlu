@@ -4086,13 +4086,18 @@ class Spellbook():
                 'en.classify.pico':'classifierdl_pico_biobert',
                 # 'en.classify.icd10.use':'useclassifier_icd10cm_hcc', buggy
 
-                # 3.0.3
+                # 3.0.3 healthcare
                 'en.resolve.umls':'sbiobertresolve_umls_major_concepts',
                 'en.resolve.umls.findings':'sbiobertresolve_umls_findings',
                 'en.resolve.loinc':'sbiobertresolve_loinc',
                 'en.resolve.loinc.biobert':'sbiobertresolve_loinc',
                 'en.resolve.loinc.bluebert':'sbluebertresolve_loinc',
                 'en.resolve.HPO':'sbiobertresolve_HPO',
+
+
+
+
+
 
             },
 
@@ -4136,11 +4141,15 @@ class Spellbook():
             'en.resolve.snomed.umls' :'snomed_umls_mapping',
 
 
-            # 'en.test1' :'clinical_analysis', # Not 3+ compatible
-            'en.test2' :'clinical_deidentification',
-            'en.test3' :'clinical_ner_assertion',
+            # '' :'clinical_analysis', # Not 3+ compatible
+            # '' :'clinical_deidentification', # todo to big ner consumer stack for NLU to handle..
+            # '' :'clinical_ner_assertion', Not 3+ compatible
 
 
+            # Explain Pipes
+            'en.explain_doc.carp':'explain_clinical_doc_carp',
+            'en.explain_doc.era':'explain_clinical_doc_era',
+            # 'en.explain_doc.ade':'explain_clinical_doc_ade', # todo wierd 2x Converter 1x NER pipe, messes up pipe logic
 
 
 
