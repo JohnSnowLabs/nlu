@@ -11,38 +11,49 @@ class TestComponentInfo(unittest.TestCase):
         a.DEBUG_list_all_components()
 
     def test_print_all_default_components_as_markdown(self):
-        print(pd.DataFrame(nlu.NameSpace.component_alias_references).T.to_markdown())
+        d = nlu.Spellbook.component_alias_references
+        f = lambda x : x[0]
+        g = lambda x : x[1]
+        print(pd.DataFrame(zip(d.keys(),map(f,d.values()),map(g,d.values()))).to_markdown(index=False))
 
     def test_print_all_models_as_markdown(self):
         rows = []
-        for lang in nlu.NameSpace.pretrained_models_references.keys():
-            for nlu_reference in nlu.NameSpace.pretrained_models_references[lang].keys():
-                rows.append((lang,nlu_reference,nlu.NameSpace.pretrained_models_references[lang][nlu_reference]))
+        for lang in nlu.Spellbook.pretrained_models_references.keys():
+            for nlu_reference in nlu.Spellbook.pretrained_models_references[lang].keys():
+                rows.append((lang,nlu_reference,nlu.Spellbook.pretrained_models_references[lang][nlu_reference]))
         
-        print(pd.DataFrame(rows).to_markdown())
+        print(pd.DataFrame(rows).to_markdown(index=False))
         
     def test_print_all_pipes_as_markdown(self):
         rows = []
-        for lang in nlu.NameSpace.pretrained_pipe_references.keys():
-            for nlu_reference in nlu.NameSpace.pretrained_pipe_references[lang].keys():
-                rows.append((lang,nlu_reference,nlu.NameSpace.pretrained_pipe_references[lang][nlu_reference]))
+        for lang in nlu.Spellbook.pretrained_pipe_references.keys():
+            for nlu_reference in nlu.Spellbook.pretrained_pipe_references[lang].keys():
+                rows.append((lang,nlu_reference,nlu.Spellbook.pretrained_pipe_references[lang][nlu_reference]))
 
-        print(pd.DataFrame(rows).to_markdown())
+        print(pd.DataFrame(rows).to_markdown(index=False))
 
 
     def test_print_all_HC_models_as_markdown(self):
         rows = []
-        for lang in nlu.NameSpace.pretrained_healthcare_model_references.keys():
-            for nlu_reference in nlu.NameSpace.pretrained_models_references[lang].keys():
-                rows.append((lang,nlu_reference,nlu.NameSpace.pretrained_models_references[lang][nlu_reference]))
+        for lang in nlu.Spellbook.pretrained_healthcare_model_references.keys():
+            for nlu_reference in nlu.Spellbook.pretrained_healthcare_model_references[lang].keys():
+                rows.append((lang,nlu_reference,nlu.Spellbook.pretrained_healthcare_model_references[lang][nlu_reference]))
 
-        print(pd.DataFrame(rows).to_markdown())
+        print(pd.DataFrame(rows).to_markdown(index=False))
+
+    def test_print_all_HC_pipes_as_markdown(self):
+        rows = []
+        for lang in nlu.Spellbook.pretrained_healthcare_pipe_references.keys():
+            for nlu_reference in nlu.Spellbook.pretrained_healthcare_pipe_references[lang].keys():
+                rows.append((lang,nlu_reference,nlu.Spellbook.pretrained_healthcare_pipe_references[lang][nlu_reference]))
+
+        print(pd.DataFrame(rows).to_markdown(index=False))
 
 
     def test_get_count_for_every_component_type(self):
         component_counts = {}
-        for lang in nlu.NameSpace.pretrained_models_references:
-            for nlu_ref, nlp_ref in nlu.NameSpace.pretrained_models_references[lang].items():
+        for lang in nlu.Spellbook.pretrained_models_references:
+            for nlu_ref, nlp_ref in nlu.Spellbook.pretrained_models_references[lang].items():
                 c_type = nlu_ref.split('.')
                 
                 if len(c_type) <2 : continue
@@ -58,8 +69,8 @@ class TestComponentInfo(unittest.TestCase):
 
     def test_get_language_count_for_every_component_type(self):
         component_counts = {}
-        for lang in nlu.NameSpace.pretrained_models_references:
-            for nlu_ref, nlp_ref in nlu.NameSpace.pretrained_models_references[lang].items():
+        for lang in nlu.Spellbook.pretrained_models_references:
+            for nlu_ref, nlp_ref in nlu.Spellbook.pretrained_models_references[lang].items():
                 c_type = nlu_ref.split('.')
 
                 if len(c_type) <2 : continue
@@ -82,16 +93,16 @@ class TestComponentInfo(unittest.TestCase):
 
         # get refs from pipes
         pipes = []
-        for lang in nlu.NameSpace.pretrained_pipe_references.keys() :
-            for key,value in nlu.NameSpace.pretrained_pipe_references[lang].items():
+        for lang in nlu.Spellbook.pretrained_pipe_references.keys() :
+            for key,value in nlu.Spellbook.pretrained_pipe_references[lang].items():
                 if lang+value not in spark_nlp_references : 
                     pipes.append(value)
                     spark_nlp_references.append(lang+value)
 
         models = []
         # get refs from models
-        for lang in nlu.NameSpace.pretrained_models_references.keys() :
-            for key,value in nlu.NameSpace.pretrained_models_references[lang].items():
+        for lang in nlu.Spellbook.pretrained_models_references.keys() :
+            for key,value in nlu.Spellbook.pretrained_models_references[lang].items():
                 if lang+value not in spark_nlp_references :
                     models.append(value)
                     spark_nlp_references.append(lang+value)
@@ -135,7 +146,6 @@ class TestComponentInfo(unittest.TestCase):
         nlu.print_components()
     def test_print_all_trainable_components(self):
         nlu.print_trainable_components()
-
 
 
     
