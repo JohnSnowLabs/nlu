@@ -778,7 +778,6 @@ class Spellbook():
             "xx.en.translate_to.fr": "translate_en_fr",
             # 3.1 Translator Pipe references
 
-
             "xx.es.translate_to.af":"translate_af_es",
             "xx.nl.translate_to.af":"translate_af_nl",
             "xx.eo.translate_to.af":"translate_af_eo",
@@ -1803,6 +1802,7 @@ class Spellbook():
             'nl.ner.wikiner.glove.6B_100': 'wikiner_6B_100',
             'nl.ner.wikiner.glove.6B_300': 'wikiner_6B_300',
             'nl.ner.wikiner.glove.840B_300': 'wikiner_840B_300',
+            'nl.embed.bert': 'bert_base_dutch_cased',
 
         },
         'en': {
@@ -2065,7 +2065,8 @@ class Spellbook():
             'de.ner.wikiner.glove.840B_300': 'wikiner_840B_300',
             'de.stopwords': 'stopwords_de',
             'de.ner.wikiner.glove.6B_300': 'wikiner_6B_300',
-
+            'de.embed.bert' : 'bert_base_german_cased',
+           'de.embed.bert.uncased' : '	bert_base_german_uncased'
         },
         'it': {
             'it.lemma': 'lemma_dxc',  # default lemma it
@@ -2077,6 +2078,10 @@ class Spellbook():
             'it.ner': 'wikiner_840B_300',  # default ner it
             'it.ner.wikiner.glove.6B_300': 'wikiner_6B_300',
             'it.stopwords': 'stopwords_it',
+            'it.embed.bert': 'bert_base_italian_cased',
+            'it.embed.bert.uncased': 'bert_base_italian_uncased',
+
+
 
         },
         'nb': {
@@ -2398,6 +2403,8 @@ class Spellbook():
             'tr.ner': 'turkish_ner_840B_300',  # ner tr default
             'tr.ner.bert': 'turkish_ner_bert' , # ner tr default
             'tr.classify.news'  : 'classifierdl_bert_news',
+            'tr.embed.bert'  : 'bert_base_turkish_cased',
+            'tr.embed.bert.uncasde'  : '	bert_base_turkish_uncased',
         },
         'uk': {
             'uk.lemma': 'lemma',  # default uk lemma
@@ -2437,6 +2444,7 @@ class Spellbook():
             'zh.lemma': 'lemma',
             'zh.embed': 'bert_base_chinese',
             'zh.embed.bert': 'bert_base_chinese',  # default zh embeds
+            'zh.embed.bert.wwm': 'chinese_bert_wwm',  # default zh embeds
 
         }
         ,
