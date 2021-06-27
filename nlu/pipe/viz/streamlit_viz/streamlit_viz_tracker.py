@@ -183,7 +183,6 @@ word-wrap: break-word;
 
 
 
-        #
     # @staticmethod
     # def viz_streamlit(
     #         pipe,

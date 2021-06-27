@@ -58,7 +58,8 @@ class OutputLevelUtils():
                   TypedDependencyParserModel, DependencyParserModel,
                   RecursiveTokenizerModel,
                   TextMatcherModel, BigTextMatcherModel, RegexMatcherModel,
-                  WordSegmenterModel, TokenizerModel
+                  WordSegmenterModel, TokenizerModel,
+                  XlmRoBertaEmbeddings, RoBertaEmbeddings, DistilBertEmbeddings,
                   ],
         # 'sub_token': [TextMatcherModel, BigTextMatcherModel, RegexMatcherModel, ],
         # sub token is when annotator is token based but some tokens may be missing since dropped/cleaned
@@ -68,7 +69,8 @@ class OutputLevelUtils():
         ] ,
         'input_dependent': [BertSentenceEmbeddings, UniversalSentenceEncoder, ViveknSentimentModel,
                             SentimentDLModel,  ClassifierDLModel,
-                            MarianTransformer,T5Transformer
+                            MarianTransformer,T5Transformer,
+                            XlmRoBertaEmbeddings, RoBertaEmbeddings, DistilBertEmbeddings,
 
                             ],
         'multi' : [MultiClassifierDLModel, MultiClassifierDLModel,]

@@ -77,8 +77,14 @@ class PipeUtils():
 
                 #3.2 update converter inputs
                 old_ner_input_col = ComponentUtils.extract_NER_converter_col(converter_to_update, 'input')
-                converter_to_update.info.inputs.remove(old_ner_input_col)
-                converter_to_update.info.spark_input_column_names.remove(old_ner_input_col)
+                if old_ner_input_col in converter_to_update.info.inputs:
+                    converter_to_update.info.inputs.remove(old_ner_input_col)
+                else : converter_to_update.info.inputs.pop()
+
+                # converter_to_update.info.inputs.remove(old_ner_input_col)
+                if old_ner_input_col in converter_to_update.info.spark_input_column_names :
+                    converter_to_update.info.spark_input_column_names.remove(old_ner_input_col)
+                else : converter_to_update.info.spark_input_column_names.pop()
                 converter_to_update.info.inputs.append(new_NER_AT_ref)
                 converter_to_update.info.spark_input_column_names.append(new_NER_AT_ref)
                 converter_to_update.model.setInputCols(converter_to_update.info.inputs)
@@ -88,8 +94,8 @@ class PipeUtils():
                 converter_to_update.info.spark_output_column_names = [new_NER_converter_AT_ref]
                 converter_to_update.model.setOutputCol(new_NER_converter_AT_ref)
 
-                ## todo improve, this causes the first ner producer to feed to all ner-cosnuners. All other ner-producers will be ignored by ner-consumers,w ithouth special syntax or manual configs
-                ##4. Update all NER consumers input columns
+                ## todo improve, this causes the first ner producer to feed to all ner-cosnuners. All other ner-producers will be ignored by ner-consumers,w ithouth special syntax or manual configs --> Chunk merger
+                ##4. Update all NER consumers input columns, i.e. Resolver, Relation, etc..
                 for conversion_consumer in pipe.components :
                     if 'entities' in conversion_consumer.info.inputs:
                         conversion_consumer.info.inputs.remove('entities')
@@ -264,7 +270,7 @@ class PipeUtils():
     def subsitute_leaf_output_names(pipe):
         """Change all output column names of leaves to something nicer, if they not already
         use AT notation"""
-
+    # TODO WIP
         for c in pipe.components:
             if PipeUtils.is_leaf_node(c,pipe) and not ComponentUtils.has_AT_notation():
                 # update name
@@ -284,6 +290,11 @@ class PipeUtils():
 
             c.info.spark_input_column_names  = [f.split('@')[0] for f in c.info.spark_input_column_names]
             c.info.spark_output_column_names = [f.split('@')[0] for f in c.info.spark_output_column_names]
+
+            c.info.spark_input_column_names  =c.info.inputs.copy()#  [f.split('@')[0] for f in c.info.spark_input_column_names]
+            c.info.spark_output_column_names =c.info.outputs.copy()#  [f.split('@')[0] for f in c.info.spark_output_column_names]
+
+
         return pipe
 
 

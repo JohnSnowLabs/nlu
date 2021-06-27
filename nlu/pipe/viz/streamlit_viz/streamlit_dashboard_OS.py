@@ -38,7 +38,7 @@ class StreamlitVizBlockHandler():
             # UI PARAMS
             visualizers:List[str] = ( "dependency_tree", "ner",  "similarity", "token_features", 'classification','manifold'),
             show_models_info:bool = True,
-            show_model_select:bool = True,
+            show_model_select:bool = False,
             show_viz_selection:bool = False,
             show_logo:bool=True,
             set_wide_layout_CSS:bool=True,
@@ -70,8 +70,16 @@ class StreamlitVizBlockHandler():
             show_code_snippets = st.sidebar.checkbox('Generate code snippets', value=show_code_snippets)
             if model_selection == [] : model_selection = Discoverer.get_components('ner',include_pipes=True)
             model_selection.sort()
-            if model_select_position == 'side':ner_model_2_viz = st.sidebar.selectbox("Select a NER model.",model_selection,index=model_selection.index(pipe.nlu_ref.split(' ')[0]))
-            else : ner_model_2_viz = st.selectbox("Select a NER model",model_selection,index=model_selection.index(pipe.nlu_ref.split(' ')[0]))
+            if model_select_position == 'side':
+                if pipe.nlu_ref.split(' ')[0] in  model_selection :
+                    ner_model_2_viz = st.sidebar.selectbox("Select a NER model.",model_selection,index=model_selection.index(pipe.nlu_ref.split(' ')[0]))
+                else :
+                    ner_model_2_viz = st.sidebar.selectbox("Select a NER model.",model_selection,index=model_selection.index('en.ner'))
+            else :
+                if pipe.nlu_ref.split(' ')[0] in  model_selection :
+                    ner_model_2_viz = st.selectbox("Select a NER model",model_selection,index=model_selection.index(pipe.nlu_ref.split(' ')[0]))
+                else :
+                    ner_model_2_viz = st.selectbox("Select a NER model.",index=model_selection.index('en.ner'))
 
         active_visualizers = visualizers
         if show_viz_selection: active_visualizers = st.sidebar.multiselect("Visualizers",options=visualizers,default=visualizers,key=key)
@@ -95,13 +103,60 @@ class StreamlitVizBlockHandler():
             WordSimilarityStreamlitBlock.display_word_similarity(ner_pipe, similarity_texts,generate_code_sample=show_code_snippets, model_select_position=model_select_position, show_infos=False,show_logo=False, num_cols=num_similarity_cols)
         if 'manifold' in active_visualizers :
             ner_pipe = pipe if ner_model_2_viz in pipe.nlu_ref.split(' ')  else StreamlitUtilsOS.get_pipe(ner_model_2_viz)
-            WordEmbeddingManifoldStreamlitBlock.display_low_dim_embed_viz_token(ner_pipe, similarity_texts,generate_code_sample=show_code_snippets, model_select_position=model_select_position, show_infos=False,show_logo=False, num_cols=num_manifold_cols)
+            WordEmbeddingManifoldStreamlitBlock.viz_streamlit_word_embed_manifold(ner_pipe, similarity_texts, generate_code_sample=show_code_snippets, model_select_position=model_select_position, show_infos=False, show_logo=False, num_cols=num_manifold_cols)
 
         models_to_display_info_for = []
         if ner_pipe  is not None : models_to_display_info_for .append(ner_pipe)
         if tree_pipe is not None : models_to_display_info_for .append(tree_pipe)
         if show_models_info      :StreamlitVizTracker.display_model_info(all_models, models_to_display_info_for)
         if display_infos         : StreamlitVizTracker.display_footer()
+
+    @staticmethod
+    def viz_streamlit_word_embed_manifold(
+            pipe, # nlu pipe
+            default_texts: List[str] = ("Donald Trump likes to party!", "Angela Merkel likes to party!", 'Peter HATES TO PARTTY!!!! :('),
+            title: Optional[str] = "Lower dimensional Manifold visualization for word embeddings",
+            sub_title: Optional[str] = "Apply any of the 11 `Manifold` or `Matrix Decomposition` algorithms to reduce the dimensionality of `Word Embeddings` to `1-D`, `2-D` and `3-D` ",
+            write_raw_pandas : bool = False ,
+            default_algos_to_apply : List[str] = ("TSNE", "PCA"),#,'LLE','Spectral Embedding','MDS','ISOMAP','SVD aka LSA','DictionaryLearning','FactorAnalysis','FastICA','KernelPCA',),  # LatentDirichletAllocation 'NMF',
+            target_dimensions : List[int] = (1,2,3),
+            show_algo_select : bool = True,
+            show_embed_select : bool = True,
+            show_color_select: bool = True,
+            MAX_DISPLAY_NUM:int=100,
+            display_embed_information:bool=True,
+            set_wide_layout_CSS:bool=True,
+            num_cols: int = 3,
+            model_select_position:str = 'side', # side or main
+            key:str = "NLU_streamlit",
+            additional_classifiers_for_coloring:List[str]=['pos', 'sentiment'],
+            generate_code_sample:bool = False,
+            show_infos:bool = True,
+            show_logo:bool = True,
+            n_jobs: Optional[int] = 3, # False
+    ): WordEmbeddingManifoldStreamlitBlock.viz_streamlit_word_embed_manifold(
+        pipe,
+        default_texts,
+        title,
+        sub_title,
+        write_raw_pandas,
+        default_algos_to_apply,
+        target_dimensions,
+        show_algo_select,
+        show_embed_select,
+        show_color_select,
+        MAX_DISPLAY_NUM,
+        display_embed_information,
+        set_wide_layout_CSS,
+        num_cols,
+        model_select_position,
+        key,
+        additional_classifiers_for_coloring,
+        generate_code_sample,
+        show_infos,
+        show_logo,
+        n_jobs,
+    )
 
 
     @staticmethod
@@ -170,54 +225,6 @@ class StreamlitVizBlockHandler():
 
 
 
-    @staticmethod
-    def display_low_dim_embed_viz_token(
-            pipe, # nlu pipe
-            default_texts: List[str] = ("Donald Trump likes to party!", "Angela Merkel likes to party!", 'Peter HATES TO PARTTY!!!! :('),
-            title: Optional[str] = "Lower dimensional Manifold visualization for word embeddings",
-            sub_title: Optional[str] = "Apply any of the 11 `Manifold` or `Matrix Decomposition` algorithms to reduce the dimensionality of `Word Embeddings` to `1-D`, `2-D` and `3-D` ",
-            write_raw_pandas : bool = False ,
-            default_applicable_algos : List[str] = ('TSNE','PCA',),
-            applicable_algos : List[str] = ("TSNE", "PCA"),#,'LLE','Spectral Embedding','MDS','ISOMAP','SVD aka LSA','DictionaryLearning','FactorAnalysis','FastICA','KernelPCA',),  # LatentDirichletAllocation 'NMF',
-            target_dimensions : List[int] = (1,2,3),
-            show_algo_select : bool = True,
-            show_embed_select : bool = True,
-            show_color_select: bool = True,
-            MAX_DISPLAY_NUM:int=100,
-            display_embed_information:bool=True,
-            set_wide_layout_CSS:bool=True,
-            num_cols: int = 3,
-            model_select_position:str = 'side', # side or main
-            key:str = "NLU_streamlit",
-            additional_classifiers_for_coloring:List[str]=['pos', 'sentiment'],
-            extra_NLU_models_for_hueing: List[str] = ('pos','sentiment'),
-            generate_code_sample:bool = False,
-            show_infos:bool = True,
-            show_logo:bool = True,
-    ): WordEmbeddingManifoldStreamlitBlock(
-        pipe,
-        default_texts,
-        title,
-        sub_title,
-        write_raw_pandas,
-        default_applicable_algos,
-        applicable_algos,
-        target_dimensions,
-        show_algo_select,
-        show_embed_select,
-        show_color_select,
-        MAX_DISPLAY_NUM,
-        display_embed_information,
-        set_wide_layout_CSS,
-        num_cols,
-        model_select_position,
-        key,
-        additional_classifiers_for_coloring,
-        extra_NLU_models_for_hueing,
-        generate_code_sample,
-        show_infos,
-        show_logo,
-    )
 
 
 

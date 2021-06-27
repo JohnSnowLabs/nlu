@@ -1,3 +1,4 @@
+from typing import List
 import logging
 logger = logging.getLogger('nlu')
 import inspect
@@ -226,3 +227,7 @@ class ComponentUtils():
             tail = str(component.model)
         return tail
 
+    @staticmethod
+    def remove_storage_ref_from_features(features:List[str]):
+        """Clean storage ref from every str in list """
+        return [f.split('@')[0] for f in features]

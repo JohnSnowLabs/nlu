@@ -410,8 +410,15 @@ class NLUPipeline(BasePipe):
                 self[component].save(path)
         print(f'Stored model in {path}')
 
-    def predict(self, data, output_level='', positions=False, keep_stranger_features=True, metadata=False,
-                multithread=True, drop_irrelevant_cols=True, return_spark_df = False):
+    def predict(self,
+                data,
+                output_level='',
+                positions=False,
+                keep_stranger_features=True,
+                metadata=False,
+                multithread=True,
+                drop_irrelevant_cols=True,
+                return_spark_df = False):
         '''
         Annotates a Pandas Dataframe/Pandas Series/Numpy Array/Spark DataFrame/Python List strings /Python String
 
@@ -447,10 +454,13 @@ class NLUPipeline(BasePipe):
             return self.pythonify_spark_dataframe(data,
                                                   keep_stranger_features=keep_stranger_features,
                                                   stranger_features=stranger_features,
-                                                  output_metadata=metadata,
+                                                   output_metadata=metadata,
                                                   drop_irrelevant_cols=drop_irrelevant_cols,
                                                   positions=positions
                                                   )
+
+
+
 
 
         except Exception as err :
@@ -458,7 +468,8 @@ class NLUPipeline(BasePipe):
             import sys
             if multithread == True:
                 logger.warning("Multithreaded mode failed. trying to predict again with non multithreaded mode ")
-                return self.predict(data, output_level=output_level, positions=positions,keep_stranger_features=keep_stranger_features, metadata=metadata, multithread=False)
+                # return self.predict(data, output_level=output_level, positions=positions,keep_stranger_features=keep_stranger_features, metadata=metadata, multithread=False,return_spark_df=return_spark_df)
+                return  self.predict(data=data,output_level=output_level,positions=positions,keep_stranger_features=keep_stranger_features,metadata=metadata,multithread=False,drop_irrelevant_cols=drop_irrelevant_cols,return_spark_df=return_spark_df)
             else: self.print_exception_err(err)
 
 
@@ -573,7 +584,7 @@ class NLUPipeline(BasePipe):
                       title:str = 'NLU ❤️ Streamlit - Prototype your NLP startup in 0 lines of code🚀',
                       sub_title:str = 'Play with over 1000+ scalable enterprise NLP models',
                       side_info:str = None,
-                      visualizers:List[str] = ( "dependency_tree", "ner",  "similarity", "token_features", 'classification'),
+                      visualizers:List[str] = ( "dependency_tree", "ner",  "similarity", "token_features", 'classification','manifold'),
                       show_models_info:bool = True,
                       show_model_select:bool = True,
                       show_viz_selection:bool = False,
@@ -587,9 +598,10 @@ class NLUPipeline(BasePipe):
                       num_similarity_cols:int=2,
                       ) -> None:
         """Display Viz in streamlit"""
-        try: from nlu.pipe.viz.streamlit_viz.viz_utils_streamlit_OS import VizUtilsStreamlitOS
+        # try: from nlu.pipe.viz.streamlit_viz.streamlit_dashboard_OS import StreamlitVizBlockHandler
+        try: from nlu.pipe.viz.streamlit_viz.streamlit_dashboard_OS import StreamlitVizBlockHandler
         except  ImportError : print("You need to install Streamlit to run this functionality.")
-        VizUtilsStreamlitOS.viz_streamlit(self,
+        StreamlitVizBlockHandler.viz_streamlit_dashboard(self,
                                           text,
                                           model_selection,
                                           similarity_texts,
@@ -633,9 +645,9 @@ class NLUPipeline(BasePipe):
 
 
     ):
-        try: from nlu.pipe.viz.streamlit_viz.viz_utils_streamlit_OS import VizUtilsStreamlitOS
+        try: from nlu.pipe.viz.streamlit_viz.streamlit_dashboard_OS import StreamlitVizBlockHandler
         except  ImportError : print("You need to install Streamlit to run this functionality.")
-        VizUtilsStreamlitOS.visualize_tokens_information(self, text, title,sub_title, show_feature_select, features, metadata, output_level, positions, set_wide_layout_CSS, generate_code_sample, key, show_model_select, model_select_position, show_infos,show_logo,show_text_input)
+        StreamlitVizBlockHandler.visualize_tokens_information(self, text, title, sub_title, show_feature_select, features, metadata, output_level, positions, set_wide_layout_CSS, generate_code_sample, key, show_model_select, model_select_position, show_infos, show_logo, show_text_input)
 
 
     def viz_streamlit_classes(
@@ -654,9 +666,9 @@ class NLUPipeline(BasePipe):
         show_infos:bool = True,
         show_logo:bool = True,
     )->None:
-        try: from nlu.pipe.viz.streamlit_viz.viz_utils_streamlit_OS import VizUtilsStreamlitOS
+        try: from nlu.pipe.viz.streamlit_viz.streamlit_dashboard_OS import StreamlitVizBlockHandler
         except  ImportError : print("You need to install Streamlit to run this functionality.")
-        VizUtilsStreamlitOS.visualize_classes( self,text,output_level,title,sub_title,metadata,positions,set_wide_layout_CSS,generate_code_sample,key,show_model_selector,model_select_position,show_infos,show_logo)
+        StreamlitVizBlockHandler.visualize_classes(self, text, output_level, title, sub_title, metadata, positions, set_wide_layout_CSS, generate_code_sample, key, show_model_selector, model_select_position, show_infos, show_logo)
 
 
 
@@ -680,9 +692,9 @@ class NLUPipeline(BasePipe):
         show_logo:bool = True,
         show_text_input:bool = True,
     )->None:
-        try: from nlu.pipe.viz.streamlit_viz.viz_utils_streamlit_OS import VizUtilsStreamlitOS
+        try: from nlu.pipe.viz.streamlit_viz.streamlit_dashboard_OS import StreamlitVizBlockHandler
         except  ImportError : print("You need to install Streamlit to run this functionality.")
-        VizUtilsStreamlitOS.visualize_dep_tree( self,text,title,sub_title,set_wide_layout_CSS,generate_code_sample,key,show_infos,show_logo,show_text_input,)
+        StreamlitVizBlockHandler.visualize_dep_tree(self, text, title, sub_title, set_wide_layout_CSS, generate_code_sample, key, show_infos, show_logo, show_text_input, )
 
     def viz_streamlit_ner(
             self, # Nlu pipe
@@ -704,9 +716,9 @@ class NLUPipeline(BasePipe):
             show_text_input:bool = True,
 
     ):
-        try: from nlu.pipe.viz.streamlit_viz.viz_utils_streamlit_OS import VizUtilsStreamlitOS
+        try: from nlu.pipe.viz.streamlit_viz.streamlit_dashboard_OS import StreamlitVizBlockHandler
         except ImportError : print("You need to install Streamlit to run this functionality.")
-        VizUtilsStreamlitOS.visualize_ner(self,text,ner_tags,show_label_select,show_table,title,sub_title,colors,show_color_selector,set_wide_layout_CSS,generate_code_sample,key,model_select_position,show_model_select,show_infos,show_logo,show_text_input)
+        StreamlitVizBlockHandler.visualize_ner(self, text, ner_tags, show_label_select, show_table, title, sub_title, colors, show_color_selector, set_wide_layout_CSS, generate_code_sample, key, model_select_position, show_model_select, show_infos, show_logo, show_text_input)
 
 
     def viz_streamlit_word_similarity(
@@ -733,8 +745,53 @@ class NLUPipeline(BasePipe):
 
 
     ):
-        try: from nlu.pipe.viz.streamlit_viz.viz_utils_streamlit_OS import VizUtilsStreamlitOS
+        try: from nlu.pipe.viz.streamlit_viz.streamlit_dashboard_OS import StreamlitVizBlockHandler
         except ImportError : print("You need to install Streamlit to run this functionality.")
-        VizUtilsStreamlitOS.display_word_similarity(self, texts, threshold, title,sub_tile, write_raw_pandas, display_embed_information, similarity_matrix, show_algo_select, dist_metrics, set_wide_layout_CSS, generate_code_sample, key, num_cols, display_scalar_similarities, display_similarity_summary, model_select_position,show_infos,show_logo,)
+        StreamlitVizBlockHandler.display_word_similarity(self, texts, threshold, title, sub_tile, write_raw_pandas, display_embed_information, similarity_matrix, show_algo_select, dist_metrics, set_wide_layout_CSS, generate_code_sample, key, num_cols, display_scalar_similarities, display_similarity_summary, model_select_position, show_infos, show_logo, )
 
 
+    def viz_streamlit_word_embed_manifold(self,
+            default_texts: List[str] = ("Donald Trump likes to party!", "Angela Merkel likes to party!", 'Peter HATES TO PARTTY!!!! :('),
+            title: Optional[str] = "Lower dimensional Manifold visualization for word embeddings",
+            sub_title: Optional[str] = "Apply any of the 11 `Manifold` or `Matrix Decomposition` algorithms to reduce the dimensionality of `Word Embeddings` to `1-D`, `2-D` and `3-D` ",
+            write_raw_pandas : bool = False ,
+            default_algos_to_apply : List[str] = ('TSNE','PCA',),
+            target_dimensions : List[int] = (1,2,3),
+            show_algo_select : bool = True,
+            show_embed_select : bool = True,
+            show_color_select: bool = True,
+            MAX_DISPLAY_NUM:int=100,
+            display_embed_information:bool=True,
+            set_wide_layout_CSS:bool=True,
+            num_cols: int = 3,
+            model_select_position:str = 'side', # side or main
+            key:str = "NLU_streamlit",
+            additional_classifiers_for_coloring:List[str]=['pos', 'sentiment.imdb'],
+            generate_code_sample:bool = False,
+            show_infos:bool = True,
+            show_logo:bool = True,
+            n_jobs: Optional[int] = 3, # False
+        ):
+        try: from nlu.pipe.viz.streamlit_viz.streamlit_dashboard_OS import StreamlitVizBlockHandler
+        except ImportError : print("You need to install Streamlit to run this functionality.")
+        StreamlitVizBlockHandler.viz_streamlit_word_embed_manifold(self,
+        default_texts,
+        title,
+        sub_title,
+        write_raw_pandas,
+        default_algos_to_apply,
+        target_dimensions,
+        show_algo_select,
+        show_embed_select,
+        show_color_select,
+        MAX_DISPLAY_NUM,
+        display_embed_information,
+        set_wide_layout_CSS,
+        num_cols,
+        model_select_position,
+        key,
+        additional_classifiers_for_coloring,
+        generate_code_sample,
+        show_infos,
+        show_logo,
+        n_jobs,)

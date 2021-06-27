@@ -15,14 +15,14 @@ class StreamlitUtilsOS():
         for c in pipe.components:
             if type(c.model) in StreamlitUtilsOS.classifers_OS :
                 classifier_cols += pipe.anno2final_cols[c.model]
-        return  classifier_cols
+        return classifier_cols
 
     @staticmethod
     def get_embed_cols(pipe):
         classifier_cols = []
         embedders = StreamlitUtilsOS.find_all_embed_components(pipe)
         for c in embedders: classifier_cols += pipe.anno2final_cols[c.model]
-        return  classifier_cols
+        return classifier_cols
 
     @staticmethod
     def find_embed_col(df, search_multi=False):
@@ -32,9 +32,10 @@ class StreamlitUtilsOS():
                 if 'embed'in c : return c
         else:
             e_cols =[]
+            print("DDDDDDDDDDDDDDDDDDDDDDDEBUG ::". df.columns)
             for c in df.columns:
                 if 'embed'in c : e_cols.append(c)
-        return  e_cols
+        return e_cols
 
 
     @staticmethod
@@ -94,25 +95,26 @@ class StreamlitUtilsOS():
         return classes_predicted_by_ner_model
 
     @staticmethod
-    def get_manifold_algo(algo,dim):
+    def get_manifold_algo(algo,dim, n_jobs = None):
         from sklearn.manifold import TSNE, Isomap, LocallyLinearEmbedding, MDS, SpectralEmbedding
         from sklearn.decomposition import TruncatedSVD,DictionaryLearning, FactorAnalysis, FastICA, KernelPCA, PCA
         # manifold
-        if algo=='TSNE' : return TSNE(n_components=dim)
-        if algo=='ISOMAP' : return Isomap(n_components=dim)
-        if algo=='LLE' : return LocallyLinearEmbedding(n_components=dim)
-        if algo=='Spectral Embedding' : return  SpectralEmbedding(n_components=dim)
-        if algo=='MDS' : return MDS(n_components=dim)
+        if algo=='TSNE' : return TSNE(n_components=dim, n_jobs=n_jobs)
+        if algo=='ISOMAP' : return Isomap(n_components=dim, n_jobs=n_jobs)
+        if algo=='LLE' : return LocallyLinearEmbedding(n_components=dim, n_jobs=n_jobs)
+        if algo=='Spectral Embedding' : return  SpectralEmbedding(n_components=dim, n_jobs=n_jobs)
+        if algo=='MDS' : return MDS(n_components=dim, n_jobs=n_jobs)
         # Matrix Decomposition
-        if algo== 'PCA' : return PCA(n_components=dim)
-        if algo== 'SVD aka LSA' : return TruncatedSVD(n_components=dim)
-        if algo =='DictionaryLearning': return DictionaryLearning(n_components=dim)
-        if algo =='FactorAnalysis': return FactorAnalysis(n_components=dim)
-        if algo =='FastICA': return FastICA(n_components=dim)
-        if algo =='KernelPCA': return KernelPCA(n_components=dim)
+        if algo== 'PCA' : return PCA(n_components=dim) # No hyper
+        if algo== 'SVD aka LSA' : return TruncatedSVD(n_components=dim) # No hyper
+        if algo =='DictionaryLearning': return DictionaryLearning(n_components=dim, n_jobs=n_jobs)
+        if algo =='FactorAnalysis': return FactorAnalysis(n_components=dim) # no hyper
+        if algo =='FastICA': return FastICA(n_components=dim) # no hyper
+        if algo =='KernelPCA': return KernelPCA(n_components=dim, n_jobs=n_jobs)
         # not applicable because negative values, todo we could just take absolute values of all embeds..
         # if algo =='LatentDirichletAllocation': return LatentDirichletAllocation(n_components=dim)
         # if algo =='NMF': return NMF(n_components=dim)
+
 
 
     @staticmethod
@@ -121,10 +123,14 @@ class StreamlitUtilsOS():
 
     @staticmethod
     def merge_token_classifiers_with_embed_pipe(embed_pipe, token_pipe):
-        """Merge token feature generators into embed pipe. i.e. Pos/Dep_depdency/Untyped_dep"""
+        """Merge token feature generators into embed pipe. i.e. Pos/Dep_depdency/Untyped_dep if not already present in pipe"""
         for c in token_pipe.components :
-            if c.info.name == 'pos' : embed_pipe.components.append(c)
-            if c.info.name == 'unlabeled_dependency_parser' : embed_pipe.components.append(c)
-            if c.info.name == 'labeled_dependency_parser' : embed_pipe.components.append(c)
-        return  embed_pipe
+            if c.info.name == 'pos' :
+                for emb_c in embed_pipe.components :
+                    if emb_c.info.name =='pos' : return embed_pipe
+                    # only merge if pos not already in pipe
+                embed_pipe.components.append(c)
+            # if c.info.name == 'unlabeled_dependency_parser' : embed_pipe.components.append(c)
+            # if c.info.name == 'labeled_dependency_parser' : embed_pipe.components.append(c)
+        return embed_pipe
 

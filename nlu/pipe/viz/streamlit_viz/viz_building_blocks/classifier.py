@@ -43,15 +43,18 @@ class ClassifierStreamlitBlock():
         classifier_pipes = [pipe]
         classifier_components_usable = [e for e in Discoverer.get_components('classify',True, include_aliases=True)]
         classifier_components = StreamlitUtilsOS.find_all_classifier_components(pipe)
-        loaded_classifier_nlu_refs = [c.info.nlu_ref for c in classifier_components]
+        loaded_classifier_nlu_refs = [c.info.nlu_ref for c in classifier_components ]
 
         for l in loaded_classifier_nlu_refs:
             if 'converter' in l :
                 loaded_classifier_nlu_refs.remove(l)
                 continue
             if l not in classifier_components_usable : classifier_components_usable.append(l)
+
         classifier_components_usable.sort()
         loaded_classifier_nlu_refs.sort()
+        for r in loaded_classifier_nlu_refs:
+            if r not in  classifier_components_usable : loaded_classifier_nlu_refs.remove(r)
         if show_model_selector :
             if model_select_position =='side':classifier_components_selection   = st.sidebar.multiselect("Pick additional Classifiers",options=classifier_components_usable,default=loaded_classifier_nlu_refs,key = key)
             else:classifier_components_selection   = st.multiselect("Pick additional Classifiers",options=classifier_components_usable,default=loaded_classifier_nlu_refs,key = key)

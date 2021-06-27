@@ -13,162 +13,167 @@ from sparknlp.annotator import *
 from sparknlp.base import *
 from nlu.pipe.extractors.extractor_configs_open_source import *
 from nlu.pipe.col_substitution.col_substitution_OS import *
+
 OS_anno2substitution_fn = {
-    NerConverter : {
-        'default': substitute_ner_converter_cols ,
+    NerConverter: {
+        'default': substitute_ner_converter_cols,
     },
-    PerceptronModel : {
+    PerceptronModel: {
         'default': substitute_pos_cols,
     },
-    BertEmbeddings : {
+    BertEmbeddings: {
         'default': substitute_word_embed_cols,
     },
-    AlbertEmbeddings : {
+    AlbertEmbeddings: {
         'default': substitute_word_embed_cols,
     },
-    XlnetEmbeddings : {
+    XlnetEmbeddings: {
         'default': substitute_word_embed_cols,
     },
-    WordEmbeddingsModel : {
+
+    DistilBertEmbeddings: {
         'default': substitute_word_embed_cols,
     },
-    ElmoEmbeddings : {
+    RoBertaEmbeddings: {
         'default': substitute_word_embed_cols,
     },
-    BertSentenceEmbeddings : {
+    XlmRoBertaEmbeddings: {
+        'default': substitute_word_embed_cols,
+    },
+
+    WordEmbeddingsModel: {
+        'default': substitute_word_embed_cols,
+    },
+    ElmoEmbeddings: {
+        'default': substitute_word_embed_cols,
+    },
+    BertSentenceEmbeddings: {
         'default': substitute_sent_embed_cols,
     },
-    UniversalSentenceEncoder : {
+    UniversalSentenceEncoder: {
         'default': substitute_sent_embed_cols,
     },
-    SentenceEmbeddings : {
+    SentenceEmbeddings: {
         'default': substitute_sent_embed_cols,
     },
-    Tokenizer : {
+    Tokenizer: {
         'default': substitute_tokenizer_cols,
     },
-    TokenizerModel : {
+    TokenizerModel: {
         'default': substitute_tokenizer_cols,
     },
-    RegexTokenizer : {
+    RegexTokenizer: {
         'default': substitute_tokenizer_cols,
     },
-    DocumentAssembler : {
+    DocumentAssembler: {
         'default': substitute_doc_assembler_cols,
     },
-    SentenceDetectorDLModel : {
+    SentenceDetectorDLModel: {
         'default': substitute_sentence_detector_dl_cols,
     },
-    SentenceDetector : {
+    SentenceDetector: {
         'default': substitute_sentence_detector_pragmatic_cols,
     },
-    ContextSpellCheckerModel : {
+    ContextSpellCheckerModel: {
         'default': substitute_spell_context_cols,
     },
-    SymmetricDeleteModel : {
+    SymmetricDeleteModel: {
         'default': substitute_spell_symm_cols,
     },
-    NorvigSweetingModel : {
+    NorvigSweetingModel: {
         'default': substitute_spell_norvig_cols,
     },
-    LemmatizerModel : {
+    LemmatizerModel: {
         'default': substitute_lem_cols,
     },
-    Normalizer : {
+    Normalizer: {
         'default': substitute_norm_cols,
     },
-    NormalizerModel : {
+    NormalizerModel: {
         'default': substitute_norm_cols,
     },
-    DocumentNormalizer : {
-        'default':substitute_doc_norm_cols,
+    DocumentNormalizer: {
+        'default': substitute_doc_norm_cols,
     },
-    Stemmer : {
+    Stemmer: {
         'default': substitute_stem_cols,
     },
-    NerDLModel : {
+    NerDLModel: {
         'default': substitute_ner_dl_cols,
     },
-    NerCrfModel : {
+    NerCrfModel: {
         'default': 'TODO',
     },
-    LanguageDetectorDL : {
+    LanguageDetectorDL: {
         'default': 'TODO',
     },
-    DependencyParserModel : {
+    DependencyParserModel: {
         'default': substitute_un_labled_dependency_cols,
     },
-    TypedDependencyParserModel : {
+    TypedDependencyParserModel: {
         'default': substitute_labled_dependency_cols,
     },
-    SentimentDLModel : {
+    SentimentDLModel: {
         'default': substitute_sentiment_dl_cols,
     },
-    SentimentDetectorModel : {
+    SentimentDetectorModel: {
         'default': substitute_sentiment_dl_cols,
     },
-    ViveknSentimentModel : {
+    ViveknSentimentModel: {
         'default': substitute_sentiment_vivk_cols,
     },
-    MultiClassifierDLModel : {
-        'default': substitute_multi_classifier_dl_cols ,
+    MultiClassifierDLModel: {
+        'default': substitute_multi_classifier_dl_cols,
     },
-    ClassifierDLModel : {
+    ClassifierDLModel: {
         'default': substitute_classifier_dl_cols,
     },
 
-    Chunker : {
+    Chunker: {
         'default': substitute_chunk_cols,
     },
-    NGramGenerator : {
+    NGramGenerator: {
         'default': substitute_ngram_cols,
     },
-    ChunkEmbeddings : {
+    ChunkEmbeddings: {
         'default': substitute_chunk_embed_cols,
     },
-    StopWordsCleaner : {
+    StopWordsCleaner: {
         'default': substitute_stopwords_cols,
     },
-    TextMatcherModel : {
-        'default': '',# TODO
+    TextMatcherModel: {
+        'default': '',  # TODO
     },
-    RegexMatcherModel : {
-        'default': '',# TODO
+    RegexMatcherModel: {
+        'default': '',  # TODO
     },
-    DateMatcher : {
-        'default':'',# TODO
+    DateMatcher: {
+        'default': '',  # TODO
     },
-    MultiDateMatcher : {
-        'default': '',# TODO
+    MultiDateMatcher: {
+        'default': '',  # TODO
     },
-    T5Transformer : {
+    T5Transformer: {
         'default': substitute_T5_cols,
     },
-    MarianTransformer : {
+    MarianTransformer: {
         'default': substitute_marian_cols,
     },
-    YakeModel : {
+    YakeModel: {
         'default': substitute_YAKE_cols,
     },
-    WordSegmenterModel : {
+    WordSegmenterModel: {
         'default': substitute_word_seg_cols,
     },
 
-
-
     # approaches
-    ViveknSentimentApproach    :{'default':substitute_sentiment_vivk_approach_cols , 'default_full'  : default_full_config,},
-    SentimentDLApproach        :{'default':substitute_sentiment_dl_approach_cols , 'default_full'  : default_full_config,},
-    ClassifierDLApproach       :{'default':substitute_classifier_dl_approach_cols , 'default_full'  : default_full_config,},
-    MultiClassifierDLApproach  :{'default':substitute_multi_classifier_dl_approach_cols , 'default_full'  : default_full_config,},
-    NerDLApproach              :{'default':substitute_ner_dl_approach_cols , 'default_full'  : default_full_config,},
-    PerceptronApproach         :{'default':substitute_pos_approach_cols , 'default_full'  : default_full_config,},
+    ViveknSentimentApproach: {'default': substitute_sentiment_vivk_approach_cols,
+                              'default_full': default_full_config, },
+    SentimentDLApproach: {'default': substitute_sentiment_dl_approach_cols, 'default_full': default_full_config, },
+    ClassifierDLApproach: {'default': substitute_classifier_dl_approach_cols, 'default_full': default_full_config, },
+    MultiClassifierDLApproach: {'default': substitute_multi_classifier_dl_approach_cols,
+                                'default_full': default_full_config, },
+    NerDLApproach: {'default': substitute_ner_dl_approach_cols, 'default_full': default_full_config, },
+    PerceptronApproach: {'default': substitute_pos_approach_cols, 'default_full': default_full_config, },
 
 }
-
-
-
-
-
-
-

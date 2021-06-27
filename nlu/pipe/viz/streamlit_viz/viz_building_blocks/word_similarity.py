@@ -74,6 +74,8 @@ class WordSimilarityStreamlitBlock():
             emb_components_usable = [e for e in Discoverer.get_components('embed',True, include_aliases=True) if 'chunk' not in e and 'sentence' not in e]
             loaded_embed_nlu_refs = []
             loaded_storage_refs = []
+            loaded_embed_nlu_refs = list(set(loaded_embed_nlu_refs))
+
             for c in e_coms :
                 if not  hasattr(c.info,'nlu_ref'): continue
                 r = c.info.nlu_ref
@@ -84,7 +86,8 @@ class WordSimilarityStreamlitBlock():
                 else :
                     loaded_embed_nlu_refs.append(StorageRefUtils.extract_storage_ref(c))
                 loaded_storage_refs.append(StorageRefUtils.extract_storage_ref(c))
-
+            for p in StreamlitVizTracker.loaded_word_embeding_pipes :
+                if p != pipe : loaded_embed_nlu_refs.append(p.nlu_ref)
             for l in loaded_embed_nlu_refs:
                 if l not in emb_components_usable : emb_components_usable.append(l)
             # embed_algo_selection = exp.multiselect("Click to pick additional Embedding Algorithm",options=emb_components_usable,default=loaded_embed_nlu_refs,key = key)
@@ -111,7 +114,8 @@ class WordSimilarityStreamlitBlock():
         embed_vector_info = {}
         cols_full = True
         col_index=0
-        for p in embed_pipes :
+        # for p in embed_pipes :
+        for p in StreamlitVizTracker.loaded_word_embeding_pipes :
             data1 = p.predict(text1,output_level='token').dropna()
             data2 = p.predict(text2,output_level='token').dropna()
             e_coms = StreamlitUtilsOS.find_all_embed_components(p)
@@ -189,7 +193,6 @@ class WordSimilarityStreamlitBlock():
         if display_embed_information:
             exp = st.beta_expander("Embedding vector information")
             exp.write(embed_vector_info)
-
         if show_infos :
             # VizUtilsStreamlitOS.display_infos()
             StreamlitVizTracker.display_model_info(pipe.nlu_ref, pipes = [pipe])
