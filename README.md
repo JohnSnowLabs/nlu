@@ -116,7 +116,7 @@ Working with text data can sometimes be quite a dirty Job. NLU helps you keep yo
 - Slang Cleaner 
 
 ## Where can I see NLUs entire offer? 
-Checkout the [NLU Namespace](https://nlu.johnsnowlabs.com/docs/en/namespace) for everything that NLU has to offer! 
+Checkout the [NLU Namespace](https://nlu.johnsnowlabs.com/docs/en/spellbook) for everything that NLU has to offer! 
 
 
 
