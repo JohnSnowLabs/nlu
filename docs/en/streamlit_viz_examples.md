@@ -18,6 +18,8 @@ This is the ultimate NLP research tool. You can visualize and compare the result
 and can see with your own eyes how context is encoded by transformer models like `BERT` or `XLNET`and many more !
 Besides that, you can also compare the results of the 200+ NER models John Snow Labs provides and see how peformances changes with varrying ebeddings, like Contextual, Static and Domain Specific Embeddings.
 
+<img src="https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/streamlit_docs_assets/gif/start.gif">
+
 ## Install
 [For detailed instructions refer to the NLU install documentation here](https://nlu.johnsnowlabs.com/docs/en/install)   
 You need `Open JDK 8` installed and the following python packages
@@ -86,6 +88,7 @@ Ontop of that, there are various visualization methods a NLUPipeline provides ea
 
 
 ### Overview of NLU + Streamlit buildingblocks
+
 
 |Method                                                         |               Description                 |
 |---------------------------------------------------------------|-------------------------------------------|
