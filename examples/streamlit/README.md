@@ -1,18 +1,9 @@
----
-layout: docs
-header: true
-title: Streamlit visualization Examples
-key: streamlit-viz-examples
-permalink: /docs/en/streamlit_viz_examples
-modify_date: "2019-05-16"
----
+# NLU & Streamlit visualizations
+<img width="65%" align="right" src="https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/streamlit_docs_assets/gif/start.gif">
 
-<div class="main-docs" markdown="1">
-
-
-This page contains examples and tutorials on how to visualize the 1000+ state-of-the-art NLP models provided by NLU in *just 1 line of code* in `streamlit`.
+This folder contains examples and tutorials on how to visualize the 1000+ state-of-the-art NLP models provided by NLU in *just 1 line of code* in `streamlit`.
 It includes simple `1-liners` you can sprinkle into your Streamlit app to for features like **Dependency Trees, Named Entities (NER), text classification results, semantic simmilarity,
-embedding visualizations via ELMO, BERT, ALBERT, XLNET and much more** .  Additionally, improvements for T5 and various resolvers have been added.
+embedding visualizations via ELMO, BERT, ALBERT, XLNET and much more** .  Additionally, improvements for T5, various resolvers have been added and models `Farsi`, `Hebrew`, `Korean`, and `Turkish`
 
 This is the ultimate NLP research tool. You can visualize and compare the results of hundreds of context aware deep learning embeddings and compare them with classical vanilla embeddings like Glove
 and can see with your own eyes how context is encoded by transformer models like `BERT` or `XLNET`and many more !
@@ -33,7 +24,7 @@ streamlit run https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/examples
 ```
 
 ## Quick Starter cheat sheet - All you need to know in 1 picture for NLU + Streamlit
-For NLU models to load, see [the NLU spellbook](https://nlu.johnsnowlabs.com/docs/en/spellbook) or the [John Snow Labs Modelshub](https://modelshub.johnsnowlabs.com/models)  or go [straight to the source](https://github.com/JohnSnowLabs/nlu/blob/master/nlu/spellbook.py).
+For NLU models to load, see [the NLU Namespace](https://nlu.johnsnowlabs.com/docs/en/namespace) or the [John Snow Labs Modelshub](https://modelshub.johnsnowlabs.com/models)  or go [straight to the source](https://github.com/JohnSnowLabs/nlu/blob/master/nlu/namespace.py).
 ![NLU Streamlit Cheatsheet](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/streamlit_docs_assets/img/NLU_Streamlit_Cheetsheet.png)
 
 
@@ -132,7 +123,7 @@ nlu.load('ner').viz_streamlit(['I love NLU and Streamlit!','I hate buggy softwar
 |-----------------------|--------------------------------------------------|----------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------|
 | `text`                  |  `Union [str, List[str], pd.DataFrame, pd.Series]` | `'NLU and Streamlit go together like peanutbutter and jelly'`                            | Default text for the `Classification`, `Named Entitiy Recognizer`, `Token Information` and `Dependency Tree` visualizations
 | `similarity_texts`      |  `Union[List[str],Tuple[str,str]]`                 | `('Donald Trump Likes to part', 'Angela Merkel likes to party')`                         | Default texts for the `Text similarity` visualization. Should contain `exactly 2 strings` which will be compared `token embedding wise`. For each embedding active, a `token wise similarity matrix` and a `similarity scalar`
-| `model_selection`       |  `List[str]`                                       | `[]`                                                                                         | List of nlu references to display in the model selector, see [the NLU spellbook](https://nlu.johnsnowlabs.com/docs/en/spellbook) or the [John Snow Labs Modelshub](https://modelshub.johnsnowlabs.com/models)  or go [straight to the source](https://github.com/JohnSnowLabs/nlu/blob/master/nlu/spellbook.py) for more info
+| `model_selection`       |  `List[str]`                                       | `[]`                                                                                         | List of nlu references to display in the model selector, see [the NLU Namespace](https://nlu.johnsnowlabs.com/docs/en/namespace) or the [John Snow Labs Modelshub](https://modelshub.johnsnowlabs.com/models)  or go [straight to the source](https://github.com/JohnSnowLabs/nlu/blob/master/nlu/namespace.py) for more info
 | `title`                 |  `str`                                             | `'NLU ❤️ Streamlit - Prototype your NLP startup in 0 lines of code🚀'`                      | Title of the Streamlit app
 | `sub_title`             |  `str`                                             | `'Play with over 1000+ scalable enterprise NLP models'`                                  | Sub title of the Streamlit app
 | `visualizers`           |  `List[str]`                                       | `( "dependency_tree", "ner",  "similarity", "token_information", 'classification')`      | Define which visualizations should be displayed. By default all visualizations are displayed.
@@ -140,7 +131,7 @@ nlu.load('ner').viz_streamlit(['I love NLU and Streamlit!','I hate buggy softwar
 | `show_model_select`   |  `bool`                                          | `True`                                                                                 | Show a model selection dropdowns that makes any of the 1000+ models avaiable in 1 click
 | `show_viz_selection`    |  `bool`                                            | `False`                                                                                  | Show a selector in the sidebar which lets you configure which visualizations are displayed.
 | `show_logo`             |  `bool`                                            | `True`                                                                                   | Show logo
-| `display_infos`         |  `bool`                                            | `False`                                                                                  | Display additonal information about ISO codes and the NLU spellbook structure.
+| `display_infos`         |  `bool`                                            | `False`                                                                                  | Display additonal information about ISO codes and the NLU namespace structure.
 | `set_wide_layout_CSS`     |  `bool`                                                             |  `True`                                                                                   | Whether to inject custom CSS or not.
 |     `key`                 |  `str`                                                              | `"NLU_streamlit"`    | Key for the Streamlit elements drawn
 | `model_select_position`   |  `str`                                                             |   `'side'`            | [Whether to output the positions of predictions or not, see `pipe.predict(positions=true`) for more info](https://nlu.johnsnowlabs.com/docs/en/predict_api#output-positions-parameter)  |
@@ -176,7 +167,7 @@ nlu.load('sentiment').viz_streamlit_classes(['I love NLU and Streamlit!','I love
 | `generate_code_sample`      |  `bool`                                                             |  `False`                                                                                 | Display Python code snippets above visualizations that can be used to re-create the visualization
 | `show_model_select`   |  `bool`                                          | `True`                                                                                 | Show a model selection dropdowns that makes any of the 1000+ models avaiable in 1 click
 | `show_logo`             |  `bool`                                            | `True`                                                                                   | Show logo
-| `display_infos`         |  `bool`                                            | `False`                                                                                  | Display additonal information about ISO codes and the NLU spellbook structure.
+| `display_infos`         |  `bool`                                            | `False`                                                                                  | Display additonal information about ISO codes and the NLU namespace structure.
 
 
 
@@ -203,7 +194,7 @@ nlu.load('ner').viz_streamlit_ner('Donald Trump from America and Angela Merkel f
 
 | Argument    | Type        |                                                                                      Default                                        |Description                  |
 |--------------------------- | -----------------------|-----------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------ |
-| `text`                     | `str`                  |     `'Donald Trump from America and Anegela Merkel from Germany do not share many views'`                 | Text to predict classes for.|
+| `text`                     | `str`        # NLU & Streamlit visualizations          |     `'Donald Trump from America and Anegela Merkel from Germany do not share many views'`                 | Text to predict classes for.|
 | `ner_tags`                 | `Optional[List[str]]`  |       `None`                                                                                               |Tags to display. By default all tags will be displayed|
 | `show_label_select`        |  `bool`                |`True`                                                                                                      | Whether to include the label selector|
 | `show_table`               | `bool`                 |   `True`                                                                                                   | Whether show to predicted pandas table or not|
@@ -217,7 +208,7 @@ nlu.load('ner').viz_streamlit_ner('Donald Trump from America and Angela Merkel f
 | `model_select_position`    |  `str`                                                             |   `'side'`            | [Whether to output the positions of predictions or not, see `pipe.predict(positions=true`) for more info](https://nlu.johnsnowlabs.com/docs/en/predict_api#output-positions-parameter)  |
 | `show_text_input`        |  `bool`                                                              | `True`                                                                                 | Show text input field to input text in
 | `show_logo`             |  `bool`                                            | `True`                                                                                   | Show logo
-| `display_infos`         |  `bool`                                            | `False`                                                                                  | Display additonal information about ISO codes and the NLU spellbook structure.
+| `display_infos`         |  `bool`                                            | `False`                                                                                  | Display additonal information about ISO codes and the NLU namespace structure.
 
 
 
@@ -246,9 +237,9 @@ nlu.load('dep.typed').viz_streamlit_dep_tree('POS tags define a grammatical labe
 | `show_model_select`        |  `bool`                                          | `True`                                                                                 | Show a model selection dropdowns that makes any of the 1000+ models avaiable in 1 click
 | `model_select_position`    |  `str`                                                             |   `'side'`            | [Whether to output the positions of predictions or not, see `pipe.predict(positions=true`) for more info](https://nlu.johnsnowlabs.com/docs/en/predict_api#output-positions-parameter)  |
 | `show_logo`             |  `bool`                                            | `True`                                                                                   | Show logo
-| `display_infos`         |  `bool`                                            | `False`                                                                                  | Display additonal information about ISO codes and the NLU spellbook structure.
+| `display_infos`         |  `bool`                                            | `False`                                                                                  | Display additonal information about ISO codes and the NLU namespace structure.
 
-
+<img width="65%" align="right" src="https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/streamlit_docs_assets/gif/start.gif">
 
 
 
@@ -279,7 +270,7 @@ nlu.load('stemm pos spell').viz_streamlit_token('I liek pentut buttr and jelly !
 | `show_model_select`        |  `bool`                                          | `True`                                                                                 | Show a model selection dropdowns that makes any of the 1000+ models avaiable in 1 click
 | `model_select_position`    |  `str`                                                             |   `'side'`            | [Whether to output the positions of predictions or not, see `pipe.predict(positions=true`) for more info](https://nlu.johnsnowlabs.com/docs/en/predict_api#output-positions-parameter)  |
 | `show_logo`             |  `bool`                                            | `True`                                                                                   | Show logo
-| `display_infos`         |  `bool`                                            | `False`                                                                                  | Display additonal information about ISO codes and the NLU spellbook structure.
+| `display_infos`         |  `bool`                                            | `False`                                                                                  | Display additonal information about ISO codes and the NLU namespace structure.
 
 
 
@@ -322,10 +313,7 @@ nlu.load('bert').viz_streamlit_word_similarity(['I love love loooove NLU! <3','I
 |`display_scalar_similarities`            | `bool`              |  `False`                        | Display scalar simmilarities in an additional field.
 |`display_similarity_summary`             | `bool`              |  `False`                        | Display summary of all similarities for all embeddings and metrics.
 | `show_logo`             |  `bool`                             | `True`                                                                                   | Show logo
-| `display_infos`         |  `bool`                             | `False`                                                                                  | Display additonal information about ISO codes and the NLU spellbook structure.
-
-
-
+| `display_infos`         |  `bool`                             | `False`                                                                                  | Display additonal information about ISO codes and the NLU namespace structure.
 
 
 
@@ -357,28 +345,25 @@ nlu.load('bert',verbose=True).viz_streamlit_word_embed_manifold(default_texts=TH
 
 | Argument    | Type        |                                                            Default         |Description |
 |----------------------------|------------|-----------------------------------------------------------|---------------------------------------------------------|
-|`default_texts`|                    `List[str]`  | ("Donald Trump likes to party!", "Angela Merkel likes to party!", 'Peter HATES TO PARTTY!!!! :(') | List of strings to apply classifiers, embeddings, and manifolds to. |  
-| `text`                                         | `Optional[str]`   |     `'Billy likes to swim'`                 | Text to predict classes for. |   
-|`sub_title`|                    `Optional[str]` | "Apply any of the 11 `Manifold` or `Matrix Decomposition` algorithms to reduce the dimensionality of `Word Embeddings` to `1-D`, `2-D` and `3-D` " | Sub title of the Streamlit app |   
+|`default_texts`|          `List[str]`  | ("Donald Trump likes to party!", "Angela Merkel likes to party!", 'Peter HATES TO PARTTY!!!! :(') | List of strings to apply classifiers, embeddings, and manifolds to. |  
+| `text`                    | `Optional[str]`   |     `'Billy likes to swim'`                 | Text to predict classes for. |   
+|`sub_title`|         ` Optional[str]` | "Apply any of the 11 `Manifold` or `Matrix Decomposition` algorithms to reduce the dimensionality of `Word Embeddings` to `1-D`, `2-D` and `3-D` " | Sub title of the Streamlit app |   
 |`default_algos_to_apply`|           `List[str]` | `["TSNE", "PCA"]` | A list Manifold and Matrix Decomposition Algorithms to apply. Can be either `'TSNE'`,`'ISOMAP'`,`'LLE'`,`'Spectral Embedding'`, `'MDS'`,`'PCA'`,`'SVD aka LSA'`,`'DictionaryLearning'`,`'FactorAnalysis'`,`'FastICA'` or `'KernelPCA'`, |   
-|`target_dimensions`|              `List[int]`   | `(1,2,3)` | Defines the target dimension embeddings will be reduced to |
-|`show_algo_select`|               `bool`        | `True`  | Show selector for Manifold and Matrix Decomposition Algorithms |   
-|`show_embed_select`|              `bool`        | `True` | Show selector for Embedding Selection |  
-|`show_color_select`|              `bool`        | `True` | Show selector for coloring plots  |
-|`MAX_DISPLAY_NUM`|                  `int`       |`100` | Cap maximum number of Tokens displayed  |
-|`display_embed_information`                     | `bool`              |  `True`                         | Show additional embedding information like `dimension`, `nlu_reference`, `spark_nlp_reference`, `sotrage_reference`, `modelhub link` and more.|  
-| `set_wide_layout_CSS`                          |  `bool`                                                             |  `True`                                                                                   | Whether to inject custom CSS or not.|  
-|`num_cols`                                      | `int`               |  `2`                            |  How many columns should for the layout in streamlit when rendering the similarity matrixes.|  
-|     `key`                                      |  `str`              | `"NLU_streamlit"`               | Key for the Streamlit elements drawn  |
-|`additional_classifiers_for_coloring`           |         `List[str]`|`['pos', 'sentiment.imdb']` | List of additional NLU references to load for generting hue colors  |
-| `show_model_select`                            |  `bool`                                          | `True`                                                                                 | Show a model selection dropdowns that makes any of the 1000+ models avaiable in 1 click  |
-| `model_select_position`                        |  `str`                                                             |   `'side'`            | [Whether to output the positions of predictions or not, see `pipe.predict(positions=true`) for more info](https://nlu.johnsnowlabs.com/docs/en/predict_api#output-positions-parameter)  |   
-| `show_logo`                                    |  `bool`                                            | `True`                                                                                   | Show logo  |
-| `display_infos`                                |  `bool`                                            | `False`                                                                                  | Display additonal information about ISO codes and the NLU namespace structure.|  
-| `n_jobs`                                       |          `Optional[int]` | `3`|   `False` | How many cores to use for paralellzing when using Sklearn Dimension Reduction algorithms.  |  
-
-
-
+|`target_dimensions`|          `List[int]` | `(1,2,3)` | Defines the target dimension embeddings will be reduced to |   
+|`show_algo_select`|          `bool` | `True`  | Show selector for Manifold and Matrix Decomposition Algorithms |   
+|`show_embed_select`|          `bool` | `True` | Show selector for Embedding Selection |  
+|`show_color_select`|          `bool` | `True` | Show selector for coloring plots  |
+|`MAX_DISPLAY_NUM`|         `int`|`100` | Cap maximum number of Tokens displayed  |
+|`display_embed_information`              | `bool`              |  `True`                         | Show additional embedding information like `dimension`, `nlu_reference`, `spark_nlp_reference`, `sotrage_reference`, `modelhub link` and more.|  
+| `set_wide_layout_CSS`      |  `bool`                                                             |  `True`                                                                                   | Whether to inject custom CSS or not.|  
+|`num_cols`                               | `int`               |  `2`                            |  How many columns should for the layout in streamlit when rendering the similarity matrixes.|  
+|     `key`                               |  `str`              | `"NLU_streamlit"`               | Key for the Streamlit elements drawn  |
+|`additional_classifiers_for_coloring`|         `List[str]`|`['pos', 'sentiment.imdb']` | List of additional NLU references to load for generting hue colors  |
+| `show_model_select`        |  `bool`                                          | `True`                                                                                 | Show a model selection dropdowns that makes any of the 1000+ models avaiable in 1 click  |
+| `model_select_position`    |  `str`                                                             |   `'side'`            | [Whether to output the positions of predictions or not, see `pipe.predict(positions=true`) for more info](https://nlu.johnsnowlabs.com/docs/en/predict_api#output-positions-parameter)  |   
+| `show_logo`             |  `bool`                                            | `True`                                                                                   | Show logo  |
+| `display_infos`         |  `bool`                                            | `False`                                                                                  | Display additonal information about ISO codes and the NLU namespace structure.|  
+| `n_jobs`|          `Optional[int]` | `3`|   `False` | How many cores to use for paralellzing when using Sklearn Dimension Reduction algorithms.  |  
 
 ### Larger Example showcasing more dimension reduction techniques on a larger corpus :
 
@@ -399,10 +384,4 @@ nlu.load('bert',verbose=True).viz_streamlit_word_embed_manifold(default_texts=TH
 - [FactorAnalysis](https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.FactorAnalysis.html#sklearn.decomposition.FactorAnalysis)
 - [FastICA](https://scikit-learn.org/stable/modules/generated/fastica-function.html#sklearn.decomposition.fastica)
 - [KernelPCA](https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.KernelPCA.html#sklearn.decomposition.KernelPCA)
-
-
-
-
-
-</div>
 

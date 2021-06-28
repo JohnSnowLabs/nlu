@@ -696,7 +696,7 @@ wrapped inside of a NLU Pipeline.
 | xx  | xx.embed_sentence.labse                         | labse                              |
 | xx  | xx.sentence_detector                            | sentence_detector_dl               |
 | xx  | xx.marian                                       | opus_mt_en_fr                      |
-| xx  | xx.embed.distilbert.                            | distilbert_base_multilingual_cased |
+| xx  | xx.embed.distilbert                             | distilbert_base_multilingual_cased |
 | xx  | xx.embed.xlm                                    | xlm_roberta_base                   |
 | xx  | xx.embed.xlm.base                               | xlm_roberta_base                   |
 | xx  | xx.embed.xlm.twitter                            | twitter_xlm_roberta_base           |
@@ -2168,7 +2168,7 @@ wrapped inside of a NLU Pipeline.
 | es  | es.ner.sm                        | entity_recognizer_sm                  |
 | es  | es.ner.md                        | entity_recognizer_md                  |
 | es  | es.ner.lg                        | entity_recognizer_lg                  |
-| xx  | lang.                            | detect_language_375                   |
+| xx  | lang                           | detect_language_375                   |
 | xx  | lang.7                           | detect_language_7                     |
 | xx  | lang.20                          | detect_language_20                    |
 | xx  | xx.classify.lang                 | detect_language_20                    |

@@ -10,6 +10,2617 @@ modify_date: "2020-06-12"
 
 <div class="main-docs" markdown="1">
 
+# NLU 3.1 Release Notes
+
+# 2600+ New Models for 200+ Languages and 10+ Dimension Reduction Algorithms for Streamlit Word-Embedding visualizations in 3-D
+
+We are extremely excited to announce the release of NLU 3.1 !
+This is our biggest release so far and it comes with over `2600+ new models in 200+` languages, including `DistilBERT`, `RoBERTa`, and `XLM-RoBERTa` and Huggingface based Embeddings from the [incredible Spark-NLP 3.1.0 release](https://github.com/JohnSnowLabs/spark-nlp/releases/tag/3.1.0),
+new `Streamlit Visualizations` for visualizing Word Embeddings in `3-D`, `2-D`, and `1-D`,
+New Healthcare pipelines for `healthcare code mappings`
+and finally `confidence extraction` for open source NER models.
+Additionally, the NLU Namespace has been renamed to the NLU Spellbook, to reflect the magicalness of each 1-liners represented by them!
+
+
+## Streamlit Word Embedding visualization via Manifold and Matrix Decomposition algorithms
+
+### <kbd>function</kbd> `pipe.viz_streamlit_word_embed_manifold`
+
+Visualize Word Embeddings in `1-D`, `2-D`, or `3-D` by `Reducing Dimensionality` via 11 Supported methods from  [Manifold Algorithms](https://scikit-learn.org/stable/modules/classes.html#module-sklearn.manifold)
+and [Matrix Decomposition Algorithms](https://scikit-learn.org/stable/modules/classes.html#module-sklearn.decomposition).
+Additionally, you can color the lower dimensional points with a label that has been previously assigned to the text by specifying a list of nlu references in the `additional_classifiers_for_coloring` parameter.
+
+- Reduces Dimensionality of high dimensional Word Embeddings to `1-D`, `2-D`, or `3-D` and plot the resulting data in an interactive `Plotly` plot
+- Applicable with [any of the 100+ Word Embedding models](https://nlp.johnsnowlabs.com/models?task=Embeddings)
+- Color points by classifying with any of the 100+ [Parts of Speech Classifiers](https://nlp.johnsnowlabs.com/models?task=Part+of+Speech+Tagging) or [Document Classifiers](https://nlp.johnsnowlabs.com/models?task=Text+Classification)
+- Gemerates `NUM-DIMENSIONS` * `NUM-EMBEDDINGS` * `NUM-DIMENSION-REDUCTION-ALGOS` plots
+
+
+
+```python
+nlu.load('bert',verbose=True).viz_streamlit_word_embed_manifold(default_texts=THE_MATRIX_ARCHITECT_SCRIPT.split('\n'),default_algos_to_apply=['TSNE'],MAX_DISPLAY_NUM=5)
+```
+
+<img  src="https://github.com/JohnSnowLabs/nlu/blob/3.1.0rc1/docs/assets/streamlit_docs_assets/gif/word_embed_dimension_reduction/manifold_intro.gif?raw=true">
+
+
+
+
+### <kbd>function parameters</kbd> `pipe.viz_streamlit_word_embed_manifold`
+| Argument    | Type        |                                                            Default         |Description |
+|--------------------------- | ---------- |-----------------------------------------------------------| ------------------------------------------------------- |
+`default_texts`|          `List[str]`  | ("Donald Trump likes to party!", "Angela Merkel likes to party!", 'Peter HATES TO PARTTY!!!! :(') | List of strings to apply classifiers, embeddings, and manifolds to.
+| `text`                    | `Optional[str]`   |     `'Billy likes to swim'`                 | Text to predict classes for. | 
+`sub_title`|         ` Optional[str]` | "Apply any of the 11 `Manifold` or `Matrix Decomposition` algorithms to reduce the dimensionality of `Word Embeddings` to `1-D`, `2-D` and `3-D` " | Sub title of the Streamlit app
+`default_algos_to_apply`|           `List[str]` | `["TSNE", "PCA"]` | A list Manifold and Matrix Decomposition Algorithms to apply. Can be either `'TSNE'`,`'ISOMAP'`,`'LLE'`,`'Spectral Embedding'`, `'MDS'`,`'PCA'`,`'SVD aka LSA'`,`'DictionaryLearning'`,`'FactorAnalysis'`,`'FastICA'` or `'KernelPCA'`,
+`target_dimensions`|          `List[int]` | `(1,2,3)` | Defines the target dimension embeddings will be reduced to
+`show_algo_select`|          `bool` | `True`  | Show selector for Manifold and Matrix Decomposition Algorithms
+`show_embed_select`|          `bool` | `True` | Show selector for Embedding Selection
+`show_color_select`|          `bool` | `True` | Show selector for coloring plots
+`MAX_DISPLAY_NUM`|         `int`|`100` | Cap maximum number of Tokens displayed
+|`display_embed_information`              | `bool`              |  `True`                         | Show additional embedding information like `dimension`, `nlu_reference`, `spark_nlp_reference`, `sotrage_reference`, `modelhub link` and more.
+| `set_wide_layout_CSS`      |  `bool`                                                             |  `True`                                                                                   | Whether to inject custom CSS or not.
+|`num_cols`                               | `int`               |  `2`                            |  How many columns should for the layout in streamlit when rendering the similarity matrixes.
+|     `key`                               |  `str`              | `"NLU_streamlit"`               | Key for the Streamlit elements drawn
+`additional_classifiers_for_coloring`|         `List[str]`|`['pos', 'sentiment.imdb']` | List of additional NLU references to load for generting hue colors
+| `show_model_select`        |  `bool`                                          | `True`                                                                                 | Show a model selection dropdowns that makes any of the 1000+ models avaiable in 1 click
+| `model_select_position`    |  `str`                                                             |   `'side'`            | [Whether to output the positions of predictions or not, see `pipe.predict(positions=true`) for more info](https://nlu.johnsnowlabs.com/docs/en/predict_api#output-positions-parameter)  |
+| `show_logo`             |  `bool`                                            | `True`                                                                                   | Show logo
+| `display_infos`         |  `bool`                                            | `False`                                                                                  | Display additonal information about ISO codes and the NLU namespace structure.
+| `n_jobs`|          `Optional[int]` | `3`|   `False` | How many cores to use for paralellzing when using Sklearn Dimension Reduction algorithms.  
+
+### Larger Example showcasing more dimension reduction techniques on a larger corpus :
+
+<img  src="https://github.com/JohnSnowLabs/nlu/blob/3.1.0rc1/docs/assets/streamlit_docs_assets/gif/word_embed_dimension_reduction/big_example_word_embedding_dimension_reduction.gif?raw=true">
+
+
+### [Supported Manifold Algorithms ](https://scikit-learn.org/stable/modules/classes.html#module-sklearn.manifold)
+- [TSNE](https://scikit-learn.org/stable/modules/generated/sklearn.manifold.TSNE.html#sklearn.manifold.TSNE)
+- [ISOMAP](https://scikit-learn.org/stable/modules/generated/sklearn.manifold.Isomap.html#sklearn.manifold.Isomap)
+- [LLE](https://scikit-learn.org/stable/modules/generated/sklearn.manifold.LocallyLinearEmbedding.html#sklearn.manifold.LocallyLinearEmbedding)
+- [Spectral Embedding](https://scikit-learn.org/stable/modules/generated/sklearn.manifold.SpectralEmbedding.html#sklearn.manifold.SpectralEmbedding)
+- [MDS](https://scikit-learn.org/stable/modules/generated/sklearn.manifold.MDS.html#sklearn.manifold.MDS)
+
+### [Supported Matrix Decomposition Algorithms ](https://scikit-learn.org/stable/modules/classes.html#module-sklearn.decomposition)
+- [PCA](https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.PCA.html#sklearn.decomposition.PCA)
+- [Truncated SVD aka LSA](https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.TruncatedSVD.html#sklearn.decomposition.TruncatedSVD)
+- [DictionaryLearning](https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.DictionaryLearning.html#sklearn.decomposition.DictionaryLearning)
+- [FactorAnalysis](https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.FactorAnalysis.html#sklearn.decomposition.FactorAnalysis)
+- [FastICA](https://scikit-learn.org/stable/modules/generated/fastica-function.html#sklearn.decomposition.fastica)
+- [KernelPCA](https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.KernelPCA.html#sklearn.decomposition.KernelPCA)
+
+
+
+
+## New Healthcare Pipelines Pipelines
+Five new healthcare code mapping pipelines:
+- `nlu.load(en.resolve.icd10cm.umls)`: This pretrained pipeline maps ICD10CM codes to UMLS codes without using any text data. You’ll just feed white space-delimited ICD10CM codes and it will return the corresponding UMLS codes as a list. If there is no mapping, the original code is returned with no mapping.
+
+`{'icd10cm': ['M89.50', 'R82.2', 'R09.01'],'umls': ['C4721411', 'C0159076', 'C0004044']}`
+
+- `nlu.load(en.resolve.mesh.umls)`: This pretrained pipeline maps MeSH codes to UMLS codes without using any text data. You’ll just feed white space-delimited MeSH codes and it will return the corresponding UMLS codes as a list. If there is no mapping, the original code is returned with no mapping.
+
+`{'mesh': ['C028491', 'D019326', 'C579867'],'umls': ['C0970275', 'C0886627', 'C3696376']}`
+
+- `nlu.load(en.resolve.rxnorm.umls)`: This pretrained pipeline maps RxNorm codes to UMLS codes without using any text data. You’ll just feed white space-delimited RxNorm codes and it will return the corresponding UMLS codes as a list. If there is no mapping, the original code is returned with no mapping.
+
+`{'rxnorm': ['1161611', '315677', '343663'],'umls': ['C3215948', 'C0984912', 'C1146501']}`
+
+- `nlu.load(en.resolve.rxnorm.mesh)`: This pretrained pipeline maps RxNorm codes to MeSH codes without using any text data. You’ll just feed white space-delimited RxNorm codes and it will return the corresponding MeSH codes as a list. If there is no mapping, the original code is returned with no mapping.
+
+`{'rxnorm': ['1191', '6809', '47613'],'mesh': ['D001241', 'D008687', 'D019355']}`
+
+- `nlu.load(en.resolve.snomed.umls)`: This pretrained pipeline maps SNOMED codes to UMLS codes without using any text data. You’ll just feed white space-delimited SNOMED codes and it will return the corresponding UMLS codes as a list. If there is no mapping, the original code is returned with no mapping.
+  `{'snomed': ['733187009', '449433008', '51264003'],'umls': ['C4546029', 'C3164619', 'C0271267']}`
+
+## New Healthcare Pipelines
+
+
+|NLU Reference| Spark NLP Reference  | 
+|---------------|---------------------|
+|[en.resolve.icd10cm.umls]((https://nlp.johnsnowlabs.com/2021/05/04/icd10cm_umls_mapping_en.html)) | [icd10cm_umls_mapping](https://nlp.johnsnowlabs.com/2021/05/04/icd10cm_umls_mapping_en.html)  |
+|[en.resolve.mesh.umls   ]((https://nlp.johnsnowlabs.com/2021/05/04/mesh_umls_mapping_en.html)) | [mesh_umls_mapping](https://nlp.johnsnowlabs.com/2021/05/04/mesh_umls_mapping_en.html)  |
+|[en.resolve.rxnorm.umls ]((https://nlp.johnsnowlabs.com/2021/05/04/rxnorm_umls_mapping_en.html)) | [rxnorm_umls_mapping](https://nlp.johnsnowlabs.com/2021/05/04/rxnorm_umls_mapping_en.html)  |
+|[en.resolve.rxnorm.mesh ]((https://nlp.johnsnowlabs.com/2021/05/04/rxnorm_mesh_mapping_en.html)) | [rxnorm_mesh_mapping](https://nlp.johnsnowlabs.com/2021/05/04/rxnorm_mesh_mapping_en.html)  |
+|[en.resolve.snomed.umls ]((https://nlp.johnsnowlabs.com/2021/05/04/snomed_umls_mapping_en.html)) | [snomed_umls_mapping](https://nlp.johnsnowlabs.com/2021/05/04/snomed_umls_mapping_en.html)  |
+|[en.explain_doc.carp    ]((https://nlp.johnsnowlabs.com/2021/04/01/explain_clinical_doc_carp_en.html)) | [explain_clinical_doc_carp](https://nlp.johnsnowlabs.com/2021/04/01/explain_clinical_doc_carp_en.html)  |
+|[en.explain_doc.era     ]((https://nlp.johnsnowlabs.com/2021/04/01/explain_clinical_doc_era_en.html)) | [explain_clinical_doc_era](https://nlp.johnsnowlabs.com/2021/04/01/explain_clinical_doc_era_en.html)  |
+
+
+## New Open Source Models and Pipelines
+
+
+| nlu.load() Refrence                                          | Spark NLP Refrence                                           |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
+| [en.embed.distilbert](https://nlp.johnsnowlabs.com//2021/05/20/distilbert_base_cased_en.html) | [distilbert_base_cased](https://nlp.johnsnowlabs.com//2021/05/20/distilbert_base_cased_en.html) |
+| [en.embed.distilbert.base](https://nlp.johnsnowlabs.com//2021/05/20/distilbert_base_cased_en.html) | [distilbert_base_cased](https://nlp.johnsnowlabs.com//2021/05/20/distilbert_base_cased_en.html) |
+| [en.embed.distilbert.base.uncased](https://nlp.johnsnowlabs.com//2021/05/20/distilbert_base_uncased_en.html) | [distilbert_base_uncased](https://nlp.johnsnowlabs.com//2021/05/20/distilbert_base_uncased_en.html) |
+| [en.embed.distilroberta](https://nlp.johnsnowlabs.com//2021/05/20/distilroberta_base_en.html) | [distilroberta_base](https://nlp.johnsnowlabs.com//2021/05/20/distilroberta_base_en.html) |
+| [en.embed.roberta](https://nlp.johnsnowlabs.com//2021/05/20/roberta_base_en.html) | [roberta_base](https://nlp.johnsnowlabs.com//2021/05/20/roberta_base_en.html) |
+| [en.embed.roberta.base](https://nlp.johnsnowlabs.com//2021/05/20/roberta_base_en.html) | [roberta_base](https://nlp.johnsnowlabs.com//2021/05/20/roberta_base_en.html) |
+| [en.embed.roberta.large](https://nlp.johnsnowlabs.com//2021/05/20/roberta_large_en.html) | [roberta_large](https://nlp.johnsnowlabs.com//2021/05/20/roberta_large_en.html) |
+| [xx.marian](https://nlp.johnsnowlabs.com//2020/12/28/opus_mt_en_fr_xx.html) | [opus_mt_en_fr](https://nlp.johnsnowlabs.com//2020/12/28/opus_mt_en_fr_xx.html) |
+| [xx.embed.distilbert.](https://nlp.johnsnowlabs.com//2021/05/20/distilbert_base_multilingual_cased_xx.html) | [distilbert_base_multilingual_cased](https://nlp.johnsnowlabs.com//2021/05/20/distilbert_base_multilingual_cased_xx.html) |
+| [xx.embed.xlm](https://nlp.johnsnowlabs.com//2021/05/25/xlm_roberta_base_xx.html) | [xlm_roberta_base](https://nlp.johnsnowlabs.com//2021/05/25/xlm_roberta_base_xx.html) |
+| [xx.embed.xlm.base](https://nlp.johnsnowlabs.com//2021/05/25/xlm_roberta_base_xx.html) | [xlm_roberta_base](https://nlp.johnsnowlabs.com//2021/05/25/xlm_roberta_base_xx.html) |
+| [xx.embed.xlm.twitter](https://nlp.johnsnowlabs.com//2021/05/25/twitter_xlm_roberta_base_xx.html) | [twitter_xlm_roberta_base](https://nlp.johnsnowlabs.com//2021/05/25/twitter_xlm_roberta_base_xx.html) |
+| [zh.embed.bert](https://nlp.johnsnowlabs.com//2021/05/20/bert_base_chinese_zh.html) | [bert_base_chinese](https://nlp.johnsnowlabs.com//2021/05/20/bert_base_chinese_zh.html) |
+| [zh.embed.bert.wwm](https://nlp.johnsnowlabs.com//2021/05/20/chinese_bert_wwm_zh.html) | [chinese_bert_wwm](https://nlp.johnsnowlabs.com//2021/05/20/chinese_bert_wwm_zh.html) |
+| [de.embed.bert](https://nlp.johnsnowlabs.com//2021/05/20/bert_base_german_cased_de.html) | [bert_base_german_cased](https://nlp.johnsnowlabs.com//2021/05/20/bert_base_german_cased_de.html) |
+| [de.embed.bert.uncased](https://nlp.johnsnowlabs.com/2021/05/20/bert_base_german_uncased_de.html) |  [bert_base_german_uncased](https://nlp.johnsnowlabs.com/2021/05/20/bert_base_german_uncased_de.html) |
+| [nl.embed.bert](https://nlp.johnsnowlabs.com//2021/05/20/bert_base_dutch_cased_nl.html) | [bert_base_dutch_cased](https://nlp.johnsnowlabs.com//2021/05/20/bert_base_dutch_cased_nl.html) |
+| [it.embed.bert](https://nlp.johnsnowlabs.com//2021/05/20/bert_base_italian_cased_it.html) | [bert_base_italian_cased](https://nlp.johnsnowlabs.com//2021/05/20/bert_base_italian_cased_it.html) |
+| [tr.embed.bert](https://nlp.johnsnowlabs.com//2021/05/20/bert_base_turkish_cased_tr.html) | [bert_base_turkish_cased](https://nlp.johnsnowlabs.com//2021/05/20/bert_base_turkish_cased_tr.html) |
+| [tr.embed.bert.uncased](https://nlp.johnsnowlabs.com/2021/05/20/bert_base_turkish_uncased_tr.html) |   [bert_base_turkish_uncased](https://nlp.johnsnowlabs.com/2021/05/20/bert_base_turkish_uncased_tr.html) |
+| [xx.fr.marian.translate_to.bcl](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_bcl_fr_xx.html) | [opus_mt_bcl_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_bcl_fr_xx.html) |
+| [xx.tr.marian.translate_to.ar](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ar_tr_xx.html) | [opus_mt_ar_tr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ar_tr_xx.html) |
+| [xx.sv.marian.translate_to.af](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_af_sv_xx.html) | [opus_mt_af_sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_af_sv_xx.html) |
+| [xx.de.marian.translate_to.ar](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ar_de_xx.html) | [opus_mt_ar_de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ar_de_xx.html) |
+| [xx.fr.marian.translate_to.bi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_bi_fr_xx.html) | [opus_mt_bi_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_bi_fr_xx.html) |
+| [xx.es.marian.translate_to.bi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_bi_es_xx.html) | [opus_mt_bi_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_bi_es_xx.html) |
+| [xx.fi.marian.translate_to.af](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_af_fi_xx.html) | [opus_mt_af_fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_af_fi_xx.html) |
+| [xx.fi.marian.translate_to.crs](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_crs_fi_xx.html) | [opus_mt_crs_fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_crs_fi_xx.html) |
+| [xx.fi.marian.translate_to.bem](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_bem_fi_xx.html) | [opus_mt_bem_fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_bem_fi_xx.html) |
+| [xx.sv.marian.translate_to.bem](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_bem_sv_xx.html) | [opus_mt_bem_sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_bem_sv_xx.html) |
+| [xx.it.marian.translate_to.ca](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ca_it_xx.html) | [opus_mt_ca_it](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ca_it_xx.html) |
+| [xx.fr.marian.translate_to.ca](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ca_fr_xx.html) | [opus_mt_ca_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ca_fr_xx.html) |
+| [xx.es.marian.translate_to.bcl](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_bcl_es_xx.html) | [opus_mt_bcl_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_bcl_es_xx.html) |
+| [xx.uk.marian.translate_to.ca](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ca_uk_xx.html) | [opus_mt_ca_uk](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ca_uk_xx.html) |
+| [xx.fr.marian.translate_to.bem](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_bem_fr_xx.html) | [opus_mt_bem_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_bem_fr_xx.html) |
+| [xx.de.marian.translate_to.af](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_af_de_xx.html) | [opus_mt_af_de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_af_de_xx.html) |
+| [xx.nl.marian.translate_to.af](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_af_nl_xx.html) | [opus_mt_af_nl](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_af_nl_xx.html) |
+| [xx.fr.marian.translate_to.ase](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ase_fr_xx.html) | [opus_mt_ase_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ase_fr_xx.html) |
+| [xx.es.marian.translate_to.az](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_az_es_xx.html) | [opus_mt_az_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_az_es_xx.html) |
+| [xx.es.marian.translate_to.chk](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_chk_es_xx.html) | [opus_mt_chk_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_chk_es_xx.html) |
+| [xx.sv.marian.translate_to.ceb](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ceb_sv_xx.html) | [opus_mt_ceb_sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ceb_sv_xx.html) |
+| [xx.es.marian.translate_to.ceb](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ceb_es_xx.html) | [opus_mt_ceb_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ceb_es_xx.html) |
+| [xx.es.marian.translate_to.aed](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_aed_es_xx.html) | [opus_mt_aed_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_aed_es_xx.html) |
+| [xx.pl.marian.translate_to.ar](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ar_pl_xx.html) | [opus_mt_ar_pl](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ar_pl_xx.html) |
+| [xx.es.marian.translate_to.bem](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_bem_es_xx.html) | [opus_mt_bem_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_bem_es_xx.html) |
+| [xx.eo.marian.translate_to.af](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_af_eo_xx.html) | [opus_mt_af_eo](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_af_eo_xx.html) |
+| [xx.fr.marian.translate_to.cs](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_cs_fr_xx.html) | [opus_mt_cs_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_cs_fr_xx.html) |
+| [xx.fi.marian.translate_to.bcl](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_bcl_fi_xx.html) | [opus_mt_bcl_fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_bcl_fi_xx.html) |
+| [xx.es.marian.translate_to.crs](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_crs_es_xx.html) | [opus_mt_crs_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_crs_es_xx.html) |
+| [xx.sv.marian.translate_to.bi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_bi_sv_xx.html) | [opus_mt_bi_sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_bi_sv_xx.html) |
+| [xx.de.marian.translate_to.bg](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_bg_de_xx.html) | [opus_mt_bg_de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_bg_de_xx.html) |
+| [xx.ru.marian.translate_to.ar](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ar_ru_xx.html) | [opus_mt_ar_ru](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ar_ru_xx.html) |
+| [xx.es.marian.translate_to.bg](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_bg_es_xx.html) | [opus_mt_bg_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_bg_es_xx.html) |
+| [xx.uk.marian.translate_to.cs](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_cs_uk_xx.html) | [opus_mt_cs_uk](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_cs_uk_xx.html) |
+| [xx.sv.marian.translate_to.bzs](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_bzs_sv_xx.html) | [opus_mt_bzs_sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_bzs_sv_xx.html) |
+| [xx.es.marian.translate_to.be](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_be_es_xx.html) | [opus_mt_be_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_be_es_xx.html) |
+| [xx.es.marian.translate_to.bzs](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_bzs_es_xx.html) | [opus_mt_bzs_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_bzs_es_xx.html) |
+| [xx.fr.marian.translate_to.af](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_af_fr_xx.html) | [opus_mt_af_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_af_fr_xx.html) |
+| [xx.pt.marian.translate_to.ca](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ca_pt_xx.html) | [opus_mt_ca_pt](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ca_pt_xx.html) |
+| [xx.fr.marian.translate_to.chk](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_chk_fr_xx.html) | [opus_mt_chk_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_chk_fr_xx.html) |
+| [xx.de.marian.translate_to.ase](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ase_de_xx.html) | [opus_mt_ase_de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ase_de_xx.html) |
+| [xx.it.marian.translate_to.ar](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ar_it_xx.html) | [opus_mt_ar_it](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ar_it_xx.html) |
+| [xx.fi.marian.translate_to.ceb](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ceb_fi_xx.html) | [opus_mt_ceb_fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ceb_fi_xx.html) |
+| [xx.cpp.marian.translate_to.cpp](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_cpp_cpp_xx.html) | [opus_mt_cpp_cpp](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_cpp_cpp_xx.html) |
+| [xx.fr.marian.translate_to.ber](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ber_fr_xx.html) | [opus_mt_ber_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ber_fr_xx.html) |
+| [xx.ru.marian.translate_to.bg](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_bg_ru_xx.html) | [opus_mt_bg_ru](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_bg_ru_xx.html) |
+| [xx.es.marian.translate_to.ase](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ase_es_xx.html) | [opus_mt_ase_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ase_es_xx.html) |
+| [xx.es.marian.translate_to.af](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_af_es_xx.html) | [opus_mt_af_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_af_es_xx.html) |
+| [xx.it.marian.translate_to.bg](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_bg_it_xx.html) | [opus_mt_bg_it](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_bg_it_xx.html) |
+| [xx.sv.marian.translate_to.am](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_am_sv_xx.html) | [opus_mt_am_sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_am_sv_xx.html) |
+| [xx.eo.marian.translate_to.ar](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ar_eo_xx.html) | [opus_mt_ar_eo](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ar_eo_xx.html) |
+| [xx.fr.marian.translate_to.ceb](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ceb_fr_xx.html) | [opus_mt_ceb_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ceb_fr_xx.html) |
+| [xx.es.marian.translate_to.ca](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ca_es_xx.html) | [opus_mt_ca_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ca_es_xx.html) |
+| [xx.fi.marian.translate_to.bzs](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_bzs_fi_xx.html) | [opus_mt_bzs_fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_bzs_fi_xx.html) |
+| [xx.de.marian.translate_to.crs](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_crs_de_xx.html) | [opus_mt_crs_de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_crs_de_xx.html) |
+| [xx.fi.marian.translate_to.cs](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_cs_fi_xx.html) | [opus_mt_cs_fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_cs_fi_xx.html) |
+| [xx.afa.marian.translate_to.afa](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_afa_afa_xx.html) | [opus_mt_afa_afa](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_afa_afa_xx.html) |
+| [xx.sv.marian.translate_to.bg](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_bg_sv_xx.html) | [opus_mt_bg_sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_bg_sv_xx.html) |
+| [xx.tr.marian.translate_to.bg](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_bg_tr_xx.html) | [opus_mt_bg_tr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_bg_tr_xx.html) |
+| [xx.fr.marian.translate_to.crs](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_crs_fr_xx.html) | [opus_mt_crs_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_crs_fr_xx.html) |
+| [xx.sv.marian.translate_to.ase](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ase_sv_xx.html) | [opus_mt_ase_sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ase_sv_xx.html) |
+| [xx.de.marian.translate_to.cs](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_cs_de_xx.html) | [opus_mt_cs_de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_cs_de_xx.html) |
+| [xx.eo.marian.translate_to.cs](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_cs_eo_xx.html) | [opus_mt_cs_eo](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_cs_eo_xx.html) |
+| [xx.sv.marian.translate_to.chk](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_chk_sv_xx.html) | [opus_mt_chk_sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_chk_sv_xx.html) |
+| [xx.sv.marian.translate_to.bcl](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_bcl_sv_xx.html) | [opus_mt_bcl_sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_bcl_sv_xx.html) |
+| [xx.fr.marian.translate_to.ar](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ar_fr_xx.html) | [opus_mt_ar_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ar_fr_xx.html) |
+| [xx.ru.marian.translate_to.af](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_af_ru_xx.html) | [opus_mt_af_ru](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_af_ru_xx.html) |
+| [xx.he.marian.translate_to.ar](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ar_he_xx.html) | [opus_mt_ar_he](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ar_he_xx.html) |
+| [xx.fi.marian.translate_to.bg](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_bg_fi_xx.html) | [opus_mt_bg_fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_bg_fi_xx.html) |
+| [xx.es.marian.translate_to.ber](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ber_es_xx.html) | [opus_mt_ber_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ber_es_xx.html) |
+| [xx.es.marian.translate_to.ar](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ar_es_xx.html) | [opus_mt_ar_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ar_es_xx.html) |
+| [xx.uk.marian.translate_to.bg](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_bg_uk_xx.html) | [opus_mt_bg_uk](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_bg_uk_xx.html) |
+| [xx.fr.marian.translate_to.bzs](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_bzs_fr_xx.html) | [opus_mt_bzs_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_bzs_fr_xx.html) |
+| [xx.el.marian.translate_to.ar](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ar_el_xx.html) | [opus_mt_ar_el](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ar_el_xx.html) |
+| [xx.nl.marian.translate_to.ca](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ca_nl_xx.html) | [opus_mt_ca_nl](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ca_nl_xx.html) |
+| [xx.de.marian.translate_to.bcl](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_bcl_de_xx.html) | [opus_mt_bcl_de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_bcl_de_xx.html) |
+| [xx.eo.marian.translate_to.bg](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_bg_eo_xx.html) | [opus_mt_bg_eo](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_bg_eo_xx.html) |
+| [xx.de.marian.translate_to.efi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_efi_de_xx.html) | [opus_mt_efi_de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_efi_de_xx.html) |
+| [xx.bzs.marian.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_bzs_xx.html) | [opus_mt_de_bzs](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_bzs_xx.html) |
+| [xx.fj.marian.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_fj_xx.html) | [opus_mt_de_fj](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_fj_xx.html) |
+| [xx.fi.marian.translate_to.da](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_da_fi_xx.html) | [opus_mt_da_fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_da_fi_xx.html) |
+| [xx.no.marian.translate_to.da](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_da_no_xx.html) | [opus_mt_da_no](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_da_no_xx.html) |
+| [xx.cs.marian.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_cs_xx.html) | [opus_mt_de_cs](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_cs_xx.html) |
+| [xx.efi.marian.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_efi_xx.html) | [opus_mt_de_efi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_efi_xx.html) |
+| [xx.gil.marian.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_gil_xx.html) | [opus_mt_de_gil](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_gil_xx.html) |
+| [xx.bcl.marian.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_bcl_xx.html) | [opus_mt_de_bcl](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_bcl_xx.html) |
+| [xx.pag.marian.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_pag_xx.html) | [opus_mt_de_pag](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_pag_xx.html) |
+| [xx.kg.marian.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_kg_xx.html) | [opus_mt_de_kg](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_kg_xx.html) |
+| [xx.fi.marian.translate_to.efi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_efi_fi_xx.html) | [opus_mt_efi_fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_efi_fi_xx.html) |
+| [xx.is.marian.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_is_xx.html) | [opus_mt_de_is](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_is_xx.html) |
+| [xx.fr.marian.translate_to.da](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_da_fr_xx.html) | [opus_mt_da_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_da_fr_xx.html) |
+| [xx.pl.marian.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_pl_xx.html) | [opus_mt_de_pl](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_pl_xx.html) |
+| [xx.ln.marian.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_ln_xx.html) | [opus_mt_de_ln](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_ln_xx.html) |
+| [xx.pap.marian.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_pap_xx.html) | [opus_mt_de_pap](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_pap_xx.html) |
+| [xx.vi.marian.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_vi_xx.html) | [opus_mt_de_vi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_vi_xx.html) |
+| [xx.no.marian.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_no_xx.html) | [opus_mt_de_no](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_no_xx.html) |
+| [xx.eo.marian.translate_to.el](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_el_eo_xx.html) | [opus_mt_el_eo](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_el_eo_xx.html) |
+| [xx.af.marian.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_af_xx.html) | [opus_mt_de_af](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_af_xx.html) |
+| [xx.es.marian.translate_to.ee](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ee_es_xx.html) | [opus_mt_ee_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ee_es_xx.html) |
+| [xx.eo.marian.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_eo_xx.html) | [opus_mt_de_eo](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_eo_xx.html) |
+| [xx.bi.marian.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_bi_xx.html) | [opus_mt_de_bi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_bi_xx.html) |
+| [xx.mt.marian.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_mt_xx.html) | [opus_mt_de_mt](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_mt_xx.html) |
+| [xx.lt.marian.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_lt_xx.html) | [opus_mt_de_lt](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_lt_xx.html) |
+| [xx.bg.marian.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_bg_xx.html) | [opus_mt_de_bg](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_bg_xx.html) |
+| [xx.hil.marian.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_hil_xx.html) | [opus_mt_de_hil](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_hil_xx.html) |
+| [xx.eu.marian.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_eu_xx.html) | [opus_mt_de_eu](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_eu_xx.html) |
+| [xx.da.marian.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_da_xx.html) | [opus_mt_de_da](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_da_xx.html) |
+| [xx.ms.marian.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_ms_xx.html) | [opus_mt_de_ms](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_ms_xx.html) |
+| [xx.he.marian.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_he_xx.html) | [opus_mt_de_he](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_he_xx.html) |
+| [xx.et.marian.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_et_xx.html) | [opus_mt_de_et](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_et_xx.html) |
+| [xx.es.marian.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_es_xx.html) | [opus_mt_de_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_es_xx.html) |
+| [xx.fr.marian.translate_to.el](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_el_fr_xx.html) | [opus_mt_el_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_el_fr_xx.html) |
+| [xx.fr.marian.translate_to.ee](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ee_fr_xx.html) | [opus_mt_ee_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ee_fr_xx.html) |
+| [xx.el.marian.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_el_xx.html) | [opus_mt_de_el](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_el_xx.html) |
+| [xx.sv.marian.translate_to.el](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_el_sv_xx.html) | [opus_mt_el_sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_el_sv_xx.html) |
+| [xx.es.marian.translate_to.csn](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_csn_es_xx.html) | [opus_mt_csn_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_csn_es_xx.html) |
+| [xx.tl.marian.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_tl_xx.html) | [opus_mt_de_tl](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_tl_xx.html) |
+| [xx.pon.marian.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_pon_xx.html) | [opus_mt_de_pon](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_pon_xx.html) |
+| [xx.fr.marian.translate_to.efi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_efi_fr_xx.html) | [opus_mt_efi_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_efi_fr_xx.html) |
+| [xx.uk.marian.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_uk_xx.html) | [opus_mt_de_uk](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_uk_xx.html) |
+| [xx.ar.marian.translate_to.el](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_el_ar_xx.html) | [opus_mt_el_ar](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_el_ar_xx.html) |
+| [xx.fi.marian.translate_to.el](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_el_fi_xx.html) | [opus_mt_el_fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_el_fi_xx.html) |
+| [xx.ig.marian.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_ig_xx.html) | [opus_mt_de_ig](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_ig_xx.html) |
+| [xx.guw.marian.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_guw_xx.html) | [opus_mt_de_guw](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_guw_xx.html) |
+| [xx.iso.marian.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_iso_xx.html) | [opus_mt_de_iso](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_iso_xx.html) |
+| [xx.sv.marian.translate_to.efi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_efi_sv_xx.html) | [opus_mt_efi_sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_efi_sv_xx.html) |
+| [xx.ha.marian.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_ha_xx.html) | [opus_mt_de_ha](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_ha_xx.html) |
+| [xx.fr.marian.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_fr_xx.html) | [opus_mt_de_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_fr_xx.html) |
+| [xx.gaa.marian.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_gaa_xx.html) | [opus_mt_de_gaa](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_gaa_xx.html) |
+| [xx.nso.marian.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_nso_xx.html) | [opus_mt_de_nso](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_nso_xx.html) |
+| [xx.ht.marian.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_ht_xx.html) | [opus_mt_de_ht](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_ht_xx.html) |
+| [xx.nl.marian.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_nl_xx.html) | [opus_mt_de_nl](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_nl_xx.html) |
+| [xx.sv.marian.translate_to.ee](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ee_sv_xx.html) | [opus_mt_ee_sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ee_sv_xx.html) |
+| [xx.fi.marian.translate_to.ee](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ee_fi_xx.html) | [opus_mt_ee_fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ee_fi_xx.html) |
+| [xx.de.marian.translate_to.ee](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ee_de_xx.html) | [opus_mt_ee_de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ee_de_xx.html) |
+| [xx.eo.marian.translate_to.da](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_da_eo_xx.html) | [opus_mt_da_eo](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_da_eo_xx.html) |
+| [xx.es.marian.translate_to.csg](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_csg_es_xx.html) | [opus_mt_csg_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_csg_es_xx.html) |
+| [xx.de.marian.translate_to.da](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_da_de_xx.html) | [opus_mt_da_de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_da_de_xx.html) |
+| [xx.ar.marian.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_ar_xx.html) | [opus_mt_de_ar](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_ar_xx.html) |
+| [xx.hu.marian.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_hu_xx.html) | [opus_mt_de_hu](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_hu_xx.html) |
+| [xx.ca.marian.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_ca_xx.html) | [opus_mt_de_ca](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_ca_xx.html) |
+| [xx.pis.marian.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_pis_xx.html) | [opus_mt_de_pis](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_pis_xx.html) |
+| [xx.ho.marian.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_ho_xx.html) | [opus_mt_de_ho](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_ho_xx.html) |
+| [xx.de.marian.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_de_xx.html) | [opus_mt_de_de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_de_xx.html) |
+| [xx.lua.marian.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_lua_xx.html) | [opus_mt_de_lua](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_lua_xx.html) |
+| [xx.loz.marian.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_loz_xx.html) | [opus_mt_de_loz](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_loz_xx.html) |
+| [xx.crs.marian.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_crs_xx.html) | [opus_mt_de_crs](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_crs_xx.html) |
+| [xx.es.marian.translate_to.da](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_da_es_xx.html) | [opus_mt_da_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_da_es_xx.html) |
+| [xx.ee.marian.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_ee_xx.html) | [opus_mt_de_ee](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_ee_xx.html) |
+| [xx.it.marian.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_it_xx.html) | [opus_mt_de_it](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_it_xx.html) |
+| [xx.ilo.marian.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_ilo_xx.html) | [opus_mt_de_ilo](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_ilo_xx.html) |
+| [xx.ny.marian.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_ny_xx.html) | [opus_mt_de_ny](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_ny_xx.html) |
+| [xx.fi.marian.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_fi_xx.html) | [opus_mt_de_fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_fi_xx.html) |
+| [xx.ase.marian.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_ase_xx.html) | [opus_mt_de_ase](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_ase_xx.html) |
+| [xx.hr.marian.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_hr_xx.html) | [opus_mt_de_hr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_de_hr_xx.html) |
+| [xx.sl.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_sl_xx.html) | [opus_mt_fi_sl](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_sl_xx.html) |
+| [xx.sk.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_sk_xx.html) | [opus_mt_fi_sk](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_sk_xx.html) |
+| [xx.ru.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_ru_xx.html) | [opus_mt_es_ru](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_ru_xx.html) |
+| [xx.sn.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_sn_xx.html) | [opus_mt_fi_sn](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_sn_xx.html) |
+| [xx.pl.marian.translate_to.eo](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_eo_pl_xx.html) | [opus_mt_eo_pl](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_eo_pl_xx.html) |
+| [xx.cs.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_cs_xx.html) | [opus_mt_es_cs](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_cs_xx.html) |
+| [xx.wls.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_wls_xx.html) | [opus_mt_fi_wls](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_wls_xx.html) |
+| [xx.gaa.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_gaa_xx.html) | [opus_mt_fi_gaa](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_gaa_xx.html) |
+| [xx.is.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_is_xx.html) | [opus_mt_fi_is](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_is_xx.html) |
+| [xx.ha.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_ha_xx.html) | [opus_mt_es_ha](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_ha_xx.html) |
+| [xx.nl.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_nl_xx.html) | [opus_mt_es_nl](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_nl_xx.html) |
+| [xx.ha.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_ha_xx.html) | [opus_mt_fi_ha](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_ha_xx.html) |
+| [xx.fj.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_fj_xx.html) | [opus_mt_fi_fj](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_fj_xx.html) |
+| [xx.ber.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_ber_xx.html) | [opus_mt_es_ber](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_ber_xx.html) |
+| [xx.ho.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_ho_xx.html) | [opus_mt_fi_ho](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_ho_xx.html) |
+| [xx.ny.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_ny_xx.html) | [opus_mt_fi_ny](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_ny_xx.html) |
+| [xx.sl.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_sl_xx.html) | [opus_mt_es_sl](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_sl_xx.html) |
+| [xx.ts.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_ts_xx.html) | [opus_mt_fi_ts](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_ts_xx.html) |
+| [xx.el.marian.translate_to.eo](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_eo_el_xx.html) | [opus_mt_eo_el](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_eo_el_xx.html) |
+| [xx.war.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_war_xx.html) | [opus_mt_fi_war](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_war_xx.html) |
+| [xx.cs.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_cs_xx.html) | [opus_mt_fi_cs](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_cs_xx.html) |
+| [xx.loz.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_loz_xx.html) | [opus_mt_es_loz](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_loz_xx.html) |
+| [xx.mk.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_mk_xx.html) | [opus_mt_fi_mk](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_mk_xx.html) |
+| [xx.bg.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_bg_xx.html) | [opus_mt_es_bg](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_bg_xx.html) |
+| [xx.srn.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_srn_xx.html) | [opus_mt_fi_srn](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_srn_xx.html) |
+| [xx.is.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_is_xx.html) | [opus_mt_es_is](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_is_xx.html) |
+| [xx.hu.marian.translate_to.eo](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_eo_hu_xx.html) | [opus_mt_eo_hu](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_eo_hu_xx.html) |
+| [xx.tw.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_tw_xx.html) | [opus_mt_fi_tw](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_tw_xx.html) |
+| [xx.mt.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_mt_xx.html) | [opus_mt_fi_mt](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_mt_xx.html) |
+| [xx.fr.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_fr_xx.html) | [opus_mt_es_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_fr_xx.html) |
+| [xx.yo.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_yo_xx.html) | [opus_mt_es_yo](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_yo_xx.html) |
+| [xx.xh.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_xh_xx.html) | [opus_mt_fi_xh](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_xh_xx.html) |
+| [xx.lv.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_lv_xx.html) | [opus_mt_fi_lv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_lv_xx.html) |
+| [xx.de.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_de_xx.html) | [opus_mt_fi_de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_de_xx.html) |
+| [xx.ve.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_ve_xx.html) | [opus_mt_es_ve](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_ve_xx.html) |
+| [xx.es.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_es_xx.html) | [opus_mt_fi_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_es_xx.html) |
+| [xx.eo.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_eo_xx.html) | [opus_mt_es_eo](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_eo_xx.html) |
+| [xx.cs.marian.translate_to.eo](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_eo_cs_xx.html) | [opus_mt_eo_cs](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_eo_cs_xx.html) |
+| [xx.mt.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_mt_xx.html) | [opus_mt_es_mt](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_mt_xx.html) |
+| [xx.el.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_el_xx.html) | [opus_mt_es_el](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_el_xx.html) |
+| [xx.ee.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_ee_xx.html) | [opus_mt_es_ee](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_ee_xx.html) |
+| [xx.de.marian.translate_to.eu](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_eu_de_xx.html) | [opus_mt_eu_de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_eu_de_xx.html) |
+| [xx.et.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_et_xx.html) | [opus_mt_es_et](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_et_xx.html) |
+| [xx.fi.marian.translate_to.et](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_et_fi_xx.html) | [opus_mt_et_fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_et_fi_xx.html) |
+| [xx.wls.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_wls_xx.html) | [opus_mt_es_wls](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_wls_xx.html) |
+| [xx.mg.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_mg_xx.html) | [opus_mt_fi_mg](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_mg_xx.html) |
+| [xx.eu.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_eu_xx.html) | [opus_mt_es_eu](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_eu_xx.html) |
+| [xx.lua.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_lua_xx.html) | [opus_mt_es_lua](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_lua_xx.html) |
+| [xx.pon.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_pon_xx.html) | [opus_mt_es_pon](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_pon_xx.html) |
+| [xx.mfe.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_mfe_xx.html) | [opus_mt_fi_mfe](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_mfe_xx.html) |
+| [xx.he.marian.translate_to.eo](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_eo_he_xx.html) | [opus_mt_eo_he](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_eo_he_xx.html) |
+| [xx.id.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_id_xx.html) | [opus_mt_es_id](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_id_xx.html) |
+| [xx.xh.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_xh_xx.html) | [opus_mt_es_xh](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_xh_xx.html) |
+| [xx.ar.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_ar_xx.html) | [opus_mt_es_ar](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_ar_xx.html) |
+| [xx.crs.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_crs_xx.html) | [opus_mt_es_crs](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_crs_xx.html) |
+| [xx.es.marian.translate_to.eu](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_eu_es_xx.html) | [opus_mt_eu_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_eu_es_xx.html) |
+| [xx.tpi.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_tpi_xx.html) | [opus_mt_fi_tpi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_tpi_xx.html) |
+| [xx.pis.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_pis_xx.html) | [opus_mt_fi_pis](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_pis_xx.html) |
+| [xx.vi.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_vi_xx.html) | [opus_mt_es_vi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_vi_xx.html) |
+| [xx.es.marian.translate_to.et](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_et_es_xx.html) | [opus_mt_et_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_et_es_xx.html) |
+| [xx.rw.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_rw_xx.html) | [opus_mt_fi_rw](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_rw_xx.html) |
+| [xx.gl.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_gl_xx.html) | [opus_mt_es_gl](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_gl_xx.html) |
+| [xx.pt.marian.translate_to.eo](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_eo_pt_xx.html) | [opus_mt_eo_pt](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_eo_pt_xx.html) |
+| [xx.he.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_he_xx.html) | [opus_mt_fi_he](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_he_xx.html) |
+| [xx.af.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_af_xx.html) | [opus_mt_fi_af](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_af_xx.html) |
+| [xx.ru.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_ru_xx.html) | [opus_mt_fi_ru](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_ru_xx.html) |
+| [xx.ve.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_ve_xx.html) | [opus_mt_fi_ve](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_ve_xx.html) |
+| [xx.ca.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_ca_xx.html) | [opus_mt_es_ca](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_ca_xx.html) |
+| [xx.tr.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_tr_xx.html) | [opus_mt_fi_tr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_tr_xx.html) |
+| [xx.ht.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_ht_xx.html) | [opus_mt_fi_ht](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_ht_xx.html) |
+| [xx.nl.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_nl_xx.html) | [opus_mt_fi_nl](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_nl_xx.html) |
+| [xx.iso.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_iso_xx.html) | [opus_mt_fi_iso](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_iso_xx.html) |
+| [xx.fi.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_fi_xx.html) | [opus_mt_es_fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_fi_xx.html) |
+| [xx.da.marian.translate_to.eo](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_eo_da_xx.html) | [opus_mt_eo_da](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_eo_da_xx.html) |
+| [xx.ln.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_ln_xx.html) | [opus_mt_es_ln](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_ln_xx.html) |
+| [xx.csn.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_csn_xx.html) | [opus_mt_es_csn](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_csn_xx.html) |
+| [xx.pon.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_pon_xx.html) | [opus_mt_fi_pon](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_pon_xx.html) |
+| [xx.af.marian.translate_to.eo](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_eo_af_xx.html) | [opus_mt_eo_af](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_eo_af_xx.html) |
+| [xx.bzs.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_bzs_xx.html) | [opus_mt_fi_bzs](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_bzs_xx.html) |
+| [xx.no.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_no_xx.html) | [opus_mt_es_no](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_no_xx.html) |
+| [xx.es.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_es_xx.html) | [opus_mt_es_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_es_xx.html) |
+| [xx.lua.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_lua_xx.html) | [opus_mt_fi_lua](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_lua_xx.html) |
+| [xx.yua.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_yua_xx.html) | [opus_mt_es_yua](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_yua_xx.html) |
+| [xx.ru.marian.translate_to.eu](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_eu_ru_xx.html) | [opus_mt_eu_ru](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_eu_ru_xx.html) |
+| [xx.tpi.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_tpi_xx.html) | [opus_mt_es_tpi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_tpi_xx.html) |
+| [xx.lue.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_lue_xx.html) | [opus_mt_fi_lue](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_lue_xx.html) |
+| [xx.sv.marian.translate_to.eo](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_eo_sv_xx.html) | [opus_mt_eo_sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_eo_sv_xx.html) |
+| [xx.niu.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_niu_xx.html) | [opus_mt_es_niu](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_niu_xx.html) |
+| [xx.tiv.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_tiv_xx.html) | [opus_mt_fi_tiv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_tiv_xx.html) |
+| [xx.pag.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_pag_xx.html) | [opus_mt_es_pag](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_pag_xx.html) |
+| [xx.run.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_run_xx.html) | [opus_mt_fi_run](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_run_xx.html) |
+| [xx.ty.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_ty_xx.html) | [opus_mt_es_ty](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_ty_xx.html) |
+| [xx.gil.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_gil_xx.html) | [opus_mt_es_gil](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_gil_xx.html) |
+| [xx.ln.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_ln_xx.html) | [opus_mt_fi_ln](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_ln_xx.html) |
+| [xx.ty.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_ty_xx.html) | [opus_mt_fi_ty](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_ty_xx.html) |
+| [xx.prl.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_prl_xx.html) | [opus_mt_es_prl](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_prl_xx.html) |
+| [xx.kg.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_kg_xx.html) | [opus_mt_es_kg](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_kg_xx.html) |
+| [xx.rw.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_rw_xx.html) | [opus_mt_es_rw](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_rw_xx.html) |
+| [xx.kqn.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_kqn_xx.html) | [opus_mt_fi_kqn](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_kqn_xx.html) |
+| [xx.sq.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_sq_xx.html) | [opus_mt_fi_sq](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_sq_xx.html) |
+| [xx.sw.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_sw_xx.html) | [opus_mt_fi_sw](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_sw_xx.html) |
+| [xx.csg.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_csg_xx.html) | [opus_mt_es_csg](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_csg_xx.html) |
+| [xx.ro.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_ro_xx.html) | [opus_mt_es_ro](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_ro_xx.html) |
+| [xx.ee.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_ee_xx.html) | [opus_mt_fi_ee](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_ee_xx.html) |
+| [xx.ilo.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_ilo_xx.html) | [opus_mt_fi_ilo](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_ilo_xx.html) |
+| [xx.eo.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_eo_xx.html) | [opus_mt_fi_eo](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_eo_xx.html) |
+| [xx.iso.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_iso_xx.html) | [opus_mt_es_iso](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_iso_xx.html) |
+| [xx.bem.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_bem_xx.html) | [opus_mt_fi_bem](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_bem_xx.html) |
+| [xx.tn.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_tn_xx.html) | [opus_mt_fi_tn](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_tn_xx.html) |
+| [xx.da.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_da_xx.html) | [opus_mt_es_da](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_da_xx.html) |
+| [xx.es.marian.translate_to.eo](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_eo_es_xx.html) | [opus_mt_eo_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_eo_es_xx.html) |
+| [xx.ru.marian.translate_to.eo](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_eo_ru_xx.html) | [opus_mt_eo_ru](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_eo_ru_xx.html) |
+| [xx.rn.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_rn_xx.html) | [opus_mt_es_rn](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_rn_xx.html) |
+| [xx.lt.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_lt_xx.html) | [opus_mt_es_lt](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_lt_xx.html) |
+| [xx.guw.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_guw_xx.html) | [opus_mt_es_guw](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_guw_xx.html) |
+| [xx.tvl.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_tvl_xx.html) | [opus_mt_es_tvl](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_tvl_xx.html) |
+| [xx.fr.marian.translate_to.et](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_et_fr_xx.html) | [opus_mt_et_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_et_fr_xx.html) |
+| [xx.ht.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_ht_xx.html) | [opus_mt_es_ht](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_ht_xx.html) |
+| [xx.mos.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_mos_xx.html) | [opus_mt_fi_mos](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_mos_xx.html) |
+| [xx.ase.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_ase_xx.html) | [opus_mt_es_ase](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_ase_xx.html) |
+| [xx.crs.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_crs_xx.html) | [opus_mt_fi_crs](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_crs_xx.html) |
+| [xx.bcl.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_bcl_xx.html) | [opus_mt_fi_bcl](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_bcl_xx.html) |
+| [xx.tvl.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_tvl_xx.html) | [opus_mt_fi_tvl](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_tvl_xx.html) |
+| [xx.lus.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_lus_xx.html) | [opus_mt_fi_lus](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_lus_xx.html) |
+| [xx.he.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_he_xx.html) | [opus_mt_es_he](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_he_xx.html) |
+| [xx.pis.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_pis_xx.html) | [opus_mt_es_pis](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_pis_xx.html) |
+| [xx.it.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_it_xx.html) | [opus_mt_es_it](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_it_xx.html) |
+| [xx.fi.marian.translate_to.eo](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_eo_fi_xx.html) | [opus_mt_eo_fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_eo_fi_xx.html) |
+| [xx.tw.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_tw_xx.html) | [opus_mt_es_tw](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_tw_xx.html) |
+| [xx.aed.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_aed_xx.html) | [opus_mt_es_aed](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_aed_xx.html) |
+| [xx.bzs.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_bzs_xx.html) | [opus_mt_es_bzs](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_bzs_xx.html) |
+| [xx.nso.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_nso_xx.html) | [opus_mt_fi_nso](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_nso_xx.html) |
+| [xx.gaa.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_gaa_xx.html) | [opus_mt_es_gaa](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_gaa_xx.html) |
+| [xx.zai.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_zai_xx.html) | [opus_mt_es_zai](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_zai_xx.html) |
+| [xx.no.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_no_xx.html) | [opus_mt_fi_no](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_no_xx.html) |
+| [xx.uk.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_uk_xx.html) | [opus_mt_fi_uk](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_uk_xx.html) |
+| [xx.sg.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_sg_xx.html) | [opus_mt_es_sg](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_sg_xx.html) |
+| [xx.ilo.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_ilo_xx.html) | [opus_mt_es_ilo](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_ilo_xx.html) |
+| [xx.bg.marian.translate_to.eo](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_eo_bg_xx.html) | [opus_mt_eo_bg](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_eo_bg_xx.html) |
+| [xx.pap.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_pap_xx.html) | [opus_mt_fi_pap](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_pap_xx.html) |
+| [xx.ho.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_ho_xx.html) | [opus_mt_es_ho](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_ho_xx.html) |
+| [xx.toi.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_toi_xx.html) | [opus_mt_fi_toi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_toi_xx.html) |
+| [xx.st.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_st_xx.html) | [opus_mt_es_st](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_st_xx.html) |
+| [xx.to.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_to_xx.html) | [opus_mt_fi_to](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_to_xx.html) |
+| [xx.kg.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_kg_xx.html) | [opus_mt_fi_kg](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_kg_xx.html) |
+| [xx.sv.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_sv_xx.html) | [opus_mt_fi_sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_sv_xx.html) |
+| [xx.tll.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_tll_xx.html) | [opus_mt_fi_tll](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_tll_xx.html) |
+| [xx.ceb.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_ceb_xx.html) | [opus_mt_es_ceb](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_ceb_xx.html) |
+| [xx.ig.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_ig_xx.html) | [opus_mt_es_ig](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_ig_xx.html) |
+| [xx.sv.marian.translate_to.et](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_et_sv_xx.html) | [opus_mt_et_sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_et_sv_xx.html) |
+| [xx.af.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_af_xx.html) | [opus_mt_es_af](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_af_xx.html) |
+| [xx.pl.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_pl_xx.html) | [opus_mt_es_pl](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_pl_xx.html) |
+| [xx.ro.marian.translate_to.eo](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_eo_ro_xx.html) | [opus_mt_eo_ro](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_eo_ro_xx.html) |
+| [xx.tn.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_tn_xx.html) | [opus_mt_es_tn](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_tn_xx.html) |
+| [xx.sm.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_sm_xx.html) | [opus_mt_fi_sm](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_sm_xx.html) |
+| [xx.mk.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_mk_xx.html) | [opus_mt_es_mk](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_mk_xx.html) |
+| [xx.id.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_id_xx.html) | [opus_mt_fi_id](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_id_xx.html) |
+| [xx.hr.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_hr_xx.html) | [opus_mt_fi_hr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_hr_xx.html) |
+| [xx.sg.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_sg_xx.html) | [opus_mt_fi_sg](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_sg_xx.html) |
+| [xx.hil.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_hil_xx.html) | [opus_mt_fi_hil](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_hil_xx.html) |
+| [xx.nl.marian.translate_to.eo](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_eo_nl_xx.html) | [opus_mt_eo_nl](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_eo_nl_xx.html) |
+| [xx.pap.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_pap_xx.html) | [opus_mt_es_pap](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_pap_xx.html) |
+| [xx.fr.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_fr_xx.html) | [opus_mt_fi_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_fr_xx.html) |
+| [xx.bi.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_bi_xx.html) | [opus_mt_es_bi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_bi_xx.html) |
+| [xx.fi.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_fi_xx.html) | [opus_mt_fi_fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_fi_xx.html) |
+| [xx.nso.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_nso_xx.html) | [opus_mt_es_nso](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_nso_xx.html) |
+| [xx.et.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_et_xx.html) | [opus_mt_fi_et](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_et_xx.html) |
+| [xx.uk.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_uk_xx.html) | [opus_mt_es_uk](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_uk_xx.html) |
+| [xx.sh.marian.translate_to.eo](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_eo_sh_xx.html) | [opus_mt_eo_sh](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_eo_sh_xx.html) |
+| [xx.lu.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_lu_xx.html) | [opus_mt_fi_lu](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_lu_xx.html) |
+| [xx.gil.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_gil_xx.html) | [opus_mt_fi_gil](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_gil_xx.html) |
+| [xx.ro.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_ro_xx.html) | [opus_mt_fi_ro](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_ro_xx.html) |
+| [xx.it.marian.translate_to.eo](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_eo_it_xx.html) | [opus_mt_eo_it](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_eo_it_xx.html) |
+| [xx.hu.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_hu_xx.html) | [opus_mt_fi_hu](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_hu_xx.html) |
+| [xx.bcl.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_bcl_xx.html) | [opus_mt_es_bcl](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_bcl_xx.html) |
+| [xx.fse.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_fse_xx.html) | [opus_mt_fi_fse](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_fse_xx.html) |
+| [xx.hil.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_hil_xx.html) | [opus_mt_es_hil](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_hil_xx.html) |
+| [xx.ig.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_ig_xx.html) | [opus_mt_fi_ig](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_ig_xx.html) |
+| [xx.tl.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_tl_xx.html) | [opus_mt_es_tl](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_tl_xx.html) |
+| [xx.pag.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_pag_xx.html) | [opus_mt_fi_pag](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_pag_xx.html) |
+| [xx.guw.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_guw_xx.html) | [opus_mt_fi_guw](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_guw_xx.html) |
+| [xx.swc.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_swc_xx.html) | [opus_mt_es_swc](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_swc_xx.html) |
+| [xx.swc.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_swc_xx.html) | [opus_mt_fi_swc](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_swc_xx.html) |
+| [xx.lg.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_lg_xx.html) | [opus_mt_fi_lg](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_lg_xx.html) |
+| [xx.srn.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_srn_xx.html) | [opus_mt_es_srn](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_srn_xx.html) |
+| [xx.hr.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_hr_xx.html) | [opus_mt_es_hr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_hr_xx.html) |
+| [xx.sm.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_sm_xx.html) | [opus_mt_es_sm](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_sm_xx.html) |
+| [xx.de.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_de_xx.html) | [opus_mt_es_de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_de_xx.html) |
+| [xx.st.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_st_xx.html) | [opus_mt_fi_st](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_st_xx.html) |
+| [xx.fr.marian.translate_to.eo](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_eo_fr_xx.html) | [opus_mt_eo_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_eo_fr_xx.html) |
+| [xx.de.marian.translate_to.et](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_et_de_xx.html) | [opus_mt_et_de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_et_de_xx.html) |
+| [xx.niu.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_niu_xx.html) | [opus_mt_fi_niu](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_niu_xx.html) |
+| [xx.el.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_el_xx.html) | [opus_mt_fi_el](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_el_xx.html) |
+| [xx.efi.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_efi_xx.html) | [opus_mt_fi_efi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_efi_xx.html) |
+| [xx.war.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_war_xx.html) | [opus_mt_es_war](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_war_xx.html) |
+| [xx.mfs.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_mfs_xx.html) | [opus_mt_es_mfs](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_mfs_xx.html) |
+| [xx.bg.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_bg_xx.html) | [opus_mt_fi_bg](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_bg_xx.html) |
+| [xx.lus.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_lus_xx.html) | [opus_mt_es_lus](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_lus_xx.html) |
+| [xx.de.marian.translate_to.eo](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_eo_de_xx.html) | [opus_mt_eo_de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_eo_de_xx.html) |
+| [xx.it.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_it_xx.html) | [opus_mt_fi_it](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_it_xx.html) |
+| [xx.efi.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_efi_xx.html) | [opus_mt_es_efi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_efi_xx.html) |
+| [xx.ny.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_ny_xx.html) | [opus_mt_es_ny](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_ny_xx.html) |
+| [xx.fj.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_fj_xx.html) | [opus_mt_es_fj](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_es_fj_xx.html) |
+| [xx.ru.marian.translate_to.et](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_et_ru_xx.html) | [opus_mt_et_ru](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_et_ru_xx.html) |
+| [xx.mh.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_mh_xx.html) | [opus_mt_fi_mh](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_mh_xx.html) |
+| [xx.es.marian.translate_to.ig](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ig_es_xx.html) | [opus_mt_ig_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ig_es_xx.html) |
+| [xx.sv.marian.translate_to.hu](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_hu_sv_xx.html) | [opus_mt_hu_sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_hu_sv_xx.html) |
+| [xx.lue.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_lue_xx.html) | [opus_mt_fr_lue](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_lue_xx.html) |
+| [xx.fi.marian.translate_to.ha](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ha_fi_xx.html) | [opus_mt_ha_fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ha_fi_xx.html) |
+| [xx.ca.marian.translate_to.it](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_it_ca_xx.html) | [opus_mt_it_ca](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_it_ca_xx.html) |
+| [xx.de.marian.translate_to.ilo](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ilo_de_xx.html) | [opus_mt_ilo_de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ilo_de_xx.html) |
+| [xx.it.marian.translate_to.he](https://nlp.johnsnowlabs.com//2021/06/01/opus_tatoeba_it_he_xx.html) | [opus_tatoeba_it_he](https://nlp.johnsnowlabs.com//2021/06/01/opus_tatoeba_it_he_xx.html) |
+| [xx.loz.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_loz_xx.html) | [opus_mt_fr_loz](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_loz_xx.html) |
+| [xx.ms.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_ms_xx.html) | [opus_mt_fr_ms](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_ms_xx.html) |
+| [xx.uk.marian.translate_to.it](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_it_uk_xx.html) | [opus_mt_it_uk](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_it_uk_xx.html) |
+| [xx.gaa.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_gaa_xx.html) | [opus_mt_fr_gaa](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_gaa_xx.html) |
+| [xx.pap.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_pap_xx.html) | [opus_mt_fr_pap](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_pap_xx.html) |
+| [xx.fi.marian.translate_to.ilo](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ilo_fi_xx.html) | [opus_mt_ilo_fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ilo_fi_xx.html) |
+| [xx.lg.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_lg_xx.html) | [opus_mt_fr_lg](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_lg_xx.html) |
+| [xx.it.marian.translate_to.is](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_is_it_xx.html) | [opus_mt_is_it](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_is_it_xx.html) |
+| [xx.ms.marian.translate_to.it](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_it_ms_xx.html) | [opus_mt_it_ms](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_it_ms_xx.html) |
+| [xx.es.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_es_xx.html) | [opus_mt_fr_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_es_xx.html) |
+| [xx.ar.marian.translate_to.he](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_he_ar_xx.html) | [opus_mt_he_ar](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_he_ar_xx.html) |
+| [xx.ro.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_ro_xx.html) | [opus_mt_fr_ro](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_ro_xx.html) |
+| [xx.ru.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_ru_xx.html) | [opus_mt_fr_ru](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_ru_xx.html) |
+| [xx.fi.marian.translate_to.ht](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ht_fi_xx.html) | [opus_mt_ht_fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ht_fi_xx.html) |
+| [xx.bg.marian.translate_to.it](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_it_bg_xx.html) | [opus_mt_it_bg](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_it_bg_xx.html) |
+| [xx.mh.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_mh_xx.html) | [opus_mt_fr_mh](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_mh_xx.html) |
+| [xx.to.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_to_xx.html) | [opus_mt_fr_to](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_to_xx.html) |
+| [xx.sl.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_sl_xx.html) | [opus_mt_fr_sl](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_sl_xx.html) |
+| [xx.fr.marian.translate_to.gil](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_gil_fr_xx.html) | [opus_mt_gil_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_gil_fr_xx.html) |
+| [xx.es.marian.translate_to.hr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_hr_es_xx.html) | [opus_mt_hr_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_hr_es_xx.html) |
+| [xx.ilo.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_ilo_xx.html) | [opus_mt_fr_ilo](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_ilo_xx.html) |
+| [xx.ee.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_ee_xx.html) | [opus_mt_fr_ee](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_ee_xx.html) |
+| [xx.sv.marian.translate_to.he](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_he_sv_xx.html) | [opus_mt_he_sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_he_sv_xx.html) |
+| [xx.fr.marian.translate_to.ha](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ha_fr_xx.html) | [opus_mt_ha_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ha_fr_xx.html) |
+| [xx.gil.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_gil_xx.html) | [opus_mt_fr_gil](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_gil_xx.html) |
+| [xx.fi.marian.translate_to.id](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_id_fi_xx.html) | [opus_mt_id_fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_id_fi_xx.html) |
+| [xx.iir.marian.translate_to.iir](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_iir_iir_xx.html) | [opus_mt_iir_iir](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_iir_iir_xx.html) |
+| [xx.pl.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_pl_xx.html) | [opus_mt_fr_pl](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_pl_xx.html) |
+| [xx.tw.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_tw_xx.html) | [opus_mt_fr_tw](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_tw_xx.html) |
+| [xx.sv.marian.translate_to.gaa](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_gaa_sv_xx.html) | [opus_mt_gaa_sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_gaa_sv_xx.html) |
+| [xx.ar.marian.translate_to.it](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_it_ar_xx.html) | [opus_mt_it_ar](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_it_ar_xx.html) |
+| [xx.es.marian.translate_to.gil](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_gil_es_xx.html) | [opus_mt_gil_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_gil_es_xx.html) |
+| [xx.ase.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_ase_xx.html) | [opus_mt_fr_ase](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_ase_xx.html) |
+| [xx.fr.marian.translate_to.gaa](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_gaa_fr_xx.html) | [opus_mt_gaa_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_gaa_fr_xx.html) |
+| [xx.lus.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_lus_xx.html) | [opus_mt_fr_lus](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_lus_xx.html) |
+| [xx.fr.marian.translate_to.iso](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_iso_fr_xx.html) | [opus_mt_iso_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_iso_fr_xx.html) |
+| [xx.sm.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_sm_xx.html) | [opus_mt_fr_sm](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_sm_xx.html) |
+| [xx.mfe.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_mfe_xx.html) | [opus_mt_fr_mfe](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_mfe_xx.html) |
+| [xx.af.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_af_xx.html) | [opus_mt_fr_af](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_af_xx.html) |
+| [xx.de.marian.translate_to.ig](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ig_de_xx.html) | [opus_mt_ig_de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ig_de_xx.html) |
+| [xx.es.marian.translate_to.id](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_id_es_xx.html) | [opus_mt_id_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_id_es_xx.html) |
+| [xx.kqn.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_kqn_xx.html) | [opus_mt_fr_kqn](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_kqn_xx.html) |
+| [xx.zne.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_zne_xx.html) | [opus_mt_fi_zne](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_zne_xx.html) |
+| [xx.rw.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_rw_xx.html) | [opus_mt_fr_rw](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_rw_xx.html) |
+| [xx.ny.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_ny_xx.html) | [opus_mt_fr_ny](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_ny_xx.html) |
+| [xx.ig.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_ig_xx.html) | [opus_mt_fr_ig](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_ig_xx.html) |
+| [xx.ur.marian.translate_to.hi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_hi_ur_xx.html) | [opus_mt_hi_ur](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_hi_ur_xx.html) |
+| [xx.lt.marian.translate_to.it](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_it_lt_xx.html) | [opus_mt_it_lt](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_it_lt_xx.html) |
+| [xx.srn.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_srn_xx.html) | [opus_mt_fr_srn](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_srn_xx.html) |
+| [xx.tiv.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_tiv_xx.html) | [opus_mt_fr_tiv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_tiv_xx.html) |
+| [xx.war.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_war_xx.html) | [opus_mt_fr_war](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_war_xx.html) |
+| [xx.fr.marian.translate_to.is](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_is_fr_xx.html) | [opus_mt_is_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_is_fr_xx.html) |
+| [xx.de.marian.translate_to.gaa](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_gaa_de_xx.html) | [opus_mt_gaa_de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_gaa_de_xx.html) |
+| [xx.kwy.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_kwy_xx.html) | [opus_mt_fr_kwy](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_kwy_xx.html) |
+| [xx.sv.marian.translate_to.gil](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_gil_sv_xx.html) | [opus_mt_gil_sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_gil_sv_xx.html) |
+| [xx.hr.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_hr_xx.html) | [opus_mt_fr_hr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_hr_xx.html) |
+| [xx.fr.marian.translate_to.ig](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ig_fr_xx.html) | [opus_mt_ig_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ig_fr_xx.html) |
+| [xx.sv.marian.translate_to.ht](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ht_sv_xx.html) | [opus_mt_ht_sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ht_sv_xx.html) |
+| [xx.de.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_de_xx.html) | [opus_mt_fr_de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_de_xx.html) |
+| [xx.fiu.marian.translate_to.fiu](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fiu_fiu_xx.html) | [opus_mt_fiu_fiu](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fiu_fiu_xx.html) |
+| [xx.wls.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_wls_xx.html) | [opus_mt_fr_wls](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_wls_xx.html) |
+| [xx.eo.marian.translate_to.hu](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_hu_eo_xx.html) | [opus_mt_hu_eo](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_hu_eo_xx.html) |
+| [xx.guw.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_guw_xx.html) | [opus_mt_fr_guw](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_guw_xx.html) |
+| [xx.de.marian.translate_to.is](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_is_de_xx.html) | [opus_mt_is_de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_is_de_xx.html) |
+| [xx.tvl.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_tvl_xx.html) | [opus_mt_fr_tvl](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_tvl_xx.html) |
+| [xx.zne.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_zne_xx.html) | [opus_mt_fr_zne](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_zne_xx.html) |
+| [xx.ha.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_ha_xx.html) | [opus_mt_fr_ha](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_ha_xx.html) |
+| [xx.fi.marian.translate_to.guw](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_guw_fi_xx.html) | [opus_mt_guw_fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_guw_fi_xx.html) |
+| [xx.es.marian.translate_to.is](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_is_es_xx.html) | [opus_mt_is_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_is_es_xx.html) |
+| [xx.sv.marian.translate_to.it](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_it_sv_xx.html) | [opus_mt_it_sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_it_sv_xx.html) |
+| [xx.uk.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_uk_xx.html) | [opus_mt_fr_uk](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_uk_xx.html) |
+| [xx.uk.marian.translate_to.hu](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_hu_uk_xx.html) | [opus_mt_hu_uk](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_hu_uk_xx.html) |
+| [xx.mt.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_mt_xx.html) | [opus_mt_fr_mt](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_mt_xx.html) |
+| [xx.gem.marian.translate_to.gem](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_gem_gem_xx.html) | [opus_mt_gem_gem](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_gem_gem_xx.html) |
+| [xx.fr.marian.translate_to.fj](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fj_fr_xx.html) | [opus_mt_fj_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fj_fr_xx.html) |
+| [xx.fi.marian.translate_to.gil](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_gil_fi_xx.html) | [opus_mt_gil_fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_gil_fi_xx.html) |
+| [xx.fr.marian.translate_to.hu](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_hu_fr_xx.html) | [opus_mt_hu_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_hu_fr_xx.html) |
+| [xx.bcl.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_bcl_xx.html) | [opus_mt_fr_bcl](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_bcl_xx.html) |
+| [xx.gmq.marian.translate_to.gmq](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_gmq_gmq_xx.html) | [opus_mt_gmq_gmq](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_gmq_gmq_xx.html) |
+| [xx.kg.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_kg_xx.html) | [opus_mt_fr_kg](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_kg_xx.html) |
+| [xx.sn.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_sn_xx.html) | [opus_mt_fr_sn](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_sn_xx.html) |
+| [xx.bg.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_bg_xx.html) | [opus_mt_fr_bg](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_bg_xx.html) |
+| [xx.fr.marian.translate_to.guw](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_guw_fr_xx.html) | [opus_mt_guw_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_guw_fr_xx.html) |
+| [xx.ts.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_ts_xx.html) | [opus_mt_fr_ts](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_ts_xx.html) |
+| [xx.pis.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_pis_xx.html) | [opus_mt_fr_pis](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_pis_xx.html) |
+| [xx.bi.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_bi_xx.html) | [opus_mt_fr_bi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_bi_xx.html) |
+| [xx.ln.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_ln_xx.html) | [opus_mt_fr_ln](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_ln_xx.html) |
+| [xx.de.marian.translate_to.hil](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_hil_de_xx.html) | [opus_mt_hil_de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_hil_de_xx.html) |
+| [xx.nso.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_nso_xx.html) | [opus_mt_fr_nso](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_nso_xx.html) |
+| [xx.es.marian.translate_to.iso](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_iso_es_xx.html) | [opus_mt_iso_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_iso_es_xx.html) |
+| [xx.crs.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_crs_xx.html) | [opus_mt_fr_crs](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_crs_xx.html) |
+| [xx.niu.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_niu_xx.html) | [opus_mt_fr_niu](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_niu_xx.html) |
+| [xx.fr.marian.translate_to.ht](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ht_fr_xx.html) | [opus_mt_ht_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ht_fr_xx.html) |
+| [xx.fi.marian.translate_to.he](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_he_fi_xx.html) | [opus_mt_he_fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_he_fi_xx.html) |
+| [xx.gmw.marian.translate_to.gmw](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_gmw_gmw_xx.html) | [opus_mt_gmw_gmw](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_gmw_gmw_xx.html) |
+| [xx.fr.marian.translate_to.hr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_hr_fr_xx.html) | [opus_mt_hr_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_hr_fr_xx.html) |
+| [xx.sg.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_sg_xx.html) | [opus_mt_fr_sg](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_sg_xx.html) |
+| [xx.pon.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_pon_xx.html) | [opus_mt_fr_pon](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_pon_xx.html) |
+| [xx.fi.marian.translate_to.gaa](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_gaa_fi_xx.html) | [opus_mt_gaa_fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_gaa_fi_xx.html) |
+| [xx.pag.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_pag_xx.html) | [opus_mt_fr_pag](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_pag_xx.html) |
+| [xx.fi.marian.translate_to.is](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_is_fi_xx.html) | [opus_mt_is_fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_is_fi_xx.html) |
+| [xx.sk.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_sk_xx.html) | [opus_mt_fr_sk](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_sk_xx.html) |
+| [xx.yap.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_yap_xx.html) | [opus_mt_fr_yap](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_yap_xx.html) |
+| [xx.es.marian.translate_to.ha](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ha_es_xx.html) | [opus_mt_ha_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ha_es_xx.html) |
+| [xx.no.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_no_xx.html) | [opus_mt_fr_no](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_no_xx.html) |
+| [xx.ine.marian.translate_to.ine](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ine_ine_xx.html) | [opus_mt_ine_ine](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ine_ine_xx.html) |
+| [xx.fr.marian.translate_to.id](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_id_fr_xx.html) | [opus_mt_id_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_id_fr_xx.html) |
+| [xx.bzs.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_bzs_xx.html) | [opus_mt_fr_bzs](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_bzs_xx.html) |
+| [xx.he.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_tatoeba_he_fr_xx.html) | [opus_tatoeba_he_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_tatoeba_he_fr_xx.html) |
+| [xx.sv.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_sv_xx.html) | [opus_mt_fr_sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_sv_xx.html) |
+| [xx.uk.marian.translate_to.he](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_he_uk_xx.html) | [opus_mt_he_uk](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_he_uk_xx.html) |
+| [xx.fr.marian.translate_to.it](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_it_fr_xx.html) | [opus_mt_it_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_it_fr_xx.html) |
+| [xx.fi.marian.translate_to.ig](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ig_fi_xx.html) | [opus_mt_ig_fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ig_fi_xx.html) |
+| [xx.vi.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_vi_xx.html) | [opus_mt_fr_vi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_vi_xx.html) |
+| [xx.fi.marian.translate_to.fse](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fse_fi_xx.html) | [opus_mt_fse_fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fse_fi_xx.html) |
+| [xx.es.marian.translate_to.guw](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_guw_es_xx.html) | [opus_mt_guw_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_guw_es_xx.html) |
+| [xx.tll.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_tll_xx.html) | [opus_mt_fr_tll](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_tll_xx.html) |
+| [xx.lua.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_lua_xx.html) | [opus_mt_fr_lua](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_lua_xx.html) |
+| [xx.yap.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_yap_xx.html) | [opus_mt_fi_yap](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_yap_xx.html) |
+| [xx.es.marian.translate_to.gaa](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_gaa_es_xx.html) | [opus_mt_gaa_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_gaa_es_xx.html) |
+| [xx.sv.marian.translate_to.ig](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ig_sv_xx.html) | [opus_mt_ig_sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ig_sv_xx.html) |
+| [xx.ht.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_ht_xx.html) | [opus_mt_fr_ht](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_ht_xx.html) |
+| [xx.el.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_el_xx.html) | [opus_mt_fr_el](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_el_xx.html) |
+| [xx.inc.marian.translate_to.inc](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_inc_inc_xx.html) | [opus_mt_inc_inc](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_inc_inc_xx.html) |
+| [xx.swc.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_swc_xx.html) | [opus_mt_fr_swc](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_swc_xx.html) |
+| [xx.ar.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_ar_xx.html) | [opus_mt_fr_ar](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_ar_xx.html) |
+| [xx.es.marian.translate_to.ilo](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ilo_es_xx.html) | [opus_mt_ilo_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ilo_es_xx.html) |
+| [xx.fi.marian.translate_to.hr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_hr_fi_xx.html) | [opus_mt_hr_fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_hr_fi_xx.html) |
+| [xx.tpi.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_tpi_xx.html) | [opus_mt_fr_tpi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_tpi_xx.html) |
+| [xx.ve.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_ve_xx.html) | [opus_mt_fr_ve](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_ve_xx.html) |
+| [xx.sv.marian.translate_to.guw](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_guw_sv_xx.html) | [opus_mt_guw_sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_guw_sv_xx.html) |
+| [xx.sv.marian.translate_to.iso](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_iso_sv_xx.html) | [opus_mt_iso_sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_iso_sv_xx.html) |
+| [xx.sv.marian.translate_to.is](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_is_sv_xx.html) | [opus_mt_is_sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_is_sv_xx.html) |
+| [xx.tum.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_tum_xx.html) | [opus_mt_fr_tum](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_tum_xx.html) |
+| [xx.es.marian.translate_to.ht](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ht_es_xx.html) | [opus_mt_ht_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ht_es_xx.html) |
+| [xx.ho.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_ho_xx.html) | [opus_mt_fr_ho](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_ho_xx.html) |
+| [xx.efi.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_efi_xx.html) | [opus_mt_fr_efi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_efi_xx.html) |
+| [xx.es.marian.translate_to.gl](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_gl_es_xx.html) | [opus_mt_gl_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_gl_es_xx.html) |
+| [xx.ru.marian.translate_to.he](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_he_ru_xx.html) | [opus_mt_he_ru](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_he_ru_xx.html) |
+| [xx.fi.marian.translate_to.hil](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_hil_fi_xx.html) | [opus_mt_hil_fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_hil_fi_xx.html) |
+| [xx.eo.marian.translate_to.he](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_he_eo_xx.html) | [opus_mt_he_eo](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_he_eo_xx.html) |
+| [xx.lu.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_lu_xx.html) | [opus_mt_fr_lu](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_lu_xx.html) |
+| [xx.sv.marian.translate_to.ha](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ha_sv_xx.html) | [opus_mt_ha_sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ha_sv_xx.html) |
+| [xx.rnd.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_rnd_xx.html) | [opus_mt_fr_rnd](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_rnd_xx.html) |
+| [xx.st.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_st_xx.html) | [opus_mt_fr_st](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_st_xx.html) |
+| [xx.tl.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_tl_xx.html) | [opus_mt_fr_tl](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_tl_xx.html) |
+| [xx.bem.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_bem_xx.html) | [opus_mt_fr_bem](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_bem_xx.html) |
+| [xx.eo.marian.translate_to.is](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_is_eo_xx.html) | [opus_mt_is_eo](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_is_eo_xx.html) |
+| [xx.is.marian.translate_to.it](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_it_is_xx.html) | [opus_mt_it_is](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_it_is_xx.html) |
+| [xx.hu.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_hu_xx.html) | [opus_mt_fr_hu](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_hu_xx.html) |
+| [xx.yo.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_yo_xx.html) | [opus_mt_fi_yo](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fi_yo_xx.html) |
+| [xx.iso.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_iso_xx.html) | [opus_mt_fr_iso](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_iso_xx.html) |
+| [xx.de.marian.translate_to.it](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_it_de_xx.html) | [opus_mt_it_de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_it_de_xx.html) |
+| [xx.ty.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_ty_xx.html) | [opus_mt_fr_ty](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_ty_xx.html) |
+| [xx.hil.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_hil_xx.html) | [opus_mt_fr_hil](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_hil_xx.html) |
+| [xx.eo.marian.translate_to.it](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_it_eo_xx.html) | [opus_mt_it_eo](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_it_eo_xx.html) |
+| [xx.sv.marian.translate_to.hr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_hr_sv_xx.html) | [opus_mt_hr_sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_hr_sv_xx.html) |
+| [xx.ber.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_ber_xx.html) | [opus_mt_fr_ber](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_ber_xx.html) |
+| [xx.de.marian.translate_to.guw](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_guw_de_xx.html) | [opus_mt_guw_de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_guw_de_xx.html) |
+| [xx.fi.marian.translate_to.hu](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_hu_fi_xx.html) | [opus_mt_hu_fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_hu_fi_xx.html) |
+| [xx.es.marian.translate_to.it](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_it_es_xx.html) | [opus_mt_it_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_it_es_xx.html) |
+| [xx.de.marian.translate_to.hu](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_hu_de_xx.html) | [opus_mt_hu_de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_hu_de_xx.html) |
+| [xx.fj.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_fj_xx.html) | [opus_mt_fr_fj](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_fj_xx.html) |
+| [xx.sv.marian.translate_to.id](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_id_sv_xx.html) | [opus_mt_id_sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_id_sv_xx.html) |
+| [xx.xh.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_xh_xx.html) | [opus_mt_fr_xh](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_xh_xx.html) |
+| [xx.yo.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_yo_xx.html) | [opus_mt_fr_yo](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_yo_xx.html) |
+| [xx.ca.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_ca_xx.html) | [opus_mt_fr_ca](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_ca_xx.html) |
+| [xx.es.marian.translate_to.he](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_he_es_xx.html) | [opus_mt_he_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_he_es_xx.html) |
+| [xx.de.marian.translate_to.he](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_he_de_xx.html) | [opus_mt_he_de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_he_de_xx.html) |
+| [xx.pt.marian.translate_to.gl](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_gl_pt_xx.html) | [opus_mt_gl_pt](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_gl_pt_xx.html) |
+| [xx.ru.marian.translate_to.hy](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_hy_ru_xx.html) | [opus_mt_hy_ru](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_hy_ru_xx.html) |
+| [xx.mos.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_mos_xx.html) | [opus_mt_fr_mos](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_mos_xx.html) |
+| [xx.ceb.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_ceb_xx.html) | [opus_mt_fr_ceb](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_fr_ceb_xx.html) |
+| [xx.sh.marian.translate_to.ja](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ja_sh_xx.html) | [opus_mt_ja_sh](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ja_sh_xx.html) |
+| [xx.bg.marian.translate_to.ja](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ja_bg_xx.html) | [opus_mt_ja_bg](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ja_bg_xx.html) |
+| [xx.sv.marian.translate_to.ja](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ja_sv_xx.html) | [opus_mt_ja_sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ja_sv_xx.html) |
+| [xx.ru.marian.translate_to.lv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_lv_ru_xx.html) | [opus_mt_lv_ru](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_lv_ru_xx.html) |
+| [xx.fr.marian.translate_to.ms](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ms_fr_xx.html) | [opus_mt_ms_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ms_fr_xx.html) |
+| [xx.sv.marian.translate_to.mt](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_mt_sv_xx.html) | [opus_mt_mt_sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_mt_sv_xx.html) |
+| [xx.da.marian.translate_to.ja](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ja_da_xx.html) | [opus_mt_ja_da](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ja_da_xx.html) |
+| [xx.de.marian.translate_to.niu](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_niu_de_xx.html) | [opus_mt_niu_de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_niu_de_xx.html) |
+| [xx.es.marian.translate_to.niu](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_niu_es_xx.html) | [opus_mt_niu_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_niu_es_xx.html) |
+| [xx.sv.marian.translate_to.lus](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_lus_sv_xx.html) | [opus_mt_lus_sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_lus_sv_xx.html) |
+| [xx.sv.marian.translate_to.lg](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_lg_sv_xx.html) | [opus_mt_lg_sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_lg_sv_xx.html) |
+| [xx.sv.marian.translate_to.pon](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_pon_sv_xx.html) | [opus_mt_pon_sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_pon_sv_xx.html) |
+| [xx.ru.marian.translate_to.lt](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_lt_ru_xx.html) | [opus_mt_lt_ru](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_lt_ru_xx.html) |
+| [xx.fi.marian.translate_to.lg](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_lg_fi_xx.html) | [opus_mt_lg_fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_lg_fi_xx.html) |
+| [xx.sv.marian.translate_to.kg](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_kg_sv_xx.html) | [opus_mt_kg_sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_kg_sv_xx.html) |
+| [xx.fr.marian.translate_to.nl](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_nl_fr_xx.html) | [opus_mt_nl_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_nl_fr_xx.html) |
+| [xx.ms.marian.translate_to.ms](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ms_ms_xx.html) | [opus_mt_ms_ms](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ms_ms_xx.html) |
+| [xx.es.marian.translate_to.lg](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_lg_es_xx.html) | [opus_mt_lg_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_lg_es_xx.html) |
+| [xx.fr.marian.translate_to.lu](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_lu_fr_xx.html) | [opus_mt_lu_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_lu_fr_xx.html) |
+| [xx.fr.marian.translate_to.loz](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_loz_fr_xx.html) | [opus_mt_loz_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_loz_fr_xx.html) |
+| [xx.ca.marian.translate_to.nl](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_nl_ca_xx.html) | [opus_mt_nl_ca](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_nl_ca_xx.html) |
+| [xx.sv.marian.translate_to.lue](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_lue_sv_xx.html) | [opus_mt_lue_sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_lue_sv_xx.html) |
+| [xx.vi.marian.translate_to.ja](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ja_vi_xx.html) | [opus_mt_ja_vi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ja_vi_xx.html) |
+| [xx.fr.marian.translate_to.ja](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ja_fr_xx.html) | [opus_mt_ja_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ja_fr_xx.html) |
+| [xx.fi.marian.translate_to.pap](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_pap_fi_xx.html) | [opus_mt_pap_fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_pap_fi_xx.html) |
+| [xx.pl.marian.translate_to.lt](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_lt_pl_xx.html) | [opus_mt_lt_pl](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_lt_pl_xx.html) |
+| [xx.de.marian.translate_to.ny](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ny_de_xx.html) | [opus_mt_ny_de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ny_de_xx.html) |
+| [xx.fr.marian.translate_to.lue](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_lue_fr_xx.html) | [opus_mt_lue_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_lue_fr_xx.html) |
+| [xx.gl.marian.translate_to.pt](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_pt_gl_xx.html) | [opus_mt_pt_gl](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_pt_gl_xx.html) |
+| [xx.fr.marian.translate_to.pap](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_pap_fr_xx.html) | [opus_mt_pap_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_pap_fr_xx.html) |
+| [xx.uk.marian.translate_to.pl](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_pl_uk_xx.html) | [opus_mt_pl_uk](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_pl_uk_xx.html) |
+| [xx.fi.marian.translate_to.niu](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_niu_fi_xx.html) | [opus_mt_niu_fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_niu_fi_xx.html) |
+| [xx.ar.marian.translate_to.ja](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ja_ar_xx.html) | [opus_mt_ja_ar](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ja_ar_xx.html) |
+| [xx.es.marian.translate_to.mh](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_mh_es_xx.html) | [opus_mt_mh_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_mh_es_xx.html) |
+| [xx.ar.marian.translate_to.pl](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_pl_ar_xx.html) | [opus_mt_pl_ar](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_pl_ar_xx.html) |
+| [xx.de.marian.translate_to.pag](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_pag_de_xx.html) | [opus_mt_pag_de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_pag_de_xx.html) |
+| [xx.es.marian.translate_to.no](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_no_es_xx.html) | [opus_mt_no_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_no_es_xx.html) |
+| [xx.es.marian.translate_to.mfs](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_mfs_es_xx.html) | [opus_mt_mfs_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_mfs_es_xx.html) |
+| [xx.fr.marian.translate_to.pis](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_pis_fr_xx.html) | [opus_mt_pis_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_pis_fr_xx.html) |
+| [xx.eo.marian.translate_to.pt](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_pt_eo_xx.html) | [opus_mt_pt_eo](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_pt_eo_xx.html) |
+| [xx.de.marian.translate_to.lt](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_lt_de_xx.html) | [opus_mt_lt_de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_lt_de_xx.html) |
+| [xx.fr.marian.translate_to.ln](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ln_fr_xx.html) | [opus_mt_ln_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ln_fr_xx.html) |
+| [xx.es.marian.translate_to.pag](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_pag_es_xx.html) | [opus_mt_pag_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_pag_es_xx.html) |
+| [xx.fi.marian.translate_to.nl](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_nl_fi_xx.html) | [opus_mt_nl_fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_nl_fi_xx.html) |
+| [xx.vi.marian.translate_to.it](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_it_vi_xx.html) | [opus_mt_it_vi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_it_vi_xx.html) |
+| [xx.fi.marian.translate_to.ko](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ko_fi_xx.html) | [opus_mt_ko_fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ko_fi_xx.html) |
+| [xx.de.marian.translate_to.nso](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_nso_de_xx.html) | [opus_mt_nso_de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_nso_de_xx.html) |
+| [xx.fr.marian.translate_to.niu](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_niu_fr_xx.html) | [opus_mt_niu_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_niu_fr_xx.html) |
+| [xx.ca.marian.translate_to.pt](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_pt_ca_xx.html) | [opus_mt_pt_ca](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_pt_ca_xx.html) |
+| [xx.fr.marian.translate_to.kwy](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_kwy_fr_xx.html) | [opus_mt_kwy_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_kwy_fr_xx.html) |
+| [xx.ru.marian.translate_to.no](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_no_ru_xx.html) | [opus_mt_no_ru](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_no_ru_xx.html) |
+| [xx.fi.marian.translate_to.pon](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_pon_fi_xx.html) | [opus_mt_pon_fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_pon_fi_xx.html) |
+| [xx.fi.marian.translate_to.lu](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_lu_fi_xx.html) | [opus_mt_lu_fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_lu_fi_xx.html) |
+| [xx.es.marian.translate_to.ko](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ko_es_xx.html) | [opus_mt_ko_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ko_es_xx.html) |
+| [xx.es.marian.translate_to.ny](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ny_es_xx.html) | [opus_mt_ny_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ny_es_xx.html) |
+| [xx.itc.marian.translate_to.itc](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_itc_itc_xx.html) | [opus_mt_itc_itc](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_itc_itc_xx.html) |
+| [xx.es.marian.translate_to.ja](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ja_es_xx.html) | [opus_mt_ja_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ja_es_xx.html) |
+| [xx.fr.marian.translate_to.mk](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_mk_fr_xx.html) | [opus_mt_mk_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_mk_fr_xx.html) |
+| [xx.it.marian.translate_to.ms](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ms_it_xx.html) | [opus_mt_ms_it](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ms_it_xx.html) |
+| [xx.sv.marian.translate_to.lu](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_lu_sv_xx.html) | [opus_mt_lu_sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_lu_sv_xx.html) |
+| [xx.fr.marian.translate_to.nso](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_nso_fr_xx.html) | [opus_mt_nso_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_nso_fr_xx.html) |
+| [xx.uk.marian.translate_to.pt](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_pt_uk_xx.html) | [opus_mt_pt_uk](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_pt_uk_xx.html) |
+| [xx.no.marian.translate_to.no](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_no_no_xx.html) | [opus_mt_no_no](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_no_no_xx.html) |
+| [xx.sv.marian.translate_to.lua](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_lua_sv_xx.html) | [opus_mt_lua_sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_lua_sv_xx.html) |
+| [xx.es.marian.translate_to.pl](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_pl_es_xx.html) | [opus_mt_pl_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_pl_es_xx.html) |
+| [xx.es.marian.translate_to.lu](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_lu_es_xx.html) | [opus_mt_lu_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_lu_es_xx.html) |
+| [xx.fr.marian.translate_to.lus](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_lus_fr_xx.html) | [opus_mt_lus_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_lus_fr_xx.html) |
+| [xx.tr.marian.translate_to.ja](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ja_tr_xx.html) | [opus_mt_ja_tr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ja_tr_xx.html) |
+| [xx.fi.marian.translate_to.pag](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_pag_fi_xx.html) | [opus_mt_pag_fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_pag_fi_xx.html) |
+| [xx.fr.marian.translate_to.kqn](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_kqn_fr_xx.html) | [opus_mt_kqn_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_kqn_fr_xx.html) |
+| [xx.fi.marian.translate_to.ja](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ja_fi_xx.html) | [opus_mt_ja_fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ja_fi_xx.html) |
+| [xx.af.marian.translate_to.nl](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_nl_af_xx.html) | [opus_mt_nl_af](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_nl_af_xx.html) |
+| [xx.sv.marian.translate_to.pag](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_pag_sv_xx.html) | [opus_mt_pag_sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_pag_sv_xx.html) |
+| [xx.sv.marian.translate_to.nl](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_nl_sv_xx.html) | [opus_mt_nl_sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_nl_sv_xx.html) |
+| [xx.uk.marian.translate_to.no](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_no_uk_xx.html) | [opus_mt_no_uk](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_no_uk_xx.html) |
+| [xx.es.marian.translate_to.lua](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_lua_es_xx.html) | [opus_mt_lua_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_lua_es_xx.html) |
+| [xx.fi.marian.translate_to.mt](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_mt_fi_xx.html) | [opus_mt_mt_fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_mt_fi_xx.html) |
+| [xx.eo.marian.translate_to.lt](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_lt_eo_xx.html) | [opus_mt_lt_eo](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_lt_eo_xx.html) |
+| [xx.de.marian.translate_to.no](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_no_de_xx.html) | [opus_mt_no_de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_no_de_xx.html) |
+| [xx.eo.marian.translate_to.pl](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_pl_eo_xx.html) | [opus_mt_pl_eo](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_pl_eo_xx.html) |
+| [xx.es.marian.translate_to.loz](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_loz_es_xx.html) | [opus_mt_loz_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_loz_es_xx.html) |
+| [xx.ru.marian.translate_to.ja](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ja_ru_xx.html) | [opus_mt_ja_ru](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ja_ru_xx.html) |
+| [xx.sv.marian.translate_to.pl](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_pl_sv_xx.html) | [opus_mt_pl_sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_pl_sv_xx.html) |
+| [xx.fi.marian.translate_to.mh](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_mh_fi_xx.html) | [opus_mt_mh_fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_mh_fi_xx.html) |
+| [xx.hu.marian.translate_to.ja](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ja_hu_xx.html) | [opus_mt_ja_hu](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ja_hu_xx.html) |
+| [xx.fi.marian.translate_to.mk](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_mk_fi_xx.html) | [opus_mt_mk_fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_mk_fi_xx.html) |
+| [xx.es.marian.translate_to.lue](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_lue_es_xx.html) | [opus_mt_lue_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_lue_es_xx.html) |
+| [xx.sv.marian.translate_to.lt](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_lt_sv_xx.html) | [opus_mt_lt_sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_lt_sv_xx.html) |
+| [xx.fr.marian.translate_to.pon](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_pon_fr_xx.html) | [opus_mt_pon_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_pon_fr_xx.html) |
+| [xx.es.marian.translate_to.pap](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_pap_es_xx.html) | [opus_mt_pap_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_pap_es_xx.html) |
+| [xx.es.marian.translate_to.ln](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ln_es_xx.html) | [opus_mt_ln_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ln_es_xx.html) |
+| [xx.de.marian.translate_to.loz](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_loz_de_xx.html) | [opus_mt_loz_de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_loz_de_xx.html) |
+| [xx.ru.marian.translate_to.ka](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ka_ru_xx.html) | [opus_mt_ka_ru](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ka_ru_xx.html) |
+| [xx.sv.marian.translate_to.kwy](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_kwy_sv_xx.html) | [opus_mt_kwy_sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_kwy_sv_xx.html) |
+| [xx.fi.marian.translate_to.lv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_lv_fi_xx.html) | [opus_mt_lv_fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_lv_fi_xx.html) |
+| [xx.pl.marian.translate_to.ja](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ja_pl_xx.html) | [opus_mt_ja_pl](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ja_pl_xx.html) |
+| [xx.hu.marian.translate_to.ko](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ko_hu_xx.html) | [opus_mt_ko_hu](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ko_hu_xx.html) |
+| [xx.de.marian.translate_to.ja](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ja_de_xx.html) | [opus_mt_ja_de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ja_de_xx.html) |
+| [xx.de.marian.translate_to.ko](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ko_de_xx.html) | [opus_mt_ko_de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ko_de_xx.html) |
+| [xx.es.marian.translate_to.kg](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_kg_es_xx.html) | [opus_mt_kg_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_kg_es_xx.html) |
+| [xx.de.marian.translate_to.pap](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_pap_de_xx.html) | [opus_mt_pap_de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_pap_de_xx.html) |
+| [xx.fi.marian.translate_to.no](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_no_fi_xx.html) | [opus_mt_no_fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_no_fi_xx.html) |
+| [xx.fi.marian.translate_to.lue](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_lue_fi_xx.html) | [opus_mt_lue_fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_lue_fi_xx.html) |
+| [xx.no.marian.translate_to.pl](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_pl_no_xx.html) | [opus_mt_pl_no](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_pl_no_xx.html) |
+| [xx.fr.marian.translate_to.mt](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_mt_fr_xx.html) | [opus_mt_mt_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_mt_fr_xx.html) |
+| [xx.es.marian.translate_to.mg](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_mg_es_xx.html) | [opus_mt_mg_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_mg_es_xx.html) |
+| [xx.es.marian.translate_to.pis](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_pis_es_xx.html) | [opus_mt_pis_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_pis_es_xx.html) |
+| [xx.fr.marian.translate_to.pl](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_pl_fr_xx.html) | [opus_mt_pl_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_pl_fr_xx.html) |
+| [xx.sv.marian.translate_to.ko](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ko_sv_xx.html) | [opus_mt_ko_sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ko_sv_xx.html) |
+| [xx.sv.marian.translate_to.loz](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_loz_sv_xx.html) | [opus_mt_loz_sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_loz_sv_xx.html) |
+| [xx.fi.marian.translate_to.loz](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_loz_fi_xx.html) | [opus_mt_loz_fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_loz_fi_xx.html) |
+| [xx.pl.marian.translate_to.no](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_no_pl_xx.html) | [opus_mt_no_pl](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_no_pl_xx.html) |
+| [xx.nl.marian.translate_to.ja](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ja_nl_xx.html) | [opus_mt_ja_nl](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ja_nl_xx.html) |
+| [xx.de.marian.translate_to.pl](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_pl_de_xx.html) | [opus_mt_pl_de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_pl_de_xx.html) |
+| [xx.lt.marian.translate_to.pl](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_pl_lt_xx.html) | [opus_mt_pl_lt](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_pl_lt_xx.html) |
+| [xx.ru.marian.translate_to.ko](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ko_ru_xx.html) | [opus_mt_ko_ru](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ko_ru_xx.html) |
+| [xx.fr.marian.translate_to.lv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_lv_fr_xx.html) | [opus_mt_lv_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_lv_fr_xx.html) |
+| [xx.he.marian.translate_to.ja](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ja_he_xx.html) | [opus_mt_ja_he](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ja_he_xx.html) |
+| [xx.sv.marian.translate_to.niu](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_niu_sv_xx.html) | [opus_mt_niu_sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_niu_sv_xx.html) |
+| [xx.de.marian.translate_to.ms](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ms_de_xx.html) | [opus_mt_ms_de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ms_de_xx.html) |
+| [xx.es.marian.translate_to.lt](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_lt_es_xx.html) | [opus_mt_lt_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_lt_es_xx.html) |
+| [xx.sv.marian.translate_to.no](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_no_sv_xx.html) | [opus_mt_no_sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_no_sv_xx.html) |
+| [xx.nl.marian.translate_to.no](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_no_nl_xx.html) | [opus_mt_no_nl](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_no_nl_xx.html) |
+| [xx.fi.marian.translate_to.lua](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_lua_fi_xx.html) | [opus_mt_lua_fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_lua_fi_xx.html) |
+| [xx.fr.marian.translate_to.lt](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_lt_fr_xx.html) | [opus_mt_lt_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_lt_fr_xx.html) |
+| [xx.ms.marian.translate_to.ja](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ja_ms_xx.html) | [opus_mt_ja_ms](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ja_ms_xx.html) |
+| [xx.es.marian.translate_to.kqn](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_kqn_es_xx.html) | [opus_mt_kqn_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_kqn_es_xx.html) |
+| [xx.fr.marian.translate_to.lg](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_lg_fr_xx.html) | [opus_mt_lg_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_lg_fr_xx.html) |
+| [xx.es.marian.translate_to.mk](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_mk_es_xx.html) | [opus_mt_mk_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_mk_es_xx.html) |
+| [xx.da.marian.translate_to.no](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_no_da_xx.html) | [opus_mt_no_da](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_no_da_xx.html) |
+| [xx.it.marian.translate_to.lt](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_lt_it_xx.html) | [opus_mt_lt_it](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_lt_it_xx.html) |
+| [xx.es.marian.translate_to.prl](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_prl_es_xx.html) | [opus_mt_prl_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_prl_es_xx.html) |
+| [xx.fr.marian.translate_to.lua](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_lua_fr_xx.html) | [opus_mt_lua_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_lua_fr_xx.html) |
+| [xx.es.marian.translate_to.nso](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_nso_es_xx.html) | [opus_mt_nso_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_nso_es_xx.html) |
+| [xx.sv.marian.translate_to.lv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_lv_sv_xx.html) | [opus_mt_lv_sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_lv_sv_xx.html) |
+| [xx.fi.marian.translate_to.pis](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_pis_fi_xx.html) | [opus_mt_pis_fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_pis_fi_xx.html) |
+| [xx.es.marian.translate_to.pon](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_pon_es_xx.html) | [opus_mt_pon_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_pon_es_xx.html) |
+| [xx.fr.marian.translate_to.ko](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ko_fr_xx.html) | [opus_mt_ko_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ko_fr_xx.html) |
+| [xx.de.marian.translate_to.ln](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ln_de_xx.html) | [opus_mt_ln_de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ln_de_xx.html) |
+| [xx.uk.marian.translate_to.nl](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_nl_uk_xx.html) | [opus_mt_nl_uk](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_nl_uk_xx.html) |
+| [xx.eo.marian.translate_to.nl](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_nl_eo_xx.html) | [opus_mt_nl_eo](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_nl_eo_xx.html) |
+| [xx.es.marian.translate_to.lv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_lv_es_xx.html) | [opus_mt_lv_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_lv_es_xx.html) |
+| [xx.tr.marian.translate_to.lt](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_lt_tr_xx.html) | [opus_mt_lt_tr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_lt_tr_xx.html) |
+| [xx.es.marian.translate_to.mt](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_mt_es_xx.html) | [opus_mt_mt_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_mt_es_xx.html) |
+| [xx.fi.marian.translate_to.lus](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_lus_fi_xx.html) | [opus_mt_lus_fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_lus_fi_xx.html) |
+| [xx.tl.marian.translate_to.pt](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_pt_tl_xx.html) | [opus_mt_pt_tl](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_pt_tl_xx.html) |
+| [xx.no.marian.translate_to.nl](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_nl_no_xx.html) | [opus_mt_nl_no](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_nl_no_xx.html) |
+| [xx.sv.marian.translate_to.kqn](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_kqn_sv_xx.html) | [opus_mt_kqn_sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_kqn_sv_xx.html) |
+| [xx.pt.marian.translate_to.ja](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ja_pt_xx.html) | [opus_mt_ja_pt](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ja_pt_xx.html) |
+| [xx.fi.marian.translate_to.nso](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_nso_fi_xx.html) | [opus_mt_nso_fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_nso_fi_xx.html) |
+| [xx.fr.marian.translate_to.kg](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_kg_fr_xx.html) | [opus_mt_kg_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_kg_fr_xx.html) |
+| [xx.sv.marian.translate_to.pis](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_pis_sv_xx.html) | [opus_mt_pis_sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_pis_sv_xx.html) |
+| [xx.is.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_is_xx.html) | [opus_mt_sv_is](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_is_xx.html) |
+| [xx.sla.marian.translate_to.sla](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sla_sla_xx.html) | [opus_mt_sla_sla](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sla_sla_xx.html) |
+| [xx.sv.marian.translate_to.srn](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_srn_sv_xx.html) | [opus_mt_srn_sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_srn_sv_xx.html) |
+| [xx.niu.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_niu_xx.html) | [opus_mt_sv_niu](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_niu_xx.html) |
+| [xx.to.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_to_xx.html) | [opus_mt_sv_to](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_to_xx.html) |
+| [xx.guw.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_guw_xx.html) | [opus_mt_sv_guw](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_guw_xx.html) |
+| [xx.sn.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_sn_xx.html) | [opus_mt_sv_sn](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_sn_xx.html) |
+| [xx.sv.marian.translate_to.rnd](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_rnd_sv_xx.html) | [opus_mt_rnd_sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_rnd_sv_xx.html) |
+| [xx.tum.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_tum_xx.html) | [opus_mt_sv_tum](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_tum_xx.html) |
+| [xx.mos.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_mos_xx.html) | [opus_mt_sv_mos](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_mos_xx.html) |
+| [xx.srn.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_srn_xx.html) | [opus_mt_sv_srn](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_srn_xx.html) |
+| [xx.ht.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_ht_xx.html) | [opus_mt_sv_ht](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_ht_xx.html) |
+| [xx.no.marian.translate_to.ru](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ru_no_xx.html) | [opus_mt_ru_no](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ru_no_xx.html) |
+| [xx.sl.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_sl_xx.html) | [opus_mt_sv_sl](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_sl_xx.html) |
+| [xx.fr.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_fr_xx.html) | [opus_mt_sv_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_fr_xx.html) |
+| [xx.uk.marian.translate_to.ru](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ru_uk_xx.html) | [opus_mt_ru_uk](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ru_uk_xx.html) |
+| [xx.tiv.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_tiv_xx.html) | [opus_mt_sv_tiv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_tiv_xx.html) |
+| [xx.es.marian.translate_to.ru](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ru_es_xx.html) | [opus_mt_ru_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ru_es_xx.html) |
+| [xx.pag.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_pag_xx.html) | [opus_mt_sv_pag](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_pag_xx.html) |
+| [xx.gaa.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_gaa_xx.html) | [opus_mt_sv_gaa](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_gaa_xx.html) |
+| [xx.kqn.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_kqn_xx.html) | [opus_mt_sv_kqn](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_kqn_xx.html) |
+| [xx.fr.marian.translate_to.sg](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sg_fr_xx.html) | [opus_mt_sg_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sg_fr_xx.html) |
+| [xx.st.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_st_xx.html) | [opus_mt_sv_st](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_st_xx.html) |
+| [xx.ase.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_ase_xx.html) | [opus_mt_sv_ase](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_ase_xx.html) |
+| [xx.es.marian.translate_to.rn](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_rn_es_xx.html) | [opus_mt_rn_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_rn_es_xx.html) |
+| [xx.ru.marian.translate_to.sl](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sl_ru_xx.html) | [opus_mt_sl_ru](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sl_ru_xx.html) |
+| [xx.lu.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_lu_xx.html) | [opus_mt_sv_lu](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_lu_xx.html) |
+| [xx.eu.marian.translate_to.ru](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ru_eu_xx.html) | [opus_mt_ru_eu](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ru_eu_xx.html) |
+| [xx.no.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_no_xx.html) | [opus_mt_sv_no](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_no_xx.html) |
+| [xx.sq.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_sq_xx.html) | [opus_mt_sv_sq](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_sq_xx.html) |
+| [xx.da.marian.translate_to.ru](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ru_da_xx.html) | [opus_mt_ru_da](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ru_da_xx.html) |
+| [xx.ny.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_ny_xx.html) | [opus_mt_sv_ny](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_ny_xx.html) |
+| [xx.kg.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_kg_xx.html) | [opus_mt_sv_kg](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_kg_xx.html) |
+| [xx.pis.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_pis_xx.html) | [opus_mt_sv_pis](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_pis_xx.html) |
+| [xx.sv.marian.translate_to.sk](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sk_sv_xx.html) | [opus_mt_sk_sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sk_sv_xx.html) |
+| [xx.lus.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_lus_xx.html) | [opus_mt_sv_lus](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_lus_xx.html) |
+| [xx.fi.marian.translate_to.sl](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sl_fi_xx.html) | [opus_mt_sl_fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sl_fi_xx.html) |
+| [xx.tn.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_tn_xx.html) | [opus_mt_sv_tn](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_tn_xx.html) |
+| [xx.fr.marian.translate_to.srn](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_srn_fr_xx.html) | [opus_mt_srn_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_srn_fr_xx.html) |
+| [xx.lv.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_lv_xx.html) | [opus_mt_sv_lv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_lv_xx.html) |
+| [xx.uk.marian.translate_to.sl](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sl_uk_xx.html) | [opus_mt_sl_uk](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sl_uk_xx.html) |
+| [xx.sg.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_sg_xx.html) | [opus_mt_sv_sg](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_sg_xx.html) |
+| [xx.he.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_he_xx.html) | [opus_mt_sv_he](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_he_xx.html) |
+| [xx.eo.marian.translate_to.ru](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ru_eo_xx.html) | [opus_mt_ru_eo](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ru_eo_xx.html) |
+| [xx.fr.marian.translate_to.ru](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ru_fr_xx.html) | [opus_mt_ru_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ru_fr_xx.html) |
+| [xx.lv.marian.translate_to.ru](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ru_lv_xx.html) | [opus_mt_ru_lv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ru_lv_xx.html) |
+| [xx.lua.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_lua_xx.html) | [opus_mt_sv_lua](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_lua_xx.html) |
+| [xx.ar.marian.translate_to.ru](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ru_ar_xx.html) | [opus_mt_ru_ar](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ru_ar_xx.html) |
+| [xx.tll.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_tll_xx.html) | [opus_mt_sv_tll](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_tll_xx.html) |
+| [xx.lue.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_lue_xx.html) | [opus_mt_sv_lue](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_lue_xx.html) |
+| [xx.bi.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_bi_xx.html) | [opus_mt_sv_bi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_bi_xx.html) |
+| [xx.hu.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_hu_xx.html) | [opus_mt_sv_hu](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_hu_xx.html) |
+| [xx.bzs.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_bzs_xx.html) | [opus_mt_sv_bzs](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_bzs_xx.html) |
+| [xx.ru.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_ru_xx.html) | [opus_mt_sv_ru](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_ru_xx.html) |
+| [xx.eo.marian.translate_to.ro](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ro_eo_xx.html) | [opus_mt_ro_eo](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ro_eo_xx.html) |
+| [xx.es.marian.translate_to.st](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_st_es_xx.html) | [opus_mt_st_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_st_es_xx.html) |
+| [xx.mt.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_mt_xx.html) | [opus_mt_sv_mt](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_mt_xx.html) |
+| [xx.af.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_af_xx.html) | [opus_mt_sv_af](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_af_xx.html) |
+| [xx.ts.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_ts_xx.html) | [opus_mt_sv_ts](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_ts_xx.html) |
+| [xx.af.marian.translate_to.ru](https://nlp.johnsnowlabs.com//2021/06/01/opus_tatoeba_af_ru_xx.html) | [opus_tatoeba_af_ru](https://nlp.johnsnowlabs.com//2021/06/01/opus_tatoeba_af_ru_xx.html) |
+| [xx.efi.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_efi_xx.html) | [opus_mt_sv_efi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_efi_xx.html) |
+| [xx.es.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_es_xx.html) | [opus_mt_sv_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_es_xx.html) |
+| [xx.fi.marian.translate_to.sk](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sk_fi_xx.html) | [opus_mt_sk_fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sk_fi_xx.html) |
+| [xx.fr.marian.translate_to.rw](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_rw_fr_xx.html) | [opus_mt_rw_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_rw_fr_xx.html) |
+| [xx.sv.marian.translate_to.run](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_run_sv_xx.html) | [opus_mt_run_sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_run_sv_xx.html) |
+| [xx.th.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_th_xx.html) | [opus_mt_sv_th](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_th_xx.html) |
+| [xx.ln.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_ln_xx.html) | [opus_mt_sv_ln](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_ln_xx.html) |
+| [xx.es.marian.translate_to.sk](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sk_es_xx.html) | [opus_mt_sk_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sk_es_xx.html) |
+| [xx.lt.marian.translate_to.ru](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ru_lt_xx.html) | [opus_mt_ru_lt](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ru_lt_xx.html) |
+| [xx.mfe.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_mfe_xx.html) | [opus_mt_sv_mfe](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_mfe_xx.html) |
+| [xx.cs.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_cs_xx.html) | [opus_mt_sv_cs](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_cs_xx.html) |
+| [xx.vi.marian.translate_to.ru](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ru_vi_xx.html) | [opus_mt_ru_vi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ru_vi_xx.html) |
+| [xx.ee.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_ee_xx.html) | [opus_mt_sv_ee](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_ee_xx.html) |
+| [xx.bg.marian.translate_to.ru](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ru_bg_xx.html) | [opus_mt_ru_bg](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ru_bg_xx.html) |
+| [xx.nso.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_nso_xx.html) | [opus_mt_sv_nso](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_nso_xx.html) |
+| [xx.mh.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_mh_xx.html) | [opus_mt_sv_mh](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_mh_xx.html) |
+| [xx.iso.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_iso_xx.html) | [opus_mt_sv_iso](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_iso_xx.html) |
+| [xx.fi.marian.translate_to.st](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_st_fi_xx.html) | [opus_mt_st_fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_st_fi_xx.html) |
+| [xx.bg.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_bg_xx.html) | [opus_mt_sv_bg](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_bg_xx.html) |
+| [xx.sv.marian.translate_to.sq](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sq_sv_xx.html) | [opus_mt_sq_sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sq_sv_xx.html) |
+| [xx.sv.marian.translate_to.sn](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sn_sv_xx.html) | [opus_mt_sn_sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sn_sv_xx.html) |
+| [xx.de.marian.translate_to.rn](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_rn_de_xx.html) | [opus_mt_rn_de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_rn_de_xx.html) |
+| [xx.pon.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_pon_xx.html) | [opus_mt_sv_pon](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_pon_xx.html) |
+| [xx.ha.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_ha_xx.html) | [opus_mt_sv_ha](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_ha_xx.html) |
+| [xx.fi.marian.translate_to.ru](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ru_fi_xx.html) | [opus_mt_ru_fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ru_fi_xx.html) |
+| [xx.sk.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_sk_xx.html) | [opus_mt_sv_sk](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_sk_xx.html) |
+| [xx.es.marian.translate_to.run](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_run_es_xx.html) | [opus_mt_run_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_run_es_xx.html) |
+| [xx.et.marian.translate_to.ru](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ru_et_xx.html) | [opus_mt_ru_et](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ru_et_xx.html) |
+| [xx.swc.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_swc_xx.html) | [opus_mt_sv_swc](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_swc_xx.html) |
+| [xx.hil.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_hil_xx.html) | [opus_mt_sv_hil](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_hil_xx.html) |
+| [xx.ro.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_ro_xx.html) | [opus_mt_sv_ro](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_ro_xx.html) |
+| [xx.fr.marian.translate_to.rnd](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_rnd_fr_xx.html) | [opus_mt_rnd_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_rnd_fr_xx.html) |
+| [xx.kwy.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_kwy_xx.html) | [opus_mt_sv_kwy](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_kwy_xx.html) |
+| [xx.uk.marian.translate_to.sh](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sh_uk_xx.html) | [opus_mt_sh_uk](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sh_uk_xx.html) |
+| [xx.sm.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_sm_xx.html) | [opus_mt_sv_sm](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_sm_xx.html) |
+| [xx.sv.marian.translate_to.rw](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_rw_sv_xx.html) | [opus_mt_rw_sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_rw_sv_xx.html) |
+| [xx.et.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_et_xx.html) | [opus_mt_sv_et](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_et_xx.html) |
+| [xx.eo.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_eo_xx.html) | [opus_mt_sv_eo](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_eo_xx.html) |
+| [xx.rnd.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_rnd_xx.html) | [opus_mt_sv_rnd](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_rnd_xx.html) |
+| [xx.eo.marian.translate_to.sh](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sh_eo_xx.html) | [opus_mt_sh_eo](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sh_eo_xx.html) |
+| [xx.ru.marian.translate_to.rn](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_rn_ru_xx.html) | [opus_mt_rn_ru](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_rn_ru_xx.html) |
+| [xx.rw.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_rw_xx.html) | [opus_mt_sv_rw](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_rw_xx.html) |
+| [xx.fr.marian.translate_to.sn](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sn_fr_xx.html) | [opus_mt_sn_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sn_fr_xx.html) |
+| [xx.ig.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_ig_xx.html) | [opus_mt_sv_ig](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_ig_xx.html) |
+| [xx.fj.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_fj_xx.html) | [opus_mt_sv_fj](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_fj_xx.html) |
+| [xx.sl.marian.translate_to.ru](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ru_sl_xx.html) | [opus_mt_ru_sl](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ru_sl_xx.html) |
+| [xx.ho.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_ho_xx.html) | [opus_mt_sv_ho](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_ho_xx.html) |
+| [xx.sv.marian.translate_to.sl](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sl_sv_xx.html) | [opus_mt_sl_sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sl_sv_xx.html) |
+| [xx.pap.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_pap_xx.html) | [opus_mt_sv_pap](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_pap_xx.html) |
+| [xx.fr.marian.translate_to.sl](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sl_fr_xx.html) | [opus_mt_sl_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sl_fr_xx.html) |
+| [xx.es.marian.translate_to.sl](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sl_es_xx.html) | [opus_mt_sl_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sl_es_xx.html) |
+| [xx.run.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_run_xx.html) | [opus_mt_sv_run](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_run_xx.html) |
+| [xx.el.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_el_xx.html) | [opus_mt_sv_el](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_el_xx.html) |
+| [xx.gil.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_gil_xx.html) | [opus_mt_sv_gil](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_gil_xx.html) |
+| [xx.crs.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_crs_xx.html) | [opus_mt_sv_crs](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_crs_xx.html) |
+| [xx.fr.marian.translate_to.sk](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sk_fr_xx.html) | [opus_mt_sk_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sk_fr_xx.html) |
+| [xx.es.marian.translate_to.sq](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sq_es_xx.html) | [opus_mt_sq_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sq_es_xx.html) |
+| [xx.sv.marian.translate_to.sg](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sg_sv_xx.html) | [opus_mt_sg_sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sg_sv_xx.html) |
+| [xx.es.marian.translate_to.srn](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_srn_es_xx.html) | [opus_mt_srn_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_srn_es_xx.html) |
+| [xx.fr.marian.translate_to.ro](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ro_fr_xx.html) | [opus_mt_ro_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ro_fr_xx.html) |
+| [xx.fr.marian.translate_to.rn](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_rn_fr_xx.html) | [opus_mt_rn_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_rn_fr_xx.html) |
+| [xx.fr.marian.translate_to.st](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_st_fr_xx.html) | [opus_mt_st_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_st_fr_xx.html) |
+| [xx.es.marian.translate_to.rw](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_rw_es_xx.html) | [opus_mt_rw_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_rw_es_xx.html) |
+| [xx.hr.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_hr_xx.html) | [opus_mt_sv_hr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_hr_xx.html) |
+| [xx.es.marian.translate_to.sm](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sm_es_xx.html) | [opus_mt_sm_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sm_es_xx.html) |
+| [xx.es.marian.translate_to.ssp](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ssp_es_xx.html) | [opus_mt_ssp_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ssp_es_xx.html) |
+| [xx.nl.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_nl_xx.html) | [opus_mt_sv_nl](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_nl_xx.html) |
+| [xx.bem.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_bem_xx.html) | [opus_mt_sv_bem](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_bem_xx.html) |
+| [xx.sem.marian.translate_to.sem](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sem_sem_xx.html) | [opus_mt_sem_sem](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sem_sem_xx.html) |
+| [xx.sv.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_sv_xx.html) | [opus_mt_sv_sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_sv_xx.html) |
+| [xx.sv.marian.translate_to.st](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_st_sv_xx.html) | [opus_mt_st_sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_st_sv_xx.html) |
+| [xx.lg.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_lg_xx.html) | [opus_mt_sv_lg](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_lg_xx.html) |
+| [xx.bcl.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_bcl_xx.html) | [opus_mt_sv_bcl](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_bcl_xx.html) |
+| [xx.toi.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_toi_xx.html) | [opus_mt_sv_toi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_toi_xx.html) |
+| [xx.id.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_id_xx.html) | [opus_mt_sv_id](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_id_xx.html) |
+| [xx.he.marian.translate_to.ru](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ru_he_xx.html) | [opus_mt_ru_he](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ru_he_xx.html) |
+| [xx.ceb.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_ceb_xx.html) | [opus_mt_sv_ceb](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_ceb_xx.html) |
+| [xx.tw.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_tw_xx.html) | [opus_mt_sv_tw](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_tw_xx.html) |
+| [xx.chk.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_chk_xx.html) | [opus_mt_sv_chk](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_chk_xx.html) |
+| [xx.fr.marian.translate_to.sm](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sm_fr_xx.html) | [opus_mt_sm_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sm_fr_xx.html) |
+| [xx.tvl.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_tvl_xx.html) | [opus_mt_sv_tvl](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_tvl_xx.html) |
+| [xx.es.marian.translate_to.sg](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sg_es_xx.html) | [opus_mt_sg_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sg_es_xx.html) |
+| [xx.ilo.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_ilo_xx.html) | [opus_mt_sv_ilo](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_ilo_xx.html) |
+| [xx.sv.marian.translate_to.ro](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ro_sv_xx.html) | [opus_mt_ro_sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ro_sv_xx.html) |
+| [xx.fi.marian.translate_to.sg](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sg_fi_xx.html) | [opus_mt_sg_fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sg_fi_xx.html) |
+| [xx.hy.marian.translate_to.ru](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ru_hy_xx.html) | [opus_mt_ru_hy](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ru_hy_xx.html) |
+| [xx.fi.marian.translate_to.ro](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ro_fi_xx.html) | [opus_mt_ro_fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ro_fi_xx.html) |
+| [xx.tpi.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_tpi_xx.html) | [opus_mt_sv_tpi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_tpi_xx.html) |
+| [xx.fi.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_fi_xx.html) | [opus_mt_sv_fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_fi_xx.html) |
+| [xx.sv.marian.translate_to.ru](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ru_sv_xx.html) | [opus_mt_ru_sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ru_sv_xx.html) |
+| [xx.es.marian.translate_to.toi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_toi_es_xx.html) | [opus_mt_toi_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_toi_es_xx.html) |
+| [xx.no.marian.translate_to.uk](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_uk_no_xx.html) | [opus_mt_uk_no](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_uk_no_xx.html) |
+| [xx.ar.marian.translate_to.tr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_tr_ar_xx.html) | [opus_mt_tr_ar](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_tr_ar_xx.html) |
+| [xx.he.marian.translate_to.uk](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_uk_he_xx.html) | [opus_mt_uk_he](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_uk_he_xx.html) |
+| [xx.sv.marian.translate_to.tvl](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_tvl_sv_xx.html) | [opus_mt_tvl_sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_tvl_sv_xx.html) |
+| [xx.uk.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_uk_xx.html) | [opus_mt_sv_uk](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_uk_xx.html) |
+| [xx.fr.marian.translate_to.tvl](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_tvl_fr_xx.html) | [opus_mt_tvl_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_tvl_fr_xx.html) |
+| [xx.bg.marian.translate_to.uk](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_uk_bg_xx.html) | [opus_mt_uk_bg](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_uk_bg_xx.html) |
+| [xx.fi.marian.translate_to.toi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_toi_fi_xx.html) | [opus_mt_toi_fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_toi_fi_xx.html) |
+| [xx.ca.marian.translate_to.uk](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_uk_ca_xx.html) | [opus_mt_uk_ca](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_uk_ca_xx.html) |
+| [xx.fr.marian.translate_to.uk](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_uk_fr_xx.html) | [opus_mt_uk_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_uk_fr_xx.html) |
+| [xx.eo.marian.translate_to.tr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_tr_eo_xx.html) | [opus_mt_tr_eo](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_tr_eo_xx.html) |
+| [xx.uk.marian.translate_to.tr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_tr_uk_xx.html) | [opus_mt_tr_uk](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_tr_uk_xx.html) |
+| [xx.es.marian.translate_to.tl](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_tl_es_xx.html) | [opus_mt_tl_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_tl_es_xx.html) |
+| [xx.es.marian.translate_to.tr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_tr_es_xx.html) | [opus_mt_tr_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_tr_es_xx.html) |
+| [xx.it.marian.translate_to.uk](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_uk_it_xx.html) | [opus_mt_uk_it](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_uk_it_xx.html) |
+| [xx.fi.marian.translate_to.uk](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_uk_fi_xx.html) | [opus_mt_uk_fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_uk_fi_xx.html) |
+| [xx.lt.marian.translate_to.tr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_tr_lt_xx.html) | [opus_mt_tr_lt](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_tr_lt_xx.html) |
+| [xx.es.marian.translate_to.swc](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_swc_es_xx.html) | [opus_mt_swc_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_swc_es_xx.html) |
+| [xx.umb.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_umb_xx.html) | [opus_mt_sv_umb](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_umb_xx.html) |
+| [xx.sv.marian.translate_to.tw](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_tw_sv_xx.html) | [opus_mt_tw_sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_tw_sv_xx.html) |
+| [xx.urj.marian.translate_to.urj](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_urj_urj_xx.html) | [opus_mt_urj_urj](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_urj_urj_xx.html) |
+| [xx.yap.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_yap_xx.html) | [opus_mt_sv_yap](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_yap_xx.html) |
+| [xx.fr.marian.translate_to.ty](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ty_fr_xx.html) | [opus_mt_ty_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ty_fr_xx.html) |
+| [xx.fr.marian.translate_to.swc](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_swc_fr_xx.html) | [opus_mt_swc_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_swc_fr_xx.html) |
+| [xx.pt.marian.translate_to.tl](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_tl_pt_xx.html) | [opus_mt_tl_pt](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_tl_pt_xx.html) |
+| [xx.tr.marian.translate_to.uk](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_uk_tr_xx.html) | [opus_mt_uk_tr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_uk_tr_xx.html) |
+| [xx.sv.marian.translate_to.tr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_tr_sv_xx.html) | [opus_mt_tr_sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_tr_sv_xx.html) |
+| [xx.fi.marian.translate_to.tvl](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_tvl_fi_xx.html) | [opus_mt_tvl_fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_tvl_fi_xx.html) |
+| [xx.es.marian.translate_to.tn](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_tn_es_xx.html) | [opus_mt_tn_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_tn_es_xx.html) |
+| [xx.fi.marian.translate_to.swc](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_swc_fi_xx.html) | [opus_mt_swc_fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_swc_fi_xx.html) |
+| [xx.fr.marian.translate_to.toi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_toi_fr_xx.html) | [opus_mt_toi_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_toi_fr_xx.html) |
+| [xx.fi.marian.translate_to.ts](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ts_fi_xx.html) | [opus_mt_ts_fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ts_fi_xx.html) |
+| [xx.de.marian.translate_to.uk](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_uk_de_xx.html) | [opus_mt_uk_de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_uk_de_xx.html) |
+| [xx.sv.marian.translate_to.uk](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_uk_sv_xx.html) | [opus_mt_uk_sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_uk_sv_xx.html) |
+| [xx.fi.marian.translate_to.tw](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_tw_fi_xx.html) | [opus_mt_tw_fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_tw_fi_xx.html) |
+| [xx.sv.marian.translate_to.to](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_to_sv_xx.html) | [opus_mt_to_sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_to_sv_xx.html) |
+| [xx.sv.marian.translate_to.tll](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_tll_sv_xx.html) | [opus_mt_tll_sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_tll_sv_xx.html) |
+| [xx.fr.marian.translate_to.th](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_th_fr_xx.html) | [opus_mt_th_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_th_fr_xx.html) |
+| [xx.es.marian.translate_to.ty](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ty_es_xx.html) | [opus_mt_ty_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ty_es_xx.html) |
+| [xx.fr.marian.translate_to.tw](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_tw_fr_xx.html) | [opus_mt_tw_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_tw_fr_xx.html) |
+| [xx.fr.marian.translate_to.to](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_to_fr_xx.html) | [opus_mt_to_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_to_fr_xx.html) |
+| [xx.sl.marian.translate_to.uk](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_uk_sl_xx.html) | [opus_mt_uk_sl](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_uk_sl_xx.html) |
+| [xx.xh.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_xh_xx.html) | [opus_mt_sv_xh](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_xh_xx.html) |
+| [xx.war.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_war_xx.html) | [opus_mt_sv_war](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_war_xx.html) |
+| [xx.hu.marian.translate_to.uk](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_uk_hu_xx.html) | [opus_mt_uk_hu](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_uk_hu_xx.html) |
+| [xx.ru.marian.translate_to.uk](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_uk_ru_xx.html) | [opus_mt_uk_ru](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_uk_ru_xx.html) |
+| [xx.sv.marian.translate_to.tn](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_tn_sv_xx.html) | [opus_mt_tn_sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_tn_sv_xx.html) |
+| [xx.fr.marian.translate_to.tum](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_tum_fr_xx.html) | [opus_mt_tum_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_tum_fr_xx.html) |
+| [xx.sv.marian.translate_to.toi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_toi_sv_xx.html) | [opus_mt_toi_sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_toi_sv_xx.html) |
+| [xx.sv.marian.translate_to.ty](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ty_sv_xx.html) | [opus_mt_ty_sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ty_sv_xx.html) |
+| [xx.fr.marian.translate_to.tr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_tr_fr_xx.html) | [opus_mt_tr_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_tr_fr_xx.html) |
+| [xx.fr.marian.translate_to.tn](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_tn_fr_xx.html) | [opus_mt_tn_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_tn_fr_xx.html) |
+| [xx.cs.marian.translate_to.uk](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_uk_cs_xx.html) | [opus_mt_uk_cs](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_uk_cs_xx.html) |
+| [xx.fr.marian.translate_to.ts](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ts_fr_xx.html) | [opus_mt_ts_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ts_fr_xx.html) |
+| [xx.sv.marian.translate_to.swc](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_swc_sv_xx.html) | [opus_mt_swc_sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_swc_sv_xx.html) |
+| [xx.es.marian.translate_to.to](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_to_es_xx.html) | [opus_mt_to_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_to_es_xx.html) |
+| [xx.es.marian.translate_to.uk](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_uk_es_xx.html) | [opus_mt_uk_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_uk_es_xx.html) |
+| [xx.nl.marian.translate_to.uk](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_uk_nl_xx.html) | [opus_mt_uk_nl](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_uk_nl_xx.html) |
+| [xx.zne.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_zne_xx.html) | [opus_mt_sv_zne](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_zne_xx.html) |
+| [xx.es.marian.translate_to.tvl](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_tvl_es_xx.html) | [opus_mt_tvl_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_tvl_es_xx.html) |
+| [xx.pt.marian.translate_to.uk](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_uk_pt_xx.html) | [opus_mt_uk_pt](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_uk_pt_xx.html) |
+| [xx.fr.marian.translate_to.tiv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_tiv_fr_xx.html) | [opus_mt_tiv_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_tiv_fr_xx.html) |
+| [xx.fr.marian.translate_to.tll](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_tll_fr_xx.html) | [opus_mt_tll_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_tll_fr_xx.html) |
+| [xx.sh.marian.translate_to.uk](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_uk_sh_xx.html) | [opus_mt_uk_sh](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_uk_sh_xx.html) |
+| [xx.wls.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_wls_xx.html) | [opus_mt_sv_wls](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_wls_xx.html) |
+| [xx.ve.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_ve_xx.html) | [opus_mt_sv_ve](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_ve_xx.html) |
+| [xx.es.marian.translate_to.tum](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_tum_es_xx.html) | [opus_mt_tum_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_tum_es_xx.html) |
+| [xx.fi.marian.translate_to.tll](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_tll_fi_xx.html) | [opus_mt_tll_fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_tll_fi_xx.html) |
+| [xx.es.marian.translate_to.tw](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_tw_es_xx.html) | [opus_mt_tw_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_tw_es_xx.html) |
+| [xx.sv.marian.translate_to.tiv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_tiv_sv_xx.html) | [opus_mt_tiv_sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_tiv_sv_xx.html) |
+| [xx.fi.marian.translate_to.ty](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ty_fi_xx.html) | [opus_mt_ty_fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ty_fi_xx.html) |
+| [xx.pl.marian.translate_to.uk](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_uk_pl_xx.html) | [opus_mt_uk_pl](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_uk_pl_xx.html) |
+| [xx.sv.marian.translate_to.tpi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_tpi_sv_xx.html) | [opus_mt_tpi_sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_tpi_sv_xx.html) |
+| [xx.az.marian.translate_to.tr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_tr_az_xx.html) | [opus_mt_tr_az](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_tr_az_xx.html) |
+| [xx.es.marian.translate_to.tll](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_tll_es_xx.html) | [opus_mt_tll_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_tll_es_xx.html) |
+| [xx.ty.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_ty_xx.html) | [opus_mt_sv_ty](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_sv_ty_xx.html) |
+| [xx.tzo.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/02/opus_mt_es_tzo_xx.html) | [opus_mt_es_tzo](https://nlp.johnsnowlabs.com//2021/06/02/opus_mt_es_tzo_xx.html) |
+| [xx.sv.marian.translate_to.crs](https://nlp.johnsnowlabs.com//2021/06/02/opus_mt_crs_sv_xx.html) | [opus_mt_crs_sv](https://nlp.johnsnowlabs.com//2021/06/02/opus_mt_crs_sv_xx.html) |
+| [xx.es.marian.translate_to.zai](https://nlp.johnsnowlabs.com//2021/06/02/opus_mt_zai_es_xx.html) | [opus_mt_zai_es](https://nlp.johnsnowlabs.com//2021/06/02/opus_mt_zai_es_xx.html) |
+| [xx.niu.marian.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/02/opus_mt_de_niu_xx.html) | [opus_mt_de_niu](https://nlp.johnsnowlabs.com//2021/06/02/opus_mt_de_niu_xx.html) |
+| [xx.sv.marian.translate_to.nso](https://nlp.johnsnowlabs.com//2021/06/02/opus_mt_nso_sv_xx.html) | [opus_mt_nso_sv](https://nlp.johnsnowlabs.com//2021/06/02/opus_mt_nso_sv_xx.html) |
+| [xx.fr.marian.translate_to.bg](https://nlp.johnsnowlabs.com//2021/06/02/opus_mt_bg_fr_xx.html) | [opus_mt_bg_fr](https://nlp.johnsnowlabs.com//2021/06/02/opus_mt_bg_fr_xx.html) |
+| [xx.es.marian.translate_to.lus](https://nlp.johnsnowlabs.com//2021/06/02/opus_mt_lus_es_xx.html) | [opus_mt_lus_es](https://nlp.johnsnowlabs.com//2021/06/02/opus_mt_lus_es_xx.html) |
+| [xx.es.marian.translate_to.nl](https://nlp.johnsnowlabs.com//2021/06/02/opus_mt_nl_es_xx.html) | [opus_mt_nl_es](https://nlp.johnsnowlabs.com//2021/06/02/opus_mt_nl_es_xx.html) |
+| [xx.fr.marian.translate_to.yo](https://nlp.johnsnowlabs.com//2021/06/02/opus_mt_yo_fr_xx.html) | [opus_mt_yo_fr](https://nlp.johnsnowlabs.com//2021/06/02/opus_mt_yo_fr_xx.html) |
+| [xx.sv.marian.translate_to.ilo](https://nlp.johnsnowlabs.com//2021/06/02/opus_mt_ilo_sv_xx.html) | [opus_mt_ilo_sv](https://nlp.johnsnowlabs.com//2021/06/02/opus_mt_ilo_sv_xx.html) |
+| [xx.es.marian.translate_to.ts](https://nlp.johnsnowlabs.com//2021/06/02/opus_mt_ts_es_xx.html) | [opus_mt_ts_es](https://nlp.johnsnowlabs.com//2021/06/02/opus_mt_ts_es_xx.html) |
+| [xx.run.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/02/opus_mt_fr_run_xx.html) | [opus_mt_fr_run](https://nlp.johnsnowlabs.com//2021/06/02/opus_mt_fr_run_xx.html) |
+| [xx.to.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/02/opus_mt_es_to_xx.html) | [opus_mt_es_to](https://nlp.johnsnowlabs.com//2021/06/02/opus_mt_es_to_xx.html) |
+| [xx.ceb.marian.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/02/opus_mt_fi_ceb_xx.html) | [opus_mt_fi_ceb](https://nlp.johnsnowlabs.com//2021/06/02/opus_mt_fi_ceb_xx.html) |
+| [xx.it.marian.translate_to.ja](https://nlp.johnsnowlabs.com//2021/06/02/opus_mt_ja_it_xx.html) | [opus_mt_ja_it](https://nlp.johnsnowlabs.com//2021/06/02/opus_mt_ja_it_xx.html) |
+| [xx.es.marian.translate_to.sn](https://nlp.johnsnowlabs.com//2021/06/02/opus_mt_sn_es_xx.html) | [opus_mt_sn_es](https://nlp.johnsnowlabs.com//2021/06/02/opus_mt_sn_es_xx.html) |
+| [xx.yo.marian.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/02/opus_mt_sv_yo_xx.html) | [opus_mt_sv_yo](https://nlp.johnsnowlabs.com//2021/06/02/opus_mt_sv_yo_xx.html) |
+| [xx.tr.marian.translate_to.az](https://nlp.johnsnowlabs.com//2021/06/02/opus_mt_az_tr_xx.html) | [opus_mt_az_tr](https://nlp.johnsnowlabs.com//2021/06/02/opus_mt_az_tr_xx.html) |
+| [xx.fr.marian.translate_to.no](https://nlp.johnsnowlabs.com//2021/06/02/opus_mt_no_fr_xx.html) | [opus_mt_no_fr](https://nlp.johnsnowlabs.com//2021/06/02/opus_mt_no_fr_xx.html) |
+| [xx.tn.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/02/opus_mt_fr_tn_xx.html) | [opus_mt_fr_tn](https://nlp.johnsnowlabs.com//2021/06/02/opus_mt_fr_tn_xx.html) |
+| [xx.id.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/02/opus_mt_fr_id_xx.html) | [opus_mt_fr_id](https://nlp.johnsnowlabs.com//2021/06/02/opus_mt_fr_id_xx.html) |
+| [xx.de.marian.translate_to.ca](https://nlp.johnsnowlabs.com//2021/06/02/opus_mt_ca_de_xx.html) | [opus_mt_ca_de](https://nlp.johnsnowlabs.com//2021/06/02/opus_mt_ca_de_xx.html) |
+| [xx.sv.marian.translate_to.tum](https://nlp.johnsnowlabs.com//2021/06/02/opus_mt_tum_sv_xx.html) | [opus_mt_tum_sv](https://nlp.johnsnowlabs.com//2021/06/02/opus_mt_tum_sv_xx.html) |
+| [xx.ru.marian.translate_to.da](https://nlp.johnsnowlabs.com//2021/06/02/opus_mt_da_ru_xx.html) | [opus_mt_da_ru](https://nlp.johnsnowlabs.com//2021/06/02/opus_mt_da_ru_xx.html) |
+| [xx.de.marian.translate_to.tl](https://nlp.johnsnowlabs.com//2021/06/02/opus_mt_tl_de_xx.html) | [opus_mt_tl_de](https://nlp.johnsnowlabs.com//2021/06/02/opus_mt_tl_de_xx.html) |
+| [xx.eo.marian.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/02/opus_mt_fr_eo_xx.html) | [opus_mt_fr_eo](https://nlp.johnsnowlabs.com//2021/06/02/opus_mt_fr_eo_xx.html) |
+| [xx.vi.marian.translate_to.zh](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_zh_vi_xx.html) | [opus_mt_zh_vi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_zh_vi_xx.html) |
+| [xx.es.marian.translate_to.vi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_vi_es_xx.html) | [opus_mt_vi_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_vi_es_xx.html) |
+| [xx.es.marian.translate_to.mfe](https://nlp.johnsnowlabs.com//2021/06/02/opus_mt_mfe_es_xx.html) | [opus_mt_mfe_es](https://nlp.johnsnowlabs.com//2021/06/02/opus_mt_mfe_es_xx.html) |
+| [xx.fi.marian.translate_to.iso](https://nlp.johnsnowlabs.com//2021/06/02/opus_mt_iso_fi_xx.html) | [opus_mt_iso_fi](https://nlp.johnsnowlabs.com//2021/06/02/opus_mt_iso_fi_xx.html) |
+| [xx.es.marian.translate_to.tzo](https://nlp.johnsnowlabs.com//2021/06/02/opus_mt_tzo_es_xx.html) | [opus_mt_tzo_es](https://nlp.johnsnowlabs.com//2021/06/02/opus_mt_tzo_es_xx.html) |
+| [xx.sn.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/02/opus_mt_es_sn_xx.html) | [opus_mt_es_sn](https://nlp.johnsnowlabs.com//2021/06/02/opus_mt_es_sn_xx.html) |
+| [xx.es.marian.translate_to.xh](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_xh_es_xx.html) | [opus_mt_xh_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_xh_es_xx.html) |
+| [xx.sv.marian.translate_to.zne](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_zne_sv_xx.html) | [opus_mt_zne_sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_zne_sv_xx.html) |
+| [xx.sv.marian.translate_to.ts](https://nlp.johnsnowlabs.com//2021/06/02/opus_mt_ts_sv_xx.html) | [opus_mt_ts_sv](https://nlp.johnsnowlabs.com//2021/06/02/opus_mt_ts_sv_xx.html) |
+| [xx.it.marian.translate_to.zh](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_zh_it_xx.html) | [opus_mt_zh_it](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_zh_it_xx.html) |
+| [xx.uk.marian.translate_to.zh](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_zh_uk_xx.html) | [opus_mt_zh_uk](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_zh_uk_xx.html) |
+| [xx.fi.marian.translate_to.yo](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_yo_fi_xx.html) | [opus_mt_yo_fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_yo_fi_xx.html) |
+| [xx.sv.marian.translate_to.war](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_war_sv_xx.html) | [opus_mt_war_sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_war_sv_xx.html) |
+| [xx.sv.marian.translate_to.yo](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_yo_sv_xx.html) | [opus_mt_yo_sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_yo_sv_xx.html) |
+| [xx.tll.marian.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/02/opus_mt_es_tll_xx.html) | [opus_mt_es_tll](https://nlp.johnsnowlabs.com//2021/06/02/opus_mt_es_tll_xx.html) |
+| [xx.nl.marian.translate_to.zh](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_zh_nl_xx.html) | [opus_mt_zh_nl](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_zh_nl_xx.html) |
+| [xx.fr.marian.translate_to.wls](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_wls_fr_xx.html) | [opus_mt_wls_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_wls_fr_xx.html) |
+| [xx.it.marian.translate_to.vi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_vi_it_xx.html) | [opus_mt_vi_it](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_vi_it_xx.html) |
+| [xx.bg.marian.translate_to.zh](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_zh_bg_xx.html) | [opus_mt_zh_bg](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_zh_bg_xx.html) |
+| [xx.sv.marian.translate_to.xh](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_xh_sv_xx.html) | [opus_mt_xh_sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_xh_sv_xx.html) |
+| [xx.es.marian.translate_to.zne](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_zne_es_xx.html) | [opus_mt_zne_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_zne_es_xx.html) |
+| [xx.zlw.marian.translate_to.zlw](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_zlw_zlw_xx.html) | [opus_mt_zlw_zlw](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_zlw_zlw_xx.html) |
+| [xx.sv.marian.translate_to.yap](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_yap_sv_xx.html) | [opus_mt_yap_sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_yap_sv_xx.html) |
+| [xx.he.marian.translate_to.zh](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_zh_he_xx.html) | [opus_mt_zh_he](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_zh_he_xx.html) |
+| [xx.fr.marian.translate_to.xh](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_xh_fr_xx.html) | [opus_mt_xh_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_xh_fr_xx.html) |
+| [xx.fi.marian.translate_to.war](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_war_fi_xx.html) | [opus_mt_war_fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_war_fi_xx.html) |
+| [xx.sv.marian.translate_to.zh](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_zh_sv_xx.html) | [opus_mt_zh_sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_zh_sv_xx.html) |
+| [xx.zls.marian.translate_to.zls](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_zls_zls_xx.html) | [opus_mt_zls_zls](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_zls_zls_xx.html) |
+| [xx.fi.marian.translate_to.zne](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_zne_fi_xx.html) | [opus_mt_zne_fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_zne_fi_xx.html) |
+| [xx.es.marian.translate_to.ve](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ve_es_xx.html) | [opus_mt_ve_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_ve_es_xx.html) |
+| [xx.de.marian.translate_to.vi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_vi_de_xx.html) | [opus_mt_vi_de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_vi_de_xx.html) |
+| [xx.eo.marian.translate_to.vi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_vi_eo_xx.html) | [opus_mt_vi_eo](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_vi_eo_xx.html) |
+| [xx.sv.marian.translate_to.wls](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_wls_sv_xx.html) | [opus_mt_wls_sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_wls_sv_xx.html) |
+| [xx.es.marian.translate_to.war](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_war_es_xx.html) | [opus_mt_war_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_war_es_xx.html) |
+| [xx.ru.marian.translate_to.vi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_vi_ru_xx.html) | [opus_mt_vi_ru](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_vi_ru_xx.html) |
+| [xx.ms.marian.translate_to.zh](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_zh_ms_xx.html) | [opus_mt_zh_ms](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_zh_ms_xx.html) |
+| [xx.fr.marian.translate_to.zne](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_zne_fr_xx.html) | [opus_mt_zne_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_zne_fr_xx.html) |
+| [xx.fr.marian.translate_to.yap](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_yap_fr_xx.html) | [opus_mt_yap_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_yap_fr_xx.html) |
+| [xx.de.marian.translate_to.zh](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_zh_de_xx.html) | [opus_mt_zh_de](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_zh_de_xx.html) |
+| [xx.es.marian.translate_to.yo](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_yo_es_xx.html) | [opus_mt_yo_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_yo_es_xx.html) |
+| [xx.es.marian.translate_to.vsl](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_vsl_es_xx.html) | [opus_mt_vsl_es](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_vsl_es_xx.html) |
+| [xx.zle.marian.translate_to.zle](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_zle_zle_xx.html) | [opus_mt_zle_zle](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_zle_zle_xx.html) |
+| [xx.fr.marian.translate_to.vi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_vi_fr_xx.html) | [opus_mt_vi_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_vi_fr_xx.html) |
+| [xx.fr.marian.translate_to.war](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_war_fr_xx.html) | [opus_mt_war_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_war_fr_xx.html) |
+| [xx.fi.marian.translate_to.zh](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_zh_fi_xx.html) | [opus_mt_zh_fi](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_zh_fi_xx.html) |
+| [xx.he.marian.translate_to.it](https://nlp.johnsnowlabs.com//2021/06/01/opus_tatoeba_he_it_xx.html) | [opus_tatoeba_he_it](https://nlp.johnsnowlabs.com//2021/06/01/opus_tatoeba_he_it_xx.html) |
+| [xx.es.marian.translate_to.zh](https://nlp.johnsnowlabs.com//2021/06/01/opus_tatoeba_es_zh_xx.html) | [opus_tatoeba_es_zh](https://nlp.johnsnowlabs.com//2021/06/01/opus_tatoeba_es_zh_xx.html) |
+| [xx.es.translate_to.af](https://nlp.johnsnowlabs.com//2021/06/04/translate_af_es_xx.html) | [translate_af_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_af_es_xx.html) |
+| [xx.nl.translate_to.af](https://nlp.johnsnowlabs.com//2021/06/04/translate_af_nl_xx.html) | [translate_af_nl](https://nlp.johnsnowlabs.com//2021/06/04/translate_af_nl_xx.html) |
+| [xx.eo.translate_to.af](https://nlp.johnsnowlabs.com//2021/06/04/translate_af_eo_xx.html) | [translate_af_eo](https://nlp.johnsnowlabs.com//2021/06/04/translate_af_eo_xx.html) |
+| [xx.afa.translate_to.afa](https://nlp.johnsnowlabs.com//2021/06/04/translate_afa_afa_xx.html) | [translate_afa_afa](https://nlp.johnsnowlabs.com//2021/06/04/translate_afa_afa_xx.html) |
+| [xx.sv.translate_to.af](https://nlp.johnsnowlabs.com//2021/06/04/translate_af_sv_xx.html) | [translate_af_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_af_sv_xx.html) |
+| [xx.es.translate_to.aed](https://nlp.johnsnowlabs.com//2021/06/04/translate_aed_es_xx.html) | [translate_aed_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_aed_es_xx.html) |
+| [xx.fr.translate_to.af](https://nlp.johnsnowlabs.com//2021/06/04/translate_af_fr_xx.html) | [translate_af_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_af_fr_xx.html) |
+| [xx.fi.translate_to.af](https://nlp.johnsnowlabs.com//2021/06/04/translate_af_fi_xx.html) | [translate_af_fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_af_fi_xx.html) |
+| [xx.de.translate_to.af](https://nlp.johnsnowlabs.com//2021/06/04/translate_af_de_xx.html) | [translate_af_de](https://nlp.johnsnowlabs.com//2021/06/04/translate_af_de_xx.html) |
+| [xx.ru.translate_to.af](https://nlp.johnsnowlabs.com//2021/06/04/translate_af_ru_xx.html) | [translate_af_ru](https://nlp.johnsnowlabs.com//2021/06/04/translate_af_ru_xx.html) |
+| [xx.es.translate_to.az](https://nlp.johnsnowlabs.com//2021/06/04/translate_az_es_xx.html) | [translate_az_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_az_es_xx.html) |
+| [xx.de.translate_to.bcl](https://nlp.johnsnowlabs.com//2021/06/04/translate_bcl_de_xx.html) | [translate_bcl_de](https://nlp.johnsnowlabs.com//2021/06/04/translate_bcl_de_xx.html) |
+| [xx.sv.translate_to.bem](https://nlp.johnsnowlabs.com//2021/06/04/translate_bem_sv_xx.html) | [translate_bem_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_bem_sv_xx.html) |
+| [xx.tr.translate_to.az](https://nlp.johnsnowlabs.com//2021/06/04/translate_az_tr_xx.html) | [translate_az_tr](https://nlp.johnsnowlabs.com//2021/06/04/translate_az_tr_xx.html) |
+| [xx.sv.translate_to.bcl](https://nlp.johnsnowlabs.com//2021/06/04/translate_bcl_sv_xx.html) | [translate_bcl_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_bcl_sv_xx.html) |
+| [xx.es.translate_to.ar](https://nlp.johnsnowlabs.com//2021/06/04/translate_ar_es_xx.html) | [translate_ar_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_ar_es_xx.html) |
+| [xx.es.translate_to.bem](https://nlp.johnsnowlabs.com//2021/06/04/translate_bem_es_xx.html) | [translate_bem_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_bem_es_xx.html) |
+| [xx.ru.translate_to.ar](https://nlp.johnsnowlabs.com//2021/06/04/translate_ar_ru_xx.html) | [translate_ar_ru](https://nlp.johnsnowlabs.com//2021/06/04/translate_ar_ru_xx.html) |
+| [xx.es.translate_to.be](https://nlp.johnsnowlabs.com//2021/06/04/translate_be_es_xx.html) | [translate_be_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_be_es_xx.html) |
+| [xx.fr.translate_to.bem](https://nlp.johnsnowlabs.com//2021/06/04/translate_bem_fr_xx.html) | [translate_bem_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_bem_fr_xx.html) |
+| [xx.he.translate_to.ar](https://nlp.johnsnowlabs.com//2021/06/04/translate_ar_he_xx.html) | [translate_ar_he](https://nlp.johnsnowlabs.com//2021/06/04/translate_ar_he_xx.html) |
+| [xx.es.translate_to.bcl](https://nlp.johnsnowlabs.com//2021/06/04/translate_bcl_es_xx.html) | [translate_bcl_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_bcl_es_xx.html) |
+| [xx.es.translate_to.ase](https://nlp.johnsnowlabs.com//2021/06/04/translate_ase_es_xx.html) | [translate_ase_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_ase_es_xx.html) |
+| [xx.de.translate_to.ar](https://nlp.johnsnowlabs.com//2021/06/04/translate_ar_de_xx.html) | [translate_ar_de](https://nlp.johnsnowlabs.com//2021/06/04/translate_ar_de_xx.html) |
+| [xx.pl.translate_to.ar](https://nlp.johnsnowlabs.com//2021/06/04/translate_ar_pl_xx.html) | [translate_ar_pl](https://nlp.johnsnowlabs.com//2021/06/04/translate_ar_pl_xx.html) |
+| [xx.tr.translate_to.ar](https://nlp.johnsnowlabs.com//2021/06/04/translate_ar_tr_xx.html) | [translate_ar_tr](https://nlp.johnsnowlabs.com//2021/06/04/translate_ar_tr_xx.html) |
+| [xx.sv.translate_to.ase](https://nlp.johnsnowlabs.com//2021/06/04/translate_ase_sv_xx.html) | [translate_ase_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_ase_sv_xx.html) |
+| [xx.fi.translate_to.bcl](https://nlp.johnsnowlabs.com//2021/06/04/translate_bcl_fi_xx.html) | [translate_bcl_fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_bcl_fi_xx.html) |
+| [xx.el.translate_to.ar](https://nlp.johnsnowlabs.com//2021/06/04/translate_ar_el_xx.html) | [translate_ar_el](https://nlp.johnsnowlabs.com//2021/06/04/translate_ar_el_xx.html) |
+| [xx.fr.translate_to.bcl](https://nlp.johnsnowlabs.com//2021/06/04/translate_bcl_fr_xx.html) | [translate_bcl_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_bcl_fr_xx.html) |
+| [xx.fi.translate_to.bem](https://nlp.johnsnowlabs.com//2021/06/04/translate_bem_fi_xx.html) | [translate_bem_fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_bem_fi_xx.html) |
+| [xx.fr.translate_to.ase](https://nlp.johnsnowlabs.com//2021/06/04/translate_ase_fr_xx.html) | [translate_ase_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_ase_fr_xx.html) |
+| [xx.fr.translate_to.ar](https://nlp.johnsnowlabs.com//2021/06/04/translate_ar_fr_xx.html) | [translate_ar_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_ar_fr_xx.html) |
+| [xx.eo.translate_to.ar](https://nlp.johnsnowlabs.com//2021/06/04/translate_ar_eo_xx.html) | [translate_ar_eo](https://nlp.johnsnowlabs.com//2021/06/04/translate_ar_eo_xx.html) |
+| [xx.it.translate_to.ar](https://nlp.johnsnowlabs.com//2021/06/04/translate_ar_it_xx.html) | [translate_ar_it](https://nlp.johnsnowlabs.com//2021/06/04/translate_ar_it_xx.html) |
+| [xx.sv.translate_to.am](https://nlp.johnsnowlabs.com//2021/06/04/translate_am_sv_xx.html) | [translate_am_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_am_sv_xx.html) |
+| [xx.de.translate_to.ase](https://nlp.johnsnowlabs.com//2021/06/04/translate_ase_de_xx.html) | [translate_ase_de](https://nlp.johnsnowlabs.com//2021/06/04/translate_ase_de_xx.html) |
+| [xx.uk.translate_to.bg](https://nlp.johnsnowlabs.com//2021/06/04/translate_bg_uk_xx.html) | [translate_bg_uk](https://nlp.johnsnowlabs.com//2021/06/04/translate_bg_uk_xx.html) |
+| [xx.it.translate_to.bg](https://nlp.johnsnowlabs.com//2021/06/04/translate_bg_it_xx.html) | [translate_bg_it](https://nlp.johnsnowlabs.com//2021/06/04/translate_bg_it_xx.html) |
+| [xx.sv.translate_to.bzs](https://nlp.johnsnowlabs.com//2021/06/04/translate_bzs_sv_xx.html) | [translate_bzs_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_bzs_sv_xx.html) |
+| [xx.pt.translate_to.ca](https://nlp.johnsnowlabs.com//2021/06/04/translate_ca_pt_xx.html) | [translate_ca_pt](https://nlp.johnsnowlabs.com//2021/06/04/translate_ca_pt_xx.html) |
+| [xx.es.translate_to.ber](https://nlp.johnsnowlabs.com//2021/06/04/translate_ber_es_xx.html) | [translate_ber_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_ber_es_xx.html) |
+| [xx.it.translate_to.ca](https://nlp.johnsnowlabs.com//2021/06/04/translate_ca_it_xx.html) | [translate_ca_it](https://nlp.johnsnowlabs.com//2021/06/04/translate_ca_it_xx.html) |
+| [xx.eo.translate_to.bg](https://nlp.johnsnowlabs.com//2021/06/04/translate_bg_eo_xx.html) | [translate_bg_eo](https://nlp.johnsnowlabs.com//2021/06/04/translate_bg_eo_xx.html) |
+| [xx.sv.translate_to.ceb](https://nlp.johnsnowlabs.com//2021/06/04/translate_ceb_sv_xx.html) | [translate_ceb_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_ceb_sv_xx.html) |
+| [xx.fr.translate_to.bi](https://nlp.johnsnowlabs.com//2021/06/04/translate_bi_fr_xx.html) | [translate_bi_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_bi_fr_xx.html) |
+| [xx.sv.translate_to.bg](https://nlp.johnsnowlabs.com//2021/06/04/translate_bg_sv_xx.html) | [translate_bg_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_bg_sv_xx.html) |
+| [xx.fr.translate_to.ca](https://nlp.johnsnowlabs.com//2021/06/04/translate_ca_fr_xx.html) | [translate_ca_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_ca_fr_xx.html) |
+| [xx.tr.translate_to.bg](https://nlp.johnsnowlabs.com//2021/06/04/translate_bg_tr_xx.html) | [translate_bg_tr](https://nlp.johnsnowlabs.com//2021/06/04/translate_bg_tr_xx.html) |
+| [xx.es.translate_to.ceb](https://nlp.johnsnowlabs.com//2021/06/04/translate_ceb_es_xx.html) | [translate_ceb_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_ceb_es_xx.html) |
+| [xx.de.translate_to.ca](https://nlp.johnsnowlabs.com//2021/06/04/translate_ca_de_xx.html) | [translate_ca_de](https://nlp.johnsnowlabs.com//2021/06/04/translate_ca_de_xx.html) |
+| [xx.fi.translate_to.ceb](https://nlp.johnsnowlabs.com//2021/06/04/translate_ceb_fi_xx.html) | [translate_ceb_fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_ceb_fi_xx.html) |
+| [xx.es.translate_to.ca](https://nlp.johnsnowlabs.com//2021/06/04/translate_ca_es_xx.html) | [translate_ca_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_ca_es_xx.html) |
+| [xx.es.translate_to.bg](https://nlp.johnsnowlabs.com//2021/06/04/translate_bg_es_xx.html) | [translate_bg_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_bg_es_xx.html) |
+| [xx.uk.translate_to.ca](https://nlp.johnsnowlabs.com//2021/06/04/translate_ca_uk_xx.html) | [translate_ca_uk](https://nlp.johnsnowlabs.com//2021/06/04/translate_ca_uk_xx.html) |
+| [xx.sv.translate_to.bi](https://nlp.johnsnowlabs.com//2021/06/04/translate_bi_sv_xx.html) | [translate_bi_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_bi_sv_xx.html) |
+| [xx.sv.translate_to.chk](https://nlp.johnsnowlabs.com//2021/06/04/translate_chk_sv_xx.html) | [translate_chk_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_chk_sv_xx.html) |
+| [xx.fr.translate_to.ceb](https://nlp.johnsnowlabs.com//2021/06/04/translate_ceb_fr_xx.html) | [translate_ceb_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_ceb_fr_xx.html) |
+| [xx.es.translate_to.bzs](https://nlp.johnsnowlabs.com//2021/06/04/translate_bzs_es_xx.html) | [translate_bzs_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_bzs_es_xx.html) |
+| [xx.de.translate_to.crs](https://nlp.johnsnowlabs.com//2021/06/04/translate_crs_de_xx.html) | [translate_crs_de](https://nlp.johnsnowlabs.com//2021/06/04/translate_crs_de_xx.html) |
+| [xx.nl.translate_to.ca](https://nlp.johnsnowlabs.com//2021/06/04/translate_ca_nl_xx.html) | [translate_ca_nl](https://nlp.johnsnowlabs.com//2021/06/04/translate_ca_nl_xx.html) |
+| [xx.es.translate_to.chk](https://nlp.johnsnowlabs.com//2021/06/04/translate_chk_es_xx.html) | [translate_chk_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_chk_es_xx.html) |
+| [xx.fr.translate_to.ber](https://nlp.johnsnowlabs.com//2021/06/04/translate_ber_fr_xx.html) | [translate_ber_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_ber_fr_xx.html) |
+| [xx.fi.translate_to.bzs](https://nlp.johnsnowlabs.com//2021/06/04/translate_bzs_fi_xx.html) | [translate_bzs_fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_bzs_fi_xx.html) |
+| [xx.es.translate_to.crs](https://nlp.johnsnowlabs.com//2021/06/04/translate_crs_es_xx.html) | [translate_crs_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_crs_es_xx.html) |
+| [xx.fi.translate_to.bg](https://nlp.johnsnowlabs.com//2021/06/04/translate_bg_fi_xx.html) | [translate_bg_fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_bg_fi_xx.html) |
+| [xx.cpp.translate_to.cpp](https://nlp.johnsnowlabs.com//2021/06/04/translate_cpp_cpp_xx.html) | [translate_cpp_cpp](https://nlp.johnsnowlabs.com//2021/06/04/translate_cpp_cpp_xx.html) |
+| [xx.de.translate_to.bg](https://nlp.johnsnowlabs.com//2021/06/04/translate_bg_de_xx.html) | [translate_bg_de](https://nlp.johnsnowlabs.com//2021/06/04/translate_bg_de_xx.html) |
+| [xx.es.translate_to.bi](https://nlp.johnsnowlabs.com//2021/06/04/translate_bi_es_xx.html) | [translate_bi_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_bi_es_xx.html) |
+| [xx.fr.translate_to.bzs](https://nlp.johnsnowlabs.com//2021/06/04/translate_bzs_fr_xx.html) | [translate_bzs_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_bzs_fr_xx.html) |
+| [xx.fr.translate_to.bg](https://nlp.johnsnowlabs.com//2021/06/04/translate_bg_fr_xx.html) | [translate_bg_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_bg_fr_xx.html) |
+| [xx.fr.translate_to.chk](https://nlp.johnsnowlabs.com//2021/06/04/translate_chk_fr_xx.html) | [translate_chk_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_chk_fr_xx.html) |
+| [xx.ru.translate_to.bg](https://nlp.johnsnowlabs.com//2021/06/04/translate_bg_ru_xx.html) | [translate_bg_ru](https://nlp.johnsnowlabs.com//2021/06/04/translate_bg_ru_xx.html) |
+| [xx.fi.translate_to.cs](https://nlp.johnsnowlabs.com//2021/06/04/translate_cs_fi_xx.html) | [translate_cs_fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_cs_fi_xx.html) |
+| [xx.ha.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_ha_xx.html) | [translate_de_ha](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_ha_xx.html) |
+| [xx.ee.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_ee_xx.html) | [translate_de_ee](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_ee_xx.html) |
+| [xx.eo.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_eo_xx.html) | [translate_de_eo](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_eo_xx.html) |
+| [xx.gil.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_gil_xx.html) | [translate_de_gil](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_gil_xx.html) |
+| [xx.fj.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_fj_xx.html) | [translate_de_fj](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_fj_xx.html) |
+| [xx.fr.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_fr_xx.html) | [translate_de_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_fr_xx.html) |
+| [xx.sv.translate_to.cs](https://nlp.johnsnowlabs.com//2021/06/04/translate_cs_sv_xx.html) | [translate_cs_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_cs_sv_xx.html) |
+| [xx.es.translate_to.csn](https://nlp.johnsnowlabs.com//2021/06/04/translate_csn_es_xx.html) | [translate_csn_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_csn_es_xx.html) |
+| [xx.ru.translate_to.da](https://nlp.johnsnowlabs.com//2021/06/04/translate_da_ru_xx.html) | [translate_da_ru](https://nlp.johnsnowlabs.com//2021/06/04/translate_da_ru_xx.html) |
+| [xx.no.translate_to.da](https://nlp.johnsnowlabs.com//2021/06/04/translate_da_no_xx.html) | [translate_da_no](https://nlp.johnsnowlabs.com//2021/06/04/translate_da_no_xx.html) |
+| [xx.iso.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_iso_xx.html) | [translate_de_iso](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_iso_xx.html) |
+| [xx.eu.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_eu_xx.html) | [translate_de_eu](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_eu_xx.html) |
+| [xx.nl.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_nl_xx.html) | [translate_de_nl](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_nl_xx.html) |
+| [xx.ilo.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_ilo_xx.html) | [translate_de_ilo](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_ilo_xx.html) |
+| [xx.hr.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_hr_xx.html) | [translate_de_hr](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_hr_xx.html) |
+| [xx.mt.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_mt_xx.html) | [translate_de_mt](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_mt_xx.html) |
+| [xx.es.translate_to.da](https://nlp.johnsnowlabs.com//2021/06/04/translate_da_es_xx.html) | [translate_da_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_da_es_xx.html) |
+| [xx.ar.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_ar_xx.html) | [translate_de_ar](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_ar_xx.html) |
+| [xx.is.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_is_xx.html) | [translate_de_is](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_is_xx.html) |
+| [xx.sv.translate_to.crs](https://nlp.johnsnowlabs.com//2021/06/04/translate_crs_sv_xx.html) | [translate_crs_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_crs_sv_xx.html) |
+| [xx.fr.translate_to.da](https://nlp.johnsnowlabs.com//2021/06/04/translate_da_fr_xx.html) | [translate_da_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_da_fr_xx.html) |
+| [xx.gaa.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_gaa_xx.html) | [translate_de_gaa](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_gaa_xx.html) |
+| [xx.niu.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_niu_xx.html) | [translate_de_niu](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_niu_xx.html) |
+| [xx.da.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_da_xx.html) | [translate_de_da](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_da_xx.html) |
+| [xx.de.translate_to.da](https://nlp.johnsnowlabs.com//2021/06/04/translate_da_de_xx.html) | [translate_da_de](https://nlp.johnsnowlabs.com//2021/06/04/translate_da_de_xx.html) |
+| [xx.ase.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_ase_xx.html) | [translate_de_ase](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_ase_xx.html) |
+| [xx.ig.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_ig_xx.html) | [translate_de_ig](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_ig_xx.html) |
+| [xx.lua.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_lua_xx.html) | [translate_de_lua](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_lua_xx.html) |
+| [xx.de.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_de_xx.html) | [translate_de_de](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_de_xx.html) |
+| [xx.bi.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_bi_xx.html) | [translate_de_bi](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_bi_xx.html) |
+| [xx.fr.translate_to.cs](https://nlp.johnsnowlabs.com//2021/06/04/translate_cs_fr_xx.html) | [translate_cs_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_cs_fr_xx.html) |
+| [xx.ms.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_ms_xx.html) | [translate_de_ms](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_ms_xx.html) |
+| [xx.fi.translate_to.crs](https://nlp.johnsnowlabs.com//2021/06/04/translate_crs_fi_xx.html) | [translate_crs_fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_crs_fi_xx.html) |
+| [xx.eo.translate_to.da](https://nlp.johnsnowlabs.com//2021/06/04/translate_da_eo_xx.html) | [translate_da_eo](https://nlp.johnsnowlabs.com//2021/06/04/translate_da_eo_xx.html) |
+| [xx.af.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_af_xx.html) | [translate_de_af](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_af_xx.html) |
+| [xx.uk.translate_to.cs](https://nlp.johnsnowlabs.com//2021/06/04/translate_cs_uk_xx.html) | [translate_cs_uk](https://nlp.johnsnowlabs.com//2021/06/04/translate_cs_uk_xx.html) |
+| [xx.bg.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_bg_xx.html) | [translate_de_bg](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_bg_xx.html) |
+| [xx.no.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_no_xx.html) | [translate_de_no](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_no_xx.html) |
+| [xx.de.translate_to.cs](https://nlp.johnsnowlabs.com//2021/06/04/translate_cs_de_xx.html) | [translate_cs_de](https://nlp.johnsnowlabs.com//2021/06/04/translate_cs_de_xx.html) |
+| [xx.it.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_it_xx.html) | [translate_de_it](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_it_xx.html) |
+| [xx.ho.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_ho_xx.html) | [translate_de_ho](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_ho_xx.html) |
+| [xx.ln.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_ln_xx.html) | [translate_de_ln](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_ln_xx.html) |
+| [xx.guw.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_guw_xx.html) | [translate_de_guw](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_guw_xx.html) |
+| [xx.efi.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_efi_xx.html) | [translate_de_efi](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_efi_xx.html) |
+| [xx.hil.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_hil_xx.html) | [translate_de_hil](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_hil_xx.html) |
+| [xx.cs.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_cs_xx.html) | [translate_de_cs](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_cs_xx.html) |
+| [xx.es.translate_to.csg](https://nlp.johnsnowlabs.com//2021/06/04/translate_csg_es_xx.html) | [translate_csg_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_csg_es_xx.html) |
+| [xx.es.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_es_xx.html) | [translate_de_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_es_xx.html) |
+| [xx.bcl.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_bcl_xx.html) | [translate_de_bcl](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_bcl_xx.html) |
+| [xx.ht.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_ht_xx.html) | [translate_de_ht](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_ht_xx.html) |
+| [xx.loz.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_loz_xx.html) | [translate_de_loz](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_loz_xx.html) |
+| [xx.kg.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_kg_xx.html) | [translate_de_kg](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_kg_xx.html) |
+| [xx.eo.translate_to.cs](https://nlp.johnsnowlabs.com//2021/06/04/translate_cs_eo_xx.html) | [translate_cs_eo](https://nlp.johnsnowlabs.com//2021/06/04/translate_cs_eo_xx.html) |
+| [xx.el.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_el_xx.html) | [translate_de_el](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_el_xx.html) |
+| [xx.fi.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_fi_xx.html) | [translate_de_fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_fi_xx.html) |
+| [xx.he.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_he_xx.html) | [translate_de_he](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_he_xx.html) |
+| [xx.bzs.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_bzs_xx.html) | [translate_de_bzs](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_bzs_xx.html) |
+| [xx.fr.translate_to.crs](https://nlp.johnsnowlabs.com//2021/06/04/translate_crs_fr_xx.html) | [translate_crs_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_crs_fr_xx.html) |
+| [xx.crs.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_crs_xx.html) | [translate_de_crs](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_crs_xx.html) |
+| [xx.fi.translate_to.da](https://nlp.johnsnowlabs.com//2021/06/04/translate_da_fi_xx.html) | [translate_da_fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_da_fi_xx.html) |
+| [xx.hu.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_hu_xx.html) | [translate_de_hu](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_hu_xx.html) |
+| [xx.et.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_et_xx.html) | [translate_de_et](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_et_xx.html) |
+| [xx.lt.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_lt_xx.html) | [translate_de_lt](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_lt_xx.html) |
+| [xx.ca.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_ca_xx.html) | [translate_de_ca](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_ca_xx.html) |
+| [xx.pl.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_pl_xx.html) | [translate_de_pl](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_pl_xx.html) |
+| [xx.sv.translate_to.el](https://nlp.johnsnowlabs.com//2021/06/04/translate_el_sv_xx.html) | [translate_el_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_el_sv_xx.html) |
+| [xx.de.translate_to.ee](https://nlp.johnsnowlabs.com//2021/06/04/translate_ee_de_xx.html) | [translate_ee_de](https://nlp.johnsnowlabs.com//2021/06/04/translate_ee_de_xx.html) |
+| [xx.pag.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_pag_xx.html) | [translate_de_pag](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_pag_xx.html) |
+| [xx.ar.translate_to.el](https://nlp.johnsnowlabs.com//2021/06/04/translate_el_ar_xx.html) | [translate_el_ar](https://nlp.johnsnowlabs.com//2021/06/04/translate_el_ar_xx.html) |
+| [xx.nso.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_nso_xx.html) | [translate_de_nso](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_nso_xx.html) |
+| [xx.pon.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_pon_xx.html) | [translate_de_pon](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_pon_xx.html) |
+| [xx.pap.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_pap_xx.html) | [translate_de_pap](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_pap_xx.html) |
+| [xx.fr.translate_to.efi](https://nlp.johnsnowlabs.com//2021/06/04/translate_efi_fr_xx.html) | [translate_efi_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_efi_fr_xx.html) |
+| [xx.pis.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_pis_xx.html) | [translate_de_pis](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_pis_xx.html) |
+| [xx.de.translate_to.efi](https://nlp.johnsnowlabs.com//2021/06/04/translate_efi_de_xx.html) | [translate_efi_de](https://nlp.johnsnowlabs.com//2021/06/04/translate_efi_de_xx.html) |
+| [xx.eo.translate_to.el](https://nlp.johnsnowlabs.com//2021/06/04/translate_el_eo_xx.html) | [translate_el_eo](https://nlp.johnsnowlabs.com//2021/06/04/translate_el_eo_xx.html) |
+| [xx.fi.translate_to.ee](https://nlp.johnsnowlabs.com//2021/06/04/translate_ee_fi_xx.html) | [translate_ee_fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_ee_fi_xx.html) |
+| [xx.es.translate_to.ee](https://nlp.johnsnowlabs.com//2021/06/04/translate_ee_es_xx.html) | [translate_ee_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_ee_es_xx.html) |
+| [xx.fr.translate_to.ee](https://nlp.johnsnowlabs.com//2021/06/04/translate_ee_fr_xx.html) | [translate_ee_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_ee_fr_xx.html) |
+| [xx.fi.translate_to.efi](https://nlp.johnsnowlabs.com//2021/06/04/translate_efi_fi_xx.html) | [translate_efi_fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_efi_fi_xx.html) |
+| [xx.fr.translate_to.el](https://nlp.johnsnowlabs.com//2021/06/04/translate_el_fr_xx.html) | [translate_el_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_el_fr_xx.html) |
+| [xx.tl.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_tl_xx.html) | [translate_de_tl](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_tl_xx.html) |
+| [xx.ny.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_ny_xx.html) | [translate_de_ny](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_ny_xx.html) |
+| [xx.uk.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_uk_xx.html) | [translate_de_uk](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_uk_xx.html) |
+| [xx.sv.translate_to.efi](https://nlp.johnsnowlabs.com//2021/06/04/translate_efi_sv_xx.html) | [translate_efi_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_efi_sv_xx.html) |
+| [xx.sv.translate_to.ee](https://nlp.johnsnowlabs.com//2021/06/04/translate_ee_sv_xx.html) | [translate_ee_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_ee_sv_xx.html) |
+| [xx.vi.translate_to.de](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_vi_xx.html) | [translate_de_vi](https://nlp.johnsnowlabs.com//2021/06/04/translate_de_vi_xx.html) |
+| [xx.fi.translate_to.el](https://nlp.johnsnowlabs.com//2021/06/04/translate_el_fi_xx.html) | [translate_el_fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_el_fi_xx.html) |
+| [xx.cs.translate_to.eo](https://nlp.johnsnowlabs.com//2021/06/04/translate_eo_cs_xx.html) | [translate_eo_cs](https://nlp.johnsnowlabs.com//2021/06/04/translate_eo_cs_xx.html) |
+| [xx.bzs.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_bzs_xx.html) | [translate_es_bzs](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_bzs_xx.html) |
+| [xx.he.translate_to.eo](https://nlp.johnsnowlabs.com//2021/06/04/translate_eo_he_xx.html) | [translate_eo_he](https://nlp.johnsnowlabs.com//2021/06/04/translate_eo_he_xx.html) |
+| [xx.hu.translate_to.eo](https://nlp.johnsnowlabs.com//2021/06/04/translate_eo_hu_xx.html) | [translate_eo_hu](https://nlp.johnsnowlabs.com//2021/06/04/translate_eo_hu_xx.html) |
+| [xx.ro.translate_to.eo](https://nlp.johnsnowlabs.com//2021/06/04/translate_eo_ro_xx.html) | [translate_eo_ro](https://nlp.johnsnowlabs.com//2021/06/04/translate_eo_ro_xx.html) |
+| [xx.ber.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_ber_xx.html) | [translate_es_ber](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_ber_xx.html) |
+| [xx.ca.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_ca_xx.html) | [translate_es_ca](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_ca_xx.html) |
+| [xx.bcl.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_bcl_xx.html) | [translate_es_bcl](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_bcl_xx.html) |
+| [xx.ceb.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_ceb_xx.html) | [translate_es_ceb](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_ceb_xx.html) |
+| [xx.da.translate_to.eo](https://nlp.johnsnowlabs.com//2021/06/04/translate_eo_da_xx.html) | [translate_eo_da](https://nlp.johnsnowlabs.com//2021/06/04/translate_eo_da_xx.html) |
+| [xx.bi.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_bi_xx.html) | [translate_es_bi](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_bi_xx.html) |
+| [xx.ee.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_ee_xx.html) | [translate_es_ee](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_ee_xx.html) |
+| [xx.ru.translate_to.eo](https://nlp.johnsnowlabs.com//2021/06/04/translate_eo_ru_xx.html) | [translate_eo_ru](https://nlp.johnsnowlabs.com//2021/06/04/translate_eo_ru_xx.html) |
+| [xx.csg.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_csg_xx.html) | [translate_es_csg](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_csg_xx.html) |
+| [xx.fi.translate_to.eo](https://nlp.johnsnowlabs.com//2021/06/04/translate_eo_fi_xx.html) | [translate_eo_fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_eo_fi_xx.html) |
+| [xx.it.translate_to.eo](https://nlp.johnsnowlabs.com//2021/06/04/translate_eo_it_xx.html) | [translate_eo_it](https://nlp.johnsnowlabs.com//2021/06/04/translate_eo_it_xx.html) |
+| [xx.nl.translate_to.eo](https://nlp.johnsnowlabs.com//2021/06/04/translate_eo_nl_xx.html) | [translate_eo_nl](https://nlp.johnsnowlabs.com//2021/06/04/translate_eo_nl_xx.html) |
+| [xx.et.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_et_xx.html) | [translate_es_et](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_et_xx.html) |
+| [xx.bg.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_bg_xx.html) | [translate_es_bg](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_bg_xx.html) |
+| [xx.de.translate_to.eo](https://nlp.johnsnowlabs.com//2021/06/04/translate_eo_de_xx.html) | [translate_eo_de](https://nlp.johnsnowlabs.com//2021/06/04/translate_eo_de_xx.html) |
+| [xx.ar.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_ar_xx.html) | [translate_es_ar](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_ar_xx.html) |
+| [xx.cs.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_cs_xx.html) | [translate_es_cs](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_cs_xx.html) |
+| [xx.aed.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_aed_xx.html) | [translate_es_aed](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_aed_xx.html) |
+| [xx.ase.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_ase_xx.html) | [translate_es_ase](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_ase_xx.html) |
+| [xx.el.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_el_xx.html) | [translate_es_el](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_el_xx.html) |
+| [xx.eo.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_eo_xx.html) | [translate_es_eo](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_eo_xx.html) |
+| [xx.af.translate_to.eo](https://nlp.johnsnowlabs.com//2021/06/04/translate_eo_af_xx.html) | [translate_eo_af](https://nlp.johnsnowlabs.com//2021/06/04/translate_eo_af_xx.html) |
+| [xx.af.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_af_xx.html) | [translate_es_af](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_af_xx.html) |
+| [xx.pl.translate_to.eo](https://nlp.johnsnowlabs.com//2021/06/04/translate_eo_pl_xx.html) | [translate_eo_pl](https://nlp.johnsnowlabs.com//2021/06/04/translate_eo_pl_xx.html) |
+| [xx.de.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_de_xx.html) | [translate_es_de](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_de_xx.html) |
+| [xx.es.translate_to.eo](https://nlp.johnsnowlabs.com//2021/06/04/translate_eo_es_xx.html) | [translate_eo_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_eo_es_xx.html) |
+| [xx.da.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_da_xx.html) | [translate_es_da](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_da_xx.html) |
+| [xx.crs.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_crs_xx.html) | [translate_es_crs](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_crs_xx.html) |
+| [xx.pt.translate_to.eo](https://nlp.johnsnowlabs.com//2021/06/04/translate_eo_pt_xx.html) | [translate_eo_pt](https://nlp.johnsnowlabs.com//2021/06/04/translate_eo_pt_xx.html) |
+| [xx.eu.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_eu_xx.html) | [translate_es_eu](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_eu_xx.html) |
+| [xx.es.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_es_xx.html) | [translate_es_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_es_xx.html) |
+| [xx.csn.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_csn_xx.html) | [translate_es_csn](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_csn_xx.html) |
+| [xx.sv.translate_to.eo](https://nlp.johnsnowlabs.com//2021/06/04/translate_eo_sv_xx.html) | [translate_eo_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_eo_sv_xx.html) |
+| [xx.efi.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_efi_xx.html) | [translate_es_efi](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_efi_xx.html) |
+| [xx.sh.translate_to.eo](https://nlp.johnsnowlabs.com//2021/06/04/translate_eo_sh_xx.html) | [translate_eo_sh](https://nlp.johnsnowlabs.com//2021/06/04/translate_eo_sh_xx.html) |
+| [xx.bg.translate_to.eo](https://nlp.johnsnowlabs.com//2021/06/04/translate_eo_bg_xx.html) | [translate_eo_bg](https://nlp.johnsnowlabs.com//2021/06/04/translate_eo_bg_xx.html) |
+| [xx.fr.translate_to.eo](https://nlp.johnsnowlabs.com//2021/06/04/translate_eo_fr_xx.html) | [translate_eo_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_eo_fr_xx.html) |
+| [xx.el.translate_to.eo](https://nlp.johnsnowlabs.com//2021/06/04/translate_eo_el_xx.html) | [translate_eo_el](https://nlp.johnsnowlabs.com//2021/06/04/translate_eo_el_xx.html) |
+| [xx.pl.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_pl_xx.html) | [translate_es_pl](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_pl_xx.html) |
+| [xx.ro.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_ro_xx.html) | [translate_es_ro](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_ro_xx.html) |
+| [xx.is.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_is_xx.html) | [translate_es_is](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_is_xx.html) |
+| [xx.ln.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_ln_xx.html) | [translate_es_ln](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_ln_xx.html) |
+| [xx.to.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_to_xx.html) | [translate_es_to](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_to_xx.html) |
+| [xx.no.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_no_xx.html) | [translate_es_no](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_no_xx.html) |
+| [xx.nl.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_nl_xx.html) | [translate_es_nl](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_nl_xx.html) |
+| [xx.pag.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_pag_xx.html) | [translate_es_pag](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_pag_xx.html) |
+| [xx.tvl.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_tvl_xx.html) | [translate_es_tvl](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_tvl_xx.html) |
+| [xx.fr.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_fr_xx.html) | [translate_es_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_fr_xx.html) |
+| [xx.he.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_he_xx.html) | [translate_es_he](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_he_xx.html) |
+| [xx.lus.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_lus_xx.html) | [translate_es_lus](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_lus_xx.html) |
+| [xx.hil.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_hil_xx.html) | [translate_es_hil](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_hil_xx.html) |
+| [xx.ny.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_ny_xx.html) | [translate_es_ny](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_ny_xx.html) |
+| [xx.pap.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_pap_xx.html) | [translate_es_pap](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_pap_xx.html) |
+| [xx.id.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_id_xx.html) | [translate_es_id](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_id_xx.html) |
+| [xx.wls.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_wls_xx.html) | [translate_es_wls](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_wls_xx.html) |
+| [xx.gaa.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_gaa_xx.html) | [translate_es_gaa](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_gaa_xx.html) |
+| [xx.nso.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_nso_xx.html) | [translate_es_nso](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_nso_xx.html) |
+| [xx.mk.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_mk_xx.html) | [translate_es_mk](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_mk_xx.html) |
+| [xx.mt.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_mt_xx.html) | [translate_es_mt](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_mt_xx.html) |
+| [xx.pis.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_pis_xx.html) | [translate_es_pis](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_pis_xx.html) |
+| [xx.gl.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_gl_xx.html) | [translate_es_gl](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_gl_xx.html) |
+| [xx.sn.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_sn_xx.html) | [translate_es_sn](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_sn_xx.html) |
+| [xx.hr.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_hr_xx.html) | [translate_es_hr](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_hr_xx.html) |
+| [xx.swc.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_swc_xx.html) | [translate_es_swc](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_swc_xx.html) |
+| [xx.lua.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_lua_xx.html) | [translate_es_lua](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_lua_xx.html) |
+| [xx.it.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_it_xx.html) | [translate_es_it](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_it_xx.html) |
+| [xx.fj.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_fj_xx.html) | [translate_es_fj](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_fj_xx.html) |
+| [xx.gil.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_gil_xx.html) | [translate_es_gil](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_gil_xx.html) |
+| [xx.sm.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_sm_xx.html) | [translate_es_sm](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_sm_xx.html) |
+| [xx.guw.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_guw_xx.html) | [translate_es_guw](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_guw_xx.html) |
+| [xx.kg.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_kg_xx.html) | [translate_es_kg](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_kg_xx.html) |
+| [xx.tl.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_tl_xx.html) | [translate_es_tl](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_tl_xx.html) |
+| [xx.rn.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_rn_xx.html) | [translate_es_rn](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_rn_xx.html) |
+| [xx.mfs.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_mfs_xx.html) | [translate_es_mfs](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_mfs_xx.html) |
+| [xx.iso.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_iso_xx.html) | [translate_es_iso](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_iso_xx.html) |
+| [xx.loz.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_loz_xx.html) | [translate_es_loz](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_loz_xx.html) |
+| [xx.tpi.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_tpi_xx.html) | [translate_es_tpi](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_tpi_xx.html) |
+| [xx.ha.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_ha_xx.html) | [translate_es_ha](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_ha_xx.html) |
+| [xx.ht.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_ht_xx.html) | [translate_es_ht](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_ht_xx.html) |
+| [xx.uk.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_uk_xx.html) | [translate_es_uk](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_uk_xx.html) |
+| [xx.tw.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_tw_xx.html) | [translate_es_tw](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_tw_xx.html) |
+| [xx.st.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_st_xx.html) | [translate_es_st](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_st_xx.html) |
+| [xx.sg.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_sg_xx.html) | [translate_es_sg](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_sg_xx.html) |
+| [xx.ilo.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_ilo_xx.html) | [translate_es_ilo](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_ilo_xx.html) |
+| [xx.ru.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_ru_xx.html) | [translate_es_ru](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_ru_xx.html) |
+| [xx.yo.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_yo_xx.html) | [translate_es_yo](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_yo_xx.html) |
+| [xx.pon.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_pon_xx.html) | [translate_es_pon](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_pon_xx.html) |
+| [xx.niu.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_niu_xx.html) | [translate_es_niu](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_niu_xx.html) |
+| [xx.lt.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_lt_xx.html) | [translate_es_lt](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_lt_xx.html) |
+| [xx.ty.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_ty_xx.html) | [translate_es_ty](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_ty_xx.html) |
+| [xx.ig.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_ig_xx.html) | [translate_es_ig](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_ig_xx.html) |
+| [xx.tzo.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_tzo_xx.html) | [translate_es_tzo](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_tzo_xx.html) |
+| [xx.rw.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_rw_xx.html) | [translate_es_rw](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_rw_xx.html) |
+| [xx.war.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_war_xx.html) | [translate_es_war](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_war_xx.html) |
+| [xx.tll.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_tll_xx.html) | [translate_es_tll](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_tll_xx.html) |
+| [xx.prl.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_prl_xx.html) | [translate_es_prl](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_prl_xx.html) |
+| [xx.xh.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_xh_xx.html) | [translate_es_xh](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_xh_xx.html) |
+| [xx.yua.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_yua_xx.html) | [translate_es_yua](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_yua_xx.html) |
+| [xx.ho.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_ho_xx.html) | [translate_es_ho](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_ho_xx.html) |
+| [xx.ve.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_ve_xx.html) | [translate_es_ve](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_ve_xx.html) |
+| [xx.sl.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_sl_xx.html) | [translate_es_sl](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_sl_xx.html) |
+| [xx.tn.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_tn_xx.html) | [translate_es_tn](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_tn_xx.html) |
+| [xx.vi.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_vi_xx.html) | [translate_es_vi](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_vi_xx.html) |
+| [xx.srn.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_srn_xx.html) | [translate_es_srn](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_srn_xx.html) |
+| [xx.fi.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_fi_xx.html) | [translate_es_fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_fi_xx.html) |
+| [xx.lua.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_lua_xx.html) | [translate_fi_lua](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_lua_xx.html) |
+| [xx.ny.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_ny_xx.html) | [translate_fi_ny](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_ny_xx.html) |
+| [xx.pon.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_pon_xx.html) | [translate_fi_pon](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_pon_xx.html) |
+| [xx.crs.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_crs_xx.html) | [translate_fi_crs](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_crs_xx.html) |
+| [xx.nso.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_nso_xx.html) | [translate_fi_nso](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_nso_xx.html) |
+| [xx.iso.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_iso_xx.html) | [translate_fi_iso](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_iso_xx.html) |
+| [xx.kqn.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_kqn_xx.html) | [translate_fi_kqn](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_kqn_xx.html) |
+| [xx.gaa.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_gaa_xx.html) | [translate_fi_gaa](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_gaa_xx.html) |
+| [xx.ru.translate_to.eu](https://nlp.johnsnowlabs.com//2021/06/04/translate_eu_ru_xx.html) | [translate_eu_ru](https://nlp.johnsnowlabs.com//2021/06/04/translate_eu_ru_xx.html) |
+| [xx.eo.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_eo_xx.html) | [translate_fi_eo](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_eo_xx.html) |
+| [xx.ig.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_ig_xx.html) | [translate_fi_ig](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_ig_xx.html) |
+| [xx.bem.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_bem_xx.html) | [translate_fi_bem](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_bem_xx.html) |
+| [xx.es.translate_to.et](https://nlp.johnsnowlabs.com//2021/06/04/translate_et_es_xx.html) | [translate_et_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_et_es_xx.html) |
+| [xx.fj.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_fj_xx.html) | [translate_fi_fj](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_fj_xx.html) |
+| [xx.et.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_et_xx.html) | [translate_fi_et](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_et_xx.html) |
+| [xx.bcl.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_bcl_xx.html) | [translate_fi_bcl](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_bcl_xx.html) |
+| [xx.fi.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_fi_xx.html) | [translate_fi_fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_fi_xx.html) |
+| [xx.el.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_el_xx.html) | [translate_fi_el](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_el_xx.html) |
+| [xx.efi.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_efi_xx.html) | [translate_fi_efi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_efi_xx.html) |
+| [xx.ht.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_ht_xx.html) | [translate_fi_ht](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_ht_xx.html) |
+| [xx.ceb.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_ceb_xx.html) | [translate_fi_ceb](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_ceb_xx.html) |
+| [xx.lg.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_lg_xx.html) | [translate_fi_lg](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_lg_xx.html) |
+| [xx.pap.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_pap_xx.html) | [translate_fi_pap](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_pap_xx.html) |
+| [xx.kg.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_kg_xx.html) | [translate_fi_kg](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_kg_xx.html) |
+| [xx.ee.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_ee_xx.html) | [translate_fi_ee](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_ee_xx.html) |
+| [xx.lv.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_lv_xx.html) | [translate_fi_lv](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_lv_xx.html) |
+| [xx.fr.translate_to.et](https://nlp.johnsnowlabs.com//2021/06/04/translate_et_fr_xx.html) | [translate_et_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_et_fr_xx.html) |
+| [xx.de.translate_to.et](https://nlp.johnsnowlabs.com//2021/06/04/translate_et_de_xx.html) | [translate_et_de](https://nlp.johnsnowlabs.com//2021/06/04/translate_et_de_xx.html) |
+| [xx.bzs.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_bzs_xx.html) | [translate_fi_bzs](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_bzs_xx.html) |
+| [xx.mos.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_mos_xx.html) | [translate_fi_mos](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_mos_xx.html) |
+| [xx.zh.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_zh_xx.html) | [translate_es_zh](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_zh_xx.html) |
+| [xx.id.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_id_xx.html) | [translate_fi_id](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_id_xx.html) |
+| [xx.gil.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_gil_xx.html) | [translate_fi_gil](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_gil_xx.html) |
+| [xx.pis.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_pis_xx.html) | [translate_fi_pis](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_pis_xx.html) |
+| [xx.no.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_no_xx.html) | [translate_fi_no](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_no_xx.html) |
+| [xx.it.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_it_xx.html) | [translate_fi_it](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_it_xx.html) |
+| [xx.es.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_es_xx.html) | [translate_fi_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_es_xx.html) |
+| [xx.ha.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_ha_xx.html) | [translate_fi_ha](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_ha_xx.html) |
+| [xx.fr.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_fr_xx.html) | [translate_fi_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_fr_xx.html) |
+| [xx.de.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_de_xx.html) | [translate_fi_de](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_de_xx.html) |
+| [xx.bg.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_bg_xx.html) | [translate_fi_bg](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_bg_xx.html) |
+| [xx.zai.translate_to.es](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_zai_xx.html) | [translate_es_zai](https://nlp.johnsnowlabs.com//2021/06/04/translate_es_zai_xx.html) |
+| [xx.hil.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_hil_xx.html) | [translate_fi_hil](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_hil_xx.html) |
+| [xx.cs.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_cs_xx.html) | [translate_fi_cs](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_cs_xx.html) |
+| [xx.es.translate_to.eu](https://nlp.johnsnowlabs.com//2021/06/04/translate_eu_es_xx.html) | [translate_eu_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_eu_es_xx.html) |
+| [xx.ilo.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_ilo_xx.html) | [translate_fi_ilo](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_ilo_xx.html) |
+| [xx.pag.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_pag_xx.html) | [translate_fi_pag](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_pag_xx.html) |
+| [xx.ln.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_ln_xx.html) | [translate_fi_ln](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_ln_xx.html) |
+| [xx.sv.translate_to.et](https://nlp.johnsnowlabs.com//2021/06/04/translate_et_sv_xx.html) | [translate_et_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_et_sv_xx.html) |
+| [xx.niu.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_niu_xx.html) | [translate_fi_niu](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_niu_xx.html) |
+| [xx.hr.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_hr_xx.html) | [translate_fi_hr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_hr_xx.html) |
+| [xx.de.translate_to.eu](https://nlp.johnsnowlabs.com//2021/06/04/translate_eu_de_xx.html) | [translate_eu_de](https://nlp.johnsnowlabs.com//2021/06/04/translate_eu_de_xx.html) |
+| [xx.lus.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_lus_xx.html) | [translate_fi_lus](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_lus_xx.html) |
+| [xx.ru.translate_to.et](https://nlp.johnsnowlabs.com//2021/06/04/translate_et_ru_xx.html) | [translate_et_ru](https://nlp.johnsnowlabs.com//2021/06/04/translate_et_ru_xx.html) |
+| [xx.af.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_af_xx.html) | [translate_fi_af](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_af_xx.html) |
+| [xx.mh.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_mh_xx.html) | [translate_fi_mh](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_mh_xx.html) |
+| [xx.guw.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_guw_xx.html) | [translate_fi_guw](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_guw_xx.html) |
+| [xx.mfe.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_mfe_xx.html) | [translate_fi_mfe](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_mfe_xx.html) |
+| [xx.ho.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_ho_xx.html) | [translate_fi_ho](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_ho_xx.html) |
+| [xx.fse.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_fse_xx.html) | [translate_fi_fse](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_fse_xx.html) |
+| [xx.lu.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_lu_xx.html) | [translate_fi_lu](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_lu_xx.html) |
+| [xx.hu.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_hu_xx.html) | [translate_fi_hu](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_hu_xx.html) |
+| [xx.mk.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_mk_xx.html) | [translate_fi_mk](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_mk_xx.html) |
+| [xx.nl.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_nl_xx.html) | [translate_fi_nl](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_nl_xx.html) |
+| [xx.mg.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_mg_xx.html) | [translate_fi_mg](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_mg_xx.html) |
+| [xx.mt.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_mt_xx.html) | [translate_fi_mt](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_mt_xx.html) |
+| [xx.he.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_he_xx.html) | [translate_fi_he](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_he_xx.html) |
+| [xx.fi.translate_to.et](https://nlp.johnsnowlabs.com//2021/06/04/translate_et_fi_xx.html) | [translate_et_fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_et_fi_xx.html) |
+| [xx.is.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_is_xx.html) | [translate_fi_is](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_is_xx.html) |
+| [xx.lue.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_lue_xx.html) | [translate_fi_lue](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_lue_xx.html) |
+| [xx.guw.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_guw_xx.html) | [translate_fr_guw](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_guw_xx.html) |
+| [xx.ber.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_ber_xx.html) | [translate_fr_ber](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_ber_xx.html) |
+| [xx.uk.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_uk_xx.html) | [translate_fi_uk](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_uk_xx.html) |
+| [xx.efi.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_efi_xx.html) | [translate_fr_efi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_efi_xx.html) |
+| [xx.tr.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_tr_xx.html) | [translate_fi_tr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_tr_xx.html) |
+| [xx.tn.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_tn_xx.html) | [translate_fi_tn](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_tn_xx.html) |
+| [xx.es.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_es_xx.html) | [translate_fr_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_es_xx.html) |
+| [xx.srn.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_srn_xx.html) | [translate_fi_srn](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_srn_xx.html) |
+| [xx.bcl.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_bcl_xx.html) | [translate_fr_bcl](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_bcl_xx.html) |
+| [xx.sl.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_sl_xx.html) | [translate_fi_sl](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_sl_xx.html) |
+| [xx.ht.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_ht_xx.html) | [translate_fr_ht](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_ht_xx.html) |
+| [xx.zne.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_zne_xx.html) | [translate_fi_zne](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_zne_xx.html) |
+| [xx.de.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_de_xx.html) | [translate_fr_de](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_de_xx.html) |
+| [xx.war.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_war_xx.html) | [translate_fi_war](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_war_xx.html) |
+| [xx.tpi.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_tpi_xx.html) | [translate_fi_tpi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_tpi_xx.html) |
+| [xx.ca.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_ca_xx.html) | [translate_fr_ca](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_ca_xx.html) |
+| [xx.yap.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_yap_xx.html) | [translate_fi_yap](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_yap_xx.html) |
+| [xx.sn.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_sn_xx.html) | [translate_fi_sn](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_sn_xx.html) |
+| [xx.hr.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_hr_xx.html) | [translate_fr_hr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_hr_xx.html) |
+| [xx.gil.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_gil_xx.html) | [translate_fr_gil](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_gil_xx.html) |
+| [xx.id.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_id_xx.html) | [translate_fr_id](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_id_xx.html) |
+| [xx.sv.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_sv_xx.html) | [translate_fi_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_sv_xx.html) |
+| [xx.toi.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_toi_xx.html) | [translate_fi_toi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_toi_xx.html) |
+| [xx.sk.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_sk_xx.html) | [translate_fi_sk](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_sk_xx.html) |
+| [xx.he.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_he_xx.html) | [translate_fr_he](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_he_xx.html) |
+| [xx.sq.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_sq_xx.html) | [translate_fi_sq](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_sq_xx.html) |
+| [xx.ve.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_ve_xx.html) | [translate_fi_ve](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_ve_xx.html) |
+| [xx.tw.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_tw_xx.html) | [translate_fi_tw](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_tw_xx.html) |
+| [xx.tvl.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_tvl_xx.html) | [translate_fi_tvl](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_tvl_xx.html) |
+| [xx.hil.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_hil_xx.html) | [translate_fr_hil](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_hil_xx.html) |
+| [xx.sw.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_sw_xx.html) | [translate_fi_sw](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_sw_xx.html) |
+| [xx.eo.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_eo_xx.html) | [translate_fr_eo](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_eo_xx.html) |
+| [xx.xh.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_xh_xx.html) | [translate_fi_xh](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_xh_xx.html) |
+| [xx.bi.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_bi_xx.html) | [translate_fr_bi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_bi_xx.html) |
+| [xx.ru.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_ru_xx.html) | [translate_fi_ru](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_ru_xx.html) |
+| [xx.ceb.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_ceb_xx.html) | [translate_fr_ceb](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_ceb_xx.html) |
+| [xx.ig.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_ig_xx.html) | [translate_fr_ig](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_ig_xx.html) |
+| [xx.el.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_el_xx.html) | [translate_fr_el](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_el_xx.html) |
+| [xx.sm.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_sm_xx.html) | [translate_fi_sm](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_sm_xx.html) |
+| [xx.to.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_to_xx.html) | [translate_fi_to](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_to_xx.html) |
+| [xx.ase.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_ase_xx.html) | [translate_fr_ase](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_ase_xx.html) |
+| [xx.yo.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_yo_xx.html) | [translate_fi_yo](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_yo_xx.html) |
+| [xx.sg.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_sg_xx.html) | [translate_fi_sg](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_sg_xx.html) |
+| [xx.rw.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_rw_xx.html) | [translate_fi_rw](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_rw_xx.html) |
+| [xx.ts.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_ts_xx.html) | [translate_fi_ts](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_ts_xx.html) |
+| [xx.wls.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_wls_xx.html) | [translate_fi_wls](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_wls_xx.html) |
+| [xx.ho.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_ho_xx.html) | [translate_fr_ho](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_ho_xx.html) |
+| [xx.tll.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_tll_xx.html) | [translate_fi_tll](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_tll_xx.html) |
+| [xx.st.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_st_xx.html) | [translate_fi_st](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_st_xx.html) |
+| [xx.fiu.translate_to.fiu](https://nlp.johnsnowlabs.com//2021/06/04/translate_fiu_fiu_xx.html) | [translate_fiu_fiu](https://nlp.johnsnowlabs.com//2021/06/04/translate_fiu_fiu_xx.html) |
+| [xx.ro.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_ro_xx.html) | [translate_fi_ro](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_ro_xx.html) |
+| [xx.tiv.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_tiv_xx.html) | [translate_fi_tiv](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_tiv_xx.html) |
+| [xx.ha.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_ha_xx.html) | [translate_fr_ha](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_ha_xx.html) |
+| [xx.ee.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_ee_xx.html) | [translate_fr_ee](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_ee_xx.html) |
+| [xx.gaa.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_gaa_xx.html) | [translate_fr_gaa](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_gaa_xx.html) |
+| [xx.hu.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_hu_xx.html) | [translate_fr_hu](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_hu_xx.html) |
+| [xx.ty.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_ty_xx.html) | [translate_fi_ty](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_ty_xx.html) |
+| [xx.fr.translate_to.fj](https://nlp.johnsnowlabs.com//2021/06/04/translate_fj_fr_xx.html) | [translate_fj_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fj_fr_xx.html) |
+| [xx.run.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_run_xx.html) | [translate_fi_run](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_run_xx.html) |
+| [xx.bem.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_bem_xx.html) | [translate_fr_bem](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_bem_xx.html) |
+| [xx.bzs.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_bzs_xx.html) | [translate_fr_bzs](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_bzs_xx.html) |
+| [xx.fj.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_fj_xx.html) | [translate_fr_fj](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_fj_xx.html) |
+| [xx.ar.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_ar_xx.html) | [translate_fr_ar](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_ar_xx.html) |
+| [xx.swc.translate_to.fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_swc_xx.html) | [translate_fi_swc](https://nlp.johnsnowlabs.com//2021/06/04/translate_fi_swc_xx.html) |
+| [xx.crs.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_crs_xx.html) | [translate_fr_crs](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_crs_xx.html) |
+| [xx.bg.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_bg_xx.html) | [translate_fr_bg](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_bg_xx.html) |
+| [xx.af.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_af_xx.html) | [translate_fr_af](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_af_xx.html) |
+| [xx.loz.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_loz_xx.html) | [translate_fr_loz](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_loz_xx.html) |
+| [xx.st.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_st_xx.html) | [translate_fr_st](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_st_xx.html) |
+| [xx.tn.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_tn_xx.html) | [translate_fr_tn](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_tn_xx.html) |
+| [xx.srn.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_srn_xx.html) | [translate_fr_srn](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_srn_xx.html) |
+| [xx.to.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_to_xx.html) | [translate_fr_to](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_to_xx.html) |
+| [xx.sk.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_sk_xx.html) | [translate_fr_sk](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_sk_xx.html) |
+| [xx.tum.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_tum_xx.html) | [translate_fr_tum](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_tum_xx.html) |
+| [xx.ts.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_ts_xx.html) | [translate_fr_ts](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_ts_xx.html) |
+| [xx.iso.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_iso_xx.html) | [translate_fr_iso](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_iso_xx.html) |
+| [xx.sv.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_sv_xx.html) | [translate_fr_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_sv_xx.html) |
+| [xx.mt.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_mt_xx.html) | [translate_fr_mt](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_mt_xx.html) |
+| [xx.pap.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_pap_xx.html) | [translate_fr_pap](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_pap_xx.html) |
+| [xx.wls.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_wls_xx.html) | [translate_fr_wls](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_wls_xx.html) |
+| [xx.lua.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_lua_xx.html) | [translate_fr_lua](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_lua_xx.html) |
+| [xx.ro.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_ro_xx.html) | [translate_fr_ro](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_ro_xx.html) |
+| [xx.tll.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_tll_xx.html) | [translate_fr_tll](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_tll_xx.html) |
+| [xx.ilo.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_ilo_xx.html) | [translate_fr_ilo](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_ilo_xx.html) |
+| [xx.ve.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_ve_xx.html) | [translate_fr_ve](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_ve_xx.html) |
+| [xx.ny.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_ny_xx.html) | [translate_fr_ny](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_ny_xx.html) |
+| [xx.tpi.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_tpi_xx.html) | [translate_fr_tpi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_tpi_xx.html) |
+| [xx.uk.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_uk_xx.html) | [translate_fr_uk](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_uk_xx.html) |
+| [xx.ln.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_ln_xx.html) | [translate_fr_ln](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_ln_xx.html) |
+| [xx.mfe.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_mfe_xx.html) | [translate_fr_mfe](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_mfe_xx.html) |
+| [xx.lue.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_lue_xx.html) | [translate_fr_lue](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_lue_xx.html) |
+| [xx.mos.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_mos_xx.html) | [translate_fr_mos](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_mos_xx.html) |
+| [xx.pon.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_pon_xx.html) | [translate_fr_pon](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_pon_xx.html) |
+| [xx.tvl.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_tvl_xx.html) | [translate_fr_tvl](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_tvl_xx.html) |
+| [xx.run.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_run_xx.html) | [translate_fr_run](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_run_xx.html) |
+| [xx.pag.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_pag_xx.html) | [translate_fr_pag](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_pag_xx.html) |
+| [xx.sg.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_sg_xx.html) | [translate_fr_sg](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_sg_xx.html) |
+| [xx.no.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_no_xx.html) | [translate_fr_no](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_no_xx.html) |
+| [xx.ty.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_ty_xx.html) | [translate_fr_ty](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_ty_xx.html) |
+| [xx.tl.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_tl_xx.html) | [translate_fr_tl](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_tl_xx.html) |
+| [xx.sl.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_sl_xx.html) | [translate_fr_sl](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_sl_xx.html) |
+| [xx.tiv.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_tiv_xx.html) | [translate_fr_tiv](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_tiv_xx.html) |
+| [xx.rw.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_rw_xx.html) | [translate_fr_rw](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_rw_xx.html) |
+| [xx.lus.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_lus_xx.html) | [translate_fr_lus](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_lus_xx.html) |
+| [xx.swc.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_swc_xx.html) | [translate_fr_swc](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_swc_xx.html) |
+| [xx.sm.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_sm_xx.html) | [translate_fr_sm](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_sm_xx.html) |
+| [xx.pl.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_pl_xx.html) | [translate_fr_pl](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_pl_xx.html) |
+| [xx.kg.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_kg_xx.html) | [translate_fr_kg](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_kg_xx.html) |
+| [xx.niu.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_niu_xx.html) | [translate_fr_niu](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_niu_xx.html) |
+| [xx.lg.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_lg_xx.html) | [translate_fr_lg](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_lg_xx.html) |
+| [xx.ms.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_ms_xx.html) | [translate_fr_ms](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_ms_xx.html) |
+| [xx.nso.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_nso_xx.html) | [translate_fr_nso](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_nso_xx.html) |
+| [xx.war.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_war_xx.html) | [translate_fr_war](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_war_xx.html) |
+| [xx.xh.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_xh_xx.html) | [translate_fr_xh](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_xh_xx.html) |
+| [xx.pis.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_pis_xx.html) | [translate_fr_pis](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_pis_xx.html) |
+| [xx.tw.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_tw_xx.html) | [translate_fr_tw](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_tw_xx.html) |
+| [xx.kwy.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_kwy_xx.html) | [translate_fr_kwy](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_kwy_xx.html) |
+| [xx.rnd.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_rnd_xx.html) | [translate_fr_rnd](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_rnd_xx.html) |
+| [xx.vi.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_vi_xx.html) | [translate_fr_vi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_vi_xx.html) |
+| [xx.lu.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_lu_xx.html) | [translate_fr_lu](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_lu_xx.html) |
+| [xx.mh.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_mh_xx.html) | [translate_fr_mh](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_mh_xx.html) |
+| [xx.ru.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_ru_xx.html) | [translate_fr_ru](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_ru_xx.html) |
+| [xx.sn.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_sn_xx.html) | [translate_fr_sn](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_sn_xx.html) |
+| [xx.kqn.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_kqn_xx.html) | [translate_fr_kqn](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_kqn_xx.html) |
+| [xx.ar.translate_to.he](https://nlp.johnsnowlabs.com//2021/06/04/translate_he_ar_xx.html) | [translate_he_ar](https://nlp.johnsnowlabs.com//2021/06/04/translate_he_ar_xx.html) |
+| [xx.de.translate_to.he](https://nlp.johnsnowlabs.com//2021/06/04/translate_he_de_xx.html) | [translate_he_de](https://nlp.johnsnowlabs.com//2021/06/04/translate_he_de_xx.html) |
+| [xx.es.translate_to.gil](https://nlp.johnsnowlabs.com//2021/06/04/translate_gil_es_xx.html) | [translate_gil_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_gil_es_xx.html) |
+| [xx.de.translate_to.gaa](https://nlp.johnsnowlabs.com//2021/06/04/translate_gaa_de_xx.html) | [translate_gaa_de](https://nlp.johnsnowlabs.com//2021/06/04/translate_gaa_de_xx.html) |
+| [xx.fr.translate_to.hu](https://nlp.johnsnowlabs.com//2021/06/04/translate_hu_fr_xx.html) | [translate_hu_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_hu_fr_xx.html) |
+| [xx.fr.translate_to.gil](https://nlp.johnsnowlabs.com//2021/06/04/translate_gil_fr_xx.html) | [translate_gil_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_gil_fr_xx.html) |
+| [xx.de.translate_to.guw](https://nlp.johnsnowlabs.com//2021/06/04/translate_guw_de_xx.html) | [translate_guw_de](https://nlp.johnsnowlabs.com//2021/06/04/translate_guw_de_xx.html) |
+| [xx.fr.translate_to.ht](https://nlp.johnsnowlabs.com//2021/06/04/translate_ht_fr_xx.html) | [translate_ht_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_ht_fr_xx.html) |
+| [xx.uk.translate_to.he](https://nlp.johnsnowlabs.com//2021/06/04/translate_he_uk_xx.html) | [translate_he_uk](https://nlp.johnsnowlabs.com//2021/06/04/translate_he_uk_xx.html) |
+| [xx.fi.translate_to.hu](https://nlp.johnsnowlabs.com//2021/06/04/translate_hu_fi_xx.html) | [translate_hu_fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_hu_fi_xx.html) |
+| [xx.uk.translate_to.hu](https://nlp.johnsnowlabs.com//2021/06/04/translate_hu_uk_xx.html) | [translate_hu_uk](https://nlp.johnsnowlabs.com//2021/06/04/translate_hu_uk_xx.html) |
+| [xx.zne.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_zne_xx.html) | [translate_fr_zne](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_zne_xx.html) |
+| [xx.sv.translate_to.gaa](https://nlp.johnsnowlabs.com//2021/06/04/translate_gaa_sv_xx.html) | [translate_gaa_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_gaa_sv_xx.html) |
+| [xx.es.translate_to.guw](https://nlp.johnsnowlabs.com//2021/06/04/translate_guw_es_xx.html) | [translate_guw_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_guw_es_xx.html) |
+| [xx.gmq.translate_to.gmq](https://nlp.johnsnowlabs.com//2021/06/04/translate_gmq_gmq_xx.html) | [translate_gmq_gmq](https://nlp.johnsnowlabs.com//2021/06/04/translate_gmq_gmq_xx.html) |
+| [xx.fi.translate_to.hil](https://nlp.johnsnowlabs.com//2021/06/04/translate_hil_fi_xx.html) | [translate_hil_fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_hil_fi_xx.html) |
+| [xx.fi.translate_to.guw](https://nlp.johnsnowlabs.com//2021/06/04/translate_guw_fi_xx.html) | [translate_guw_fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_guw_fi_xx.html) |
+| [xx.es.translate_to.he](https://nlp.johnsnowlabs.com//2021/06/04/translate_he_es_xx.html) | [translate_he_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_he_es_xx.html) |
+| [xx.ur.translate_to.hi](https://nlp.johnsnowlabs.com//2021/06/04/translate_hi_ur_xx.html) | [translate_hi_ur](https://nlp.johnsnowlabs.com//2021/06/04/translate_hi_ur_xx.html) |
+| [xx.de.translate_to.hil](https://nlp.johnsnowlabs.com//2021/06/04/translate_hil_de_xx.html) | [translate_hil_de](https://nlp.johnsnowlabs.com//2021/06/04/translate_hil_de_xx.html) |
+| [xx.gmw.translate_to.gmw](https://nlp.johnsnowlabs.com//2021/06/04/translate_gmw_gmw_xx.html) | [translate_gmw_gmw](https://nlp.johnsnowlabs.com//2021/06/04/translate_gmw_gmw_xx.html) |
+| [xx.fi.translate_to.gaa](https://nlp.johnsnowlabs.com//2021/06/04/translate_gaa_fi_xx.html) | [translate_gaa_fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_gaa_fi_xx.html) |
+| [xx.fi.translate_to.he](https://nlp.johnsnowlabs.com//2021/06/04/translate_he_fi_xx.html) | [translate_he_fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_he_fi_xx.html) |
+| [xx.eo.translate_to.hu](https://nlp.johnsnowlabs.com//2021/06/04/translate_hu_eo_xx.html) | [translate_hu_eo](https://nlp.johnsnowlabs.com//2021/06/04/translate_hu_eo_xx.html) |
+| [xx.fi.translate_to.ht](https://nlp.johnsnowlabs.com//2021/06/04/translate_ht_fi_xx.html) | [translate_ht_fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_ht_fi_xx.html) |
+| [xx.yo.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_yo_xx.html) | [translate_fr_yo](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_yo_xx.html) |
+| [xx.sv.translate_to.hr](https://nlp.johnsnowlabs.com//2021/06/04/translate_hr_sv_xx.html) | [translate_hr_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_hr_sv_xx.html) |
+| [xx.fr.translate_to.ha](https://nlp.johnsnowlabs.com//2021/06/04/translate_ha_fr_xx.html) | [translate_ha_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_ha_fr_xx.html) |
+| [xx.fi.translate_to.ha](https://nlp.johnsnowlabs.com//2021/06/04/translate_ha_fi_xx.html) | [translate_ha_fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_ha_fi_xx.html) |
+| [xx.sv.translate_to.ha](https://nlp.johnsnowlabs.com//2021/06/04/translate_ha_sv_xx.html) | [translate_ha_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_ha_sv_xx.html) |
+| [xx.pt.translate_to.gl](https://nlp.johnsnowlabs.com//2021/06/04/translate_gl_pt_xx.html) | [translate_gl_pt](https://nlp.johnsnowlabs.com//2021/06/04/translate_gl_pt_xx.html) |
+| [xx.fr.translate_to.guw](https://nlp.johnsnowlabs.com//2021/06/04/translate_guw_fr_xx.html) | [translate_guw_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_guw_fr_xx.html) |
+| [xx.es.translate_to.ht](https://nlp.johnsnowlabs.com//2021/06/04/translate_ht_es_xx.html) | [translate_ht_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_ht_es_xx.html) |
+| [xx.de.translate_to.hu](https://nlp.johnsnowlabs.com//2021/06/04/translate_hu_de_xx.html) | [translate_hu_de](https://nlp.johnsnowlabs.com//2021/06/04/translate_hu_de_xx.html) |
+| [xx.sv.translate_to.ht](https://nlp.johnsnowlabs.com//2021/06/04/translate_ht_sv_xx.html) | [translate_ht_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_ht_sv_xx.html) |
+| [xx.es.translate_to.hr](https://nlp.johnsnowlabs.com//2021/06/04/translate_hr_es_xx.html) | [translate_hr_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_hr_es_xx.html) |
+| [xx.fr.translate_to.gaa](https://nlp.johnsnowlabs.com//2021/06/04/translate_gaa_fr_xx.html) | [translate_gaa_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_gaa_fr_xx.html) |
+| [xx.ru.translate_to.he](https://nlp.johnsnowlabs.com//2021/06/04/translate_he_ru_xx.html) | [translate_he_ru](https://nlp.johnsnowlabs.com//2021/06/04/translate_he_ru_xx.html) |
+| [xx.es.translate_to.gl](https://nlp.johnsnowlabs.com//2021/06/04/translate_gl_es_xx.html) | [translate_gl_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_gl_es_xx.html) |
+| [xx.ru.translate_to.hy](https://nlp.johnsnowlabs.com//2021/06/04/translate_hy_ru_xx.html) | [translate_hy_ru](https://nlp.johnsnowlabs.com//2021/06/04/translate_hy_ru_xx.html) |
+| [xx.fi.translate_to.gil](https://nlp.johnsnowlabs.com//2021/06/04/translate_gil_fi_xx.html) | [translate_gil_fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_gil_fi_xx.html) |
+| [xx.sv.translate_to.hu](https://nlp.johnsnowlabs.com//2021/06/04/translate_hu_sv_xx.html) | [translate_hu_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_hu_sv_xx.html) |
+| [xx.sv.translate_to.gil](https://nlp.johnsnowlabs.com//2021/06/04/translate_gil_sv_xx.html) | [translate_gil_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_gil_sv_xx.html) |
+| [xx.fi.translate_to.fse](https://nlp.johnsnowlabs.com//2021/06/04/translate_fse_fi_xx.html) | [translate_fse_fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_fse_fi_xx.html) |
+| [xx.gem.translate_to.gem](https://nlp.johnsnowlabs.com//2021/06/04/translate_gem_gem_xx.html) | [translate_gem_gem](https://nlp.johnsnowlabs.com//2021/06/04/translate_gem_gem_xx.html) |
+| [xx.es.translate_to.ha](https://nlp.johnsnowlabs.com//2021/06/04/translate_ha_es_xx.html) | [translate_ha_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_ha_es_xx.html) |
+| [xx.it.translate_to.he](https://nlp.johnsnowlabs.com//2021/06/04/translate_he_it_xx.html) | [translate_he_it](https://nlp.johnsnowlabs.com//2021/06/04/translate_he_it_xx.html) |
+| [xx.sv.translate_to.guw](https://nlp.johnsnowlabs.com//2021/06/04/translate_guw_sv_xx.html) | [translate_guw_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_guw_sv_xx.html) |
+| [xx.sv.translate_to.he](https://nlp.johnsnowlabs.com//2021/06/04/translate_he_sv_xx.html) | [translate_he_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_he_sv_xx.html) |
+| [xx.yap.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_yap_xx.html) | [translate_fr_yap](https://nlp.johnsnowlabs.com//2021/06/04/translate_fr_yap_xx.html) |
+| [xx.fr.translate_to.hr](https://nlp.johnsnowlabs.com//2021/06/04/translate_hr_fr_xx.html) | [translate_hr_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_hr_fr_xx.html) |
+| [xx.eo.translate_to.he](https://nlp.johnsnowlabs.com//2021/06/04/translate_he_eo_xx.html) | [translate_he_eo](https://nlp.johnsnowlabs.com//2021/06/04/translate_he_eo_xx.html) |
+| [xx.es.translate_to.gaa](https://nlp.johnsnowlabs.com//2021/06/04/translate_gaa_es_xx.html) | [translate_gaa_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_gaa_es_xx.html) |
+| [xx.fi.translate_to.hr](https://nlp.johnsnowlabs.com//2021/06/04/translate_hr_fi_xx.html) | [translate_hr_fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_hr_fi_xx.html) |
+| [xx.fr.translate_to.he](https://nlp.johnsnowlabs.com//2021/06/04/translate_he_fr_xx.html) | [translate_he_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_he_fr_xx.html) |
+| [xx.fi.translate_to.ilo](https://nlp.johnsnowlabs.com//2021/06/04/translate_ilo_fi_xx.html) | [translate_ilo_fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_ilo_fi_xx.html) |
+| [xx.sv.translate_to.iso](https://nlp.johnsnowlabs.com//2021/06/04/translate_iso_sv_xx.html) | [translate_iso_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_iso_sv_xx.html) |
+| [xx.he.translate_to.ja](https://nlp.johnsnowlabs.com//2021/06/04/translate_ja_he_xx.html) | [translate_ja_he](https://nlp.johnsnowlabs.com//2021/06/04/translate_ja_he_xx.html) |
+| [xx.fi.translate_to.id](https://nlp.johnsnowlabs.com//2021/06/04/translate_id_fi_xx.html) | [translate_id_fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_id_fi_xx.html) |
+| [xx.de.translate_to.ja](https://nlp.johnsnowlabs.com//2021/06/04/translate_ja_de_xx.html) | [translate_ja_de](https://nlp.johnsnowlabs.com//2021/06/04/translate_ja_de_xx.html) |
+| [xx.he.translate_to.it](https://nlp.johnsnowlabs.com//2021/06/04/translate_it_he_xx.html) | [translate_it_he](https://nlp.johnsnowlabs.com//2021/06/04/translate_it_he_xx.html) |
+| [xx.it.translate_to.ja](https://nlp.johnsnowlabs.com//2021/06/04/translate_ja_it_xx.html) | [translate_ja_it](https://nlp.johnsnowlabs.com//2021/06/04/translate_ja_it_xx.html) |
+| [xx.is.translate_to.it](https://nlp.johnsnowlabs.com//2021/06/04/translate_it_is_xx.html) | [translate_it_is](https://nlp.johnsnowlabs.com//2021/06/04/translate_it_is_xx.html) |
+| [xx.bg.translate_to.ja](https://nlp.johnsnowlabs.com//2021/06/04/translate_ja_bg_xx.html) | [translate_ja_bg](https://nlp.johnsnowlabs.com//2021/06/04/translate_ja_bg_xx.html) |
+| [xx.de.translate_to.ig](https://nlp.johnsnowlabs.com//2021/06/04/translate_ig_de_xx.html) | [translate_ig_de](https://nlp.johnsnowlabs.com//2021/06/04/translate_ig_de_xx.html) |
+| [xx.bg.translate_to.it](https://nlp.johnsnowlabs.com//2021/06/04/translate_it_bg_xx.html) | [translate_it_bg](https://nlp.johnsnowlabs.com//2021/06/04/translate_it_bg_xx.html) |
+| [xx.es.translate_to.id](https://nlp.johnsnowlabs.com//2021/06/04/translate_id_es_xx.html) | [translate_id_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_id_es_xx.html) |
+| [xx.fr.translate_to.id](https://nlp.johnsnowlabs.com//2021/06/04/translate_id_fr_xx.html) | [translate_id_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_id_fr_xx.html) |
+| [xx.es.translate_to.ja](https://nlp.johnsnowlabs.com//2021/06/04/translate_ja_es_xx.html) | [translate_ja_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_ja_es_xx.html) |
+| [xx.sv.translate_to.ja](https://nlp.johnsnowlabs.com//2021/06/04/translate_ja_sv_xx.html) | [translate_ja_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_ja_sv_xx.html) |
+| [xx.es.translate_to.iso](https://nlp.johnsnowlabs.com//2021/06/04/translate_iso_es_xx.html) | [translate_iso_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_iso_es_xx.html) |
+| [xx.es.translate_to.ilo](https://nlp.johnsnowlabs.com//2021/06/04/translate_ilo_es_xx.html) | [translate_ilo_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_ilo_es_xx.html) |
+| [xx.it.translate_to.is](https://nlp.johnsnowlabs.com//2021/06/04/translate_is_it_xx.html) | [translate_is_it](https://nlp.johnsnowlabs.com//2021/06/04/translate_is_it_xx.html) |
+| [xx.sv.translate_to.it](https://nlp.johnsnowlabs.com//2021/06/04/translate_it_sv_xx.html) | [translate_it_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_it_sv_xx.html) |
+| [xx.sv.translate_to.is](https://nlp.johnsnowlabs.com//2021/06/04/translate_is_sv_xx.html) | [translate_is_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_is_sv_xx.html) |
+| [xx.ru.translate_to.ja](https://nlp.johnsnowlabs.com//2021/06/04/translate_ja_ru_xx.html) | [translate_ja_ru](https://nlp.johnsnowlabs.com//2021/06/04/translate_ja_ru_xx.html) |
+| [xx.es.translate_to.kg](https://nlp.johnsnowlabs.com//2021/06/04/translate_kg_es_xx.html) | [translate_kg_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_kg_es_xx.html) |
+| [xx.fi.translate_to.ig](https://nlp.johnsnowlabs.com//2021/06/04/translate_ig_fi_xx.html) | [translate_ig_fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_ig_fi_xx.html) |
+| [xx.fr.translate_to.iso](https://nlp.johnsnowlabs.com//2021/06/04/translate_iso_fr_xx.html) | [translate_iso_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_iso_fr_xx.html) |
+| [xx.de.translate_to.ko](https://nlp.johnsnowlabs.com//2021/06/04/translate_ko_de_xx.html) | [translate_ko_de](https://nlp.johnsnowlabs.com//2021/06/04/translate_ko_de_xx.html) |
+| [xx.sv.translate_to.ilo](https://nlp.johnsnowlabs.com//2021/06/04/translate_ilo_sv_xx.html) | [translate_ilo_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_ilo_sv_xx.html) |
+| [xx.es.translate_to.is](https://nlp.johnsnowlabs.com//2021/06/04/translate_is_es_xx.html) | [translate_is_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_is_es_xx.html) |
+| [xx.da.translate_to.ja](https://nlp.johnsnowlabs.com//2021/06/04/translate_ja_da_xx.html) | [translate_ja_da](https://nlp.johnsnowlabs.com//2021/06/04/translate_ja_da_xx.html) |
+| [xx.nl.translate_to.ja](https://nlp.johnsnowlabs.com//2021/06/04/translate_ja_nl_xx.html) | [translate_ja_nl](https://nlp.johnsnowlabs.com//2021/06/04/translate_ja_nl_xx.html) |
+| [xx.inc.translate_to.inc](https://nlp.johnsnowlabs.com//2021/06/04/translate_inc_inc_xx.html) | [translate_inc_inc](https://nlp.johnsnowlabs.com//2021/06/04/translate_inc_inc_xx.html) |
+| [xx.de.translate_to.is](https://nlp.johnsnowlabs.com//2021/06/04/translate_is_de_xx.html) | [translate_is_de](https://nlp.johnsnowlabs.com//2021/06/04/translate_is_de_xx.html) |
+| [xx.fr.translate_to.is](https://nlp.johnsnowlabs.com//2021/06/04/translate_is_fr_xx.html) | [translate_is_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_is_fr_xx.html) |
+| [xx.lt.translate_to.it](https://nlp.johnsnowlabs.com//2021/06/04/translate_it_lt_xx.html) | [translate_it_lt](https://nlp.johnsnowlabs.com//2021/06/04/translate_it_lt_xx.html) |
+| [xx.sv.translate_to.ig](https://nlp.johnsnowlabs.com//2021/06/04/translate_ig_sv_xx.html) | [translate_ig_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_ig_sv_xx.html) |
+| [xx.de.translate_to.ilo](https://nlp.johnsnowlabs.com//2021/06/04/translate_ilo_de_xx.html) | [translate_ilo_de](https://nlp.johnsnowlabs.com//2021/06/04/translate_ilo_de_xx.html) |
+| [xx.ar.translate_to.it](https://nlp.johnsnowlabs.com//2021/06/04/translate_it_ar_xx.html) | [translate_it_ar](https://nlp.johnsnowlabs.com//2021/06/04/translate_it_ar_xx.html) |
+| [xx.fr.translate_to.kg](https://nlp.johnsnowlabs.com//2021/06/04/translate_kg_fr_xx.html) | [translate_kg_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_kg_fr_xx.html) |
+| [xx.vi.translate_to.ja](https://nlp.johnsnowlabs.com//2021/06/04/translate_ja_vi_xx.html) | [translate_ja_vi](https://nlp.johnsnowlabs.com//2021/06/04/translate_ja_vi_xx.html) |
+| [xx.ru.translate_to.ka](https://nlp.johnsnowlabs.com//2021/06/04/translate_ka_ru_xx.html) | [translate_ka_ru](https://nlp.johnsnowlabs.com//2021/06/04/translate_ka_ru_xx.html) |
+| [xx.uk.translate_to.it](https://nlp.johnsnowlabs.com//2021/06/04/translate_it_uk_xx.html) | [translate_it_uk](https://nlp.johnsnowlabs.com//2021/06/04/translate_it_uk_xx.html) |
+| [xx.vi.translate_to.it](https://nlp.johnsnowlabs.com//2021/06/04/translate_it_vi_xx.html) | [translate_it_vi](https://nlp.johnsnowlabs.com//2021/06/04/translate_it_vi_xx.html) |
+| [xx.ms.translate_to.it](https://nlp.johnsnowlabs.com//2021/06/04/translate_it_ms_xx.html) | [translate_it_ms](https://nlp.johnsnowlabs.com//2021/06/04/translate_it_ms_xx.html) |
+| [xx.ar.translate_to.ja](https://nlp.johnsnowlabs.com//2021/06/04/translate_ja_ar_xx.html) | [translate_ja_ar](https://nlp.johnsnowlabs.com//2021/06/04/translate_ja_ar_xx.html) |
+| [xx.eo.translate_to.is](https://nlp.johnsnowlabs.com//2021/06/04/translate_is_eo_xx.html) | [translate_is_eo](https://nlp.johnsnowlabs.com//2021/06/04/translate_is_eo_xx.html) |
+| [xx.ca.translate_to.it](https://nlp.johnsnowlabs.com//2021/06/04/translate_it_ca_xx.html) | [translate_it_ca](https://nlp.johnsnowlabs.com//2021/06/04/translate_it_ca_xx.html) |
+| [xx.sh.translate_to.ja](https://nlp.johnsnowlabs.com//2021/06/04/translate_ja_sh_xx.html) | [translate_ja_sh](https://nlp.johnsnowlabs.com//2021/06/04/translate_ja_sh_xx.html) |
+| [xx.fi.translate_to.ja](https://nlp.johnsnowlabs.com//2021/06/04/translate_ja_fi_xx.html) | [translate_ja_fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_ja_fi_xx.html) |
+| [xx.iir.translate_to.iir](https://nlp.johnsnowlabs.com//2021/06/04/translate_iir_iir_xx.html) | [translate_iir_iir](https://nlp.johnsnowlabs.com//2021/06/04/translate_iir_iir_xx.html) |
+| [xx.itc.translate_to.itc](https://nlp.johnsnowlabs.com//2021/06/04/translate_itc_itc_xx.html) | [translate_itc_itc](https://nlp.johnsnowlabs.com//2021/06/04/translate_itc_itc_xx.html) |
+| [xx.ms.translate_to.ja](https://nlp.johnsnowlabs.com//2021/06/04/translate_ja_ms_xx.html) | [translate_ja_ms](https://nlp.johnsnowlabs.com//2021/06/04/translate_ja_ms_xx.html) |
+| [xx.fr.translate_to.it](https://nlp.johnsnowlabs.com//2021/06/04/translate_it_fr_xx.html) | [translate_it_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_it_fr_xx.html) |
+| [xx.fr.translate_to.ja](https://nlp.johnsnowlabs.com//2021/06/04/translate_ja_fr_xx.html) | [translate_ja_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_ja_fr_xx.html) |
+| [xx.pt.translate_to.ja](https://nlp.johnsnowlabs.com//2021/06/04/translate_ja_pt_xx.html) | [translate_ja_pt](https://nlp.johnsnowlabs.com//2021/06/04/translate_ja_pt_xx.html) |
+| [xx.eo.translate_to.it](https://nlp.johnsnowlabs.com//2021/06/04/translate_it_eo_xx.html) | [translate_it_eo](https://nlp.johnsnowlabs.com//2021/06/04/translate_it_eo_xx.html) |
+| [xx.fi.translate_to.iso](https://nlp.johnsnowlabs.com//2021/06/04/translate_iso_fi_xx.html) | [translate_iso_fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_iso_fi_xx.html) |
+| [xx.pl.translate_to.ja](https://nlp.johnsnowlabs.com//2021/06/04/translate_ja_pl_xx.html) | [translate_ja_pl](https://nlp.johnsnowlabs.com//2021/06/04/translate_ja_pl_xx.html) |
+| [xx.tr.translate_to.ja](https://nlp.johnsnowlabs.com//2021/06/04/translate_ja_tr_xx.html) | [translate_ja_tr](https://nlp.johnsnowlabs.com//2021/06/04/translate_ja_tr_xx.html) |
+| [xx.es.translate_to.ig](https://nlp.johnsnowlabs.com//2021/06/04/translate_ig_es_xx.html) | [translate_ig_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_ig_es_xx.html) |
+| [xx.fr.translate_to.ig](https://nlp.johnsnowlabs.com//2021/06/04/translate_ig_fr_xx.html) | [translate_ig_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_ig_fr_xx.html) |
+| [xx.sv.translate_to.id](https://nlp.johnsnowlabs.com//2021/06/04/translate_id_sv_xx.html) | [translate_id_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_id_sv_xx.html) |
+| [xx.hu.translate_to.ja](https://nlp.johnsnowlabs.com//2021/06/04/translate_ja_hu_xx.html) | [translate_ja_hu](https://nlp.johnsnowlabs.com//2021/06/04/translate_ja_hu_xx.html) |
+| [xx.sv.translate_to.kg](https://nlp.johnsnowlabs.com//2021/06/04/translate_kg_sv_xx.html) | [translate_kg_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_kg_sv_xx.html) |
+| [xx.es.translate_to.it](https://nlp.johnsnowlabs.com//2021/06/04/translate_it_es_xx.html) | [translate_it_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_it_es_xx.html) |
+| [xx.ine.translate_to.ine](https://nlp.johnsnowlabs.com//2021/06/04/translate_ine_ine_xx.html) | [translate_ine_ine](https://nlp.johnsnowlabs.com//2021/06/04/translate_ine_ine_xx.html) |
+| [xx.de.translate_to.it](https://nlp.johnsnowlabs.com//2021/06/04/translate_it_de_xx.html) | [translate_it_de](https://nlp.johnsnowlabs.com//2021/06/04/translate_it_de_xx.html) |
+| [xx.fi.translate_to.is](https://nlp.johnsnowlabs.com//2021/06/04/translate_is_fi_xx.html) | [translate_is_fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_is_fi_xx.html) |
+| [xx.es.translate_to.mk](https://nlp.johnsnowlabs.com//2021/06/04/translate_mk_es_xx.html) | [translate_mk_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_mk_es_xx.html) |
+| [xx.es.translate_to.lue](https://nlp.johnsnowlabs.com//2021/06/04/translate_lue_es_xx.html) | [translate_lue_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_lue_es_xx.html) |
+| [xx.es.translate_to.lv](https://nlp.johnsnowlabs.com//2021/06/04/translate_lv_es_xx.html) | [translate_lv_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_lv_es_xx.html) |
+| [xx.fi.translate_to.lue](https://nlp.johnsnowlabs.com//2021/06/04/translate_lue_fi_xx.html) | [translate_lue_fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_lue_fi_xx.html) |
+| [xx.es.translate_to.ln](https://nlp.johnsnowlabs.com//2021/06/04/translate_ln_es_xx.html) | [translate_ln_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_ln_es_xx.html) |
+| [xx.fr.translate_to.loz](https://nlp.johnsnowlabs.com//2021/06/04/translate_loz_fr_xx.html) | [translate_loz_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_loz_fr_xx.html) |
+| [xx.sv.translate_to.kwy](https://nlp.johnsnowlabs.com//2021/06/04/translate_kwy_sv_xx.html) | [translate_kwy_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_kwy_sv_xx.html) |
+| [xx.es.translate_to.lus](https://nlp.johnsnowlabs.com//2021/06/04/translate_lus_es_xx.html) | [translate_lus_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_lus_es_xx.html) |
+| [xx.fr.translate_to.lv](https://nlp.johnsnowlabs.com//2021/06/04/translate_lv_fr_xx.html) | [translate_lv_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_lv_fr_xx.html) |
+| [xx.fr.translate_to.lu](https://nlp.johnsnowlabs.com//2021/06/04/translate_lu_fr_xx.html) | [translate_lu_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_lu_fr_xx.html) |
+| [xx.de.translate_to.lt](https://nlp.johnsnowlabs.com//2021/06/04/translate_lt_de_xx.html) | [translate_lt_de](https://nlp.johnsnowlabs.com//2021/06/04/translate_lt_de_xx.html) |
+| [xx.tr.translate_to.lt](https://nlp.johnsnowlabs.com//2021/06/04/translate_lt_tr_xx.html) | [translate_lt_tr](https://nlp.johnsnowlabs.com//2021/06/04/translate_lt_tr_xx.html) |
+| [xx.fr.translate_to.lus](https://nlp.johnsnowlabs.com//2021/06/04/translate_lus_fr_xx.html) | [translate_lus_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_lus_fr_xx.html) |
+| [xx.es.translate_to.mg](https://nlp.johnsnowlabs.com//2021/06/04/translate_mg_es_xx.html) | [translate_mg_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_mg_es_xx.html) |
+| [xx.sv.translate_to.lua](https://nlp.johnsnowlabs.com//2021/06/04/translate_lua_sv_xx.html) | [translate_lua_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_lua_sv_xx.html) |
+| [xx.fr.translate_to.lg](https://nlp.johnsnowlabs.com//2021/06/04/translate_lg_fr_xx.html) | [translate_lg_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_lg_fr_xx.html) |
+| [xx.fr.translate_to.kwy](https://nlp.johnsnowlabs.com//2021/06/04/translate_kwy_fr_xx.html) | [translate_kwy_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_kwy_fr_xx.html) |
+| [xx.es.translate_to.lt](https://nlp.johnsnowlabs.com//2021/06/04/translate_lt_es_xx.html) | [translate_lt_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_lt_es_xx.html) |
+| [xx.sv.translate_to.ko](https://nlp.johnsnowlabs.com//2021/06/04/translate_ko_sv_xx.html) | [translate_ko_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_ko_sv_xx.html) |
+| [xx.es.translate_to.kqn](https://nlp.johnsnowlabs.com//2021/06/04/translate_kqn_es_xx.html) | [translate_kqn_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_kqn_es_xx.html) |
+| [xx.fr.translate_to.ko](https://nlp.johnsnowlabs.com//2021/06/04/translate_ko_fr_xx.html) | [translate_ko_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_ko_fr_xx.html) |
+| [xx.sv.translate_to.kqn](https://nlp.johnsnowlabs.com//2021/06/04/translate_kqn_sv_xx.html) | [translate_kqn_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_kqn_sv_xx.html) |
+| [xx.fi.translate_to.ko](https://nlp.johnsnowlabs.com//2021/06/04/translate_ko_fi_xx.html) | [translate_ko_fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_ko_fi_xx.html) |
+| [xx.es.translate_to.mh](https://nlp.johnsnowlabs.com//2021/06/04/translate_mh_es_xx.html) | [translate_mh_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_mh_es_xx.html) |
+| [xx.fr.translate_to.lua](https://nlp.johnsnowlabs.com//2021/06/04/translate_lua_fr_xx.html) | [translate_lua_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_lua_fr_xx.html) |
+| [xx.it.translate_to.lt](https://nlp.johnsnowlabs.com//2021/06/04/translate_lt_it_xx.html) | [translate_lt_it](https://nlp.johnsnowlabs.com//2021/06/04/translate_lt_it_xx.html) |
+| [xx.sv.translate_to.lt](https://nlp.johnsnowlabs.com//2021/06/04/translate_lt_sv_xx.html) | [translate_lt_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_lt_sv_xx.html) |
+| [xx.es.translate_to.lu](https://nlp.johnsnowlabs.com//2021/06/04/translate_lu_es_xx.html) | [translate_lu_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_lu_es_xx.html) |
+| [xx.fi.translate_to.lua](https://nlp.johnsnowlabs.com//2021/06/04/translate_lua_fi_xx.html) | [translate_lua_fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_lua_fi_xx.html) |
+| [xx.fr.translate_to.kqn](https://nlp.johnsnowlabs.com//2021/06/04/translate_kqn_fr_xx.html) | [translate_kqn_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_kqn_fr_xx.html) |
+| [xx.de.translate_to.loz](https://nlp.johnsnowlabs.com//2021/06/04/translate_loz_de_xx.html) | [translate_loz_de](https://nlp.johnsnowlabs.com//2021/06/04/translate_loz_de_xx.html) |
+| [xx.fr.translate_to.ms](https://nlp.johnsnowlabs.com//2021/06/04/translate_ms_fr_xx.html) | [translate_ms_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_ms_fr_xx.html) |
+| [xx.fr.translate_to.lt](https://nlp.johnsnowlabs.com//2021/06/04/translate_lt_fr_xx.html) | [translate_lt_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_lt_fr_xx.html) |
+| [xx.ru.translate_to.lv](https://nlp.johnsnowlabs.com//2021/06/04/translate_lv_ru_xx.html) | [translate_lv_ru](https://nlp.johnsnowlabs.com//2021/06/04/translate_lv_ru_xx.html) |
+| [xx.ms.translate_to.ms](https://nlp.johnsnowlabs.com//2021/06/04/translate_ms_ms_xx.html) | [translate_ms_ms](https://nlp.johnsnowlabs.com//2021/06/04/translate_ms_ms_xx.html) |
+| [xx.sv.translate_to.lus](https://nlp.johnsnowlabs.com//2021/06/04/translate_lus_sv_xx.html) | [translate_lus_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_lus_sv_xx.html) |
+| [xx.fr.translate_to.lue](https://nlp.johnsnowlabs.com//2021/06/04/translate_lue_fr_xx.html) | [translate_lue_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_lue_fr_xx.html) |
+| [xx.fi.translate_to.lu](https://nlp.johnsnowlabs.com//2021/06/04/translate_lu_fi_xx.html) | [translate_lu_fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_lu_fi_xx.html) |
+| [xx.eo.translate_to.lt](https://nlp.johnsnowlabs.com//2021/06/04/translate_lt_eo_xx.html) | [translate_lt_eo](https://nlp.johnsnowlabs.com//2021/06/04/translate_lt_eo_xx.html) |
+| [xx.fi.translate_to.mk](https://nlp.johnsnowlabs.com//2021/06/04/translate_mk_fi_xx.html) | [translate_mk_fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_mk_fi_xx.html) |
+| [xx.es.translate_to.ko](https://nlp.johnsnowlabs.com//2021/06/04/translate_ko_es_xx.html) | [translate_ko_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_ko_es_xx.html) |
+| [xx.sv.translate_to.lue](https://nlp.johnsnowlabs.com//2021/06/04/translate_lue_sv_xx.html) | [translate_lue_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_lue_sv_xx.html) |
+| [xx.pl.translate_to.lt](https://nlp.johnsnowlabs.com//2021/06/04/translate_lt_pl_xx.html) | [translate_lt_pl](https://nlp.johnsnowlabs.com//2021/06/04/translate_lt_pl_xx.html) |
+| [xx.es.translate_to.mfe](https://nlp.johnsnowlabs.com//2021/06/04/translate_mfe_es_xx.html) | [translate_mfe_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_mfe_es_xx.html) |
+| [xx.fi.translate_to.loz](https://nlp.johnsnowlabs.com//2021/06/04/translate_loz_fi_xx.html) | [translate_loz_fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_loz_fi_xx.html) |
+| [xx.sv.translate_to.loz](https://nlp.johnsnowlabs.com//2021/06/04/translate_loz_sv_xx.html) | [translate_loz_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_loz_sv_xx.html) |
+| [xx.ru.translate_to.ko](https://nlp.johnsnowlabs.com//2021/06/04/translate_ko_ru_xx.html) | [translate_ko_ru](https://nlp.johnsnowlabs.com//2021/06/04/translate_ko_ru_xx.html) |
+| [xx.fi.translate_to.lg](https://nlp.johnsnowlabs.com//2021/06/04/translate_lg_fi_xx.html) | [translate_lg_fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_lg_fi_xx.html) |
+| [xx.fi.translate_to.mh](https://nlp.johnsnowlabs.com//2021/06/04/translate_mh_fi_xx.html) | [translate_mh_fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_mh_fi_xx.html) |
+| [xx.sv.translate_to.lv](https://nlp.johnsnowlabs.com//2021/06/04/translate_lv_sv_xx.html) | [translate_lv_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_lv_sv_xx.html) |
+| [xx.hu.translate_to.ko](https://nlp.johnsnowlabs.com//2021/06/04/translate_ko_hu_xx.html) | [translate_ko_hu](https://nlp.johnsnowlabs.com//2021/06/04/translate_ko_hu_xx.html) |
+| [xx.es.translate_to.lua](https://nlp.johnsnowlabs.com//2021/06/04/translate_lua_es_xx.html) | [translate_lua_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_lua_es_xx.html) |
+| [xx.fi.translate_to.lv](https://nlp.johnsnowlabs.com//2021/06/04/translate_lv_fi_xx.html) | [translate_lv_fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_lv_fi_xx.html) |
+| [xx.ru.translate_to.lt](https://nlp.johnsnowlabs.com//2021/06/04/translate_lt_ru_xx.html) | [translate_lt_ru](https://nlp.johnsnowlabs.com//2021/06/04/translate_lt_ru_xx.html) |
+| [xx.de.translate_to.ms](https://nlp.johnsnowlabs.com//2021/06/04/translate_ms_de_xx.html) | [translate_ms_de](https://nlp.johnsnowlabs.com//2021/06/04/translate_ms_de_xx.html) |
+| [xx.fi.translate_to.lus](https://nlp.johnsnowlabs.com//2021/06/04/translate_lus_fi_xx.html) | [translate_lus_fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_lus_fi_xx.html) |
+| [xx.es.translate_to.lg](https://nlp.johnsnowlabs.com//2021/06/04/translate_lg_es_xx.html) | [translate_lg_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_lg_es_xx.html) |
+| [xx.de.translate_to.ln](https://nlp.johnsnowlabs.com//2021/06/04/translate_ln_de_xx.html) | [translate_ln_de](https://nlp.johnsnowlabs.com//2021/06/04/translate_ln_de_xx.html) |
+| [xx.es.translate_to.mfs](https://nlp.johnsnowlabs.com//2021/06/04/translate_mfs_es_xx.html) | [translate_mfs_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_mfs_es_xx.html) |
+| [xx.fr.translate_to.mk](https://nlp.johnsnowlabs.com//2021/06/04/translate_mk_fr_xx.html) | [translate_mk_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_mk_fr_xx.html) |
+| [xx.fr.translate_to.ln](https://nlp.johnsnowlabs.com//2021/06/04/translate_ln_fr_xx.html) | [translate_ln_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_ln_fr_xx.html) |
+| [xx.es.translate_to.loz](https://nlp.johnsnowlabs.com//2021/06/04/translate_loz_es_xx.html) | [translate_loz_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_loz_es_xx.html) |
+| [xx.sv.translate_to.lu](https://nlp.johnsnowlabs.com//2021/06/04/translate_lu_sv_xx.html) | [translate_lu_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_lu_sv_xx.html) |
+| [xx.it.translate_to.ms](https://nlp.johnsnowlabs.com//2021/06/04/translate_ms_it_xx.html) | [translate_ms_it](https://nlp.johnsnowlabs.com//2021/06/04/translate_ms_it_xx.html) |
+| [xx.sv.translate_to.lg](https://nlp.johnsnowlabs.com//2021/06/04/translate_lg_sv_xx.html) | [translate_lg_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_lg_sv_xx.html) |
+| [xx.ar.translate_to.pl](https://nlp.johnsnowlabs.com//2021/06/04/translate_pl_ar_xx.html) | [translate_pl_ar](https://nlp.johnsnowlabs.com//2021/06/04/translate_pl_ar_xx.html) |
+| [xx.fr.translate_to.ro](https://nlp.johnsnowlabs.com//2021/06/04/translate_ro_fr_xx.html) | [translate_ro_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_ro_fr_xx.html) |
+| [xx.sv.translate_to.niu](https://nlp.johnsnowlabs.com//2021/06/04/translate_niu_sv_xx.html) | [translate_niu_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_niu_sv_xx.html) |
+| [xx.eo.translate_to.pl](https://nlp.johnsnowlabs.com//2021/06/04/translate_pl_eo_xx.html) | [translate_pl_eo](https://nlp.johnsnowlabs.com//2021/06/04/translate_pl_eo_xx.html) |
+| [xx.nl.translate_to.no](https://nlp.johnsnowlabs.com//2021/06/04/translate_no_nl_xx.html) | [translate_no_nl](https://nlp.johnsnowlabs.com//2021/06/04/translate_no_nl_xx.html) |
+| [xx.es.translate_to.no](https://nlp.johnsnowlabs.com//2021/06/04/translate_no_es_xx.html) | [translate_no_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_no_es_xx.html) |
+| [xx.es.translate_to.pag](https://nlp.johnsnowlabs.com//2021/06/04/translate_pag_es_xx.html) | [translate_pag_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_pag_es_xx.html) |
+| [xx.ru.translate_to.rn](https://nlp.johnsnowlabs.com//2021/06/04/translate_rn_ru_xx.html) | [translate_rn_ru](https://nlp.johnsnowlabs.com//2021/06/04/translate_rn_ru_xx.html) |
+| [xx.sv.translate_to.pag](https://nlp.johnsnowlabs.com//2021/06/04/translate_pag_sv_xx.html) | [translate_pag_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_pag_sv_xx.html) |
+| [xx.uk.translate_to.pt](https://nlp.johnsnowlabs.com//2021/06/04/translate_pt_uk_xx.html) | [translate_pt_uk](https://nlp.johnsnowlabs.com//2021/06/04/translate_pt_uk_xx.html) |
+| [xx.uk.translate_to.pl](https://nlp.johnsnowlabs.com//2021/06/04/translate_pl_uk_xx.html) | [translate_pl_uk](https://nlp.johnsnowlabs.com//2021/06/04/translate_pl_uk_xx.html) |
+| [xx.de.translate_to.pl](https://nlp.johnsnowlabs.com//2021/06/04/translate_pl_de_xx.html) | [translate_pl_de](https://nlp.johnsnowlabs.com//2021/06/04/translate_pl_de_xx.html) |
+| [xx.sv.translate_to.nl](https://nlp.johnsnowlabs.com//2021/06/04/translate_nl_sv_xx.html) | [translate_nl_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_nl_sv_xx.html) |
+| [xx.fr.translate_to.no](https://nlp.johnsnowlabs.com//2021/06/04/translate_no_fr_xx.html) | [translate_no_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_no_fr_xx.html) |
+| [xx.es.translate_to.niu](https://nlp.johnsnowlabs.com//2021/06/04/translate_niu_es_xx.html) | [translate_niu_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_niu_es_xx.html) |
+| [xx.uk.translate_to.no](https://nlp.johnsnowlabs.com//2021/06/04/translate_no_uk_xx.html) | [translate_no_uk](https://nlp.johnsnowlabs.com//2021/06/04/translate_no_uk_xx.html) |
+| [xx.lt.translate_to.pl](https://nlp.johnsnowlabs.com//2021/06/04/translate_pl_lt_xx.html) | [translate_pl_lt](https://nlp.johnsnowlabs.com//2021/06/04/translate_pl_lt_xx.html) |
+| [xx.tl.translate_to.pt](https://nlp.johnsnowlabs.com//2021/06/04/translate_pt_tl_xx.html) | [translate_pt_tl](https://nlp.johnsnowlabs.com//2021/06/04/translate_pt_tl_xx.html) |
+| [xx.gl.translate_to.pt](https://nlp.johnsnowlabs.com//2021/06/04/translate_pt_gl_xx.html) | [translate_pt_gl](https://nlp.johnsnowlabs.com//2021/06/04/translate_pt_gl_xx.html) |
+| [xx.da.translate_to.ru](https://nlp.johnsnowlabs.com//2021/06/04/translate_ru_da_xx.html) | [translate_ru_da](https://nlp.johnsnowlabs.com//2021/06/04/translate_ru_da_xx.html) |
+| [xx.da.translate_to.no](https://nlp.johnsnowlabs.com//2021/06/04/translate_no_da_xx.html) | [translate_no_da](https://nlp.johnsnowlabs.com//2021/06/04/translate_no_da_xx.html) |
+| [xx.uk.translate_to.nl](https://nlp.johnsnowlabs.com//2021/06/04/translate_nl_uk_xx.html) | [translate_nl_uk](https://nlp.johnsnowlabs.com//2021/06/04/translate_nl_uk_xx.html) |
+| [xx.sv.translate_to.pon](https://nlp.johnsnowlabs.com//2021/06/04/translate_pon_sv_xx.html) | [translate_pon_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_pon_sv_xx.html) |
+| [xx.fr.translate_to.pis](https://nlp.johnsnowlabs.com//2021/06/04/translate_pis_fr_xx.html) | [translate_pis_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_pis_fr_xx.html) |
+| [xx.fr.translate_to.niu](https://nlp.johnsnowlabs.com//2021/06/04/translate_niu_fr_xx.html) | [translate_niu_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_niu_fr_xx.html) |
+| [xx.af.translate_to.nl](https://nlp.johnsnowlabs.com//2021/06/04/translate_nl_af_xx.html) | [translate_nl_af](https://nlp.johnsnowlabs.com//2021/06/04/translate_nl_af_xx.html) |
+| [xx.fi.translate_to.nso](https://nlp.johnsnowlabs.com//2021/06/04/translate_nso_fi_xx.html) | [translate_nso_fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_nso_fi_xx.html) |
+| [xx.fi.translate_to.pon](https://nlp.johnsnowlabs.com//2021/06/04/translate_pon_fi_xx.html) | [translate_pon_fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_pon_fi_xx.html) |
+| [xx.de.translate_to.pap](https://nlp.johnsnowlabs.com//2021/06/04/translate_pap_de_xx.html) | [translate_pap_de](https://nlp.johnsnowlabs.com//2021/06/04/translate_pap_de_xx.html) |
+| [xx.de.translate_to.rn](https://nlp.johnsnowlabs.com//2021/06/04/translate_rn_de_xx.html) | [translate_rn_de](https://nlp.johnsnowlabs.com//2021/06/04/translate_rn_de_xx.html) |
+| [xx.es.translate_to.pon](https://nlp.johnsnowlabs.com//2021/06/04/translate_pon_es_xx.html) | [translate_pon_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_pon_es_xx.html) |
+| [xx.es.translate_to.pis](https://nlp.johnsnowlabs.com//2021/06/04/translate_pis_es_xx.html) | [translate_pis_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_pis_es_xx.html) |
+| [xx.ca.translate_to.pt](https://nlp.johnsnowlabs.com//2021/06/04/translate_pt_ca_xx.html) | [translate_pt_ca](https://nlp.johnsnowlabs.com//2021/06/04/translate_pt_ca_xx.html) |
+| [xx.sv.translate_to.rnd](https://nlp.johnsnowlabs.com//2021/06/04/translate_rnd_sv_xx.html) | [translate_rnd_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_rnd_sv_xx.html) |
+| [xx.sv.translate_to.pl](https://nlp.johnsnowlabs.com//2021/06/04/translate_pl_sv_xx.html) | [translate_pl_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_pl_sv_xx.html) |
+| [xx.ru.translate_to.no](https://nlp.johnsnowlabs.com//2021/06/04/translate_no_ru_xx.html) | [translate_no_ru](https://nlp.johnsnowlabs.com//2021/06/04/translate_no_ru_xx.html) |
+| [xx.fi.translate_to.niu](https://nlp.johnsnowlabs.com//2021/06/04/translate_niu_fi_xx.html) | [translate_niu_fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_niu_fi_xx.html) |
+| [xx.de.translate_to.pag](https://nlp.johnsnowlabs.com//2021/06/04/translate_pag_de_xx.html) | [translate_pag_de](https://nlp.johnsnowlabs.com//2021/06/04/translate_pag_de_xx.html) |
+| [xx.fr.translate_to.pl](https://nlp.johnsnowlabs.com//2021/06/04/translate_pl_fr_xx.html) | [translate_pl_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_pl_fr_xx.html) |
+| [xx.fi.translate_to.no](https://nlp.johnsnowlabs.com//2021/06/04/translate_no_fi_xx.html) | [translate_no_fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_no_fi_xx.html) |
+| [xx.pl.translate_to.no](https://nlp.johnsnowlabs.com//2021/06/04/translate_no_pl_xx.html) | [translate_no_pl](https://nlp.johnsnowlabs.com//2021/06/04/translate_no_pl_xx.html) |
+| [xx.de.translate_to.nso](https://nlp.johnsnowlabs.com//2021/06/04/translate_nso_de_xx.html) | [translate_nso_de](https://nlp.johnsnowlabs.com//2021/06/04/translate_nso_de_xx.html) |
+| [xx.fr.translate_to.rn](https://nlp.johnsnowlabs.com//2021/06/04/translate_rn_fr_xx.html) | [translate_rn_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_rn_fr_xx.html) |
+| [xx.sv.translate_to.nso](https://nlp.johnsnowlabs.com//2021/06/04/translate_nso_sv_xx.html) | [translate_nso_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_nso_sv_xx.html) |
+| [xx.sv.translate_to.ro](https://nlp.johnsnowlabs.com//2021/06/04/translate_ro_sv_xx.html) | [translate_ro_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_ro_sv_xx.html) |
+| [xx.no.translate_to.pl](https://nlp.johnsnowlabs.com//2021/06/04/translate_pl_no_xx.html) | [translate_pl_no](https://nlp.johnsnowlabs.com//2021/06/04/translate_pl_no_xx.html) |
+| [xx.fr.translate_to.nl](https://nlp.johnsnowlabs.com//2021/06/04/translate_nl_fr_xx.html) | [translate_nl_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_nl_fr_xx.html) |
+| [xx.es.translate_to.nso](https://nlp.johnsnowlabs.com//2021/06/04/translate_nso_es_xx.html) | [translate_nso_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_nso_es_xx.html) |
+| [xx.no.translate_to.nl](https://nlp.johnsnowlabs.com//2021/06/04/translate_nl_no_xx.html) | [translate_nl_no](https://nlp.johnsnowlabs.com//2021/06/04/translate_nl_no_xx.html) |
+| [xx.fi.translate_to.pis](https://nlp.johnsnowlabs.com//2021/06/04/translate_pis_fi_xx.html) | [translate_pis_fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_pis_fi_xx.html) |
+| [xx.ca.translate_to.nl](https://nlp.johnsnowlabs.com//2021/06/04/translate_nl_ca_xx.html) | [translate_nl_ca](https://nlp.johnsnowlabs.com//2021/06/04/translate_nl_ca_xx.html) |
+| [xx.es.translate_to.nl](https://nlp.johnsnowlabs.com//2021/06/04/translate_nl_es_xx.html) | [translate_nl_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_nl_es_xx.html) |
+| [xx.es.translate_to.ny](https://nlp.johnsnowlabs.com//2021/06/04/translate_ny_es_xx.html) | [translate_ny_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_ny_es_xx.html) |
+| [xx.fr.translate_to.pap](https://nlp.johnsnowlabs.com//2021/06/04/translate_pap_fr_xx.html) | [translate_pap_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_pap_fr_xx.html) |
+| [xx.fi.translate_to.nl](https://nlp.johnsnowlabs.com//2021/06/04/translate_nl_fi_xx.html) | [translate_nl_fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_nl_fi_xx.html) |
+| [xx.sv.translate_to.no](https://nlp.johnsnowlabs.com//2021/06/04/translate_no_sv_xx.html) | [translate_no_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_no_sv_xx.html) |
+| [xx.fr.translate_to.pon](https://nlp.johnsnowlabs.com//2021/06/04/translate_pon_fr_xx.html) | [translate_pon_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_pon_fr_xx.html) |
+| [xx.fr.translate_to.rnd](https://nlp.johnsnowlabs.com//2021/06/04/translate_rnd_fr_xx.html) | [translate_rnd_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_rnd_fr_xx.html) |
+| [xx.es.translate_to.pap](https://nlp.johnsnowlabs.com//2021/06/04/translate_pap_es_xx.html) | [translate_pap_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_pap_es_xx.html) |
+| [xx.es.translate_to.prl](https://nlp.johnsnowlabs.com//2021/06/04/translate_prl_es_xx.html) | [translate_prl_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_prl_es_xx.html) |
+| [xx.eo.translate_to.ro](https://nlp.johnsnowlabs.com//2021/06/04/translate_ro_eo_xx.html) | [translate_ro_eo](https://nlp.johnsnowlabs.com//2021/06/04/translate_ro_eo_xx.html) |
+| [xx.sv.translate_to.pis](https://nlp.johnsnowlabs.com//2021/06/04/translate_pis_sv_xx.html) | [translate_pis_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_pis_sv_xx.html) |
+| [xx.af.translate_to.ru](https://nlp.johnsnowlabs.com//2021/06/04/translate_ru_af_xx.html) | [translate_ru_af](https://nlp.johnsnowlabs.com//2021/06/04/translate_ru_af_xx.html) |
+| [xx.fr.translate_to.nso](https://nlp.johnsnowlabs.com//2021/06/04/translate_nso_fr_xx.html) | [translate_nso_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_nso_fr_xx.html) |
+| [xx.eo.translate_to.pt](https://nlp.johnsnowlabs.com//2021/06/04/translate_pt_eo_xx.html) | [translate_pt_eo](https://nlp.johnsnowlabs.com//2021/06/04/translate_pt_eo_xx.html) |
+| [xx.ar.translate_to.ru](https://nlp.johnsnowlabs.com//2021/06/04/translate_ru_ar_xx.html) | [translate_ru_ar](https://nlp.johnsnowlabs.com//2021/06/04/translate_ru_ar_xx.html) |
+| [xx.fr.translate_to.mt](https://nlp.johnsnowlabs.com//2021/06/04/translate_mt_fr_xx.html) | [translate_mt_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_mt_fr_xx.html) |
+| [xx.es.translate_to.rn](https://nlp.johnsnowlabs.com//2021/06/04/translate_rn_es_xx.html) | [translate_rn_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_rn_es_xx.html) |
+| [xx.sv.translate_to.mt](https://nlp.johnsnowlabs.com//2021/06/04/translate_mt_sv_xx.html) | [translate_mt_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_mt_sv_xx.html) |
+| [xx.de.translate_to.niu](https://nlp.johnsnowlabs.com//2021/06/04/translate_niu_de_xx.html) | [translate_niu_de](https://nlp.johnsnowlabs.com//2021/06/04/translate_niu_de_xx.html) |
+| [xx.es.translate_to.mt](https://nlp.johnsnowlabs.com//2021/06/04/translate_mt_es_xx.html) | [translate_mt_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_mt_es_xx.html) |
+| [xx.es.translate_to.pl](https://nlp.johnsnowlabs.com//2021/06/04/translate_pl_es_xx.html) | [translate_pl_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_pl_es_xx.html) |
+| [xx.fi.translate_to.pag](https://nlp.johnsnowlabs.com//2021/06/04/translate_pag_fi_xx.html) | [translate_pag_fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_pag_fi_xx.html) |
+| [xx.de.translate_to.no](https://nlp.johnsnowlabs.com//2021/06/04/translate_no_de_xx.html) | [translate_no_de](https://nlp.johnsnowlabs.com//2021/06/04/translate_no_de_xx.html) |
+| [xx.de.translate_to.ny](https://nlp.johnsnowlabs.com//2021/06/04/translate_ny_de_xx.html) | [translate_ny_de](https://nlp.johnsnowlabs.com//2021/06/04/translate_ny_de_xx.html) |
+| [xx.fi.translate_to.mt](https://nlp.johnsnowlabs.com//2021/06/04/translate_mt_fi_xx.html) | [translate_mt_fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_mt_fi_xx.html) |
+| [xx.no.translate_to.no](https://nlp.johnsnowlabs.com//2021/06/04/translate_no_no_xx.html) | [translate_no_no](https://nlp.johnsnowlabs.com//2021/06/04/translate_no_no_xx.html) |
+| [xx.eo.translate_to.nl](https://nlp.johnsnowlabs.com//2021/06/04/translate_nl_eo_xx.html) | [translate_nl_eo](https://nlp.johnsnowlabs.com//2021/06/04/translate_nl_eo_xx.html) |
+| [xx.bg.translate_to.ru](https://nlp.johnsnowlabs.com//2021/06/04/translate_ru_bg_xx.html) | [translate_ru_bg](https://nlp.johnsnowlabs.com//2021/06/04/translate_ru_bg_xx.html) |
+| [xx.fi.translate_to.pap](https://nlp.johnsnowlabs.com//2021/06/04/translate_pap_fi_xx.html) | [translate_pap_fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_pap_fi_xx.html) |
+| [xx.fi.translate_to.ro](https://nlp.johnsnowlabs.com//2021/06/04/translate_ro_fi_xx.html) | [translate_ro_fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_ro_fi_xx.html) |
+| [xx.sv.translate_to.st](https://nlp.johnsnowlabs.com//2021/06/04/translate_st_sv_xx.html) | [translate_st_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_st_sv_xx.html) |
+| [xx.kg.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_kg_xx.html) | [translate_sv_kg](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_kg_xx.html) |
+| [xx.sv.translate_to.sq](https://nlp.johnsnowlabs.com//2021/06/04/translate_sq_sv_xx.html) | [translate_sq_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sq_sv_xx.html) |
+| [xx.ee.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_ee_xx.html) | [translate_sv_ee](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_ee_xx.html) |
+| [xx.es.translate_to.srn](https://nlp.johnsnowlabs.com//2021/06/04/translate_srn_es_xx.html) | [translate_srn_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_srn_es_xx.html) |
+| [xx.lv.translate_to.ru](https://nlp.johnsnowlabs.com//2021/06/04/translate_ru_lv_xx.html) | [translate_ru_lv](https://nlp.johnsnowlabs.com//2021/06/04/translate_ru_lv_xx.html) |
+| [xx.cs.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_cs_xx.html) | [translate_sv_cs](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_cs_xx.html) |
+| [xx.ha.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_ha_xx.html) | [translate_sv_ha](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_ha_xx.html) |
+| [xx.kqn.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_kqn_xx.html) | [translate_sv_kqn](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_kqn_xx.html) |
+| [xx.fr.translate_to.rw](https://nlp.johnsnowlabs.com//2021/06/04/translate_rw_fr_xx.html) | [translate_rw_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_rw_fr_xx.html) |
+| [xx.fr.translate_to.sn](https://nlp.johnsnowlabs.com//2021/06/04/translate_sn_fr_xx.html) | [translate_sn_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_sn_fr_xx.html) |
+| [xx.eu.translate_to.ru](https://nlp.johnsnowlabs.com//2021/06/04/translate_ru_eu_xx.html) | [translate_ru_eu](https://nlp.johnsnowlabs.com//2021/06/04/translate_ru_eu_xx.html) |
+| [xx.fi.translate_to.st](https://nlp.johnsnowlabs.com//2021/06/04/translate_st_fi_xx.html) | [translate_st_fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_st_fi_xx.html) |
+| [xx.efi.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_efi_xx.html) | [translate_sv_efi](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_efi_xx.html) |
+| [xx.ho.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_ho_xx.html) | [translate_sv_ho](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_ho_xx.html) |
+| [xx.id.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_id_xx.html) | [translate_sv_id](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_id_xx.html) |
+| [xx.eo.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_eo_xx.html) | [translate_sv_eo](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_eo_xx.html) |
+| [xx.guw.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_guw_xx.html) | [translate_sv_guw](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_guw_xx.html) |
+| [xx.sv.translate_to.sk](https://nlp.johnsnowlabs.com//2021/06/04/translate_sk_sv_xx.html) | [translate_sk_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sk_sv_xx.html) |
+| [xx.fr.translate_to.srn](https://nlp.johnsnowlabs.com//2021/06/04/translate_srn_fr_xx.html) | [translate_srn_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_srn_fr_xx.html) |
+| [xx.ceb.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_ceb_xx.html) | [translate_sv_ceb](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_ceb_xx.html) |
+| [xx.es.translate_to.sq](https://nlp.johnsnowlabs.com//2021/06/04/translate_sq_es_xx.html) | [translate_sq_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_sq_es_xx.html) |
+| [xx.sv.translate_to.rw](https://nlp.johnsnowlabs.com//2021/06/04/translate_rw_sv_xx.html) | [translate_rw_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_rw_sv_xx.html) |
+| [xx.is.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_is_xx.html) | [translate_sv_is](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_is_xx.html) |
+| [xx.es.translate_to.sm](https://nlp.johnsnowlabs.com//2021/06/04/translate_sm_es_xx.html) | [translate_sm_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_sm_es_xx.html) |
+| [xx.bcl.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_bcl_xx.html) | [translate_sv_bcl](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_bcl_xx.html) |
+| [xx.kwy.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_kwy_xx.html) | [translate_sv_kwy](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_kwy_xx.html) |
+| [xx.es.translate_to.run](https://nlp.johnsnowlabs.com//2021/06/04/translate_run_es_xx.html) | [translate_run_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_run_es_xx.html) |
+| [xx.el.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_el_xx.html) | [translate_sv_el](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_el_xx.html) |
+| [xx.es.translate_to.sk](https://nlp.johnsnowlabs.com//2021/06/04/translate_sk_es_xx.html) | [translate_sk_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_sk_es_xx.html) |
+| [xx.iso.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_iso_xx.html) | [translate_sv_iso](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_iso_xx.html) |
+| [xx.lu.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_lu_xx.html) | [translate_sv_lu](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_lu_xx.html) |
+| [xx.af.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_af_xx.html) | [translate_sv_af](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_af_xx.html) |
+| [xx.bg.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_bg_xx.html) | [translate_sv_bg](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_bg_xx.html) |
+| [xx.fr.translate_to.sm](https://nlp.johnsnowlabs.com//2021/06/04/translate_sm_fr_xx.html) | [translate_sm_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_sm_fr_xx.html) |
+| [xx.hr.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_hr_xx.html) | [translate_sv_hr](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_hr_xx.html) |
+| [xx.sv.translate_to.sn](https://nlp.johnsnowlabs.com//2021/06/04/translate_sn_sv_xx.html) | [translate_sn_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sn_sv_xx.html) |
+| [xx.no.translate_to.ru](https://nlp.johnsnowlabs.com//2021/06/04/translate_ru_no_xx.html) | [translate_ru_no](https://nlp.johnsnowlabs.com//2021/06/04/translate_ru_no_xx.html) |
+| [xx.fr.translate_to.sg](https://nlp.johnsnowlabs.com//2021/06/04/translate_sg_fr_xx.html) | [translate_sg_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_sg_fr_xx.html) |
+| [xx.es.translate_to.sl](https://nlp.johnsnowlabs.com//2021/06/04/translate_sl_es_xx.html) | [translate_sl_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_sl_es_xx.html) |
+| [xx.bzs.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_bzs_xx.html) | [translate_sv_bzs](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_bzs_xx.html) |
+| [xx.fr.translate_to.st](https://nlp.johnsnowlabs.com//2021/06/04/translate_st_fr_xx.html) | [translate_st_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_st_fr_xx.html) |
+| [xx.hu.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_hu_xx.html) | [translate_sv_hu](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_hu_xx.html) |
+| [xx.sv.translate_to.sg](https://nlp.johnsnowlabs.com//2021/06/04/translate_sg_sv_xx.html) | [translate_sg_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sg_sv_xx.html) |
+| [xx.sem.translate_to.sem](https://nlp.johnsnowlabs.com//2021/06/04/translate_sem_sem_xx.html) | [translate_sem_sem](https://nlp.johnsnowlabs.com//2021/06/04/translate_sem_sem_xx.html) |
+| [xx.uk.translate_to.sh](https://nlp.johnsnowlabs.com//2021/06/04/translate_sh_uk_xx.html) | [translate_sh_uk](https://nlp.johnsnowlabs.com//2021/06/04/translate_sh_uk_xx.html) |
+| [xx.ln.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_ln_xx.html) | [translate_sv_ln](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_ln_xx.html) |
+| [xx.fi.translate_to.sk](https://nlp.johnsnowlabs.com//2021/06/04/translate_sk_fi_xx.html) | [translate_sk_fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_sk_fi_xx.html) |
+| [xx.ht.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_ht_xx.html) | [translate_sv_ht](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_ht_xx.html) |
+| [xx.es.translate_to.st](https://nlp.johnsnowlabs.com//2021/06/04/translate_st_es_xx.html) | [translate_st_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_st_es_xx.html) |
+| [xx.fr.translate_to.ru](https://nlp.johnsnowlabs.com//2021/06/04/translate_ru_fr_xx.html) | [translate_ru_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_ru_fr_xx.html) |
+| [xx.chk.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_chk_xx.html) | [translate_sv_chk](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_chk_xx.html) |
+| [xx.fr.translate_to.sk](https://nlp.johnsnowlabs.com//2021/06/04/translate_sk_fr_xx.html) | [translate_sk_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_sk_fr_xx.html) |
+| [xx.lg.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_lg_xx.html) | [translate_sv_lg](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_lg_xx.html) |
+| [xx.sv.translate_to.srn](https://nlp.johnsnowlabs.com//2021/06/04/translate_srn_sv_xx.html) | [translate_srn_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_srn_sv_xx.html) |
+| [xx.crs.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_crs_xx.html) | [translate_sv_crs](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_crs_xx.html) |
+| [xx.uk.translate_to.ru](https://nlp.johnsnowlabs.com//2021/06/04/translate_ru_uk_xx.html) | [translate_ru_uk](https://nlp.johnsnowlabs.com//2021/06/04/translate_ru_uk_xx.html) |
+| [xx.et.translate_to.ru](https://nlp.johnsnowlabs.com//2021/06/04/translate_ru_et_xx.html) | [translate_ru_et](https://nlp.johnsnowlabs.com//2021/06/04/translate_ru_et_xx.html) |
+| [xx.et.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_et_xx.html) | [translate_sv_et](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_et_xx.html) |
+| [xx.es.translate_to.rw](https://nlp.johnsnowlabs.com//2021/06/04/translate_rw_es_xx.html) | [translate_rw_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_rw_es_xx.html) |
+| [xx.sla.translate_to.sla](https://nlp.johnsnowlabs.com//2021/06/04/translate_sla_sla_xx.html) | [translate_sla_sla](https://nlp.johnsnowlabs.com//2021/06/04/translate_sla_sla_xx.html) |
+| [xx.ru.translate_to.sl](https://nlp.johnsnowlabs.com//2021/06/04/translate_sl_ru_xx.html) | [translate_sl_ru](https://nlp.johnsnowlabs.com//2021/06/04/translate_sl_ru_xx.html) |
+| [xx.fj.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_fj_xx.html) | [translate_sv_fj](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_fj_xx.html) |
+| [xx.es.translate_to.sn](https://nlp.johnsnowlabs.com//2021/06/04/translate_sn_es_xx.html) | [translate_sn_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_sn_es_xx.html) |
+| [xx.lua.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_lua_xx.html) | [translate_sv_lua](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_lua_xx.html) |
+| [xx.hil.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_hil_xx.html) | [translate_sv_hil](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_hil_xx.html) |
+| [xx.es.translate_to.ru](https://nlp.johnsnowlabs.com//2021/06/04/translate_ru_es_xx.html) | [translate_ru_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_ru_es_xx.html) |
+| [xx.lue.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_lue_xx.html) | [translate_sv_lue](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_lue_xx.html) |
+| [xx.gaa.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_gaa_xx.html) | [translate_sv_gaa](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_gaa_xx.html) |
+| [xx.hy.translate_to.ru](https://nlp.johnsnowlabs.com//2021/06/04/translate_ru_hy_xx.html) | [translate_ru_hy](https://nlp.johnsnowlabs.com//2021/06/04/translate_ru_hy_xx.html) |
+| [xx.bem.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_bem_xx.html) | [translate_sv_bem](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_bem_xx.html) |
+| [xx.sv.translate_to.run](https://nlp.johnsnowlabs.com//2021/06/04/translate_run_sv_xx.html) | [translate_run_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_run_sv_xx.html) |
+| [xx.gil.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_gil_xx.html) | [translate_sv_gil](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_gil_xx.html) |
+| [xx.lus.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_lus_xx.html) | [translate_sv_lus](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_lus_xx.html) |
+| [xx.he.translate_to.ru](https://nlp.johnsnowlabs.com//2021/06/04/translate_ru_he_xx.html) | [translate_ru_he](https://nlp.johnsnowlabs.com//2021/06/04/translate_ru_he_xx.html) |
+| [xx.vi.translate_to.ru](https://nlp.johnsnowlabs.com//2021/06/04/translate_ru_vi_xx.html) | [translate_ru_vi](https://nlp.johnsnowlabs.com//2021/06/04/translate_ru_vi_xx.html) |
+| [xx.he.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_he_xx.html) | [translate_sv_he](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_he_xx.html) |
+| [xx.sv.translate_to.ru](https://nlp.johnsnowlabs.com//2021/06/04/translate_ru_sv_xx.html) | [translate_ru_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_ru_sv_xx.html) |
+| [xx.fi.translate_to.ru](https://nlp.johnsnowlabs.com//2021/06/04/translate_ru_fi_xx.html) | [translate_ru_fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_ru_fi_xx.html) |
+| [xx.es.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_es_xx.html) | [translate_sv_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_es_xx.html) |
+| [xx.es.translate_to.sg](https://nlp.johnsnowlabs.com//2021/06/04/translate_sg_es_xx.html) | [translate_sg_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_sg_es_xx.html) |
+| [xx.eo.translate_to.ru](https://nlp.johnsnowlabs.com//2021/06/04/translate_ru_eo_xx.html) | [translate_ru_eo](https://nlp.johnsnowlabs.com//2021/06/04/translate_ru_eo_xx.html) |
+| [xx.lv.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_lv_xx.html) | [translate_sv_lv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_lv_xx.html) |
+| [xx.fi.translate_to.sg](https://nlp.johnsnowlabs.com//2021/06/04/translate_sg_fi_xx.html) | [translate_sg_fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_sg_fi_xx.html) |
+| [xx.es.translate_to.ssp](https://nlp.johnsnowlabs.com//2021/06/04/translate_ssp_es_xx.html) | [translate_ssp_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_ssp_es_xx.html) |
+| [xx.ilo.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_ilo_xx.html) | [translate_sv_ilo](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_ilo_xx.html) |
+| [xx.fi.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_fi_xx.html) | [translate_sv_fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_fi_xx.html) |
+| [xx.lt.translate_to.ru](https://nlp.johnsnowlabs.com//2021/06/04/translate_ru_lt_xx.html) | [translate_ru_lt](https://nlp.johnsnowlabs.com//2021/06/04/translate_ru_lt_xx.html) |
+| [xx.bi.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_bi_xx.html) | [translate_sv_bi](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_bi_xx.html) |
+| [xx.sv.translate_to.sl](https://nlp.johnsnowlabs.com//2021/06/04/translate_sl_sv_xx.html) | [translate_sl_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sl_sv_xx.html) |
+| [xx.fr.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_fr_xx.html) | [translate_sv_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_fr_xx.html) |
+| [xx.uk.translate_to.sl](https://nlp.johnsnowlabs.com//2021/06/04/translate_sl_uk_xx.html) | [translate_sl_uk](https://nlp.johnsnowlabs.com//2021/06/04/translate_sl_uk_xx.html) |
+| [xx.fi.translate_to.sl](https://nlp.johnsnowlabs.com//2021/06/04/translate_sl_fi_xx.html) | [translate_sl_fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_sl_fi_xx.html) |
+| [xx.sl.translate_to.ru](https://nlp.johnsnowlabs.com//2021/06/04/translate_ru_sl_xx.html) | [translate_ru_sl](https://nlp.johnsnowlabs.com//2021/06/04/translate_ru_sl_xx.html) |
+| [xx.ig.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_ig_xx.html) | [translate_sv_ig](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_ig_xx.html) |
+| [xx.ase.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_ase_xx.html) | [translate_sv_ase](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_ase_xx.html) |
+| [xx.eo.translate_to.sh](https://nlp.johnsnowlabs.com//2021/06/04/translate_sh_eo_xx.html) | [translate_sh_eo](https://nlp.johnsnowlabs.com//2021/06/04/translate_sh_eo_xx.html) |
+| [xx.fr.translate_to.sl](https://nlp.johnsnowlabs.com//2021/06/04/translate_sl_fr_xx.html) | [translate_sl_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_sl_fr_xx.html) |
+| [xx.es.translate_to.tl](https://nlp.johnsnowlabs.com//2021/06/04/translate_tl_es_xx.html) | [translate_tl_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_tl_es_xx.html) |
+| [xx.sv.translate_to.tw](https://nlp.johnsnowlabs.com//2021/06/04/translate_tw_sv_xx.html) | [translate_tw_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_tw_sv_xx.html) |
+| [xx.lt.translate_to.tr](https://nlp.johnsnowlabs.com//2021/06/04/translate_tr_lt_xx.html) | [translate_tr_lt](https://nlp.johnsnowlabs.com//2021/06/04/translate_tr_lt_xx.html) |
+| [xx.fi.translate_to.tll](https://nlp.johnsnowlabs.com//2021/06/04/translate_tll_fi_xx.html) | [translate_tll_fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_tll_fi_xx.html) |
+| [xx.sn.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_sn_xx.html) | [translate_sv_sn](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_sn_xx.html) |
+| [xx.tn.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_tn_xx.html) | [translate_sv_tn](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_tn_xx.html) |
+| [xx.sv.translate_to.toi](https://nlp.johnsnowlabs.com//2021/06/04/translate_toi_sv_xx.html) | [translate_toi_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_toi_sv_xx.html) |
+| [xx.uk.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_uk_xx.html) | [translate_sv_uk](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_uk_xx.html) |
+| [xx.tiv.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_tiv_xx.html) | [translate_sv_tiv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_tiv_xx.html) |
+| [xx.sk.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_sk_xx.html) | [translate_sv_sk](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_sk_xx.html) |
+| [xx.ty.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_ty_xx.html) | [translate_sv_ty](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_ty_xx.html) |
+| [xx.es.translate_to.toi](https://nlp.johnsnowlabs.com//2021/06/04/translate_toi_es_xx.html) | [translate_toi_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_toi_es_xx.html) |
+| [xx.rw.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_rw_xx.html) | [translate_sv_rw](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_rw_xx.html) |
+| [xx.ny.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_ny_xx.html) | [translate_sv_ny](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_ny_xx.html) |
+| [xx.rnd.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_rnd_xx.html) | [translate_sv_rnd](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_rnd_xx.html) |
+| [xx.es.translate_to.tn](https://nlp.johnsnowlabs.com//2021/06/04/translate_tn_es_xx.html) | [translate_tn_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_tn_es_xx.html) |
+| [xx.sv.translate_to.tn](https://nlp.johnsnowlabs.com//2021/06/04/translate_tn_sv_xx.html) | [translate_tn_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_tn_sv_xx.html) |
+| [xx.es.translate_to.tvl](https://nlp.johnsnowlabs.com//2021/06/04/translate_tvl_es_xx.html) | [translate_tvl_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_tvl_es_xx.html) |
+| [xx.pon.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_pon_xx.html) | [translate_sv_pon](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_pon_xx.html) |
+| [xx.ve.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_ve_xx.html) | [translate_sv_ve](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_ve_xx.html) |
+| [xx.fr.translate_to.tvl](https://nlp.johnsnowlabs.com//2021/06/04/translate_tvl_fr_xx.html) | [translate_tvl_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_tvl_fr_xx.html) |
+| [xx.es.translate_to.tum](https://nlp.johnsnowlabs.com//2021/06/04/translate_tum_es_xx.html) | [translate_tum_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_tum_es_xx.html) |
+| [xx.run.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_run_xx.html) | [translate_sv_run](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_run_xx.html) |
+| [xx.de.translate_to.tl](https://nlp.johnsnowlabs.com//2021/06/04/translate_tl_de_xx.html) | [translate_tl_de](https://nlp.johnsnowlabs.com//2021/06/04/translate_tl_de_xx.html) |
+| [xx.fi.translate_to.tw](https://nlp.johnsnowlabs.com//2021/06/04/translate_tw_fi_xx.html) | [translate_tw_fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_tw_fi_xx.html) |
+| [xx.es.translate_to.ty](https://nlp.johnsnowlabs.com//2021/06/04/translate_ty_es_xx.html) | [translate_ty_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_ty_es_xx.html) |
+| [xx.fr.translate_to.toi](https://nlp.johnsnowlabs.com//2021/06/04/translate_toi_fr_xx.html) | [translate_toi_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_toi_fr_xx.html) |
+| [xx.sv.translate_to.tll](https://nlp.johnsnowlabs.com//2021/06/04/translate_tll_sv_xx.html) | [translate_tll_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_tll_sv_xx.html) |
+| [xx.sg.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_sg_xx.html) | [translate_sv_sg](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_sg_xx.html) |
+| [xx.az.translate_to.tr](https://nlp.johnsnowlabs.com//2021/06/04/translate_tr_az_xx.html) | [translate_tr_az](https://nlp.johnsnowlabs.com//2021/06/04/translate_tr_az_xx.html) |
+| [xx.es.translate_to.ts](https://nlp.johnsnowlabs.com//2021/06/04/translate_ts_es_xx.html) | [translate_ts_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_ts_es_xx.html) |
+| [xx.fr.translate_to.ts](https://nlp.johnsnowlabs.com//2021/06/04/translate_ts_fr_xx.html) | [translate_ts_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_ts_fr_xx.html) |
+| [xx.fr.translate_to.th](https://nlp.johnsnowlabs.com//2021/06/04/translate_th_fr_xx.html) | [translate_th_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_th_fr_xx.html) |
+| [xx.zne.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_zne_xx.html) | [translate_sv_zne](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_zne_xx.html) |
+| [xx.tw.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_tw_xx.html) | [translate_sv_tw](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_tw_xx.html) |
+| [xx.mh.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_mh_xx.html) | [translate_sv_mh](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_mh_xx.html) |
+| [xx.pag.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_pag_xx.html) | [translate_sv_pag](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_pag_xx.html) |
+| [xx.fr.translate_to.tum](https://nlp.johnsnowlabs.com//2021/06/04/translate_tum_fr_xx.html) | [translate_tum_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_tum_fr_xx.html) |
+| [xx.no.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_no_xx.html) | [translate_sv_no](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_no_xx.html) |
+| [xx.ts.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_ts_xx.html) | [translate_sv_ts](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_ts_xx.html) |
+| [xx.mt.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_mt_xx.html) | [translate_sv_mt](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_mt_xx.html) |
+| [xx.yo.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_yo_xx.html) | [translate_sv_yo](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_yo_xx.html) |
+| [xx.fr.translate_to.to](https://nlp.johnsnowlabs.com//2021/06/04/translate_to_fr_xx.html) | [translate_to_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_to_fr_xx.html) |
+| [xx.sv.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_sv_xx.html) | [translate_sv_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_sv_xx.html) |
+| [xx.fi.translate_to.toi](https://nlp.johnsnowlabs.com//2021/06/04/translate_toi_fi_xx.html) | [translate_toi_fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_toi_fi_xx.html) |
+| [xx.ro.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_ro_xx.html) | [translate_sv_ro](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_ro_xx.html) |
+| [xx.es.translate_to.tw](https://nlp.johnsnowlabs.com//2021/06/04/translate_tw_es_xx.html) | [translate_tw_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_tw_es_xx.html) |
+| [xx.niu.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_niu_xx.html) | [translate_sv_niu](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_niu_xx.html) |
+| [xx.uk.translate_to.tr](https://nlp.johnsnowlabs.com//2021/06/04/translate_tr_uk_xx.html) | [translate_tr_uk](https://nlp.johnsnowlabs.com//2021/06/04/translate_tr_uk_xx.html) |
+| [xx.to.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_to_xx.html) | [translate_sv_to](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_to_xx.html) |
+| [xx.fi.translate_to.ts](https://nlp.johnsnowlabs.com//2021/06/04/translate_ts_fi_xx.html) | [translate_ts_fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_ts_fi_xx.html) |
+| [xx.tll.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_tll_xx.html) | [translate_sv_tll](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_tll_xx.html) |
+| [xx.fr.translate_to.tll](https://nlp.johnsnowlabs.com//2021/06/04/translate_tll_fr_xx.html) | [translate_tll_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_tll_fr_xx.html) |
+| [xx.pt.translate_to.tl](https://nlp.johnsnowlabs.com//2021/06/04/translate_tl_pt_xx.html) | [translate_tl_pt](https://nlp.johnsnowlabs.com//2021/06/04/translate_tl_pt_xx.html) |
+| [xx.nso.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_nso_xx.html) | [translate_sv_nso](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_nso_xx.html) |
+| [xx.sq.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_sq_xx.html) | [translate_sv_sq](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_sq_xx.html) |
+| [xx.sv.translate_to.tpi](https://nlp.johnsnowlabs.com//2021/06/04/translate_tpi_sv_xx.html) | [translate_tpi_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_tpi_sv_xx.html) |
+| [xx.yap.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_yap_xx.html) | [translate_sv_yap](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_yap_xx.html) |
+| [xx.sv.translate_to.tr](https://nlp.johnsnowlabs.com//2021/06/04/translate_tr_sv_xx.html) | [translate_tr_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_tr_sv_xx.html) |
+| [xx.fr.translate_to.swc](https://nlp.johnsnowlabs.com//2021/06/04/translate_swc_fr_xx.html) | [translate_swc_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_swc_fr_xx.html) |
+| [xx.nl.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_nl_xx.html) | [translate_sv_nl](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_nl_xx.html) |
+| [xx.fi.translate_to.ty](https://nlp.johnsnowlabs.com//2021/06/04/translate_ty_fi_xx.html) | [translate_ty_fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_ty_fi_xx.html) |
+| [xx.fr.translate_to.tr](https://nlp.johnsnowlabs.com//2021/06/04/translate_tr_fr_xx.html) | [translate_tr_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_tr_fr_xx.html) |
+| [xx.sv.translate_to.tum](https://nlp.johnsnowlabs.com//2021/06/04/translate_tum_sv_xx.html) | [translate_tum_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_tum_sv_xx.html) |
+| [xx.swc.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_swc_xx.html) | [translate_sv_swc](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_swc_xx.html) |
+| [xx.fi.translate_to.swc](https://nlp.johnsnowlabs.com//2021/06/04/translate_swc_fi_xx.html) | [translate_swc_fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_swc_fi_xx.html) |
+| [xx.eo.translate_to.tr](https://nlp.johnsnowlabs.com//2021/06/04/translate_tr_eo_xx.html) | [translate_tr_eo](https://nlp.johnsnowlabs.com//2021/06/04/translate_tr_eo_xx.html) |
+| [xx.xh.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_xh_xx.html) | [translate_sv_xh](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_xh_xx.html) |
+| [xx.sv.translate_to.tvl](https://nlp.johnsnowlabs.com//2021/06/04/translate_tvl_sv_xx.html) | [translate_tvl_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_tvl_sv_xx.html) |
+| [xx.sl.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_sl_xx.html) | [translate_sv_sl](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_sl_xx.html) |
+| [xx.tum.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_tum_xx.html) | [translate_sv_tum](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_tum_xx.html) |
+| [xx.es.translate_to.to](https://nlp.johnsnowlabs.com//2021/06/04/translate_to_es_xx.html) | [translate_to_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_to_es_xx.html) |
+| [xx.fr.translate_to.tn](https://nlp.johnsnowlabs.com//2021/06/04/translate_tn_fr_xx.html) | [translate_tn_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_tn_fr_xx.html) |
+| [xx.sv.translate_to.ty](https://nlp.johnsnowlabs.com//2021/06/04/translate_ty_sv_xx.html) | [translate_ty_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_ty_sv_xx.html) |
+| [xx.sv.translate_to.swc](https://nlp.johnsnowlabs.com//2021/06/04/translate_swc_sv_xx.html) | [translate_swc_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_swc_sv_xx.html) |
+| [xx.mos.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_mos_xx.html) | [translate_sv_mos](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_mos_xx.html) |
+| [xx.ar.translate_to.tr](https://nlp.johnsnowlabs.com//2021/06/04/translate_tr_ar_xx.html) | [translate_tr_ar](https://nlp.johnsnowlabs.com//2021/06/04/translate_tr_ar_xx.html) |
+| [xx.ru.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_ru_xx.html) | [translate_sv_ru](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_ru_xx.html) |
+| [xx.srn.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_srn_xx.html) | [translate_sv_srn](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_srn_xx.html) |
+| [xx.pis.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_pis_xx.html) | [translate_sv_pis](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_pis_xx.html) |
+| [xx.pap.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_pap_xx.html) | [translate_sv_pap](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_pap_xx.html) |
+| [xx.tvl.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_tvl_xx.html) | [translate_sv_tvl](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_tvl_xx.html) |
+| [xx.sv.translate_to.to](https://nlp.johnsnowlabs.com//2021/06/04/translate_to_sv_xx.html) | [translate_to_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_to_sv_xx.html) |
+| [xx.th.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_th_xx.html) | [translate_sv_th](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_th_xx.html) |
+| [xx.war.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_war_xx.html) | [translate_sv_war](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_war_xx.html) |
+| [xx.sv.translate_to.ts](https://nlp.johnsnowlabs.com//2021/06/04/translate_ts_sv_xx.html) | [translate_ts_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_ts_sv_xx.html) |
+| [xx.fr.translate_to.tw](https://nlp.johnsnowlabs.com//2021/06/04/translate_tw_fr_xx.html) | [translate_tw_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_tw_fr_xx.html) |
+| [xx.st.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_st_xx.html) | [translate_sv_st](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_st_xx.html) |
+| [xx.fr.translate_to.tiv](https://nlp.johnsnowlabs.com//2021/06/04/translate_tiv_fr_xx.html) | [translate_tiv_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_tiv_fr_xx.html) |
+| [xx.tpi.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_tpi_xx.html) | [translate_sv_tpi](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_tpi_xx.html) |
+| [xx.fi.translate_to.tvl](https://nlp.johnsnowlabs.com//2021/06/04/translate_tvl_fi_xx.html) | [translate_tvl_fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_tvl_fi_xx.html) |
+| [xx.fr.translate_to.ty](https://nlp.johnsnowlabs.com//2021/06/04/translate_ty_fr_xx.html) | [translate_ty_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_ty_fr_xx.html) |
+| [xx.sm.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_sm_xx.html) | [translate_sv_sm](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_sm_xx.html) |
+| [xx.es.translate_to.swc](https://nlp.johnsnowlabs.com//2021/06/04/translate_swc_es_xx.html) | [translate_swc_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_swc_es_xx.html) |
+| [xx.sv.translate_to.tiv](https://nlp.johnsnowlabs.com//2021/06/04/translate_tiv_sv_xx.html) | [translate_tiv_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_tiv_sv_xx.html) |
+| [xx.toi.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_toi_xx.html) | [translate_sv_toi](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_toi_xx.html) |
+| [xx.mfe.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_mfe_xx.html) | [translate_sv_mfe](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_mfe_xx.html) |
+| [xx.wls.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_wls_xx.html) | [translate_sv_wls](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_wls_xx.html) |
+| [xx.umb.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_umb_xx.html) | [translate_sv_umb](https://nlp.johnsnowlabs.com//2021/06/04/translate_sv_umb_xx.html) |
+| [xx.es.translate_to.tr](https://nlp.johnsnowlabs.com//2021/06/04/translate_tr_es_xx.html) | [translate_tr_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_tr_es_xx.html) |
+| [xx.es.translate_to.tll](https://nlp.johnsnowlabs.com//2021/06/04/translate_tll_es_xx.html) | [translate_tll_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_tll_es_xx.html) |
+| [xx.pt.translate_to.uk](https://nlp.johnsnowlabs.com//2021/06/04/translate_uk_pt_xx.html) | [translate_uk_pt](https://nlp.johnsnowlabs.com//2021/06/04/translate_uk_pt_xx.html) |
+| [xx.it.translate_to.zh](https://nlp.johnsnowlabs.com//2021/06/04/translate_zh_it_xx.html) | [translate_zh_it](https://nlp.johnsnowlabs.com//2021/06/04/translate_zh_it_xx.html) |
+| [xx.no.translate_to.uk](https://nlp.johnsnowlabs.com//2021/06/04/translate_uk_no_xx.html) | [translate_uk_no](https://nlp.johnsnowlabs.com//2021/06/04/translate_uk_no_xx.html) |
+| [xx.sh.translate_to.uk](https://nlp.johnsnowlabs.com//2021/06/04/translate_uk_sh_xx.html) | [translate_uk_sh](https://nlp.johnsnowlabs.com//2021/06/04/translate_uk_sh_xx.html) |
+| [xx.sv.translate_to.wls](https://nlp.johnsnowlabs.com//2021/06/04/translate_wls_sv_xx.html) | [translate_wls_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_wls_sv_xx.html) |
+| [xx.pl.translate_to.uk](https://nlp.johnsnowlabs.com//2021/06/04/translate_uk_pl_xx.html) | [translate_uk_pl](https://nlp.johnsnowlabs.com//2021/06/04/translate_uk_pl_xx.html) |
+| [xx.es.translate_to.yo](https://nlp.johnsnowlabs.com//2021/06/04/translate_yo_es_xx.html) | [translate_yo_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_yo_es_xx.html) |
+| [xx.es.translate_to.war](https://nlp.johnsnowlabs.com//2021/06/04/translate_war_es_xx.html) | [translate_war_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_war_es_xx.html) |
+| [xx.sv.translate_to.zh](https://nlp.johnsnowlabs.com//2021/06/04/translate_zh_sv_xx.html) | [translate_zh_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_zh_sv_xx.html) |
+| [xx.tr.translate_to.uk](https://nlp.johnsnowlabs.com//2021/06/04/translate_uk_tr_xx.html) | [translate_uk_tr](https://nlp.johnsnowlabs.com//2021/06/04/translate_uk_tr_xx.html) |
+| [xx.fi.translate_to.war](https://nlp.johnsnowlabs.com//2021/06/04/translate_war_fi_xx.html) | [translate_war_fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_war_fi_xx.html) |
+| [xx.de.translate_to.zh](https://nlp.johnsnowlabs.com//2021/06/04/translate_zh_de_xx.html) | [translate_zh_de](https://nlp.johnsnowlabs.com//2021/06/04/translate_zh_de_xx.html) |
+| [xx.uk.translate_to.zh](https://nlp.johnsnowlabs.com//2021/06/04/translate_zh_uk_xx.html) | [translate_zh_uk](https://nlp.johnsnowlabs.com//2021/06/04/translate_zh_uk_xx.html) |
+| [xx.eo.translate_to.vi](https://nlp.johnsnowlabs.com//2021/06/04/translate_vi_eo_xx.html) | [translate_vi_eo](https://nlp.johnsnowlabs.com//2021/06/04/translate_vi_eo_xx.html) |
+| [xx.bg.translate_to.zh](https://nlp.johnsnowlabs.com//2021/06/04/translate_zh_bg_xx.html) | [translate_zh_bg](https://nlp.johnsnowlabs.com//2021/06/04/translate_zh_bg_xx.html) |
+| [xx.es.translate_to.zne](https://nlp.johnsnowlabs.com//2021/06/04/translate_zne_es_xx.html) | [translate_zne_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_zne_es_xx.html) |
+| [xx.fr.translate_to.uk](https://nlp.johnsnowlabs.com//2021/06/04/translate_uk_fr_xx.html) | [translate_uk_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_uk_fr_xx.html) |
+| [xx.zls.translate_to.zls](https://nlp.johnsnowlabs.com//2021/06/04/translate_zls_zls_xx.html) | [translate_zls_zls](https://nlp.johnsnowlabs.com//2021/06/04/translate_zls_zls_xx.html) |
+| [xx.fr.translate_to.yo](https://nlp.johnsnowlabs.com//2021/06/04/translate_yo_fr_xx.html) | [translate_yo_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_yo_fr_xx.html) |
+| [xx.bg.translate_to.uk](https://nlp.johnsnowlabs.com//2021/06/04/translate_uk_bg_xx.html) | [translate_uk_bg](https://nlp.johnsnowlabs.com//2021/06/04/translate_uk_bg_xx.html) |
+| [xx.fr.translate_to.xh](https://nlp.johnsnowlabs.com//2021/06/04/translate_xh_fr_xx.html) | [translate_xh_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_xh_fr_xx.html) |
+| [xx.ca.translate_to.uk](https://nlp.johnsnowlabs.com//2021/06/04/translate_uk_ca_xx.html) | [translate_uk_ca](https://nlp.johnsnowlabs.com//2021/06/04/translate_uk_ca_xx.html) |
+| [xx.fi.translate_to.zh](https://nlp.johnsnowlabs.com//2021/06/04/translate_zh_fi_xx.html) | [translate_zh_fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_zh_fi_xx.html) |
+| [xx.es.translate_to.zai](https://nlp.johnsnowlabs.com//2021/06/04/translate_zai_es_xx.html) | [translate_zai_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_zai_es_xx.html) |
+| [xx.es.translate_to.uk](https://nlp.johnsnowlabs.com//2021/06/04/translate_uk_es_xx.html) | [translate_uk_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_uk_es_xx.html) |
+| [xx.nl.translate_to.uk](https://nlp.johnsnowlabs.com//2021/06/04/translate_uk_nl_xx.html) | [translate_uk_nl](https://nlp.johnsnowlabs.com//2021/06/04/translate_uk_nl_xx.html) |
+| [xx.sv.translate_to.yap](https://nlp.johnsnowlabs.com//2021/06/04/translate_yap_sv_xx.html) | [translate_yap_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_yap_sv_xx.html) |
+| [xx.he.translate_to.uk](https://nlp.johnsnowlabs.com//2021/06/04/translate_uk_he_xx.html) | [translate_uk_he](https://nlp.johnsnowlabs.com//2021/06/04/translate_uk_he_xx.html) |
+| [xx.sl.translate_to.uk](https://nlp.johnsnowlabs.com//2021/06/04/translate_uk_sl_xx.html) | [translate_uk_sl](https://nlp.johnsnowlabs.com//2021/06/04/translate_uk_sl_xx.html) |
+| [xx.es.translate_to.ve](https://nlp.johnsnowlabs.com//2021/06/04/translate_ve_es_xx.html) | [translate_ve_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_ve_es_xx.html) |
+| [xx.zlw.translate_to.zlw](https://nlp.johnsnowlabs.com//2021/06/04/translate_zlw_zlw_xx.html) | [translate_zlw_zlw](https://nlp.johnsnowlabs.com//2021/06/04/translate_zlw_zlw_xx.html) |
+| [xx.es.translate_to.tzo](https://nlp.johnsnowlabs.com//2021/06/04/translate_tzo_es_xx.html) | [translate_tzo_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_tzo_es_xx.html) |
+| [xx.hu.translate_to.uk](https://nlp.johnsnowlabs.com//2021/06/04/translate_uk_hu_xx.html) | [translate_uk_hu](https://nlp.johnsnowlabs.com//2021/06/04/translate_uk_hu_xx.html) |
+| [xx.de.translate_to.vi](https://nlp.johnsnowlabs.com//2021/06/04/translate_vi_de_xx.html) | [translate_vi_de](https://nlp.johnsnowlabs.com//2021/06/04/translate_vi_de_xx.html) |
+| [xx.fi.translate_to.yo](https://nlp.johnsnowlabs.com//2021/06/04/translate_yo_fi_xx.html) | [translate_yo_fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_yo_fi_xx.html) |
+| [xx.ru.translate_to.uk](https://nlp.johnsnowlabs.com//2021/06/04/translate_uk_ru_xx.html) | [translate_uk_ru](https://nlp.johnsnowlabs.com//2021/06/04/translate_uk_ru_xx.html) |
+| [xx.ms.translate_to.zh](https://nlp.johnsnowlabs.com//2021/06/04/translate_zh_ms_xx.html) | [translate_zh_ms](https://nlp.johnsnowlabs.com//2021/06/04/translate_zh_ms_xx.html) |
+| [xx.urj.translate_to.urj](https://nlp.johnsnowlabs.com//2021/06/04/translate_urj_urj_xx.html) | [translate_urj_urj](https://nlp.johnsnowlabs.com//2021/06/04/translate_urj_urj_xx.html) |
+| [xx.it.translate_to.uk](https://nlp.johnsnowlabs.com//2021/06/04/translate_uk_it_xx.html) | [translate_uk_it](https://nlp.johnsnowlabs.com//2021/06/04/translate_uk_it_xx.html) |
+| [xx.sv.translate_to.war](https://nlp.johnsnowlabs.com//2021/06/04/translate_war_sv_xx.html) | [translate_war_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_war_sv_xx.html) |
+| [xx.fr.translate_to.wls](https://nlp.johnsnowlabs.com//2021/06/04/translate_wls_fr_xx.html) | [translate_wls_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_wls_fr_xx.html) |
+| [xx.zle.translate_to.zle](https://nlp.johnsnowlabs.com//2021/06/04/translate_zle_zle_xx.html) | [translate_zle_zle](https://nlp.johnsnowlabs.com//2021/06/04/translate_zle_zle_xx.html) |
+| [xx.vi.translate_to.zh](https://nlp.johnsnowlabs.com//2021/06/04/translate_zh_vi_xx.html) | [translate_zh_vi](https://nlp.johnsnowlabs.com//2021/06/04/translate_zh_vi_xx.html) |
+| [xx.es.translate_to.vsl](https://nlp.johnsnowlabs.com//2021/06/04/translate_vsl_es_xx.html) | [translate_vsl_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_vsl_es_xx.html) |
+| [xx.fi.translate_to.zne](https://nlp.johnsnowlabs.com//2021/06/04/translate_zne_fi_xx.html) | [translate_zne_fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_zne_fi_xx.html) |
+| [xx.fi.translate_to.uk](https://nlp.johnsnowlabs.com//2021/06/04/translate_uk_fi_xx.html) | [translate_uk_fi](https://nlp.johnsnowlabs.com//2021/06/04/translate_uk_fi_xx.html) |
+| [xx.ru.translate_to.vi](https://nlp.johnsnowlabs.com//2021/06/04/translate_vi_ru_xx.html) | [translate_vi_ru](https://nlp.johnsnowlabs.com//2021/06/04/translate_vi_ru_xx.html) |
+| [xx.nl.translate_to.zh](https://nlp.johnsnowlabs.com//2021/06/04/translate_zh_nl_xx.html) | [translate_zh_nl](https://nlp.johnsnowlabs.com//2021/06/04/translate_zh_nl_xx.html) |
+| [xx.sv.translate_to.xh](https://nlp.johnsnowlabs.com//2021/06/04/translate_xh_sv_xx.html) | [translate_xh_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_xh_sv_xx.html) |
+| [xx.es.translate_to.xh](https://nlp.johnsnowlabs.com//2021/06/04/translate_xh_es_xx.html) | [translate_xh_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_xh_es_xx.html) |
+| [xx.he.translate_to.zh](https://nlp.johnsnowlabs.com//2021/06/04/translate_zh_he_xx.html) | [translate_zh_he](https://nlp.johnsnowlabs.com//2021/06/04/translate_zh_he_xx.html) |
+| [xx.fr.translate_to.war](https://nlp.johnsnowlabs.com//2021/06/04/translate_war_fr_xx.html) | [translate_war_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_war_fr_xx.html) |
+| [xx.fr.translate_to.zne](https://nlp.johnsnowlabs.com//2021/06/04/translate_zne_fr_xx.html) | [translate_zne_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_zne_fr_xx.html) |
+| [xx.sv.translate_to.yo](https://nlp.johnsnowlabs.com//2021/06/04/translate_yo_sv_xx.html) | [translate_yo_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_yo_sv_xx.html) |
+| [xx.fr.translate_to.vi](https://nlp.johnsnowlabs.com//2021/06/04/translate_vi_fr_xx.html) | [translate_vi_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_vi_fr_xx.html) |
+| [xx.it.translate_to.vi](https://nlp.johnsnowlabs.com//2021/06/04/translate_vi_it_xx.html) | [translate_vi_it](https://nlp.johnsnowlabs.com//2021/06/04/translate_vi_it_xx.html) |
+| [xx.sv.translate_to.zne](https://nlp.johnsnowlabs.com//2021/06/04/translate_zne_sv_xx.html) | [translate_zne_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_zne_sv_xx.html) |
+| [xx.fr.translate_to.yap](https://nlp.johnsnowlabs.com//2021/06/04/translate_yap_fr_xx.html) | [translate_yap_fr](https://nlp.johnsnowlabs.com//2021/06/04/translate_yap_fr_xx.html) |
+| [xx.cs.translate_to.uk](https://nlp.johnsnowlabs.com//2021/06/04/translate_uk_cs_xx.html) | [translate_uk_cs](https://nlp.johnsnowlabs.com//2021/06/04/translate_uk_cs_xx.html) |
+| [xx.es.translate_to.vi](https://nlp.johnsnowlabs.com//2021/06/04/translate_vi_es_xx.html) | [translate_vi_es](https://nlp.johnsnowlabs.com//2021/06/04/translate_vi_es_xx.html) |
+| [xx.de.translate_to.uk](https://nlp.johnsnowlabs.com//2021/06/04/translate_uk_de_xx.html) | [translate_uk_de](https://nlp.johnsnowlabs.com//2021/06/04/translate_uk_de_xx.html) |
+| [xx.sv.translate_to.uk](https://nlp.johnsnowlabs.com//2021/06/04/translate_uk_sv_xx.html) | [translate_uk_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_uk_sv_xx.html) |
+
+
+## Bugfixes
+- Fixed bugs that occured when loading a model from disk.
+
+
+
+
+* [140+ NLU Tutorials](https://github.com/JohnSnowLabs/nlu/tree/master/examples)
+* [Streamlit visualizations docs](https://nlu.johnsnowlabs.com/docs/en/streamlit_viz_examples)
+* The complete list of all 1100+ models & pipelines in 192+ languages is available on [Models Hub](https://nlp.johnsnowlabs.com/models).
+* [Spark NLP publications](https://medium.com/spark-nlp)
+* [NLU in Action](https://nlp.johnsnowlabs.com/demo)
+* [NLU documentation](https://nlu.johnsnowlabs.com/docs/en/install)
+* [Discussions](https://github.com/JohnSnowLabs/spark-nlp/discussions) Engage with other community members, share ideas, and show off how you use Spark NLP and NLU!
+
+# 1 line Install NLU on Google Colab
+```!wget https://setup.johnsnowlabs.com/nlu/colab.sh  -O - | bash```
+# 1 line Install NLU on Kaggle
+```!wget https://setup.johnsnowlabs.com/nlu/kaggle.sh  -O - | bash```
+# Install via PIP
+```! pip install nlu pyspark==3.0.3```
+
+
+
+
+
+# NLU 3.0.2 Release Notes
+<img width="65%" align="right" src="https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/streamlit_docs_assets/gif/start.gif">
+
+This release contains examples and tutorials on how to visualize the 1000+ state-of-the-art NLP models provided by NLU in *just 1 line of code* in `streamlit`.
+It includes simple `1-liners` you can sprinkle into your Streamlit app to for features like **Dependency Trees, Named Entities (NER), text classification results, semantic simmilarity,
+embedding visualizations via ELMO, BERT, ALBERT, XLNET and much more** .  Additionally, improvements for T5, various resolvers have been added and models `Farsi`, `Hebrew`, `Korean`, and `Turkish`
+
+This is the ultimate NLP research tool. You can visualize and compare the results of hundreds of context aware deep learning embeddings and compare them with classical vanilla embeddings like Glove
+and can see with your own eyes how context is encoded by transformer models like `BERT` or `XLNET`and many more !
+Besides that, you can also compare the results of the 200+ NER models John Snow Labs provides and see how peformances changes with varrying ebeddings, like Contextual, Static and Domain Specific Embeddings.
+
+## Install
+[For detailed instructions refer to the NLU install documentation here](https://nlu.johnsnowlabs.com/docs/en/install)   
+You need `Open JDK 8` installed and the following python packages
+```bash
+pip install nlu streamlit pyspark==3.0.1 sklearn plotly 
+```
+Problems? [Connect with us on Slack!](https://join.slack.com/t/spark-nlp/shared_invite/zt-lutct9gm-kuUazcyFKhuGY3_0AMkxqA)
+
+## Impatient and want some action?
+Just run this Streamlit app, you can use it to generate python code for each NLU-Streamlit building block
+```shell
+streamlit run https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/examples/streamlit/01_dashboard.py
+```
+
+## Quick Starter cheat sheet - All you need to know in 1 picture for NLU + Streamlit
+For NLU models to load, see [the NLU Namespace](https://nlu.johnsnowlabs.com/docs/en/namespace) or the [John Snow Labs Modelshub](https://modelshub.johnsnowlabs.com/models)  or go [straight to the source](https://github.com/JohnSnowLabs/nlu/blob/master/nlu/namespace.py).
+![NLU Streamlit Cheatsheet](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/streamlit_docs_assets/img/NLU_Streamlit_Cheetsheet.png)
+
+
+## Examples
+Just try out any of these.
+You can use the first example to generate python-code snippets which you can
+recycle as building blocks in your streamlit apps!
+### Example:  [`01_dashboard`](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/examples/streamlit/01_dashboard.py)
+```shell
+streamlit run https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/examples/streamlit/01_dashboard.py
+```
+### Example:  [`02_NER`](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/examples/streamlit/02_NER.py)
+```shell
+streamlit run https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/examples/streamlit/02_NER.py
+```
+### Example:  [`03_text_similarity_matrix`](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/examples/streamlit/03_text_similarity_matrix.py)
+```shell
+streamlit run https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/examples/streamlit/03_text_similarity_matrix.py
+```
+
+
+### Example:  [`04_dependency_tree`](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/examples/streamlit/04_dependency_tree.py)
+```shell
+streamlit run https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/examples/streamlit/04_dependency_tree.py
+```
+
+### Example:  [`05_classifiers`](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/examples/streamlit/05_classifiers.py)
+```shell
+streamlit run https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/examples/streamlit/05_classifiers.py
+```
+
+### Example:  [`06_token_features`](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/examples/streamlit/06_token_features.py)
+```shell
+streamlit run https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/examples/streamlit/06_token_features.py
+```
+
+## How to use NLU?
+All you need to know about NLU is that there is the [`nlu.load()`](https://nlu.johnsnowlabs.com/docs/en/load_api) method which returns a `NLUPipeline` object
+which has a [`.predict()`](https://nlu.johnsnowlabs.com/docs/en/predict_api) that works on most [common data types in the pydata stack like Pandas dataframes](https://nlu.johnsnowlabs.com/docs/en/predict_api#supported-data-types) .     
+Ontop of that, there are various visualization methods a NLUPipeline provides easily integrate in Streamlit as re-usable components. [`viz() method`](https://nlu.johnsnowlabs.com/docs/en/viz_examples)
+
+
+
+
+
+### Overview of NLU + Streamlit buildingblocks
+
+|Method                                                         |               Description                 |
+|---------------------------------------------------------------|-------------------------------------------|
+| [`nlu.load('<Model>').predict(data)`](TODO.com)                                     | Load any of the [1000+ models](https://nlp.johnsnowlabs.com/models) by providing the model name any predict on most Pythontic [data strucutres like Pandas, strings, arrays of strings and more](https://nlu.johnsnowlabs.com/docs/en/predict_api#supported-data-types) |
+| [`nlu.load('<Model>').viz_streamlit(data)`](TODO.com)                               | Display full NLU exploration dashboard, that showcases every feature avaiable with dropdown selectors for 1000+ models|
+| [`nlu.load('<Model>').viz_streamlit_similarity([string1, string2])`](TODO.com)      | Display similarity matrix and scalar similarity for every word embedding loaded and 2 strings. |
+| [`nlu.load('<Model>').viz_streamlit_ner(data)`](TODO.com)                           | Visualize predicted NER tags from Named Entity Recognizer model|
+| [`nlu.load('<Model>').viz_streamlit_dep_tree(data)`](TODO.com)                      | Visualize Dependency Tree together with Part of Speech labels|
+| [`nlu.load('<Model>').viz_streamlit_classes(data)`](TODO.com)                       | Display all extracted class features and confidences for every classifier loaded in pipeline|
+| [`nlu.load('<Model>').viz_streamlit_token(data)`](TODO.com)                         | Display all detected token features and informations in Streamlit |
+| [`nlu.load('<Model>').viz(data, write_to_streamlit=True)`](TODO.com)                | Display the raw visualization without any UI elements. See [viz docs for more info](https://nlu.johnsnowlabs.com/docs/en/viz_examples). By default all aplicable nlu model references will be shown. |
+| [`nlu.enable_streamlit_caching()`](#test)  | Enable caching the `nlu.load()` call. Once enabled, the `nlu.load()` method will automatically cached. **This is recommended** to run first and for large peformance gans |
+
+
+# Detailed visualizer information and API docs
+
+## <kbd>function</kbd> `pipe.viz_streamlit`
+
+
+Display a highly configurable UI that showcases almost every feature available for Streamlit visualization with model selection dropdowns in your applications.   
+Ths includes :
+- `Similarity Matrix` & `Scalars` & `Embedding Information` for any of the [100+ Word Embedding Models]()
+- `NER visualizations` for any of the [200+ Named entity recognizers]()
+- `Labled` & `Unlabled Dependency Trees visualizations` with `Part of Speech Tags` for any of the [100+ Part of Speech Models]()
+- `Token informations`  predicted by any of the [1000+ models]()
+- `Classification results`  predicted by any of the [100+ models classification models]()
+- `Pipeline Configuration` & `Model Information` & `Link to John Snow Labs Modelshub` for all loaded pipelines
+- `Auto generate Python code` that can be copy pasted to re-create the individual Streamlit visualization blocks.
+  NlLU takes the first model specified as `nlu.load()` for the first visualization run.     
+  Once the Streamlit app is running, additional models can easily be added via the UI.    
+  It is recommended to run this first, since you can generate Python code snippets `to recreate individual Streamlit visualization blocks`
+
+```python
+nlu.load('ner').viz_streamlit(['I love NLU and Streamlit!','I hate buggy software'])
+```
+
+
+
+![NLU Streamlit UI Overview](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/streamlit_docs_assets/gif/ui.gif)
+
+### <kbd>function parameters</kbd> `pipe.viz_streamlit`
+
+| Argument              | Type                                             |                                                            Default                     |Description |
+|-----------------------|--------------------------------------------------|----------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------|
+| `text`                  |  `Union [str, List[str], pd.DataFrame, pd.Series]` | `'NLU and Streamlit go together like peanutbutter and jelly'`                            | Default text for the `Classification`, `Named Entitiy Recognizer`, `Token Information` and `Dependency Tree` visualizations
+| `similarity_texts`      |  `Union[List[str],Tuple[str,str]]`                 | `('Donald Trump Likes to part', 'Angela Merkel likes to party')`                         | Default texts for the `Text similarity` visualization. Should contain `exactly 2 strings` which will be compared `token embedding wise`. For each embedding active, a `token wise similarity matrix` and a `similarity scalar`
+| `model_selection`       |  `List[str]`                                       | `[]`                                                                                         | List of nlu references to display in the model selector, see [the NLU Namespace](https://nlu.johnsnowlabs.com/docs/en/namespace) or the [John Snow Labs Modelshub](https://modelshub.johnsnowlabs.com/models)  or go [straight to the source](https://github.com/JohnSnowLabs/nlu/blob/master/nlu/namespace.py) for more info
+| `title`                 |  `str`                                             | `'NLU ❤️ Streamlit - Prototype your NLP startup in 0 lines of code🚀'`                      | Title of the Streamlit app
+| `sub_title`             |  `str`                                             | `'Play with over 1000+ scalable enterprise NLP models'`                                  | Sub title of the Streamlit app
+| `visualizers`           |  `List[str]`                                       | `( "dependency_tree", "ner",  "similarity", "token_information", 'classification')`      | Define which visualizations should be displayed. By default all visualizations are displayed.
+| `show_models_info`      |  `bool`                                            | `True`                                                                                   | Show information for every model loaded in the bottom of the Streamlit app.
+| `show_model_select`   |  `bool`                                          | `True`                                                                                 | Show a model selection dropdowns that makes any of the 1000+ models avaiable in 1 click
+| `show_viz_selection`    |  `bool`                                            | `False`                                                                                  | Show a selector in the sidebar which lets you configure which visualizations are displayed.
+| `show_logo`             |  `bool`                                            | `True`                                                                                   | Show logo
+| `display_infos`         |  `bool`                                            | `False`                                                                                  | Display additonal information about ISO codes and the NLU namespace structure.
+| `set_wide_layout_CSS`     |  `bool`                                                             |  `True`                                                                                   | Whether to inject custom CSS or not.
+|     `key`                 |  `str`                                                              | `"NLU_streamlit"`    | Key for the Streamlit elements drawn
+| `model_select_position`   |  `str`                                                             |   `'side'`            | [Whether to output the positions of predictions or not, see `pipe.predict(positions=true`) for more info](https://nlu.johnsnowlabs.com/docs/en/predict_api#output-positions-parameter)  |
+| `show_code_snippets`      |  `bool`                                                             |  `False`                                                                                 | Display Python code snippets above visualizations that can be used to re-create the visualization
+|`num_similarity_cols`                               | `int`               |  `2`                            |  How many columns should for the layout in Streamlit when rendering the similarity matrixes.
+
+
+
+## <kbd>function</kbd> `pipe.viz_streamlit_classes`
+
+Visualize the predicted classes and their confidences and additional metadata to streamlit.
+Aplicable with [any of the 100+ classifiers](https://nlp.johnsnowlabs.com/models?task=Text+Classification)
+
+```python
+nlu.load('sentiment').viz_streamlit_classes(['I love NLU and Streamlit!','I love buggy software', 'Sign up now get a chance to win 1000$ !', 'I am afraid of Snakes','Unicorns have been sighted on Mars!','Where is the next bus stop?'])
+```
+![text_class1](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/streamlit_docs_assets/gif/class.gif)
+
+
+### <kbd>function parameters</kbd> `pipe.viz_streamlit_classes`
+
+| Argument    | Type        |                                                            Default         |Description |
+|--------------------------- | ---------- |-----------------------------------------------------------| ------------------------------------------------------- |
+| `text`                    | `Union[str,list,pd.DataFrame, pd.Series, pyspark.sql.DataFrame ]`   |     `'I love NLU and Streamlit and sunny days!'`                  | Text to predict classes for. Will predict on each input of the iteratable or dataframe if type is not str.|
+| `output_level`            | `Optional[str]`                                                     |       `document`        | [Outputlevel of NLU pipeline, see `pipe.predict()` docsmore info](https://nlu.johnsnowlabs.com/docs/en/predict_api#output-level-parameter)|
+| `include_text_col`        |  `bool`                                                              |`True`               | Whether to include a e text column in the output table or just the prediction data |
+| `title`                   | `Optional[str]`                                                     |   `Text Classification`            | Title of the Streamlit building block that will be visualized to screen |
+| `metadata`                | `bool`                                                              |  `False`             | [whether to output addition metadata or not, see `pipe.predict(meta=true)` docs for more info](https://nlu.johnsnowlabs.com/docs/en/predict_api#output-metadata) |
+| `positions`               |  `bool`                                                             |   `False`            | [whether to output the positions of predictions or not, see `pipe.predict(positions=true`) for more info](https://nlu.johnsnowlabs.com/docs/en/predict_api#output-positions-parameter)  |
+| `set_wide_layout_CSS`     |  `bool`                                                             |  `True`                                                                                   | Whether to inject custom CSS or not.
+|     `key`                 |  `str`                                                              | `"NLU_streamlit"`    | Key for the Streamlit elements drawn
+| `model_select_position`   |  `str`                                                             |   `'side'`            | [Whether to output the positions of predictions or not, see `pipe.predict(positions=true`) for more info](https://nlu.johnsnowlabs.com/docs/en/predict_api#output-positions-parameter)  |
+| `generate_code_sample`      |  `bool`                                                             |  `False`                                                                                 | Display Python code snippets above visualizations that can be used to re-create the visualization
+| `show_model_select`   |  `bool`                                          | `True`                                                                                 | Show a model selection dropdowns that makes any of the 1000+ models avaiable in 1 click
+| `show_logo`             |  `bool`                                            | `True`                                                                                   | Show logo
+| `display_infos`         |  `bool`                                            | `False`                                                                                  | Display additonal information about ISO codes and the NLU namespace structure.
+
+
+
+## <kbd>function</kbd> `pipe.viz_streamlit_ner`
+Visualize the predicted classes and their confidences and additional metadata to Streamlit.
+Aplicable with [any of the 250+ NER models](https://nlp.johnsnowlabs.com/models?task=Named+Entity+Recognition).    
+You can filter which NER tags to highlight via the dropdown in the main window.
+
+Basic usage
+```python
+nlu.load('ner').viz_streamlit_ner('Donald Trump from America and Angela Merkel from Germany dont share many views')
+```
+
+![NER visualization](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/streamlit_docs_assets/gif/NER.gif)
+
+Example for coloring
+```python
+# Color all entities of class GPE black
+nlu.load('ner').viz_streamlit_ner('Donald Trump from America and Angela Merkel from Germany dont share many views',colors={'PERSON':'#6e992e', 'GPE':'#000000'})
+```
+![NER coloring](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/streamlit_docs_assets/img/NER_colored.png)
+
+### <kbd>function parameters</kbd> `pipe.viz_streamlit_ner`
+
+| Argument    | Type        |                                                                                      Default                                        |Description                  |
+|--------------------------- | -----------------------|-----------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------ |
+| `text`                     | `str`                  |     `'Donald Trump from America and Anegela Merkel from Germany do not share many views'`                 | Text to predict classes for.|
+| `ner_tags`                 | `Optional[List[str]]`  |       `None`                                                                                               |Tags to display. By default all tags will be displayed|
+| `show_label_select`        |  `bool`                |`True`                                                                                                      | Whether to include the label selector|
+| `show_table`               | `bool`                 |   `True`                                                                                                   | Whether show to predicted pandas table or not|
+| `title`                    | `Optional[str]`        |  `'Named Entities'`                                                                                        |  Title of the Streamlit building block that will be visualized to screen |
+| `sub_title`                    | `Optional[str]`        |  `'"Recognize various Named Entities (NER) in text entered and filter them. You can select from over 100 languages in the dropdown. On the left side.",'`                                                                                        |  Sub-title of the Streamlit building block that will be visualized to screen |
+| `colors`                   |  `Dict[str,str]`       |   `{}`                                                                                                     | Dict with `KEY=ENTITY_LABEL` and `VALUE=COLOR_AS_HEX_CODE`,which will change color of highlighted entities.[See custom color labels docs for more info.](https://nlu.johnsnowlabs.com/docs/en/viz_examples#define-custom-colors-for-labels) |
+| `set_wide_layout_CSS`      |  `bool`                                                             |  `True`                                                                                   | Whether to inject custom CSS or not.
+|     `key`                  |  `str`                                                              | `"NLU_streamlit"`    | Key for the Streamlit elements drawn
+| `generate_code_sample`       |  `bool`                                                             |  `False`                                                                                 | Display Python code snippets above visualizations that can be used to re-create the visualization
+| `show_model_select`        |  `bool`                                          | `True`                                                                                 | Show a model selection dropdowns that makes any of the 1000+ models avaiable in 1 click
+| `model_select_position`    |  `str`                                                             |   `'side'`            | [Whether to output the positions of predictions or not, see `pipe.predict(positions=true`) for more info](https://nlu.johnsnowlabs.com/docs/en/predict_api#output-positions-parameter)  |
+| `show_text_input`        |  `bool`                                                              | `True`                                                                                 | Show text input field to input text in
+| `show_logo`             |  `bool`                                            | `True`                                                                                   | Show logo
+| `display_infos`         |  `bool`                                            | `False`                                                                                  | Display additonal information about ISO codes and the NLU namespace structure.
+
+
+
+
+## <kbd>function</kbd> `pipe.viz_streamlit_dep_tree`
+Visualize a typed dependency tree, the relations between tokens and part of speech tags predicted.
+Aplicable with [any of the 100+ Part of Speech(POS) models and dep tree model](https://nlp.johnsnowlabs.com/models?task=Part+of+Speech+Tagging)
+
+```python
+nlu.load('dep.typed').viz_streamlit_dep_tree('POS tags define a grammatical label for each token and the Dependency Tree classifies Relations between the tokens')
+```
+![Dependency Tree](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/streamlit_docs_assets/img/DEP.png)
+
+### <kbd>function parameters</kbd> `pipe.viz_streamlit_dep_tree`
+
+| Argument    | Type        |                                                            Default         |Description |
+|--------------------------- | ---------- |-----------------------------------------------------------| ------------------------------------------------------- |
+| `text`                    | `str`   |     `'Billy likes to swim'`                 | Text to predict classes for.|
+| `title`                | `Optional[str]`                                                              |  `'Dependency Parse Tree & Part-of-speech tags'`             |  Title of the Streamlit building block that will be visualized to screen |
+| `set_wide_layout_CSS`      |  `bool`                                                             |  `True`                                                                                   | Whether to inject custom CSS or not.
+|     `key`                  |  `str`                                                              | `"NLU_streamlit"`    | Key for the Streamlit elements drawn
+| `generate_code_sample`       |  `bool`                                                             |  `False`                                                                                 | Display Python code snippets above visualizations that can be used to re-create the visualization
+| `set_wide_layout_CSS`      |  `bool`                                                             |  `True`                                                                                   | Whether to inject custom CSS or not.
+|     `key`                  |  `str`                                                              | `"NLU_streamlit"`    | Key for the Streamlit elements drawn
+| `generate_code_sample`       |  `bool`                                                             |  `False`                                                                                 | Display Python code snippets above visualizations that can be used to re-create the visualization
+| `show_model_select`        |  `bool`                                          | `True`                                                                                 | Show a model selection dropdowns that makes any of the 1000+ models avaiable in 1 click
+| `model_select_position`    |  `str`                                                             |   `'side'`            | [Whether to output the positions of predictions or not, see `pipe.predict(positions=true`) for more info](https://nlu.johnsnowlabs.com/docs/en/predict_api#output-positions-parameter)  |
+| `show_logo`             |  `bool`                                            | `True`                                                                                   | Show logo
+| `display_infos`         |  `bool`                                            | `False`                                                                                  | Display additonal information about ISO codes and the NLU namespace structure.
+
+
+
+
+
+## <kbd>function</kbd> `pipe.viz_streamlit_token`
+Visualize predicted token and text features for every model loaded.
+You can use this with [any of the 1000+ models](https://nlp.johnsnowlabs.com/models) and select them from the left dropdown.
+
+```python
+nlu.load('stemm pos spell').viz_streamlit_token('I liek pentut buttr and jelly !')
+```
+![text_class1](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/streamlit_docs_assets/gif/token.gif)
+
+
+### <kbd>function parameters</kbd> `pipe.viz_streamlit_token`
+
+| Argument    | Type        |                                                            Default         |Description |
+|--------------------------- | ---------- |-----------------------------------------------------------| ------------------------------------------------------- |
+| `text`                    | `str`   |     `'NLU and Streamlit are great!'`                 | Text to predict token information for.|
+| `title`                | `Optional[str]`                                                              |  `'Named Entities'`             |  Title of the Streamlit building block that will be visualized to screen |
+| `show_feature_select`        |  `bool`                                                              |`True`               | Whether to include the token feature selector|
+| `features`            | `Optional[List[str]]`                                                     |       `None`        |Features to to display. By default all Features will be displayed|
+| `metadata`                | `bool`                                                              |  `False`             | [Whether to output addition metadata or not, see `pipe.predict(meta=true)` docs for more info](https://nlu.johnsnowlabs.com/docs/en/predict_api#output-metadata) |
+| `output_level`            | `Optional[str]`                                                     |       `'token'`        | [Outputlevel of NLU pipeline, see `pipe.predict()` docsmore info](https://nlu.johnsnowlabs.com/docs/en/predict_api#output-level-parameter)|
+| `positions`               |  `bool`                                                             |   `False`            | [Whether to output the positions of predictions or not, see `pipe.predict(positions=true`) for more info](https://nlu.johnsnowlabs.com/docs/en/predict_api#output-positions-parameter)  |
+| `set_wide_layout_CSS`      |  `bool`                                                             |  `True`                                                                                   | Whether to inject custom CSS or not.
+|     `key`                  |  `str`                                                              | `"NLU_streamlit"`    | Key for the Streamlit elements drawn
+| `generate_code_sample`       |  `bool`                                                             |  `False`                                                                                 | Display Python code snippets above visualizations that can be used to re-create the visualization
+| `show_model_select`        |  `bool`                                          | `True`                                                                                 | Show a model selection dropdowns that makes any of the 1000+ models avaiable in 1 click
+| `model_select_position`    |  `str`                                                             |   `'side'`            | [Whether to output the positions of predictions or not, see `pipe.predict(positions=true`) for more info](https://nlu.johnsnowlabs.com/docs/en/predict_api#output-positions-parameter)  |
+| `show_logo`             |  `bool`                                            | `True`                                                                                   | Show logo
+| `display_infos`         |  `bool`                                            | `False`                                                                                  | Display additonal information about ISO codes and the NLU namespace structure.
+
+
+
+
+## <kbd>function</kbd> `pipe.viz_streamlit_similarity`
+
+- Displays a `similarity matrix`, where `x-axis` is every token in the first text and `y-axis` is every token in the second text.
+- Index `i,j` in the matrix describes the similarity of `token-i` to `token-j` based on the loaded embeddings and distance metrics, based on [Sklearns Pariwise Metrics.](https://scikit-learn.org/stable/modules/classes.html#module-sklearn.metrics.pairwise). [See this article for more elaboration on similarities](https://medium.com/spark-nlp/easy-sentence-similarity-with-bert-sentence-embeddings-using-john-snow-labs-nlu-ea078deb6ebf)
+- Displays  a dropdown selectors from which various similarity metrics and over 100 embeddings can be selected.
+  -There will be one similarity matrix per `metric` and `embedding` pair selected. `num_plots = num_metric*num_embeddings`
+  Also displays embedding vector information.
+  Applicable with [any of the 100+ Word Embedding models](https://nlp.johnsnowlabs.com/models?task=Embeddings)
+
+
+
+```python
+nlu.load('bert').viz_streamlit_word_similarity(['I love love loooove NLU! <3','I also love love looove  Streamlit! <3'])
+```
+![text_class1](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/streamlit_docs_assets/gif/SIM.gif)
+
+### <kbd>function parameters</kbd> `pipe.viz_streamlit_similarity`
+
+| Argument    | Type        |                                                            Default         |Description |
+|--------------------------- | ---------- |-----------------------------------------------------------| ------------------------------------------------------- |
+| `texts`                                 | `str`               |     `'Donald Trump from America and Anegela Merkel from Germany do not share many views.'`                 | Text to predict token information for.|
+| `title`                                 | `Optional[str]`     |  `'Named Entities'`             |  Title of the Streamlit building block that will be visualized to screen |
+| `similarity_matrix`                     | `bool`              |       `None`                    |Whether to display similarity matrix or not|
+| `show_algo_select`                      |  `bool`             |`True`                           | Whether to show dist algo select or not |
+| `show_table`                            | `bool`              |   `True`                        | Whether show to predicted pandas table or not|
+| `threshold`                             | `float`             |  `0.5`                          | Threshold for displaying result red on screen |
+| `set_wide_layout_CSS`                   |  `bool`             |  `True`                         | Whether to inject custom CSS or not.
+|     `key`                               |  `str`              | `"NLU_streamlit"`               | Key for the Streamlit elements drawn
+| `generate_code_sample`                  |  `bool`             |  `False`                        | Display Python code snippets above visualizations that can be used to re-create the visualization
+| `show_model_select`                     |  `bool`             | `True`                          | Show a model selection dropdowns that makes any of the 1000+ models avaiable in 1 click
+| `model_select_position`                 |  `str`              |   `'side'`                      | [Whether to output the positions of predictions or not, see `pipe.predict(positions=true`) for more info](https://nlu.johnsnowlabs.com/docs/en/predict_api#output-positions-parameter)  |
+|`write_raw_pandas`                       | `bool`              |  `False`                        | Write the raw pandas similarity df to streamlit
+|`display_embed_information`              | `bool`              |  `True`                         | Show additional embedding information like `dimension`, `nlu_reference`, `spark_nlp_reference`, `sotrage_reference`, `modelhub link` and more.
+|`dist_metrics`                           | `List[str]`         |  `['cosine']`                   | Which distance metrics to apply. If multiple are selected, there will be multiple plots for each embedding and metric. `num_plots = num_metric*num_embeddings`. Can use multiple at the same time, any of of `cityblock`,`cosine`,`euclidean`,`l2`,`l1`,`manhattan`,`nan_euclidean`. Provided via [Sklearn `metrics.pairwise` package](https://scikit-learn.org/stable/modules/classes.html#module-sklearn.metrics.pairwise)
+|`num_cols`                               | `int`               |  `2`                            |  How many columns should for the layout in streamlit when rendering the similarity matrixes.
+|`display_scalar_similarities`            | `bool`              |  `False`                        | Display scalar simmilarities in an additional field.
+|`display_similarity_summary`             | `bool`              |  `False`                        | Display summary of all similarities for all embeddings and metrics.
+| `show_logo`             |  `bool`                             | `True`                                                                                   | Show logo
+| `display_infos`         |  `bool`                             | `False`                                                                                  | Display additonal information about ISO codes and the NLU namespace structure.
+
+
+
+
+
+
+
+
+
+
+
+## 
+In addition have added some new features to our T5 Transformer annotator to help with longer and more accurate text generation, trained some new multi-lingual models and pipelines in `Farsi`, `Hebrew`, `Korean`, and `Turkish`.
+
+
+
+## T5 Model Improvements
+* Add 6 new features to T5Transformer for longer and better text generation
+  - doSample: Whether or not to use sampling; use greedy decoding otherwise
+  - temperature: The value used to module the next token probabilities
+  - topK: The number of highest probability vocabulary tokens to keep for top-k-filtering
+  - topP: If set to float < 1, only the most probable tokens with probabilities that add up to ``top_p`` or higher are kept for generation
+  - repetitionPenalty: The parameter for repetition penalty. 1.0 means no penalty. See [CTRL: A Conditional Transformer Language Model for Controllable Generation](https://arxiv.org/abs/1909.05858) paper for more details
+  - noRepeatNgramSize: If set to int > 0, all ngrams of that size can only occur once
+
+
+## New Open Source Model in NLU 3.0.2
+New multilingual models and pipelines for `Farsi`, `Hebrew`, `Korean`, and `Turkish`
+
+| Model       |NLU Reference         | Spark NLP Reference               | Lang |  
+|:----------|:-------------------------------------|:-----------------|:------|
+| ClassifierDLModel       | [`tr.classify.news`](https://nlp.johnsnowlabs.com/2021/05/03/classifierdl_bert_news_tr.html) |        [classifierdl_bert_news](https://nlp.johnsnowlabs.com/2021/05/03/classifierdl_bert_news_tr.html) |  `tr`
+| UniversalSentenceEncoder| [`xx.use.multi`](https://nlp.johnsnowlabs.com/2021/05/06/tfhub_use_multi_xx.html) | [tfhub_use_multi](https://nlp.johnsnowlabs.com/2021/05/06/tfhub_use_multi_xx.html) |  `xx`
+| UniversalSentenceEncoder| [`xx.use.multi_lg`](https://nlp.johnsnowlabs.com/2021/05/06/tfhub_use_multi_lg_xx.html) | [tfhub_use_multi_lg](https://nlp.johnsnowlabs.com/2021/05/06/tfhub_use_multi_lg_xx.html) |  `xx`
+
+| Pipeline                  |NLU Reference| Spark NLP Reference               | Lang |  
+|:-----------------------------|:-------------------|:-----------------|:------|
+| PretrainedPipeline | [`fa.ner.dl`](https://nlp.johnsnowlabs.com/2021/04/26/recognize_entities_dl_fa.html) | [recognize_entities_dl](https://nlp.johnsnowlabs.com/2021/04/26/recognize_entities_dl_fa.html) |`fa`
+| PretrainedPipeline | [`he.explain_document`](https://nlp.johnsnowlabs.com/2021/04/30/explain_document_lg_he.html) | [explain_document_lg](https://nlp.johnsnowlabs.com/2021/04/30/explain_document_lg_he.html) |`he`
+| PretrainedPipeline | [`ko.explain_document`](https://nlp.johnsnowlabs.com/2021/04/30/explain_document_lg_ko.html) | [explain_document_lg](https://nlp.johnsnowlabs.com/2021/04/30/explain_document_lg_ko.html) |`ko`
+
+
+
+## New Healthcare Models in NLU 3.0.2
+Five new resolver models:
+- `en.resolve.umls`: This model returns CUI (concept unique identifier) codes for Clinical Findings, Medical Devices, Anatomical Structures and Injuries & Poisoning terms.
+- `en.resolve.umls.findings`: This model returns CUI (concept unique identifier) codes for 200K concepts from clinical findings.
+- `en.resolve.loinc`: Map clinical NER entities to LOINC codes using sbiobert.
+- `en.resolve.loinc.bluebert`: Map clinical NER entities to LOINC codes using sbluebert.
+- `en.resolve.HPO`: This model returns Human Phenotype Ontology (HPO) codes for phenotypic abnormalities encountered in human diseases. It also returns associated codes from the following vocabularies for each HPO code:
+
+[Related NLU Notebook](https://colab.research.google.com/github/JohnSnowLabs/nlu/blob/master/examples/release_notebooks/NLU_3_0_2_release_notebook.ipynb)
+
+|Model| NLU Reference                           | Spark NLP Reference                                 |
+|--------|-----------------------------------|-----------------------------------------|
+|Resolver|[`en.resolve.umls`                    ](https://nlp.johnsnowlabs.com/2021/05/16/sbiobertresolve_umls_major_concepts_en.html)| [`sbiobertresolve_umls_major_concepts`](https://nlp.johnsnowlabs.com/2021/05/16/sbiobertresolve_umls_major_concepts_en.html)     |
+|Resolver|[`en.resolve.umls.findings`           ](https://nlp.johnsnowlabs.com/2021/05/16/sbiobertresolve_umls_findings_en.html)| [`sbiobertresolve_umls_findings`](https://nlp.johnsnowlabs.com/2021/05/16/sbiobertresolve_umls_findings_en.html)           |
+|Resolver|[`en.resolve.loinc`                   ](https://nlp.johnsnowlabs.com/2021/04/29/sbiobertresolve_loinc_en.html)| [`sbiobertresolve_loinc`](https://nlp.johnsnowlabs.com/2021/04/29/sbiobertresolve_loinc_en.html)                   |
+|Resolver|[`en.resolve.loinc.biobert`           ](https://nlp.johnsnowlabs.com/2021/04/29/sbiobertresolve_loinc_en.html)| [`sbiobertresolve_loinc`](https://nlp.johnsnowlabs.com/2021/04/29/sbiobertresolve_loinc_en.html)                   |
+|Resolver|[`en.resolve.loinc.bluebert`          ](https://nlp.johnsnowlabs.com/2021/04/29/sbluebertresolve_loinc_en.html)| [`sbluebertresolve_loinc`](https://nlp.johnsnowlabs.com/2021/04/29/sbluebertresolve_loinc_en.html)                  |
+|Resolver|[`en.resolve.HPO`                     ](https://nlp.johnsnowlabs.com/2021/05/16/sbiobertresolve_HPO_en.html)| [`sbiobertresolve_HPO`](https://nlp.johnsnowlabs.com/2021/05/16/sbiobertresolve_HPO_en.html)                     |
+
+
+
+[en.resolve.HPO](https://nlp.johnsnowlabs.com/2021/05/16/sbiobertresolve_HPO_en.html)
+
+```python
+nlu.load('med_ner.jsl.wip.clinical en.resolve.HPO').viz("""These disorders include cancer, bipolar disorder, schizophrenia, autism, Cri-du-chat syndrome,
+ myopia, cortical cataract-linked Alzheimer's disease, and infectious diseases""")
+```
+![text_class1](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/images/releases/3_0_2/HPO.png)
+
+
+
+[en.resolve.loinc.bluebert](https://nlp.johnsnowlabs.com/2021/04/29/sbluebertresolve_loinc_en.html)
+```python
+nlu.load('med_ner.jsl.wip.clinical en.resolve.loinc.bluebert').viz("""A 28-year-old female with a history of gestational diabetes mellitus diagnosed eight years prior to presentation and
+subsequent type two diabetes mellitus (TSS2DM), one prior episode of HTG-induced pancreatitis three years prior to presentation, associated with an acute 
+hepatitis, and obesity with a body mass index (BMI) of 33.5 kg/m2, presented with a one-week history of polyuria, polydipsia, poor appetite, and vomiting.""")
+```
+![text_class1](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/images/releases/3_0_2/LIONC_blue.png)
+
+
+
+[en.resolve.umls.findings](https://nlp.johnsnowlabs.com/2021/05/16/sbiobertresolve_umls_findings_en.html)
+```python
+nlu.load('med_ner.jsl.wip.clinical en.resolve.umls.findings').viz("""A 28-year-old female with a history of gestational diabetes mellitus diagnosed eight years prior to presentation and
+subsequent type two diabetes mellitus (TSS2DM), one prior episode of HTG-induced pancreatitis three years prior to presentation, associated with an acute 
+hepatitis, and obesity with a body mass index (BMI) of 33.5 kg/m2, presented with a one-week history of polyuria, polydipsia, poor appetite, and vomiting."""
+)
+```
+![text_class1](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/images/releases/3_0_2/umls_finding.png)
+
+
+[en.resolve.umls](https://nlp.johnsnowlabs.com/2021/05/16/sbiobertresolve_umls_major_concepts_en.html)
+```python
+nlu.load('med_ner.jsl.wip.clinical en.resolve.umls').viz("""A 28-year-old female with a history of gestational diabetes mellitus diagnosed eight years prior to presentation and
+subsequent type two diabetes mellitus (TSS2DM), one prior episode of HTG-induced pancreatitis three years prior to presentation, associated with an acute 
+hepatitis, and obesity with a body mass index (BMI) of 33.5 kg/m2, presented with a one-week history of polyuria, polydipsia, poor appetite, and vomiting.""")
+```
+![text_class1](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/images/releases/3_0_2/umls.png)
+
+
+
+
+[en.resolve.loinc](https://nlp.johnsnowlabs.com/2021/04/29/sbiobertresolve_loinc_en.html)
+```python
+nlu.load('med_ner.jsl.wip.clinical en.resolve.loinc').predict("""A 28-year-old female with a history of gestational diabetes mellitus diagnosed eight years prior to presentation and
+subsequent type two diabetes mellitus (TSS2DM), one prior episode of HTG-induced pancreatitis three years prior to presentation, associated with an acute 
+hepatitis, and obesity with a body mass index (BMI) of 33.5 kg/m2, presented with a one-week history of polyuria, polydipsia, poor appetite, and vomiting.""")
+```
+![text_class1](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/images/releases/3_0_2/LIONC.png)
+
+
+
+[en.resolve.loinc.biobert](https://nlp.johnsnowlabs.com/2021/04/29/sbiobertresolve_loinc_en.html)
+```python
+nlu.load('med_ner.jsl.wip.clinical en.resolve.loinc.biobert').predict("""A 28-year-old female with a history of gestational diabetes mellitus diagnosed eight years prior to presentation and
+subsequent type two diabetes mellitus (TSS2DM), one prior episode of HTG-induced pancreatitis three years prior to presentation, associated with an acute 
+hepatitis, and obesity with a body mass index (BMI) of 33.5 kg/m2, presented with a one-week history of polyuria, polydipsia, poor appetite, and vomiting.""")
+```
+![text_class1](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/images/releases/3_0_2/LIONC_BIOBERT.png)
+
+
+
+
+* [140+ tutorials](https://github.com/JohnSnowLabs/nlu/tree/master/examples)
+* [New Streamlit visualizations docs](https://nlu.johnsnowlabs.com/docs/en/streamlit_viz_examples)
+* The complete list of all 1100+ models & pipelines in 192+ languages is available on [Models Hub](https://nlp.johnsnowlabs.com/models).
+* [Spark NLP publications](https://medium.com/spark-nlp)
+* [NLU in Action](https://nlp.johnsnowlabs.com/demo)
+* [NLU documentation](https://nlu.johnsnowlabs.com/docs/en/install)
+* [Discussions](https://github.com/JohnSnowLabs/spark-nlp/discussions) Engage with other community members, share ideas, and show off how you use Spark NLP and NLU!
+
+# 1 line Install NLU on Google Colab
+```!wget https://setup.johnsnowlabs.com/nlu/colab.sh  -O - | bash```
+# 1 line Install NLU on Kaggle
+```!wget https://setup.johnsnowlabs.com/nlu/kaggle.sh  -O - | bash```
+# Install via PIP
+```! pip install nlu pyspark==3.0.1```
+
+
+
+
+
+
 # NLU 3.0.1 Release Notes
 We are very excited to announce NLU 3.0.1 has been released!
 This is one of the most visually appealing releases, with the integration of the [Spark-NLP-Display](https://nlp.johnsnowlabs.com/docs/en/display) library and visualizations for `dependency trees`, `entity resolution`, `entity assertion`, `relationship between entities` and `named 
