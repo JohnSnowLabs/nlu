@@ -3,14 +3,14 @@ from sparknlp_jsl.base import *
 class SentimentDl:
     @staticmethod
     def get_default_model():
-        return   GenericClassifierModel.pretrained() \
+        return GenericClassifierModel.pretrained() \
             .setInputCols("sentence_embeddings") \
             .setOutputCol("category") \
 
 
     @staticmethod
     def get_pretrained_model(name, language):
-        return   GenericClassifierModel.pretrained(name,language) \
+        return GenericClassifierModel.pretrained(name,language) \
             .setInputCols("sentence_embeddings") \
             .setOutputCol("category") \
 

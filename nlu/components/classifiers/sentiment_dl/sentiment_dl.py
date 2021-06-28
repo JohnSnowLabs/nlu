@@ -3,14 +3,14 @@ from sparknlp.annotator import *
 class SentimentDl:
     @staticmethod
     def get_default_model():
-        return   SentimentDLModel.pretrained() \
+        return SentimentDLModel.pretrained() \
             .setInputCols("sentence_embeddings") \
             .setOutputCol("category") \
 
 
     @staticmethod
     def get_pretrained_model(name, language, bucket=None):
-        return   SentimentDLModel.pretrained(name,language,bucket) \
+        return SentimentDLModel.pretrained(name,language,bucket) \
             .setInputCols("sentence_embeddings") \
             .setOutputCol("category") \
 

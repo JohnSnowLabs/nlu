@@ -13,7 +13,7 @@ class ModelHubUtils():
         NLU_ref : which nlu model's nlp refrence to return.
         lang : what language is the model in.
         """
-        nlu_namespaces_to_check = [nlu.NameSpace.pretrained_pipe_references,nlu.NameSpace.pretrained_models_references,nlu.NameSpace.pretrained_healthcare_model_references,nlu.NameSpace.licensed_storage_ref_2_nlu_ref ,nlu.NameSpace.storage_ref_2_nlu_ref ]#]
+        nlu_namespaces_to_check = [nlu.Spellbook.pretrained_pipe_references, nlu.Spellbook.pretrained_models_references, nlu.Spellbook.pretrained_healthcare_model_references, nlu.Spellbook.licensed_storage_ref_2_nlu_ref , nlu.Spellbook.storage_ref_2_nlu_ref]#]
         for dict_ in nlu_namespaces_to_check:
             if lang:
                 if lang in dict_.keys():
@@ -26,7 +26,7 @@ class ModelHubUtils():
                         for reference in dict_[lang]:
                             if reference ==nlu_ref:
                                 return  dict_[lang][reference]
-        for _nlp_ref, nlp_ref_type in nlu.NameSpace.component_alias_references.items():
+        for _nlp_ref, nlp_ref_type in nlu.Spellbook.component_alias_references.items():
             if _nlp_ref == nlu_ref : return  nlp_ref_type[0]
 
         return ''

@@ -50,10 +50,10 @@ class WordEmbeddingManifoldStreamlitBlock():
         # if show_logo :VizUtilsStreamlitOS.show_logo()
 
         # VizUtilsStreamlitOS.loaded_word_embeding_pipes = []
-        loaded_word_embeding_pipes = []
 
 
         data = st.text_area('Enter N texts, seperated by new lines to visualize Word Embeddings for ','\n'.join(default_texts))
+        if len(data) > MAX_DISPLAY_NUM : data = data[:MAX_DISPLAY_NUM]
         data_split = data.split("\n")
         while '' in data_split : data_split.remove('')
         data       = data_split.copy()
@@ -103,11 +103,12 @@ class WordEmbeddingManifoldStreamlitBlock():
             loaded_embed_nlu_refs.sort()
             if model_select_position =='side':
                 embed_algo_selection   = st.sidebar.multiselect("Pick additional Word Embeddings for the Dimension Reduction",options=emb_components_usable,default=loaded_embed_nlu_refs,key = key)
+                embed_algo_selection=[embed_algo_selection[-1]]
             else :
                 exp = st.beta_expander("Pick additional Word Embeddings")
                 embed_algo_selection   = exp.multiselect("Pick additional Word Embeddings for the Dimension Reduction",options=emb_components_usable,default=loaded_embed_nlu_refs,key = key)
+                embed_algo_selection=[embed_algo_selection[-1]]
             embed_algos_to_load = list(set(embed_algo_selection) - set(loaded_embed_nlu_refs))
-
         for embedder in embed_algos_to_load:new_embed_pipes.append(nlu.load(embedder))# + f' {" ".join(additional_classifiers_for_coloring)}'))
         StreamlitVizTracker.loaded_word_embeding_pipes+=new_embed_pipes
         if pipe not in StreamlitVizTracker.loaded_word_embeding_pipes: StreamlitVizTracker.loaded_word_embeding_pipes.append(pipe)

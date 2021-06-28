@@ -27,4 +27,4 @@ class WordSegmenter:
     def get_default_word_seg_for_lang(language):
         import nlu
         # get default reference
-        return nlu.NameSpace.pretrained_models_references[language][language+'.'+'segment_words']
+        return nlu.Spellbook.pretrained_models_references[language][language + '.' + 'segment_words']

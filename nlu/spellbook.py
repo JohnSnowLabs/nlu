@@ -436,7 +436,7 @@ class Spellbook():
 
             # 2.7 lang classifiers
 
-            'xx.classify.lang.': 'detect_language_375',  # default lang classifer
+            'xx.classify.lang': 'detect_language_375',  # default lang classifer
             'xx.classify.lang.21': 'detect_language_21',
             'xx.classify.lang.43': 'detect_language_43',
             'xx.classify.lang.95': 'detect_language_95',
@@ -2039,6 +2039,7 @@ class Spellbook():
             "en.embed.distilbert.base"  :'distilbert_base_cased',
             "en.embed.distilbert.base.uncased"  :'distilbert_base_uncased',
             "en.embed.distilroberta"  :'distilroberta_base',
+            'roberta': 'distilroberta_base',
             "en.embed.roberta"  :'roberta_base',
             "en.embed.roberta.base"  :'roberta_base',
             "en.embed.roberta.large"  :'roberta_large',
@@ -2404,7 +2405,7 @@ class Spellbook():
             'tr.ner.bert': 'turkish_ner_bert' , # ner tr default
             'tr.classify.news'  : 'classifierdl_bert_news',
             'tr.embed.bert'  : 'bert_base_turkish_cased',
-            'tr.embed.bert.uncasde'  : '	bert_base_turkish_uncased',
+            'tr.embed.bert.uncased'  : '	bert_base_turkish_uncased',
         },
         'uk': {
             'uk.lemma': 'lemma',  # default uk lemma
@@ -2517,7 +2518,7 @@ class Spellbook():
             'xx.marian': 'opus_mt_en_fr',
 
             # 3.1
-            "xx.embed.distilbert."  :'distilbert_base_multilingual_cased',
+            "xx.embed.distilbert"  :'distilbert_base_multilingual_cased',
             "xx.embed.xlm"  :'xlm_roberta_base',
             "xx.embed.xlm.base"  :'xlm_roberta_base',
             "xx.embed.xlm.twitter"  :'twitter_xlm_roberta_base',

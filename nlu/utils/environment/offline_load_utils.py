@@ -52,11 +52,12 @@ def verify_and_create_model(model_path:str, nlu_referenced_requirements = [], nl
         if type(m) not in [SentenceEmbeddings,ChunkEmbeddings]  and storage_ref != -1 and feeds_from_embeddings:
             # Check storage ref is matching either some NLU or NLP ref.
             if not check_if_storage_ref_exists(storage_ref) :
-                raise ValueError("When loading a model from disk with embeddings in it's inputs or you must set the Storage Reference attribute on the model."
-                                 "Additionaly, the configured Storage Reference must either match to a NLU-Model-Reference or a Spark-NLP-Model-Reference."
-                                 "To view all references visit the modelshub or view https://github.com/JohnSnowLabs/nlu/blob/master/nlu/spellbook.py "
-                                 "You can set a storage reference via calling model.setStorageRef(storage_reference)"
-                                 "To disable this check, run nlu.disable_hard_offline_checks()")
+                pass
+            raise ValueError("When loading a model from disk with embeddings in it's inputs or you must set the Storage Reference attribute on the model."
+                             "Additionaly, the configured Storage Reference must either match to a NLU-Model-Reference or a Spark-NLP-Model-Reference."
+                             "To view all references visit the modelshub or view https://github.com/JohnSnowLabs/nlu/blob/master/nlu/spellbook.py "
+                             "You can set a storage reference via calling model.setStorageRef(storage_reference)"
+                             "To disable this check, run nlu.disable_hard_offline_checks()")
 
     return c
 def resolve_annotator_class_to_nlu_component_info(anno_class ='LemmatizerModel'):

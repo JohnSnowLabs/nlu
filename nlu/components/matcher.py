@@ -1,7 +1,7 @@
 from nlu.pipe.pipe_components import SparkNLUComponent
 
 class Matcher(SparkNLUComponent):
-    def __init__(self, annotator_class='date_matcher', language ='en', component_type='matcher', get_default=False,nlp_ref ='',model = None, nlu_ref='', dataset='' , is_licensed=False):
+    def __init__(self, annotator_class='date_matcher', language ='en', component_type='matcher', get_default=False,nlp_ref ='',model = None, nlu_ref='', dataset='' , is_licensed=False,loaded_from_pretrained_pipe=False):
 
         if 'date' in nlp_ref or 'date' in nlu_ref : annotator_class= 'date_matcher'
         elif 'regex' in nlp_ref or 'regex' in nlu_ref : annotator_class= 'regex_matcher'
