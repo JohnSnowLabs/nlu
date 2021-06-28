@@ -19,7 +19,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 
 REQUIRED_PKGS = [
     # 'pyspark>=2.4.0,<2.5',
-    'spark-nlp>=3.0.0,<3.1.0',
+    'spark-nlp>=3.1.0,<3.2.0',
     'numpy',
     'pyarrow>=0.16.0',
     'pandas',
@@ -47,12 +47,12 @@ setup(
     # For a discussion on single-sourcing the version across setup.py and the
     # project code, see
     # https://packaging.python.org/en/latest/single_source_version.html
-    version='3.0.2',  # Required
+    version='3.1.0',  # Required
 
     # This is a one-line description or tagline of what your project does. This
     # corresponds to the "Summary" metadata field:
     # https://packaging.python.org/specifications/core-metadata/#summary
-    description='John Snow Labs NLU provides state of the art algorithms for NLP&NLU with hundreds of pretrained models in 60+ languages. It enables swift and simple development and research with its powerful Pythonic and Keras inspired API. It is powerd by John Snow Labs powerful Spark NLP library.',
+    description='John Snow Labs NLU provides state of the art algorithms for NLP&NLU with 1000+ of pretrained models in 200+ languages. It enables swift and simple development and research with its powerful Pythonic and Keras inspired API. It is powerd by John Snow Labs powerful Spark NLP library.',
 
     # This is an optional longer description of your project that represents
     # the body of text which users will see when they visit PyPI.
@@ -157,6 +157,10 @@ setup(
         ('', ['nlu/components/embeddings/use/component_infos.json']),
         ('', ['nlu/components/embeddings/sentence_bert/component_infos.json']),
 
+        ('', ['nlu/components/embeddings/distil_bert/component_infos.json']),
+        ('', ['nlu/components/embeddings/roberta/component_infos.json']),
+        ('', ['nlu/components/embeddings/xlm/component_infos.json']),
+
         #Seq2Seq
 
         ('', ['nlu/components/seq2seqs/marian/component_infos.json']),
@@ -200,6 +204,8 @@ setup(
         #chunker
         ('', ['nlu/components/chunkers/default_chunker/component_infos.json']),
         ('', ['nlu/components/chunkers/ngram/component_infos.json']),
+        ('', ['nlu/components/chunkers/contextual_parser/component_infos.json']),
+
         ('', ['nlu/components/embeddings_chunks/chunk_embedder/component_infos.json']),
 
 
@@ -211,6 +217,7 @@ setup(
         ('', ['nlu/components/utils/sentence_detector/component_infos.json']),
         ('', ['nlu/components/utils/sentence_embeddings/component_infos.json']),
         ('', ['nlu/components/utils/ner_to_chunk_converter/component_infos.json']),
+        ('', ['nlu/components/utils/chunk_merger/component_infos.json']),
 
         ('', ['nlu/components/utils/token_assembler/component_infos.json']),
         ('', ['nlu/components/deidentifiers/deidentifier/component_infos.json']),
@@ -219,6 +226,7 @@ setup(
         ('', ['nlu/components/resolutions/chunk_entity_resolver/component_infos.json']),
         ('', ['nlu/components/resolutions/sentence_entity_resolver/component_infos.json']),
         ('', ['nlu/components/assertions/assertion_dl/component_infos.json']),
+        ('', ['nlu/components/assertions/assertion_log_reg/component_infos.json']),
         ('', ['nlu/components/classifiers/generic_classifier/component_infos.json']),
         ('', ['nlu/components/utils/feature_assembler/component_infos.json']),
         ('', ['nlu/components/classifiers/ner_healthcare/component_infos.json']),
