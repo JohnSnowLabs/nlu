@@ -1,0 +1,23 @@
+{
+  "name": "chunk_merger",
+  "description": "todo",
+  "trainable": false,
+  "output_level": "chunk",
+  "outputs": [
+    "merged_entities"
+  ],
+  "inputs": [
+    "entities"
+  ],
+  "type": "util",
+  "spark_input_column_names": [
+    "entities"
+  ],
+  "spark_output_column_names": [
+    "merged_entities"
+  ],
+  "provider": "sparknlp",
+  "license": "licensed",
+  "computation_context": "spark",
+  "output_context": "spark"
+}

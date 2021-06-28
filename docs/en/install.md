@@ -141,7 +141,7 @@ Detailed information about NLU APIs, concepts, components and more can be found 
 {:.list4}
 - [The NLU load function](load_api)
 - [The NLU predict function](predict_api)
-- [The NLU components namespace](https://nlu.johnsnowlabs.com/docs/en/namespace)
+- [The NLU components spellbook](https://nlu.johnsnowlabs.com/docs/en/spellbook)
 - [NLU Notebooks](notebooks)
 
 </div></div>

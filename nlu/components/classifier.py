@@ -24,7 +24,14 @@ class Classifier(SparkNLUComponent):
             elif 'ner' in nlu_ref: annotator_class= 'ner'
             elif 'ner' in nlp_ref: annotator_class= 'ner'
 
-        if model != None : self.model = model
+        if model != None :
+            self.model = model
+            from sparknlp.annotator import NerDLModel,NerCrfModel
+            if isinstance(self.model, (NerDLModel,NerCrfModel)): self.model.setIncludeConfidence(True)
+            elif is_licensed :
+                from sparknlp_jsl.annotator import MedicalNerModel
+                if isinstance(self.model, MedicalNerModel): self.model.setIncludeConfidence(True)
+
         else :
             if 'sentiment' in annotator_class and 'vivekn' not in annotator_class:
                 from nlu import SentimentDl
@@ -42,16 +49,21 @@ class Classifier(SparkNLUComponent):
                 elif is_licensed : self.model = NERDL.get_pretrained_model(nlp_ref, language, bucket='clinical/models')
                 elif get_default : self.model = NERDL.get_default_model()
                 else : self.model = NERDL.get_pretrained_model(nlp_ref, language)
+                if hasattr(self, 'model'): self.model.setIncludeConfidence(True)
+
             elif 'ner.crf' in annotator_class:
                 from nlu import NERDLCRF
                 if get_default : self.model = NERDLCRF.get_default_model()
                 else : self.model = NERDLCRF.get_pretrained_model(nlp_ref, language)
+                if hasattr(self, 'model'): self.model.setIncludeConfidence(True)
             elif ('classifier_dl' in annotator_class or annotator_class == 'toxic') and not 'multi' in annotator_class:
                 from nlu import ClassifierDl
                 if trainable: self.model = ClassifierDl.get_trainable_model()
                 elif is_licensed : self.model = ClassifierDl.get_pretrained_model(nlp_ref, language, bucket='clinical/models')
                 elif get_default : self.model = ClassifierDl.get_default_model()
                 else : self.model = ClassifierDl.get_pretrained_model(nlp_ref, language)
+                if hasattr(self, 'model'): self.model.setIncludeConfidence(True)
+
             elif 'language_detector' in annotator_class:
                 from nlu import LanguageDetector
                 if get_default : self.model = LanguageDetector.get_default_model()

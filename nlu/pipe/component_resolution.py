@@ -2,7 +2,8 @@
 Contains methods used to resolve a NLU reference to a NLU component.
 Handler for getting default components, etcc.
 '''
-
+from sparknlp.base import Finisher,EmbeddingsFinisher
+from sparknlp.annotator import SentenceEmbeddings
 
 # <<<Name parse procedure>>>
 #1.  parse NAMLE data and RETURN IT -> Detect if OC or Closed source (CS)
@@ -10,6 +11,9 @@ Handler for getting default components, etcc.
 # 2.1 if CS_annotator, then verify licsence/ authenticate, if not do the usual (Make sure all CS imports are in seperate files)
 #3. Put all components in NLU pipe and return it
 #
+
+
+
 
 
 # <<<Pythonify procedure>>>
@@ -37,7 +41,7 @@ from sparknlp.annotator import NerConverter, MultiClassifierDLModel, PerceptronM
 
 import nlu
 #NluError, all_components_info,
-from nlu import logger, Util, Embeddings, Classifier, NameSpace, ClassifierDl, \
+from nlu import logger, Util, Embeddings, Classifier, Spellbook, ClassifierDl, \
     NLUSentenceDetector, NGram, Seq2Seq, SpellChecker, Matcher
 from nlu.components import embeddings_chunker
 from nlu.components.labeled_dependency_parser import LabeledDependencyParser as LabledDepParser
@@ -46,7 +50,7 @@ from nlu.pipe.utils.pipe_utils import PipeUtils
 from nlu.pipe.utils.component_utils import ComponentUtils
 
 def load_offline_model(path):
-    c = offline_utils.verify_model(path)
+    c = offline_utils.verify_and_create_model(path)
     return c
 def parse_language_from_nlu_ref(nlu_ref):
     """Parse a ISO language identifier from a NLU reference which can be used to load a Spark NLP model"""
@@ -133,31 +137,31 @@ def resolve_storage_ref(lang, storage_ref,missing_component_type):
 
 
     # check if storage_ref is hardcoded
-    if lang in nlu.NameSpace.licensed_storage_ref_2_nlu_ref.keys():
-        if storage_ref in nlu.NameSpace.licensed_storage_ref_2_nlu_ref[lang].keys():
-            nlu_ref = nlu.NameSpace.licensed_storage_ref_2_nlu_ref[lang][storage_ref]
+    if lang in nlu.Spellbook.licensed_storage_ref_2_nlu_ref.keys():
+        if storage_ref in nlu.Spellbook.licensed_storage_ref_2_nlu_ref[lang].keys():
+            nlu_ref = nlu.Spellbook.licensed_storage_ref_2_nlu_ref[lang][storage_ref]
             is_licensed = False
-    elif lang in nlu.NameSpace.storage_ref_2_nlu_ref.keys():
-        if storage_ref in nlu.NameSpace.storage_ref_2_nlu_ref[lang].keys():
-            nlu_ref = nlu.NameSpace.storage_ref_2_nlu_ref[lang][storage_ref] # a HC model may use OS storage_ref_provider, so we dont know yet if it is licensed or not
+    elif lang in nlu.Spellbook.storage_ref_2_nlu_ref.keys():
+        if storage_ref in nlu.Spellbook.storage_ref_2_nlu_ref[lang].keys():
+            nlu_ref = nlu.Spellbook.storage_ref_2_nlu_ref[lang][storage_ref] # a HC model may use OS storage_ref_provider, so we dont know yet if it is licensed or not
     if nlu_ref is not None and 'xx.' in nlu_ref : lang = 'xx'
 
-    if lang in nlu.NameSpace.pretrained_models_references.keys() and nlu_ref in nlu.NameSpace.pretrained_models_references[lang].keys():
-        nlp_ref = nlu.NameSpace.pretrained_models_references[lang][nlu_ref]
-    elif lang in nlu.NameSpace.pretrained_healthcare_model_references.keys() and nlu_ref in nlu.NameSpace.pretrained_healthcare_model_references[lang].keys():
-        nlp_ref = nlu.NameSpace.pretrained_healthcare_model_references[lang][nlu_ref]
+    if lang in nlu.Spellbook.pretrained_models_references.keys() and nlu_ref in nlu.Spellbook.pretrained_models_references[lang].keys():
+        nlp_ref = nlu.Spellbook.pretrained_models_references[lang][nlu_ref]
+    elif lang in nlu.Spellbook.pretrained_healthcare_model_references.keys() and nlu_ref in nlu.Spellbook.pretrained_healthcare_model_references[lang].keys():
+        nlp_ref = nlu.Spellbook.pretrained_healthcare_model_references[lang][nlu_ref]
         is_licensed = True
 
 
     # check if storage_ref matches nlu_ref and get NLP_ref
-    elif lang in nlu.NameSpace.licensed_storage_ref_2_nlu_ref.keys():
-        if storage_ref in nlu.NameSpace.licensed_storage_ref_2_nlu_ref[lang].keys():
+    elif lang in nlu.Spellbook.licensed_storage_ref_2_nlu_ref.keys():
+        if storage_ref in nlu.Spellbook.licensed_storage_ref_2_nlu_ref[lang].keys():
             nlu_ref = storage_ref
-            nlp_ref = nlu.NameSpace.licensed_storage_ref_2_nlu_ref[lang][nlu_ref]
-    elif lang in nlu.NameSpace.pretrained_models_references.keys():
-        if storage_ref in nlu.NameSpace.pretrained_models_references[lang].keys():
+            nlp_ref = nlu.Spellbook.licensed_storage_ref_2_nlu_ref[lang][nlu_ref]
+    elif lang in nlu.Spellbook.pretrained_models_references.keys():
+        if storage_ref in nlu.Spellbook.pretrained_models_references[lang].keys():
             nlu_ref = storage_ref
-            nlp_ref = nlu.NameSpace.pretrained_models_references[lang][nlu_ref]
+            nlp_ref = nlu.Spellbook.pretrained_models_references[lang][nlu_ref]
 
 
 
@@ -190,7 +194,7 @@ def resolve_multi_lang_embed(language,sparknlp_reference):
     if language == 'ar' and 'glove' in sparknlp_reference : return 'arabic_w2v_cc_300d'
     else : return sparknlp_reference
 
-def nlu_ref_to_component(nlu_reference, detect_lang=False, authenticated=False, is_recursive_call=False):
+def  nlu_ref_to_component(nlu_reference, detect_lang=False, authenticated=False, is_recursive_call=False):
     '''
     This method implements the main namespace for all component names. It parses the input request and passes the data to a resolver method which searches the namespace for a Component for the input request
     It returns a list of NLU.component objects or just one NLU.component object alone if just one component was specified.
@@ -306,31 +310,31 @@ def resolve_component_from_parsed_query_data(language, component_type, dataset, 
     is_licensed = False
     # 0. check trainable references
     if trainable == True :
-        if nlu_ref in NameSpace.trainable_models.keys():
+        if nlu_ref in Spellbook.trainable_models.keys():
             component_kind = 'trainable_model'
-            nlp_ref = NameSpace.trainable_models[nlu_ref]
+            nlp_ref = Spellbook.trainable_models[nlu_ref]
             logger.info(f'Found Spark NLP reference in trainable models namespace = {nlp_ref}')
             resolved = True
             trainable=True
     # 1. check if pipeline references for resolution
-    if resolved == False and language in NameSpace.pretrained_pipe_references.keys():
-        if nlu_ref in NameSpace.pretrained_pipe_references[language].keys():
+    if resolved == False and language in Spellbook.pretrained_pipe_references.keys():
+        if nlu_ref in Spellbook.pretrained_pipe_references[language].keys():
             component_kind = 'pipe'
-            nlp_ref = NameSpace.pretrained_pipe_references[language][nlu_ref]
+            nlp_ref = Spellbook.pretrained_pipe_references[language][nlu_ref]
             logger.info(f'Found Spark NLP reference in pretrained pipelines namespace = {nlp_ref}')
             resolved = True
 
     # 2. check if model references for resolution
-    if resolved == False and language in NameSpace.pretrained_models_references.keys():
-        if nlu_ref in NameSpace.pretrained_models_references[language].keys():
+    if resolved == False and language in Spellbook.pretrained_models_references.keys():
+        if nlu_ref in Spellbook.pretrained_models_references[language].keys():
             component_kind = 'model'
-            nlp_ref = NameSpace.pretrained_models_references[language][nlu_ref]
+            nlp_ref = Spellbook.pretrained_models_references[language][nlu_ref]
             logger.info(f'Found Spark NLP reference in pretrained models namespace = {nlp_ref}')
             resolved = True
 
     # 3. check if alias/default references for resolution
-    if resolved == False and nlu_ref in NameSpace.component_alias_references.keys():
-        sparknlp_data = NameSpace.component_alias_references[nlu_ref]
+    if resolved == False and nlu_ref in Spellbook.component_alias_references.keys():
+        sparknlp_data = Spellbook.component_alias_references[nlu_ref]
         component_kind = sparknlp_data[1]
         nlp_ref = sparknlp_data[0]
         logger.info('Found Spark NLP reference in language free aliases namespace')
@@ -343,10 +347,10 @@ def resolve_component_from_parsed_query_data(language, component_type, dataset, 
 
 
     # 4. Check Healthcare Pipe Namespace
-    if resolved == False and language in NameSpace.pretrained_healthcare_pipe_references.keys():
-        if nlu_ref in NameSpace.pretrained_healthcare_pipe_references[language].keys():
+    if resolved == False and language in Spellbook.pretrained_healthcare_pipe_references.keys():
+        if nlu_ref in Spellbook.pretrained_healthcare_pipe_references[language].keys():
             component_kind = 'pipe'
-            nlp_ref = NameSpace.pretrained_healthcare_pipe_references[language][nlu_ref]
+            nlp_ref = Spellbook.pretrained_healthcare_pipe_references[language][nlu_ref]
             logger.info(f'Found Spark NLP reference in pretrained healthcare pipe namespace = {nlp_ref}')
             resolved = True
             is_licensed = True
@@ -354,17 +358,17 @@ def resolve_component_from_parsed_query_data(language, component_type, dataset, 
 
 
     # 5. Check Healthcare Model Namespace
-    if resolved == False and language in NameSpace.pretrained_healthcare_model_references.keys():
-        if nlu_ref in NameSpace.pretrained_healthcare_model_references[language].keys():
+    if resolved == False and language in Spellbook.pretrained_healthcare_model_references.keys():
+        if nlu_ref in Spellbook.pretrained_healthcare_model_references[language].keys():
             component_kind = 'model'
-            nlp_ref = NameSpace.pretrained_healthcare_model_references[language][nlu_ref]
+            nlp_ref = Spellbook.pretrained_healthcare_model_references[language][nlu_ref]
             logger.info(f'Found Spark NLP reference in pretrained healthcare model namespace = {nlp_ref}')
             resolved = True
             is_licensed = True
 
     # 6. Check Healthcare Aliases Namespace
-    if resolved == False and nlu_ref in NameSpace.healthcare_component_alias_references.keys():
-        sparknlp_data = NameSpace.healthcare_component_alias_references[nlu_ref]
+    if resolved == False and nlu_ref in Spellbook.healthcare_component_alias_references.keys():
+        sparknlp_data = Spellbook.healthcare_component_alias_references[nlu_ref]
         component_kind = sparknlp_data[1]
         nlp_ref = sparknlp_data[0]
         logger.info('Found Spark NLP reference in language free healthcare aliases namespace')
@@ -484,7 +488,7 @@ def construct_trainable_component_from_identifier(nlu_ref,nlp_ref):
         return None
 
 
-def construct_component_from_pipe_identifier(language, nlp_ref, nlu_ref,path=None, is_licensed=False):
+def construct_component_from_pipe_identifier(language, nlp_ref, nlu_ref,path=None, is_licensed=False, strict=False):
     '''
     # creates a list of components from a Spark NLP Pipeline reference
     # 1. download pipeline
@@ -497,7 +501,6 @@ def construct_component_from_pipe_identifier(language, nlp_ref, nlu_ref,path=Non
     :return: Each element of the SaprkNLP pipeline wrapped as a NLU componed inside of a list
     '''
 
-    # TODO check is IS LICESNED HERE! IF YES, JUST ADD BUCKET TO PRETRAIEND PIE DOWNLAOD AND DONE!
     logger.info("Starting Spark NLP to NLU pipeline conversion process")
     from sparknlp.pretrained import PretrainedPipeline, LightPipeline
     if 'language' in nlp_ref: language = 'xx'  # special edge case for lang detectors
@@ -518,11 +521,8 @@ def construct_component_from_pipe_identifier(language, nlp_ref, nlu_ref,path=Non
         logger.info(f"Extracting model from Spark NLP pipeline: {component} and creating Component")
         parsed = str(component).split('_')[0].lower()
         logger.info(f"Parsed Component for : {parsed}")
-        c_name = component.__class__.__name__
         if isinstance(component, NerConverter):
             constructed_components.append(Util(annotator_class='ner_converter', model=component, lang=language, nlu_ref=nlu_ref,nlp_ref=nlp_ref,loaded_from_pretrained_pipe=True))
-        elif parsed in NameSpace.classifiers:
-            constructed_components.append(nlu.Classifier(model=component, lang=language, nlu_ref=nlu_ref,nlp_ref=nlp_ref,loaded_from_pretrained_pipe=True))
         elif isinstance(component, MultiClassifierDLModel):
             constructed_components.append(nlu.Classifier(model=component, annotator_class='multi_classifier', lang=language, nlu_ref=nlu_ref,nlp_ref=nlp_ref,loaded_from_pretrained_pipe=True,do_ref_checks=False))
         elif isinstance(component, PerceptronModel):
@@ -551,6 +551,8 @@ def construct_component_from_pipe_identifier(language, nlp_ref, nlu_ref,path=Non
             constructed_components.append(NLUSentenceDetector(annotator_class='deep_sentence_detector', model=component,lang=language, nlu_ref=nlu_ref,nlp_ref=nlp_ref,loaded_from_pretrained_pipe=True))
         elif isinstance(component, SentenceDetector):
             constructed_components.append(NLUSentenceDetector(annotator_class='pragmatic_sentence_detector', model=component,lang=language, nlu_ref=nlu_ref,nlp_ref=nlp_ref,loaded_from_pretrained_pipe=True))
+        elif parsed in Spellbook.classifiers:
+            constructed_components.append(nlu.Classifier(model=component, lang=language, nlu_ref=nlu_ref,nlp_ref=nlp_ref,loaded_from_pretrained_pipe=True))
 
 
         elif isinstance(component, Chunker):
@@ -583,9 +585,9 @@ def construct_component_from_pipe_identifier(language, nlp_ref, nlu_ref,path=Non
         elif isinstance(component, LanguageDetectorDL):
             constructed_components.append(nlu.Classifier(model=component, annotator_class='language_detector',nlu_ref=nlu_ref))
         elif isinstance(component, DependencyParserModel):
-            constructed_components.append(UnlabledDepParser(model=component,nlu_ref=nlu_ref))
+            constructed_components.append(UnlabledDepParser(model=component,nlu_ref=nlu_ref,loaded_from_pretrained_pipe=True ))
         elif isinstance(component, TypedDependencyParserModel):
-            constructed_components.append(LabledDepParser(model=component,nlu_ref=nlu_ref))
+            constructed_components.append(LabledDepParser(model=component,nlu_ref=nlu_ref,loaded_from_pretrained_pipe=True,))
         elif isinstance(component, MultiClassifierDLModel):
             constructed_components.append(nlu.Classifier(model=component, nlp_ref='multiclassifierdl',nlu_ref=nlu_ref))
         elif isinstance(component, (SentimentDetectorModel,SentimentDLModel)):
@@ -594,29 +596,76 @@ def construct_component_from_pipe_identifier(language, nlp_ref, nlu_ref,path=Non
             constructed_components.append(nlu.Classifier(model=component, nlp_ref='vivekn',nlu_ref=nlu_ref))
 
         elif isinstance(component, NGram):
-            constructed_components.append(nlu.chunker.Chunker(model=component,nlu_ref=nlu_ref))
+            constructed_components.append(nlu.chunker.Chunker(annotator_class='ngram',model=component,nlu_ref=nlu_ref))
         elif isinstance(component, StopWordsCleaner):
-            constructed_components.append(nlu.StopWordsCleaner(model=component,nlu_ref=nlu_ref))
+            from nlu.components.stopwordscleaner import StopWordsCleaner as Stopw
+            constructed_components.append(Stopw(annotator_class='Stopw', model=component,nlu_ref=nlu_ref))
         elif isinstance(component, (TextMatcherModel, RegexMatcherModel, DateMatcher,MultiDateMatcher)) or parsed == 'match':
-            constructed_components.append(nlu.Matcher(model=component,nlu_ref=nlu_ref))
+            constructed_components.append(nlu.Matcher(model=component,nlu_ref=nlu_ref, loaded_from_pretrained_pipe=True))
         elif isinstance(component,(T5Transformer)):
             constructed_components.append(nlu.Seq2Seq(annotator_class='t5', model=component,nlu_ref=nlu_ref))
         elif isinstance(component,(MarianTransformer)):
             constructed_components.append(nlu.Seq2Seq(annotator_class='marian', model=component,nlu_ref=nlu_ref))
-        elif parsed in NameSpace.word_embeddings + NameSpace.sentence_embeddings:
-             constructed_components.append(nlu.Embeddings(model=component, lang=language, nlu_ref=nlu_ref,nlp_ref=nlp_ref,loaded_from_pretrained_pipe=True))
 
-        else:
-            logger.exception(
-                f"EXCEPTION: Could not infer component type for lang={language} and nlp_ref={nlp_ref} and model {component} during pipeline conversion,")
-            logger.info("USING DEFAULT ANNOTATOR TYPE Lemmatizer to fix issue")
+        elif isinstance(component, SentenceEmbeddings):
+            constructed_components.append(Util(annotator_class='sentence_embeddings', model=component,nlu_ref=nlu_ref))
+        elif parsed in Spellbook.word_embeddings + Spellbook.sentence_embeddings:
+             constructed_components.append(nlu.Embeddings(model=component, lang=language, nlu_ref=nlu_ref,nlp_ref=nlp_ref,loaded_from_pretrained_pipe=True))
+        elif isinstance(component, (Finisher, EmbeddingsFinisher)) : continue # Dont need fnishers since nlu handles finishign
+        elif is_licensed :
+            from sparknlp_jsl.annotator import AssertionDLModel, AssertionFilterer, AssertionLogRegModel, Chunk2Token, ChunkEntityResolverModel, ChunkFilterer
+            from sparknlp_jsl.annotator import ChunkMergeModel, ContextualParserModel, DeIdentificationModel, DocumentLogRegClassifierModel, DrugNormalizer
+            from sparknlp_jsl.annotator import GenericClassifierModel, IOBTagger, NerChunker, NerConverterInternal, NerDisambiguatorModel, ReIdentification
+            from sparknlp_jsl.annotator import MedicalNerModel,RelationExtractionModel, RelationExtractionDLModel, RENerChunksFilter, SentenceEntityResolverModel
+            #todo embelish ChunkFilterer, Chunk2Token, Disambeguiate, DrugNormalizer, RENerChunksfilterer, IOBTager(???)_, ReIdentify,, NERChunker
+            if isinstance(component, AssertionLogRegModel):
+                constructed_components.append(nlu.Asserter(annotator_class='assertion_dl',model=component,nlu_ref=nlu_ref, nlp_ref=nlp_ref ,loaded_from_pretrained_pipe=True))
+
+            elif isinstance(component, AssertionDLModel):
+                constructed_components.append(nlu.Asserter(annotator_class='assertion_log_reg',model=component,nlu_ref=nlu_ref, nlp_ref=nlp_ref ,loaded_from_pretrained_pipe=True))
+
+
+            elif isinstance(component, SentenceEntityResolverModel):
+                constructed_components.append(nlu.Resolver(annotator_class='sentence_entity_resolver',model=component,nlu_ref=nlu_ref, nlp_ref=nlp_ref ,loaded_from_pretrained_pipe=True))
+
+            elif isinstance(component, ChunkEntityResolverModel):
+                constructed_components.append(nlu.Resolver(annotator_class='chunk_entity_resolver',model=component,nlu_ref=nlu_ref, nlp_ref=nlp_ref ,loaded_from_pretrained_pipe=True))
+
+
+            elif isinstance(component, RelationExtractionModel):
+                constructed_components.append(nlu.Relation(annotator_class='relation_extractor',model=component,nlu_ref=nlu_ref, nlp_ref=nlp_ref ,loaded_from_pretrained_pipe=True))
+
+
+            elif isinstance(component, RelationExtractionDLModel):
+                constructed_components.append(nlu.Relation(annotator_class='relation_extractor_dl',model=component,nlu_ref=nlu_ref, nlp_ref=nlp_ref ,loaded_from_pretrained_pipe=True))
+
+            elif isinstance(component, MedicalNerModel):
+                constructed_components.append(nlu.Classifier(annotator_class='ner_healthcare',model=component,nlu_ref=nlu_ref, nlp_ref=nlp_ref ,loaded_from_pretrained_pipe=True))
+
+            elif isinstance(component, ChunkMergeModel):
+                constructed_components.append(nlu.Util(annotator_class='chunk_merger',model=component,nlu_ref=nlu_ref, nlp_ref=nlp_ref ,loaded_from_pretrained_pipe=True))
+
+            elif isinstance(component,ContextualParserModel):
+                from nlu.components.chunker import Chunker as Chu
+                constructed_components.append(Chu(annotator_class ='contextual_parser',model=component,nlu_ref=nlu_ref, nlp_ref=nlp_ref ,loaded_from_pretrained_pipe=True))
+
+
+            elif isinstance(component,DeIdentificationModel):
+                constructed_components.append(nlu.Deidentification(annotator_class ='deidentifier',model=component,nlu_ref=nlu_ref, nlp_ref=nlp_ref ,loaded_from_pretrained_pipe=True))
+
+
+
+            else :
+                if strict : raise Exception(f"Could not infer component type for lang={language} and nlp_ref={nlp_ref} of type={component} during pipeline conversion ")
+                logger.warning(f"Warning: Could not infer component type for lang={language} and nlp_ref={nlp_ref} and model {component} during pipeline conversion, using default type Normalizer")
+                constructed_components.append(nlu.normalizer.Normalizer(model=component))
+        else :
+            if strict : raise Exception(f"Could not infer component type for lang={language} and nlp_ref={nlp_ref} of type={component} during pipeline conversion ")
+            logger.warning(f"Warning: Could not infer component type for lang={language} and nlp_ref={nlp_ref} and model {component} during pipeline conversion, using default type Normalizer")
             constructed_components.append(nlu.normalizer.Normalizer(model=component))
 
         logger.info(f"Extracted into NLU Component type : {parsed}", )
-        if None in constructed_components:
-            logger.exception(
-                f"EXCEPTION: Could not infer component type for lang={language} and nlp_ref={nlp_ref} during pipeline conversion,")
-            return None
+        if None in constructed_components: raise Exception(f"Could not infer component type for lang={language} and nlp_ref={nlp_ref} during pipeline conversion,")
 
 
     return PipeUtils.enforece_AT_embedding_provider_output_col_name_schema_for_list_of_components(ComponentUtils.set_storage_ref_attribute_of_embedding_converters(constructed_components))
@@ -639,31 +688,31 @@ def construct_component_from_identifier(language, component_type='', dataset='',
     logger.info(f'Creating singular NLU component for type={component_type} sparknlp_ref={nlp_ref} , nlu_ref={nlu_ref} dataset={dataset}, language={language} ' )
     try:
         if 'assert' in component_type:
-            return nlu.Asserter(nlp_ref=nlp_ref, nlu_ref=nlu_ref, language=language,get_default=False, is_licensed=is_licensed)
+            return nlu.Asserter(nlp_ref=nlp_ref, nlu_ref=nlu_ref, lang=language, get_default=False, is_licensed=is_licensed)
         elif 'resolve' in component_type or 'resolve' in nlu_ref:
             return nlu.Resolver(nlp_ref=nlp_ref, nlu_ref=nlu_ref, language=language,get_default=False, is_licensed=is_licensed)
         elif 'relation' in nlu_ref:
-            return nlu.Relation(nlp_ref=nlp_ref, nlu_ref=nlu_ref, language=language,get_default=False, is_licensed=is_licensed)
+            return nlu.Relation(nlp_ref=nlp_ref, nlu_ref=nlu_ref, lang=language, get_default=False, is_licensed=is_licensed)
         elif 'de_identify' in nlu_ref and 'ner' not in nlu_ref:
-            return nlu.Deidentification(nlp_ref=nlp_ref, nlu_ref=nlu_ref, language=language,get_default=False, is_licensed=is_licensed)
+            return nlu.Deidentification(nlp_ref=nlp_ref, nlu_ref=nlu_ref, lang=language, get_default=False, is_licensed=is_licensed)
 
 
 
-        elif any(x in NameSpace.seq2seq for x in [nlp_ref, nlu_ref, dataset, component_type, ]):
+        elif any(x in Spellbook.seq2seq for x in [nlp_ref, nlu_ref, dataset, component_type, ]):
             return Seq2Seq(annotator_class=component_type, language=language, get_default=False, nlp_ref=nlp_ref,configs=dataset, is_licensed=is_licensed)
 
         # if any([component_type in NameSpace.word_embeddings,dataset in NameSpace.word_embeddings, nlu_ref in NameSpace.word_embeddings, nlp_ref in NameSpace.word_embeddings]):
 
-        elif any(x in NameSpace.classifiers for x in [nlp_ref, nlu_ref, dataset, component_type, ] + dataset.split('_')):
+        elif any(x in Spellbook.classifiers for x in [nlp_ref, nlu_ref, dataset, component_type, ] + dataset.split('_')):
             return Classifier(get_default=False, nlp_ref=nlp_ref, nlu_ref=nlu_ref, language=language, is_licensed=is_licensed)
 
 
-        elif any(x in NameSpace.word_embeddings and x not in NameSpace.classifiers for x in
+        elif any(x in Spellbook.word_embeddings and x not in Spellbook.classifiers for x in
                  [nlp_ref, nlu_ref, dataset, component_type, ] + dataset.split('_')):
             return Embeddings(get_default=False, nlp_ref=nlp_ref, nlu_ref=nlu_ref, lang=language, is_licensed=is_licensed)
 
         # elif any([component_type in NameSpace.sentence_embeddings,dataset in NameSpace.sentence_embeddings, nlu_ref in NameSpace.sentence_embeddings, nlp_ref in NameSpace.sentence_embeddings]):
-        if any(x in NameSpace.sentence_embeddings and not x in NameSpace.classifiers for x in
+        if any(x in Spellbook.sentence_embeddings and not x in Spellbook.classifiers for x in
                [nlp_ref, nlu_ref, dataset, component_type, ] + dataset.split('_')):
             return Embeddings(get_default=False, nlp_ref=nlp_ref, nlu_ref=nlu_ref, lang=language, is_licensed=is_licensed)
 
@@ -730,7 +779,7 @@ def extract_classifier_metadata_from_nlu_ref(nlu_ref):
     '''
     model_infos = []
     for e in nlu_ref.split('.'):
-        if e in nlu.all_components_info.all_languages or e in nlu.namespace.NameSpace.actions: continue
+        if e in nlu.all_components_info.all_languages or e in nlu.spellbook.Spellbook.actions: continue
         model_infos.append(e)
     return model_infos
 

@@ -42,6 +42,10 @@ name_deductable_OS = [
     WordSegmenterModel,
 
 
+    DistilBertEmbeddings,
+    RoBertaEmbeddings,
+    XlmRoBertaEmbeddings,
+
 
     # approaches
     ViveknSentimentApproach    ,
@@ -74,6 +78,10 @@ always_name_deductable_OS = [
     # MarianTransformer,
     # WordSegmenterModel,
 
+
+    DistilBertEmbeddings,
+    RoBertaEmbeddings,
+    XlmRoBertaEmbeddings,
 
 
 

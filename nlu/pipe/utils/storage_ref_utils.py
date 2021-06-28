@@ -1,4 +1,5 @@
 import logging
+from  nlu.pipe.utils import uid_to_storageref as uid2storageref
 logger = logging.getLogger('nlu')
 
 
@@ -11,15 +12,26 @@ class StorageRefUtils():
 
 
     @staticmethod
-    def extract_storage_ref(component):
+    def extract_storage_ref(component, prefer_anno=False):
         """Extract storage ref from either a NLU component or NLP Annotator. First cheks if annotator has storage ref, otherwise check NLU attribute"""
         if StorageRefUtils.has_storage_ref(component):
-            if hasattr(component.info,'storage_ref') : return component.info.storage_ref
-            if StorageRefUtils.nlp_component_has_storage_ref(component.model) : return StorageRefUtils.nlu_extract_storage_ref_nlp_model(component)
+            if hasattr(component.info,'storage_ref') and not prefer_anno: return StorageRefUtils.fallback_storage_ref_resolutions(component.info.storage_ref)
+            if StorageRefUtils.nlp_component_has_storage_ref(component.model) :
+                return StorageRefUtils.fallback_storage_ref_resolutions( StorageRefUtils.nlu_extract_storage_ref_nlp_model(component))
         return ''
 
+    @staticmethod
+    def fallback_storage_ref_resolutions(storage_ref):
+        """
+            For every storage ref result, we check if its storage ref is defined as its UID and if a fallback storageref is avaiable.
+            If avaiable, alternative is returned, otherwise original
+        """
+        if storage_ref in uid2storageref.mappings.keys():
+            return uid2storageref.mappings[storage_ref]
+        else : return storage_ref
 
-### SUB HELPERS
+
+    ### SUB HELPERS
 
     @staticmethod
     def has_component_storage_ref_or_anno_storage_ref(component):
@@ -62,4 +74,5 @@ class StorageRefUtils():
     def nlp_extract_storage_ref_nlp_model(model):
         """Extract storage ref from a NLU component which embelished a Spark NLP Annotator"""
         return model.extractParamMap()[model.model.getParam('storageRef')]
+
 

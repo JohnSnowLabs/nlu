@@ -7,6 +7,12 @@ class Embeddings(SparkNLUComponent):
         if do_ref_checks:
             if 'use' in nlu_ref or 'tfhub_use' in nlp_ref: annotator_class = 'use'
             # first check for sentence then token embeddings.
+
+            elif 'xlm'     in nlu_ref or 'xlm' in nlp_ref : annotator_class = 'xlm'
+            elif 'roberta' in nlu_ref or 'roberta' in nlp_ref : annotator_class = 'roberta'
+            elif 'distil'  in nlu_ref or 'distil' in nlp_ref : annotator_class = 'distil_bert'
+
+
             elif 'bert' in nlp_ref and 'albert' not in nlp_ref and 'sent' in nlp_ref : annotator_class= 'sentence_bert'
             elif 'bert' in nlu_ref and 'albert' not in nlu_ref and 'sent' in nlu_ref : annotator_class= 'sentence_bert'
 
@@ -41,7 +47,23 @@ class Embeddings(SparkNLUComponent):
             multi_lang_embeds = ['th']
             if lang in multi_lang_embeds : lang ='xx'
 
-            if 'albert' in annotator_class :
+            if 'xlm' in annotator_class :
+                from nlu import XLM
+                if get_default: self.model =  XLM.get_default_model()
+                else : self.model = XLM.get_pretrained_model(nlp_ref, lang)
+
+            elif 'roberta' in annotator_class :
+                from nlu import Roberta
+                if get_default: self.model =  Roberta.get_default_model()
+                else : self.model = Roberta.get_pretrained_model(nlp_ref, lang)
+
+
+            elif 'distil_bert' in annotator_class :
+                from nlu import DistilBert
+                if get_default: self.model =  DistilBert.get_default_model()
+                else : self.model = DistilBert.get_pretrained_model(nlp_ref, lang)
+
+            elif 'albert' in annotator_class :
                 from nlu import SparkNLPAlbert
                 if get_default: self.model =  SparkNLPAlbert.get_default_model()
                 else : self.model = SparkNLPAlbert.get_pretrained_model(nlp_ref, lang)

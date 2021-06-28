@@ -29,4 +29,10 @@ class Util(SparkNLUComponent):
             elif annotator_class == 'ner_to_chunk_converter_licensed':
                 from nlu.components.utils.ner_to_chunk_converter_licensed.ner_to_chunk_converter_licensed import NerToChunkConverterLicensed
                 self.model = NerToChunkConverterLicensed.get_default_model()
+            elif annotator_class == 'chunk_merger':
+                from nlu.components.utils.chunk_merger.chunk_merger import ChunkMerger
+                self.model = ChunkMerger.get_default_model()
+
+
+
         SparkNLUComponent.__init__(self, annotator_class, component_type, nlu_ref, lang,loaded_from_pretrained_pipe )

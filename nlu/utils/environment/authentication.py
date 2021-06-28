@@ -55,7 +55,7 @@ def get_authenticated_spark(SPARK_NLP_LICENSE,AWS_ACCESS_KEY_ID,AWS_SECRET_ACCES
     import sparknlp_jsl
     if is_env_pyspark_2_3() : return sparknlp_jsl.start(JSL_SECRET, spark23=True, gpu=gpu)
     if is_env_pyspark_2_4() : return sparknlp_jsl.start(JSL_SECRET, spark24=True, gpu=gpu)
-    if is_env_pyspark_3_0() or is_env_pyspark_3_1()  : return sparknlp_jsl.start(JSL_SECRET, gpu=gpu)
+    if is_env_pyspark_3_0() or is_env_pyspark_3_1()  : return sparknlp_jsl.start(JSL_SECRET, gpu=gpu, public='3.1.0')
     print(f"Current Spark version {get_pyspark_version()} not supported!")
     raise ValueError
 

@@ -7,13 +7,15 @@ header:
   - title: Visualizations
     url:  /docs/en/viz_examples
     key: viz
-  - title: Streamlit & NLU
+  - title: Streamlit
     url: /docs/en/streamlit_viz_examples
     key: streamlit_viz
   - title: Tutorial Notebooks
     url:    /docs/en/notebooks
     key: tutorial_notebooks
-
+  - title: Spellbook
+    url:    /docs/en/spellbook
+    key: tutorial_notebooks
 #  - title: Articles
 #    url: /articles
 #    key: articles
@@ -43,8 +45,11 @@ docs-en:
         url:    /docs/en/notebooks
       - title:  Visualization Examples
         url:    /docs/en/viz_examples
-      - title:  Streamlit Examples
-        url:    /docs/en/streamlit_viz_examples
+      - title: Streamlit Visualization
+        url: /docs/en/streamlit_viz_examples
+        key: streamlit_viz
+      - title:  Spellbook
+        url:    /docs/en/spellbook
 
   - title:      Documentation
     children:
@@ -52,8 +57,7 @@ docs-en:
         url:    /docs/en/load_api
       - title:  NLU Predict Function
         url:    /docs/en/predict_api
-      - title:  Pipelines and Models Namespace
-        url:    /docs/en/namespace
+
 
 #      - title: Pydocs
 #        url: /api/

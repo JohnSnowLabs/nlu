@@ -1,4 +1,4 @@
-from nlu.namespace import NameSpace
+from nlu.spellbook import Spellbook
 import nlu
 all_components_info = nlu.AllComponentsInfo()
 
@@ -19,7 +19,7 @@ class Discoverer:
         get_all: If set to true, will ignore other params and gets EVERY NLU_ref from defined name spaces
         """
         nlu_refs_of_type = []
-        model_universe = nlu.NameSpace.pretrained_models_references
+        model_universe = nlu.Spellbook.pretrained_models_references
         for lang_, models in model_universe.items():
             if lang != '' :
                 if lang_!= lang : continue
@@ -27,19 +27,19 @@ class Discoverer:
                 if m_type in nlu_ref or get_all: nlu_refs_of_type.append(nlu_ref)
 
         if include_pipes :
-            model_universe = nlu.NameSpace.pretrained_pipe_references
+            model_universe = nlu.Spellbook.pretrained_pipe_references
             for lang_, models in model_universe.items():
                 if lang != '':
                     if lang_!= lang : continue
                 for nlu_ref, nlp_ref in model_universe[lang_].items():
                     if m_type in nlu_ref or get_all: nlu_refs_of_type.append(nlu_ref)
         if include_aliases :
-            model_universe = nlu.NameSpace.component_alias_references
+            model_universe = nlu.Spellbook.component_alias_references
             for nlu_ref, nlp_ref in model_universe.items():
                 if m_type in nlu_ref or get_all: nlu_refs_of_type.append(nlu_ref)
 
         if licensed:
-            model_universe = nlu.NameSpace.pretrained_healthcare_model_references
+            model_universe = nlu.Spellbook.pretrained_healthcare_model_references
             for lang_, models in model_universe.items():
                 if lang != '':
                     if lang_!= lang : continue
@@ -66,13 +66,13 @@ class Discoverer:
         '''Print all NLU components available for a language Spark NLP pointer'''
         if lang in all_components_info.all_languages:
             # print("All Pipelines for language"+ lang+ "\n"+)
-            for nlu_reference in NameSpace.pretrained_pipe_references[lang]:
+            for nlu_reference in Spellbook.pretrained_pipe_references[lang]:
                 print("nlu.load('" + nlu_reference + "') returns Spark NLP Pipeline:" +
-                      NameSpace.pretrained_pipe_references[lang][nlu_reference])
+                      Spellbook.pretrained_pipe_references[lang][nlu_reference])
 
-            for nlu_reference in NameSpace.pretrained_models_references[lang]:
+            for nlu_reference in Spellbook.pretrained_models_references[lang]:
                 print("nlu.load('" + nlu_reference + "') returns Spark NLP Model: " +
-                      NameSpace.pretrained_models_references[lang][nlu_reference])
+                      Spellbook.pretrained_models_references[lang][nlu_reference])
 
         else:
             print(
@@ -100,20 +100,20 @@ class Discoverer:
             return
 
         # Print entire Namespace below
-        for nlu_reference in nlu.NameSpace.component_alias_references.keys():
-            component_type = nlu.NameSpace.component_alias_references[nlu_reference][1][0],  # pipe or model
+        for nlu_reference in nlu.Spellbook.component_alias_references.keys():
+            component_type = nlu.Spellbook.component_alias_references[nlu_reference][1][0],  # pipe or model
             print("nlu.load('" + nlu_reference + "') '  returns Spark NLP " + str(component_type) + ': ' +
-                  nlu.NameSpace.component_alias_references[nlu_reference][0])
+                  nlu.Spellbook.component_alias_references[nlu_reference][0])
 
-        for lang in nlu.NameSpace.pretrained_pipe_references.keys():
-            for nlu_reference in nlu.NameSpace.pretrained_pipe_references[lang]:
+        for lang in nlu.Spellbook.pretrained_pipe_references.keys():
+            for nlu_reference in nlu.Spellbook.pretrained_pipe_references[lang]:
                 print("nlu.load('" + nlu_reference + "') for lang" + lang + " returns model Spark NLP model:" +
-                      nlu.NameSpace.pretrained_pipe_references[lang][nlu_reference])
+                      nlu.Spellbook.pretrained_pipe_references[lang][nlu_reference])
 
-        for lang in nlu.NameSpace.pretrained_models_references.keys():
-            for nlu_reference in nlu.NameSpace.pretrained_models_references[lang]:
+        for lang in nlu.Spellbook.pretrained_models_references.keys():
+            for nlu_reference in nlu.Spellbook.pretrained_models_references[lang]:
                 print("nlu.load('" + nlu_reference + "')' for lang" + lang + " returns model Spark NLP model: " +
-                      nlu.NameSpace.pretrained_models_references[lang][nlu_reference])
+                      nlu.Spellbook.pretrained_models_references[lang][nlu_reference])
 
 
     @staticmethod
@@ -130,7 +130,7 @@ class Discoverer:
 
     @staticmethod
     def print_all_model_kinds_for_action(action):
-        for lang, lang_models in nlu.NameSpace.pretrained_models_references.items():
+        for lang, lang_models in nlu.Spellbook.pretrained_models_references.items():
             lang_printed = False
             for nlu_reference, nlp_reference in lang_models.items():
                 ref_action = nlu_reference.split('.')
@@ -146,7 +146,7 @@ class Discoverer:
 
     @staticmethod
     def print_all_model_kinds_for_action_and_lang(lang, action):
-        lang_candidates = nlu.NameSpace.pretrained_models_references[lang]
+        lang_candidates = nlu.Spellbook.pretrained_models_references[lang]
         print("All NLU components for lang ", lang, " that peform action ", action)
         for nlu_reference, nlp_reference in lang_candidates.items():
             ref_action = nlu_reference.split('.')

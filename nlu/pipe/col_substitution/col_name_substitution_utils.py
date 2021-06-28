@@ -117,7 +117,8 @@ class ColSubstitutionUtils():
     @staticmethod
     def deduct_component_names(pipe):
         """Deduct a meaningful name for Embeddings, classifiers, resolvesr, relation extractors, etc..
-        Will return a dict that maps every Annotator Class to a String Name. If String_Name =='' that means, it can be omtited for naming and the unique_default name schema should be used,
+        Will return a dict that maps every Annotator Class to a String Name. If String_Name =='' that means, it can be omtited for naming and the
+        unique_default name schema should be used,
         since that annotator is unique in the pipe
         """
         import nlu.pipe.col_substitution.name_deduction.name_deductable_annotators_OS as deductable_OS

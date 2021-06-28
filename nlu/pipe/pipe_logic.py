@@ -292,8 +292,6 @@ class PipelineQueryVerifier():
 
 
 
-
-
         logger.info(f"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
         logger.info(f"ALLL DEPENDENCIES SATISFIED")
         return pipe
@@ -455,13 +453,22 @@ class PipelineQueryVerifier():
             else : update_last_type = True
             for component in all_components:
                 logger.info(f"Optimizing order for component {component.info.name}")
-                input_columns = ComponentUtils.clean_irrelevant_features(component.info.spark_input_column_names, False)
+                # input_columns = ComponentUtils.clean_irrelevant_features(component.info.spark_input_column_names, False)
+                input_columns = ComponentUtils.remove_storage_ref_from_features(
+                    ComponentUtils.clean_irrelevant_features(component.info.spark_input_column_names,False))
+
+
                 if last_type_sorted is None or component.info.type == last_type_sorted:
                     if set(input_columns).issubset(provided_features):
                         correct_order_component_pipeline.append(component)
                         if component in all_components: all_components.remove(component)
                         # for feature in component.info.spark_output_column_names: provided_features.append(feature)
-                        provided_features += ComponentUtils.clean_irrelevant_features(component.info.spark_output_column_names,False)
+
+                        # provided_features += ComponentUtils.clean_irrelevant_features(component.info.spark_output_column_names,False)
+                        # TODO REMOVE STORAGE REF FROM PROVDED FEATURES???
+                        provided_features += ComponentUtils.remove_storage_ref_from_features(
+                            ComponentUtils.clean_irrelevant_features(component.info.spark_output_column_names,False))
+
                         last_type_sorted = component.info.type
                         update_last_type = False
                         break

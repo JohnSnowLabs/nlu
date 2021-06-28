@@ -12,14 +12,14 @@ modify_date: "2020-05-08"
 <div class="h3-box" markdown="1">
 
 The nlu.load() method takes in one or multiple NLU pipeline, model or component references separated by whitespaces.     
-See [the NLU namespace]( /docs/en/namespace) for an overview of all possible NLU references.     
+See [the NLU spellbook]( /docs/en/spellbook) for an overview of all possible NLU references.     
 
 NLU  will induce the following reference format for any query to the load method:       
 **language.component_type.dataset.embeddings** i.e.: en.sentiment.twitter.use     
       
 It is possible to omit many parts of the query and NLU will provide the best possible defaults, like embeddings for choosing a dataset.
 
-The NLU namespace also provides a few aliases which make referencing a model even easier!       
+The NLU spellbook also provides a few aliases which make referencing a model even easier!       
 This makes it possible to get predictions by only referencing the component name       
 Examples for aliases are nlu.load('bert') or nlu.load('sentiment')   
 
@@ -76,10 +76,10 @@ Param Name [ classes ] :  Param Info : get the tags used to trained this NerDLMo
 
 </div><div class="h3-box" markdown="1">
 
-## Component Namespace
+## Component spellbook
 The NLU name space describes the collection of all models, pipelines and components available in NLU and supported by the nlu.load() method.       
 You can view it on the [Name Space page](https://nlu.johnsnowlabs.com/docs/en/load_api)
 
-NLU also provides a few handy functions to gain insight into the NLU namespace.
+NLU also provides a few handy functions to gain insight into the NLU spellbook.
 
 </div></div>

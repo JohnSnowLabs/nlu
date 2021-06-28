@@ -1,0 +1,27 @@
+{
+  "name": "assertion_log_reg",
+  "description": "todo",
+  "output_level": "chunk",
+  "trainable": true,
+  "outputs": [
+    "assertion"
+  ],
+  "inputs": [
+    "word_embeddings",
+    "sentence",
+    "entities"
+  ],
+  "type": "asserter",
+  "spark_input_column_names": [
+    "word_embeddings",
+    "sentence",
+    "entities"
+  ],
+  "spark_output_column_names": [
+    "assertion"
+  ],
+  "provider": "sparknlp healthcare",
+  "license": "licensed",
+  "computation_context": "spark",
+  "output_context": "spark"
+}

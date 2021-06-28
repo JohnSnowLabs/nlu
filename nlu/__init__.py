@@ -1,4 +1,6 @@
-__version__ = '3.0.2'
+__version__ = '3.1.0'
+hard_offline_checks = False
+def version(): return __version__
 #
 # from nlu.component_resolution import parse_language_from_nlu_ref, nlu_ref_to_component, \
 #     construct_component_from_pipe_identifier
@@ -22,6 +24,7 @@ def try_import_pyspark_in_streamlit():
     return True
 if not try_import_pyspark_in_streamlit() : raise  ImportError
 st_cache_enabled = False
+from typing import Optional
 
 import nlu.utils.environment.env_utils as env_utils
 import nlu.utils.environment.authentication as auth_utils
@@ -29,7 +32,7 @@ if not env_utils.check_python_version(): raise Exception()
 
 import nlu
 import logging
-from nlu.namespace import NameSpace
+from nlu.spellbook import Spellbook
 import warnings
 from nlu.utils.environment.authentication import *
 
@@ -43,12 +46,16 @@ ch.setLevel(logging.CRITICAL)
 
 logger.addHandler(ch)
 
-import gc
 # NLU Healthcare components
 from nlu.components.assertion import Asserter
 from nlu.components.resolution import Resolver
 from nlu.components.relation import Relation
 from nlu.components.deidentification import Deidentification
+
+from nlu.components.embeddings.distil_bert.distilbert import DistilBert
+from nlu.components.embeddings.roberta.roberta import Roberta
+from nlu.components.embeddings.xlm.xlm import XLM
+
 
 
 from nlu.components.utils.sentence_embeddings.spark_nlp_sentence_embedding import SparkNLPSentenceEmbeddings
@@ -119,7 +126,7 @@ from nlu.components.stopwordscleaner import StopWordsCleaner as StopWordsCleaner
 from nlu.components.stemmer import Stemmer as Stemmers
 from nlu.components.stemmers.stemmer.spark_nlp_stemmer import SparkNLPStemmer
 from nlu.components.normalizers.normalizer.spark_nlp_normalizer import SparkNLPNormalizer
-from nlu.components.normalizers.document_normalizer.spark_nlp_normalizer import SparkNLPDocumentNormalizer
+from nlu.components.normalizers.document_normalizer.spark_nlp_document_normalizer import SparkNLPDocumentNormalizer
 
 from nlu.components.lemmatizers.lemmatizer.spark_nlp_lemmatizer import SparkNLPLemmatizer
 from nlu.components.stopwordscleaners.stopwordcleaner.nlustopwordcleaner import NLUStopWordcleaner
@@ -204,7 +211,7 @@ def load_nlu_pipe_from_hdd(pipe_path,request)-> NLUPipeline:
 
             pipe_components = construct_component_from_pipe_identifier('en', nlu_ref, nlu_ref, pipe_path, False)
         elif offline_utils.is_model(pipe_path):
-            c = offline_utils.verify_model(pipe_path)
+            c = offline_utils.verify_and_create_model(pipe_path)
             c.info.nlu_ref = nlu_ref
             pipe.add(c, nlu_ref, pretrained_pipe_component=True)
             return PipelineQueryVerifier.check_and_fix_nlu_pipeline(pipe)
@@ -264,7 +271,13 @@ def wrap_with_st_cache_if_avaiable(f):
         print("You need streamlit to run use this method")
         return f
 
-def load(request ='from_disk', path=None,verbose=False, gpu=False, streamlit_caching=False)->NLUPipeline :
+
+def enable_hard_offline_checks():nlu.hard_offline_checks = True
+def disable_hard_offline_checks():nlu.hard_offline_checks = False
+
+
+
+def load(request:str ='from_disk', path:Optional[str]=None,verbose:bool=False, gpu:bool=False, streamlit_caching:bool=False)->NLUPipeline :
     '''
     Load either a prebuild pipeline or a set of components identified by a whitespace seperated list of components
     You must call nlu.auth() BEFORE calling nlu.load() to access licensed models.
@@ -278,9 +291,7 @@ def load(request ='from_disk', path=None,verbose=False, gpu=False, streamlit_cac
     '''
     if streamlit_caching and not nlu.st_cache_enabled :
         enable_streamlit_caching()
-
         return nlu.load(request, path,verbose, gpu, streamlit_caching)
-
     global is_authenticated
     is_authenticated = True
     auth(gpu=gpu) # check if secets are in default loc, if yes load them and create licensed context automatically
@@ -333,10 +344,7 @@ def load(request ='from_disk', path=None,verbose=False, gpu=False, streamlit_cac
         # IF ST IMPORTABLE, TRY WRITE WARN MESSAGE TO STREAMLIT FROM NLU.LOAD()
         # IF ST NOT IMPORTABLE. JUST PRINT ERR MESSAGE
         # 4. ELSE LINK TO INSTALL NOTES https://nlu.johnsnowlabs.com/docs/en/install  and SLACK https://join.slack.com/t/spark-nlp/shared_invite/zt-lutct9gm-kuUazcyFKhuGY3_0AMkxqA
-
-        print("Something went wrong during loading and fitting the pipe. Check the other prints for more information and also verbose mode. Did you use a correct model reference?")
-
-        return NluError()
+        raise Exception("Something went wrong during loading and fitting the pipe. Check the other prints for more information and also verbose mode. Did you use a correct model reference?")
 
 
 
