@@ -1,7 +1,6 @@
 ---
 layout: docs
 header: true
-layout: article
 title: NLU release notes
 permalink: /docs/en/release_notes
 key: docs-release-notes
@@ -10,9 +9,9 @@ modify_date: "2020-06-12"
 
 <div class="main-docs" markdown="1">
 
-# NLU 3.1 Release Notes
+## NLU 3.1 Release Notes
 
-# 2600+ New Models for 200+ Languages and 10+ Dimension Reduction Algorithms for Streamlit Word-Embedding visualizations in 3-D
+## 2600+ New Models for 200+ Languages and 10+ Dimension Reduction Algorithms for Streamlit Word-Embedding visualizations in 3-D
 
 We are extremely excited to announce the release of NLU 3.1 !
 This is our biggest release so far and it comes with over `2600+ new models in 200+` languages, including `DistilBERT`, `RoBERTa`, and `XLM-RoBERTa` and Huggingface based Embeddings from the [incredible Spark-NLP 3.1.0 release](https://github.com/JohnSnowLabs/spark-nlp/releases/tag/3.1.0),
@@ -47,27 +46,29 @@ nlu.load('bert',verbose=True).viz_streamlit_word_embed_manifold(default_texts=TH
 
 
 ### <kbd>function parameters</kbd> `pipe.viz_streamlit_word_embed_manifold`
-| Argument    | Type        |                                                            Default         |Description |
-|--------------------------- | ---------- |-----------------------------------------------------------| ------------------------------------------------------- |
-`default_texts`|          `List[str]`  | ("Donald Trump likes to party!", "Angela Merkel likes to party!", 'Peter HATES TO PARTTY!!!! :(') | List of strings to apply classifiers, embeddings, and manifolds to.
-| `text`                    | `Optional[str]`   |     `'Billy likes to swim'`                 | Text to predict classes for. | 
-`sub_title`|         ` Optional[str]` | "Apply any of the 11 `Manifold` or `Matrix Decomposition` algorithms to reduce the dimensionality of `Word Embeddings` to `1-D`, `2-D` and `3-D` " | Sub title of the Streamlit app
-`default_algos_to_apply`|           `List[str]` | `["TSNE", "PCA"]` | A list Manifold and Matrix Decomposition Algorithms to apply. Can be either `'TSNE'`,`'ISOMAP'`,`'LLE'`,`'Spectral Embedding'`, `'MDS'`,`'PCA'`,`'SVD aka LSA'`,`'DictionaryLearning'`,`'FactorAnalysis'`,`'FastICA'` or `'KernelPCA'`,
-`target_dimensions`|          `List[int]` | `(1,2,3)` | Defines the target dimension embeddings will be reduced to
-`show_algo_select`|          `bool` | `True`  | Show selector for Manifold and Matrix Decomposition Algorithms
-`show_embed_select`|          `bool` | `True` | Show selector for Embedding Selection
-`show_color_select`|          `bool` | `True` | Show selector for coloring plots
-`MAX_DISPLAY_NUM`|         `int`|`100` | Cap maximum number of Tokens displayed
-|`display_embed_information`              | `bool`              |  `True`                         | Show additional embedding information like `dimension`, `nlu_reference`, `spark_nlp_reference`, `sotrage_reference`, `modelhub link` and more.
-| `set_wide_layout_CSS`      |  `bool`                                                             |  `True`                                                                                   | Whether to inject custom CSS or not.
-|`num_cols`                               | `int`               |  `2`                            |  How many columns should for the layout in streamlit when rendering the similarity matrixes.
-|     `key`                               |  `str`              | `"NLU_streamlit"`               | Key for the Streamlit elements drawn
-`additional_classifiers_for_coloring`|         `List[str]`|`['pos', 'sentiment.imdb']` | List of additional NLU references to load for generting hue colors
-| `show_model_select`        |  `bool`                                          | `True`                                                                                 | Show a model selection dropdowns that makes any of the 1000+ models avaiable in 1 click
-| `model_select_position`    |  `str`                                                             |   `'side'`            | [Whether to output the positions of predictions or not, see `pipe.predict(positions=true`) for more info](https://nlu.johnsnowlabs.com/docs/en/predict_api#output-positions-parameter)  |
-| `show_logo`             |  `bool`                                            | `True`                                                                                   | Show logo
-| `display_infos`         |  `bool`                                            | `False`                                                                                  | Display additonal information about ISO codes and the NLU namespace structure.
-| `n_jobs`|          `Optional[int]` | `3`|   `False` | How many cores to use for paralellzing when using Sklearn Dimension Reduction algorithms.  
+
+
+| Argument    | Type        |                                          Default         |Description |
+|-------------| ---------- |-----------------------------------------------------------| ------------------------------------------------------- |
+`default_texts`| `List[str]`  | ("Donald Trump likes to party!", "Angela Merkel likes to party!", 'Peter HATES TO PARTTY!!!! :(') | List of strings to apply classifiers, embeddings, and manifolds to.|
+| `text` | `Optional[str]`   | `'Billy likes to swim'` | Text to predict classes for. | 
+| `sub_title` | `Optional[str]`   | Apply any of the 11 `Manifold` or `Matrix Decomposition` algorithms to reduce the dimensionality of `Word Embeddings` to `1-D`, `2-D` and `3-D` | Sub title of the Streamlit app | 
+|`default_algos_to_apply`| `List[str]` | `["TSNE", "PCA"]` | A list Manifold and Matrix Decomposition Algorithms to apply. Can be either `'TSNE'`,`'ISOMAP'`,`'LLE'`,`'Spectral Embedding'`, `'MDS'`,`'PCA'`,`'SVD aka LSA'`,`'DictionaryLearning'`,`'FactorAnalysis'`,`'FastICA'` or `'KernelPCA'` |
+|`target_dimensions`| `List[int]` | `(1,2,3)` | Defines the target dimension embeddings will be reduced to |
+|`show_algo_select`| `bool` | `True`  | Show selector for Manifold and Matrix Decomposition Algorithms |
+|`show_embed_select`| `bool` | `True` | Show selector for Embedding Selection |
+|`show_color_select`| `bool` | `True` | Show selector for coloring plots |
+|`MAX_DISPLAY_NUM`| `int`|`100` | Cap maximum number of Tokens displayed |
+|`display_embed_information` | `bool` |  `True` | Show additional embedding information like `dimension`, `nlu_reference`, `spark_nlp_reference`, `sotrage_reference`, `modelhub link` and more. |
+| `set_wide_layout_CSS` |  `bool`    |  `True` | Whether to inject custom CSS or not. |
+|`num_cols`     | `int` |  `2` |  How many columns should for the layout in streamlit when rendering the similarity matrixes. |
+| `key` |  `str` | `"NLU_streamlit"` | Key for the Streamlit elements drawn |
+| `additional_classifiers_for_coloring`|         `List[str]`|`['pos', 'sentiment.imdb']` | List of additional NLU references to load for generting hue colors |
+| `show_model_select`        |  `bool` | `True` | Show a model selection dropdowns that makes any of the 1000+ models avaiable in 1 click |
+| `model_select_position`    |  `str` |   `'side'` | [Whether to output the positions of predictions or not, see `pipe.predict(positions=true`) for more info](https://nlu.johnsnowlabs.com/docs/en/predict_api#output-positions-parameter)  |
+| `show_logo` |  `bool` | `True` | Show logo |
+| `display_infos` |  `bool` | `False` | Display additonal information about ISO codes and the NLU namespace structure. |
+| `n_jobs`| `Optional[int]` | `False` | How many cores to use for paralellzing when using Sklearn Dimension Reduction algorithms.  |
 
 ### Larger Example showcasing more dimension reduction techniques on a larger corpus :
 
@@ -2154,18 +2155,18 @@ Five new healthcare code mapping pipelines:
 * [NLU documentation](https://nlu.johnsnowlabs.com/docs/en/install)
 * [Discussions](https://github.com/JohnSnowLabs/spark-nlp/discussions) Engage with other community members, share ideas, and show off how you use Spark NLP and NLU!
 
-# 1 line Install NLU on Google Colab
+## 1 line Install NLU on Google Colab
 ```!wget https://setup.johnsnowlabs.com/nlu/colab.sh  -O - | bash```
-# 1 line Install NLU on Kaggle
+## 1 line Install NLU on Kaggle
 ```!wget https://setup.johnsnowlabs.com/nlu/kaggle.sh  -O - | bash```
-# Install via PIP
+## Install via PIP
 ```! pip install nlu pyspark==3.0.3```
 
 
 
 
 
-# NLU 3.0.2 Release Notes
+## NLU 3.0.2 Release Notes
 <img width="65%" align="right" src="https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/streamlit_docs_assets/gif/start.gif">
 
 This release contains examples and tutorials on how to visualize the 1000+ state-of-the-art NLP models provided by NLU in *just 1 line of code* in `streamlit`.
@@ -2252,7 +2253,7 @@ Ontop of that, there are various visualization methods a NLUPipeline provides ea
 | [`nlu.enable_streamlit_caching()`](#test)  | Enable caching the `nlu.load()` call. Once enabled, the `nlu.load()` method will automatically cached. **This is recommended** to run first and for large peformance gans |
 
 
-# Detailed visualizer information and API docs
+## Detailed visualizer information and API docs
 
 ## <kbd>function</kbd> `pipe.viz_streamlit`
 
@@ -2609,11 +2610,11 @@ hepatitis, and obesity with a body mass index (BMI) of 33.5 kg/m2, presented wit
 * [NLU documentation](https://nlu.johnsnowlabs.com/docs/en/install)
 * [Discussions](https://github.com/JohnSnowLabs/spark-nlp/discussions) Engage with other community members, share ideas, and show off how you use Spark NLP and NLU!
 
-# 1 line Install NLU on Google Colab
+## 1 line Install NLU on Google Colab
 ```!wget https://setup.johnsnowlabs.com/nlu/colab.sh  -O - | bash```
-# 1 line Install NLU on Kaggle
+## 1 line Install NLU on Kaggle
 ```!wget https://setup.johnsnowlabs.com/nlu/kaggle.sh  -O - | bash```
-# Install via PIP
+## Install via PIP
 ```! pip install nlu pyspark==3.0.1```
 
 
@@ -2621,7 +2622,7 @@ hepatitis, and obesity with a body mass index (BMI) of 33.5 kg/m2, presented wit
 
 
 
-# NLU 3.0.1 Release Notes
+## NLU 3.0.1 Release Notes
 We are very excited to announce NLU 3.0.1 has been released!
 This is one of the most visually appealing releases, with the integration of the [Spark-NLP-Display](https://nlp.johnsnowlabs.com/docs/en/display) library and visualizations for `dependency trees`, `entity resolution`, `entity assertion`, `relationship between entities` and `named 
 entity recognition`. In addition to this, the schema of how columns are named by NLU has been reworked and all 140+ tutorial notebooks have been updated to reflect the latest changes in NLU 3.0.0+
@@ -2630,7 +2631,7 @@ Finally, new multilingual models for `Afrikaans`, `Welsh`, `Maltese`, `Tamil`, a
 
 
 
-# New Features and Enhancements
+## New Features and Enhancements
 - 1 line to visualization for `NER`, `Dependency`, `Resolution`, `Assertion` and `Relation` via [Spark-NLP-Display](https://nlp.johnsnowlabs.com/docs/en/display) integration
 - Improved column naming schema
 - [Over 140 + NLU tutorial Notebooks updated](https://github.com/JohnSnowLabs/nlu/tree/master/examples) and improved to reflect latest changes in NLU 3.0.0 +
@@ -2808,11 +2809,11 @@ All of the [140+ NLU tutorial Notebooks](https://github.com/JohnSnowLabs/nlu/tre
 * [NLU documentation](https://nlu.johnsnowlabs.com/docs/en/install)
 * [Discussions](https://github.com/JohnSnowLabs/spark-nlp/discussions) Engage with other community members, share ideas, and show off how you use Spark NLP and NLU!
 
-# 1 line Install NLU on Google Colab
+## 1 line Install NLU on Google Colab
 ```!wget https://setup.johnsnowlabs.com/nlu/colab.sh  -O - | bash```
-# 1 line Install NLU on Kaggle
+## 1 line Install NLU on Kaggle
 ```!wget https://setup.johnsnowlabs.com/nlu/kaggle.sh  -O - | bash```
-# Install via PIP
+## Install via PIP
 ```! pip install nlu pyspark==3.0.1```
 
 
@@ -2827,7 +2828,7 @@ In addition, `Spark 3.0.X`  and `Spark 3.1.X ` is now supported, together with P
 
 This is enabled by the the amazing [Spark NLP3.0.1](https://nlp.johnsnowlabs.com/docs/en/release_notes#300) and [Spark NLP for Healthcare 3.0.1](https://nlp.johnsnowlabs.com/docs/en/licensed_release_notes#301) releases.
 
-# New Features
+## New Features
 - Over 200 new models for the `healthcare` domain
 - 6 new classes of models, Assertion, Sentence/Chunk Resolvers, Relation Extractors, Medical NER models, De-Identificator Models
 - Spark 3.0.X and 3.1.X support
@@ -3000,7 +3001,7 @@ This is enabled by the the amazing [Spark NLP3.0.1](https://nlp.johnsnowlabs.com
 
 
 
-# Chunk resolvers
+## Chunk resolvers
 
 | Language | nlu.load() reference                                         | Spark NLP Model reference          |
 | -------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
@@ -3029,7 +3030,7 @@ This is enabled by the the amazing [Spark NLP3.0.1](https://nlp.johnsnowlabs.com
 | English  | [resolve_chunk.snomed.findings](https://nlp.johnsnowlabs.com/2020/06/20/chunkresolve_snomed_findings_clinical_en.html) | [chunkresolve_snomed_findings_clinical](https://nlp.johnsnowlabs.com/2020/06/20/chunkresolve_snomed_findings_clinical_en.html)           |
 
 
-# New Classifiers
+## New Classifiers
 
 | Language | nlu.load() reference                                         | Spark NLP Model reference          |
 | -------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
@@ -3043,7 +3044,7 @@ This is enabled by the the amazing [Spark NLP3.0.1](https://nlp.johnsnowlabs.com
 | English  | classify.pico | classifierdl_pico_biobert          |
 
 
-# German Medical models
+## German Medical models
 
 | nlu.load() reference                                         | Spark NLP Model reference          |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
@@ -3058,7 +3059,7 @@ This is enabled by the the amazing [Spark NLP3.0.1](https://nlp.johnsnowlabs.com
 | med_ner.healthcare_slim    | ner_healthcare_slim|
 | med_ner.traffic    | ner_traffic|
 
-# Spanish Medical models
+## Spanish Medical models
 | nlu.load() reference                                         | Spark NLP Model reference          |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
 | [embed.scielo.150d](https://nlp.johnsnowlabs.com/2020/05/26/embeddings_scielo_150d_es.html) | [embeddings_scielo_150d](https://nlp.johnsnowlabs.com/2020/05/26/embeddings_scielo_150d_es.html)| 
@@ -3074,21 +3075,21 @@ This is enabled by the the amazing [Spark NLP3.0.1](https://nlp.johnsnowlabs.com
 | [med_ner.neoplasm](https://nlp.johnsnowlabs.com/2021/03/31/ner_neoplasms_es.html)  | [ner_neoplasms](https://nlp.johnsnowlabs.com/2021/03/31/ner_neoplasms_es.html)| 
 | [med_ner.diag_proc](https://nlp.johnsnowlabs.com/2021/03/31/ner_diag_proc_es.html)  | [ner_diag_proc](https://nlp.johnsnowlabs.com/2021/03/31/ner_diag_proc_es.html)| 
 
-# GPU Mode
+## GPU Mode
 You can now enable NLU GPU mode by setting `gpu=true` while loading a model. I.e. `nlu.load('train.sentiment' gpu=True)` . If must resart you kernel, if you already loaded a nlu pipeline withouth GPU mode.
 
-# Output Level Relation
+## Output Level Relation
 This new output level is used for relation extractors and will give you 1 row per relation extracted.
 
 
-# Bug fixes
+## Bug fixes
 - Fixed a bug that caused loading NLU models in offline mode not to work in some occasions
 
 
-# 1 line Install NLU
+## 1 line Install NLU
 ```!wget https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/scripts/colab_setup.sh -O - | bash```
 
-# Install via PIP 
+## Install via PIP 
 ```! pip install nlu pyspark==3.0.1```
 
 
@@ -3109,7 +3110,7 @@ This new output level is used for relation extractors and will give you 1 row pe
 
 <div class="h3-box" markdown="1">
 
-# Intent and Action Classification,  analyze Chinese News and the Crypto market, train a classifier that understands 100+ languages, translate between 200 + languages, answer questions, summarize text, and much more in NLU 1.1.3
+### Intent and Action Classification,  analyze Chinese News and the Crypto market, train a classifier that understands 100+ languages, translate between 200 + languages, answer questions, summarize text, and much more in NLU 1.1.3
 
 ## NLU 1.1.3 Release Notes
 We are very excited to announce that the latest NLU release comes with a new pretrained Intent Classifier and NER Action Extractor for text related to
@@ -4732,7 +4733,7 @@ Check it out here :  http://nlu.johnsnowlabs.com/
 
 
 
-# 1.0 Release Notes 
+## 1.0 Release Notes 
 - Automatic to Numpy conversion of embeddings
 - Added various testing classes
 - [New 6 embeddings at once notebook with t-SNE and Medium article](https://medium.com/spark-nlp/1-line-of-code-for-bert-albert-elmo-electra-xlnet-glove-part-of-speech-with-nlu-and-t-sne-9ebcd5379cd)
@@ -4740,14 +4741,14 @@ Check it out here :  http://nlu.johnsnowlabs.com/
 - Integration of Spark NLP 2.6.2 enhancements and bugfixes https://github.com/JohnSnowLabs/spark-nlp/releases/tag/2.6.2
 - Updated old T-SNE notebooks with more elegant and simpler generation of t-SNE embeddings 
 
-# 0.2.1 Release Notes 
+## 0.2.1 Release Notes 
 - Various bugfixes
 - Improved output column names when using multiple classifirs at once
 
-# 0.2 Release Notes 
+## 0.2 Release Notes 
 -   Improved output column names  classifiers
     
-# 0.1 Release Notes
+## 0.1 Release Notes
 We are glad to announce that NLU 0.0.1 has been released!
 NLU makes the 350+ models and annotators in Spark NLPs arsenal available in just 1 line of python code and it works with Pandas dataframes!
 A picture says more than a 1000 words, so here is a demo clip of the 12 coolest features in NLU, all just in 1 line!
@@ -4764,7 +4765,7 @@ A picture says more than a 1000 words, so here is a demo clip of the 12 coolest 
 ## NLU in action 
 <img src="http://ckl-it.de/wp-content/uploads/2020/08/My-Video6.gif" width="1800" height="500"/>
 
-# What does NLU 0.1 include?
+## What does NLU 0.1 include?
  - NLU provides everything a data scientist might want to wish for in one line of code!
  - 350 + pre-trained models
  - 100+ of the latest NLP word embeddings ( BERT, ELMO, ALBERT, XLNET, GLOVE, BIOBERT, ELECTRA, COVIDBERT) and different variations of them
@@ -4788,7 +4789,7 @@ A picture says more than a 1000 words, so here is a demo clip of the 12 coolest 
 
 </div><div class="h3-box" markdown="1">
 
-# NLU 0.1 Features Google Collab Notebook Demos
+## NLU 0.1 Features Google Collab Notebook Demos
 
 - Named Entity Recognition (NER)
     -[NER pretrained on ONTO Notes](https://colab.research.google.com/drive/1_sgbJV3dYPZ_Q7acCgKWgqZkWcKAfg79?usp=sharing)
@@ -4863,6 +4864,3 @@ A picture says more than a 1000 words, so here is a demo clip of the 12 coolest 
     -[Entity Chunking](https://colab.research.google.com/drive/1svpqtC3cY6JnRGeJngIPl2raqxdowpyi?usp=sharing)
 - Matchers
     -[Date Matcher](https://colab.research.google.com/drive/1JrlfuV2jNGTdOXvaWIoHTSf6BscDMkN7?usp=sharing)
-
-
-
