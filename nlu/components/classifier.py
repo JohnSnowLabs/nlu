@@ -62,7 +62,7 @@ class Classifier(SparkNLUComponent):
                 elif is_licensed : self.model = ClassifierDl.get_pretrained_model(nlp_ref, language, bucket='clinical/models')
                 elif get_default : self.model = ClassifierDl.get_default_model()
                 else : self.model = ClassifierDl.get_pretrained_model(nlp_ref, language)
-                if hasattr(self, 'model'): self.model.setIncludeConfidence(True)
+                if hasattr(self.model,'setIncludeConfidence'): self.model.setIncludeConfidence(True)
 
             elif 'language_detector' in annotator_class:
                 from nlu import LanguageDetector
