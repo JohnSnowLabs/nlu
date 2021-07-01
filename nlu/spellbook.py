@@ -103,7 +103,7 @@ class Spellbook():
         'clean.slang': ('clean_slang', 'pipe'),
         # 'spell': ('check_spelling','pipe'),  # bad spell_checker,
         'spell': ('spellcheck_dl', 'model'),  # default spell
-        'sentiment': ('analyze_sentiment', 'pipe'),
+        'sentiment': ('sentiment.imdb.glove', 'pipe'),
         'emotion': ('classifierdl_use_emotion', 'model'),  # default emotion model
 
         'sentiment.imdb': ('analyze_sentimentdl_use_imdb', 'pipe'),
@@ -3917,6 +3917,7 @@ class Spellbook():
                 'en.resolve.cpt.augmented': 'sbiobertresolve_cpt_augmented',
                 'en.resolve.cpt.procedures_augmented': 'sbiobertresolve_cpt_procedures_augmented',
                 # resolve sentence hcc
+                'en.resolve.hcc': 'sbiobertresolve_hcc_augmented',
                 'en.resolve.hcc.augmented': 'sbiobertresolve_hcc_augmented',
                 # resolve sentence icdf
                 'en.resolve.icd10cm': 'sbiobertresolve_icd10cm',
