@@ -103,7 +103,7 @@ class Spellbook():
         'clean.slang': ('clean_slang', 'pipe'),
         # 'spell': ('check_spelling','pipe'),  # bad spell_checker,
         'spell': ('spellcheck_dl', 'model'),  # default spell
-        'sentiment': ('sentiment.imdb.glove', 'pipe'),
+        'sentiment': ('sentimentdl_glove_imdb', 'model'),
         'emotion': ('classifierdl_use_emotion', 'model'),  # default emotion model
 
         'sentiment.imdb': ('analyze_sentimentdl_use_imdb', 'pipe'),
@@ -216,7 +216,6 @@ class Spellbook():
         'classify.emotion': ('classifierdl_use_emotion', 'model'),  # Alias withouth embedding
         'classify.cyberbullying': ('classifierdl_use_cyberbullying', 'model'),  # Alias withouth embedding
         'cyberbullying': ('classifierdl_use_cyberbullying', 'model'),  # Alias withouth embedding
-        'cyber': ('classifierdl_use_cyberbullying', 'model'),  # Alias withouth embedding
 
         'classify.sarcasm': ('classifierdl_use_sarcasm', 'model'),  # Alias withouth embedding
         'sarcasm': ('classifierdl_use_sarcasm', 'model'),  # Alias withouth embedding
@@ -3873,7 +3872,7 @@ class Spellbook():
                 # 'en.spell.context.med':'context_spell_med', #todo crashing Byteerror
 
                 'en.detect_sentence.clinical' : 'sentence_detector_dl_healthcare',
-
+                'en.norm_drugs' : 'drug_normalizer', # TODO!?!??!
                 # T5
                 'en.t5.mediqa' : 't5_base_mediqa_mnli',
 
