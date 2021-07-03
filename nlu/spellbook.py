@@ -92,8 +92,12 @@ class Spellbook():
         'ner.onto.sm': ('onto_recognize_entities_sm', 'pipe'),
         'ner.onto.lg': ('onto_recognize_entities_lg', 'pipe'),
         'match.datetime': ('match_datetime', 'pipe'),
+
         'match.text': ('text_matcher', 'model'),
         'match.regex': ('regex_matcher', 'model'),
+        'match.date': ('date_matcher', 'model'),
+        'match.context': ('context_parser', 'model'), #  TODOLicensed!!
+        # 'context_parser': ('context_parser', 'model'),
 
         'match.pattern': ('match_pattern', 'pipe'),
         'match.chunks': ('match_chunks', 'pipe'),

@@ -48,13 +48,17 @@ HC_anno2substitution_fn = {
         'default': '',# TODO
     },
 
+    ContextualParserApproach : {
+        'default' :substitute_context_parser_cols,#
+
+    },
     ContextualParserModel : {
-        'default': '',# TODO
+        'default': substitute_context_parser_cols,
 
     },
 
     DrugNormalizer : {
-        'default': '',# TODO
+        'default': substitute_drug_normalizer_cols
     },
 
     GenericClassifierModel : {

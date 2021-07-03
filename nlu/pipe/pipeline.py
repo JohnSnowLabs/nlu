@@ -482,6 +482,8 @@ class NLUPipeline(BasePipe):
         print('The following parameters are configurable for this NLU pipeline (You can copy paste the examples) :')
         # list of tuples, where first element is component name and second element is list of param tuples, all ready formatted for printing
         all_outputs = []
+        ## TODO CONDINOTAL LOOP either on approaches or transformers
+        iterable = None
         for i, component_key in enumerate(self.keys()):
             s = ">>> pipe['" + component_key + "'] has settable params:"
             p_map = self[component_key].extractParamMap()

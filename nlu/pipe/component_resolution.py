@@ -411,9 +411,7 @@ def resolve_component_from_parsed_query_data(language, component_type, dataset, 
         constructed_components = construct_component_from_pipe_identifier(language, nlp_ref, nlu_ref,is_licensed=is_licensed)
         logger.info(f'Inferred Spark reference nlp_ref={nlp_ref} and nlu_ref={nlu_ref}  to NLP Annotator Class {constructed_components}')
         if constructed_components is None:
-            logger.exception(
-                f'EXCEPTION : Could not create NLU component for nlp_ref={nlp_ref} and nlu_ref={nlu_ref}  to NLP Annotator Classes {constructed_components}')
-            return nlu.NluError
+            raise ValueError(f'EXCEPTION : Could not create NLU component for nlp_ref={nlp_ref} and nlu_ref={nlu_ref}  to NLP Annotator Classes {constructed_components}')
         else:
             return constructed_components
     elif component_kind in ['model', 'component']:
@@ -424,24 +422,19 @@ def resolve_component_from_parsed_query_data(language, component_type, dataset, 
         logger.info(f'Inferred Spark reference nlp_ref={nlp_ref} and nlu_ref={nlu_ref}  to NLP Annotator Class {constructed_component}')
 
         if constructed_component is None:
-            logger.exception(f'EXCEPTION : Could not create NLU component for nlp_ref={nlp_ref} and nlu_ref={nlu_ref}')
-            return nlu.NluError
+            raise ValueError(f'EXCEPTION : Could not create NLU component for nlp_ref={nlp_ref} and nlu_ref={nlu_ref}')
         else:
             return constructed_component
     elif component_kind == 'trainable_model':
         constructed_component = construct_trainable_component_from_identifier(nlu_ref,nlp_ref)
         if constructed_component is None:
-            logger.exception(f'EXCEPTION : Could not create NLU component for nlp_ref={nlp_ref} and nlu_ref={nlu_ref}')
-            return nlu.NluError
+            logger.exception()
+            raise ValueError(f'EXCEPTION : Could not create NLU component for nlp_ref={nlp_ref} and nlu_ref={nlu_ref}')
         else:
             constructed_component.info.is_untrained = True
             return constructed_component
     else:
-        logger.exception(
-            "EXCEPTION : Could not resolve query=%s for kind=%s and reference=%s in any of NLU's namespaces ", nlu_ref,
-            component_kind,
-            nlp_ref)
-        return nlu.NluError
+        raise ValueError(f'EXCEPTION : Could not create NLU component for nlp_ref={nlp_ref} and nlu_ref={nlu_ref}')
 
 
 def construct_trainable_component_from_identifier(nlu_ref,nlp_ref):
@@ -484,8 +477,7 @@ def construct_trainable_component_from_identifier(nlu_ref,nlp_ref):
 
 
     except:  # if reference is not in namespace and not a component it will cause a unrecoverable crash
-        logger.exception(f'EXCEPTION: Could not create trainable NLU component for nlu_ref = {nlu_ref} and nlp_ref = {nlp_ref}')
-        return None
+        ValueError(f'EXCEPTION: Could not create trainable NLU component for nlu_ref = {nlu_ref} and nlp_ref = {nlp_ref}')
 
 
 def construct_component_from_pipe_identifier(language, nlp_ref, nlu_ref,path=None, is_licensed=False, strict=False):
@@ -735,7 +727,7 @@ def construct_component_from_identifier(language, component_type='', dataset='',
         elif any('norm' in x for x in [nlp_ref, nlu_ref, dataset, component_type]):
             return nlu.normalizer.Normalizer(nlp_ref=nlp_ref, nlu_ref=nlu_ref, is_licensed=is_licensed)
         elif any('clean' in x or 'stopword' in x for x in [nlp_ref, nlu_ref, dataset, component_type]):
-            return nlu.StopWordsCleaners(language=language, get_default=False, nlp_ref=nlp_ref)
+            return nlu.StopWordsCleaners(lang=language, get_default=False, nlp_ref=nlp_ref)
         elif any('sentence_detector' in x for x in [nlp_ref, nlu_ref, dataset, component_type]):
             return NLUSentenceDetector(nlu_ref=nlu_ref, nlp_ref=nlp_ref, language=language, is_licensed=is_licensed)
 
@@ -751,7 +743,7 @@ def construct_component_from_identifier(language, component_type='', dataset='',
 
         # supported in future version with auto embed generation
         # elif any('embed_chunk' in x for x in [nlp_ref, nlu_ref, dataset, component_type] ):
-        #     return embeddings_chunker.EmbeddingsChunker()
+        #     return embeddings_chunker.EmbeddingsChunker()    DrugNormalizer,
 
         elif any('chunk' in x for x in [nlp_ref, nlu_ref, dataset, component_type]):
             return nlu.chunker.Chunker()

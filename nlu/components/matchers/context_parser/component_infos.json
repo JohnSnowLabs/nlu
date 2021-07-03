@@ -1,5 +1,5 @@
 {
-  "name": "date_matcher",
+  "name": "context_matcher",
   "output_level": "chunk",
   "description": "todo",
   "trainable": false,
@@ -7,14 +7,15 @@
     "chunk"
   ],
   "inputs": [
-    "sentence"
+    "document",
+    "token"
   ],
   "type": "matcher",
   "spark_input_column_names": [
-    "sentence"
+    "sentence",
+    "token"
   ],
   "spark_output_column_names": [
-    "date_entity"
   ],
   "provider": "sparknlp",
   "license": "open source",

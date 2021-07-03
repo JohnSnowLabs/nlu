@@ -122,6 +122,7 @@ class PipelineQueryVerifier():
         return conversion_candidates_data
     @staticmethod
     def get_missing_required_features(pipe):
+        """For every component in the pipeline"""
         provided_features_no_ref                = ComponentUtils.clean_irrelevant_features(PipelineQueryVerifier.extract_provided_features_refless_from_pipe(pipe))
         required_features_no_ref                = ComponentUtils.clean_irrelevant_features(PipelineQueryVerifier.extract_required_features_refless_from_pipe(pipe))
         provided_features_ref                   = ComponentUtils.clean_irrelevant_features(PipelineQueryVerifier.extract_provided_features_ref_from_pipe(pipe))

@@ -62,13 +62,18 @@ HC_anno2config = {
     },
 
     ContextualParserModel : {
-        'default': '',# TODO
+        'default': default_full_config,# TODO
         'default_full'  : default_full_config,
 
     },
 
+    ContextualParserApproach : {
+        'default': default_full_config,# TODO
+        'default_full'  : default_full_config,
+
+    },
     DrugNormalizer : {
-        'default': '',# TODO
+        'default': default_only_result_config,
         'default_full'  : default_full_config,
     },
 

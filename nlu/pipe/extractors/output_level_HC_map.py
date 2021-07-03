@@ -5,6 +5,7 @@ from sparknlp_jsl.annotator  import *
 HC_anno2output_level = {
     'document': [
         RENerChunksFilter,
+        DrugNormalizer,
 
                  ],
     'sentence': [
@@ -20,6 +21,8 @@ HC_anno2output_level = {
         DeIdentificationModel,
         AssertionDLModel,
         AssertionLogRegModel,
+        ContextualParserApproach,
+        ContextualParserModel
 
 
     ],

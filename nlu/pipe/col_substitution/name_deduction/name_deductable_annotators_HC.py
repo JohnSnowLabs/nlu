@@ -20,7 +20,10 @@ name_deductable_HC=[
     # NerDisambiguatorModel
     # ChunkMergeModel
     # RENerChunksFilter
-    NerOverwriter
+    NerOverwriter,
+    ContextualParserModel, # todo
+    ContextualParserApproach,
+
 ]
 
 
@@ -33,7 +36,7 @@ always_name_deductable_HC=[
     PosologyREModel,
     # Chunk2Token,
     ContextualParserModel, # todo
-    DrugNormalizer,
+    ContextualParserApproach,
     GenericClassifierModel,
     # NerDisambiguatorModel
     # ChunkMergeModel
