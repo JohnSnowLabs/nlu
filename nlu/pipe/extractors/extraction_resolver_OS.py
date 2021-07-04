@@ -185,13 +185,24 @@ OS_anno2config = {
         'default': '',# TODO
         'default_full'  : default_full_config,
     },
+    TextMatcher : {
+        'default': '',# TODO
+        'default_full'  : default_full_config,
+    },
+
     RegexMatcherModel : {
+        'default': '',# TODO
+        'default_full'  : default_full_config,
+    },
+    RegexMatcher : {
         'default': '',# TODO
         'default_full'  : default_full_config,
     },
     DateMatcher : {
         'default':'',# TODO
+        'default_full'  : default_full_config,
     },
+
     MultiDateMatcher : {
         'default': '',# TODO
         'default_full'  : default_full_config,

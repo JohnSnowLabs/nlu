@@ -135,10 +135,12 @@ class PipelineQueryVerifier():
             trainable_index, embed_type = PipeUtils.find_trainable_embed_consumer(pipe)
 
             required_features_ref = []
-            if len(provided_features_ref) == 0 : required_features_no_ref.append(embed_type)
-            else :
-                #set storage ref
-                pipe.components[trainable_index].info.storage_ref = provided_features_ref[0].split('@')[-1]
+            if embed_type is not None :
+                # embed consuming trainablea nnotators get their storage ref set here
+                if len(provided_features_ref) == 0 : required_features_no_ref.append(embed_type)
+                else :
+                    #set storage ref
+                    pipe.components[trainable_index].info.storage_ref = provided_features_ref[0].split('@')[-1]
         components_for_ner_conversion = [] #
 
         missing_features_no_ref                 = set(required_features_no_ref) - set(provided_features_no_ref)# - set(['text','label'])

@@ -313,7 +313,7 @@ def resolve_component_from_parsed_query_data(language, component_type, dataset, 
         if nlu_ref in Spellbook.trainable_models.keys():
             component_kind = 'trainable_model'
             nlp_ref = Spellbook.trainable_models[nlu_ref]
-            logger.info(f'Found Spark NLP reference in trainable models namespace = {nlp_ref}')
+            logger.info(f'Found Spark NLP reference in trainable models naqmespace = {nlp_ref}')
             resolved = True
             trainable=True
     # 1. check if pipeline references for resolution
@@ -428,7 +428,6 @@ def resolve_component_from_parsed_query_data(language, component_type, dataset, 
     elif component_kind == 'trainable_model':
         constructed_component = construct_trainable_component_from_identifier(nlu_ref,nlp_ref)
         if constructed_component is None:
-            logger.exception()
             raise ValueError(f'EXCEPTION : Could not create NLU component for nlp_ref={nlp_ref} and nlu_ref={nlu_ref}')
         else:
             constructed_component.info.is_untrained = True
@@ -462,6 +461,8 @@ def construct_trainable_component_from_identifier(nlu_ref,nlp_ref):
             pass
         if nlu_ref in ['train.classifier_dl','train.classifier'] :
             return nlu.Classifier(annotator_class = 'classifier_dl', trainable=True, nlu_ref=nlu_ref,)
+        if nlu_ref in ['train.generic_classifier'] :
+            return nlu.Classifier(annotator_class = 'generic_classifier', trainable=True, nlu_ref=nlu_ref,is_licensed=True)
         if nlu_ref in ['train.ner','train.named_entity_recognizer_dl'] :
             return nlu.Classifier(annotator_class = 'ner', trainable=True,nlu_ref=nlu_ref,)
         if nlu_ref in ['train.sentiment_dl','train.sentiment'] :

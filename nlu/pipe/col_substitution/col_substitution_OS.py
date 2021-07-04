@@ -566,11 +566,62 @@ def substitute_multi_classifier_dl_cols(c, cols, nlu_identifier=True):
 
 
 
+def substitute_date_match_cols(c, cols, nlu_identifier=True):
+    """
+    stem is always unique
+    """
+    new_cols = {}
+    new_base_name = 'matched_date'# if is_unique else f'document_{nlu_identifier}'
+    for col in cols :
+        if '_results'    in col       : new_cols[col] = new_base_name
+        elif '_beginnings' in col     : new_cols[col] = f'{new_base_name}_begin'
+        elif '_endings'    in col     : new_cols[col] = f'{new_base_name}_end'
+        elif '_embeddings' in col     : continue # Token never stores Embeddings  new_cols[col] = f'{new_base_name}_embedding'
+        elif '_types' in col          : continue # new_cols[col] = f'{new_base_name}_type'
+        elif 'meta' in col:
+            if '_sentence' in col  : new_cols[col] = f'{new_base_name}_origin_sentence'  # maps to which sentence token comes from
+            else : logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
+            # new_cols[col]= f"{new_base_name}_confidence"
+    return new_cols
 
 
 
+def substitute_regex_match_cols(c, cols, nlu_identifier=True):
+    """
+    stem is always unique
+    """
+    new_cols = {}
+    new_base_name = 'matched_regex'# if is_unique else f'document_{nlu_identifier}'
+    for col in cols :
+        if '_results'    in col       : new_cols[col] = new_base_name
+        elif '_beginnings' in col     : new_cols[col] = f'{new_base_name}_begin'
+        elif '_endings'    in col     : new_cols[col] = f'{new_base_name}_end'
+        elif '_embeddings' in col     : continue # Token never stores Embeddings  new_cols[col] = f'{new_base_name}_embedding'
+        elif '_types' in col          : continue # new_cols[col] = f'{new_base_name}_type'
+        elif 'meta' in col:
+            if '_sentence' in col  : new_cols[col] = f'{new_base_name}_origin_sentence'  # maps to which sentence token comes from
+            else : logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
+            # new_cols[col]= f"{new_base_name}_confidence"
+    return new_cols
 
 
+def substitute_text_match_cols(c, cols, nlu_identifier=True):
+    """
+    stem is always unique
+    """
+    new_cols = {}
+    new_base_name = 'matched_text'# if is_unique else f'document_{nlu_identifier}'
+    for col in cols :
+        if '_results'    in col       : new_cols[col] = new_base_name
+        elif '_beginnings' in col     : new_cols[col] = f'{new_base_name}_begin'
+        elif '_endings'    in col     : new_cols[col] = f'{new_base_name}_end'
+        elif '_embeddings' in col     : continue # Token never stores Embeddings  new_cols[col] = f'{new_base_name}_embedding'
+        elif '_types' in col          : continue # new_cols[col] = f'{new_base_name}_type'
+        elif 'meta' in col:
+            if '_sentence' in col  : new_cols[col] = f'{new_base_name}_origin_sentence'  # maps to which sentence token comes from
+            else : logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
+            # new_cols[col]= f"{new_base_name}_confidence"
+    return new_cols
 
 
 

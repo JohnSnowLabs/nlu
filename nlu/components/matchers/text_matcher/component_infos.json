@@ -7,11 +7,14 @@
     "chunk"
   ],
   "inputs": [
-    "sentence"
+    "sentence",
+    "token"
   ],
   "type": "matcher",
   "spark_input_column_names": [
-    "sentence"
+    "sentence",
+    "token"
+
   ],
   "spark_output_column_names": [
     "matched_entity"

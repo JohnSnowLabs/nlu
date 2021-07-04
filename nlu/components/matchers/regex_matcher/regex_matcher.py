@@ -3,7 +3,7 @@ import sparknlp
 class RegexMatcher:
     @staticmethod
     def get_default_model():
-        return sparknlp.annotator.RegexMatcherModel()\
+        return sparknlp.annotator.RegexMatcher()\
             .setInputCols("sentence") \
             .setOutputCol("regex_entity") \
             

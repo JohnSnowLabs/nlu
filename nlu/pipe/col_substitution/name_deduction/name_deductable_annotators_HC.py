@@ -3,6 +3,7 @@ from nlu.pipe.col_substitution.col_substitution_HC import *
 from nlu.pipe.col_substitution.col_substitution_OS import *
 
 from sparknlp_jsl.annotator  import *
+from sparknlp_jsl.base  import *
 
 
 name_deductable_HC=[
@@ -17,6 +18,8 @@ name_deductable_HC=[
     ContextualParserModel, # todo
     DrugNormalizer,
     GenericClassifierModel,
+    GenericClassifierApproach,
+    FeaturesAssembler,
     # NerDisambiguatorModel
     # ChunkMergeModel
     # RENerChunksFilter
@@ -37,11 +40,14 @@ always_name_deductable_HC=[
     # Chunk2Token,
     ContextualParserModel, # todo
     ContextualParserApproach,
-    GenericClassifierModel,
+    # GenericClassifierModel,
     # NerDisambiguatorModel
     # ChunkMergeModel
     # RENerChunksFilter
-    NerOverwriter
+    NerOverwriter,
+    GenericClassifierModel,
+    GenericClassifierApproach,
+
 ]
 
 

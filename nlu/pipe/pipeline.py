@@ -167,7 +167,26 @@ class NLUPipeline(BasePipe):
 
         elif isinstance(dataset,pd.DataFrame):
             if not self.verify_all_labels_exist(dataset) : raise ValueError(f"Could not detect label in provided columns={dataset.columns}\nMake sure a column named label, labels or y exists in your dataset.")
-            self.spark_transformer_pipe = self.spark_estimator_pipe.fit(DataConversionUtils.pdf_to_sdf(dataset,self.spark)[0])
+            if self.has_licensed_components :
+            # TODO IF vector_assembler in pipe, configure its inputs to all cols except XZY
+            # TODO  pre_deduct output cols of OTHER ANNOTS??? especially embeds and feed to vec assembleR>>
+                # TODO LOOP ALL ANN
+                pipe_generated_feature_elements = []
+                for c in self.components :
+                    if 'embed' in c.info.type :
+                        pipe_generated_feature_elements += c.info.spark_output_column_names
+
+
+                for c in self.components :
+                    if c.info.name == 'feature_assembler':
+                        vector_assembler_input_cols=[c for c in dataset.columns if c !='text' and c !='y' and c!='label' and c!='labels']
+                        c.model.setInputCols(vector_assembler_input_cols)
+                        # c.model.info.spark_input_column_names = vector_assembler_input_cols
+
+                self.spark_transformer_pipe = self.spark_estimator_pipe.fit(DataConversionUtils.pdf_to_sdf(dataset,self.spark)[0])
+
+            else :
+                self.spark_transformer_pipe = self.spark_estimator_pipe.fit(DataConversionUtils.pdf_to_sdf(dataset,self.spark)[0])
 
         elif isinstance(dataset,pyspark.sql.DataFrame) :
             if not self.verify_all_labels_exist(dataset) : raise ValueError(f"Could not detect label in provided columns={dataset.columns}\nMake sure a column named label, labels or y exists in your dataset.")
@@ -252,6 +271,7 @@ class NLUPipeline(BasePipe):
         c_level_mapping =OutputLevelUtils.get_output_level_mapping_by_component(self)
 
         anno_2_ex_config                                                          = self.get_annotator_extraction_configs(output_metadata,c_level_mapping,positions)
+        # TODO UNPACK MAKES MULTI_LAEL CLASS TRAINED GO OOOOOOOOOOOOOOOOOOOOOOOOOOOM
         pretty_df = self.unpack_and_apply_extractors(processed, keep_stranger_features, stranger_features,anno_2_ex_config)
         col2output_level,same_output_level,not_same_output_level                  = OutputLevelUtils.get_output_level_mappings(self,pretty_df,anno_2_ex_config)
         logger.info(f"Extracting for same_level_cols = {same_output_level}\nand different_output_level_cols = {not_same_output_level}")
@@ -332,8 +352,7 @@ class NLUPipeline(BasePipe):
         logger.info("Configuring Light Pipeline Usage")
         if data_instances > 50000 or use_multi == False:
             logger.info("Disabling light pipeline")
-            self.fit()
-            return
+            if  not self.is_fitted :self.fit()
         else:
             if self.light_pipe_configured == False or force and not isinstance(self.spark_transformer_pipe, LightPipeline):
                 self.light_pipe_configured = True

@@ -1,6 +1,7 @@
 from sparknlp.annotator import *
 import inspect
 import logging
+
 logger = logging.getLogger('nlu')
 from nlu.pipe.utils.component_utils import ComponentUtils
 class PipeUtils():
@@ -128,6 +129,9 @@ class PipeUtils():
                 if '@' not in input_embed_col:
                     # storage_ref = StorageRefUtils.extract_storage_ref(c)
                     # new_embed_col_with_AT_notation = input_embed_col+"@"+storage_ref
+                    # TODO SET STORAGE REF ON TRAINABLE MODELS!!!!!!!!
+                    ## OTHERWHISE ENFORCING AT STORAGE REF WILL BREAK STUFFFZ!
+                    # STORAGE REF MUST MATCH UP TO THE EMBEDDINGS WE ARE FEEDING!!
                     new_embed_AT_ref = ComponentUtils.extract_storage_ref_AT_notation_for_embeds(c, 'input')
                     c.info.inputs.remove(input_embed_col)
                     c.info.inputs.append(new_embed_AT_ref)
@@ -311,3 +315,12 @@ class PipeUtils():
 
         return pipe
 
+
+
+
+    @staticmethod
+    def find_trainable_embed_consumer(pipe):
+        for i,c in enumerate(pipe.components):
+            if isinstance(c.model, NerDLApproach): return i, 'word_embeddings'
+            if isinstance(c.model, (ClassifierDLApproach,SentimentDLApproach,MultiClassifierDLApproach)): return i, 'sentence_embeddings'
+        return -1, None

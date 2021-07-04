@@ -141,18 +141,24 @@ OS_anno2substitution_fn = {
     StopWordsCleaner: {
         'default': substitute_stopwords_cols,
     },
+
+
+
     TextMatcherModel: {
-        'default': '',  # TODO
+        'default': substitute_text_match_cols,
     },
     RegexMatcherModel: {
-        'default': '',  # TODO
+        'default': substitute_regex_match_cols,
     },
     DateMatcher: {
-        'default': '',  # TODO
+        'default': substitute_date_match_cols,
     },
     MultiDateMatcher: {
         'default': '',  # TODO
     },
+
+
+
     T5Transformer: {
         'default': substitute_T5_cols,
     },

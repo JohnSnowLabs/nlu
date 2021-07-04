@@ -44,6 +44,7 @@ class Spellbook():
         'train.sentiment': '',  # sent DL alias
         'train.pos': '',
         'train.multi_classifier': '',
+        'train.generic_classifier': '',
 
     }
 

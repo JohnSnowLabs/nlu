@@ -1,3 +1,4 @@
+import nlu
 from nlu.pipe.pipe_components import SparkNLUComponent
 
 
@@ -28,13 +29,16 @@ class Matcher(SparkNLUComponent):
 
             elif 'text' in annotator_class:
                 from nlu import TextMatcher
-                if get_default:
+                if get_default or nlp_ref =='text_matcher':
                     self.model = TextMatcher.get_default_model()
                 else:
-                    self.model = TextMatcher.get_pretrained_model(nlu_ref, language)
+                    self.model = TextMatcher.get_pretrained_model(nlp_ref, language)
             elif 'date' in annotator_class:
                 from nlu import DateMatcher
-                if get_default: self.model = DateMatcher.get_default_model()
+                from nlu.components.matchers.date_matcher.date_matcher import DateMatcher as DateM
+
+                if get_default: self.model = DateM.get_default_model()
+                else: self.model = DateM.get_default_model()
             elif 'regex' in annotator_class:
                 from nlu import RegexMatcher
                 if get_default:

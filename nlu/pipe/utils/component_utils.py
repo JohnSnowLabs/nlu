@@ -39,6 +39,7 @@ class ComponentUtils():
         if 'raw_texts'       in feature_list: feature_list.remove('raw_texts')
         if 'label'           in feature_list: feature_list.remove('label')
         if 'sentiment_label' in feature_list: feature_list.remove('sentiment_label')
+        if '%%%feature_elements%%%' in feature_list : feature_list.remove('%%%feature_elements%%%')
         if remove_AT_notation:
             new_cs = []
             for c in feature_list :new_cs.append(c.split("@")[0])

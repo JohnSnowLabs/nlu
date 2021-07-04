@@ -13,6 +13,7 @@ from nlu.pipe.extractors.extractor_configs_open_source import *
 from nlu.pipe.extractors.extractor_configs_healthcare import *
 
 from sparknlp_jsl.annotator  import *
+from sparknlp_jsl.base import *
 
 HC_anno2config = {
     MedicalNerModel : {
@@ -78,7 +79,18 @@ HC_anno2config = {
     },
 
     GenericClassifierModel : {
-        'default': '',# TODO
+        'default': default_generic_classifier_config,
+        'default_full'  : default_full_config,
+    },
+
+    GenericClassifierApproach : {
+        'default': default_generic_classifier_config,
+        'default_full'  : default_full_config,
+    },
+
+
+    FeaturesAssembler : {
+        'default': default_feature_assembler_config,
         'default_full'  : default_full_config,
     },
 

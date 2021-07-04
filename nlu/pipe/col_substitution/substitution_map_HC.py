@@ -62,7 +62,10 @@ HC_anno2substitution_fn = {
     },
 
     GenericClassifierModel : {
-        'default': '',# TODO
+        'default': substitute_generic_classifier_parser_cols,# TODO
+    },
+    GenericClassifierApproach : {
+        'default': substitute_generic_classifier_parser_cols,# TODO
     },
 
 
