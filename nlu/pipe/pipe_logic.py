@@ -131,11 +131,14 @@ class PipelineQueryVerifier():
         conversion_candidates                   = PipelineQueryVerifier.extract_sentence_embedding_conversion_candidates(pipe)
         pipe.has_trainable_components           = is_trainable
         if is_trainable:
+            #TODO add storage ref on trainable annotators/approaches
+            trainable_index, embed_type = PipeUtils.find_trainable_embed_consumer(pipe)
+
             required_features_ref = []
-            if len(provided_features_ref) == 0 and not isinstance(pipe.components[0].model, NerDLApproach) : required_features_no_ref.append('sentence_embeddings') # special case, if training we can reset this
-            if len(provided_features_ref) == 0 and     isinstance(pipe.components[0].model, NerDLApproach) : required_features_no_ref.append('word_embeddings') # special case, if training we can reset this
-
-
+            if len(provided_features_ref) == 0 : required_features_no_ref.append(embed_type)
+            else :
+                #set storage ref
+                pipe.components[trainable_index].info.storage_ref = provided_features_ref[0].split('@')[-1]
         components_for_ner_conversion = [] #
 
         missing_features_no_ref                 = set(required_features_no_ref) - set(provided_features_no_ref)# - set(['text','label'])
