@@ -168,25 +168,33 @@ class NLUPipeline(BasePipe):
         elif isinstance(dataset,pd.DataFrame):
             if not self.verify_all_labels_exist(dataset) : raise ValueError(f"Could not detect label in provided columns={dataset.columns}\nMake sure a column named label, labels or y exists in your dataset.")
             if self.has_licensed_components :
-            # TODO IF vector_assembler in pipe, configure its inputs to all cols except XZY
-            # TODO  pre_deduct output cols of OTHER ANNOTS??? especially embeds and feed to vec assembleR>>
-                # TODO LOOP ALL ANN
-                pipe_generated_feature_elements = []
-                for c in self.components :
-                    if 'embed' in c.info.type :
-                        pipe_generated_feature_elements += c.info.spark_output_column_names
-
-
                 for c in self.components :
                     if c.info.name == 'feature_assembler':
                         vector_assembler_input_cols=[c for c in dataset.columns if c !='text' and c !='y' and c!='label' and c!='labels']
                         c.model.setInputCols(vector_assembler_input_cols)
                         # c.model.info.spark_input_column_names = vector_assembler_input_cols
 
-                self.spark_transformer_pipe = self.spark_estimator_pipe.fit(DataConversionUtils.pdf_to_sdf(dataset,self.spark)[0])
 
-            else :
-                self.spark_transformer_pipe = self.spark_estimator_pipe.fit(DataConversionUtils.pdf_to_sdf(dataset,self.spark)[0])
+            # self.spark_transformer_pipe = self.spark_estimator_pipe.fit(DataConversionUtils.pdf_to_sdf(dataset,self.spark)[0])
+
+            # TODO GOD DAMMIT AT NOTATION MAKES WIERD SQL ERRORS APPEAR HERE!!! WE GOTTA REMOVE IT and subitutite it with smth different......
+            for c in self.components:
+                for inp in c.info.spark_input_column_names:
+                    if 'chunk_embedding' in inp :
+                        c.info.spark_input_column_names.remove(inp)
+                        c.info.spark_input_column_names.append(inp.replace('@',"___"))
+                        c.model.setInputCols(c.info.spark_input_column_names)
+                for out in c.info.spark_output_column_names:
+                    if 'chunk_embedding' in out :
+                        c.info.spark_output_column_names.remove(out)
+                        c.info.spark_output_column_names.append(out.replace('@',"___"))
+                        c.model.setOutputCol(c.info.spark_output_column_names[0])
+
+            stages = []
+            for component in self.components:stages.append(component.model)
+            self.spark_estimator_pipe = Pipeline(stages=stages)
+            ## TODO SET STORAGE REF ON FITTED ANNOTATORS!!!!especially resoluton...
+            self.spark_transformer_pipe = self.spark_estimator_pipe.fit(DataConversionUtils.pdf_to_sdf(dataset,self.spark)[0])
 
         elif isinstance(dataset,pyspark.sql.DataFrame) :
             if not self.verify_all_labels_exist(dataset) : raise ValueError(f"Could not detect label in provided columns={dataset.columns}\nMake sure a column named label, labels or y exists in your dataset.")

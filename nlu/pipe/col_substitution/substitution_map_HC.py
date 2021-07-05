@@ -33,6 +33,10 @@ HC_anno2substitution_fn = {
     ChunkEntityResolverModel : {
         'default': substitute_chunk_resolution_cols,
     },
+    ChunkEntityResolverApproach : {
+        'default': substitute_chunk_resolution_cols,
+    },
+
 
     DeIdentificationModel : {
         'default': substitute_de_identification_cols,
@@ -62,10 +66,10 @@ HC_anno2substitution_fn = {
     },
 
     GenericClassifierModel : {
-        'default': substitute_generic_classifier_parser_cols,# TODO
+        'default': substitute_generic_classifier_parser_cols,
     },
     GenericClassifierApproach : {
-        'default': substitute_generic_classifier_parser_cols,# TODO
+        'default': substitute_generic_classifier_parser_cols,
     },
 
 

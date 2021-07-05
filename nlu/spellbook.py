@@ -45,6 +45,9 @@ class Spellbook():
         'train.pos': '',
         'train.multi_classifier': '',
         'train.generic_classifier': '',
+        'train.resolve_chunks': '',
+        'train.resolve_sentence': '',
+        'train.resolve': '',
 
     }
 

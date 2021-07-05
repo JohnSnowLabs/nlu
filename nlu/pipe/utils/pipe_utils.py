@@ -323,4 +323,9 @@ class PipeUtils():
         for i,c in enumerate(pipe.components):
             if isinstance(c.model, NerDLApproach): return i, 'word_embeddings'
             if isinstance(c.model, (ClassifierDLApproach,SentimentDLApproach,MultiClassifierDLApproach)): return i, 'sentence_embeddings'
+            if pipe.has_licensed_components:
+                from sparknlp_jsl.annotator import ChunkEntityResolverApproach, SentenceEntityResolverApproach
+                if isinstance(c.model, ChunkEntityResolverApproach):    return i, 'chunk_embeddings'
+                if isinstance(c.model, SentenceEntityResolverApproach): return i, 'sentence_embeddings'
+
         return -1, None

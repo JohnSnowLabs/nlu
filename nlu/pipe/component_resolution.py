@@ -65,7 +65,7 @@ def parse_language_from_nlu_ref(nlu_ref):
 
 
 
-def get_default_component_of_type(missing_component_type,language='en',is_licensed=False):
+def get_default_component_of_type(missing_component_type,language='en',is_licensed=False, is_trainable_pipe = False ):
     '''
     This function returns a default component for a missing component type.
     It is used to auto complete pipelines, which are missng required components.
@@ -83,7 +83,7 @@ def get_default_component_of_type(missing_component_type,language='en',is_licens
         if 'token' in missing_component_type: return nlu.components.tokenizer.Tokenizer("default_tokenizer", nlu_ref = 'tokenize', language=language)
         if missing_component_type == 'word_embeddings': return Embeddings(annotator_class='glove', nlu_ref='embed.glove')
         if missing_component_type == 'pos':   return Classifier(nlu_ref='pos')
-        if missing_component_type == 'ner':   return Classifier(nlu_ref='ner')
+        if missing_component_type == 'ner':   return Classifier(nlu_ref='ner') if not is_licensed else Classifier(nlu_ref='med_ner', nlp_ref='jsl_ner_wip_clinical')
         if missing_component_type == 'ner_converter':   return Util('ner_converter', nlu_ref='entity')
         if missing_component_type == 'chunk': return nlu.chunker.Chunker(nlu_ref='chunker')
         if missing_component_type == 'ngram': return nlu.chunker.Chunker(nlu_ref='ngram')
@@ -92,6 +92,9 @@ def get_default_component_of_type(missing_component_type,language='en',is_licens
         if missing_component_type == 'labled_dependency': return LabledDepParser('dep',nlu_ref='dep.typed')
         if missing_component_type == 'date': return nlu.Matcher('date', nlu_ref='match.date')
         if missing_component_type == 'ner_chunk': return Util('ner_converter',nlu_ref='entitiy')
+        # TODO ENTITIES REQUIREMENT: if entities is required and we are training a chunk_reoslver, we just and DOC2CHUNK!!! ??
+
+        if missing_component_type == 'entities' and is_licensed and is_trainable_pipe: return Util('doc2chunk')
         if missing_component_type == 'entities' and is_licensed: return Util('ner_to_chunk_converter_licensed')
         if missing_component_type == 'entities': return Util('ner_converter')
         if missing_component_type == 'feature_vector': return Util('feature_assembler')
@@ -461,8 +464,6 @@ def construct_trainable_component_from_identifier(nlu_ref,nlp_ref):
             pass
         if nlu_ref in ['train.classifier_dl','train.classifier'] :
             return nlu.Classifier(annotator_class = 'classifier_dl', trainable=True, nlu_ref=nlu_ref,)
-        if nlu_ref in ['train.generic_classifier'] :
-            return nlu.Classifier(annotator_class = 'generic_classifier', trainable=True, nlu_ref=nlu_ref,is_licensed=True)
         if nlu_ref in ['train.ner','train.named_entity_recognizer_dl'] :
             return nlu.Classifier(annotator_class = 'ner', trainable=True,nlu_ref=nlu_ref,)
         if nlu_ref in ['train.sentiment_dl','train.sentiment'] :
@@ -475,6 +476,19 @@ def construct_trainable_component_from_identifier(nlu_ref,nlp_ref):
             return nlu.Classifier(annotator_class = 'multi_classifier', trainable=True,nlu_ref=nlu_ref,)
         if nlu_ref in ['train.word_seg','train.word_segmenter'] :
             return nlu.Tokenizer(annotator_class = 'word_segmenter', trainable=True,nlu_ref=nlu_ref,)
+
+
+        if nlu_ref in ['train.generic_classifier'] :
+            return nlu.Classifier(annotator_class = 'generic_classifier', trainable=True, nlu_ref=nlu_ref,is_licensed=True)
+
+        if nlu_ref in ['train.resolve_chunks'] :
+            return nlu.Resolver(annotator_class = 'chunk_entity_resolver', trainable=True,nlu_ref=nlu_ref,)
+        if nlu_ref in ['train.resolve_sentence','train.resolve'] :
+            return nlu.Resolver(annotator_class = 'sentence_entity_resolver', trainable=True,nlu_ref=nlu_ref,)
+
+        if nlu_ref in ['train.assertion','train.assertion_dl'] : # TODO
+            return nlu.Classifier(annotator_class = 'sentiment_dl', trainable=True,nlu_ref=nlu_ref,)
+
 
 
     except:  # if reference is not in namespace and not a component it will cause a unrecoverable crash

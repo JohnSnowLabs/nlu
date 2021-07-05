@@ -157,6 +157,9 @@ OS_anno2substitution_fn = {
         'default': '',  # TODO
     },
 
+    Doc2Chunk: {
+        'default': substitute_doc2chunk_cols,
+    },
 
 
     T5Transformer: {

@@ -32,7 +32,9 @@ class Util(SparkNLUComponent):
             elif annotator_class == 'chunk_merger':
                 from nlu.components.utils.chunk_merger.chunk_merger import ChunkMerger
                 self.model = ChunkMerger.get_default_model()
-
+            elif annotator_class == 'doc2chunk':
+                from nlu.components.utils.doc2chunk.doc_2_chunk import Doc_2_Chunk
+                self.model = Doc_2_Chunk.get_default_model()
 
 
         SparkNLUComponent.__init__(self, annotator_class, component_type, nlu_ref, lang,loaded_from_pretrained_pipe )

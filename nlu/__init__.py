@@ -1,4 +1,4 @@
-__version__ = '3.1.0'
+__version__ = '3.1.1'
 hard_offline_checks = False
 def version(): return __version__
 #
@@ -22,7 +22,7 @@ def try_import_pyspark_in_streamlit():
             return False
         return False
     return True
-if not try_import_pyspark_in_streamlit() : raise  ImportError
+if not try_import_pyspark_in_streamlit() : raise  ImportError("You ned to install Pyspark")
 st_cache_enabled = False
 from typing import Optional
 

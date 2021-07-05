@@ -10,7 +10,7 @@ class ChunkResolver:
 
     @staticmethod
     def get_default_trainable_model():
-        return ChunkEntityResolverModel() \
+        return ChunkEntityResolverApproach() \
         .setInputCols("token","chunk_embeddings") \
         .setOutputCol("chunk_resolution") \
         .setDistanceFunction("COSINE") \

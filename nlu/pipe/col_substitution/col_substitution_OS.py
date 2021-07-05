@@ -750,3 +750,20 @@ def substitute_pos_approach_cols(c, cols, nlu_identifier=True):
             elif 'confidence' in col  : new_cols[col] = f'{new_base_name}_confidence'
             else : logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
     return new_cols
+
+
+def substitute_doc2chunk_cols(c, cols, nlu_identifier=True):
+    """
+    Substitute col name for Doc2chunk
+    """
+    new_cols = {}
+    new_base_name = f'doc2chunk'# if is_unique else f'document_{nlu_identifier}'
+    for col in cols :
+        if '_results'    in col       : new_cols[col]  = f'{new_base_name}'
+        elif '_beginnings' in col     : new_cols[col]  = f'{new_base_name}_begin'
+        elif '_endings'    in col     : new_cols[col]  = f'{new_base_name}_end'
+        elif '_types' in col          : continue #
+        elif '_embeddings' in col     : continue #
+        elif 'meta' in col:
+            logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
+    return new_cols
