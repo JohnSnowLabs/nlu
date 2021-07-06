@@ -2071,6 +2071,7 @@ class Spellbook():
             'de.ner': 'wikiner_840B_300',  # default ner de
             'de.ner.wikiner': 'wikiner_840B_300',  # default ner embeds de
             'de.ner.wikiner.glove.840B_300': 'wikiner_840B_300',
+            # 'de.ner.wikiner.6B_100':'wikiner_6B_100', # In modelshub but not in S3?
             'de.stopwords': 'stopwords_de',
             'de.ner.wikiner.glove.6B_300': 'wikiner_6B_300',
             'de.embed.bert' : 'bert_base_german_cased',
@@ -3941,6 +3942,7 @@ class Spellbook():
                 'en.resolve.snomed.aux_concepts_int': 'sbiobertresolve_snomed_auxConcepts_int',
                 'en.resolve.snomed.findings': 'sbiobertresolve_snomed_findings',
                 'en.resolve.snomed.findings_int': 'sbiobertresolve_snomed_findings_int',
+                'en.resolve'
 
                 # Greedy Relation extracction
                 'en.relation.posology': 'posology_re',  # TODo OCRASHES SOME STRINGS!
@@ -3997,7 +3999,7 @@ class Spellbook():
                 'en.med_ner.chemprot.clinical': 'ner_chemprot_clinical',
                 'en.med_ner.clinical': 'ner_clinical',
                 'en.med_ner.clinical.biobert': 'ner_clinical_biobert',
-                'en.med_ner.clinical.noncontrib': 'ner_clinical_noncontrib',
+                # 'en.med_ner.clinical.noncontrib': 'ner_clinical_noncontrib', # outtaded, NER model it is not MedNER
                 'en.med_ner.diseases': 'ner_diseases',
                 'en.med_ner.diseases.biobert': 'ner_diseases_biobert',
                 'en.med_ner.diseases.large': 'ner_diseases_large',
@@ -4030,7 +4032,7 @@ class Spellbook():
                 'en.med_ner.radiology.wip_clinical': 'ner_radiology_wip_clinical',
                 'en.med_ner.risk_factors': 'ner_risk_factors',
                 'en.med_ner.risk_factors.biobert': 'ner_risk_factors_biobert',
-                'en.med_ner.i2b2': 'nerdl_i2b2', #  broken
+                # 'en.med_ner.i2b2': 'nerdl_i2b2', #  broken
                 'en.med_ner.tumour': 'nerdl_tumour_demo',
                 'en.med_ner.jsl.wip.clinical': 'jsl_ner_wip_clinical',
                 'en.med_ner.jsl.wip.clinical.greedy': 'jsl_ner_wip_greedy_clinical',
@@ -4044,8 +4046,7 @@ class Spellbook():
                 'en.med_ner.deid.sd': 'ner_deid_sd',
                 'en.med_ner.deid.sd_large': 'ner_deid_sd_large',
                 'en.med_ner.deid.synthetic': 'ner_deid_synthetic',
-                'en.med_ner.deid.dl': 'ner_deidentify_dl',
-                'en.med_ner.deid': 'nerdl_deid',
+                'en.med_ner.deid': 'ner_deidentify_dl',
 
                 # 'en.med_ner.clinical.icdem': 'ner_clinical_icdem', # TODO UNRESOLVED! PIPE?
                 # 'en.med_ner.clinical.large': 'ner_clinical_large',# TODO URNESOLVED, PIPE?
@@ -4069,17 +4070,17 @@ class Spellbook():
                 # 'en.resolve_chunk.icd10pcs.icdoem_2ng': 'chunkresolve_icd10pcs_icdoem_2ng', # broken
                 # 'en.resolve_chunk.icdo.icdoem': 'chunkresolve_icdo_icdoem', # broken
 
-                'en.resolve_chunk.athena_conditions': 'chunkresolve_athena_conditions_healthcare',
+                # 'en.resolve_chunk.athena_conditions': 'chunkresolve_athena_conditions_healthcare', # Not 3.+ Compatible
                 'en.resolve_chunk.cpt_clinical': 'chunkresolve_cpt_clinical',
                 'en.resolve_chunk.icd10cm.clinical': 'chunkresolve_icd10cm_clinical',
                 'en.resolve_chunk.icd10cm.diseases_clinical': 'chunkresolve_icd10cm_diseases_clinical',
                 'en.resolve_chunk.icd10cm.hcc_clinical': 'chunkresolve_icd10cm_hcc_clinical',
-                'en.resolve_chunk.icd10cm.hcc_healthcare': 'chunkresolve_icd10cm_hcc_healthcare',
+                # 'en.resolve_chunk.icd10cm.hcc_healthcare': 'chunkresolve_icd10cm_hcc_healthcare',
                 'en.resolve_chunk.icd10cm.injuries': 'chunkresolve_icd10cm_injuries_clinical',
                 'en.resolve_chunk.icd10cm.musculoskeletal': 'chunkresolve_icd10cm_musculoskeletal_clinical',
                 'en.resolve_chunk.icd10cm.neoplasms': 'chunkresolve_icd10cm_neoplasms_clinical',
-                'en.resolve_chunk.icd10cm.poison': 'chunkresolve_icd10cm_poison_ext_clinical',
-                'en.resolve_chunk.icd10cm.puerile': 'chunkresolve_icd10cm_puerile_clinical',
+                # 'en.resolve_chunk.icd10cm.poison': 'chunkresolve_icd10cm_poison_ext_clinical',
+                # 'en.resolve_chunk.icd10cm.puerile': 'chunkresolve_icd10cm_puerile_clinical',
                 'en.resolve_chunk.icd10pcs.clinical': 'chunkresolve_icd10pcs_clinical',
                 'en.resolve_chunk.icdo.clinical': 'chunkresolve_icdo_clinical',
                 'en.resolve_chunk.loinc': 'chunkresolve_loinc_clinical',
@@ -4093,8 +4094,8 @@ class Spellbook():
                 'en.resolve_chunk.rxnorm.xsmall.clinical': 'chunkresolve_rxnorm_xsmall_clinical',
                 'en.resolve_chunk.snomed.findings': 'chunkresolve_snomed_findings_clinical',
 
-                'en.classify.icd10.clinical':'classifier_icd10cm_hcc_clinical',      #  WHCIH CLASS? # TODO NOT LAODING
-                'en.classify.icd10.healthcare':'classifier_icd10cm_hcc_healthcare', # TODO NOT LOADING CORRECt
+                # 'en.classify.icd10.clinical':'classifier_icd10cm_hcc_clinical',      #  WHCIH CLASS? # TODO NOT LAODING
+                # 'en.classify.icd10.healthcare':'classifier_icd10cm_hcc_healthcare', # TODO NOT LOADING CORRECt
                 'en.classify.ade.biobert':'classifierdl_ade_biobert',
                 'en.classify.ade.clinical':'classifierdl_ade_clinicalbert',
                 'en.classify.ade.conversational':'classifierdl_ade_conversational_biobert',
@@ -4122,13 +4123,13 @@ class Spellbook():
             {
                 'de.embed' :'w2v_cc_300d',
                 'de.embed.w2v' :'w2v_cc_300d',
-                'de.resolve_chunk' :'chunkresolve_ICD10GM',
-                'de.resolve_chunk.icd10gm' :'chunkresolve_ICD10GM',
+                # 'de.resolve_chunk' :'chunkresolve_ICD10GM',
+                # 'de.resolve_chunk.icd10gm' :'chunkresolve_ICD10GM',
                 'de.resolve_chunk.icd10gm.2021' :'chunkresolve_ICD10GM_2021',
                 'de.med_ner.legal' :'ner_legal',
-                'de.med_ner' :'ner_healthcare',
-                'de.med_ner.healthcare' :'ner_healthcare',
-                'de.med_ner.healthcare_slim' :'ner_healthcare_slim',
+                # 'de.med_ner' :'ner_healthcare', # BAD NER TRAINED ON STORAGE_REF embeddings_healthcare_100d which only exist in EN
+                #  'de.med_ner.healthcare' :'ner_healthcare', # BAD NER TRAINED ON STORAGE_REF embeddings_healthcare_100d which only exist in EN
+                'de.med_ner' :'ner_healthcare_slim',
                 'de.med_ner.traffic' :'ner_traffic',
             },
 
@@ -4178,6 +4179,7 @@ class Spellbook():
     # map storage ref to nlu ref
 
     storage_ref_2_nlu_ref = {
+
         'en': {
             'tfhub_use'         : 'en.embed_sentence.use',
             'glove_100d'        : 'en.embed.glove.100d',
@@ -4213,6 +4215,10 @@ class Spellbook():
 
 
         },
+        'es':{
+            'embeddings_scielowiki300':'es.embed.scielowiki.300d',
+
+        }
 
     }
 
