@@ -1805,9 +1805,10 @@ class Spellbook():
             'nl.pos': 'pos_ud_alpino',  # default pos nl
             'nl.pos.ud_alpino': 'pos_ud_alpino',
             'nl.ner': 'wikiner_6B_100',  # default ner nl
-            'nl.ner.wikiner': 'wikiner_6B_100',  # default ner nl with embeds
-            'nl.ner.wikiner.glove.6B_100': 'wikiner_6B_100',
+            # 'nl.ner.wikiner': 'wikiner_6B_100',  # default ner nl with embeds, unresolvable Storageref
+            # 'nl.ner.wikiner.glove.6B_100': 'wikiner_6B_100', #  unresolvable Storageref
             'nl.ner.wikiner.glove.6B_300': 'wikiner_6B_300',
+            'nl.ner.wikiner': 'wikiner_6B_300',
             'nl.ner.wikiner.glove.840B_300': 'wikiner_840B_300',
             'nl.embed.bert': 'bert_base_dutch_cased',
 
@@ -1847,7 +1848,7 @@ class Spellbook():
             'en.ner.onto.electra.uncased_base': 'onto_electra_base_uncased',
             'en.ner.bert_base_cased': 'ner_dl_bert_base_cased',
 
-            'en.ner.ade': 'ade_ner_100d',
+            # 'en.ner.ade': 'ade_ner_100d', # FORBIDDEN?
             'en.ner.aspect_sentiment': 'ner_aspect_based_sentiment',
 
             'en.ner.glove.100d': 'ner_dl_sentence',
@@ -2075,7 +2076,7 @@ class Spellbook():
             'de.stopwords': 'stopwords_de',
             'de.ner.wikiner.glove.6B_300': 'wikiner_6B_300',
             'de.embed.bert' : 'bert_base_german_cased',
-           'de.embed.bert.uncased' : '	bert_base_german_uncased'
+           'de.embed.bert.uncased' : 'bert_base_german_uncased'
         },
         'it': {
             'it.lemma': 'lemma_dxc',  # default lemma it
@@ -2197,12 +2198,11 @@ class Spellbook():
             'bn.stopwords': 'stopwords_bn',
             "bn.lemma": "lemma",
             "bn.pos": "pos_msri",
-            'bn.ner': 'ner_jifs_glove_840B_300d',
+            'bn.ner': 'bengaliner_cc_300d',
+            'bn.ner.jifs': 'ner_jifs_glove_840B_300d',
             'bn.ner.glove': 'ner_jifs_glove_840B_300d',
-            'bn.embed.glove': 'bengaliner_cc_300d',
-            'bn.embed': 'bengaliner_cc_300d',
-            'bn.ner.cc': 'bengali_cc_300d',
-            'bn.ner.cc_300d': 'bengali_cc_300d',
+            'bn.embed.glove': 'bengali_cc_300d',
+            'bn.embed': 'bengali_cc_300d',
 
         },
         'br': {
@@ -2240,12 +2240,11 @@ class Spellbook():
             'fi.pos': 'pos_ud_tdt',  # default pos fi
             'fi.stopwords': 'stopwords_fi',
             'fi.ner': 'wikiner_6B_100',
-            'fi.ner.6B_100': 'wikiner_6B_100',
-            'fi.ner.6B_300': 'wikiner_6B_300',
-            'fi.ner.840B_300': 'wikiner_840B_300',
-            'fi.embed.bert.': 'bert_finnish_cased',
-            'fi.embed.bert.cased.': 'bert_finnish_cased',
-            'fi.embed.bert.uncased.': 'bert_finnish_uncased',
+            # 'fi.ner.6B_300': 'wikiner_6B_300',
+            # 'fi.ner.840B_300': 'wikiner_840B_300',
+            'fi.embed.bert': 'bert_finnish_cased',
+            'fi.embed.bert.cased': 'bert_finnish_cased',
+            'fi.embed.bert.uncased': 'bert_finnish_uncased',
             'fi.embed_sentence': 'sent_bert_finnish_cased',
             'fi.embed_sentence.bert.cased': 'sent_bert_finnish_cased',
             'fi.embed_sentence.bert.uncased': 'sent_bert_finnish_uncased',
@@ -2413,7 +2412,7 @@ class Spellbook():
             'tr.ner.bert': 'turkish_ner_bert' , # ner tr default
             'tr.classify.news'  : 'classifierdl_bert_news',
             'tr.embed.bert'  : 'bert_base_turkish_cased',
-            'tr.embed.bert.uncased'  : '	bert_base_turkish_uncased',
+            'tr.embed.bert.uncased'  : 'bert_base_turkish_uncased',
         },
         'uk': {
             'uk.lemma': 'lemma',  # default uk lemma
@@ -2504,6 +2503,7 @@ class Spellbook():
 
             # 'xx.embed.glove.840B_300': 'glove_840B_300',
             'xx.embed.glove.6B_300': 'glove_6B_300',
+            'xx.embed.glove.glove_6B_100': 'glove_6B_100',
             'xx.embed.bert_multi_cased': 'bert_multi_cased',
             'xx.embed.bert': 'bert_multi_cased',
 
@@ -4192,8 +4192,29 @@ class Spellbook():
         'th':{
             'tfhub_use_multi_lg' :'xx.use.multi'
 
-        }
-
+        },
+        'ur':{
+            'glove_300d' : 'ur.embed',
+        },
+        'tr':
+            {'bert_multi_cased': 'xx.embed.bert',
+             'labse' : 'xx.embed_sentence.labse'
+             },
+        'sv':
+            {'glove_100d': 'xx.embed.glove.glove_6B_100',
+             },
+        'fa':
+            {'glove_300d': 'fa.embed',
+             },
+        'he':
+            {'glove_300d': 'he.embed',
+             },
+        'fi':
+            {'glove_100d': 'fi.embed.bert',
+             },
+        'ar':
+            {'glove_300d': 'ar.embed',
+             }
 
     }  #
 

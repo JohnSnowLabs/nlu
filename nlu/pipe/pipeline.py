@@ -192,8 +192,8 @@ class NLUPipeline(BasePipe):
 
             stages = []
             for component in self.components:stages.append(component.model)
-            self.spark_estimator_pipe = Pipeline(stages=stages)
             ## TODO SET STORAGE REF ON FITTED ANNOTATORS!!!!especially resoluton...
+            self.spark_estimator_pipe = Pipeline(stages=stages)
             self.spark_transformer_pipe = self.spark_estimator_pipe.fit(DataConversionUtils.pdf_to_sdf(dataset,self.spark)[0])
 
         elif isinstance(dataset,pyspark.sql.DataFrame) :

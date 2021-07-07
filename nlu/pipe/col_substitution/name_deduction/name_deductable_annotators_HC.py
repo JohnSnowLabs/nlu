@@ -47,6 +47,7 @@ always_name_deductable_HC=[
     NerOverwriter,
     GenericClassifierModel,
     GenericClassifierApproach,
+    DrugNormalizer,
 
 ]
 
