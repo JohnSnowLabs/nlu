@@ -3891,6 +3891,10 @@ class Spellbook():
                 'en.assert.healthcare': 'assertion_dl_healthcare',
                 'en.assert.large': 'assertion_dl_large',
 
+                #2.7.6
+                'en.assert.radiology' :'assertion_dl_radiology',
+
+
                 # WordEmbedding Model Glove Embeddings
                 'en.embed.glove.clinical': 'embeddings_clinical',
                 'en.embed.glove.biovec': 'embeddings_biovec',
@@ -3899,6 +3903,17 @@ class Spellbook():
                 # 'en.embed.glove.icd10': 'embeddings_icd10_base', # Broken in JSL
                 'en.embed.glove.icdoem': 'embeddings_icdoem',
                 'en.embed.glove.icdoem_2ng': 'embeddings_icdoem_2ng',
+
+                #3.1.1
+                'en.embed_sentence.biobert.jsl_cased':'sbiobert_jsl_cased',
+                'en.embed_sentence.biobert.jsl_umls_cased':'sbiobert_jsl_umls_cased',
+                'en.embed_sentence.bert.jsl_medium_uncased':'sbert_jsl_medium_uncased',
+                'en.embed_sentence.bert.jsl_medium_umls_uncased':'sbert_jsl_medium_umls_uncased',
+                'en.embed_sentence.bert.jsl_mini_uncased':'sbert_jsl_mini_uncased',
+                'en.embed_sentence.bert.jsl_mini_umlsuncased':'sbert_jsl_mini_umls_uncased',
+                'en.embed_sentence.bert.jsl_tiny_uncased':'sbert_jsl_tiny_uncased',
+                'en.embed_sentence.bert.jsl_tiny_umls_uncased':'sbert_jsl_tiny_umls_uncased',
+
 
                 # BIOBERT embeddings
 
@@ -3942,7 +3957,15 @@ class Spellbook():
                 'en.resolve.snomed.aux_concepts_int': 'sbiobertresolve_snomed_auxConcepts_int',
                 'en.resolve.snomed.findings': 'sbiobertresolve_snomed_findings',
                 'en.resolve.snomed.findings_int': 'sbiobertresolve_snomed_findings_int',
-                'en.resolve'
+
+                #3.1.1
+                'en.resolve.snomed_body_structure_med':'sbertresolve_snomed_bodyStructure_med',
+                'en.resolve.snomed_body_structure':'sbiobertresolve_snomed_bodyStructure',
+                'en.resolve.icdo_augmented':'sbiobertresolve_icdo_augmented',
+
+                'en.resolve.icd10cm.slim_billable_hcc'  :'sbiobertresolve_icd10cm_slim_billable_hcc',
+                'en.resolve.icd10cm.slim_billable_hcc_med'  :'sbertresolve_icd10cm_slim_billable_hcc_med',
+
 
                 # Greedy Relation extracction
                 'en.relation.posology': 'posology_re',  # TODo OCRASHES SOME STRINGS!
@@ -3973,6 +3996,11 @@ class Spellbook():
                 'en.relation.drug_drug_interaction': 'redl_drug_drug_interaction_biobert',
                 'en.relation.humen_phenotype_gene': 'redl_human_phenotype_gene_biobert',
                 'en.relation.temporal_events': 'redl_temporal_events_biobert',
+
+                #2.7.5
+                'en.relation.test_result_date'  :'re_test_result_date',
+                # 2.7.3
+                'en.relation.chemport'   :'re_chemprot',
 
                 # PartOfSpeechModels
                 'en.pos.clinical': 'pos_clinical',  # DEFAULT POS HC|| RELATION EXTRACTION TRAIN ON THIS!
@@ -4047,10 +4075,25 @@ class Spellbook():
                 'en.med_ner.deid.sd_large': 'ner_deid_sd_large',
                 'en.med_ner.deid.synthetic': 'ner_deid_synthetic',
                 'en.med_ner.deid': 'ner_deidentify_dl',
+                #2.7.5
+                'en.med_ner.admission_events'  :'ner_events_admission_clinical',
+
+                #3.1.1
+
+                'med_ner.deid.generic_augmented':'ner_deid_generic_augmented',
+                'med_ner.deid.subentity_augmented':'ner_deid_subentity_augmented',
+                'med_ner.deid.generic_glove':'ner_deid_generic_glove',
+                'med_ner.deid.subentity_glove':'ner_deid_subentity_glove',
 
                 # 'en.med_ner.clinical.icdem': 'ner_clinical_icdem', # TODO UNRESOLVED! PIPE?
                 # 'en.med_ner.clinical.large': 'ner_clinical_large',# TODO URNESOLVED, PIPE?
 
+                # NLU 3.1.2
+
+                'en.med_ner.ade_biobert' :'ner_ade_biobert',
+                'en.classify.ade.clinicalbert' :'classifierdl_ade_clinicalbert',
+                'en.recognize_entities.posology'  :'recognize_entities_posology', # PIPE
+                'en.med_ner.large':'ner_large_clinical',
 
                 # DeIdentificationModel
 
