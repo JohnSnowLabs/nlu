@@ -1876,7 +1876,8 @@ class Spellbook():
             'biobert': 'biobert_pubmed_base_cased',  # alias
             'en.embed.biobert': 'biobert_pubmed_base_cased',  # default bio bert
             'en.embed.biobert.pubmed_base_cased': 'biobert_pubmed_base_cased',
-            # TODO NO SUCH PARAM POOLING LAYER EXISTS!
+            # 'en.embed_sentence.bluebert_cased_mli' :  'sbluebert_base_cased_mli', # NOT FOUND
+
             'en.embed.biobert.pubmed_large_cased': 'biobert_pubmed_large_cased',
             'en.embed.biobert.pmc_base_cased': 'biobert_pmc_base_cased',
             'en.embed.biobert.pubmed_pmc_base_cased': 'biobert_pubmed_pmc_base_cased',
@@ -3858,10 +3859,7 @@ class Spellbook():
             "xx.fr.marian.translate_to.vi":"opus_mt_vi_fr",
             "xx.fr.marian.translate_to.war":"opus_mt_war_fr",
             "xx.fi.marian.translate_to.zh":"opus_mt_zh_fi",
-            "xx.af.marian.translate_to.ru" : "opus_tatoeba_af_ru",
             "xx.he.marian.translate_to.it" : "opus_tatoeba_he_it",
-            "xx.he.marian.translate_to.fr" : "opus_tatoeba_he_fr",
-            "xx.it.marian.translate_to.he" : "opus_tatoeba_it_he",
             "xx.es.marian.translate_to.zh" : "opus_tatoeba_es_zh",
 
 
@@ -4000,7 +3998,7 @@ class Spellbook():
                 #2.7.5
                 'en.relation.test_result_date'  :'re_test_result_date',
                 # 2.7.3
-                'en.relation.chemport'   :'re_chemprot',
+                # 'en.relation.chemport'   :'re_chemprot',
 
                 # PartOfSpeechModels
                 'en.pos.clinical': 'pos_clinical',  # DEFAULT POS HC|| RELATION EXTRACTION TRAIN ON THIS!
@@ -4082,8 +4080,8 @@ class Spellbook():
 
                 'med_ner.deid.generic_augmented':'ner_deid_generic_augmented',
                 'med_ner.deid.subentity_augmented':'ner_deid_subentity_augmented',
-                'med_ner.deid.generic_glove':'ner_deid_generic_glove',
-                'med_ner.deid.subentity_glove':'ner_deid_subentity_glove',
+                # 'med_ner.deid.generic_glove':'ner_deid_generic_glove',
+                # 'med_ner.deid.subentity_glove':'ner_deid_subentity_glove',
 
                 # 'en.med_ner.clinical.icdem': 'ner_clinical_icdem', # TODO UNRESOLVED! PIPE?
                 # 'en.med_ner.clinical.large': 'ner_clinical_large',# TODO URNESOLVED, PIPE?
@@ -4092,7 +4090,6 @@ class Spellbook():
 
                 'en.med_ner.ade_biobert' :'ner_ade_biobert',
                 'en.classify.ade.clinicalbert' :'classifierdl_ade_clinicalbert',
-                'en.recognize_entities.posology'  :'recognize_entities_posology', # PIPE
                 'en.med_ner.large':'ner_large_clinical',
 
                 # DeIdentificationModel
@@ -4212,6 +4209,7 @@ class Spellbook():
             'en.explain_doc.era':'explain_clinical_doc_era',
             # 'en.explain_doc.ade':'explain_clinical_doc_ade', # todo wierd 2x Converter 1x NER pipe, messes up pipe logic
 
+            'en.recognize_entities.posology'  :'recognize_entities_posology', # PIPE
 
 
 
@@ -4276,8 +4274,8 @@ class Spellbook():
             'RelationExtractionModel_9c255241fec3': 'en.embed.glove.clinical',
             # 'bert_base_cased' : 'en.embed.glove.clinical'
             'bert_base_cased': 'en.embed.bert.base_cased',
-
-
+            'BERT_SENTENCE_EMBEDDINGS_c7e5b6a772f5' : 'en.embed_sentence.bert.jsl_medium_uncased',
+            'RelationExtractionModel_ce79d77d1bf1' : 'en.embed.glove.clinical',
         },
         'es':{
             'embeddings_scielowiki300':'es.embed.scielowiki.300d',
