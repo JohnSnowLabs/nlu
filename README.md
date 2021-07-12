@@ -113,7 +113,7 @@ Working with text data can sometimes be quite a dirty Job. NLU helps you keep yo
 - Pattern Cleaners
 - Slang Cleaner 
 
-## Where can I see all models avaiable in NLU? 
+## Where can I see all models available in NLU? 
 For NLU models to load, see [the NLU Namespace](https://nlu.johnsnowlabs.com/docs/en/namespace) or the [John Snow Labs Modelshub](https://modelshub.johnsnowlabs.com/models)  or go [straight to the source](https://github.com/JohnSnowLabs/nlu/blob/master/nlu/namespace.py).
 
 ## Supported Data Types
