@@ -177,7 +177,7 @@ class NLUPipeline(BasePipe):
 
             # self.spark_transformer_pipe = self.spark_estimator_pipe.fit(DataConversionUtils.pdf_to_sdf(dataset,self.spark)[0])
 
-            # TODO GOD DAMMIT AT NOTATION MAKES WIERD SQL ERRORS APPEAR HERE!!! WE GOTTA REMOVE IT and subitutite it with smth different......
+            # TODO fix  AT NOTATION MAKES WIERD SQL ERRORS APPEAR HERE!!! WE GOTTA REMOVE IT and subitutite it with smth different......
             for c in self.components:
                 for inp in c.info.spark_input_column_names:
                     if 'chunk_embedding' in inp :
@@ -192,7 +192,7 @@ class NLUPipeline(BasePipe):
 
             stages = []
             for component in self.components:stages.append(component.model)
-            ## TODO SET STORAGE REF ON FITTED ANNOTATORS!!!!especially resoluton...
+            ## TODO SET STORAGE REF ON FITTED ANNOTATORS, especially resoluton...
             self.spark_estimator_pipe = Pipeline(stages=stages)
             self.spark_transformer_pipe = self.spark_estimator_pipe.fit(DataConversionUtils.pdf_to_sdf(dataset,self.spark)[0])
 
@@ -279,7 +279,6 @@ class NLUPipeline(BasePipe):
         c_level_mapping =OutputLevelUtils.get_output_level_mapping_by_component(self)
 
         anno_2_ex_config                                                          = self.get_annotator_extraction_configs(output_metadata,c_level_mapping,positions)
-        # TODO UNPACK MAKES MULTI_LAEL CLASS TRAINED GO OOOOOOOOOOOOOOOOOOOOOOOOOOOM
         pretty_df = self.unpack_and_apply_extractors(processed, keep_stranger_features, stranger_features,anno_2_ex_config)
         col2output_level,same_output_level,not_same_output_level                  = OutputLevelUtils.get_output_level_mappings(self,pretty_df,anno_2_ex_config)
         logger.info(f"Extracting for same_level_cols = {same_output_level}\nand different_output_level_cols = {not_same_output_level}")

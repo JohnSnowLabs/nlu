@@ -79,7 +79,7 @@ word-wrap: break-word;
     def display_infos():
         FOOTER       = """<span style="font-size: 0.75em">{}</span>"""
         field_info   = """**INFO:** You can type in the model selection fields to search and filter."""
-        iso_info     = """**INFO:** NLU model references have the structure: `<iso_language_code>.<model_name>.<dataset>` . [Based on the `ISO Language Codes`](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes). If no language defined, `en.` will be assumed as default ' ,"""
+        iso_info     = """**INFO:** NLU model references have the structure.md: `<iso_language_code>.<model_name>.<dataset>` . [Based on the `ISO Language Codes`](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes). If no language defined, `en.` will be assumed as default ' ,"""
         ISO_FOOTER   = FOOTER.format(field_info)
         FIELD_FOOTER = FOOTER.format(iso_info)
         st.sidebar.markdown(ISO_FOOTER, unsafe_allow_html=True)

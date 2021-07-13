@@ -77,7 +77,7 @@ from nlu.components.dependency_untypeds.unlabeled_dependency_parser.unlabeled_de
 from nlu.components.dependency_typeds.labeled_dependency_parser.labeled_dependency_parser import \
     LabeledDependencyParser
 
-# 0 Base internal Spark NLP structure required for all JSL components
+# 0 Base internal Spark NLP structure.md required for all JSL components
 from nlu.components.utils.document_assembler.spark_nlp_document_assembler import SparkNlpDocumentAssembler
 from nlu.components.utils.ner_to_chunk_converter.ner_to_chunk_converter import NerToChunkConverter
 

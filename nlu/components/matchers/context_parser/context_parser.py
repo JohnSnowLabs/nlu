@@ -6,7 +6,7 @@ class ContextParser:
         return ContextualParserApproach() \
             .setInputCols(["sentence", "token"]) \
             .setOutputCol("context_entity")\
-           .setCaseSensitive(False) \
+            .setCaseSensitive(False) \
             .setContextMatch(False) \
             .setPrefixAndSuffixMatch(False)
     @staticmethod

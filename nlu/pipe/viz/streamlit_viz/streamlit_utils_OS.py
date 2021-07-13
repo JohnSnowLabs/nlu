@@ -127,10 +127,15 @@ class StreamlitUtilsOS():
         for c in token_pipe.components :
             if c.info.name == 'pos' :
                 for emb_c in embed_pipe.components :
-                    if emb_c.info.name =='pos' : return embed_pipe
+                    if emb_c.info.name =='pos' :
+                        embed_pipe.is_fitted=False
+                        embed_pipe.fit()
+                        return embed_pipe
                     # only merge if pos not already in pipe
                 embed_pipe.components.append(c)
             # if c.info.name == 'unlabeled_dependency_parser' : embed_pipe.components.append(c)
             # if c.info.name == 'labeled_dependency_parser' : embed_pipe.components.append(c)
+        embed_pipe.is_fitted=False
+        embed_pipe.fit()
         return embed_pipe
 
