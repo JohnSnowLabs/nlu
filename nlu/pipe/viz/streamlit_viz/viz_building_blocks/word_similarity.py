@@ -147,7 +147,7 @@ class WordSimilarityStreamlitBlock():
                                             'Modelhub info': modelhub_links[num_emb]}
                 for dist_algo in dist_algo_selection:
                     # scalar_similarities[e_col][dist_algo]={}
-                    sim_score = normalize_matrix(dist_metric_algos[dist_algo](embed_mat1,embed_mat2))
+                    sim_score = ((dist_metric_algos[dist_algo](embed_mat1,embed_mat2) -1 )* -1)
 
                     sim_score = pd.DataFrame(sim_score)
                     sim_score.index   = tok1.values
