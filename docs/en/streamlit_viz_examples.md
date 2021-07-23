@@ -348,7 +348,7 @@ Additionally, you can color the lower dimensional points with a label that has b
 
 
 ```python
-nlu.load('bert',verbose=True).viz_streamlit_word_embed_manifold(default_texts=THE_MATRIX_ARCHITECT_SCRIPT.split('\n'),default_algos_to_apply=['TSNE'],MAX_DISPLAY_NUM=5)
+nlu.load('bert',verbose=True).viz_streamlit_word_embed_manifold(default_texts=['I love NLU <3',  'I love streamlit <3'],default_algos_to_apply=['TSNE'],MAX_DISPLAY_NUM=5)
 ```
 
 <img  src="https://github.com/JohnSnowLabs/nlu/blob/master/docs/assets/streamlit_docs_assets/gif/word_embed_dimension_reduction/manifold_intro.gif?raw=true">
