@@ -160,8 +160,8 @@ trained_chunk_resolver.predict(df)
 
 ### Train with custom embeddings
 ```python
-# Use BIo GLove
-untrained_chunk_resolver = nlu.load('en.embed.glove.biovec train.resolve_chunks')
+# Use Healthcare Embeddings
+trainable_pipe = nlu.load('en.embed.glove.healthcare_100d train.resolve_chunks')
 trained_chunk_resolver  =  untrained_chunk_resolver.fit(df)
 trained_chunk_resolver.predict(df)
  ```
