@@ -193,6 +193,108 @@ df = nlu.load('de_identify').predict(data)
 See the [Models Hub for all avaiable De-Identification Models](https://nlp.johnsnowlabs.com/models?task=De-identification)
 
 
+## Drug Normalizer
+[Drug Normalizer tutorial notebook](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/healthcare/drug_normalization/drug_norm.ipynb)
+
+Normalize raw text from clinical documents, e.g. scraped web pages or xml document. Removes all dirty characters from text following one or more input regex patterns. Can apply non wanted character removal which a specific policy. Can apply lower case normalization.
+
+**Parameters are**
+- lowercase: whether to convert strings to lowercase. Default is False.
+- `policy`: rule to remove patterns from text. Valid policy values are: `all` `abbreviations`, `dosages`
+Defaults is `all`. `abbreviation` policy used to expend common drugs abbreviations, `dosages` policy used to convert drugs dosages and values to the standard form (see examples bellow).
+
+```python
+data = ["Agnogenic one half cup","adalimumab 54.5 + 43.2 gm","aspirin 10 meq/ 5 ml oral sol","interferon alfa-2b 10 million unit ( 1 ml ) injec","Sodium Chloride/Potassium Chloride 13bag"]
+nlu.load('norm_drugs').predict(data)
+```
+
+
+| drug_norm                                            | text                                              |
+|:-----------------------------------------------------|:--------------------------------------------------|
+| Agnogenic 0.5 oral solution                          | Agnogenic one half cup                            |
+| adalimumab 97700 mg                                  | adalimumab 54.5 + 43.2 gm                         |
+| aspirin 2 meq/ml oral solution                       | aspirin 10 meq/ 5 ml oral sol                     |
+| interferon alfa - 2b 10000000 unt ( 1 ml ) injection | interferon alfa-2b 10 million unit ( 1 ml ) injec |
+| Sodium Chloride / Potassium Chloride 13 bag          | Sodium Chloride/Potassium Chloride 13bag          |
+
+
+## Rule based NER with Context Matcher
+[Rule based NER with context matching tutorial notebook](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/Training/rule_based_named_entity_recognition_and_resolution/rule_based_NER_and_resolution_with_context_matching.ipynb)
+Define a rule based NER algorithm by providing Regex Patterns and resolution mappings.
+The confidence value is computed  using a heuristic approach based on how many matches it has.    
+A dictionary can be provided with setDictionary to map extracted entities to a unified representation. The first column of the dictionary file should be the representation with following columns the possible matches.
+
+
+```python
+import nlu
+import json
+# Define helper functions to write NER rules to file 
+"""Generate json with dict contexts at target path"""
+def dump_dict_to_json_file(dict, path): 
+  with open(path, 'w') as f: json.dump(dict, f)
+
+"""Dump raw text file """
+def dump_file_to_csv(data,path):
+  with open(path, 'w') as f:f.write(data)
+sample_text = """A 28-year-old female with a history of gestational diabetes mellitus diagnosed eight years prior to presentation and subsequent type two diabetes mellitus ( T2DM ), one prior episode of HTG-induced pancreatitis three years prior to presentation , associated with an acute hepatitis , and obesity with a body mass index ( BMI ) of 33.5 kg/m2 , presented with a one-week history of polyuria , polydipsia , poor appetite , and vomiting. Two weeks prior to presentation , she was treated with a five-day course of amoxicillin for a respiratory tract infection . She was on metformin , glipizide , and dapagliflozin for T2DM and atorvastatin and gemfibrozil for HTG . She had been on dapagliflozin for six months at the time of presentation . Physical examination on presentation was significant for dry oral mucosa ; significantly , her abdominal examination was benign with no tenderness , guarding , or rigidity . Pertinent laboratory findings on admission were : serum glucose 111 mg/dl , bicarbonate 18 mmol/l , anion gap 20 , creatinine 0.4 mg/dL , triglycerides 508 mg/dL , total cholesterol 122 mg/dL , glycated hemoglobin ( HbA1c ) 10% , and venous pH 7.27 . Serum lipase was normal at 43 U/L . Serum acetone levels could not be assessed as blood samples kept hemolyzing due to significant lipemia . The patient was initially admitted for starvation ketosis , as she reported poor oral intake for three days prior to admission . However , serum chemistry obtained six hours after presentation revealed her glucose was 186 mg/dL , the anion gap was still elevated at 21 , serum bicarbonate was 16 mmol/L , triglyceride level peaked at 2050 mg/dL , and lipase was 52 U/L . β-hydroxybutyrate level was obtained and found to be elevated at 5.29 mmol/L - the original sample was centrifuged and the chylomicron layer removed prior to analysis due to interference from turbidity caused by lipemia again . The patient was treated with an insulin drip for euDKA and HTG with a reduction in the anion gap to 13 and triglycerides to 1400 mg/dL , within 24 hours . Twenty days ago. Her euDKA was thought to be precipitated by her respiratory tract infection in the setting of SGLT2 inhibitor use . At birth the typical boy is growing slightly faster than the typical girl, but the velocities become equal at about seven months, and then the girl grows faster until four years. From then until adolescence no differences in velocity can be detected. 21-02-2020 21/04/2020 """
+
+# Define Gender NER matching rules
+gender_rules = {
+    "entity": "Gender",
+    "ruleScope": "sentence",
+    "completeMatchRegex": "true"    }
+
+# Define dict data in csv format
+gender_data = '''male,man,male,boy,gentleman,he,him
+female,woman,female,girl,lady,old-lady,she,her
+neutral,neutral'''
+
+# Dump configs to file 
+dump_dict_to_json_file(gender_data, 'gender.csv')
+dump_dict_to_json_file(gender_rules, 'gender.json')
+gender_NER_pipe = nlu.load('match.context')
+gender_NER_pipe.print_info()
+gender_NER_pipe['context_matcher'].setJsonPath('gender.json')
+gender_NER_pipe['context_matcher'].setDictionary('gender.csv', options={"delimiter":","})
+gender_NER_pipe.predict(sample_text)
+```
+
+| context_match   |   context_match_confidence |
+|:----------------|---------------------------:|
+| female          |                       0.13 |
+| she             |                       0.13 |
+| she             |                       0.13 |
+| she             |                       0.13 |
+| she             |                       0.13 |
+| boy             |                       0.13 |
+| girl            |                       0.13 |
+| girl            |                       0.13 |
+
+### Context Matcher Parameters
+You can define the following parameters in your rules.json file to define the entities to be matched
+
+| Parameter | Type | Description|
+|------------|-------|-----------|
+| entity | `str   `| The name of this rule |
+| regex | `Optional[str] `| Regex Pattern to extract candidates |
+| contextLength | `Optional[int] `| defines the maximum distance a prefix and suffix words can be away from the word to match,whereas context are words that must be immediately after or before the word to match |
+| prefix | `Optional[List[str]] `| Words preceding the regex match, that are at most `contextLength` characters aways |
+| regexPrefix | `Optional[str]  `| RegexPattern of words preceding the regex match, that are at most `contextLength` characters aways |
+| suffix | `Optional[List[str]]  `| Words following the regex match, that are at most `contextLength` characters aways |
+| regexSuffix | `Optional[str] `| RegexPattern of words following the regex match, that are at most `contextLength` distance aways |
+| context | `Optional[List[str]] `| list of words that must be immediatly before/after a match |
+| contextException | `Optional[List[str]] `|  ?? List of words that may not be immediatly before/after a match |
+| exceptionDistance | `Optional[int] `| Distance exceptions must be away from a match |
+| regexContextException | `Optional[str] `| Regex Pattern of exceptions that may not be within `exceptionDistance` range of the match |
+| matchScope | `Optional[str]`| Either `token` or `sub-token` to match on character basis |
+| completeMatchRegex | `Optional[str]`| Wether to use complete or partial matching, either `"true"` or `"false"` |
+| ruleScope | `str` | currently only `sentence` supported |
+
+
+
+
+
+
 ## Authorize access to licensed features and install healthcare dependencies
 You need a set of **credentials** to access the licensed healthcare features.   
 [You can grab one here](https://www.johnsnowlabs.com/spark-nlp-try-free/)

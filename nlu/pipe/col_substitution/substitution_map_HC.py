@@ -33,6 +33,10 @@ HC_anno2substitution_fn = {
     ChunkEntityResolverModel : {
         'default': substitute_chunk_resolution_cols,
     },
+    ChunkEntityResolverApproach : {
+        'default': substitute_chunk_resolution_cols,
+    },
+
 
     DeIdentificationModel : {
         'default': substitute_de_identification_cols,
@@ -48,17 +52,24 @@ HC_anno2substitution_fn = {
         'default': '',# TODO
     },
 
+    ContextualParserApproach : {
+        'default' :substitute_context_parser_cols,#
+
+    },
     ContextualParserModel : {
-        'default': '',# TODO
+        'default': substitute_context_parser_cols,
 
     },
 
     DrugNormalizer : {
-        'default': '',# TODO
+        'default': substitute_drug_normalizer_cols
     },
 
     GenericClassifierModel : {
-        'default': '',# TODO
+        'default': substitute_generic_classifier_parser_cols,
+    },
+    GenericClassifierApproach : {
+        'default': substitute_generic_classifier_parser_cols,
     },
 
 

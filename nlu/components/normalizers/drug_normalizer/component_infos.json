@@ -1,0 +1,23 @@
+{
+  "name": "drug_normalizer",
+  "description": "todo",
+  "output_level": "token",
+  "trainable": false,
+  "outputs": [
+    "normalized_drugs"
+  ],
+  "inputs": [
+    "document"
+  ],
+  "type": "normalizer",
+  "spark_input_column_names": [
+    "token"
+  ],
+  "spark_output_column_names": [
+    "normalized_drugs"
+  ],
+  "provider": "sparknlp",
+  "license": "healthcare",
+  "computation_context": "spark",
+  "output_context": "spark"
+}

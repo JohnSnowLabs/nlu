@@ -21,8 +21,9 @@ class Classifier(SparkNLUComponent):
 
             elif 'icd' in nlu_ref: annotator_class= 'classifier_dl'
             elif 'med_ner' in nlu_ref: annotator_class= 'ner_healthcare'
-            elif 'ner' in nlu_ref: annotator_class= 'ner'
-            elif 'ner' in nlp_ref: annotator_class= 'ner'
+            elif 'generic_classifier' in nlu_ref: annotator_class= 'generic_classifier'
+            elif 'ner' in nlu_ref and 'generic' not in nlu_ref : annotator_class= 'ner'
+            elif 'ner' in nlp_ref and 'generic' not in nlp_ref : annotator_class= 'ner'
 
         if model != None :
             self.model = model
@@ -39,6 +40,10 @@ class Classifier(SparkNLUComponent):
                 elif is_licensed : self.model = SentimentDl.get_pretrained_model(nlp_ref, language, bucket='clinical/models')
                 elif get_default : self.model = SentimentDl.get_default_model()
                 else : self.model = SentimentDl.get_pretrained_model(nlp_ref, language)
+            elif 'generic_classifier' in annotator_class:
+                from nlu.components.classifiers.generic_classifier.generic_classifier import GenericClassifier
+                if trainable : self.model     = GenericClassifier.get_default_trainable_model()
+                else : self.model = GenericClassifier.get_pretrained_model(nlp_ref, language, bucket='clinical/models')
             elif 'vivekn' in annotator_class:
                 from nlu import ViveknSentiment
                 if get_default : self.model = ViveknSentiment.get_default_model()
@@ -62,7 +67,7 @@ class Classifier(SparkNLUComponent):
                 elif is_licensed : self.model = ClassifierDl.get_pretrained_model(nlp_ref, language, bucket='clinical/models')
                 elif get_default : self.model = ClassifierDl.get_default_model()
                 else : self.model = ClassifierDl.get_pretrained_model(nlp_ref, language)
-                if hasattr(self, 'model'): self.model.setIncludeConfidence(True)
+                if hasattr(self.model,'setIncludeConfidence'): self.model.setIncludeConfidence(True)
 
             elif 'language_detector' in annotator_class:
                 from nlu import LanguageDetector
@@ -87,5 +92,7 @@ class Classifier(SparkNLUComponent):
                 from nlu.components.classifiers.ner_healthcare.ner_dl_healthcare import NERDLHealthcare
                 if trainable : self.model     = NERDLHealthcare.get_default_trainable_model()
                 else : self.model = NERDLHealthcare.get_pretrained_model(nlp_ref, language, bucket='clinical/models')
+
+
 
         SparkNLUComponent.__init__(self, annotator_class, component_type, nlu_ref, nlp_ref, lang,loaded_from_pretrained_pipe , is_licensed)

@@ -122,6 +122,7 @@ class PipelineQueryVerifier():
         return conversion_candidates_data
     @staticmethod
     def get_missing_required_features(pipe):
+        """For every component in the pipeline"""
         provided_features_no_ref                = ComponentUtils.clean_irrelevant_features(PipelineQueryVerifier.extract_provided_features_refless_from_pipe(pipe))
         required_features_no_ref                = ComponentUtils.clean_irrelevant_features(PipelineQueryVerifier.extract_required_features_refless_from_pipe(pipe))
         provided_features_ref                   = ComponentUtils.clean_irrelevant_features(PipelineQueryVerifier.extract_provided_features_ref_from_pipe(pipe))
@@ -130,10 +131,45 @@ class PipelineQueryVerifier():
         conversion_candidates                   = PipelineQueryVerifier.extract_sentence_embedding_conversion_candidates(pipe)
         pipe.has_trainable_components           = is_trainable
         if is_trainable:
-            required_features_ref = []
-            if len(provided_features_ref) == 0 and not isinstance(pipe.components[0].model, NerDLApproach) : required_features_no_ref.append('sentence_embeddings') # special case, if training we can reset this
-            if len(provided_features_ref) == 0 and     isinstance(pipe.components[0].model, NerDLApproach) : required_features_no_ref.append('word_embeddings') # special case, if training we can reset this
+            trainable_index, embed_type = PipeUtils.find_trainable_embed_consumer(pipe)
 
+            required_features_ref = []
+            if embed_type is not None :
+                #TODO storage ref of chunk embeddigns and chunk embed consumers !?!
+                # TODO if we have a TRAINABLE CHUNK-CONSUMEr, we first will have chunk_embed@NONE, word_embed@NONE, word_embed@SOME,
+                # After resolve for a word embedding ,we must fix all NONES and set their storage refs !
+                # embed consuming trainablea nnotators get their storage ref set here
+                if len(provided_features_ref) == 0 :
+                    required_features_no_ref.append(embed_type)
+                    if embed_type=='chunk_embeddings': required_features_no_ref.append('word_embeddings')
+                if len(provided_features_ref) == 1  and embed_type=='chunk_embeddings' :
+                    # This case is for when 1 Embed is preloaded and we still need to load the converter
+                    if any('word_embedding' in c for  c in provided_features_ref) :required_features_no_ref.append(embed_type)
+
+
+                else :
+                    #set storage ref
+                    if embed_type=='chunk_embeddings' and len(provided_features_ref) >  1 :
+                        # TODO UPDATE HERE ALL REFS TO THE ONE THATS NOT NONE !!!
+                        training_storage_ref = ''
+                        for c in pipe.components:
+                            if c.info.type =='word_embeddings': training_storage_ref = StorageRefUtils.extract_storage_ref(c)
+                        for c in pipe.components:
+                            if c.info.type =='chunk_embeddings' :
+                                c.info.storage_ref               = training_storage_ref
+                                c.info.inputs                    = ['entities',f'word_embeddings@{training_storage_ref}']
+                                c.info.spark_input_column_names  = ['entities',f'word_embeddings@{training_storage_ref}']
+                                c.info.outputs                   = [f'chunk_embeddings@{training_storage_ref}']
+                                c.info.spark_output_column_names = [f'chunk_embeddings@{training_storage_ref}']
+
+                            if c.info.name =='chunk_resolver' :
+                                c.info.storage_ref = training_storage_ref
+                                c.info.inputs                    = ['token',f'chunk_embeddings@{training_storage_ref}']
+                                c.info.spark_input_column_names  = ['token',f'chunk_embeddings@{training_storage_ref}']
+
+
+                    elif len(provided_features_ref) >=1 :
+                        pipe.components[trainable_index].info.storage_ref = provided_features_ref[0].split('@')[-1]
 
         components_for_ner_conversion = [] #
 
@@ -252,6 +288,7 @@ class PipelineQueryVerifier():
         all_features_provided = False
         is_licensed = PipelineQueryVerifier.has_licensed_components(pipe)
         pipe.has_licensed_components=is_licensed
+        is_trainable = PipeUtils.is_trainable_pipe(pipe)
         while all_features_provided == False:
             # After new components have been added, we must loop again and check for the new components if requriements are met
             components_to_add = []
@@ -263,7 +300,7 @@ class PipelineQueryVerifier():
 
             # Create missing base storage ref producers, i.e embeddings
             for missing_component in missing_storage_refs:
-                component = get_default_component_of_type(missing_component, language=pipe.lang, is_licensed=is_licensed)
+                component = get_default_component_of_type(missing_component, language=pipe.lang, is_licensed=is_licensed, is_trainable_pipe=is_trainable)
                 if component is None : continue
                 if 'chunk_emb' in missing_component:
                     components_to_add.append(ComponentUtils.config_chunk_embed_converter(component))
@@ -272,7 +309,7 @@ class PipelineQueryVerifier():
 
             # Create missing base components, storage refs are fetched in rpevious loop
             for missing_component in missing_components:
-                components_to_add.append(get_default_component_of_type(missing_component, language=pipe.lang,is_licensed=is_licensed))
+                components_to_add.append(get_default_component_of_type(missing_component, language=pipe.lang,is_licensed=is_licensed, is_trainable_pipe=is_trainable))
 
             # Create embedding converters
             for resolution_info in components_for_embedding_conversion:

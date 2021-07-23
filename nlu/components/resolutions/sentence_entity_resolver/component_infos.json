@@ -7,13 +7,11 @@
     "sentence_resolution"
   ],
   "inputs": [
-    "entities",
     "sentence_embeddings"
   ],
   "type": "resolver",
   "spark_input_column_names": [
-    "sentence_embeddings",
-    "entities"
+    "sentence_embeddings"
   ],
   "spark_output_column_names": [
     "resolution"
