@@ -58,7 +58,7 @@ class ChunkResolverTrainingTests(unittest.TestCase):
         # trainable_pipe = nlu.load('glove train.resolve_chunks', verbose=True)
         # trainable_pipe = nlu.load('bert train.resolve_chunks', verbose=True)
         # trainable_pipe = nlu.load('bert train.resolve_chunks', verbose=True)
-        trainable_pipe = nlu.load('en.embed.glove.biovec train.resolve_chunks')
+        trainable_pipe = nlu.load('en.embed.glove.healthcare_100d train.resolve_chunks')
         trainable_pipe['chunk_resolver'].setNeighbours(350)
 
         # TODO bert/elmo give wierd storage ref errors...
