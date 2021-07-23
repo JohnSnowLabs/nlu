@@ -6,6 +6,8 @@ import numpy as np
 import pandas as pd
 from sparknlp.annotator import *
 import nlu
+from nlu.pipe.utils.storage_ref_utils import StorageRefUtils
+
 class StreamlitUtilsOS():
     classifers_OS = [ ClassifierDLModel, LanguageDetectorDL, MultiClassifierDLModel, NerDLModel, NerCrfModel, YakeModel, PerceptronModel, SentimentDLModel,
                       SentimentDetectorModel, ViveknSentimentModel, DependencyParserModel, TypedDependencyParserModel, T5Transformer, MarianTransformer, NerConverter]
@@ -97,7 +99,7 @@ class StreamlitUtilsOS():
     @staticmethod
     def get_manifold_algo(algo,dim, n_jobs = None):
         from sklearn.manifold import TSNE, Isomap, LocallyLinearEmbedding, MDS, SpectralEmbedding
-        from sklearn.decomposition import TruncatedSVD,DictionaryLearning, FactorAnalysis, FastICA, KernelPCA, PCA
+        from sklearn.decomposition import TruncatedSVD,DictionaryLearning, FactorAnalysis, FastICA, KernelPCA, PCA,LatentDirichletAllocation
         # manifold
         if algo=='TSNE' : return TSNE(n_components=dim, n_jobs=n_jobs)
         if algo=='ISOMAP' : return Isomap(n_components=dim, n_jobs=n_jobs)
@@ -112,7 +114,7 @@ class StreamlitUtilsOS():
         if algo =='FastICA': return FastICA(n_components=dim) # no hyper
         if algo =='KernelPCA': return KernelPCA(n_components=dim, n_jobs=n_jobs)
         # not applicable because negative values, todo we could just take absolute values of all embeds..
-        # if algo =='LatentDirichletAllocation': return LatentDirichletAllocation(n_components=dim)
+        if algo =='LatentDirichletAllocation': return LatentDirichletAllocation(n_components=dim)
         # if algo =='NMF': return NMF(n_components=dim)
 
 
@@ -139,3 +141,20 @@ class StreamlitUtilsOS():
         embed_pipe.fit()
         return embed_pipe
 
+
+    @staticmethod
+    def extract_all_sentence_storage_refs_or_nlu_refs(e_coms):
+        """extract either NLU_ref or storage_ref as fallback for a list of embedding components"""
+        loaded_storage_refs = []
+        loaded_embed_nlu_refs  = []
+        for c in e_coms :
+            if not  hasattr(c.info,'nlu_ref'): continue
+            r = c.info.nlu_ref
+            if 'en.' not in r and 'embed_sentence.' not  in r and 'ner' not in r : loaded_embed_nlu_refs.append('en.embed_sentence.' + r)
+            elif 'en.'  in r and 'embed_sentence.' not  in r  and 'ner' not in r:
+                r = r.split('en.')[0]
+                loaded_embed_nlu_refs.append('en.embed_sentence.' + r)
+            else :
+                loaded_embed_nlu_refs.append(StorageRefUtils.extract_storage_ref(c))
+            loaded_storage_refs.append(StorageRefUtils.extract_storage_ref(c))
+        return loaded_embed_nlu_refs, loaded_storage_refs

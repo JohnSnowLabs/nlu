@@ -494,14 +494,13 @@ def construct_trainable_component_from_identifier(nlu_ref,nlp_ref):
         if nlu_ref in ['train.word_seg','train.word_segmenter'] :
             return nlu.Tokenizer(annotator_class = 'word_segmenter', trainable=True,nlu_ref=nlu_ref,)
 
-
         if nlu_ref in ['train.generic_classifier'] :
             return nlu.Classifier(annotator_class = 'generic_classifier', trainable=True, nlu_ref=nlu_ref,is_licensed=True)
 
         if nlu_ref in ['train.resolve_chunks'] :
-            return nlu.Resolver(annotator_class = 'chunk_entity_resolver', trainable=True,nlu_ref=nlu_ref,)
+            return nlu.Resolver(annotator_class = 'chunk_entity_resolver', trainable=True,nlu_ref=nlu_ref,is_licensed=True)
         if nlu_ref in ['train.resolve_sentence','train.resolve'] :
-            return nlu.Resolver(annotator_class = 'sentence_entity_resolver', trainable=True,nlu_ref=nlu_ref,)
+            return nlu.Resolver(annotator_class = 'sentence_entity_resolver', trainable=True,nlu_ref=nlu_ref,is_licensed=True)
 
         if nlu_ref in ['train.assertion','train.assertion_dl'] : # TODO
             return nlu.Classifier(annotator_class = 'sentiment_dl', trainable=True,nlu_ref=nlu_ref,)

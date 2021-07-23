@@ -13,6 +13,14 @@ class ChunkResolver:
         return ChunkEntityResolverApproach() \
         .setInputCols("token","chunk_embeddings") \
         .setOutputCol("chunk_resolution") \
-        .setDistanceFunction("COSINE") \
-            .setNeighbours(1) \
-            .setLabelCol('label')
+                .setLabelCol('y')\
+        .setNormalizedCol("_y") \
+            .setNeighbours(1000) \
+            .setAlternatives(25) \
+            .setEnableWmd(True).setEnableTfidf(True).setEnableJaccard(True) \
+            .setEnableSorensenDice(True).setEnableJaroWinkler(True).setEnableLevenshtein(True) \
+            .setDistanceWeights([1, 2, 2, 1, 1, 1]) \
+            .setAllDistancesMetadata(True) \
+            .setPoolingStrategy("MAX") \
+            .setThreshold(1e32)
+        # .setDistanceFunction("COSINE") \

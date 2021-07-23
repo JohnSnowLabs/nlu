@@ -187,7 +187,7 @@ class PipeUtils():
         '''
         Configure pipe components to output level document. Substitute every occurence of <sentence> to <document> for every component that feeds from <sentence>
         :param pipe: pipe to be configured
-        :return: configured pipe
+        :return: configured pipe coonents only
         '''
         logger.info('Configuring components to document level')
         for c in pipe.components:

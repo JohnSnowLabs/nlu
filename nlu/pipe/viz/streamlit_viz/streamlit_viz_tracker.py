@@ -10,13 +10,11 @@ from nlu.pipe.viz.streamlit_viz.streamlit_utils_OS import StreamlitUtilsOS
 from nlu.pipe.viz.streamlit_viz.gen_streamlit_code import get_code_for_viz
 from nlu.pipe.viz.streamlit_viz.styles import _set_block_container_style
 import random
-
-## TODO THIS BECOME VIZ TRACKER!! MODEL-VIEW-CONTROLLER Pattern!!!  THis is the MODEL, STREAMLIT IS the VIEW, STreamlit-UI+Methods called by that are CONTROLLER
 class StreamlitVizTracker():
     """Track the status of the visualizations and models loaded in the Streamlit Web View. This is the Model part of the MVC pattern"""
     _set_block_container_style()
     loaded_word_embeding_pipes = []
-    loaded_sentence_embeding_pipes = [] # todo track
+    loaded_sentence_embeding_pipes = [] 
     loaded_document_classifier_pipes = []
     loaded_token_pipes = []
     loaded_token_level_classifiers = []
