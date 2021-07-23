@@ -58,7 +58,6 @@ class WordSimilarityStreamlitBlock():
         StreamlitVizTracker.loaded_word_embeding_pipes = []
         dist_metric_algos =distance_metrics()
         dist_algos = list(dist_metric_algos.keys())
-        # TODO NORMALIZE DISTANCES TO [0,1] for non cosine
         if 'haversine'   in dist_algos    : dist_algos.remove('haversine') # not applicable in >2D
         if 'precomputed' in dist_algos  : dist_algos.remove('precomputed') # Not a dist
         cols = st.beta_columns(2)
@@ -132,8 +131,9 @@ class WordSimilarityStreamlitBlock():
                 tok2 = data2['token']
                 emb1 = data1[e_col]
                 emb2 = data2[e_col]
-                embed_mat1 = np.array([x for x in emb1])
-                embed_mat2 = np.array([x for x in emb2])
+                def normalize_matrix(m ): return m / np.linalg.norm(m, axis=1, keepdims=True)
+                embed_mat1 = normalize_matrix(np.array([x for x in emb1]))
+                embed_mat2 = normalize_matrix(np.array([x for x in emb2]))
                 # e_name = e_col.split('word_embedding_')[-1]
                 e_name = e_coms[num_emb].info.nlu_ref if hasattr(e_coms[num_emb].info,'nlu_ref') else e_col.split('word_embedding_')[-1] if 'en.' in e_col else e_col
                 e_name = e_name.split('embed.')[-1] if 'en.' in e_name else e_name
@@ -147,7 +147,8 @@ class WordSimilarityStreamlitBlock():
                                             'Modelhub info': modelhub_links[num_emb]}
                 for dist_algo in dist_algo_selection:
                     # scalar_similarities[e_col][dist_algo]={}
-                    sim_score = dist_metric_algos[dist_algo](embed_mat1,embed_mat2)
+                    sim_score = ((dist_metric_algos[dist_algo](embed_mat1,embed_mat2) -1 )* -1)
+
                     sim_score = pd.DataFrame(sim_score)
                     sim_score.index   = tok1.values
                     sim_score.columns = tok2.values

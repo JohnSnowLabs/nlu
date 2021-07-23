@@ -780,7 +780,7 @@ nlu.load('spell').predict('I liek pentut buttr ant jely')
 
 
 ```python
-nlu.load('dep.untyped').predict('Untyped Dependencies represent a grammatical tree structure')
+nlu.load('dep.untyped').predict('Untyped Dependencies represent a grammatical tree structure.md')
 ```
 
 <div class="table-wrapper"><div class="table-inner" markdown="1">
@@ -802,7 +802,7 @@ nlu.load('dep.untyped').predict('Untyped Dependencies represent a grammatical tr
 [Typed Dependency Parsing example](https://colab.research.google.com/drive/1KXUqcF8e-LU9cXnHE8ni8z758LuFPvY7?usp=sharing)
 
 ```python
-nlu.load('dep').predict('Typed Dependencies represent a grammatical tree structure where every edge has a label')
+nlu.load('dep').predict('Typed Dependencies represent a grammatical tree structure.md where every edge has a label')
 ```
 
 <div class="table-wrapper"><div class="table-inner" markdown="1">

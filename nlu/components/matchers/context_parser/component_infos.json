@@ -1,0 +1,24 @@
+{
+  "name": "context_matcher",
+  "output_level": "chunk",
+  "description": "todo",
+  "trainable": false,
+  "outputs": [
+    "chunk"
+  ],
+  "inputs": [
+    "document",
+    "token"
+  ],
+  "type": "matcher",
+  "spark_input_column_names": [
+    "sentence",
+    "token"
+  ],
+  "spark_output_column_names": [
+  ],
+  "provider": "sparknlp",
+  "license": "open source",
+  "computation_context": "spark",
+  "output_context": "spark"
+}

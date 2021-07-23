@@ -1,1 +1,23 @@
-{"name": "date_matcher", "output_level": "token", "description": "todo", "trainable": false, "outputs": ["date"], "inputs": ["document"], "type": "matcher", "spark_input_column_names": ["date"], "spark_output_column_names": ["document"], "provider": "sparknlp", "license": "open source", "computation_context": "spark", "output_context": "spark"}
+{
+  "name": "date_matcher",
+  "output_level": "chunk",
+  "description": "todo",
+  "trainable": false,
+  "outputs": [
+    "chunk"
+  ],
+  "inputs": [
+    "sentence"
+  ],
+  "type": "matcher",
+  "spark_input_column_names": [
+    "sentence"
+  ],
+  "spark_output_column_names": [
+    "date_entity"
+  ],
+  "provider": "sparknlp",
+  "license": "open source",
+  "computation_context": "spark",
+  "output_context": "spark"
+}

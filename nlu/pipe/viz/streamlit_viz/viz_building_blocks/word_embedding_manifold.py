@@ -24,7 +24,7 @@ class WordEmbeddingManifoldStreamlitBlock():
             show_algo_select : bool = True,
             show_embed_select : bool = True,
             show_color_select: bool = True,
-            MAX_DISPLAY_NUM:int=100,
+            MAX_DISPLAY_NUM:int=200000,
             display_embed_information:bool=True,
             set_wide_layout_CSS:bool=True,
             num_cols: int = 3,
@@ -54,15 +54,8 @@ class WordEmbeddingManifoldStreamlitBlock():
 
         data = st.text_area('Enter N texts, seperated by new lines to visualize Word Embeddings for ','\n'.join(default_texts))
         if len(data) > MAX_DISPLAY_NUM : data = data[:MAX_DISPLAY_NUM]
-        data_split = data.split("\n")
-        while '' in data_split : data_split.remove('')
-        data       = data_split.copy()
-        while '' in data : data.remove('')
+        original_text = nlu.load('tokenize').predict(data.split("\n"),output_level='document')['document'].values
 
-        if len(data)<=1:
-            st.error("Please enter more than 2 lines of text, seperated by new lines (hit <ENTER>)")
-            return
-        # TODO dynamic color inference for plotting
         if show_color_select:
             if model_select_position == 'side' : feature_to_color_by =  st.sidebar.selectbox('Pick a feature to color points in manifold by ',['pos','sentiment',],0)
             else:feature_to_color_by =  st.selectbox('Feature to color plots by ',['pos','sentiment',],0)
@@ -131,36 +124,37 @@ class WordEmbeddingManifoldStreamlitBlock():
         token_feature_pipe = StreamlitUtilsOS.get_pipe('pos')
         #not all pipes have sentiment/pos etc.. models for hueing loaded....
         ## Lets FIRST predict with the classifiers/Token level feature generators and THEN apply embed pipe
-        for p in StreamlitVizTracker.loaded_word_embeding_pipes :
-            data = data_split.copy()
 
-            classifier_cols = []
 
-            for class_p in StreamlitVizTracker.loaded_document_classifier_pipes:
+        data = original_text.copy()
+        classifier_cols = []
+        for class_p in StreamlitVizTracker.loaded_document_classifier_pipes:
 
-                data = class_p.predict(data, output_level='document',multithread=False).dropna()
-                classifier_cols.append(StreamlitUtilsOS.get_classifier_cols(class_p))
-                data['text'] = data_split
-                # drop embeds of classifiers because bad conversion
-                for c in data.columns :
-                    if 'embedding' in c : data.drop(c, inplace=True,axis=1)
-            # data['text']
-            # =data['document']
-            data['text'] = data_split
+            data = class_p.predict(data, output_level='document',multithread=False)#.dropna()
+            classifier_cols.append(StreamlitUtilsOS.get_classifier_cols(class_p))
+            data['text'] = original_text
+            # drop embeds of classifiers because bad conversion
             for c in data.columns :
-                if 'sentence_embedding' in c : data.drop(c,inplace=True,axis=1)
+                if 'embedding' in c : data.drop(c, inplace=True,axis=1)
+        # data['text']
+        # =data['document']
+        data['text'] = original_text
+        for c in data.columns :
+            if 'sentence_embedding' in c : data.drop(c,inplace=True,axis=1)
+        if'pos' in data.columns : data.drop('pos',inplace=True,axis=1)
 
+
+        for p in StreamlitVizTracker.loaded_word_embeding_pipes :
             p = StreamlitUtilsOS.merge_token_classifiers_with_embed_pipe(p, token_feature_pipe)
-            # if'token' in data.columns : data.drop(['token','pos'],inplace=True,)
-            if'pos' in data.columns : data.drop('pos',inplace=True,axis=1)
             predictions =   p.predict(data,output_level='token',multithread=False).dropna()
             e_col = StreamlitUtilsOS.find_embed_col(predictions)
             e_com = StreamlitUtilsOS.find_embed_component(p)
             e_com_storage_ref = StorageRefUtils.extract_storage_ref(e_com, True)
-            # embedder_name = StreamlitUtilsOS.extract_name(e_com)
             emb = predictions[e_col]
             mat = np.array([x for x in emb])
             for algo in algos :
+                #Only pos values for latent Dirchlet
+                if algo == 'LatentDirichletAllocation':mat = np.square(mat)
                 if len(mat.shape)>2 : mat = mat.reshape(len(emb),mat.shape[-1])
                 hover_data = ['token','text','sentiment', 'pos']  # TODO DEDUCT
                 # calc reduced dimensionality with every algo
@@ -168,7 +162,6 @@ class WordEmbeddingManifoldStreamlitBlock():
                     low_dim_data = StreamlitUtilsOS.get_manifold_algo(algo,1,n_jobs).fit_transform(mat)
                     x = low_dim_data[:,0]
                     y = np.zeros(low_dim_data[:,0].shape)
-
                     tsne_df =  pd.DataFrame({'x':x,'y':y, 'text':predictions[text_col], 'pos':predictions.pos, 'sentiment' : predictions.sentiment,'token':predictions.token})
                     fig = px.scatter(tsne_df, x="x", y="y",color=feature_to_color_by, hover_data=hover_data)
                     subh = f"""Word-Embeddings =`{e_com_storage_ref}`, Manifold-Algo =`{algo}` for `D=1`"""
