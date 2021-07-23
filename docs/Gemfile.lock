@@ -89,7 +89,7 @@ GEM
       rouge (= 3.26.0)
       terminal-table (~> 1.4)
     github-pages-health-check (1.17.0)
-      addressable (~> 2.3)
+      addressable (>= 2.8.0)
       dnsruby (~> 1.60)
       octokit (~> 4.0)
       public_suffix (>= 2.0.2, < 5.0)
