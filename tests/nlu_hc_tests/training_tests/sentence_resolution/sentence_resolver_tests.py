@@ -11,14 +11,11 @@ class SentenceResolverTrainingTests(unittest.TestCase):
         Alternatively, if a Word Embedding is specified in the load command before the train.chunk_resolver,
         it will be used instead of the default glove
         """
-        dataset = pd.DataFrame({
-            'text': ['super sleepy', 'bleeding from ears','bleeding from nose','bleeding from mouth'],
-            '_extra_info': ['bad disease', 'bad disease!', 'very bad', ' super bad  '],
-            # 'y': [1,33,44,66]
-            # 'label': ['lol','kek','lol','kek']
-            'label': ['lol','kek','lol','kek']
-        })
-
+        import pandas as pd
+        cols = ["y","_term","text"]
+        p='/home/ckl/Documents/freelance/jsl/nlu/nlu4realgit2/tests/datasets/AskAPatient.fold-0.train.txt'
+        dataset = pd.read_csv(p,sep="\t",encoding="ISO-8859-1",header=None)
+        dataset.columns = cols
         SPARK_NLP_LICENSE     = sct.SPARK_NLP_LICENSE
         AWS_ACCESS_KEY_ID     = sct.AWS_ACCESS_KEY_ID
         AWS_SECRET_ACCESS_KEY = sct.AWS_SECRET_ACCESS_KEY
