@@ -13,6 +13,7 @@ from nlu.pipe.extractors.extractor_configs_open_source import *
 from nlu.pipe.extractors.extractor_configs_healthcare import *
 
 from sparknlp_jsl.annotator  import *
+from sparknlp_jsl.base import *
 
 HC_anno2config = {
     MedicalNerModel : {
@@ -40,6 +41,10 @@ HC_anno2config = {
         'default': default_chunk_resolution_config,
         'default_full'  : default_full_config,
     },
+    ChunkEntityResolverApproach : {
+        'default': default_chunk_resolution_config,
+        'default_full'  : default_full_config,
+    },
 
     DeIdentificationModel : {
         'default': default_de_identification_config,
@@ -62,18 +67,34 @@ HC_anno2config = {
     },
 
     ContextualParserModel : {
-        'default': '',# TODO
+        'default': default_full_config,# TODO
         'default_full'  : default_full_config,
 
     },
 
+    ContextualParserApproach : {
+        'default': default_full_config,# TODO
+        'default_full'  : default_full_config,
+
+    },
     DrugNormalizer : {
-        'default': '',# TODO
+        'default': default_only_result_config,
         'default_full'  : default_full_config,
     },
 
     GenericClassifierModel : {
-        'default': '',# TODO
+        'default': default_generic_classifier_config,
+        'default_full'  : default_full_config,
+    },
+
+    GenericClassifierApproach : {
+        'default': default_generic_classifier_config,
+        'default_full'  : default_full_config,
+    },
+
+
+    FeaturesAssembler : {
+        'default': default_feature_assembler_config,
         'default_full'  : default_full_config,
     },
 

@@ -123,3 +123,23 @@ def default_ner_config(output_col_prefix='med_ner'):
 
 def default_ner_config(output_col_prefix='med_ner'):
     return default_get_nothing(output_col_prefix)
+
+
+def default_feature_assembler_config(output_col_prefix='feature_assembler'):
+    return SparkNLPExtractorConfig(
+        output_col_prefix   = output_col_prefix,
+        get_result          = False,
+        name                = 'features_assembled',
+        get_meta            = False,
+        description         = 'Gets nothing',
+    )
+
+def default_generic_classifier_config(output_col_prefix='generic_classifier'):
+    return SparkNLPExtractorConfig(
+        output_col_prefix   = output_col_prefix,
+        get_result          = True,
+        name                = 'generic_classifier',
+        get_meta            = True,
+        meta_white_list     = ['confidence'],
+        description         = 'Gets the  result and confidence',
+    )

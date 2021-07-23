@@ -301,3 +301,12 @@ def default_ner_converter_config(output_col_prefix='ner_chunk'):
         meta_white_list     = ['entity','confidence'],
         description         = 'Converts IOB-NER representation into entity representation and generates confidences for the entire entity chunk',
     )
+
+def default_doc2chunk_config(output_col_prefix='doc2chunk'):
+    return SparkNLPExtractorConfig(
+        output_col_prefix   = output_col_prefix,
+        get_result          = False,
+        name                = 'doc2chunk',
+        get_meta            = False,
+        description         = 'Converts Doc type col to chunk aka entity type',
+    )

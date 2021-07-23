@@ -1,5 +1,5 @@
 {
-  "name": "sentiment_dl",
+  "name": "generic_classifier",
   "output_level": "sentence",
   "description": "todo",
   "trainable": true,
@@ -8,19 +8,18 @@
   ],
   "inputs": [
     "label",
-    "sentence_embeddings"
+    "feature_vector"
   ],
   "type": "classifier",
   "spark_input_column_names": [
-    "sentence",
     "label",
-    "sentence_embeddings"
+    "feature_vector"
   ],
   "spark_output_column_names": [
-    "category"
+    "generic_classification"
   ],
   "provider": "sparknlp",
-  "license": "open source",
+  "license": "healthcare",
   "computation_context": "spark",
   "output_context": "spark"
 }

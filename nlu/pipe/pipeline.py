@@ -130,7 +130,7 @@ class NLUPipeline(BasePipe):
         text_df = pd.DataFrame(data)
         return sparknlp.start().createDataFrame(data=text_df)
     def verify_all_labels_exist(self,dataset):
-        return 'y'  in dataset.columns or 'label' in dataset.columns or 'labels' in dataset.columns
+        return 'y'  in dataset.columns # or 'label' in dataset.columns or 'labels' in dataset.columns
     def fit(self, dataset=None, dataset_path=None, label_seperator=','):
         '''
         if dataset is  string with '/' in it, its dataset path!
@@ -167,6 +167,37 @@ class NLUPipeline(BasePipe):
 
         elif isinstance(dataset,pd.DataFrame):
             if not self.verify_all_labels_exist(dataset) : raise ValueError(f"Could not detect label in provided columns={dataset.columns}\nMake sure a column named label, labels or y exists in your dataset.")
+            dataset.y = dataset.y.apply(str)
+            if self.has_licensed_components :
+                # Configure Feature Assembler
+                for c in self.components :
+                    if c.info.name == 'feature_assembler':
+                        vector_assembler_input_cols=[c for c in dataset.columns if c !='text' and c !='y' and c!='label' and c!='labels']
+                        c.model.setInputCols(vector_assembler_input_cols)
+                        # c.model.info.spark_input_column_names = vector_assembler_input_cols
+
+
+                # Configure Chunk resolver Sentence to Document substitution in all cols
+                self.components = PipeUtils.configure_component_output_levels_to_document(self)
+
+            # TODO fix  AT NOTATION MAKES WIERD SQL ERRORS APPEAR HERE!!! WE GOTTA REMOVE IT and subitutite it with smth different......
+            for c in self.components:
+                for inp in c.info.spark_input_column_names:
+                    if 'chunk_embedding' in inp :
+                        c.info.spark_input_column_names.remove(inp)
+                        c.info.spark_input_column_names.append(inp.replace('@',"___"))
+                        c.model.setInputCols(c.info.spark_input_column_names)
+                for out in c.info.spark_output_column_names:
+                    if 'chunk_embedding' in out :
+                        c.info.spark_output_column_names.remove(out)
+                        c.info.spark_output_column_names.append(out.replace('@',"___"))
+                        c.model.setOutputCol(c.info.spark_output_column_names[0])
+
+            stages = []
+            for component in self.components:stages.append(component.model)
+            ## TODO SET STORAGE REF ON FITTED ANNOTATORS, especially resoluton...
+            ## TODO, when training Chunk resolver, we must substitute all SENTENCE cols with DOC. We MAY NOT FEED SENTENCE to CHUNK RESOLVE GOSDGOHSDUKL:G
+            self.spark_estimator_pipe = Pipeline(stages=stages)
             self.spark_transformer_pipe = self.spark_estimator_pipe.fit(DataConversionUtils.pdf_to_sdf(dataset,self.spark)[0])
 
         elif isinstance(dataset,pyspark.sql.DataFrame) :
@@ -332,8 +363,7 @@ class NLUPipeline(BasePipe):
         logger.info("Configuring Light Pipeline Usage")
         if data_instances > 50000 or use_multi == False:
             logger.info("Disabling light pipeline")
-            self.fit()
-            return
+            if  not self.is_fitted :self.fit()
         else:
             if self.light_pipe_configured == False or force and not isinstance(self.spark_transformer_pipe, LightPipeline):
                 self.light_pipe_configured = True
@@ -482,6 +512,8 @@ class NLUPipeline(BasePipe):
         print('The following parameters are configurable for this NLU pipeline (You can copy paste the examples) :')
         # list of tuples, where first element is component name and second element is list of param tuples, all ready formatted for printing
         all_outputs = []
+        ## TODO CONDINOTAL LOOP either on approaches or transformers
+        iterable = None
         for i, component_key in enumerate(self.keys()):
             s = ">>> pipe['" + component_key + "'] has settable params:"
             p_map = self[component_key].extractParamMap()
@@ -596,6 +628,7 @@ class NLUPipeline(BasePipe):
                       key:str = "NLU_streamlit",
                       display_footer :bool =  True ,
                       num_similarity_cols:int=2,
+
                       ) -> None:
         """Display Viz in streamlit"""
         # try: from nlu.pipe.viz.streamlit_viz.streamlit_dashboard_OS import StreamlitVizBlockHandler
@@ -795,3 +828,51 @@ class NLUPipeline(BasePipe):
         show_infos,
         show_logo,
         n_jobs,)
+
+
+
+    def viz_streamlit_sentence_embed_manifold(self,
+                                          default_texts: List[str] = ("Donald Trump likes to party!", "Angela Merkel likes to party!", 'Peter HATES TO PARTTY!!!! :('),
+                                          title: Optional[str] = "Lower dimensional Manifold visualization for sentence embeddings",
+                                          sub_title: Optional[str] = "Apply any of the 11 `Manifold` or `Matrix Decomposition` algorithms to reduce the dimensionality of `Word Embeddings` to `1-D`, `2-D` and `3-D` ",
+                                          write_raw_pandas : bool = False ,
+                                          default_algos_to_apply : List[str] = ('TSNE','PCA',),
+                                          target_dimensions : List[int] = (1,2,3),
+                                          show_algo_select : bool = True,
+                                          show_embed_select : bool = True,
+                                          show_color_select: bool = True,
+                                          MAX_DISPLAY_NUM:int=100,
+                                          display_embed_information:bool=True,
+                                          set_wide_layout_CSS:bool=True,
+                                          num_cols: int = 3,
+                                          model_select_position:str = 'side', # side or main
+                                          key:str = "NLU_streamlit",
+                                          additional_classifiers_for_coloring:List[str]=[ 'sentiment.imdb'],
+                                          generate_code_sample:bool = False,
+                                          show_infos:bool = True,
+                                          show_logo:bool = True,
+                                          n_jobs: Optional[int] = 3, # False
+                                          ):
+        try: from nlu.pipe.viz.streamlit_viz.streamlit_dashboard_OS import StreamlitVizBlockHandler
+        except ImportError : print("You need to install Streamlit to run this functionality.")
+        StreamlitVizBlockHandler.viz_streamlit_sentence_embed_manifold(self,
+                                                                   default_texts,
+                                                                   title,
+                                                                   sub_title,
+                                                                   write_raw_pandas,
+                                                                   default_algos_to_apply,
+                                                                   target_dimensions,
+                                                                   show_algo_select,
+                                                                   show_embed_select,
+                                                                   show_color_select,
+                                                                   MAX_DISPLAY_NUM,
+                                                                   display_embed_information,
+                                                                   set_wide_layout_CSS,
+                                                                   num_cols,
+                                                                   model_select_position,
+                                                                   key,
+                                                                   additional_classifiers_for_coloring,
+                                                                   generate_code_sample,
+                                                                   show_infos,
+                                                                   show_logo,
+                                                                   n_jobs,)

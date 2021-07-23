@@ -10,13 +10,11 @@ from nlu.pipe.viz.streamlit_viz.streamlit_utils_OS import StreamlitUtilsOS
 from nlu.pipe.viz.streamlit_viz.gen_streamlit_code import get_code_for_viz
 from nlu.pipe.viz.streamlit_viz.styles import _set_block_container_style
 import random
-
-## TODO THIS BECOME VIZ TRACKER!! MODEL-VIEW-CONTROLLER Pattern!!!  THis is the MODEL, STREAMLIT IS the VIEW, STreamlit-UI+Methods called by that are CONTROLLER
 class StreamlitVizTracker():
     """Track the status of the visualizations and models loaded in the Streamlit Web View. This is the Model part of the MVC pattern"""
     _set_block_container_style()
     loaded_word_embeding_pipes = []
-    loaded_sentence_embeding_pipes = [] # todo track
+    loaded_sentence_embeding_pipes = [] 
     loaded_document_classifier_pipes = []
     loaded_token_pipes = []
     loaded_token_level_classifiers = []
@@ -79,7 +77,7 @@ word-wrap: break-word;
     def display_infos():
         FOOTER       = """<span style="font-size: 0.75em">{}</span>"""
         field_info   = """**INFO:** You can type in the model selection fields to search and filter."""
-        iso_info     = """**INFO:** NLU model references have the structure: `<iso_language_code>.<model_name>.<dataset>` . [Based on the `ISO Language Codes`](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes). If no language defined, `en.` will be assumed as default ' ,"""
+        iso_info     = """**INFO:** NLU model references have the structure.md: `<iso_language_code>.<model_name>.<dataset>` . [Based on the `ISO Language Codes`](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes). If no language defined, `en.` will be assumed as default ' ,"""
         ISO_FOOTER   = FOOTER.format(field_info)
         FIELD_FOOTER = FOOTER.format(iso_info)
         st.sidebar.markdown(ISO_FOOTER, unsafe_allow_html=True)

@@ -65,7 +65,7 @@ def parse_language_from_nlu_ref(nlu_ref):
 
 
 
-def get_default_component_of_type(missing_component_type,language='en',is_licensed=False):
+def get_default_component_of_type(missing_component_type,language='en',is_licensed=False, is_trainable_pipe = False ):
     '''
     This function returns a default component for a missing component type.
     It is used to auto complete pipelines, which are missng required components.
@@ -83,7 +83,7 @@ def get_default_component_of_type(missing_component_type,language='en',is_licens
         if 'token' in missing_component_type: return nlu.components.tokenizer.Tokenizer("default_tokenizer", nlu_ref = 'tokenize', language=language)
         if missing_component_type == 'word_embeddings': return Embeddings(annotator_class='glove', nlu_ref='embed.glove')
         if missing_component_type == 'pos':   return Classifier(nlu_ref='pos')
-        if missing_component_type == 'ner':   return Classifier(nlu_ref='ner')
+        if missing_component_type == 'ner':   return Classifier(nlu_ref='ner') if not is_licensed else Classifier(nlu_ref='med_ner', nlp_ref='jsl_ner_wip_clinical')
         if missing_component_type == 'ner_converter':   return Util('ner_converter', nlu_ref='entity')
         if missing_component_type == 'chunk': return nlu.chunker.Chunker(nlu_ref='chunker')
         if missing_component_type == 'ngram': return nlu.chunker.Chunker(nlu_ref='ngram')
@@ -92,23 +92,22 @@ def get_default_component_of_type(missing_component_type,language='en',is_licens
         if missing_component_type == 'labled_dependency': return LabledDepParser('dep',nlu_ref='dep.typed')
         if missing_component_type == 'date': return nlu.Matcher('date', nlu_ref='match.date')
         if missing_component_type == 'ner_chunk': return Util('ner_converter',nlu_ref='entitiy')
+        # TODO ENTITIES REQUIREMENT: if entities is required and we are training a chunk_reoslver, we just and DOC2CHUNK!!! ??
+
+        if missing_component_type == 'entities' and is_licensed and is_trainable_pipe: return Util('doc2chunk')
         if missing_component_type == 'entities' and is_licensed: return Util('ner_to_chunk_converter_licensed')
         if missing_component_type == 'entities': return Util('ner_converter')
         if missing_component_type == 'feature_vector': return Util('feature_assembler')
 
     else:
         """ These models are fetched becuase they required a storage ref, so we ad a storage ref attribute to the component info"""
-        multi_lang =['ar']
         # if there is an @ in the name, we must get some specific pretrained model from the sparknlp reference that should follow after the @
         missing_component_type, storage_ref = missing_component_type.split('@')
 
 
-
         if 'embed' in missing_component_type:
-            # TODO RESOLVE MULTI LANG EMBEDS , this should be hdled  better
-            if language in multi_lang : storage_ref = resolve_multi_lang_embed(language,storage_ref)
-            else :  nlu_ref,nlp_ref, is_licensed =  resolve_storage_ref(language,storage_ref,missing_component_type)
-
+            # Get storage ref and metadata
+            nlu_ref,nlp_ref, is_licensed,language =  resolve_storage_ref(language,storage_ref,missing_component_type)
             if 'chunk_embeddings' in missing_component_type: return  set_storage_ref_and_resolution_on_component_info(embeddings_chunker.EmbeddingsChunker(nlu_ref=nlu_ref,nlp_ref=nlp_ref),storage_ref)
             else : return set_storage_ref_and_resolution_on_component_info(construct_component_from_identifier(language=language, component_type='embed', nlu_ref=nlu_ref,nlp_ref=nlp_ref, is_licensed=is_licensed), storage_ref,)
 
@@ -129,22 +128,20 @@ def set_storage_ref_and_resolution_on_component_info(c,storage_ref):
     c.info.storage_ref = storage_ref
 
     return c
+
 def resolve_storage_ref(lang, storage_ref,missing_component_type):
-    """Returns a nlp_ref, nlu_ref and wether it is a licensed model or not"""
+    """Returns a nlp_ref, nlu_ref and wether it is a licensed model or not and an updated languiage, if multi lingual"""
     logger.info(f"Resolving storage_ref={storage_ref} for lang={lang} and missing_component_type={missing_component_type}")
     nlu_ref,nlp_ref,is_licensed = None,None,False
     # get nlu ref
 
 
     # check if storage_ref is hardcoded
-    if lang in nlu.Spellbook.licensed_storage_ref_2_nlu_ref.keys():
-        if storage_ref in nlu.Spellbook.licensed_storage_ref_2_nlu_ref[lang].keys():
+    if lang in nlu.Spellbook.licensed_storage_ref_2_nlu_ref.keys() and  storage_ref in nlu.Spellbook.licensed_storage_ref_2_nlu_ref[lang].keys():
             nlu_ref = nlu.Spellbook.licensed_storage_ref_2_nlu_ref[lang][storage_ref]
-            is_licensed = False
-    elif lang in nlu.Spellbook.storage_ref_2_nlu_ref.keys():
-        if storage_ref in nlu.Spellbook.storage_ref_2_nlu_ref[lang].keys():
+            is_licensed = True
+    elif lang in nlu.Spellbook.storage_ref_2_nlu_ref.keys() and storage_ref in nlu.Spellbook.storage_ref_2_nlu_ref[lang].keys():
             nlu_ref = nlu.Spellbook.storage_ref_2_nlu_ref[lang][storage_ref] # a HC model may use OS storage_ref_provider, so we dont know yet if it is licensed or not
-    if nlu_ref is not None and 'xx.' in nlu_ref : lang = 'xx'
 
     if lang in nlu.Spellbook.pretrained_models_references.keys() and nlu_ref in nlu.Spellbook.pretrained_models_references[lang].keys():
         nlp_ref = nlu.Spellbook.pretrained_models_references[lang][nlu_ref]
@@ -154,16 +151,39 @@ def resolve_storage_ref(lang, storage_ref,missing_component_type):
 
 
     # check if storage_ref matches nlu_ref and get NLP_ref
-    elif lang in nlu.Spellbook.licensed_storage_ref_2_nlu_ref.keys():
-        if storage_ref in nlu.Spellbook.licensed_storage_ref_2_nlu_ref[lang].keys():
+    elif lang in nlu.Spellbook.licensed_storage_ref_2_nlu_ref.keys() and  storage_ref in nlu.Spellbook.licensed_storage_ref_2_nlu_ref[lang].keys():
             nlu_ref = storage_ref
             nlp_ref = nlu.Spellbook.licensed_storage_ref_2_nlu_ref[lang][nlu_ref]
-    elif lang in nlu.Spellbook.pretrained_models_references.keys():
-        if storage_ref in nlu.Spellbook.pretrained_models_references[lang].keys():
+    elif lang in nlu.Spellbook.pretrained_models_references.keys() and storage_ref in nlu.Spellbook.pretrained_models_references[lang].keys():
             nlu_ref = storage_ref
             nlp_ref = nlu.Spellbook.pretrained_models_references[lang][nlu_ref]
 
+    # check if storage_ref matches nlp_ref and get nlp and nlu ref
+    elif lang in nlu.Spellbook.pretrained_healthcare_model_references.keys():
+        if storage_ref in nlu.Spellbook.pretrained_healthcare_model_references[lang].values():
+            inv_namespace = {v: k for k, v in nlu.Spellbook.pretrained_healthcare_model_references[lang].items()}
+            nlp_ref = storage_ref
+            nlu_ref = inv_namespace[nlp_ref]
+            is_licensed = True
 
+    if nlu_ref is not None and 'xx.' in nlu_ref : lang = 'xx'
+
+
+    if nlp_ref is None and nlu_ref is not None:
+        # cast NLU ref to NLP ref
+        if is_licensed :
+            nlp_ref = Spellbook.pretrained_healthcare_model_references[lang][nlu_ref]
+        else :
+            nlp_ref = Spellbook.pretrained_models_references[lang][nlu_ref]
+
+    if nlp_ref is not None and nlu_ref is None:
+        # cast NLP ref to NLU ref
+        if is_licensed :
+            inv_namespace = {v: k for k, v in nlu.Spellbook.pretrained_healthcare_model_references[lang].items()}
+            nlu_ref = inv_namespace[nlp_ref]
+        else :
+            inv_namespace = {v: k for k, v in nlu.Spellbook.pretrained_models_references[lang].items()}
+            nlu_ref = inv_namespace[nlp_ref]
 
     if nlu_ref == None and nlp_ref == None :
         logger.info("COULD NOT RESOLVE STORAGE_REF")
@@ -185,7 +205,7 @@ def resolve_storage_ref(lang, storage_ref,missing_component_type):
         # raise  ValueError
 
     logger.info(f'Resolved storageref = {storage_ref} to NLU_ref = {nlu_ref} and NLP_ref = {nlp_ref}')
-    return nlu_ref, nlp_ref, is_licensed
+    return nlu_ref, nlp_ref, is_licensed,lang
 
 
 
@@ -313,7 +333,7 @@ def resolve_component_from_parsed_query_data(language, component_type, dataset, 
         if nlu_ref in Spellbook.trainable_models.keys():
             component_kind = 'trainable_model'
             nlp_ref = Spellbook.trainable_models[nlu_ref]
-            logger.info(f'Found Spark NLP reference in trainable models namespace = {nlp_ref}')
+            logger.info(f'Found Spark NLP reference in trainable models naqmespace = {nlp_ref}')
             resolved = True
             trainable=True
     # 1. check if pipeline references for resolution
@@ -411,9 +431,7 @@ def resolve_component_from_parsed_query_data(language, component_type, dataset, 
         constructed_components = construct_component_from_pipe_identifier(language, nlp_ref, nlu_ref,is_licensed=is_licensed)
         logger.info(f'Inferred Spark reference nlp_ref={nlp_ref} and nlu_ref={nlu_ref}  to NLP Annotator Class {constructed_components}')
         if constructed_components is None:
-            logger.exception(
-                f'EXCEPTION : Could not create NLU component for nlp_ref={nlp_ref} and nlu_ref={nlu_ref}  to NLP Annotator Classes {constructed_components}')
-            return nlu.NluError
+            raise ValueError(f'EXCEPTION : Could not create NLU component for nlp_ref={nlp_ref} and nlu_ref={nlu_ref}  to NLP Annotator Classes {constructed_components}')
         else:
             return constructed_components
     elif component_kind in ['model', 'component']:
@@ -424,24 +442,18 @@ def resolve_component_from_parsed_query_data(language, component_type, dataset, 
         logger.info(f'Inferred Spark reference nlp_ref={nlp_ref} and nlu_ref={nlu_ref}  to NLP Annotator Class {constructed_component}')
 
         if constructed_component is None:
-            logger.exception(f'EXCEPTION : Could not create NLU component for nlp_ref={nlp_ref} and nlu_ref={nlu_ref}')
-            return nlu.NluError
+            raise ValueError(f'EXCEPTION : Could not create NLU component for nlp_ref={nlp_ref} and nlu_ref={nlu_ref}')
         else:
             return constructed_component
     elif component_kind == 'trainable_model':
         constructed_component = construct_trainable_component_from_identifier(nlu_ref,nlp_ref)
         if constructed_component is None:
-            logger.exception(f'EXCEPTION : Could not create NLU component for nlp_ref={nlp_ref} and nlu_ref={nlu_ref}')
-            return nlu.NluError
+            raise ValueError(f'EXCEPTION : Could not create NLU component for nlp_ref={nlp_ref} and nlu_ref={nlu_ref}')
         else:
             constructed_component.info.is_untrained = True
             return constructed_component
     else:
-        logger.exception(
-            "EXCEPTION : Could not resolve query=%s for kind=%s and reference=%s in any of NLU's namespaces ", nlu_ref,
-            component_kind,
-            nlp_ref)
-        return nlu.NluError
+        raise ValueError(f'EXCEPTION : Could not create NLU component for nlp_ref={nlp_ref} and nlu_ref={nlu_ref}')
 
 
 def construct_trainable_component_from_identifier(nlu_ref,nlp_ref):
@@ -482,10 +494,21 @@ def construct_trainable_component_from_identifier(nlu_ref,nlp_ref):
         if nlu_ref in ['train.word_seg','train.word_segmenter'] :
             return nlu.Tokenizer(annotator_class = 'word_segmenter', trainable=True,nlu_ref=nlu_ref,)
 
+        if nlu_ref in ['train.generic_classifier'] :
+            return nlu.Classifier(annotator_class = 'generic_classifier', trainable=True, nlu_ref=nlu_ref,is_licensed=True)
+
+        if nlu_ref in ['train.resolve_chunks'] :
+            return nlu.Resolver(annotator_class = 'chunk_entity_resolver', trainable=True,nlu_ref=nlu_ref,is_licensed=True)
+        if nlu_ref in ['train.resolve_sentence','train.resolve'] :
+            return nlu.Resolver(annotator_class = 'sentence_entity_resolver', trainable=True,nlu_ref=nlu_ref,is_licensed=True)
+
+        if nlu_ref in ['train.assertion','train.assertion_dl'] : # TODO
+            return nlu.Classifier(annotator_class = 'sentiment_dl', trainable=True,nlu_ref=nlu_ref,)
+
+
 
     except:  # if reference is not in namespace and not a component it will cause a unrecoverable crash
-        logger.exception(f'EXCEPTION: Could not create trainable NLU component for nlu_ref = {nlu_ref} and nlp_ref = {nlp_ref}')
-        return None
+        ValueError(f'EXCEPTION: Could not create trainable NLU component for nlu_ref = {nlu_ref} and nlp_ref = {nlp_ref}')
 
 
 def construct_component_from_pipe_identifier(language, nlp_ref, nlu_ref,path=None, is_licensed=False, strict=False):
@@ -735,7 +758,7 @@ def construct_component_from_identifier(language, component_type='', dataset='',
         elif any('norm' in x for x in [nlp_ref, nlu_ref, dataset, component_type]):
             return nlu.normalizer.Normalizer(nlp_ref=nlp_ref, nlu_ref=nlu_ref, is_licensed=is_licensed)
         elif any('clean' in x or 'stopword' in x for x in [nlp_ref, nlu_ref, dataset, component_type]):
-            return nlu.StopWordsCleaners(language=language, get_default=False, nlp_ref=nlp_ref)
+            return nlu.StopWordsCleaners(lang=language, get_default=False, nlp_ref=nlp_ref)
         elif any('sentence_detector' in x for x in [nlp_ref, nlu_ref, dataset, component_type]):
             return NLUSentenceDetector(nlu_ref=nlu_ref, nlp_ref=nlp_ref, language=language, is_licensed=is_licensed)
 
@@ -751,7 +774,7 @@ def construct_component_from_identifier(language, component_type='', dataset='',
 
         # supported in future version with auto embed generation
         # elif any('embed_chunk' in x for x in [nlp_ref, nlu_ref, dataset, component_type] ):
-        #     return embeddings_chunker.EmbeddingsChunker()
+        #     return embeddings_chunker.EmbeddingsChunker()    DrugNormalizer,
 
         elif any('chunk' in x for x in [nlp_ref, nlu_ref, dataset, component_type]):
             return nlu.chunker.Chunker()

@@ -4,7 +4,7 @@ class SentenceResolver:
     @staticmethod
     def get_pretrained_model(name, language, bucket='clinical/models'):
         return SentenceEntityResolverModel.pretrained(name, language,bucket) \
-            .setInputCols(['entities',"sentence_embeddings"]) \
+            .setInputCols(["sentence_embeddings"]) \
             .setDistanceFunction("COSINE") \
             .setNeighbours(3) \
             .setOutputCol("sentence_resolution")
@@ -12,7 +12,7 @@ class SentenceResolver:
     @staticmethod
     def get_default_trainable_model():
         return SentenceEntityResolverApproach() \
-        .setInputCols("entities","sentence_embeddings") \
+        .setInputCols("sentence_embeddings") \
         .setOutputCol("sentence_resolution") \
         .setDistanceFunction("COSINE") \
         .setNeighbours(1) \

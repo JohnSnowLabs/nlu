@@ -11,6 +11,7 @@ Every Annotator should have 2 configs. Some might offor multuple configs/method 
 
 """
 from sparknlp.annotator import *
+from sparknlp.base import *
 name_deductable_OS = [
     NerConverter,
     BertEmbeddings,
@@ -54,7 +55,7 @@ name_deductable_OS = [
     MultiClassifierDLApproach  ,
     NerDLApproach              ,
     PerceptronApproach         ,
-
+    Doc2Chunk,
 ]
 
 

@@ -1,1 +1,0 @@
-{"name": "doc2chunk", "description": "todo", "trainable": false, "output_level": "chunk", "outputs": ["chunk"], "inputs": ["document", "some_column"], "type": "util", "spark_input_column_names": ["document"], "spark_output_column_names": ["chunk"], "provider": "sparknlp", "license": "open source", "computation_context": "spark", "output_context": "spark"}

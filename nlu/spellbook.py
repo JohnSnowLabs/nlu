@@ -44,6 +44,10 @@ class Spellbook():
         'train.sentiment': '',  # sent DL alias
         'train.pos': '',
         'train.multi_classifier': '',
+        'train.generic_classifier': '',
+        'train.resolve_chunks': '',
+        'train.resolve_sentence': '',
+        'train.resolve': '',
 
     }
 
@@ -92,8 +96,12 @@ class Spellbook():
         'ner.onto.sm': ('onto_recognize_entities_sm', 'pipe'),
         'ner.onto.lg': ('onto_recognize_entities_lg', 'pipe'),
         'match.datetime': ('match_datetime', 'pipe'),
+
         'match.text': ('text_matcher', 'model'),
         'match.regex': ('regex_matcher', 'model'),
+        'match.date': ('date_matcher', 'model'),
+        'match.context': ('context_parser', 'model'), #  TODOLicensed!!
+        # 'context_parser': ('context_parser', 'model'),
 
         'match.pattern': ('match_pattern', 'pipe'),
         'match.chunks': ('match_chunks', 'pipe'),
@@ -103,7 +111,7 @@ class Spellbook():
         'clean.slang': ('clean_slang', 'pipe'),
         # 'spell': ('check_spelling','pipe'),  # bad spell_checker,
         'spell': ('spellcheck_dl', 'model'),  # default spell
-        'sentiment': ('analyze_sentiment', 'pipe'),
+        'sentiment': ('sentimentdl_glove_imdb', 'model'),
         'emotion': ('classifierdl_use_emotion', 'model'),  # default emotion model
 
         'sentiment.imdb': ('analyze_sentimentdl_use_imdb', 'pipe'),
@@ -216,7 +224,6 @@ class Spellbook():
         'classify.emotion': ('classifierdl_use_emotion', 'model'),  # Alias withouth embedding
         'classify.cyberbullying': ('classifierdl_use_cyberbullying', 'model'),  # Alias withouth embedding
         'cyberbullying': ('classifierdl_use_cyberbullying', 'model'),  # Alias withouth embedding
-        'cyber': ('classifierdl_use_cyberbullying', 'model'),  # Alias withouth embedding
 
         'classify.sarcasm': ('classifierdl_use_sarcasm', 'model'),  # Alias withouth embedding
         'sarcasm': ('classifierdl_use_sarcasm', 'model'),  # Alias withouth embedding
@@ -1798,9 +1805,10 @@ class Spellbook():
             'nl.pos': 'pos_ud_alpino',  # default pos nl
             'nl.pos.ud_alpino': 'pos_ud_alpino',
             'nl.ner': 'wikiner_6B_100',  # default ner nl
-            'nl.ner.wikiner': 'wikiner_6B_100',  # default ner nl with embeds
-            'nl.ner.wikiner.glove.6B_100': 'wikiner_6B_100',
+            # 'nl.ner.wikiner': 'wikiner_6B_100',  # default ner nl with embeds, unresolvable Storageref
+            # 'nl.ner.wikiner.glove.6B_100': 'wikiner_6B_100', #  unresolvable Storageref
             'nl.ner.wikiner.glove.6B_300': 'wikiner_6B_300',
+            'nl.ner.wikiner': 'wikiner_6B_300',
             'nl.ner.wikiner.glove.840B_300': 'wikiner_840B_300',
             'nl.embed.bert': 'bert_base_dutch_cased',
 
@@ -1840,7 +1848,7 @@ class Spellbook():
             'en.ner.onto.electra.uncased_base': 'onto_electra_base_uncased',
             'en.ner.bert_base_cased': 'ner_dl_bert_base_cased',
 
-            'en.ner.ade': 'ade_ner_100d',
+            # 'en.ner.ade': 'ade_ner_100d', # FORBIDDEN?
             'en.ner.aspect_sentiment': 'ner_aspect_based_sentiment',
 
             'en.ner.glove.100d': 'ner_dl_sentence',
@@ -1868,7 +1876,8 @@ class Spellbook():
             'biobert': 'biobert_pubmed_base_cased',  # alias
             'en.embed.biobert': 'biobert_pubmed_base_cased',  # default bio bert
             'en.embed.biobert.pubmed_base_cased': 'biobert_pubmed_base_cased',
-            # TODO NO SUCH PARAM POOLING LAYER EXISTS!
+            # 'en.embed_sentence.bluebert_cased_mli' :  'sbluebert_base_cased_mli', # NOT FOUND
+
             'en.embed.biobert.pubmed_large_cased': 'biobert_pubmed_large_cased',
             'en.embed.biobert.pmc_base_cased': 'biobert_pmc_base_cased',
             'en.embed.biobert.pubmed_pmc_base_cased': 'biobert_pubmed_pmc_base_cased',
@@ -2064,10 +2073,11 @@ class Spellbook():
             'de.ner': 'wikiner_840B_300',  # default ner de
             'de.ner.wikiner': 'wikiner_840B_300',  # default ner embeds de
             'de.ner.wikiner.glove.840B_300': 'wikiner_840B_300',
+            # 'de.ner.wikiner.6B_100':'wikiner_6B_100', # In modelshub but not in S3?
             'de.stopwords': 'stopwords_de',
             'de.ner.wikiner.glove.6B_300': 'wikiner_6B_300',
             'de.embed.bert' : 'bert_base_german_cased',
-           'de.embed.bert.uncased' : '	bert_base_german_uncased'
+           'de.embed.bert.uncased' : 'bert_base_german_uncased'
         },
         'it': {
             'it.lemma': 'lemma_dxc',  # default lemma it
@@ -2189,12 +2199,11 @@ class Spellbook():
             'bn.stopwords': 'stopwords_bn',
             "bn.lemma": "lemma",
             "bn.pos": "pos_msri",
-            'bn.ner': 'ner_jifs_glove_840B_300d',
+            'bn.ner': 'bengaliner_cc_300d',
+            'bn.ner.jifs': 'ner_jifs_glove_840B_300d',
             'bn.ner.glove': 'ner_jifs_glove_840B_300d',
-            'bn.embed.glove': 'bengaliner_cc_300d',
-            'bn.embed': 'bengaliner_cc_300d',
-            'bn.ner.cc': 'bengali_cc_300d',
-            'bn.ner.cc_300d': 'bengali_cc_300d',
+            'bn.embed.glove': 'bengali_cc_300d',
+            'bn.embed': 'bengali_cc_300d',
 
         },
         'br': {
@@ -2232,12 +2241,11 @@ class Spellbook():
             'fi.pos': 'pos_ud_tdt',  # default pos fi
             'fi.stopwords': 'stopwords_fi',
             'fi.ner': 'wikiner_6B_100',
-            'fi.ner.6B_100': 'wikiner_6B_100',
-            'fi.ner.6B_300': 'wikiner_6B_300',
-            'fi.ner.840B_300': 'wikiner_840B_300',
-            'fi.embed.bert.': 'bert_finnish_cased',
-            'fi.embed.bert.cased.': 'bert_finnish_cased',
-            'fi.embed.bert.uncased.': 'bert_finnish_uncased',
+            # 'fi.ner.6B_300': 'wikiner_6B_300',
+            # 'fi.ner.840B_300': 'wikiner_840B_300',
+            'fi.embed.bert': 'bert_finnish_cased',
+            'fi.embed.bert.cased': 'bert_finnish_cased',
+            'fi.embed.bert.uncased': 'bert_finnish_uncased',
             'fi.embed_sentence': 'sent_bert_finnish_cased',
             'fi.embed_sentence.bert.cased': 'sent_bert_finnish_cased',
             'fi.embed_sentence.bert.uncased': 'sent_bert_finnish_uncased',
@@ -2405,7 +2413,7 @@ class Spellbook():
             'tr.ner.bert': 'turkish_ner_bert' , # ner tr default
             'tr.classify.news'  : 'classifierdl_bert_news',
             'tr.embed.bert'  : 'bert_base_turkish_cased',
-            'tr.embed.bert.uncased'  : '	bert_base_turkish_uncased',
+            'tr.embed.bert.uncased'  : 'bert_base_turkish_uncased',
         },
         'uk': {
             'uk.lemma': 'lemma',  # default uk lemma
@@ -2496,6 +2504,7 @@ class Spellbook():
 
             # 'xx.embed.glove.840B_300': 'glove_840B_300',
             'xx.embed.glove.6B_300': 'glove_6B_300',
+            'xx.embed.glove.glove_6B_100': 'glove_6B_100',
             'xx.embed.bert_multi_cased': 'bert_multi_cased',
             'xx.embed.bert': 'bert_multi_cased',
 
@@ -3850,10 +3859,7 @@ class Spellbook():
             "xx.fr.marian.translate_to.vi":"opus_mt_vi_fr",
             "xx.fr.marian.translate_to.war":"opus_mt_war_fr",
             "xx.fi.marian.translate_to.zh":"opus_mt_zh_fi",
-            "xx.af.marian.translate_to.ru" : "opus_tatoeba_af_ru",
             "xx.he.marian.translate_to.it" : "opus_tatoeba_he_it",
-            "xx.he.marian.translate_to.fr" : "opus_tatoeba_he_fr",
-            "xx.it.marian.translate_to.he" : "opus_tatoeba_it_he",
             "xx.es.marian.translate_to.zh" : "opus_tatoeba_es_zh",
 
 
@@ -3873,7 +3879,7 @@ class Spellbook():
                 # 'en.spell.context.med':'context_spell_med', #todo crashing Byteerror
 
                 'en.detect_sentence.clinical' : 'sentence_detector_dl_healthcare',
-
+                'en.norm_drugs' : 'drug_normalizer', # TODO!?!??!
                 # T5
                 'en.t5.mediqa' : 't5_base_mediqa_mnli',
 
@@ -3883,6 +3889,10 @@ class Spellbook():
                 'en.assert.healthcare': 'assertion_dl_healthcare',
                 'en.assert.large': 'assertion_dl_large',
 
+                #2.7.6
+                'en.assert.radiology' :'assertion_dl_radiology',
+
+
                 # WordEmbedding Model Glove Embeddings
                 'en.embed.glove.clinical': 'embeddings_clinical',
                 'en.embed.glove.biovec': 'embeddings_biovec',
@@ -3891,6 +3901,17 @@ class Spellbook():
                 # 'en.embed.glove.icd10': 'embeddings_icd10_base', # Broken in JSL
                 'en.embed.glove.icdoem': 'embeddings_icdoem',
                 'en.embed.glove.icdoem_2ng': 'embeddings_icdoem_2ng',
+
+                #3.1.1
+                'en.embed_sentence.biobert.jsl_cased':'sbiobert_jsl_cased',
+                'en.embed_sentence.biobert.jsl_umls_cased':'sbiobert_jsl_umls_cased',
+                'en.embed_sentence.bert.jsl_medium_uncased':'sbert_jsl_medium_uncased',
+                'en.embed_sentence.bert.jsl_medium_umls_uncased':'sbert_jsl_medium_umls_uncased',
+                'en.embed_sentence.bert.jsl_mini_uncased':'sbert_jsl_mini_uncased',
+                'en.embed_sentence.bert.jsl_mini_umlsuncased':'sbert_jsl_mini_umls_uncased',
+                'en.embed_sentence.bert.jsl_tiny_uncased':'sbert_jsl_tiny_uncased',
+                'en.embed_sentence.bert.jsl_tiny_umls_uncased':'sbert_jsl_tiny_umls_uncased',
+
 
                 # BIOBERT embeddings
 
@@ -3917,6 +3938,7 @@ class Spellbook():
                 'en.resolve.cpt.augmented': 'sbiobertresolve_cpt_augmented',
                 'en.resolve.cpt.procedures_augmented': 'sbiobertresolve_cpt_procedures_augmented',
                 # resolve sentence hcc
+                'en.resolve.hcc': 'sbiobertresolve_hcc_augmented',
                 'en.resolve.hcc.augmented': 'sbiobertresolve_hcc_augmented',
                 # resolve sentence icdf
                 'en.resolve.icd10cm': 'sbiobertresolve_icd10cm',
@@ -3933,6 +3955,15 @@ class Spellbook():
                 'en.resolve.snomed.aux_concepts_int': 'sbiobertresolve_snomed_auxConcepts_int',
                 'en.resolve.snomed.findings': 'sbiobertresolve_snomed_findings',
                 'en.resolve.snomed.findings_int': 'sbiobertresolve_snomed_findings_int',
+
+                #3.1.1
+                'en.resolve.snomed_body_structure_med':'sbertresolve_snomed_bodyStructure_med',
+                'en.resolve.snomed_body_structure':'sbiobertresolve_snomed_bodyStructure',
+                'en.resolve.icdo_augmented':'sbiobertresolve_icdo_augmented',
+
+                'en.resolve.icd10cm.slim_billable_hcc'  :'sbiobertresolve_icd10cm_slim_billable_hcc',
+                'en.resolve.icd10cm.slim_billable_hcc_med'  :'sbertresolve_icd10cm_slim_billable_hcc_med',
+
 
                 # Greedy Relation extracction
                 'en.relation.posology': 'posology_re',  # TODo OCRASHES SOME STRINGS!
@@ -3964,6 +3995,11 @@ class Spellbook():
                 'en.relation.humen_phenotype_gene': 'redl_human_phenotype_gene_biobert',
                 'en.relation.temporal_events': 'redl_temporal_events_biobert',
 
+                #2.7.5
+                'en.relation.test_result_date'  :'re_test_result_date',
+                # 2.7.3
+                # 'en.relation.chemport'   :'re_chemprot',
+
                 # PartOfSpeechModels
                 'en.pos.clinical': 'pos_clinical',  # DEFAULT POS HC|| RELATION EXTRACTION TRAIN ON THIS!
 
@@ -3989,7 +4025,7 @@ class Spellbook():
                 'en.med_ner.chemprot.clinical': 'ner_chemprot_clinical',
                 'en.med_ner.clinical': 'ner_clinical',
                 'en.med_ner.clinical.biobert': 'ner_clinical_biobert',
-                'en.med_ner.clinical.noncontrib': 'ner_clinical_noncontrib',
+                # 'en.med_ner.clinical.noncontrib': 'ner_clinical_noncontrib', # outtaded, NER model it is not MedNER
                 'en.med_ner.diseases': 'ner_diseases',
                 'en.med_ner.diseases.biobert': 'ner_diseases_biobert',
                 'en.med_ner.diseases.large': 'ner_diseases_large',
@@ -4022,7 +4058,7 @@ class Spellbook():
                 'en.med_ner.radiology.wip_clinical': 'ner_radiology_wip_clinical',
                 'en.med_ner.risk_factors': 'ner_risk_factors',
                 'en.med_ner.risk_factors.biobert': 'ner_risk_factors_biobert',
-                'en.med_ner.i2b2': 'nerdl_i2b2', #  broken
+                # 'en.med_ner.i2b2': 'nerdl_i2b2', #  broken
                 'en.med_ner.tumour': 'nerdl_tumour_demo',
                 'en.med_ner.jsl.wip.clinical': 'jsl_ner_wip_clinical',
                 'en.med_ner.jsl.wip.clinical.greedy': 'jsl_ner_wip_greedy_clinical',
@@ -4036,12 +4072,25 @@ class Spellbook():
                 'en.med_ner.deid.sd': 'ner_deid_sd',
                 'en.med_ner.deid.sd_large': 'ner_deid_sd_large',
                 'en.med_ner.deid.synthetic': 'ner_deid_synthetic',
-                'en.med_ner.deid.dl': 'ner_deidentify_dl',
-                'en.med_ner.deid': 'nerdl_deid',
+                'en.med_ner.deid': 'ner_deidentify_dl',
+                #2.7.5
+                'en.med_ner.admission_events'  :'ner_events_admission_clinical',
+
+                #3.1.1
+
+                'med_ner.deid.generic_augmented':'ner_deid_generic_augmented',
+                'med_ner.deid.subentity_augmented':'ner_deid_subentity_augmented',
+                # 'med_ner.deid.generic_glove':'ner_deid_generic_glove',
+                # 'med_ner.deid.subentity_glove':'ner_deid_subentity_glove',
 
                 # 'en.med_ner.clinical.icdem': 'ner_clinical_icdem', # TODO UNRESOLVED! PIPE?
                 # 'en.med_ner.clinical.large': 'ner_clinical_large',# TODO URNESOLVED, PIPE?
 
+                # NLU 3.1.2
+
+                'en.med_ner.ade_biobert' :'ner_ade_biobert',
+                'en.classify.ade.clinicalbert' :'classifierdl_ade_clinicalbert',
+                'en.med_ner.large':'ner_large_clinical',
 
                 # DeIdentificationModel
 
@@ -4061,17 +4110,17 @@ class Spellbook():
                 # 'en.resolve_chunk.icd10pcs.icdoem_2ng': 'chunkresolve_icd10pcs_icdoem_2ng', # broken
                 # 'en.resolve_chunk.icdo.icdoem': 'chunkresolve_icdo_icdoem', # broken
 
-                'en.resolve_chunk.athena_conditions': 'chunkresolve_athena_conditions_healthcare',
+                # 'en.resolve_chunk.athena_conditions': 'chunkresolve_athena_conditions_healthcare', # Not 3.+ Compatible
                 'en.resolve_chunk.cpt_clinical': 'chunkresolve_cpt_clinical',
                 'en.resolve_chunk.icd10cm.clinical': 'chunkresolve_icd10cm_clinical',
                 'en.resolve_chunk.icd10cm.diseases_clinical': 'chunkresolve_icd10cm_diseases_clinical',
                 'en.resolve_chunk.icd10cm.hcc_clinical': 'chunkresolve_icd10cm_hcc_clinical',
-                'en.resolve_chunk.icd10cm.hcc_healthcare': 'chunkresolve_icd10cm_hcc_healthcare',
+                # 'en.resolve_chunk.icd10cm.hcc_healthcare': 'chunkresolve_icd10cm_hcc_healthcare',
                 'en.resolve_chunk.icd10cm.injuries': 'chunkresolve_icd10cm_injuries_clinical',
                 'en.resolve_chunk.icd10cm.musculoskeletal': 'chunkresolve_icd10cm_musculoskeletal_clinical',
                 'en.resolve_chunk.icd10cm.neoplasms': 'chunkresolve_icd10cm_neoplasms_clinical',
-                'en.resolve_chunk.icd10cm.poison': 'chunkresolve_icd10cm_poison_ext_clinical',
-                'en.resolve_chunk.icd10cm.puerile': 'chunkresolve_icd10cm_puerile_clinical',
+                # 'en.resolve_chunk.icd10cm.poison': 'chunkresolve_icd10cm_poison_ext_clinical',
+                # 'en.resolve_chunk.icd10cm.puerile': 'chunkresolve_icd10cm_puerile_clinical',
                 'en.resolve_chunk.icd10pcs.clinical': 'chunkresolve_icd10pcs_clinical',
                 'en.resolve_chunk.icdo.clinical': 'chunkresolve_icdo_clinical',
                 'en.resolve_chunk.loinc': 'chunkresolve_loinc_clinical',
@@ -4085,8 +4134,8 @@ class Spellbook():
                 'en.resolve_chunk.rxnorm.xsmall.clinical': 'chunkresolve_rxnorm_xsmall_clinical',
                 'en.resolve_chunk.snomed.findings': 'chunkresolve_snomed_findings_clinical',
 
-                'en.classify.icd10.clinical':'classifier_icd10cm_hcc_clinical',      #  WHCIH CLASS? # TODO NOT LAODING
-                'en.classify.icd10.healthcare':'classifier_icd10cm_hcc_healthcare', # TODO NOT LOADING CORRECt
+                # 'en.classify.icd10.clinical':'classifier_icd10cm_hcc_clinical',      #  WHCIH CLASS? # TODO NOT LAODING
+                # 'en.classify.icd10.healthcare':'classifier_icd10cm_hcc_healthcare', # TODO NOT LOADING CORRECt
                 'en.classify.ade.biobert':'classifierdl_ade_biobert',
                 'en.classify.ade.clinical':'classifierdl_ade_clinicalbert',
                 'en.classify.ade.conversational':'classifierdl_ade_conversational_biobert',
@@ -4114,13 +4163,13 @@ class Spellbook():
             {
                 'de.embed' :'w2v_cc_300d',
                 'de.embed.w2v' :'w2v_cc_300d',
-                'de.resolve_chunk' :'chunkresolve_ICD10GM',
-                'de.resolve_chunk.icd10gm' :'chunkresolve_ICD10GM',
+                # 'de.resolve_chunk' :'chunkresolve_ICD10GM',
+                # 'de.resolve_chunk.icd10gm' :'chunkresolve_ICD10GM',
                 'de.resolve_chunk.icd10gm.2021' :'chunkresolve_ICD10GM_2021',
                 'de.med_ner.legal' :'ner_legal',
-                'de.med_ner' :'ner_healthcare',
-                'de.med_ner.healthcare' :'ner_healthcare',
-                'de.med_ner.healthcare_slim' :'ner_healthcare_slim',
+                # 'de.med_ner' :'ner_healthcare', # BAD NER TRAINED ON STORAGE_REF embeddings_healthcare_100d which only exist in EN
+                #  'de.med_ner.healthcare' :'ner_healthcare', # BAD NER TRAINED ON STORAGE_REF embeddings_healthcare_100d which only exist in EN
+                'de.med_ner' :'ner_healthcare_slim',
                 'de.med_ner.traffic' :'ner_traffic',
             },
 
@@ -4160,6 +4209,7 @@ class Spellbook():
             'en.explain_doc.era':'explain_clinical_doc_era',
             # 'en.explain_doc.ade':'explain_clinical_doc_ade', # todo wierd 2x Converter 1x NER pipe, messes up pipe logic
 
+            'en.recognize_entities.posology'  :'recognize_entities_posology', # PIPE
 
 
 
@@ -4170,6 +4220,7 @@ class Spellbook():
     # map storage ref to nlu ref
 
     storage_ref_2_nlu_ref = {
+
         'en': {
             'tfhub_use'         : 'en.embed_sentence.use',
             'glove_100d'        : 'en.embed.glove.100d',
@@ -4182,8 +4233,29 @@ class Spellbook():
         'th':{
             'tfhub_use_multi_lg' :'xx.use.multi'
 
-        }
-
+        },
+        'ur':{
+            'glove_300d' : 'ur.embed',
+        },
+        'tr':
+            {'bert_multi_cased': 'xx.embed.bert',
+             'labse' : 'xx.embed_sentence.labse'
+             },
+        'sv':
+            {'glove_100d': 'xx.embed.glove.glove_6B_100',
+             },
+        'fa':
+            {'glove_300d': 'fa.embed',
+             },
+        'he':
+            {'glove_300d': 'he.embed',
+             },
+        'fi':
+            {'glove_100d': 'fi.embed.bert',
+             },
+        'ar':
+            {'glove_300d': 'ar.embed',
+             }
 
     }  #
 
@@ -4202,9 +4274,13 @@ class Spellbook():
             'RelationExtractionModel_9c255241fec3': 'en.embed.glove.clinical',
             # 'bert_base_cased' : 'en.embed.glove.clinical'
             'bert_base_cased': 'en.embed.bert.base_cased',
-
-
+            'BERT_SENTENCE_EMBEDDINGS_c7e5b6a772f5' : 'en.embed_sentence.bert.jsl_medium_uncased',
+            'RelationExtractionModel_ce79d77d1bf1' : 'en.embed.glove.clinical',
         },
+        'es':{
+            'embeddings_scielowiki300':'es.embed.scielowiki.300d',
+
+        }
 
     }
 

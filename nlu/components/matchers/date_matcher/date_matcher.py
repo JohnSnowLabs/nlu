@@ -5,7 +5,7 @@ class DateMatcher:
     def get_default_model():
         return sparknlp.annotator.DateMatcher()\
             .setInputCols("document") \
-            .setOutputCol("date") \
+            .setOutputCol("date_entity") \
             .setDateFormat("yyyyMM")
 
 

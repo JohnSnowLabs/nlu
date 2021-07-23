@@ -1,4 +1,4 @@
-__version__ = '3.1.0'
+__version__ = '3.1.1'
 hard_offline_checks = False
 def version(): return __version__
 #
@@ -22,7 +22,7 @@ def try_import_pyspark_in_streamlit():
             return False
         return False
     return True
-if not try_import_pyspark_in_streamlit() : raise  ImportError
+if not try_import_pyspark_in_streamlit() : raise  ImportError("You ned to install Pyspark")
 st_cache_enabled = False
 from typing import Optional
 
@@ -77,7 +77,7 @@ from nlu.components.dependency_untypeds.unlabeled_dependency_parser.unlabeled_de
 from nlu.components.dependency_typeds.labeled_dependency_parser.labeled_dependency_parser import \
     LabeledDependencyParser
 
-# 0 Base internal Spark NLP structure required for all JSL components
+# 0 Base internal Spark NLP structure.md required for all JSL components
 from nlu.components.utils.document_assembler.spark_nlp_document_assembler import SparkNlpDocumentAssembler
 from nlu.components.utils.ner_to_chunk_converter.ner_to_chunk_converter import NerToChunkConverter
 
