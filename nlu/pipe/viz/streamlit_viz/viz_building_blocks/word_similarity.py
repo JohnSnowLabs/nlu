@@ -131,7 +131,7 @@ class WordSimilarityStreamlitBlock():
                 tok2 = data2['token']
                 emb1 = data1[e_col]
                 emb2 = data2[e_col]
-                def normalize_matrix(m ): return m / np.linalg.norm(m, axis=1, keepdims=True)
+                def normalize_matrix(m ): return np.nan_to_num( m / np.linalg.norm(m, axis=1, keepdims=True))
                 embed_mat1 = normalize_matrix(np.array([x for x in emb1]))
                 embed_mat2 = normalize_matrix(np.array([x for x in emb2]))
                 # e_name = e_col.split('word_embedding_')[-1]
