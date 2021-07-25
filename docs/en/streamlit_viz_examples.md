@@ -410,6 +410,7 @@ nlu.load('embed_sentence.bert').viz_streamlit_sentence_embed_manifold(['text1','
 <img  src="https://github.com/JohnSnowLabs/nlu/blob/master/docs/assets/streamlit_docs_assets/gif/sentence_embedding_dimension_reduction/sentence_manifold_low_qual.gif?raw=true">
 
 ### <kbd>function parameters</kbd> `pipe.viz_streamlit_sentence_embed_manifold`
+
 | Argument    | Type        |                                                            Default         |Description |
 |----------------------------|------------|-----------------------------------------------------------|---------------------------------------------------------|
 |`default_texts`|                    `List[str]`  | ("Donald Trump likes to party!", "Angela Merkel likes to party!", 'Peter HATES TO PARTTY!!!! :(') | List of strings to apply classifiers, embeddings, and manifolds to. |  
