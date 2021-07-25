@@ -24,7 +24,7 @@ The entire GIF demo and
 
 
 ## All NLU ressources overview
-Take a look at our official Spark NLU page: [https://nlu.johnsnowlabs.com/](https://nlu.johnsnowlabs.com/)  for user documentation and examples
+Take a look at our official NLU page: [https://nlu.johnsnowlabs.com/](https://nlu.johnsnowlabs.com/)  for user documentation and examples
 
 | Ressource                                                                  |                                Description|
 |-----------------------------------------------------------------------|-------------------------------------------|
