@@ -175,15 +175,17 @@ class NLUPipeline(BasePipe):
                         vector_assembler_input_cols=[c for c in dataset.columns if c !='text' and c !='y' and c!='label' and c!='labels']
                         c.model.setInputCols(vector_assembler_input_cols)
                         # c.model.info.spark_input_column_names = vector_assembler_input_cols
-
-
-                # Configure Chunk resolver Sentence to Document substitution in all cols
+                # Configure Chunk resolver Sentence to Document substitution in all cols. when training Chunk resolver, we must substitute all SENTENCE cols with DOC. We MAY NOT FEED SENTENCE to CHUNK RESOLVE or we get errors
                 self.components = PipeUtils.configure_component_output_levels_to_document(self)
 
-            # TODO fix  AT NOTATION MAKES WIERD SQL ERRORS APPEAR HERE!!! WE GOTTA REMOVE IT and subitutite it with smth different......
+            # Substitute @ notation to ___ because it breaks Pyspark SQL Parser...
             for c in self.components:
                 for inp in c.info.spark_input_column_names:
                     if 'chunk_embedding' in inp :
+                        c.info.spark_input_column_names.remove(inp)
+                        c.info.spark_input_column_names.append(inp.replace('@',"___"))
+                        c.model.setInputCols(c.info.spark_input_column_names)
+                    if 'sentence_embedding' in inp :
                         c.info.spark_input_column_names.remove(inp)
                         c.info.spark_input_column_names.append(inp.replace('@',"___"))
                         c.model.setInputCols(c.info.spark_input_column_names)
@@ -192,11 +194,14 @@ class NLUPipeline(BasePipe):
                         c.info.spark_output_column_names.remove(out)
                         c.info.spark_output_column_names.append(out.replace('@',"___"))
                         c.model.setOutputCol(c.info.spark_output_column_names[0])
+                    if 'sentence_embedding' in out :
+                        c.info.spark_output_column_names.remove(out)
+                        c.info.spark_output_column_names.append(out.replace('@',"___"))
+                        c.model.setOutputCol(c.info.spark_output_column_names[0])
 
             stages = []
             for component in self.components:stages.append(component.model)
             ## TODO SET STORAGE REF ON FITTED ANNOTATORS, especially resoluton...
-            ## TODO, when training Chunk resolver, we must substitute all SENTENCE cols with DOC. We MAY NOT FEED SENTENCE to CHUNK RESOLVE GOSDGOHSDUKL:G
             self.spark_estimator_pipe = Pipeline(stages=stages)
             self.spark_transformer_pipe = self.spark_estimator_pipe.fit(DataConversionUtils.pdf_to_sdf(dataset,self.spark)[0])
 

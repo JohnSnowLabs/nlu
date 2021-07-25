@@ -1,7 +1,6 @@
 import nlu
 import logging
 logger = logging.getLogger('nlu')
-from sparknlp.annotator import *
 from nlu.pipe.pipe_components import SparkNLUComponent
 from nlu.pipe.utils.pipe_utils import PipeUtils
 from nlu.pipe.utils.component_utils import ComponentUtils

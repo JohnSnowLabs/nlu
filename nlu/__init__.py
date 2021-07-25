@@ -1,4 +1,4 @@
-__version__ = '3.1.1'
+__version__ = '3.1.2'
 hard_offline_checks = False
 def version(): return __version__
 #

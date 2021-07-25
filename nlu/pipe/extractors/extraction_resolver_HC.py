@@ -37,6 +37,10 @@ HC_anno2config = {
         'default': default_chunk_resolution_config,
         'default_full'  : default_full_config,
     },
+    SentenceEntityResolverApproach : {
+        'default': default_chunk_resolution_config,
+        'default_full'  : default_full_config,
+    },
     ChunkEntityResolverModel : {
         'default': default_chunk_resolution_config,
         'default_full'  : default_full_config,
