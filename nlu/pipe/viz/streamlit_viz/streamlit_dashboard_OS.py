@@ -18,6 +18,7 @@ from nlu.pipe.viz.streamlit_viz.viz_building_blocks.ner import NERStreamlitBlock
 from nlu.pipe.viz.streamlit_viz.viz_building_blocks.word_similarity import WordSimilarityStreamlitBlock
 from nlu.pipe.viz.streamlit_viz.viz_building_blocks.word_embedding_manifold import WordEmbeddingManifoldStreamlitBlock
 from nlu.pipe.viz.streamlit_viz.viz_building_blocks.sentence_embedding_manifold import SentenceEmbeddingManifoldStreamlitBlock
+from nlu.pipe.viz.streamlit_viz.viz_building_blocks.entity_embedding_manifold import EntityEmbeddingManifoldStreamlitBlock
 
 
 
@@ -113,6 +114,61 @@ class StreamlitVizBlockHandler():
         if tree_pipe is not None : models_to_display_info_for .append(tree_pipe)
         if show_models_info      :StreamlitVizTracker.display_model_info(all_models, models_to_display_info_for)
         if display_infos         : StreamlitVizTracker.display_footer()
+
+
+
+
+
+    @staticmethod
+    def viz_streamlit_entity_embed_manifold(
+            pipe, # nlu pipe
+            default_texts: List[str] = ("Donald Trump likes to party!", "Angela Merkel likes to party!", 'Peter HATES TO PARTTY!!!! :('),
+            title: Optional[str] = "Lower dimensional Manifold visualization for word embeddings",
+            sub_title: Optional[str] = "Apply any of the 11 `Manifold` or `Matrix Decomposition` algorithms to reduce the dimensionality of `Word Embeddings` to `1-D`, `2-D` and `3-D` ",
+            write_raw_pandas : bool = False ,
+            default_algos_to_apply : List[str] = ("TSNE", "PCA"),#,'LLE','Spectral Embedding','MDS','ISOMAP','SVD aka LSA','DictionaryLearning','FactorAnalysis','FastICA','KernelPCA',),  # LatentDirichletAllocation 'NMF',
+            target_dimensions : List[int] = (1,2,3),
+            show_algo_select : bool = True,
+            show_embed_select : bool = True,
+            show_color_select: bool = True,
+            MAX_DISPLAY_NUM:int=100,
+            display_embed_information:bool=True,
+            set_wide_layout_CSS:bool=True,
+            num_cols: int = 3,
+            model_select_position:str = 'side', # side or main
+            key:str = "NLU_streamlit",
+            additional_classifiers_for_coloring:List[str]=['pos', 'sentiment'],
+            generate_code_sample:bool = False,
+            show_infos:bool = True,
+            show_logo:bool = True,
+            n_jobs: Optional[int] = 3, # False
+    ): EntityEmbeddingManifoldStreamlitBlock.viz_streamlit_entity_embed_manifold(
+        pipe,
+        default_texts,
+        title,
+        sub_title,
+        write_raw_pandas,
+        default_algos_to_apply,
+        target_dimensions,
+        show_algo_select,
+        show_embed_select,
+        show_color_select,
+        MAX_DISPLAY_NUM,
+        display_embed_information,
+        set_wide_layout_CSS,
+        num_cols,
+        model_select_position,
+        key,
+        additional_classifiers_for_coloring,
+        generate_code_sample,
+        show_infos,
+        show_logo,
+        n_jobs,
+    )
+
+
+
+
 
     @staticmethod
     def viz_streamlit_sentence_embed_manifold(

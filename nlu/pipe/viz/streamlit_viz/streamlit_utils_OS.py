@@ -34,7 +34,6 @@ class StreamlitUtilsOS():
                 if 'embed'in c : return c
         else:
             e_cols =[]
-            print("DDDDDDDDDDDDDDDDDDDDDDDEBUG ::". df.columns)
             for c in df.columns:
                 if 'embed'in c : e_cols.append(c)
         return e_cols

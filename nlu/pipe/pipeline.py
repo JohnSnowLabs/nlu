@@ -881,3 +881,51 @@ class NLUPipeline(BasePipe):
                                                                    show_infos,
                                                                    show_logo,
                                                                    n_jobs,)
+
+
+
+    def viz_streamlit_entity_embed_manifold(self,
+                                              default_texts: List[str] = ("Donald Trump likes to party!", "Angela Merkel likes to party!", 'Peter HATES TO PARTTY!!!! :('),
+                                              title: Optional[str] = "Lower dimensional Manifold visualization for entity embeddings",
+                                              sub_title: Optional[str] = "Apply any of the 11 `Manifold` or `Matrix Decomposition` algorithms to reduce the dimensionality of `Word Embeddings` to `1-D`, `2-D` and `3-D` ",
+                                              write_raw_pandas : bool = False ,
+                                              default_algos_to_apply : List[str] = ('TSNE','PCA',),
+                                              target_dimensions : List[int] = (1,2,3),
+                                              show_algo_select : bool = True,
+                                              show_embed_select : bool = True,
+                                              show_color_select: bool = True,
+                                              MAX_DISPLAY_NUM:int=100,
+                                              display_embed_information:bool=True,
+                                              set_wide_layout_CSS:bool=True,
+                                              num_cols: int = 3,
+                                              model_select_position:str = 'side', # side or main
+                                              key:str = "NLU_streamlit",
+                                              additional_classifiers_for_coloring:List[str]=[ 'sentiment.imdb'],
+                                              generate_code_sample:bool = False,
+                                              show_infos:bool = True,
+                                              show_logo:bool = True,
+                                              n_jobs: Optional[int] = 3, # False
+                                              ):
+        try: from nlu.pipe.viz.streamlit_viz.streamlit_dashboard_OS import StreamlitVizBlockHandler
+        except ImportError : print("You need to install Streamlit to run this functionality.")
+        StreamlitVizBlockHandler.viz_streamlit_entity_embed_manifold(self,
+                                                                       default_texts,
+                                                                       title,
+                                                                       sub_title,
+                                                                       write_raw_pandas,
+                                                                       default_algos_to_apply,
+                                                                       target_dimensions,
+                                                                       show_algo_select,
+                                                                       show_embed_select,
+                                                                       show_color_select,
+                                                                       MAX_DISPLAY_NUM,
+                                                                       display_embed_information,
+                                                                       set_wide_layout_CSS,
+                                                                       num_cols,
+                                                                       model_select_position,
+                                                                       key,
+                                                                       additional_classifiers_for_coloring,
+                                                                       generate_code_sample,
+                                                                       show_infos,
+                                                                       show_logo,
+                                                                       n_jobs,)
