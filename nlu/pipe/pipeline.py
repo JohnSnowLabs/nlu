@@ -253,8 +253,8 @@ class NLUPipeline(BasePipe):
         """1. Unpack SDF to PDF with Spark NLP Annotator Dictionaries
            2. Get the extractor configs for the corrosponding Annotator classes
            3. Apply The extractor configs with the extractor methods to each column and merge back with zip/explode"""
-        unpack_df = sdf.toPandas().applymap(extract_pyspark_rows)
-        return apply_extractors_and_merge(unpack_df,anno_2_ex_config, keep_stranger_features,stranger_features)
+        # unpack_df =
+        return apply_extractors_and_merge(sdf.toPandas().applymap(extract_pyspark_rows),anno_2_ex_config, keep_stranger_features,stranger_features)
     def pythonify_spark_dataframe(self, processed,
                                   keep_stranger_features=True,
                                   stranger_features=[],
