@@ -373,6 +373,7 @@ class Spellbook():
             'de.ner.recognizer': 'entity_recognizer_md',  # default de ner
             'de.ner.recognizer.md': 'entity_recognizer_md',
             'de.ner.recognizer.lg': 'entity_recognizer_lg',
+            'de.classify.news':'classifierdl_bert_news',
         },
         'it': {
             'it.explain.document': 'explain_document_md',  # it default explain
@@ -1862,6 +1863,19 @@ class Spellbook():
             'en.dep.typed.conllu': 'dependency_typed_conllu',
             'en.stopwords': 'stopwords_en',
 
+            # 3.1.3 NER  and embeds
+            'en.ner.fewnerd':'nerdl_fewnerd_100d',
+            'en.ner.fewnerd_subentity':'nerdl_fewnerd_subentity_100d',
+            'en.ner.movie':'ner_mit_movie_complex_bert_base_cased', # ALIAS
+            'en.ner.movie_complex':'ner_mit_movie_complex_bert_base_cased', # ALIAS
+            'en.ner.movie_simple':'ner_mit_movie_complex_bert_base_cased', # ALIAS
+            'en.ner.mit_movie_complex_bert':'ner_mit_movie_complex_bert_base_cased',
+            'en.ner.mit_movie_complex_distilbert':'ner_mit_movie_complex_distilbert_base_cased',
+            'en.ner.mit_movie_simple':'ner_mit_movie_simple_distilbert_base_cased',
+            'en.embed_sentence.bert_use_cmlm_en_base':'sent_bert_use_cmlm_en_base',
+            'en.embed_sentence.bert_use_cmlm_en_large':'sent_bert_use_cmlm_en_large',
+
+
             # embeddings
             'en.glove': 'glove_100d',  # default embed
             'en.embed': 'glove_100d',  # default glove en
@@ -2414,6 +2428,7 @@ class Spellbook():
             'tr.classify.news'  : 'classifierdl_bert_news',
             'tr.embed.bert'  : 'bert_base_turkish_cased',
             'tr.embed.bert.uncased'  : 'bert_base_turkish_uncased',
+            'tr.classify.cyberbullying':'classifierdl_berturk_cyberbullying',
         },
         'uk': {
             'uk.lemma': 'lemma',  # default uk lemma
@@ -2454,6 +2469,7 @@ class Spellbook():
             'zh.embed': 'bert_base_chinese',
             'zh.embed.bert': 'bert_base_chinese',  # default zh embeds
             'zh.embed.bert.wwm': 'chinese_bert_wwm',  # default zh embeds
+            'zh.embed.xlnet':'chinese_xlnet_base',
 
         }
         ,
@@ -2498,6 +2514,20 @@ class Spellbook():
         },
 
         'xx': {
+            # 3.1.3 NER
+            'xx.ner.xtreme_glove_840B_300' :'ner_xtreme_glove_840B_300',
+            'xx.ner.xtreme_xlm_roberta_xtreme_base' :'ner_xtreme_xlm_roberta_xtreme_base',
+            'xx.ner.wikiner_glove_840B_300' :'ner_wikiner_glove_840B_300',
+            'xx.ner.wikiner_xlm_roberta_base' :'ner_wikiner_xlm_roberta_base',
+
+            # 3.1.3 Embeds
+            'xx.embed_sentence.bert_use_cmlm_multi_base_br' :'sent_bert_use_cmlm_multi_base_br',
+            'xx.embed_sentence.bert_use_cmlm_multi_base' :'sent_bert_use_cmlm_multi_base',
+            'xx.embed.xlm_roberta_xtreme_base' :'xlm_roberta_xtreme_base',
+            'xx.embed.bert_base_multilingual_cased' :'bert_base_multilingual_cased',
+            'xx.embed.bert_base_multilingual_uncased' :'bert_base_multilingual_uncased',
+
+
             'xx.embed': 'glove_840B_300',
 
             'xx.embed.glove.840B_300': 'glove_840B_300',
@@ -3862,6 +3892,13 @@ class Spellbook():
             "xx.he.marian.translate_to.it" : "opus_tatoeba_he_it",
             "xx.es.marian.translate_to.zh" : "opus_tatoeba_es_zh",
 
+
+
+        # 3.1.3 translators
+            'xx.af.translate_to.ru' :'opus_tatoeba_af_ru',
+            'xx.he.translate_to.fr' :'opus_tatoeba_he_fr',
+            'xx.it.translate_to.he' :'opus_tatoeba_it_he',
+            'xx.cs.translate_to.sv' :'opus_mt_cs_sv',
 
 
         },
