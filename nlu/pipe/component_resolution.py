@@ -204,15 +204,26 @@ def resolve_storage_ref(lang, storage_ref,missing_component_type):
             nlu_ref = storage_ref
         # raise  ValueError
 
+    if nlu_ref is not None : is_licensed = check_if_nlu_ref_is_licensed(nlu_ref)
+
+
     logger.info(f'Resolved storageref = {storage_ref} to NLU_ref = {nlu_ref} and NLP_ref = {nlp_ref}')
     return nlu_ref, nlp_ref, is_licensed,lang
 
 
+def check_if_nlu_ref_is_licensed(nlu_ref):
+    """check if a nlu_ref is pointing to a licensed or open source model.
+    This works by just checking if the NLU ref points to a healthcare model or not"""
+    for lang, universe in Spellbook.healthcare_component_alias_references.items():
+        for hc_nlu_ref, hc_nlp_ref in universe.items():
+            if hc_nlu_ref == nlu_ref : return True
 
-def resolve_multi_lang_embed(language,sparknlp_reference):
-    """Helper Method for resolving Multi Lingual References to correct embedding"""
-    if language == 'ar' and 'glove' in sparknlp_reference : return 'arabic_w2v_cc_300d'
-    else : return sparknlp_reference
+    for lang, universe in Spellbook.pretrained_healthcare_model_references.items():
+        for hc_nlu_ref, hc_nlp_ref in universe.items():
+            if hc_nlu_ref == nlu_ref : return True
+
+    return False
+
 
 def  nlu_ref_to_component(nlu_reference, detect_lang=False, authenticated=False, is_recursive_call=False):
     '''
