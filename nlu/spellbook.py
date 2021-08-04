@@ -373,7 +373,6 @@ class Spellbook():
             'de.ner.recognizer': 'entity_recognizer_md',  # default de ner
             'de.ner.recognizer.md': 'entity_recognizer_md',
             'de.ner.recognizer.lg': 'entity_recognizer_lg',
-            'de.classify.news':'classifierdl_bert_news',
         },
         'it': {
             'it.explain.document': 'explain_document_md',  # it default explain
@@ -2091,7 +2090,9 @@ class Spellbook():
             'de.stopwords': 'stopwords_de',
             'de.ner.wikiner.glove.6B_300': 'wikiner_6B_300',
             'de.embed.bert' : 'bert_base_german_cased',
-           'de.embed.bert.uncased' : 'bert_base_german_uncased'
+           'de.embed.bert.uncased' : 'bert_base_german_uncased',
+            'de.classify.news':'classifierdl_bert_news',
+
         },
         'it': {
             'it.lemma': 'lemma_dxc',  # default lemma it
@@ -4292,7 +4293,11 @@ class Spellbook():
              },
         'ar':
             {'glove_300d': 'ar.embed',
-             }
+             },
+        'de':
+            {
+               'sent_bert_multi_cased': 'xx.embed_sentence',
+            }
 
     }  #
 
