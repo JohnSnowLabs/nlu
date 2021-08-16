@@ -252,9 +252,17 @@ class NLUPipeline(BasePipe):
     def unpack_and_apply_extractors(self,sdf:pyspark.sql.DataFrame, keep_stranger_features=True, stranger_features=[],anno_2_ex_config={})-> pd.DataFrame:
         """1. Unpack SDF to PDF with Spark NLP Annotator Dictionaries
            2. Get the extractor configs for the corrosponding Annotator classes
-           3. Apply The extractor configs with the extractor methods to each column and merge back with zip/explode"""
-        # unpack_df =
+           3. Apply The extractor configs with the extractor methods to each column and merge back with zip/explode
+           Uses optimized PyArrow conversion to avoid representing data multiple times between the JVM and PVM
+           """
+        from nlu.pipe.utils.pyarrow_conversion.pa_conversion import PaConversionUtils
+        # try :
+        #     # Custom Pyarrow Conversion
+        # return apply_extractors_and_merge(PaConversionUtils.convert_via_pyarrow(sdf).applymap(extract_pyarrow_rows),anno_2_ex_config, keep_stranger_features,stranger_features)
+        # except:
+            # Default Conversion, No PyArrow (auto-Schema-Inferrence from PyArrow failed)
         return apply_extractors_and_merge(sdf.toPandas().applymap(extract_pyspark_rows),anno_2_ex_config, keep_stranger_features,stranger_features)
+
     def pythonify_spark_dataframe(self, processed,
                                   keep_stranger_features=True,
                                   stranger_features=[],
@@ -371,6 +379,7 @@ class NLUPipeline(BasePipe):
             if  not self.is_fitted :self.fit()
         else:
             if self.light_pipe_configured == False or force and not isinstance(self.spark_transformer_pipe, LightPipeline):
+                if  not self.is_fitted :self.fit()
                 self.light_pipe_configured = True
                 logger.info("Enabling light pipeline")
                 self.spark_transformer_pipe = LightPipeline(self.spark_transformer_pipe)

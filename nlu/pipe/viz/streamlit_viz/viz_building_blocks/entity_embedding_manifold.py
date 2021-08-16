@@ -139,42 +139,10 @@ class EntityEmbeddingManifoldStreamlitBlock():
         StreamlitVizTracker.loaded_document_classifier_pipes+=new_class_pipes
         if pipe not in StreamlitVizTracker.loaded_sentence_embeding_pipes: StreamlitVizTracker.loaded_sentence_embeding_pipes.append(pipe)
 
-        # for nlu_ref in additional_classifiers_for_coloring : # TODO REMVOVE< INTEGRATE INTO THE AUT LOAD THING REDUNDAND
-        #     already_loaded=False
-        #     for embed_pipe in  StreamlitVizTracker.loaded_document_classifier_pipes:
-        #         if embed_pipe.nlu_ref == nlu_ref : already_loaded = True
-        #     if not already_loaded :
-        #         already_loaded=True
-        #         StreamlitVizTracker.loaded_document_classifier_pipes.append(nlu.load(nlu_ref))
-
         col_index = 0
         cols = st.beta_columns(num_cols)
+        entity_cols = EntityManifoldUtils.get_ner_cols()
 
-
-
-
-        # chache_original_text = True
-        # original_text = None
-        # if chache_original_text :
-        #     original_text = original_text[:2500]
-        #     original_text = original_text[original_text != '']
-        #     original_text = original_text[~pd.isna(original_text)]
-        # data = original_text.copy()
-        # Get classifier predictions
-        #
-        # classifier_cols = []
-        # for class_pipe in StreamlitVizTracker.loaded_document_classifier_pipes:
-        #     data = class_pipe.predict(data, output_level=output_level,multithread=False, metadata=True)
-        #
-        #
-        #
-        #     classifier_cols += StreamlitUtilsOS.get_classifier_cols(class_pipe)
-        #     data['text'] = original_text
-        #     # drop embeds of classifiers because bad conversion
-        #     for c in data.columns :
-        #         if 'embedding' in c : data.drop(c, inplace=True,axis=1)
-
-        # data['text'] = original_text
         if show_color_select:
             if model_select_position == 'side' : feature_to_color_by =  st.sidebar.selectbox('Pick a feature to color points in manifold by ',classifier_cols,0)
             else:feature_to_color_by =  st.selectbox('Feature to color plots by ',classifier_cols,0)
@@ -183,8 +151,7 @@ class EntityEmbeddingManifoldStreamlitBlock():
         predictions =   pipe.predict(data,metadata=True,output_level=output_level,multithread=False).dropna()
         chunk_embed_col = EntityManifoldUtils.find_chunk_embed_col(predictions)
 
-        features = predictions[EntityManifoldUtils.find_ner_cols(predictions)]
-        entity_cols = EntityManifoldUtils.find_ner_cols(predictions)
+        features = predictions[EntityManifoldUtils.get_ner_cols(predictions)]
         # e_col = StreamlitUtilsOS.find_embed_col(predictions)
         e_com = StreamlitUtilsOS.find_embed_component(pipe)
         e_com_storage_ref =  StorageRefUtils.extract_storage_ref(e_com, True)
@@ -194,7 +161,7 @@ class EntityEmbeddingManifoldStreamlitBlock():
             #Only pos values for latent Dirchlet
             if algo == 'LatentDirichletAllocation':mat = np.square(mat)
             if len(mat.shape)>2 : mat = mat.reshape(len(emb),mat.shape[-1])
-            hover_data = entity_cols +  classifier_cols + ['text']
+            hover_data = entity_cols + ['text']
             # calc reduced dimensionality with every algo
             feature_to_color_by='entities_class'
             if 1 in target_dimensions:

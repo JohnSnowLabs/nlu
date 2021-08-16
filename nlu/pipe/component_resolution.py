@@ -186,7 +186,8 @@ def resolve_storage_ref(lang, storage_ref,missing_component_type):
             nlu_ref = inv_namespace[nlp_ref]
 
     if nlu_ref == None and nlp_ref == None :
-        logger.info("COULD NOT RESOLVE STORAGE_REF")
+        # todo enfore storage ref when trainin
+        logger.info(f"COULD NOT RESOLVE STORAGE_REF={storage_ref}")
         if storage_ref =='' :
             if missing_component_type =='sentence_embeddings':
                 logger.info("Using default storage_ref USE, assuming training mode")
@@ -225,7 +226,7 @@ def check_if_nlu_ref_is_licensed(nlu_ref):
     return False
 
 
-def  nlu_ref_to_component(nlu_reference, detect_lang=False, authenticated=False, is_recursive_call=False):
+def nlu_ref_to_component(nlu_reference, detect_lang=False, authenticated=False, is_recursive_call=False):
     '''
     This method implements the main namespace for all component names. It parses the input request and passes the data to a resolver method which searches the namespace for a Component for the input request
     It returns a list of NLU.component objects or just one NLU.component object alone if just one component was specified.
@@ -704,7 +705,6 @@ def construct_component_from_pipe_identifier(language, nlp_ref, nlu_ref,path=Non
 
     return PipeUtils.enforece_AT_embedding_provider_output_col_name_schema_for_list_of_components(ComponentUtils.set_storage_ref_attribute_of_embedding_converters(constructed_components))
 
-
 def construct_component_from_identifier(language, component_type='', dataset='', component_embeddings='', nlu_ref='',nlp_ref='',is_licensed=False):
     '''
     Creates a NLU component from a pretrained SparkNLP model reference or Class reference.
@@ -729,8 +729,6 @@ def construct_component_from_identifier(language, component_type='', dataset='',
             return nlu.Relation(nlp_ref=nlp_ref, nlu_ref=nlu_ref, lang=language, get_default=False, is_licensed=is_licensed)
         elif 'de_identify' in nlu_ref and 'ner' not in nlu_ref:
             return nlu.Deidentification(nlp_ref=nlp_ref, nlu_ref=nlu_ref, lang=language, get_default=False, is_licensed=is_licensed)
-
-
 
         elif any(x in Spellbook.seq2seq for x in [nlp_ref, nlu_ref, dataset, component_type, ]):
             return Seq2Seq(annotator_class=component_type, language=language, get_default=False, nlp_ref=nlp_ref,configs=dataset, is_licensed=is_licensed)
@@ -793,16 +791,13 @@ def construct_component_from_identifier(language, component_type='', dataset='',
             return nlu.chunker.Chunker('ngram')
 
 
-        logger.exception('EXCEPTION: Could not resolve singular Component for type=%s and nlp_ref=%s and nlu_ref=%s',
-                         component_type, nlp_ref, nlu_ref)
+        logger.exception(f'EXCEPTION: Could not resolve singular Component for type={component_type} and nlp_ref={nlp_ref} and nlu_ref={nlu_ref} and lang ={language} ' )
         return None
         # raise ValueError
     except:  # if reference is not in namespace and not a component it will cause a unrecoverable crash
-        logger.exception('EXCEPTION: Could not resolve singular Component for type=%s and nlp_ref=%s and nlu_ref=%s',
-                         component_type, nlp_ref, nlu_ref)
+        logger.exception(f'EXCEPTION: Could not resolve singular Component for type={component_type} and nlp_ref={nlp_ref} and nlu_ref={nlu_ref} and lang ={language} ' )
         return None
         # raise ValueError
-
 
 def extract_classifier_metadata_from_nlu_ref(nlu_ref):
     '''

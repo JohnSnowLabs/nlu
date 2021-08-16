@@ -23,14 +23,27 @@ def extract_pyspark_rows(r:pd.Series,)-> pd.Series:
     if    isinstance(r,str) : return r
     elif  isinstance(r,list):
         if len(r) == 0 : return r
-        # SHOULD THIS REALLY BE LIST???? WHY NOT JUST DICTS?!?! ISNT IT JUST ONE DICT PER ROW?!?!?
-        # THEN WE CAN LEAVE OUT THIS OUTER LIST!
         elif isinstance(r[0], PysparkRow):
             pyspark_row_to_list = lambda l : l.asDict()
-            # return next(map(pyspark_row_to_list,r))
-            # WE MUST MAKE THIS LIST! A aNNOTATOR MAY RETURN MULTIPLE aNNOTATIONS per Row! Cannnot use next()
             return list(map(pyspark_row_to_list,r))
     return r
+
+
+def extract_pyarrow_rows(r:pd.Series,)-> pd.Series:
+    """ Convert pyspark.sql.Row[Annotation] to List(Dict[str,str]) objects. Except for key=metadata in dict, this element in the Dict which is [str,Dict[str,str]]
+
+    Checks if elements are of type list and wether they contain Pyspark Rows.
+     If PysparkRow, call .asDict() on every row element to generate the dicts
+    First method that runs after toPandas() call
+    """
+    if    isinstance(r,str) : return r
+    elif  isinstance(r,np.ndarray):
+        if len(r) == 0 : return r
+        elif isinstance(r[0], dict) and 'annotatorType' in r[0].keys()  :
+            r[0]['metadata'] = dict(r[0]['metadata'])
+            return r
+    return r
+
 
 
 def extract_base_sparknlp_features(row:pd.Series, configs:SparkNLPExtractorConfig)->dict:

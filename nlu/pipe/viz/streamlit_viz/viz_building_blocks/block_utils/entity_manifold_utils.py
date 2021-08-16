@@ -62,7 +62,7 @@ class EntityManifoldUtils():
             if len(ss) == 0: return c
         ValueError('Could not find chunk embed col')
     @staticmethod
-    def find_ner_cols(df):
+    def get_ner_cols(df):
         """find NER pred, conf and class cols"""
         return ['entities_class','entities','entities_confidence']
 
