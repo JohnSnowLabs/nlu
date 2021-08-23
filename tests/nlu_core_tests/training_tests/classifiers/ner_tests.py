@@ -7,13 +7,13 @@ from nlu import *
 import tests.test_utils as t
 class NerTrainingTests(unittest.TestCase):
     def test_ner_training(self):
-        #CONLL data
+        # CONLL data
         train_path = self.load_ner_train_dataset_and_get_path()
-        pipe = nlu.load('train.ner',verbose=True)
+        pipe = nlu.load('train.ner', verbose=True)
         pipe = pipe.fit(dataset_path=train_path)
         df = pipe.predict(' Hello Donald Trump and Hello Angela Merkel')
-        pipe.save('/home/ckl/Documents/freelance/jsl/nlu/nlu4realgit/tmp/dump/saved_model_testbug')
-        for c in df.columns : print (df[c])
+        pipe.save('saved_test_models/ner_training')
+        for c in df.columns: print(df[c])
 
 
     def test_sentiment_with_embed_save(self):
