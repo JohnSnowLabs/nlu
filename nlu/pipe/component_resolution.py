@@ -2,9 +2,6 @@
 Contains methods used to resolve a NLU reference to a NLU component.
 Handler for getting default components, etcc.
 '''
-from sparknlp.base import Finisher, EmbeddingsFinisher
-from sparknlp.annotator import SentenceEmbeddings
-
 # <<<Name parse procedure>>>
 # 1.  parse NAMLE data and RETURN IT -> Detect if OC or Closed source (CS)
 # 2. based on wether OC or CS, use according component resolver
@@ -25,21 +22,11 @@ from sparknlp.annotator import SentenceEmbeddings
 #
 import nlu.utils.environment.authentication as auth_utils
 import nlu.utils.environment.offline_load_utils as offline_utils
-
 from pyspark.ml import PipelineModel
-from sparknlp import DocumentAssembler
-from sparknlp.annotator import NerConverter, MultiClassifierDLModel, PerceptronModel, ClassifierDLModel, \
-    UniversalSentenceEncoder, BertEmbeddings, AlbertEmbeddings, XlnetEmbeddings, WordEmbeddingsModel, ElmoEmbeddings, \
-    BertSentenceEmbeddings, TokenizerModel, SentenceDetectorDLModel, SentenceDetector, RegexMatcherModel, \
-    TextMatcherModel, DateMatcher, ContextSpellCheckerModel, SymmetricDeleteModel, NorvigSweetingModel, LemmatizerModel, \
-    NormalizerModel, Stemmer, NerDLModel, NerCrfModel, LanguageDetectorDL, DependencyParserModel, \
-    TypedDependencyParserModel, SentimentDetectorModel, SentimentDLModel, ViveknSentimentModel, Chunker, \
-    ChunkEmbeddings, StopWordsCleaner, MultiDateMatcher, T5Transformer, MarianTransformer
-
+from sparknlp.annotator import *
 import nlu
-# NluError, all_components_info,
-from nlu import logger, Util, Embeddings, Classifier, Spellbook, ClassifierDl, \
-    NLUSentenceDetector, NGram, Seq2Seq, SpellChecker, Matcher
+from nlu import logger, Util, Embeddings, Classifier, Spellbook, ClassifierDl, NLUSentenceDetector, NGram, Seq2Seq, \
+    SpellChecker, Matcher
 from nlu.components import embeddings_chunker
 from nlu.components.labeled_dependency_parser import LabeledDependencyParser as LabledDepParser
 from nlu.components.unlabeled_dependency_parser import UnlabeledDependencyParser as UnlabledDepParser

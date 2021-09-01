@@ -4,7 +4,7 @@ def version(): return __version__
 #
 # from nlu.component_resolution import parse_language_from_nlu_ref, nlu_ref_to_component, \
 #     construct_component_from_pipe_identifier
-
+print('debug')
 
 # if not check_pyspark_install(): raise Exception()
 def try_import_pyspark_in_streamlit():
@@ -56,6 +56,10 @@ from nlu.components.embeddings.distil_bert.distilbert import DistilBert
 from nlu.components.embeddings.roberta.roberta import Roberta
 from nlu.components.embeddings.xlm.xlm import XLM
 
+from nlu.components.embeddings.longformer.longformer import Longformer
+from nlu.components.embeddings.token_bert.token_bert import TokenBert
+from nlu.components.embeddings.token_distilbert.token_distilbert import TokenDistilBert
+from nlu.components.embeddings.xlm.xlm import XLM
 
 
 from nlu.components.utils.sentence_embeddings.spark_nlp_sentence_embedding import SparkNLPSentenceEmbeddings
@@ -296,7 +300,20 @@ def load(request:str ='from_disk', path:Optional[str]=None,verbose:bool=False, g
     is_authenticated = True
     auth(gpu=gpu) # check if secets are in default loc, if yes load them and create licensed context automatically
     spark = get_open_source_spark_context(gpu)
+
     spark.catalog.clearCache()
+
+
+    # Enable PyArrow
+    spark.conf.set("spark.sql.execution.arrow.pyspark.enabled", "true")
+    spark.conf.set("spark.sql.execution.arrow.pyspark.fallback.enabled.", "true")
+
+
+
+
+
+
+
     if verbose:enable_verbose()
     else: disable_verbose()
 
@@ -306,7 +323,7 @@ def load(request:str ='from_disk', path:Optional[str]=None,verbose:bool=False, g
         pipe = PipelineQueryVerifier.check_and_fix_nlu_pipeline(load_nlu_pipe_from_hdd(path,request))
         pipe.nlu_ref = request
         return pipe
-    components_requested = request.split(' ')
+    components_requested = request.split(' ') ## sentiment emotion yake
     pipe = NLUPipeline()
     language = parse_language_from_nlu_ref(request)
     pipe.lang=language
