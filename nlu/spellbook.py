@@ -47,7 +47,6 @@ class Spellbook():
         'train.pos': '',
         'train.multi_classifier': '',
         'train.generic_classifier': '',
-        'train.resolve_chunks': '',
         'train.resolve_sentence': '',
         'train.resolve': '',
 
@@ -1795,6 +1794,8 @@ class Spellbook():
 
         'ta': {
             'ta.lemma': 'lemma',
+            'ta.detect_sentence': 'sentence_detector_dl',
+
         },
 
         'cy': {
@@ -2087,10 +2088,43 @@ class Spellbook():
             'en.ner.conll_roberta_base': 'ner_conll_roberta_base',
             'en.ner.conll_roberta_large': 'ner_conll_roberta_large',
             'en.ner.conll_xlm_roberta_base': 'ner_conll_xlm_roberta_base',
-            'en.ner.conll_longformer_base_4096': 'ner_conll_longformer_base_4096',
+            # 'en.ner.conll_longformer_base_4096': 'ner_conll_longformer_base_4096', # BAD
             'en.ner.conll_longformer_large_4096': 'ner_conll_longformer_large_4096',
 
+            # Spark NLP 3.2.2  NerDLModel
+            'en.ner.conll_elmo': 'ner_conll_elmo',
+            'en.ner.conll_albert_base_uncased': 'ner_conll_albert_base_uncased',
+            'en.ner.conll_albert_large_uncased': 'ner_conll_albert_large_uncased',
+            'en.ner.conll_xlnet_base_cased': 'ner_conll_xlnet_base_cased',
+
+            # Spark NLP 3.2.2 BertEmbeddings
+            'en.embed.bert.wiki_books_sst2': 'bert_wiki_books_sst2',
+            'en.embed.bert.wiki_books_squad2': 'bert_wiki_books_squad2',
+            'en.embed.bert.wiki_books_qqp': 'bert_wiki_books_qqp',
+            'en.embed.bert.wiki_books_qnli': 'bert_wiki_books_qnli',
+            'en.embed.bert.wiki_books_mnli': 'bert_wiki_books_mnli',
+            'en.embed.bert.wiki_books': 'bert_wiki_books',
+            'en.embed.bert.pubmed_squad2': 'bert_pubmed_squad2',
+            'en.embed.bert.pubmed': 'bert_pubmed',
+
+            # Spark NLP 3.2.2   3.2.2 BertSentenceEmbeddings
+            'en.embed_sentence.bert.wiki_books_sst2': 'sent_bert_wiki_books_sst2',
+            'en.embed_sentence.bert.wiki_books_squad2': 'sent_bert_wiki_books_squad2',
+            'en.embed_sentence.bert.wiki_books_qqp': 'sent_bert_wiki_books_qqp',
+            'en.embed_sentence.bert.wiki_books_qnli': 'sent_bert_wiki_books_qnli',
+            'en.embed_sentence.bert.wiki_books_mnli': 'sent_bert_wiki_books_mnli',
+            'en.embed_sentence.bert.wiki_books': 'sent_bert_wiki_books',
+            'en.embed_sentence.bert.pubmed_squad2': 'sent_bert_pubmed_squad2',
+            'en.embed_sentence.bert.pubmed': 'sent_bert_pubmed',
+
         },
+
+        'yi': {
+            'yi.detect_sentence': 'sentence_detector_dl',
+
+        },
+
+
         'fr': {
             'fr.lemma': 'lemma',
             'fr.pos': 'pos_ud_gsd',  # default pos fr
@@ -2184,8 +2218,21 @@ class Spellbook():
             'ru.ner.wikiner.glove.6B_300': 'wikiner_6B_300',
             'ru.ner.wikiner.glove.840B_300': 'wikiner_840B_300',
             'ru.stopwords': 'stopwords_ru',
+            'ru.detect_sentence': 'sentence_detector_dl',
 
         },
+
+        'pa' : {
+            'pa.detect_sentence': 'sentence_detector_dl',
+
+        },
+        'ne' : {
+            'ne.detect_sentence': 'sentence_detector_dl',
+
+        },
+
+
+
         'es': {
             'es.lemma': 'lemma',
             'es.pos': 'pos_ud_gsd',  # pos default es
@@ -2342,6 +2389,7 @@ class Spellbook():
             'ga.stopwords': 'stopwords_ga',
             'ga.lemma': 'lemma',
             'ga.pos': 'pos_ud_idt',
+            'id.detect_sentence': 'sentence_detector_dl',
 
         },
         'da': {
@@ -2380,6 +2428,19 @@ class Spellbook():
             'mr.stopwords': 'stopwords_mr',
             'mr.lemma': 'lemma',
             'mr.pos': 'pos_ud_ufal',
+            'mr.detect_sentence': 'sentence_detector_dl',
+        },
+        'ml': {
+            'ml.detect_sentence': 'sentence_detector_dl',
+        },
+        'kn': {
+            'ml.detect_sentence': 'sentence_detector_dl',
+        },
+        'gu': {
+            'gu.detect_sentence': 'sentence_detector_dl',
+        },
+        'bs': {
+            'bs.detect_sentence': 'sentence_detector_dl',
         },
         'fa': {
             'fa.stopwords': 'stopwords_fa',
@@ -2391,7 +2452,7 @@ class Spellbook():
             'fa.embed': 'persian_w2v_cc_300d',  # default fa embeds
             'fa.embed.word2vec': 'persian_w2v_cc_300d',  # default fa word2vec embeds
             'fa.embed.word2vec.300d': 'persian_w2v_cc_300d',
-            'fa.embed.token_distilbert.persian_ner': 'distilbert_token_classifier_persian_ner',
+            # 'fa.embed.token_distilbert.persian_ner': 'distilbert_token_classifier_persian_ner', # BAD S3 MAP
             'fa.embed.token_bert.parsbert_armanner': 'bert_token_classifier_parsbert_armanner',
             'fa.embed.token_bert.parsbert_ner': 'bert_token_classifier_parsbert_ner',
             'fa.embed.token_bert.parsbert_peymaner': 'bert_token_classifier_parsbert_peymaner',
@@ -2416,9 +2477,19 @@ class Spellbook():
 
         },
         'so': {
-            'so.stopwords': 'stopwords_so'
+            'so.stopwords': 'stopwords_so',
+            'so.detect_sentence': 'sentence_detector_dl',
 
         },
+
+        'sd': {
+            'sd.detect_sentence': 'sentence_detector_dl',
+
+        },
+
+
+
+
         'st': {
             'st.stopwords': 'stopwords_st'
         },
@@ -2463,13 +2534,24 @@ class Spellbook():
             'uk.lemma': 'lemma',  # default uk lemma
             'uk.pos': 'pos_ud_iu',  # default uk pos
             'uk.pos.ud_iu': 'pos_ud_iu',
+            'uk.detect_sentence': 'sentence_detector_dl',
+
         },
+
+
+        'te': {
+            'te.detect_sentence': 'sentence_detector_dl',
+
+        },
+
+
         'yo': {
             'yo.stopwords': 'stopwords_yo',
             'yo.lemma': 'lemma',
             'yo.pos': 'pos_ud_ytb'
 
         },
+
         'zu': {
             'zu.stopwords': 'stopwords_zu'
         },
@@ -2543,6 +2625,10 @@ class Spellbook():
         },
 
         'xx': {
+            # Spark NLP 3.2.2
+            'xx.embed.bert.muril': 'bert_muril',
+            'xx.embed_sentence.bert.muril': 'sent_bert_muril',
+
             # 3.1.3 NER
             'xx.ner.xtreme_glove_840B_300': 'ner_xtreme_glove_840B_300',
             'xx.ner.xtreme_xlm_roberta_xtreme_base': 'ner_xtreme_xlm_roberta_xtreme_base',
@@ -3986,7 +4072,7 @@ class Spellbook():
                 'en.embed_sentence.biobert.mli': 'sbiobert_base_cased_mli',
                 'en.embed_sentence.bluebert.mli': 'sbluebert_base_uncased_mli',  # Broken
 
-                # 'en.embed_sentence.bluebert.mednli': 'sent_bluebert_base_uncased_mednli', # broken
+                # 'en.embed_sentence.bluebert.mednli': 'sent_bluebert_base_uncased_mednli', # broken  : java.util.NoSuchElementException: Param isSBert does not exist.
                 # 'en.embed_sentence.biobert.mednli': 'sent_biobert_base_uncased_mednli',  # broken
 
                 # resolve sentence cpt
@@ -4157,38 +4243,7 @@ class Spellbook():
                 'en.de_identify.large': 'deidentify_large',
                 'en.de_identify.rb': 'deidentify_rb',
                 'en.de_identify.rb_no_regex': 'deidentify_rb_no_regex',
-                # ChunkResolverModels
-                # 'en.resolve_chunk.cpt_icdoem': 'chunkresolve_cpt_icdoem', # broken
-                # 'en.resolve_chunk.icd10cm.icdoem': 'chunkresolve_icd10cm_icdoem', # broken
-                # 'en.resolve_chunk.icd10cm.icdoem_2ng': 'chunkresolve_icd10cm_icdoem_2ng', # broken
-                # 'en.resolve_chunk.icd10cpt.icdoem': 'chunkresolve_icd10cpt_icdoem_2ng', # broken
-                # 'en.resolve_chunk.icd10pcs.icdoem': 'chunkresolve_icd10pcs_icdoem', # broken
-                # 'en.resolve_chunk.icd10pcs.icdoem_2ng': 'chunkresolve_icd10pcs_icdoem_2ng', # broken
-                # 'en.resolve_chunk.icdo.icdoem': 'chunkresolve_icdo_icdoem', # broken
 
-                # 'en.resolve_chunk.athena_conditions': 'chunkresolve_athena_conditions_healthcare', # Not 3.+ Compatible
-                'en.resolve_chunk.cpt_clinical': 'chunkresolve_cpt_clinical',
-                'en.resolve_chunk.icd10cm.clinical': 'chunkresolve_icd10cm_clinical',
-                'en.resolve_chunk.icd10cm.diseases_clinical': 'chunkresolve_icd10cm_diseases_clinical',
-                'en.resolve_chunk.icd10cm.hcc_clinical': 'chunkresolve_icd10cm_hcc_clinical',
-                # 'en.resolve_chunk.icd10cm.hcc_healthcare': 'chunkresolve_icd10cm_hcc_healthcare',
-                'en.resolve_chunk.icd10cm.injuries': 'chunkresolve_icd10cm_injuries_clinical',
-                'en.resolve_chunk.icd10cm.musculoskeletal': 'chunkresolve_icd10cm_musculoskeletal_clinical',
-                'en.resolve_chunk.icd10cm.neoplasms': 'chunkresolve_icd10cm_neoplasms_clinical',
-                # 'en.resolve_chunk.icd10cm.poison': 'chunkresolve_icd10cm_poison_ext_clinical',
-                # 'en.resolve_chunk.icd10cm.puerile': 'chunkresolve_icd10cm_puerile_clinical',
-                'en.resolve_chunk.icd10pcs.clinical': 'chunkresolve_icd10pcs_clinical',
-                'en.resolve_chunk.icdo.clinical': 'chunkresolve_icdo_clinical',
-                'en.resolve_chunk.loinc': 'chunkresolve_loinc_clinical',
-                'en.resolve_chunk.rxnorm.cd': 'chunkresolve_rxnorm_cd_clinical',
-                'en.resolve_chunk.rxnorm.in': 'chunkresolve_rxnorm_in_clinical',
-                'en.resolve_chunk.rxnorm.in_healthcare': 'chunkresolve_rxnorm_in_healthcare',
-                'en.resolve_chunk.rxnorm.sbd': 'chunkresolve_rxnorm_sbd_clinical',
-                'en.resolve_chunk.rxnorm.scd': 'chunkresolve_rxnorm_scd_clinical',
-                'en.resolve_chunk.rxnorm.scdc': 'chunkresolve_rxnorm_scdc_clinical',
-                'en.resolve_chunk.rxnorm.scdc_healthcare': 'chunkresolve_rxnorm_scdc_healthcare',
-                'en.resolve_chunk.rxnorm.xsmall.clinical': 'chunkresolve_rxnorm_xsmall_clinical',
-                'en.resolve_chunk.snomed.findings': 'chunkresolve_snomed_findings_clinical',
 
                 # 'en.classify.icd10.clinical':'classifier_icd10cm_hcc_clinical',      #  WHCIH CLASS? # TODO NOT LAODING
                 # 'en.classify.icd10.healthcare':'classifier_icd10cm_hcc_healthcare', # TODO NOT LOADING CORRECt
@@ -4208,15 +4263,27 @@ class Spellbook():
                 'en.resolve.loinc.bluebert': 'sbluebertresolve_loinc',
                 'en.resolve.HPO': 'sbiobertresolve_HPO',
 
+                # Healthcare 3.1.2 to 3.2.0
+                'en.relation.ade': 'redl_ade_biobert',
+                'en.relation.ade_clinical': 're_ade_clinical',
+                'en.relation.ade_biobert': 're_ade_biobert',
+                'en.assert.jsl': 'assertion_jsl',
+                'en.assert.jsl_large': 'assertion_jsl_large',
+                'en.resolve.snomed_findings_aux_concepts': 'sbiobertresolve_snomed_findings_aux_concepts',
+                'en.resolve.rxnorm_disposition': 'sbiobertresolve_rxnorm_disposition',
+                'en.resolve.biobert_base_cased_mli': 'sbiobert_base_cased_mli',
+
+                'en.med_ner.jsl_slim': 'ner_jsl_slim',
+                'en.med_ner.jsl_greedy_biobert': 'ner_jsl_greedy_biobert',
+                'en.embed.token_bert.ner_clinical': 'bert_token_classifier_ner_clinical',
+                'en.embed.token_bert.ner_jsl': 'bert_token_classifier_ner_jsl',
+
             },
 
         'de':
             {
                 'de.embed': 'w2v_cc_300d',
                 'de.embed.w2v': 'w2v_cc_300d',
-                # 'de.resolve_chunk' :'chunkresolve_ICD10GM',
-                # 'de.resolve_chunk.icd10gm' :'chunkresolve_ICD10GM',
-                'de.resolve_chunk.icd10gm.2021': 'chunkresolve_ICD10GM_2021',
                 'de.med_ner.legal': 'ner_legal',
                 # 'de.med_ner' :'ner_healthcare', # BAD NER TRAINED ON STORAGE_REF embeddings_healthcare_100d which only exist in EN
                 #  'de.med_ner.healthcare' :'ner_healthcare', # BAD NER TRAINED ON STORAGE_REF embeddings_healthcare_100d which only exist in EN
@@ -4269,7 +4336,7 @@ class Spellbook():
         'en': {
             'tfhub_use': 'en.embed_sentence.use',
             'glove_100d': 'en.embed.glove.100d',
-            'xlm_roberta_base':'xx.embed.xlm'
+            'xlm_roberta_base': 'xx.embed.xlm'
         },
         'zh': {
             'bert_base_chinese': 'zh.embed',
@@ -4324,6 +4391,9 @@ class Spellbook():
             'bert_base_cased': 'en.embed.bert.base_cased',
             'BERT_SENTENCE_EMBEDDINGS_c7e5b6a772f5': 'en.embed_sentence.bert.jsl_medium_uncased',
             'RelationExtractionModel_ce79d77d1bf1': 'en.embed.glove.clinical',
+            'RelationExtractionModel_1fb1dfa024c7': 'en.embed.glove.clinical',
+            'RelationExtractionModel_6a65c9992836': 'biobert',
+            'sent_bluebert_base_uncased_mednli': 'en.embed_sentence.bluebert.mli',
         },
         'es': {
             'embeddings_scielowiki300': 'es.embed.scielowiki.300d',
