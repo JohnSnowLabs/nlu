@@ -5,8 +5,12 @@ class Embeddings(SparkNLUComponent):
 
     def __init__(self, annotator_class='glove', lang ='en', component_type='embedding', get_default=True, model = None, nlp_ref ='', nlu_ref ='', is_licensed=False, resolution_ref='',loaded_from_pretrained_pipe=False,do_ref_checks=True ):
         if do_ref_checks:
-            if 'use' in nlu_ref or 'tfhub_use' in nlp_ref: annotator_class = 'use'
+            if 'use' in nlu_ref and 'bert'  not in nlu_ref or 'tfhub_use' in nlp_ref and 'bert' not in nlp_ref: annotator_class = 'use'
             # first check for sentence then token embeddings.
+
+            elif 'longformer'     in nlu_ref : annotator_class = 'longformer'
+            elif 'token_distilbert' in nlu_ref : annotator_class = 'token_distilbert'
+            elif 'token_bert' in nlu_ref : annotator_class = 'token_bert'
 
             elif 'xlm'     in nlu_ref or 'xlm' in nlp_ref : annotator_class = 'xlm'
             elif 'roberta' in nlu_ref or 'roberta' in nlp_ref : annotator_class = 'roberta'
@@ -15,6 +19,7 @@ class Embeddings(SparkNLUComponent):
 
             elif 'bert' in nlp_ref and 'albert' not in nlp_ref and 'sent' in nlp_ref : annotator_class= 'sentence_bert'
             elif 'bert' in nlu_ref and 'albert' not in nlu_ref and 'sent' in nlu_ref : annotator_class= 'sentence_bert'
+            elif 'bert' in nlu_ref and 'use' in nlu_ref : annotator_class= 'sentence_bert'
 
             elif 'elmo' in nlp_ref  : annotator_class= 'elmo'
             elif 'elmo' in nlu_ref  : annotator_class= 'elmo'
@@ -47,7 +52,20 @@ class Embeddings(SparkNLUComponent):
             multi_lang_embeds = ['th']
             if lang in multi_lang_embeds : lang ='xx'
 
-            if 'xlm' in annotator_class :
+            if 'longformer' == annotator_class :
+                from nlu import Longformer
+                if get_default: self.model =  Longformer.get_default_model()
+                else : self.model = Longformer.get_pretrained_model(nlp_ref, lang)
+            elif 'token_distilbert' == annotator_class :
+                from nlu import TokenDistilBert
+                if get_default: self.model =  TokenDistilBert.get_default_model()
+                else : self.model = TokenDistilBert.get_pretrained_model(nlp_ref, lang)
+            elif 'token_bert' == annotator_class :
+                from nlu import TokenBert
+                if get_default: self.model =  TokenBert.get_default_model()
+                elif is_licensed :  self.model =  TokenBert.get_pretrained_model(nlp_ref, lang,'clinical/models')
+                else : self.model = TokenBert.get_pretrained_model(nlp_ref, lang)
+            elif 'xlm' in annotator_class :
                 from nlu import XLM
                 if get_default: self.model =  XLM.get_default_model()
                 else : self.model = XLM.get_pretrained_model(nlp_ref, lang)

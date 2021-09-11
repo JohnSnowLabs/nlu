@@ -41,14 +41,14 @@ HC_anno2config = {
         'default': default_chunk_resolution_config,
         'default_full'  : default_full_config,
     },
-    ChunkEntityResolverModel : {
-        'default': default_chunk_resolution_config,
-        'default_full'  : default_full_config,
-    },
-    ChunkEntityResolverApproach : {
-        'default': default_chunk_resolution_config,
-        'default_full'  : default_full_config,
-    },
+    # ChunkEntityResolverModel : {
+    #     'default': default_chunk_resolution_config,
+    #     'default_full'  : default_full_config,
+    # },
+    # ChunkEntityResolverApproach : {
+    #     'default': default_chunk_resolution_config,
+    #     'default_full'  : default_full_config,
+    # },
 
     DeIdentificationModel : {
         'default': default_de_identification_config,

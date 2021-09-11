@@ -19,7 +19,7 @@ class Classifier(SparkNLUComponent):
             elif 'pos' in nlu_ref and 'ner' not in nlu_ref:  annotator_class= 'pos'
             elif 'pos' in nlp_ref and 'ner' not in nlp_ref:  annotator_class= 'pos'
 
-            elif 'icd' in nlu_ref: annotator_class= 'classifier_dl'
+            elif 'icd' in nlu_ref and 'med_ner' not in nlu_ref: annotator_class= 'classifier_dl'
             elif 'med_ner' in nlu_ref: annotator_class= 'ner_healthcare'
             elif 'generic_classifier' in nlu_ref: annotator_class= 'generic_classifier'
             elif 'ner' in nlu_ref and 'generic' not in nlu_ref : annotator_class= 'ner'

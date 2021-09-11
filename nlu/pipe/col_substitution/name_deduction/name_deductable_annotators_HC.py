@@ -10,7 +10,8 @@ name_deductable_HC=[
     MedicalNerModel,
     NerConverterInternal,
     SentenceEntityResolverModel,
-    ChunkEntityResolverModel,
+    SentenceEntityResolverApproach,
+    # ChunkEntityResolverModel,
     RelationExtractionModel,
     RelationExtractionDLModel,
     PosologyREModel,
@@ -27,13 +28,15 @@ name_deductable_HC=[
     ContextualParserModel, # todo
     ContextualParserApproach,
 
+
 ]
 
 
 
 always_name_deductable_HC=[
     SentenceEntityResolverModel,
-    ChunkEntityResolverModel,
+    SentenceEntityResolverApproach,
+    # ChunkEntityResolverModel,
     RelationExtractionModel,
     RelationExtractionDLModel,
     PosologyREModel,
