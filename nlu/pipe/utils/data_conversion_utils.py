@@ -71,6 +71,8 @@ class DataConversionUtils():
             sdf = spark_sess.createDataFrame(pd.DataFrame(data[raw_text_column]), schema=schema)
         else:
             DataConversionUtils.except_text_col_not_found(data.columns)
+        if 'origin_index' not in sdf.columns:
+            sdf = sdf.withColumn('origin_index', monotonically_increasing_id().alias('origin_index'))
         return sdf, [], output_datatype
 
     @staticmethod

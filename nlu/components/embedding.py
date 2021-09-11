@@ -63,6 +63,7 @@ class Embeddings(SparkNLUComponent):
             elif 'token_bert' == annotator_class :
                 from nlu import TokenBert
                 if get_default: self.model =  TokenBert.get_default_model()
+                elif is_licensed :  self.model =  TokenBert.get_pretrained_model(nlp_ref, lang,'clinical/models')
                 else : self.model = TokenBert.get_pretrained_model(nlp_ref, lang)
             elif 'xlm' in annotator_class :
                 from nlu import XLM

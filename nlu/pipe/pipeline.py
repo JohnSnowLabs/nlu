@@ -133,6 +133,7 @@ class NLUPipeline(BasePipe):
         self.spark = sparknlp.start()
         self.provider = 'sparknlp'
         self.pipe_ready = False  # ready when we have created a spark df
+        self.failed_pyarrow_conversion = False
         # The NLU pipeline uses  types of Spark NLP annotators to identify how to handle different columns
 
     def get_sample_spark_dataframe(self):
@@ -284,13 +285,20 @@ class NLUPipeline(BasePipe):
            Uses optimized PyArrow conversion to avoid representing data multiple times between the JVM and PVM
            """
         from nlu.pipe.utils.pyarrow_conversion.pa_conversion import PaConversionUtils
-        # try :
-        #     # Custom Pyarrow Conversion
-        # return apply_extractors_and_merge(PaConversionUtils.convert_via_pyarrow(sdf).applymap(extract_pyarrow_rows),anno_2_ex_config, keep_stranger_features,stranger_features)
-        # except:
-        #     Default Conversion, No PyArrow (auto-Schema-Inferrence from PyArrow failed)
-        return apply_extractors_and_merge(sdf.toPandas().applymap(extract_pyspark_rows), anno_2_ex_config,
-                                          keep_stranger_features, stranger_features)
+        if not self.failed_pyarrow_conversion:
+            try:
+                # Custom Pyarrow Conversion
+                return apply_extractors_and_merge(
+                    PaConversionUtils.convert_via_pyarrow(sdf).applymap(extract_pyarrow_rows),
+                    anno_2_ex_config, keep_stranger_features, stranger_features)
+            except:
+                #     Default Conversion, No PyArrow (auto-Schema-Inferrence from PyArrow failed)
+                self.failed_pyarrow_conversion = True
+                return apply_extractors_and_merge(sdf.toPandas().applymap(extract_pyspark_rows), anno_2_ex_config,
+                                                  keep_stranger_features, stranger_features)
+        else:
+            return apply_extractors_and_merge(sdf.toPandas().applymap(extract_pyspark_rows), anno_2_ex_config,
+                                              keep_stranger_features, stranger_features)
 
     def pythonify_spark_dataframe(self, processed,
                                   keep_stranger_features=True,
@@ -325,19 +333,20 @@ class NLUPipeline(BasePipe):
         c_level_mapping = OutputLevelUtils.get_output_level_mapping_by_component(self)
 
         anno_2_ex_config = self.get_annotator_extraction_configs(output_metadata, c_level_mapping, positions)
-        pretty_df = self.unpack_and_apply_extractors(processed, keep_stranger_features, stranger_features,
+        # Processed becomes pandas
+        processed = self.unpack_and_apply_extractors(processed, keep_stranger_features, stranger_features,
                                                      anno_2_ex_config)
         col2output_level, same_output_level, not_same_output_level = OutputLevelUtils.get_output_level_mappings(self,
-                                                                                                                pretty_df,
+                                                                                                                processed,
                                                                                                                 anno_2_ex_config)
         logger.info(
             f"Extracting for same_level_cols = {same_output_level}\nand different_output_level_cols = {not_same_output_level}")
-        pretty_df = zip_and_explode(pretty_df, same_output_level, not_same_output_level, self.output_level)
-        pretty_df = self.convert_embeddings_to_np(pretty_df)
-        pretty_df = ColSubstitutionUtils.substitute_col_names(pretty_df, anno_2_ex_config, self, stranger_features)
-        pretty_df = pretty_df.loc[:, ~pretty_df.columns.duplicated()]
-        if drop_irrelevant_cols:  pretty_df = pretty_df[self.drop_irrelevant_cols(list(pretty_df.columns))]
-        return pretty_df
+        processed = zip_and_explode(processed, same_output_level, not_same_output_level, self.output_level)
+        processed = self.convert_embeddings_to_np(processed)
+        processed = ColSubstitutionUtils.substitute_col_names(processed, anno_2_ex_config, self, stranger_features)
+        processed = processed.loc[:, ~processed.columns.duplicated()]
+        if drop_irrelevant_cols:  processed = processed[self.drop_irrelevant_cols(list(processed.columns))]
+        return processed
 
     def convert_embeddings_to_np(self, pdf):
         '''
@@ -558,7 +567,7 @@ class NLUPipeline(BasePipe):
 
             import sys
             if multithread == True:
-                logger.warning("Multithreaded mode failed. trying to predict again with non multithreaded mode ")
+                logger.warning(f"Multithreaded mode failed. trying to predict again with non multithreaded mode, err={err}")
                 # return self.predict(data, output_level=output_level, positions=positions,keep_stranger_features=keep_stranger_features, metadata=metadata, multithread=False,return_spark_df=return_spark_df)
                 return self.predict(data=data, output_level=output_level, positions=positions,
                                     keep_stranger_features=keep_stranger_features, metadata=metadata, multithread=False,
@@ -965,27 +974,20 @@ class NLUPipeline(BasePipe):
                                                                        n_jobs, )
 
     def viz_streamlit_entity_embed_manifold(self,
-                                            default_texts: List[str] = (
-                                                    "Donald Trump likes to party!", "Angela Merkel likes to party!",
-                                                    'Peter HATES TO PARTTY!!!! :('),
+                                            default_texts: List[str] = ("Donald Trump likes to visit New York",
+                                                                        "Angela Merkel likes to visit Berlin!",
+                                                                        'Peter hates visiting Paris'),
                                             title: Optional[
-                                                str] = "Lower dimensional Manifold visualization for entity embeddings",
+                                                str] = "Lower dimensional Manifold visualization for Entity embeddings",
                                             sub_title: Optional[
-                                                str] = "Apply any of the 11 `Manifold` or `Matrix Decomposition` algorithms to reduce the dimensionality of `Word Embeddings` to `1-D`, `2-D` and `3-D` ",
-                                            write_raw_pandas: bool = False,
-                                            default_algos_to_apply: List[str] = ('TSNE', 'PCA',),
+                                                str] = "Apply any of the 11 `Manifold` or `Matrix Decomposition` algorithms to reduce the dimensionality of `Entity Embeddings` to `1-D`, `2-D` and `3-D` ",
+                                            default_algos_to_apply: List[str] = ("TSNE", "PCA"),
                                             target_dimensions: List[int] = (1, 2, 3),
                                             show_algo_select: bool = True,
-                                            show_embed_select: bool = True,
-                                            show_color_select: bool = True,
-                                            MAX_DISPLAY_NUM: int = 100,
-                                            display_embed_information: bool = True,
                                             set_wide_layout_CSS: bool = True,
                                             num_cols: int = 3,
                                             model_select_position: str = 'side',  # side or main
                                             key: str = "NLU_streamlit",
-                                            additional_classifiers_for_coloring: List[str] = ['sentiment.imdb'],
-                                            generate_code_sample: bool = False,
                                             show_infos: bool = True,
                                             show_logo: bool = True,
                                             n_jobs: Optional[int] = 3,  # False
@@ -998,20 +1000,13 @@ class NLUPipeline(BasePipe):
                                                                      default_texts,
                                                                      title,
                                                                      sub_title,
-                                                                     write_raw_pandas,
                                                                      default_algos_to_apply,
                                                                      target_dimensions,
                                                                      show_algo_select,
-                                                                     show_embed_select,
-                                                                     show_color_select,
-                                                                     MAX_DISPLAY_NUM,
-                                                                     display_embed_information,
                                                                      set_wide_layout_CSS,
                                                                      num_cols,
                                                                      model_select_position,
                                                                      key,
-                                                                     additional_classifiers_for_coloring,
-                                                                     generate_code_sample,
                                                                      show_infos,
                                                                      show_logo,
-                                                                     n_jobs, )
+                                                                     n_jobs)

@@ -30,12 +30,10 @@ HC_anno2substitution_fn = {
     SentenceEntityResolverModel : {
         'default': substitute_sentence_resolution_cols,
     },
-    ChunkEntityResolverModel : {
-        'default': substitute_chunk_resolution_cols,
+    SentenceEntityResolverApproach : {
+        'default': substitute_sentence_resolution_cols,
     },
-    ChunkEntityResolverApproach : {
-        'default': substitute_chunk_resolution_cols,
-    },
+
 
 
     DeIdentificationModel : {

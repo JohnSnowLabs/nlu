@@ -23,10 +23,11 @@ Handler for getting default components, etcc.
 import nlu.utils.environment.authentication as auth_utils
 import nlu.utils.environment.offline_load_utils as offline_utils
 from pyspark.ml import PipelineModel
+from sparknlp.base import DocumentAssembler
 from sparknlp.annotator import *
 import nlu
 from nlu import logger, Util, Embeddings, Classifier, Spellbook, ClassifierDl, NLUSentenceDetector, NGram, Seq2Seq, \
-    SpellChecker, Matcher
+    SpellChecker, Matcher, Nlu_Tokenizer
 from nlu.components import embeddings_chunker
 from nlu.components.labeled_dependency_parser import LabeledDependencyParser as LabledDepParser
 from nlu.components.unlabeled_dependency_parser import UnlabeledDependencyParser as UnlabledDepParser
@@ -58,16 +59,16 @@ def get_default_component_of_type(missing_component_type, language='en', is_lice
     :param missing_component_type: String which is either just the component type or componenttype@spark_nlp_reference which stems from a models storageref and refers to some pretrained embeddings or model
     :return: a NLU component which is a either the default if there is no '@' in the @param missing_component_type or a default component for that particualar type
     '''
-
     logger.info(f'Getting default for missing_component_type={missing_component_type}')
+
     if not '@' in missing_component_type:
         # get default models if there is no @ in the model name included
         if missing_component_type == 'document': return Util('document_assembler', nlu_ref='document')
         if missing_component_type == 'sentence': return Util('deep_sentence_detector', nlu_ref='sentence')
         if missing_component_type == 'sentence_embeddings': return Embeddings('use', nlu_ref='embed_sentence.use')
-        if 'token' in missing_component_type: return nlu.components.tokenizer.Tokenizer("default_tokenizer",
-                                                                                        nlu_ref='tokenize',
-                                                                                        language=language)
+        if 'token' in missing_component_type: return Nlu_Tokenizer("default_tokenizer",
+                                                                   nlu_ref='tokenize',
+                                                                   language=language)
         if missing_component_type == 'word_embeddings': return Embeddings(annotator_class='glove',
                                                                           nlu_ref='embed.glove')
         if missing_component_type == 'pos':   return Classifier(nlu_ref='pos')
@@ -441,9 +442,9 @@ def resolve_component_from_parsed_query_data(lang, component_type, dataset, comp
             nlp_ref = 'ner_xtreme_glove_840B_300'
             nlu_ref = 'xx.ner.xtreme_glove_840B_300'
 
-        if nlp_ref == '' and not is_recursive_call and not trainable and 'en.' not in nlu_ref and lang in ['', 'en']:
-            # Search again but with en. prefixed, enables all refs to work withouth en prefix
-            return nlu_ref_to_component('en.' + nlu_ref, is_recursive_call=True)
+    if nlp_ref == '' and not is_recursive_call and not trainable and 'en.' not in nlu_ref and lang in ['', 'en']:
+        # Search again but with en. prefixed, enables all refs to work withouth en prefix
+        return nlu_ref_to_component('en.' + nlu_ref, is_recursive_call=True)
 
     # Convert references into NLU Component object which embelishes NLP annotators
     if component_kind == 'pipe':
@@ -469,7 +470,7 @@ def resolve_component_from_parsed_query_data(lang, component_type, dataset, comp
         else:
             return constructed_component
     elif component_kind == 'trainable_model':
-        constructed_component = construct_trainable_component_from_identifier(nlu_ref, nlp_ref)
+        constructed_component = construct_trainable_component_from_identifier(nlu_ref, nlp_ref,authenticated)
         if constructed_component is None:
             raise ValueError(f'EXCEPTION : Could not create NLU component for nlp_ref={nlp_ref} and nlu_ref={nlu_ref}')
         else:
@@ -479,7 +480,7 @@ def resolve_component_from_parsed_query_data(lang, component_type, dataset, comp
         raise ValueError(f'EXCEPTION : Could not create NLU component for nlp_ref={nlp_ref} and nlu_ref={nlu_ref}')
 
 
-def construct_trainable_component_from_identifier(nlu_ref, nlp_ref):
+def construct_trainable_component_from_identifier(nlu_ref, nlp_ref,authenticated=False):
     '''
     This method returns a Spark NLP annotator Approach class embelished by a NLU component
     :param nlu_ref: nlu ref to the trainable model
@@ -516,16 +517,25 @@ def construct_trainable_component_from_identifier(nlu_ref, nlp_ref):
         if nlu_ref in ['train.multi_classifier']:
             return nlu.Classifier(annotator_class='multi_classifier', trainable=True, nlu_ref=nlu_ref, )
         if nlu_ref in ['train.word_seg', 'train.word_segmenter']:
-            return nlu.Tokenizer(annotator_class='word_segmenter', trainable=True, nlu_ref=nlu_ref, )
+            return nlu.Nlu_Tokenizer(annotator_class='word_segmenter', trainable=True, nlu_ref=nlu_ref, )
 
         if nlu_ref in ['train.generic_classifier']:
+            if not authenticated : print("WARNING! You are trying to train a Licensed Model and your environment does not seem to be Authenticated.\n"
+                                         "Please restart your runtime and run nlu.auth() and for more details see https://nlu.johnsnowlabs.com/docs/en/examples_hc#authorize-access-to-licensed-features-and-install-healthcare-dependencies  ")
+
             return nlu.Classifier(annotator_class='generic_classifier', trainable=True, nlu_ref=nlu_ref,
                                   is_licensed=True)
 
         if nlu_ref in ['train.resolve_chunks']:
+            if not authenticated : print("WARNING! You are trying to train a Licensed Model and your environment does not seem to be Authenticated.\n"
+                                         "Please restart your runtime and run nlu.auth() and for more details see https://nlu.johnsnowlabs.com/docs/en/examples_hc#authorize-access-to-licensed-features-and-install-healthcare-dependencies  ")
+
             return nlu.Resolver(annotator_class='chunk_entity_resolver', trainable=True, nlu_ref=nlu_ref,
                                 is_licensed=True)
+
         if nlu_ref in ['train.resolve_sentence', 'train.resolve']:
+            if not authenticated : print("WARNING! You are trying to train a Licensed Model and your environment does not seem to be Authenticated.\n"
+                                         "Please restart your runtime and run nlu.auth() and for more details see https://nlu.johnsnowlabs.com/docs/en/examples_hc#authorize-access-to-licensed-features-and-install-healthcare-dependencies  ")
             return nlu.Resolver(annotator_class='sentence_entity_resolver', trainable=True, nlu_ref=nlu_ref,
                                 is_licensed=True)
 
@@ -618,8 +628,8 @@ def construct_component_from_pipe_identifier(language, nlp_ref, nlu_ref, path=No
                                nlp_ref=nlp_ref, loaded_from_pretrained_pipe=True, do_ref_checks=False))
         elif isinstance(component, TokenizerModel):
             constructed_components.append(
-                nlu.Tokenizer(model=component, annotator_class='default_tokenizer', lang=language, nlu_ref=nlu_ref,
-                              nlp_ref=nlp_ref, loaded_from_pretrained_pipe=True))
+                nlu.Nlu_Tokenizer(model=component, annotator_class='default_tokenizer', lang=language, nlu_ref=nlu_ref,
+                                  nlp_ref=nlp_ref, loaded_from_pretrained_pipe=True))
         elif isinstance(component, DocumentAssembler):
             constructed_components.append(nlu.Util(model=component, lang='xx', nlu_ref=nlu_ref, nlp_ref=nlp_ref,
                                                    loaded_from_pretrained_pipe=True))
@@ -712,8 +722,7 @@ def construct_component_from_pipe_identifier(language, nlp_ref, nlu_ref, path=No
         elif isinstance(component, (Finisher, EmbeddingsFinisher)):
             continue  # Dont need fnishers since nlu handles finishign
         elif is_licensed:
-            from sparknlp_jsl.annotator import AssertionDLModel, AssertionFilterer, AssertionLogRegModel, Chunk2Token, \
-                ChunkEntityResolverModel, ChunkFilterer
+            from sparknlp_jsl.annotator import AssertionDLModel, AssertionFilterer, AssertionLogRegModel, Chunk2Token,  ChunkFilterer
             from sparknlp_jsl.annotator import ChunkMergeModel, ContextualParserModel, DeIdentificationModel, \
                 DocumentLogRegClassifierModel, DrugNormalizer
             from sparknlp_jsl.annotator import GenericClassifierModel, IOBTagger, NerChunker, NerConverterInternal, \
@@ -737,10 +746,10 @@ def construct_component_from_pipe_identifier(language, nlp_ref, nlu_ref, path=No
                     nlu.Resolver(annotator_class='sentence_entity_resolver', model=component, nlu_ref=nlu_ref,
                                  nlp_ref=nlp_ref, loaded_from_pretrained_pipe=True))
 
-            elif isinstance(component, ChunkEntityResolverModel):
-                constructed_components.append(
-                    nlu.Resolver(annotator_class='chunk_entity_resolver', model=component, nlu_ref=nlu_ref,
-                                 nlp_ref=nlp_ref, loaded_from_pretrained_pipe=True))
+            # elif isinstance(component, ChunkEntityResolverModel):
+            #     constructed_components.append(
+            #         nlu.Resolver(annotator_class='chunk_entity_resolver', model=component, nlu_ref=nlu_ref,
+            #                      nlp_ref=nlp_ref, loaded_from_pretrained_pipe=True))
 
 
             elif isinstance(component, RelationExtractionModel):
@@ -881,8 +890,9 @@ def construct_component_from_identifier(language, component_type='', dataset='',
 
 
         elif any('tokenize' in x or 'segment_words' in x for x in [nlp_ref, nlu_ref, dataset, component_type]):
-            return nlu.tokenizer.Tokenizer(nlp_ref=nlp_ref, nlu_ref=nlu_ref, language=language, get_default=False,
-                                           is_licensed=is_licensed)
+            return nlu.nlu_tokenizer.Nlu_Tokenizer(nlp_ref=nlp_ref, nlu_ref=nlu_ref, language=language,
+                                                   get_default=False,
+                                                   is_licensed=is_licensed)
 
         elif any('stem' in x for x in [nlp_ref, nlu_ref, dataset, component_type]):
             return nlu.Stemmers()

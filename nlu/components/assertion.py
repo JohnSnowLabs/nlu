@@ -2,6 +2,8 @@ from nlu.pipe.pipe_components import SparkNLUComponent
 class Asserter(SparkNLUComponent):
     def __init__(self, annotator_class='assertion_dl', lang='en', component_type='assertion', get_default=True, model = None, nlp_ref ='', nlu_ref='', trainable=False, is_licensed=False, loaded_from_pretrained_pipe=False):
 
+        if 'jsl' in nlu_ref : annotator_class='assertion_dl'
+
         if model != None : self.model = model
         else :
             if annotator_class == 'assertion_dl':

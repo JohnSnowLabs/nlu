@@ -3,6 +3,7 @@ from nlu.discovery import Discoverer
 from nlu.pipe.utils.storage_ref_utils import StorageRefUtils
 from typing import List, Tuple, Optional, Dict, Union
 import streamlit as st
+from nlu.utils.modelhub.modelhub_utils import ModelHubUtils
 
 import numpy as np
 import pandas as pd
@@ -66,8 +67,8 @@ class WordSimilarityStreamlitBlock():
         if 'haversine' in dist_algos: dist_algos.remove('haversine')  # not applicable in >2D
         if 'precomputed' in dist_algos: dist_algos.remove('precomputed')  # Not a dist
         cols = st.beta_columns(2)
-        text1 = cols[0].text_input("Text or word1", default_texts[0], key=key)
-        text2 = cols[1].text_input("Text or word2", default_texts[1], key=key) if len(default_texts) > 1 else cols[
+        text1 = cols[0].text_input("Text or word1", default_texts[0], key=key+'field_1')
+        text2 = cols[1].text_input("Text or word2", default_texts[1], key=key+'field_2') if len(default_texts) > 1 else cols[
             1].text_input("Text or word2", 'Please enter second string', key=key)
         # exp = st.sidebar.beta_expander("Select additional Embedding Models and distance metric to compare ")
         e_coms = StreamlitUtilsOS.find_all_embed_components(pipe)
@@ -102,7 +103,6 @@ class WordSimilarityStreamlitBlock():
             emb_components_usable.sort()
             loaded_embed_nlu_refs.sort()
             dist_algos.sort()
-            # dist_metrics.sort()
             if model_select_position == 'side':
                 embed_algo_selection = st.sidebar.multiselect(
                     "Pick additional Word Embeddings for the Similarity Matrix", options=emb_components_usable,

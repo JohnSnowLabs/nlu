@@ -1854,6 +1854,7 @@ class Spellbook():
             'en.ner.aspect_sentiment': 'ner_aspect_based_sentiment',
 
             'en.ner.glove.100d': 'ner_dl_sentence',
+            'en.ner.glove': 'ner_dl_sentence',
             # 'en.spell.symmetric': 'spellcheck_sd',
             'en.spell.norvig': 'spellcheck_norvig',
             'en.sentiment.vivekn': 'sentiment_vivekn',
@@ -4163,6 +4164,7 @@ class Spellbook():
                 'en.med_ner.cellular': 'ner_cellular',
                 'en.med_ner.cellular.biobert': 'ner_cellular_biobert',
                 'en.med_ner.chemicals': 'ner_chemicals',
+                'en.med_ner.genetic_variants': 'ner_genetic_variants',
                 'en.med_ner.chemprot': 'ner_chemprot_biobert',
                 'en.med_ner.chemprot.clinical': 'ner_chemprot_clinical',
                 'en.med_ner.clinical': 'ner_clinical',
@@ -4200,6 +4202,9 @@ class Spellbook():
                 'en.med_ner.radiology.wip_clinical': 'ner_radiology_wip_clinical',
                 'en.med_ner.risk_factors': 'ner_risk_factors',
                 'en.med_ner.risk_factors.biobert': 'ner_risk_factors_biobert',
+
+                'en.med_ner.radiology.wip_greedy_biobert': 'jsl_rd_ner_wip_greedy_biobert',
+
                 # 'en.med_ner.i2b2': 'nerdl_i2b2', #  broken
                 'en.med_ner.tumour': 'nerdl_tumour_demo',
                 'en.med_ner.jsl.wip.clinical': 'jsl_ner_wip_clinical',
@@ -4225,7 +4230,7 @@ class Spellbook():
                 # 'med_ner.deid.generic_glove':'ner_deid_generic_glove',
                 # 'med_ner.deid.subentity_glove':'ner_deid_subentity_glove',
 
-                # 'en.med_ner.clinical.icdem': 'ner_clinical_icdem', # TODO UNRESOLVED! PIPE?
+                # 'en.med_ner.clinical.icdem': 'ner_clinical_icdem', # TODO UNRESOLVable storageref
                 # 'en.med_ner.clinical.large': 'ner_clinical_large',# TODO URNESOLVED, PIPE?
 
                 # NLU 3.1.2

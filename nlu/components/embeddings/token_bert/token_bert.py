@@ -8,8 +8,8 @@ class TokenBert:
         .setOutputCol("tokenbert")
 
     @staticmethod
-    def get_pretrained_model(name, language):
-        return BertForTokenClassification.pretrained(name, language) \
+    def get_pretrained_model(name, language, bucket=None):
+        return BertForTokenClassification.pretrained(name, language,bucket) \
             .setInputCols("sentence", "token") \
             .setOutputCol("tokenbert")
 

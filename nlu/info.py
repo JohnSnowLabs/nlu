@@ -37,6 +37,7 @@ class AllComponentsInfo:
                                                'br', 'bg', 'ca', 'cs', 'eo', 'fi', 'gl', 'el', 'ha', 'he', 'hi', 'hu',
                                                'id', 'ga', 'ja', 'la', 'lv', 'mr', 'fa', 'ro', 'sk', 'sl', 'so', 'st',
                                                'sw', 'sv', 'th', 'tr', 'uk', 'yo', 'zu', 'zh', 'xx', 'ur', 'ko',
+                                               'yi','uk', 'te','ta','sd','pa','ne', 'ml','mr','kn','id','gu','bs',
                                                ] + self.all_multi_lang_xtreme_ner_languages
         self.all_languages = set(self.all_pretrained_pipe_languages).union(set(self.all_pretrained_model_languages))
         self.all_classifier_classes = []

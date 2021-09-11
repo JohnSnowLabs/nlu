@@ -4,7 +4,6 @@ hard_offline_checks = False
 
 def version(): return __version__
 
-
 # if not check_pyspark_install(): raise Exception()
 def try_import_pyspark_in_streamlit():
     """Try importing Pyspark or display warn message in streamlit"""
@@ -359,14 +358,6 @@ def load(request: str = 'from_disk', path: Optional[str] = None, verbose: bool =
             e = sys.exc_info()
             print(e[0])
             print(e[1])
-
-        # 1. Verfiy PYSPARK INSTALLED
-        # 2. Verify SPARK-NLP INSTALLED
-        # 3. Verify JAVA8 IS DEFAULT
-        # FAILURE :
-        # IF ST IMPORTABLE, TRY WRITE WARN MESSAGE TO STREAMLIT FROM NLU.LOAD()
-        # IF ST NOT IMPORTABLE. JUST PRINT ERR MESSAGE
-        # 4. ELSE LINK TO INSTALL NOTES https://nlu.johnsnowlabs.com/docs/en/install  and SLACK https://join.slack.com/t/spark-nlp/shared_invite/zt-lutct9gm-kuUazcyFKhuGY3_0AMkxqA
         raise Exception(
             "Something went wrong during loading and fitting the pipe. Check the other prints for more information and also verbose mode. Did you use a correct model reference?")
 
