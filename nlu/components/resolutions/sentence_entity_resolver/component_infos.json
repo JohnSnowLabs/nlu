@@ -14,7 +14,7 @@
     "sentence_embeddings"
   ],
   "spark_output_column_names": [
-    "resolution"
+    "sentence_resolution"
   ],
   "provider": "spark nlp healthcare",
   "license": "licensed",

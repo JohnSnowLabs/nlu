@@ -13,6 +13,7 @@ import random
 class StreamlitVizTracker():
     """Track the status of the visualizations and models loaded in the Streamlit Web View. This is the Model part of the MVC pattern"""
     _set_block_container_style()
+    loaded_ner_word_embeding_pipes = []
     loaded_word_embeding_pipes = []
     loaded_sentence_embeding_pipes = [] 
     loaded_document_classifier_pipes = []

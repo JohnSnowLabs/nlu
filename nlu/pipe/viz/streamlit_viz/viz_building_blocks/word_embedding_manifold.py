@@ -94,6 +94,8 @@ class WordEmbeddingManifoldStreamlitBlock():
                 if l not in emb_components_usable : emb_components_usable.append(l)
             emb_components_usable.sort()
             loaded_embed_nlu_refs.sort()
+
+
             if model_select_position =='side':
                 embed_algo_selection   = st.sidebar.multiselect("Pick additional Word Embeddings for the Dimension Reduction",options=emb_components_usable,default=loaded_embed_nlu_refs,key = key)
                 embed_algo_selection=[embed_algo_selection[-1]]
@@ -141,6 +143,7 @@ class WordEmbeddingManifoldStreamlitBlock():
         data['text'] = original_text
         for c in data.columns :
             if 'sentence_embedding' in c : data.drop(c,inplace=True,axis=1)
+        if 'document' in data.columns : data.drop('document',inplace=True,axis=1)
         if'pos' in data.columns : data.drop('pos',inplace=True,axis=1)
 
 

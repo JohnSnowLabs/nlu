@@ -47,6 +47,9 @@ name_deductable_OS = [
     RoBertaEmbeddings,
     XlmRoBertaEmbeddings,
 
+    DistilBertForTokenClassification,
+    BertForTokenClassification,
+    LongformerEmbeddings,
 
     # approaches
     ViveknSentimentApproach    ,
@@ -56,6 +59,8 @@ name_deductable_OS = [
     NerDLApproach              ,
     PerceptronApproach         ,
     Doc2Chunk,
+
+
 ]
 
 

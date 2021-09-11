@@ -12,8 +12,13 @@ class SentenceResolver:
     @staticmethod
     def get_default_trainable_model():
         return SentenceEntityResolverApproach() \
-        .setInputCols("sentence_embeddings") \
-        .setOutputCol("sentence_resolution") \
-        .setDistanceFunction("COSINE") \
-        .setNeighbours(1) \
-        .setLabelCol('label')
+            .setNeighbours(25) \
+            .setThreshold(1000) \
+            .setInputCols("sentence_embeddings") \
+            .setNormalizedCol("_y") \
+            .setLabelCol("y") \
+            .setOutputCol('sentence_resolution') \
+            .setDistanceFunction("EUCLIDIAN") \
+            .setCaseSensitive(False)
+
+

@@ -1,5 +1,6 @@
 """
 Map Healthcare annotators to output level
+
 """
 from sparknlp_jsl.annotator  import *
 HC_anno2output_level = {
@@ -9,7 +10,8 @@ HC_anno2output_level = {
 
                  ],
     'sentence': [
-        SentenceEntityResolverModel
+        SentenceEntityResolverModel,
+        SentenceEntityResolverApproach
 
     ],
     'chunk': [
@@ -17,7 +19,7 @@ HC_anno2output_level = {
         NerDisambiguatorModel,
         ChunkMergeModel,
         NerConverterInternal,
-        ChunkEntityResolverModel,
+        # ChunkEntityResolverModel, # Deprecated?
         DeIdentificationModel,
         AssertionDLModel,
         AssertionLogRegModel,
