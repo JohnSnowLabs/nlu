@@ -19,7 +19,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 
 REQUIRED_PKGS = [
     # 'pyspark>=2.4.0,<2.5',
-    'spark-nlp>=3.1.0,<3.2.0',
+    'spark-nlp>=3.2.0,<3.3.0',
     'numpy',
     'pyarrow>=0.16.0',
     'pandas',
@@ -47,7 +47,7 @@ setup(
     # For a discussion on single-sourcing the version across setup.py and the
     # project code, see
     # https://packaging.python.org/en/latest/single_source_version.html
-    version='3.1.0',  # Required
+    version='3.2.0',  # Required
 
     # This is a one-line description or tagline of what your project does. This
     # corresponds to the "Summary" metadata field:
@@ -130,7 +130,7 @@ setup(
     #
     #   py_modules=["my_module"],
 
-    packages=find_packages() , # exclude=['test']
+    packages=find_packages(exclude=['test*','tmp*']) , # exclude=['test']
     data_files=[
         #classifiers
         ('', ['nlu/components/classifiers/classifier_dl/component_infos.json']),
@@ -161,6 +161,13 @@ setup(
         ('', ['nlu/components/embeddings/roberta/component_infos.json']),
         ('', ['nlu/components/embeddings/xlm/component_infos.json']),
 
+
+        ('', ['nlu/components/embeddings/distil_bert/component_infos.json']),
+        ('', ['nlu/components/embeddings/longformer/component_infos.json']),
+        ('', ['nlu/components/embeddings/token_bert/component_infos.json']),
+        ('', ['nlu/components/embeddings/token_distilbert/component_infos.json']),
+
+
         #Seq2Seq
 
         ('', ['nlu/components/seq2seqs/marian/component_infos.json']),
@@ -176,11 +183,13 @@ setup(
         ('', ['nlu/components/matchers/date_matcher/component_infos.json']),
         ('', ['nlu/components/matchers/regex_matcher/component_infos.json']),
         ('', ['nlu/components/matchers/text_matcher/component_infos.json']),
+        ('', ['nlu/components/matchers/context_parser/component_infos.json']),
 
 
         #normalizer
         ('', ['nlu/components/normalizers/normalizer/component_infos.json']),
         ('', ['nlu/components/normalizers/document_normalizer/component_infos.json']),
+        ('', ['nlu/components/normalizers/drug_normalizer/component_infos.json']),
 
         #sentence detector
         ('', ['nlu/components/sentence_detectors/deep_sentence_detector/component_infos.json']),
@@ -211,7 +220,7 @@ setup(
 
         #utils
         ('', ['nlu/components/utils/chunk_2_doc/component_infos.json']),
-        ('', ['nlu/components/utils/doc_2_chunk/component_infos.json']),
+        ('', ['nlu/components/utils/doc2chunk/component_infos.json']),
         ('', ['nlu/components/utils/deep_sentence_detector/component_infos.json']),
         ('', ['nlu/components/utils/document_assembler/component_infos.json']),
         ('', ['nlu/components/utils/sentence_detector/component_infos.json']),

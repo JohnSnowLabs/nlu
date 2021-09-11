@@ -60,15 +60,21 @@ streamlit run https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/examples
 streamlit run https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/examples/streamlit/06_token_features.py
 ```
 
-### Example:  [`07_token_embedding_dimension_reduction`](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/examples/streamlit/07_token_embedding_manifolds)
+### Example:  [`07_token_embedding_dimension_reduction`](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/examples/streamlit/07_token_embedding_manifolds.py)
 ```shell
 streamlit run https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/examples/streamlit/07_token_embedding_manifolds.py
 ```
 
-### Example:  [`08_token_embedding_dimension_reduction`](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/examples/streamlit/08_sentence_embedding_manifolds.py==)
+### Example:  [`08_token_embedding_dimension_reduction`](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/examples/streamlit/08_sentence_embedding_manifolds.py)
 ```shell
 streamlit run https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/examples/streamlit/08_sentence_embedding_manifolds.py
 ```
+
+### Example:  [`09_entity_embedding_dimension_reduction`](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/examples/streamlit/09_entity_embedding_manifolds.py)
+```shell
+streamlit run https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/examples/streamlit/09_entity_embedding_manifolds.py
+```
+
 
 ## How to use NLU?
 All you need to know about NLU is that there is the [`nlu.load()`](https://nlu.johnsnowlabs.com/docs/en/load_api) method which returns a `NLUPipeline` object
@@ -420,14 +426,51 @@ nlu.load('embed_sentence.bert').viz_streamlit_sentence_embed_manifold(['text1','
 
 
 
-### [Supported Manifold Algorithms for Word and Sentence Embeddings](https://scikit-learn.org/stable/modules/classes.html#module-sklearn.manifold)
+
+## Streamlit Entity Manifold visualization
+## <kbd>function</kbd> `pipe.viz_streamlit_entity_embed_manifold`
+Visualize recognized entities by NER models via their Entity Embeddings in `1-D`, `2-D`, or `3-D` by `Reducing Dimensionality` via 10+ Supported methods from  [Manifold Algorithms](https://scikit-learn.org/stable/modules/classes.html#module-sklearn.manifold)
+and [Matrix Decomposition Algorithms](https://scikit-learn.org/stable/modules/classes.html#module-sklearn.decomposition).
+You can pick additional NER models and compare them via the GUI dropdown on the left.
+
+
+- Reduces Dimensionality of high dimensional Entity Embeddings to `1-D`, `2-D`, or `3-D` and plot the resulting data in an interactive `Plotly` plot
+- Applicable with [any of the 330+ Named Entity Recognizer models](https://nlp.johnsnowlabs.com/models?task=Named+Entity+Recognition)
+- Gemerates `NUM-DIMENSIONS` * `NUM-NER-MODELS` * `NUM-DIMENSION-REDUCTION-ALGOS` plots
+
+```python
+nlu.load('ner').viz_streamlit_sentence_embed_manifold(['Hello From John Snow Labs', 'Peter loves to visit New York'])
+```
+<img  src="https://github.com/JohnSnowLabs/nlu/blob/master/docs/assets/streamlit_docs_assets/gif/entity_embedding_dimension_reduction/low_quality.gif?raw=true">
+
+### <kbd>function parameters</kbd> `pipe.viz_streamlit_sentence_embed_manifold`
+| Argument    | Type        |                                                            Default         |Description |
+|----------------------------|------------|-----------------------------------------------------------|---------------------------------------------------------|
+|`default_texts`|                    `List[str]`  |"Donald Trump likes to visit New York", "Angela Merkel likes to visit Berlin!", 'Peter hates visiting Paris')| List of strings to apply classifiers, embeddings, and manifolds to. |  
+| `title`                 |  `str`                                             | `'NLU ❤️ Streamlit - Prototype your NLP startup in 0 lines of code🚀'`                      | Title of the Streamlit app
+|`sub_title`|                    `Optional[str]` | "Apply any of the 10+ `Manifold` or `Matrix Decomposition` algorithms to reduce the dimensionality of `Entity Embeddings` to `1-D`, `2-D` and `3-D` " | Sub title of the Streamlit app |   
+|`default_algos_to_apply`|           `List[str]` | `["TSNE", "PCA"]` | A list Manifold and Matrix Decomposition Algorithms to apply. Can be either `'TSNE'`,`'ISOMAP'`,`'LLE'`,`'Spectral Embedding'`, `'MDS'`,`'PCA'`,`'SVD aka LSA'`,`'DictionaryLearning'`,`'FactorAnalysis'`,`'FastICA'` or `'KernelPCA'`, |   
+|`target_dimensions`|              `List[int]`   | `(1,2,3)` | Defines the target dimension embeddings will be reduced to |
+|`show_algo_select`|               `bool`        | `True`  | Show selector for Manifold and Matrix Decomposition Algorithms |   
+| `set_wide_layout_CSS`                          |  `bool`                                                             |  `True`                                                                                   | Whether to inject custom CSS or not.|  
+|`num_cols`                                      | `int`               |  `2`                            |  How many columns should for the layout in streamlit when rendering the similarity matrixes.|  
+|     `key`                                      |  `str`              | `"NLU_streamlit"`               | Key for the Streamlit elements drawn  |
+| `show_logo`                                    |  `bool`                                            | `True`                                                                                   | Show logo  |
+| `display_infos`                                |  `bool`                                            | `False`                                                                                  | Display additonal information about ISO codes and the NLU namespace structure.|  
+| `n_jobs`                                       |          `Optional[int]` | `3`|   `False` | How many cores to use for paralellzing when using Sklearn Dimension Reduction algorithms.  |  
+
+
+
+
+
+### [Supported Manifold Algorithms for Word, Sentence and Entity Embeddings](https://scikit-learn.org/stable/modules/classes.html#module-sklearn.manifold)
 - [TSNE](https://scikit-learn.org/stable/modules/generated/sklearn.manifold.TSNE.html#sklearn.manifold.TSNE)
 - [ISOMAP](https://scikit-learn.org/stable/modules/generated/sklearn.manifold.Isomap.html#sklearn.manifold.Isomap)
 - [LLE](https://scikit-learn.org/stable/modules/generated/sklearn.manifold.LocallyLinearEmbedding.html#sklearn.manifold.LocallyLinearEmbedding)
 - [Spectral Embedding](https://scikit-learn.org/stable/modules/generated/sklearn.manifold.SpectralEmbedding.html#sklearn.manifold.SpectralEmbedding)
 - [MDS](https://scikit-learn.org/stable/modules/generated/sklearn.manifold.MDS.html#sklearn.manifold.MDS)
 
-### [Supported Matrix Decomposition Algorithms for Word and Sentence Embeddings](https://scikit-learn.org/stable/modules/classes.html#module-sklearn.decomposition)
+### [Supported Matrix Decomposition Algorithms for Word,Sentence and Entity Embeddings](https://scikit-learn.org/stable/modules/classes.html#module-sklearn.decomposition)
 - [PCA](https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.PCA.html#sklearn.decomposition.PCA)
 - [Truncated SVD aka LSA](https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.TruncatedSVD.html#sklearn.decomposition.TruncatedSVD)
 - [DictionaryLearning](https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.DictionaryLearning.html#sklearn.decomposition.DictionaryLearning)
