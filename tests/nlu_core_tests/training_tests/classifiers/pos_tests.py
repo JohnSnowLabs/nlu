@@ -26,7 +26,7 @@ class posTrainingTests(unittest.TestCase):
         df = pipe.predict('I love to go to the super market when there are great offers!')
         print(df.columns)
         for c in df.columns : print (df[c])
-        p='/home/ckl/Documents/freelance/jsl/nlu/nlu4realgit/tmp/dump/123123'
+        p = 'saved_test_models/pos_training'
         pipe.save(p)
         pipe = nlu.load(path=p)
         df = pipe.predict('lol123 fuck')
