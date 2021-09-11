@@ -2,7 +2,6 @@ import nlu
 import pandas as pd
 import sparknlp
 
-spark = sparknlp.start()
 
 
 def get_sample_pdf():
