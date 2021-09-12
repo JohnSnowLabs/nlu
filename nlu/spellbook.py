@@ -4099,6 +4099,8 @@ class Spellbook():
                 'en.resolve.snomed.aux_concepts_int': 'sbiobertresolve_snomed_auxConcepts_int',
                 'en.resolve.snomed.findings': 'sbiobertresolve_snomed_findings',
                 'en.resolve.snomed.findings_int': 'sbiobertresolve_snomed_findings_int',
+                'en.resolve.cpt.procedures_measurements': 'sbiobertresolve_cpt_procedures_measurements_augmented',
+                'en.resolve.icdo.base': 'sbiobertresolve_icdo_base',
 
                 # 3.1.1
                 'en.resolve.snomed_body_structure_med': 'sbertresolve_snomed_bodyStructure_med',
@@ -4267,6 +4269,7 @@ class Spellbook():
                 'en.resolve.loinc.biobert': 'sbiobertresolve_loinc',
                 'en.resolve.loinc.bluebert': 'sbluebertresolve_loinc',
                 'en.resolve.HPO': 'sbiobertresolve_HPO',
+                'en.resolve.snomed_conditions': 'sbertresolve_snomed_conditions',
 
                 # Healthcare 3.1.2 to 3.2.0
                 'en.relation.ade': 'redl_ade_biobert',
