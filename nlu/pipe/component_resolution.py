@@ -83,12 +83,11 @@ def get_default_component_of_type(missing_component_type, language='en', is_lice
         if missing_component_type == 'labled_dependency': return LabledDepParser('dep', nlu_ref='dep.typed')
         if missing_component_type == 'date': return nlu.Matcher('date', nlu_ref='match.date')
         if missing_component_type == 'ner_chunk': return Util('ner_converter', nlu_ref='entitiy')
-        # TODO ENTITIES REQUIREMENT: if entities is required and we are training a chunk_reoslver, we just and DOC2CHUNK!!! ??
-
         if missing_component_type == 'entities' and is_licensed and is_trainable_pipe: return Util('doc2chunk')
         if missing_component_type == 'entities' and is_licensed: return Util('ner_to_chunk_converter_licensed')
         if missing_component_type == 'entities': return Util('ner_converter')
         if missing_component_type == 'feature_vector': return Util('feature_assembler')
+        if missing_component_type == 'chunk_2_doc': return Util('chunk_2_doc')
 
     else:
         """ These models are fetched becuase they required a storage ref, so we ad a storage ref attribute to the component info"""
@@ -470,7 +469,7 @@ def resolve_component_from_parsed_query_data(lang, component_type, dataset, comp
         else:
             return constructed_component
     elif component_kind == 'trainable_model':
-        constructed_component = construct_trainable_component_from_identifier(nlu_ref, nlp_ref,authenticated)
+        constructed_component = construct_trainable_component_from_identifier(nlu_ref, nlp_ref, authenticated)
         if constructed_component is None:
             raise ValueError(f'EXCEPTION : Could not create NLU component for nlp_ref={nlp_ref} and nlu_ref={nlu_ref}')
         else:
@@ -480,7 +479,7 @@ def resolve_component_from_parsed_query_data(lang, component_type, dataset, comp
         raise ValueError(f'EXCEPTION : Could not create NLU component for nlp_ref={nlp_ref} and nlu_ref={nlu_ref}')
 
 
-def construct_trainable_component_from_identifier(nlu_ref, nlp_ref,authenticated=False):
+def construct_trainable_component_from_identifier(nlu_ref, nlp_ref, authenticated=False):
     '''
     This method returns a Spark NLP annotator Approach class embelished by a NLU component
     :param nlu_ref: nlu ref to the trainable model
@@ -520,22 +519,25 @@ def construct_trainable_component_from_identifier(nlu_ref, nlp_ref,authenticated
             return nlu.Nlu_Tokenizer(annotator_class='word_segmenter', trainable=True, nlu_ref=nlu_ref, )
 
         if nlu_ref in ['train.generic_classifier']:
-            if not authenticated : print("WARNING! You are trying to train a Licensed Model and your environment does not seem to be Authenticated.\n"
-                                         "Please restart your runtime and run nlu.auth() and for more details see https://nlu.johnsnowlabs.com/docs/en/examples_hc#authorize-access-to-licensed-features-and-install-healthcare-dependencies  ")
+            if not authenticated: print(
+                "WARNING! You are trying to train a Licensed Model and your environment does not seem to be Authenticated.\n"
+                "Please restart your runtime and run nlu.auth() and for more details see https://nlu.johnsnowlabs.com/docs/en/examples_hc#authorize-access-to-licensed-features-and-install-healthcare-dependencies  ")
 
             return nlu.Classifier(annotator_class='generic_classifier', trainable=True, nlu_ref=nlu_ref,
                                   is_licensed=True)
 
         if nlu_ref in ['train.resolve_chunks']:
-            if not authenticated : print("WARNING! You are trying to train a Licensed Model and your environment does not seem to be Authenticated.\n"
-                                         "Please restart your runtime and run nlu.auth() and for more details see https://nlu.johnsnowlabs.com/docs/en/examples_hc#authorize-access-to-licensed-features-and-install-healthcare-dependencies  ")
+            if not authenticated: print(
+                "WARNING! You are trying to train a Licensed Model and your environment does not seem to be Authenticated.\n"
+                "Please restart your runtime and run nlu.auth() and for more details see https://nlu.johnsnowlabs.com/docs/en/examples_hc#authorize-access-to-licensed-features-and-install-healthcare-dependencies  ")
 
             return nlu.Resolver(annotator_class='chunk_entity_resolver', trainable=True, nlu_ref=nlu_ref,
                                 is_licensed=True)
 
         if nlu_ref in ['train.resolve_sentence', 'train.resolve']:
-            if not authenticated : print("WARNING! You are trying to train a Licensed Model and your environment does not seem to be Authenticated.\n"
-                                         "Please restart your runtime and run nlu.auth() and for more details see https://nlu.johnsnowlabs.com/docs/en/examples_hc#authorize-access-to-licensed-features-and-install-healthcare-dependencies  ")
+            if not authenticated: print(
+                "WARNING! You are trying to train a Licensed Model and your environment does not seem to be Authenticated.\n"
+                "Please restart your runtime and run nlu.auth() and for more details see https://nlu.johnsnowlabs.com/docs/en/examples_hc#authorize-access-to-licensed-features-and-install-healthcare-dependencies  ")
             return nlu.Resolver(annotator_class='sentence_entity_resolver', trainable=True, nlu_ref=nlu_ref,
                                 is_licensed=True)
 
@@ -722,7 +724,8 @@ def construct_component_from_pipe_identifier(language, nlp_ref, nlu_ref, path=No
         elif isinstance(component, (Finisher, EmbeddingsFinisher)):
             continue  # Dont need fnishers since nlu handles finishign
         elif is_licensed:
-            from sparknlp_jsl.annotator import AssertionDLModel, AssertionFilterer, AssertionLogRegModel, Chunk2Token,  ChunkFilterer
+            from sparknlp_jsl.annotator import AssertionDLModel, AssertionFilterer, AssertionLogRegModel, Chunk2Token, \
+                ChunkFilterer
             from sparknlp_jsl.annotator import ChunkMergeModel, ContextualParserModel, DeIdentificationModel, \
                 DocumentLogRegClassifierModel, DrugNormalizer
             from sparknlp_jsl.annotator import GenericClassifierModel, IOBTagger, NerChunker, NerConverterInternal, \
@@ -750,7 +753,6 @@ def construct_component_from_pipe_identifier(language, nlp_ref, nlu_ref, path=No
             #     constructed_components.append(
             #         nlu.Resolver(annotator_class='chunk_entity_resolver', model=component, nlu_ref=nlu_ref,
             #                      nlp_ref=nlp_ref, loaded_from_pretrained_pipe=True))
-
 
             elif isinstance(component, RelationExtractionModel):
                 constructed_components.append(
