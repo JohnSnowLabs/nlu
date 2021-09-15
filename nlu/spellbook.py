@@ -4101,6 +4101,7 @@ class Spellbook():
                 'en.resolve.snomed.findings_int': 'sbiobertresolve_snomed_findings_int',
                 'en.resolve.cpt.procedures_measurements': 'sbiobertresolve_cpt_procedures_measurements_augmented',
                 'en.resolve.icdo.base': 'sbiobertresolve_icdo_base',
+                'en.resolve.rxnorm.disposition': 'sbertresolve_rxnorm_disposition',
 
                 # 3.1.1
                 'en.resolve.snomed_body_structure_med': 'sbertresolve_snomed_bodyStructure_med',

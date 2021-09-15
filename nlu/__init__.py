@@ -352,7 +352,7 @@ def load(request: str = 'from_disk', path: Optional[str] = None, verbose: bool =
             if c.info.license == 'licensed': pipe.has_licensed_components = True
         return pipe
 
-    except:
+    except :
         import sys
         if verbose:
             e = sys.exc_info()

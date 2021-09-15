@@ -4,17 +4,17 @@
   "trainable": false,
   "output_level": "document",
   "outputs": [
-    "new_document"
+    "chunk2doc"
   ],
   "inputs": [
-    "chunk_output"
+    "entities"
   ],
   "type": "util",
   "spark_input_column_names": [
-    "chunk_output"
+    "entities"
   ],
   "spark_output_column_names": [
-    "new_document"
+    "chunk2doc"
   ],
   "provider": "sparknlp",
   "license": "open source",

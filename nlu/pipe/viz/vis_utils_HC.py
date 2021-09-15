@@ -10,7 +10,7 @@ class VizUtilsHC():
         # we go in reverse, which makes NER always take lowest priority and NER feeder annotators have higher priority
         for c in pipe.components[::-1]:
             if isinstance(c.model, TypedDependencyParserModel) : return 'dep'
-            # if isinstance(c.model, (SentenceEntityResolverModel,ChunkEntityResolverModel)) : return 'resolution'
+            if isinstance(c.model, (SentenceEntityResolverModel)) : return 'resolution'
             if isinstance(c.model, (RelationExtractionDLModel,RelationExtractionDLModel)) : return 'relation'
             if isinstance(c.model, (AssertionDLModel,AssertionLogRegModel)) : return 'assert'
             if isinstance(c.model, (NerConverter,NerConverterInternal)) : return 'ner'
@@ -121,7 +121,7 @@ class VizUtilsHC():
         for c in pipe.components:
             if isinstance(c.model, DocumentAssembler) :              doc_component  = c
             if isinstance(c.model, (NerConverter,NerConverterInternal)) :   entities_component  = c
-            # if isinstance(c.model, (SentenceEntityResolverModel,ChunkEntityResolverModel)) :        resolution_component  = c
+            if isinstance(c.model, (SentenceEntityResolverModel)) :        resolution_component  = c
 
         entities_col       = entities_component.info.outputs[0]
         resolution_col   = resolution_component.info.outputs[0]

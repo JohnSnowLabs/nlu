@@ -481,7 +481,7 @@ class PipelineQueryVerifier():
         pipe = PipeUtils.enforce_AT_schema_on_pipeline(pipe)
 
         # 2.1 In Sentence Resolvers are in pipeline, all Sentence-Embeddings must feed from Chunk2Duc which stems from the entities column to resolve
-        pipe = PipelineQueryVerifier.enfore_chunk2doc_on_sentence_embeddings(pipe)
+        pipe = PipelineQueryVerifier.enforce_chunk2doc_on_sentence_embeddings(pipe)
 
         # 3. Validate naming of output columns is correct and no error will be thrown in spark
         logger.info('Fixing column names')
@@ -636,7 +636,7 @@ class PipelineQueryVerifier():
         """For a component and a pipe, find storage_ref and """
 
     @staticmethod
-    def enfore_chunk2doc_on_sentence_embeddings(pipe):
+    def enforce_chunk2doc_on_sentence_embeddings(pipe):
         """
     #2.1 In Sentence Resolvers are in pipeline, all Sentence-Embeddings must feed from Chunk2Duc which stems from the entities column to resolve
  We need to update input/output types of sentence Resolver, to the component sorting does not get confused

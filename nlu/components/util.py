@@ -35,6 +35,8 @@ class Util(SparkNLUComponent):
             elif annotator_class == 'doc2chunk':
                 from nlu.components.utils.doc2chunk.doc_2_chunk import Doc_2_Chunk
                 self.model = Doc_2_Chunk.get_default_model()
-
+            elif annotator_class == 'chunk_2_doc':
+                from nlu.components.utils.chunk_2_doc.doc_2_chunk import Chunk_2_Doc
+                self.model = Chunk_2_Doc.get_default_model()
 
         SparkNLUComponent.__init__(self, annotator_class, component_type, nlu_ref, lang,loaded_from_pretrained_pipe )

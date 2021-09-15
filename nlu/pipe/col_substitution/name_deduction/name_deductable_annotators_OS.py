@@ -59,6 +59,7 @@ name_deductable_OS = [
     NerDLApproach              ,
     PerceptronApproach         ,
     Doc2Chunk,
+    Chunk2Doc,
 
 
 ]
@@ -89,6 +90,7 @@ always_name_deductable_OS = [
     RoBertaEmbeddings,
     XlmRoBertaEmbeddings,
 
+    Chunk2Doc,
 
 
 ]
