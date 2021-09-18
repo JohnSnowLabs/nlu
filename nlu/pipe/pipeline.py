@@ -307,7 +307,8 @@ class NLUPipeline(BasePipe):
                                   stranger_features=[],
                                   drop_irrelevant_cols=True,
                                   output_metadata=False,
-                                  positions=False
+                                  positions=False,
+                                  output_level='',
                                   ):
         '''
         This functions takes in a spark dataframe with Spark NLP annotations in it and transforms it into a Pandas Dataframe with common feature types for further NLP/NLU downstream tasks.
@@ -332,7 +333,7 @@ class NLUPipeline(BasePipe):
         stranger_features += ['origin_index']
 
         # if self.output_level == '': self.output_level = OutputLevelUtils.infer_output_level(self)
-        if self.output_level == '': OutputLevelUtils.infer_output_level(self)
+        if output_level == '': OutputLevelUtils.infer_output_level(self)
         c_level_mapping = OutputLevelUtils.get_output_level_mapping_by_component(self)
 
         anno_2_ex_config = self.get_annotator_extraction_configs(output_metadata, c_level_mapping, positions)
