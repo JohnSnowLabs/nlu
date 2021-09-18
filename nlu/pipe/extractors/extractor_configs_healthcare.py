@@ -76,7 +76,7 @@ def default_relation_extraction_positional_config(output_col_prefix='extracted_r
         get_result          = True,
         meta_white_list     = [],
         get_meta            = True,
-        meta_black_list     = ['entity1_begin','entity2_begin','entity1_end','entity2_end','entity1','entity2','chunk1','chunk2',],
+        meta_black_list     = ['entity1_begin','entity2_begin','entity1_end','entity2_end',],
         name                = 'default_relation_extraction',
         description         = 'Get relation extraction result and all metadata, positions of entities excluded',
     )
@@ -89,7 +89,7 @@ def default_relation_extraction_config(output_col_prefix='extracted_relations'):
         get_result          = True,
         meta_white_list     = [],
         get_meta            = True,
-        meta_black_list     = ['entity1','entity2','chunk1','chunk2',],
+        meta_black_list     = ['entity1_begin','entity2_begin','entity1_end','entity2_end',],
         name                = 'default_relation_extraction',
         description         = 'Get relation extraction result and all metadata, positions of entities excluded',
     )

@@ -160,8 +160,10 @@ OS_anno2substitution_fn = {
     Doc2Chunk: {
         'default': substitute_doc2chunk_cols,
     },
-
-
+#
+    Chunk2Doc: {
+        'default': substitute_doc2chunk_cols, # TODO better?
+    },
     T5Transformer: {
         'default': substitute_T5_cols,
     },

@@ -435,7 +435,7 @@ class Spellbook():
             'es.ner.lg': 'entity_recognizer_lg',
         },
         'xx': {
-            'lang.': 'detect_language_375',  # default lang classifer
+            'lang': 'detect_language_375',  # default lang classifer
             'lang.7': 'detect_language_7',  # multi lang detector alias
             'lang.20': 'detect_language_20',  # multi lang detector alias
             'xx.classify.lang': 'detect_language_20',  # multi lang detector default
@@ -1813,6 +1813,8 @@ class Spellbook():
             'nl.ner.wikiner': 'wikiner_6B_300',
             'nl.ner.wikiner.glove.840B_300': 'wikiner_840B_300',
             'nl.embed.bert': 'bert_base_dutch_cased',
+            'nl.embed_sentence.bert.base_cased': 'sent_bert_base_cased',
+            'nl.embed.bert.base_cased' : 'bert_base_cased',
 
         },
         'en': {
@@ -2118,6 +2120,11 @@ class Spellbook():
             'en.embed_sentence.bert.pubmed_squad2': 'sent_bert_pubmed_squad2',
             'en.embed_sentence.bert.pubmed': 'sent_bert_pubmed',
 
+            'en.embed.bert.base_uncased_legal' : 'bert_base_uncased_legal',
+            'en.embed_sentence.bert.base_uncased_legal': 'sent_bert_base_uncased_legal',
+           'en.embed.token_bert.classifier_ner_btc'	:'bert_token_classifier_ner_btc',
+
+
         },
 
         'yi': {
@@ -2135,6 +2142,7 @@ class Spellbook():
             'fr.ner.wikiner.glove.840B_300': 'wikiner_840B_300',
             'fr.stopwords': 'stopwords_fr',
             'fr.ner.wikiner.glove.6B_300': 'wikiner_6B_300',
+            'fr.classify.sentiment.bert' :	'classifierdl_bert_sentiment'
 
         },
         'de': {
@@ -2150,6 +2158,9 @@ class Spellbook():
             'de.embed.bert': 'bert_base_german_cased',
             'de.embed.bert.uncased': 'bert_base_german_uncased',
             'de.classify.news': 'classifierdl_bert_news',
+            'de.embed_sentence.bert.base_cased': 'sent_bert_base_cased',
+            'de.classify.sentiment.bert' :	'classifierdl_bert_sentiment'
+
 
         },
         'it': {
@@ -2245,6 +2256,12 @@ class Spellbook():
             'es.ner.wikiner.glove.840B_300': 'wikiner_840B_300',
             'es.stopwords_es': 'stopwords_es',
             'es.embed.token_bert.spanish_ner': 'bert_token_classifier_spanish_ner',
+            'es.embed.bert.base_uncased' : 'bert_base_uncased',
+            'es.embed.bert.base_cased' : 'bert_base_cased',
+            'es.embed_sentence.bert.base_uncased': 'sent_bert_base_uncased',
+            'es.embed_sentence.bert.base_cased': 'sent_bert_base_cased',
+
+
         },
         'af': {
             'af.stopwords': 'stopwords_af',
@@ -2349,6 +2366,10 @@ class Spellbook():
             'el.pos': 'pos_ud_gdt',  # default POS  el
             'el.pos.ud_gdt': 'pos_ud_gdt',
             'el.stopwords': 'stopwords_el',
+
+            'el.embed.bert.base_uncased' : 'bert_base_uncased',
+            'el.embed_sentence.bert.base_uncased': 'sent_bert_base_uncased',
+
         },
         'ha': {
             'ha.stopwords': 'stopwords_ha'
@@ -2411,7 +2432,10 @@ class Spellbook():
             'ja.ner.ud_gsd.glove_840B_300D': 'ner_ud_gsd_glove_840B_300d',
             'ja.pos.ud_gsd': 'pos_ud_gsd',
             "ja.lemma": "lemma",
-
+            'ja.embed.glove.cc_300d' : 	'japanese_cc_300d',
+            'ja.ner.ud_gsd_cc_300d'	: 'ner_ud_gsd_cc_300d',
+            'ja.ner.ud_gsd_xlm_roberta_base'	: 'ner_ud_gsd_xlm_roberta_base',
+            'ja.embed.token_bert.classifier_ner_ud_gsd'	:'bert_token_classifier_ner_ud_gsd',
         },
         'la': {
             'la.stopwords': 'stopwords_la',
@@ -2507,6 +2531,8 @@ class Spellbook():
             'sv.ner.6B_300': 'swedish_ner_6B_300',
             'sv.ner.840B_300': 'swedish_ner_840B_300',
             'sv.embed.token_bert.swedish_ner': 'bert_token_classifier_swedish_ner',
+            'sv.embed.bert.base_cased' : 'bert_base_cased',
+            'sv.embed_sentence.bert.base_cased':'sent_bert_base_cased',
 
         },
         'th': {
@@ -4015,6 +4041,7 @@ class Spellbook():
 
     }
 
+    healthcare_component_alias_references = {}
     pretrained_healthcare_model_references = {
 
         'en':
@@ -4099,6 +4126,10 @@ class Spellbook():
                 'en.resolve.snomed.aux_concepts_int': 'sbiobertresolve_snomed_auxConcepts_int',
                 'en.resolve.snomed.findings': 'sbiobertresolve_snomed_findings',
                 'en.resolve.snomed.findings_int': 'sbiobertresolve_snomed_findings_int',
+                'en.resolve.cpt.procedures_measurements': 'sbiobertresolve_cpt_procedures_measurements_augmented',
+                'en.resolve.icdo.base': 'sbiobertresolve_icdo_base',
+                'en.resolve.rxnorm.disposition': 'sbertresolve_rxnorm_disposition',
+                'en.resolve.rxnorm.disposition.sbert': 'sbertresolve_rxnorm_disposition',
 
                 # 3.1.1
                 'en.resolve.snomed_body_structure_med': 'sbertresolve_snomed_bodyStructure_med',
@@ -4202,7 +4233,7 @@ class Spellbook():
                 'en.med_ner.radiology.wip_clinical': 'ner_radiology_wip_clinical',
                 'en.med_ner.risk_factors': 'ner_risk_factors',
                 'en.med_ner.risk_factors.biobert': 'ner_risk_factors_biobert',
-
+                'en.med_ner.posology.experimental': 'ner_posology_experimental',
                 'en.med_ner.radiology.wip_greedy_biobert': 'jsl_rd_ner_wip_greedy_biobert',
 
                 # 'en.med_ner.i2b2': 'nerdl_i2b2', #  broken
@@ -4225,8 +4256,8 @@ class Spellbook():
 
                 # 3.1.1
 
-                'med_ner.deid.generic_augmented': 'ner_deid_generic_augmented',
-                'med_ner.deid.subentity_augmented': 'ner_deid_subentity_augmented',
+                'en.med_ner.deid.generic_augmented': 'ner_deid_generic_augmented',
+                'en.med_ner.deid.subentity_augmented': 'ner_deid_subentity_augmented',
                 # 'med_ner.deid.generic_glove':'ner_deid_generic_glove',
                 # 'med_ner.deid.subentity_glove':'ner_deid_subentity_glove',
 
@@ -4267,6 +4298,7 @@ class Spellbook():
                 'en.resolve.loinc.biobert': 'sbiobertresolve_loinc',
                 'en.resolve.loinc.bluebert': 'sbluebertresolve_loinc',
                 'en.resolve.HPO': 'sbiobertresolve_HPO',
+                'en.resolve.snomed_conditions': 'sbertresolve_snomed_conditions',
 
                 # Healthcare 3.1.2 to 3.2.0
                 'en.relation.ade': 'redl_ade_biobert',
@@ -4276,6 +4308,8 @@ class Spellbook():
                 'en.assert.jsl_large': 'assertion_jsl_large',
                 'en.resolve.snomed_findings_aux_concepts': 'sbiobertresolve_snomed_findings_aux_concepts',
                 'en.resolve.rxnorm_disposition': 'sbiobertresolve_rxnorm_disposition',
+                'en.resolve.rxnorm_disposition.sbert': 'sbertresolve_rxnorm_disposition',
+
                 'en.resolve.biobert_base_cased_mli': 'sbiobert_base_cased_mli',
 
                 'en.med_ner.jsl_slim': 'ner_jsl_slim',
@@ -4311,7 +4345,6 @@ class Spellbook():
             'es.med_ner.diag_proc': 'ner_diag_proc',
         }
     }
-    healthcare_component_alias_references = {}
     pretrained_healthcare_pipe_references = {
         'en': {
 
@@ -4335,49 +4368,61 @@ class Spellbook():
         },
     }
     # map storage ref to nlu ref
-
     storage_ref_2_nlu_ref = {
 
-        'en': {
-            'tfhub_use': 'en.embed_sentence.use',
-            'glove_100d': 'en.embed.glove.100d',
-            'xlm_roberta_base': 'xx.embed.xlm'
-        },
-        'zh': {
-            'bert_base_chinese': 'zh.embed',
-        },
-        'th': {
-            'tfhub_use_multi_lg': 'xx.use.multi'
+    'en': {
+        'tfhub_use': 'en.embed_sentence.use',
+        'glove_100d': 'en.embed.glove.100d',
+        'xlm_roberta_base': 'xx.embed.xlm'
+    },
+    'zh': {
+        'bert_base_chinese': 'zh.embed',
+    },
+    'th': {
+        'tfhub_use_multi_lg': 'xx.use.multi'
 
+    },
+    'ur': {
+        'glove_300d': 'ur.embed',
+    },
+    'fr':
+        {
+            'labse': 'xx.embed_sentence.labse'
         },
-        'ur': {
-            'glove_300d': 'ur.embed',
+    'tr':
+        {'bert_multi_cased': 'xx.embed.bert',
+         'labse': 'xx.embed_sentence.labse'
+         },
+    'sv':
+        {'glove_100d': 'xx.embed.glove.glove_6B_100',
+         },
+    'fa':
+        {'glove_300d': 'fa.embed',
+         },
+    'he':
+        {'glove_300d': 'he.embed',
+         },
+    'fi':
+        {'glove_100d': 'fi.embed.bert',
+         },
+    'ar':
+        {'glove_300d': 'ar.embed',
+         },
+    'de':
+        {
+            'sent_bert_multi_cased': 'xx.embed_sentence',
+            'labse': 'xx.embed_sentence.labse'
         },
-        'tr':
-            {'bert_multi_cased': 'xx.embed.bert',
-             'labse': 'xx.embed_sentence.labse'
-             },
-        'sv':
-            {'glove_100d': 'xx.embed.glove.glove_6B_100',
-             },
-        'fa':
-            {'glove_300d': 'fa.embed',
-             },
-        'he':
-            {'glove_300d': 'he.embed',
-             },
-        'fi':
-            {'glove_100d': 'fi.embed.bert',
-             },
-        'ar':
-            {'glove_300d': 'ar.embed',
-             },
-        'de':
-            {
-                'sent_bert_multi_cased': 'xx.embed_sentence',
-            }
+    'ja':
+        {
+            'fasttext_300_ja': 'ja.embed.glove.cc_300d',
+            'xlm_roberta_base': 'xx.embed.xlm',
 
-    }  #
+        }
+
+
+}  #
+
 
     licensed_storage_ref_2_nlu_ref = {
         'en': {

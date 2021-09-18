@@ -10,8 +10,6 @@ HC_anno2output_level = {
 
                  ],
     'sentence': [
-        SentenceEntityResolverModel,
-        SentenceEntityResolverApproach
 
     ],
     'chunk': [
@@ -24,7 +22,9 @@ HC_anno2output_level = {
         AssertionDLModel,
         AssertionLogRegModel,
         ContextualParserApproach,
-        ContextualParserModel
+        ContextualParserModel,
+        SentenceEntityResolverModel,
+        SentenceEntityResolverApproach
 
 
     ],

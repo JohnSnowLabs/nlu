@@ -285,6 +285,8 @@ class NLUPipeline(BasePipe):
            Uses optimized PyArrow conversion to avoid representing data multiple times between the JVM and PVM
            """
         from nlu.pipe.utils.pyarrow_conversion.pa_conversion import PaConversionUtils
+
+
         if not self.failed_pyarrow_conversion:
             try:
                 # Custom Pyarrow Conversion
@@ -305,7 +307,8 @@ class NLUPipeline(BasePipe):
                                   stranger_features=[],
                                   drop_irrelevant_cols=True,
                                   output_metadata=False,
-                                  positions=False
+                                  positions=False,
+                                  output_level='',
                                   ):
         '''
         This functions takes in a spark dataframe with Spark NLP annotations in it and transforms it into a Pandas Dataframe with common feature types for further NLP/NLU downstream tasks.
@@ -329,7 +332,8 @@ class NLUPipeline(BasePipe):
         '''
         stranger_features += ['origin_index']
 
-        if self.output_level == '': self.output_level = OutputLevelUtils.infer_output_level(self)
+        # if self.output_level == '': self.output_level = OutputLevelUtils.infer_output_level(self)
+        if output_level == '': OutputLevelUtils.infer_output_level(self)
         c_level_mapping = OutputLevelUtils.get_output_level_mapping_by_component(self)
 
         anno_2_ex_config = self.get_annotator_extraction_configs(output_metadata, c_level_mapping, positions)
@@ -345,7 +349,10 @@ class NLUPipeline(BasePipe):
         processed = self.convert_embeddings_to_np(processed)
         processed = ColSubstitutionUtils.substitute_col_names(processed, anno_2_ex_config, self, stranger_features)
         processed = processed.loc[:, ~processed.columns.duplicated()]
+        # Sort cols alphabetically
+
         if drop_irrelevant_cols:  processed = processed[self.drop_irrelevant_cols(list(processed.columns))]
+        processed = processed.reindex(sorted(processed.columns), axis=1)
         return processed
 
     def convert_embeddings_to_np(self, pdf):
@@ -392,6 +399,8 @@ class NLUPipeline(BasePipe):
         :param cols:  list of column names in the df
         :return: list of columns with the irrelevant names removed
         '''
+        if 'doc2chunk' in cols: cols.remove('doc2chunk')
+
         if self.output_level == 'token':
             if 'document' in cols: cols.remove('document')
             if 'chunk' in cols: cols.remove('chunk')

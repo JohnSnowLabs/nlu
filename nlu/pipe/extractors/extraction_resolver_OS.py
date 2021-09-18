@@ -226,6 +226,12 @@ OS_anno2config = {
         'default': default_doc2chunk_config,
         'default_full': default_full_config,
     },
+    Chunk2Doc: {
+        'default': '',  # TODO
+        'default_full': default_full_config,
+    },
+
+
 
     T5Transformer: {
         'default': default_T5_config,
