@@ -1,6 +1,7 @@
 ---
 layout: docs
 header: true
+seotitle: NLU | John Snow Labs
 title: NLU release notes
 permalink: /docs/en/release_notes
 key: docs-release-notes
