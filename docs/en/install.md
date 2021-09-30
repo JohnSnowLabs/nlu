@@ -1,5 +1,6 @@
 ---
 layout: docs
+seotitle: NLU | John Snow Labs
 title: Installation
 permalink: /docs/en/install
 key: docs-install

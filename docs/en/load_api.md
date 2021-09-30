@@ -1,6 +1,7 @@
 ---
 layout: docs
 header: true
+seotitle: NLU | John Snow Labs
 title: The NLU Load function
 permalink: /docs/en/load_api
 key: docs-developers

@@ -1,6 +1,7 @@
 ---
 layout: docs
 header: true
+seotitle: NLU | John Snow Labs
 title: NLU under the hood
 key: docs-examples
 permalink: /docs/en/under_the_hood

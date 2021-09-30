@@ -1,6 +1,7 @@
 ---
 layout: docs
 header: true
+seotitle: NLU | John Snow Labs
 title: Training Models with NLU
 permalink: /docs/en/training
 key: docs-developers
