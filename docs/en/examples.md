@@ -880,7 +880,7 @@ nlu.load('stopwords').predict('I want you to remove stopwords from this sentence
 |token|    cleanTokens|   
 |-----|------------|
 |I|    remove |   
-|want| stopewords |   
+|want| stopwords |   
 |you|  sentence | 
 |to|   None | 
 |remove|   None | 
