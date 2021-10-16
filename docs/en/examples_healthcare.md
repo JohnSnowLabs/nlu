@@ -6,7 +6,6 @@ key: docs-examples-hc
 permalink: /docs/en/examples_hc
 modify_date: "2019-05-16"
 ---
-
 <div class="main-docs" markdown="1">
 
 <div class="h3-box" markdown="1">
