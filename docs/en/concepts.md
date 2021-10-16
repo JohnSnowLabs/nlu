@@ -1,6 +1,7 @@
 ---
 layout: docs
 header: true
+seotitle: NLU | John Snow Labs
 title: NLU Concepts
 permalink: /docs/en/concepts
 key: docs-concepts

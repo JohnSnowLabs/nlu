@@ -1,6 +1,7 @@
 ---
 layout: docs
 header: true
+seotitle: NLU | John Snow Labs
 title: Examples
 key: docs-examples-hc
 permalink: /docs/en/examples_hc

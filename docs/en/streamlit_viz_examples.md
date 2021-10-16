@@ -1,6 +1,7 @@
 ---
 layout: docs
 header: true
+seotitle: NLU | John Snow Labs
 title: Streamlit visualization Examples
 key: streamlit-viz-examples
 permalink: /docs/en/streamlit_viz_examples
