@@ -979,6 +979,9 @@ ul.list1 {
 		&.w7 {
 			width: 750px;
 		}
+		&.db {
+			display: block;
+		}
 		thead {
 			tr {
 				th {
@@ -1100,6 +1103,10 @@ ul.list1 {
 	.h3-box {
 		padding-bottom: 50px;
 	}	
+}
+
+.tac {
+	text-align: center;
 }
 
 code {
