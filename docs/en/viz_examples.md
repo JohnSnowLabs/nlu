@@ -1,6 +1,7 @@
 ---
 layout: docs
 header: true
+seotitle: NLU | John Snow Labs
 title: NLU Visualization Examples
 key: viz-examples
 permalink: /docs/en/viz_examples

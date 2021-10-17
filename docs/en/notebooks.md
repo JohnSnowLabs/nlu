@@ -1,6 +1,7 @@
 ---
 layout: docs
 header: true
+seotitle: NLU | John Snow Labs
 title: NLU Notebook Examples
 key: notebooks
 permalink: /docs/en/notebooks

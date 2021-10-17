@@ -1,6 +1,7 @@
 ---
 layout: docs
 header: true
+seotitle: NLU | John Snow Labs
 title: The NLU predict function
 key: predict-api
 permalink: /docs/en/predict_api

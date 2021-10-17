@@ -1,6 +1,7 @@
 ---
 layout: docs
 header: true
+seotitle: NLU | John Snow Labs
 title: Developers
 permalink: /docs/en/spellbook
 key: docs-spellbook
