@@ -143,6 +143,17 @@ OS_anno2substitution_fn = {
     },
 
 
+    BertForTokenClassification: { # TODO
+        'default': substitute_transformer_token_classifier_cols,
+    },
+
+    DistilBertForTokenClassification: { # TODO
+        'default': substitute_transformer_token_classifier_cols,
+    },
+
+
+
+
 
     TextMatcherModel: {
         'default': substitute_text_match_cols,

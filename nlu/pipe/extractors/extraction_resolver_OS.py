@@ -37,12 +37,12 @@ OS_anno2config = {
     },
 
     BertForTokenClassification: {
-        'default': default_word_embedding_config,
+        'default': default_token_classifier_config,
         'default_full': default_full_config,
     },
 
     DistilBertForTokenClassification: {
-        'default': default_word_embedding_config,
+        'default': default_token_classifier_config,
         'default_full': default_full_config,
     },
 

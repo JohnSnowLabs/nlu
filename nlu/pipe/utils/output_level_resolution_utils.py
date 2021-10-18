@@ -60,6 +60,7 @@ class OutputLevelUtils():
                   TextMatcherModel, BigTextMatcherModel, RegexMatcherModel,
                   WordSegmenterModel, TokenizerModel,
                   XlmRoBertaEmbeddings, RoBertaEmbeddings, DistilBertEmbeddings,
+                  BertForTokenClassification,DistilBertForTokenClassification
                   ],
         # 'sub_token': [TextMatcherModel, BigTextMatcherModel, RegexMatcherModel, ],
         # sub token is when annotator is token based but some tokens may be missing since dropped/cleaned

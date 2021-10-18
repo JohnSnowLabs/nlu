@@ -225,11 +225,14 @@ def default_chunk_embedding_config(output_col_prefix='chunk_embedding'):
 def default_word_embedding_config(output_col_prefix='word_embedding'):
     return default_only_embedding_config(output_col_prefix)
 
+def default_token_classifier_config(output_col_prefix='token_classifier'):
+    return default_only_result_config(output_col_prefix)
+
+
+
+
+
 # TOKEN CLEANERS
-
-
-
-
 def default_stopwords_config(output_col_prefix='stopwords_removed'):
     return default_only_result_config(output_col_prefix)
 def default_lemma_config(output_col_prefix='lemma'):
