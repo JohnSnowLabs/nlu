@@ -3,7 +3,7 @@ from sparknlp.annotator import *
 class Yake:
     @staticmethod
     def get_default_model():
-        return YakeModel() \
+        return YakeKeywordExtraction() \
                    .setInputCols("token") \
                    .setOutputCol("keywords") \
                    .setMinNGrams(1) \

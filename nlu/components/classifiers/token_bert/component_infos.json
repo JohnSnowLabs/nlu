@@ -1,24 +1,22 @@
 {
-  "name": "named_entity_recognizer_dl",
+  "name": "token_bert",
   "output_level": "token",
   "description": "todo",
-  "trainable": true,
+  "trainable": false,
   "outputs": [
     "ner"
   ],
   "inputs": [
     "sentence",
-    "token",
-    "word_embeddings"
+    "token"
   ],
-  "type": "classifier",
+  "type": "token_classifier",
   "spark_input_column_names": [
     "sentence",
-    "token",
-    "word_embeddings"
+    "token"
   ],
   "spark_output_column_names": [
-    "`ner`"
+    "ner"
   ],
   "provider": "sparknlp",
   "license": "open source",
