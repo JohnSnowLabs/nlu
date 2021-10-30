@@ -9,7 +9,7 @@ import nlu
 from nlu.pipe.utils.storage_ref_utils import StorageRefUtils
 
 class StreamlitUtilsOS():
-    classifers_OS = [ ClassifierDLModel, LanguageDetectorDL, MultiClassifierDLModel, NerDLModel, NerCrfModel, YakeModel, PerceptronModel, SentimentDLModel,
+    classifers_OS = [ ClassifierDLModel, LanguageDetectorDL, MultiClassifierDLModel, NerDLModel, NerCrfModel, YakeKeywordExtraction, PerceptronModel, SentimentDLModel,
                       SentimentDetectorModel, ViveknSentimentModel, DependencyParserModel, TypedDependencyParserModel, T5Transformer, MarianTransformer, NerConverter]
     @staticmethod
     def get_classifier_cols(pipe):

@@ -167,7 +167,7 @@ class NLUPipeline(BasePipe):
             from sparknlp.training import POS
             s_df = POS().readDataset(self.spark, path=dataset_path, delimiter=label_seperator, outputPosCol="y",
                                      outputDocumentCol="document", outputTextCol="text")
-            self.spark_transformer_pipe = self.spark_estimator_pipe.fit(s_df)
+            self.spark_transformer_pipe = LightPipeline(self.spark_estimator_pipe.fit(s_df))
         elif isinstance(dataset, pd.DataFrame) and 'multi' in self.nlu_ref:
             schema = StructType([
                 StructField("y", StringType(), True),
@@ -219,23 +219,25 @@ class NLUPipeline(BasePipe):
             for component in self.components: stages.append(component.model)
             ## TODO SET STORAGE REF ON FITTED ANNOTATORS, especially resoluton...
             self.spark_estimator_pipe = Pipeline(stages=stages)
-            self.spark_transformer_pipe = self.spark_estimator_pipe.fit(
-                DataConversionUtils.pdf_to_sdf(dataset, self.spark)[0])
+            self.spark_transformer_pipe = LightPipeline(self.spark_estimator_pipe.fit(
+                DataConversionUtils.pdf_to_sdf(dataset, self.spark)[0]))
 
         elif isinstance(dataset, pyspark.sql.DataFrame):
             if not self.verify_all_labels_exist(dataset): raise ValueError(
                 f"Could not detect label in provided columns={dataset.columns}\nMake sure a column named label, labels or y exists in your dataset.")
-            self.spark_transformer_pipe = self.spark_estimator_pipe.fit(
-                DataConversionUtils.sdf_to_sdf(dataset, self.spark))
+            self.spark_transformer_pipe = LightPipeline(self.spark_estimator_pipe.fit(
+                DataConversionUtils.sdf_to_sdf(dataset, self.spark)))
 
         else:
             # fit on empty dataframe since no data provided
             logger.info(
                 'Fitting on empty Dataframe, could not infer correct training method. This is intended for non-trainable pipelines.')
-            self.spark_transformer_pipe = self.spark_estimator_pipe.fit(self.get_sample_spark_dataframe())
+            self.spark_transformer_pipe = LightPipeline(self.spark_estimator_pipe.fit(self.get_sample_spark_dataframe()))
+        self.is_fitted = True
+        self.light_pipe_configured = True
         return self
 
-    def get_annotator_extraction_configs(self, full_meta, c_level_mapping, positions):
+    def get_annotator_extraction_configs(self, full_meta, c_level_mapping, positions,get_embeddings):
 
         """Search first OC namespace and if not found the HC Namespace for each Annotator Class in pipeline and get corrosponding config
         Returns a dictionary of methods, where keys are column names values are methods  that are applied to extract and represent the data in these
@@ -244,6 +246,10 @@ class NLUPipeline(BasePipe):
         # tood doc level annos and same level annos can be popped always.
         anno_2_ex_config = {}
         for c in self.components:
+            if 'embedding' in c.info.type and get_embeddings == False  : continue
+
+
+
             if type(c.model) in OS_anno2config.keys():
                 if OS_anno2config[type(c.model)]['default'] == '' or full_meta:
                     if not full_meta: logger.info(
@@ -275,31 +281,47 @@ class NLUPipeline(BasePipe):
                 anno_2_ex_config[c.info.spark_output_column_names[0]].get_end = False
                 anno_2_ex_config[c.info.spark_output_column_names[0]].get_positions = False
 
+            if c.info.loaded_from_pretrained_pipe :
+                # Use original col name of pretrained pipes as prefix
+                anno_2_ex_config[c.info.spark_output_column_names[0]].output_col_prefix = c.info.spark_output_column_names[0]
+
+
+
+
         return anno_2_ex_config
 
-    def unpack_and_apply_extractors(self, sdf: pyspark.sql.DataFrame, keep_stranger_features=True, stranger_features=[],
-                                    anno_2_ex_config={}) -> pd.DataFrame:
+    def unpack_and_apply_extractors(self, pdf: Union[pyspark.sql.DataFrame, pd.DataFrame], keep_stranger_features=True, stranger_features=[],
+                                    anno_2_ex_config={},
+                                    light_pipe_enabled=True,
+                                    get_embeddings=False
+                                    ) -> pd.DataFrame:
         """1. Unpack SDF to PDF with Spark NLP Annotator Dictionaries
            2. Get the extractor configs for the corrosponding Annotator classes
            3. Apply The extractor configs with the extractor methods to each column and merge back with zip/explode
            Uses optimized PyArrow conversion to avoid representing data multiple times between the JVM and PVM
+
+           Can process Spark DF output from Vanilla pipes and Pandas Convertes outputs of Lightpipeline
            """
-        from nlu.pipe.utils.pyarrow_conversion.pa_conversion import PaConversionUtils
+
+        if light_pipe_enabled and not get_embeddings : return apply_extractors_and_merge(extract_light_pipe_rows(pdf), anno_2_ex_config,
+                                                                  keep_stranger_features, stranger_features)
 
 
-        if not self.failed_pyarrow_conversion:
+        if not self.failed_pyarrow_conversion and self.check_pyspark_pyarrow_optimization_compatibility():
+            from nlu.pipe.utils.pyarrow_conversion.pa_conversion import PaConversionUtils
             try:
                 # Custom Pyarrow Conversion
                 return apply_extractors_and_merge(
-                    PaConversionUtils.convert_via_pyarrow(sdf).applymap(extract_pyarrow_rows),
+                    PaConversionUtils.convert_via_pyarrow(pdf).applymap(extract_pyarrow_rows),
                     anno_2_ex_config, keep_stranger_features, stranger_features)
             except:
                 #     Default Conversion, No PyArrow (auto-Schema-Inferrence from PyArrow failed)
                 self.failed_pyarrow_conversion = True
-                return apply_extractors_and_merge(sdf.toPandas().applymap(extract_pyspark_rows), anno_2_ex_config,
+                return apply_extractors_and_merge(pdf.toPandas().applymap(extract_pyspark_rows), anno_2_ex_config,
                                                   keep_stranger_features, stranger_features)
         else:
-            return apply_extractors_and_merge(sdf.toPandas().applymap(extract_pyspark_rows), anno_2_ex_config,
+        # Vanilla Spark Pipe
+            return apply_extractors_and_merge(pdf.toPandas().applymap(extract_pyspark_rows), anno_2_ex_config,
                                               keep_stranger_features, stranger_features)
 
     def pythonify_spark_dataframe(self, processed,
@@ -309,6 +331,7 @@ class NLUPipeline(BasePipe):
                                   output_metadata=False,
                                   positions=False,
                                   output_level='',
+                                  get_embeddings = True ,
                                   ):
         '''
         This functions takes in a spark dataframe with Spark NLP annotations in it and transforms it into a Pandas Dataframe with common feature types for further NLP/NLU downstream tasks.
@@ -330,28 +353,36 @@ class NLUPipeline(BasePipe):
         :param output_metadata: Wether to keep or drop additional metadataf or predictions, like prediction confidence
         :return: Pandas dataframe which easy accessable features
         '''
+
         stranger_features += ['origin_index']
 
         # if self.output_level == '': self.output_level = OutputLevelUtils.infer_output_level(self)
         if output_level == '': OutputLevelUtils.infer_output_level(self)
-        c_level_mapping = OutputLevelUtils.get_output_level_mapping_by_component(self)
 
-        anno_2_ex_config = self.get_annotator_extraction_configs(output_metadata, c_level_mapping, positions)
+        # if output_level == 'sentence'
+        c_level_mapping = OutputLevelUtils.get_output_level_mapping_by_component(self)
+        anno_2_ex_config = self.get_annotator_extraction_configs(output_metadata, c_level_mapping, positions,get_embeddings)
+
+        def remove_embedding_references(c_level_mapping, anno_2_ex_config):
+            """Removes all embedding information from c_level_mapping and anno_2_ex_config"""
+            return c_level_mapping, anno_2_ex_config
+        if not get_embeddings : c_level_mapping, anno_2_ex_config = remove_embedding_references(c_level_mapping, anno_2_ex_config)
+
         # Processed becomes pandas
         processed = self.unpack_and_apply_extractors(processed, keep_stranger_features, stranger_features,
-                                                     anno_2_ex_config)
+                                                     anno_2_ex_config,self.light_pipe_configured, get_embeddings)
         col2output_level, same_output_level, not_same_output_level = OutputLevelUtils.get_output_level_mappings(self,
                                                                                                                 processed,
-                                                                                                                anno_2_ex_config)
+                                                                                                                anno_2_ex_config,get_embeddings)
         logger.info(
             f"Extracting for same_level_cols = {same_output_level}\nand different_output_level_cols = {not_same_output_level}")
         processed = zip_and_explode(processed, same_output_level, not_same_output_level, self.output_level)
         processed = self.convert_embeddings_to_np(processed)
-        processed = ColSubstitutionUtils.substitute_col_names(processed, anno_2_ex_config, self, stranger_features)
+        processed = ColSubstitutionUtils.substitute_col_names(processed, anno_2_ex_config, self, stranger_features,get_embeddings)
         processed = processed.loc[:, ~processed.columns.duplicated()]
-        # Sort cols alphabetically
 
         if drop_irrelevant_cols:  processed = processed[self.drop_irrelevant_cols(list(processed.columns))]
+        # Sort cols alphabetically
         processed = processed.reindex(sorted(processed.columns), axis=1)
         return processed
 
@@ -426,7 +457,7 @@ class NLUPipeline(BasePipe):
 
     def configure_light_pipe_usage(self, data_instances, use_multi=True, force=False):
         logger.info("Configuring Light Pipeline Usage")
-        if data_instances > 50000 or use_multi == False:
+        if data_instances > 50 or use_multi == False:
             logger.info("Disabling light pipeline")
             if not self.is_fitted: self.fit()
         else:
@@ -435,7 +466,7 @@ class NLUPipeline(BasePipe):
                 if not self.is_fitted: self.fit()
                 self.light_pipe_configured = True
                 logger.info("Enabling light pipeline")
-                self.spark_transformer_pipe = LightPipeline(self.spark_transformer_pipe)
+                self.spark_transformer_pipe = LightPipeline(self.spark_transformer_pipe,parse_embeddings=True)
 
     def check_if_sentence_level_requirements_met(self):
         '''
@@ -522,7 +553,9 @@ class NLUPipeline(BasePipe):
                 metadata=False,
                 multithread=True,
                 drop_irrelevant_cols=True,
-                return_spark_df=False):
+                return_spark_df=False,
+                get_embeddings = False
+                ):
         '''
         Annotates a Pandas Dataframe/Pandas Series/Numpy Array/Spark DataFrame/Python List strings /Python String
 
@@ -534,55 +567,11 @@ class NLUPipeline(BasePipe):
         :param multithread: Whether to use multithreading based lightpipeline. In some cases, this may cause errors.
         :param drop_irellevant_cols: Wether to drop cols of different output levels, i.e. when predicting token level and dro_irrelevant_cols = True then chunk, sentence and Doc will be dropped
         :param return_spark_df: Prediction results will be returned right after transforming with the Spark NLP pipeline
+        :param get_embeddings: Wether to return embeddings or not
         :return:
         '''
-        if output_level != '': self.output_level = output_level
-        if output_level == 'sentence' or output_level == 'document': self.components = PipeUtils.configure_component_output_levels(
-            self)
-        if output_level in ['token', 'chunk',
-                            'relation']: self.components = PipeUtils.configure_component_output_levels(self, 'document')
-
-        try:
-            # 1. Convert data to Spark DF
-            data, stranger_features, output_datatype = DataConversionUtils.to_spark_df(data, self.spark,
-                                                                                       self.raw_text_column)
-
-            # 2. configure Lightpipline usage
-            self.configure_light_pipe_usage(data.count(), multithread)
-            # 3. Fit
-            if not self.is_fitted:
-                if self.has_trainable_components:
-                    self.fit(data)
-                else:
-                    self.fit()
-
-            # 4. Apply Spark Pipeline
-            data = self.spark_transformer_pipe.transform(data)
-            # 5. Convert resulting spark DF into nicer format and by default into pandas.
-            if return_spark_df: return data  # Returns RAW  Spark Dataframe result of pipe prediction
-            return self.pythonify_spark_dataframe(data,
-                                                  keep_stranger_features=keep_stranger_features,
-                                                  stranger_features=stranger_features,
-                                                  output_metadata=metadata,
-                                                  drop_irrelevant_cols=drop_irrelevant_cols,
-                                                  positions=positions
-                                                  )
-
-
-
-
-
-        except Exception as err:
-
-            import sys
-            if multithread == True:
-                logger.warning(f"Multithreaded mode failed. trying to predict again with non multithreaded mode, err={err}")
-                # return self.predict(data, output_level=output_level, positions=positions,keep_stranger_features=keep_stranger_features, metadata=metadata, multithread=False,return_spark_df=return_spark_df)
-                return self.predict(data=data, output_level=output_level, positions=positions,
-                                    keep_stranger_features=keep_stranger_features, metadata=metadata, multithread=False,
-                                    drop_irrelevant_cols=drop_irrelevant_cols, return_spark_df=return_spark_df)
-            else:
-                self.print_exception_err(err)
+        from nlu.pipe.utils.predict_helper import predict_help
+        return predict_help(self,data,output_level,positions,keep_stranger_features,metadata,multithread,drop_irrelevant_cols,return_spark_df,get_embeddings)
 
     def print_info(self, minimal=True):
         '''
@@ -1019,3 +1008,7 @@ class NLUPipeline(BasePipe):
                                                                      show_infos,
                                                                      show_logo,
                                                                      n_jobs)
+    def check_pyspark_pyarrow_optimization_compatibility(self):
+            # Only works for pyspark        "3.1.2"
+            v = pyspark.version.__version__.split('.')
+            if int(v[0]) == 3 and int(v[1]) >=1 : return True

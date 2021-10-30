@@ -12,7 +12,6 @@ from pyspark.sql.types import StringType, StructType, StructField
 class DataConversionUtils():
     # Modin aswell but optional, so we dont import the type yet
     supported_types = [pyspark.sql.DataFrame, pd.DataFrame, pd.Series, np.ndarray]
-
     @staticmethod
     def except_text_col_not_found(cols):
         print(
@@ -156,3 +155,99 @@ class DataConversionUtils():
                 return DataConversionUtils.fallback_modin_to_sdf(data, spark_sess, raw_text_column)
         except:
             ValueError("Data could not be converted to Spark Dataframe for internal conversion.")
+
+
+
+    @staticmethod
+    def str_to_pdf(data,raw_text_column):
+        return pd.DataFrame({raw_text_column:[data]}).reset_index().rename(columns = {'index' : 'origin_index'} ), [], 'string'
+
+    @staticmethod
+    def str_list_to_pdf(data,raw_text_column):
+        return pd.DataFrame({raw_text_column:data}).reset_index().rename(columns = {'index' : 'origin_index'} ), [], 'string_list'
+
+    @staticmethod
+    def np_to_pdf(data,raw_text_column):
+        return pd.DataFrame({raw_text_column:data}).reset_index().rename(columns = {'index' : 'origin_index'} ), [], 'string_list'
+    @staticmethod
+    def pds_to_pdf(data,raw_text_column):
+        return pd.DataFrame({raw_text_column:data}).reset_index().rename(columns = {'index' : 'origin_index'} ), [], 'string_list'
+
+
+    @staticmethod
+    def pdf_to_pdf(data,raw_text_column):
+        data = data.reset_index().rename(columns = {'index' : 'origin_index'} )
+        stranger_features = list(data.columns)
+        if raw_text_column not in stranger_features:
+            print(f"Could not find {raw_text_column} col in df. Using {stranger_features[0]} col istead")
+            data = data.reset_index().rename(columns = {stranger_features[0] : raw_text_column} )
+        stranger_features.remove('text')
+        stranger_features.remove('origin_index')
+
+        return data , stranger_features, 'pandas'
+
+    @staticmethod
+    def sdf_to_pdf(data,raw_text_column):
+        data = data.toPandas().reset_index().rename(columns = {'index' : 'origin_index'} )
+        stranger_features = list(data.columns)
+        if raw_text_column not in stranger_features:
+            print(f"Could not find {raw_text_column} col in df. Using {stranger_features[0]} col istead")
+            data = data.reset_index().rename(columns = {stranger_features[0] : raw_text_column} )
+        stranger_features.remove('text')
+        stranger_features.remove('origin_index')
+
+        return data , stranger_features, 'spark'
+
+    @staticmethod
+    def to_pandas_df(data, raw_text_column='text'):
+        """
+        Convert data to LihgtPipeline Compatible Format, which is np.array[str], list[str] and str  but we need list anyways later.
+        So we create here a pd.Dataframe with a TEXT col if not already given
+        Convert supported datatypes to Pandas and extract extra data for prediction later on.
+
+        """
+        try:
+            if isinstance(data, pyspark.sql.dataframe.DataFrame):
+                return DataConversionUtils.pdf_to_pdf(data, raw_text_column)
+            elif isinstance(data, pd.DataFrame):
+                return DataConversionUtils.pdf_to_pdf(data, raw_text_column)
+            elif isinstance(data, pd.Series):
+                return DataConversionUtils.pds_to_pdf(data, raw_text_column)
+            elif isinstance(data, np.ndarray):
+                return DataConversionUtils.np_to_pdf(data, raw_text_column)
+            elif isinstance(data, str):
+                return DataConversionUtils.str_to_pdf(data, raw_text_column)
+            elif isinstance(data, list):
+                return DataConversionUtils.str_list_to_pdf(data, raw_text_column)
+            else:
+                return DataConversionUtils.fallback_modin_to_pdf(data, raw_text_column)
+        except:
+            ValueError("Data could not be converted to Spark Dataframe for internal conversion.")
+
+
+
+
+
+
+
+
+
+
+
+
+
+    @staticmethod
+    def size_of(data):
+        """
+        Convert data to LihgtPipeline Compatible Format, which is np.array[str], list[str] and str  but we need list anyways later.
+        So we create here a pd.Dataframe with a TEXT col if not already given
+        Convert supported datatypes to Pandas and extract extra data for prediction later on.
+
+        """
+        if isinstance(data, pyspark.sql.dataframe.DataFrame): return data.size()
+        elif isinstance(data, pd.DataFrame): return data.shape[0]
+        elif isinstance(data, pd.Series): return data.shape[0]
+        elif isinstance(data, np.ndarray): return data.shape[0]
+        elif isinstance(data, str): return 1
+        elif isinstance(data, list): return len(data)
+        else: return len(data)

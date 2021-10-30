@@ -50,6 +50,10 @@ OS_anno2substitution_fn = {
     BertSentenceEmbeddings: {
         'default': substitute_sent_embed_cols,
     },
+
+    XlmRoBertaSentenceEmbeddings: {
+        'default': substitute_sent_embed_cols,
+    },
     UniversalSentenceEncoder: {
         'default': substitute_sent_embed_cols,
     },
@@ -143,15 +147,36 @@ OS_anno2substitution_fn = {
     },
 
 
-    BertForTokenClassification: { # TODO
+    BertForTokenClassification: {
         'default': substitute_transformer_token_classifier_cols,
     },
 
-    DistilBertForTokenClassification: { # TODO
+    DistilBertForTokenClassification: {
+        'default': substitute_transformer_token_classifier_cols,
+    },
+
+    XlnetForTokenClassification: {
         'default': substitute_transformer_token_classifier_cols,
     },
 
 
+    XlmRoBertaForTokenClassification: {
+        'default': substitute_transformer_token_classifier_cols,
+    },
+
+
+    RoBertaForTokenClassification: {
+        'default': substitute_transformer_token_classifier_cols,
+    },
+
+    LongformerForTokenClassification: {
+        'default': substitute_transformer_token_classifier_cols,
+    },
+
+
+    AlbertForTokenClassification: {
+        'default': substitute_transformer_token_classifier_cols,
+    },
 
 
 
@@ -181,7 +206,7 @@ OS_anno2substitution_fn = {
     MarianTransformer: {
         'default': substitute_marian_cols,
     },
-    YakeModel: {
+    YakeKeywordExtraction: {
         'default': substitute_YAKE_cols,
     },
     WordSegmenterModel: {

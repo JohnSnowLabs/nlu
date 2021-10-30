@@ -4,10 +4,57 @@ import logging
 
 logger = logging.getLogger('nlu')
 from nlu.pipe.utils.component_utils import ComponentUtils
+from typing import List
 
 
 class PipeUtils():
     """Pipe Level logic oprations and utils"""
+
+    @staticmethod
+    def set_column_values_on_components_from_pretrained_pipe(pipe, nlp_ref, lang,path):
+        """Since output/input cols cannot be fetched, we must check annotator data to find them
+        Expects a list of NLU Component objects which all stem from the same pipeline defined by nlp_ref
+        """
+        import os
+        import glob
+        import json
+        if path : pipe_path = path
+        else :
+            pipe_path = os.path.expanduser('~') + '/cache_pretrained/' + f'{nlp_ref}_{lang}'
+            # WE do not need to check for Spark Version, since cols should match accors versions
+            # TODO but what about LOCAL pipes!!!! todo fix
+            pipe_path = glob.glob(f'{pipe_path}*')[0]
+            if not os.path.exists(pipe_path): raise FileNotFoundError(f"Could not find downloaded Pipeline at path={pipe_path}")
+
+        # Find HDD location of pipe and read out input/output cols
+        digits_num = len(str(len(pipe)))
+        digit_str = '0'*digits_num
+        digit_cur = 0
+
+        for c in pipe:
+            # c_metadata_path = f'{pipe_path}/stages/{digit_str}_*/metadata/part-00000'
+            c_metadata_path = f'{pipe_path}/stages/{digit_str}_*/metadata/part-00000'
+            c_metadata_path = glob.glob(f'{c_metadata_path}*')[0]
+            # print(f'exists={os.path.exists(c_metadata_path)} p = {c_metadata_path}')
+            with open(c_metadata_path, "r") as f:
+                data = json.load(f)
+                if 'inputCols' in data['paramMap'].keys() :
+                    inp = data['paramMap']['inputCols']
+                    c.model.setInputCols(inp)
+                else :
+                    inp = data['paramMap']['inputCol']
+                    c.model.setInputCol(inp)
+                out = data['paramMap']['outputCol']
+                c.info.spark_input_column_names = inp if isinstance(inp,List) else [inp]
+                c.info.spark_output_column_names = [out]
+                c.model.setOutputCol(out)
+
+            digit_cur += 1
+            digit_str = str(digit_cur)
+            while len(digit_str) < digits_num :
+                digit_str = '0' + digit_str
+        return pipe
+
 
     @staticmethod
     def is_trainable_pipe(pipe):
@@ -18,7 +65,10 @@ class PipeUtils():
 
     @staticmethod
     def enforece_AT_embedding_provider_output_col_name_schema_for_list_of_components(pipe_list):
-        """For every embedding provider, enforce that their output col is named <output_level>@storage_ref for output_levels word,chunk,sentence aka document , i.e. word_embed@elmo or sentence_embed@elmo etc.."""
+        """For every embedding provider, enforce that their output col is named <output_level>@storage_ref for output_levels word,chunk,sentence aka document ,
+
+        TODO update the classifier models aswell
+        i.e. word_embed@elmo or sentence_embed@elmo etc.."""
         for c in pipe_list:
             if ComponentUtils.is_embedding_provider(c):
                 level_AT_ref = ComponentUtils.extract_storage_ref_AT_notation_for_embeds(c, 'output')
@@ -28,7 +78,7 @@ class PipeUtils():
         return pipe_list
 
     @staticmethod
-    def enforce_AT_schema_on_pipeline(pipe):
+    def enforce_AT_schema_on_pipeline_and_add_NER_converter(pipe):
         """Enforces the AT naming schema on all column names and add missing NER converters"""
         return PipeUtils.enforce_AT_schema_on_NER_processors_and_add_missing_NER_converters(
             PipeUtils.enforce_AT_schema_on_embedding_processors(pipe))
@@ -46,10 +96,18 @@ class PipeUtils():
         3.2 Update NER Converter input  to <ner-iob>@<nlu_ref_identifier>
         3.3 Update NER Converter output to <entities>@<nlu_ref_identifier>
         4. Update every Component that feeds from the NER converter (i.e. Resolver etc..)
+
+        includes TOKEN-CLASSIFIER-TRANSFORMER models which usually output NER format
         """
         from nlu import Util
         new_converters = []
         for c in pipe.components:
+
+            if c.info.loaded_from_pretrained_pipe :
+                # Leave pretrained pipe models untouched
+                new_converters.append(c)
+                continue
+
             if ComponentUtils.is_NER_provider(c):
                 output_NER_col = ComponentUtils.extract_NER_col(c, 'output')
                 converter_to_update = None
@@ -121,6 +179,9 @@ class PipeUtils():
     def enforce_AT_schema_on_embedding_processors(pipe):
         """For every embedding provider and consumer, enforce that their output col is named <output_level>@storage_ref for output_levels word,chunk,sentence aka document , i.e. word_embed@elmo or sentence_embed@elmo etc.."""
         for c in pipe.components:
+            # Leave pretrained pipe models untouched
+            if c.info.loaded_from_pretrained_pipe : continue
+
             if ComponentUtils.is_embedding_provider(c):
                 if '@' not in c.info.outputs[0]:
                     new_embed_AT_ref = ComponentUtils.extract_storage_ref_AT_notation_for_embeds(c, 'output')
@@ -150,6 +211,7 @@ class PipeUtils():
     def enforce_NLU_columns_to_NLP_columns(pipe):
         """for every component, set its inputs and outputs to the ones configured on the NLU component."""
         for c in pipe.components:
+            if c.info.loaded_from_pretrained_pipe: continue
             if c.info.name == 'document_assembler': continue
             c.model.setOutputCol(c.info.outputs[0])
             c.model.setInputCols(c.info.inputs)
@@ -274,7 +336,7 @@ class PipeUtils():
         for c in pipe.components:
             if PipeUtils.is_leaf_node(c, pipe) and not ComponentUtils.has_AT_notation():
                 # update name
-                1
+                pass
 
         return pipe
 
@@ -283,6 +345,7 @@ class PipeUtils():
         """Removes AT notation from all columns. Useful to reset pipe back to default state"""
 
         for c in pipe.components:
+            if c.info.loaded_from_pretrained_pipe : continue
             c.info.inputs = [f.split('@')[0] for f in c.info.inputs]
             c.info.outputs = [f.split('@')[0] for f in c.info.outputs]
 
@@ -319,4 +382,3 @@ class PipeUtils():
                 if isinstance(c.model, SentenceEntityResolverApproach): return i, 'sentence_embeddings'
 
         return -1, None
-

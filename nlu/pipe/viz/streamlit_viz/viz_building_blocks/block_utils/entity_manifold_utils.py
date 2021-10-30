@@ -10,7 +10,7 @@ from nlu.pipe.utils.storage_ref_utils import StorageRefUtils
 from nlu.components import embeddings_chunker
 
 class EntityManifoldUtils():
-    classifers_OS = [ ClassifierDLModel, LanguageDetectorDL, MultiClassifierDLModel, NerDLModel, NerCrfModel, YakeModel, PerceptronModel, SentimentDLModel,
+    classifers_OS = [ ClassifierDLModel, LanguageDetectorDL, MultiClassifierDLModel, NerDLModel, NerCrfModel, YakeKeywordExtraction, PerceptronModel, SentimentDLModel,
                       SentimentDetectorModel, ViveknSentimentModel, DependencyParserModel, TypedDependencyParserModel, T5Transformer, MarianTransformer, NerConverter]
     @staticmethod
     def insert_chunk_embedder_to_pipe_if_missing(pipe):
