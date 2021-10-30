@@ -89,11 +89,11 @@ class SentimentTrainingTests(unittest.TestCase):
         # df = fitted_pipe.predict(' I love NLU!')
 
         df = pipe.predict(df_train.iloc[0:50],output_level='sentence')
-        s_path = 'saved_models/training_custom_embeds'
-        pipe.save(s_path)
-        hdd_pipe = nlu.load(path=s_path)
-        print(hdd_pipe.predict("YESSSSSSSSSSSSSSSSSSSSSSSSSSSSSsss"))
-        for c in df.columns : print (df[c])
+        # s_path = 'saved_models/training_custom_embeds'
+        # pipe.save(s_path)
+        # hdd_pipe = nlu.load(path=s_path)
+        # print(hdd_pipe.predict("test 123 "))
+        # for c in df.columns : print (df[c])
 
         # print(df.columns)
         # print(df)

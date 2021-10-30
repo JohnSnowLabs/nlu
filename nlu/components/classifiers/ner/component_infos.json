@@ -18,7 +18,7 @@
     "word_embeddings"
   ],
   "spark_output_column_names": [
-    "ner"
+    "`ner`"
   ],
   "provider": "sparknlp",
   "license": "open source",

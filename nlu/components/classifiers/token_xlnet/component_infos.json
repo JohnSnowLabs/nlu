@@ -1,0 +1,25 @@
+{
+  "name": "token_xlnet",
+  "output_level": "token",
+  "description": "todo",
+  "trainable": false,
+  "outputs": [
+    "ner"
+  ],
+  "inputs": [
+    "sentence",
+    "token"
+  ],
+  "type": "token_classifier",
+  "spark_input_column_names": [
+    "sentence",
+    "token"
+  ],
+  "spark_output_column_names": [
+    "ner"
+  ],
+  "provider": "sparknlp",
+  "license": "open source",
+  "computation_context": "spark",
+  "output_context": "spark"
+}

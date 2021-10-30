@@ -130,8 +130,8 @@ class WordSimilarityStreamlitBlock():
         col_index = 0
         # for p in embed_pipes :
         for p in StreamlitVizTracker.loaded_word_embeding_pipes:
-            data1 = p.predict(text1, output_level='token').dropna()
-            data2 = p.predict(text2, output_level='token').dropna()
+            data1 = p.predict(text1, output_level='token', get_embeddings=True).dropna()
+            data2 = p.predict(text2, output_level='token', get_embeddings=True).dropna()
             e_coms = StreamlitUtilsOS.find_all_embed_components(p)
             modelhub_links = [ModelHubUtils.get_url_by_nlu_refrence(c.info.nlu_ref) if hasattr(c.info,
                                                                                                'nlu_ref') else ModelHubUtils.get_url_by_nlu_refrence(

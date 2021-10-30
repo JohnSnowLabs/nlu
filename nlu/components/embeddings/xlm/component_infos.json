@@ -16,7 +16,7 @@
     "token"
   ],
   "spark_output_column_names": [
-    "xlm"
+    "xlm_roberta"
   ],
   "provider": "sparknlp",
   "license": "open source",

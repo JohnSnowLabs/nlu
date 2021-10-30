@@ -40,7 +40,7 @@ class ColSubstitutionUtils():
     cleanable_splits = ['ner_converter','spell','ner_to_chunk_converter','train','classify','ner','med_ner','dl','match','clean','sentiment','embed','embed_sentence','embed_chunk','explain','pos','resolve_chunk','resolve',]
     all_langs        = ['yi','uk', 'te','ta','sd','pa','ne', 'ml','mr','kn','id','gu','bs','vi','mt','ta','af','cy','et','en','et','bh','am','da','fr','de','it','nb','no','nn','pl','pt','ru','es','af','ar','hy','eu','bn','br','bg','ca','cs','eo','fi','gl','el','ha','he','hi','hu','id','ga','ja','la','lv','mr','fa','ro','sk','sl','so','st','sw','sv','th','tr','uk','yo','zu','zh','xx','ur','ko']
     @staticmethod
-    def substitute_col_names(df,anno_2_ex,pipe, stranger_cols=[],drop_debug_cols=True,):
+    def substitute_col_names(df,anno_2_ex,pipe, stranger_cols=[],get_embeddings=False,drop_debug_cols=True):
         """
         Some truly irrelevant cols might be dropped, regardless of anno Extractor config
         Some truly irrelevant cols might be dropped, regardless of anno Extractor config
@@ -57,6 +57,7 @@ class ColSubstitutionUtils():
             from nlu.pipe.col_substitution import substitution_map_HC
         deducted_component_names = ColSubstitutionUtils.deduct_component_names(pipe)
         for c in pipe.components :
+            if 'embedding' in c.info.type and get_embeddings == False  : continue
             cols_to_substitute = ColSubstitutionUtils.get_final_output_cols_of_component(c,df,anno_2_ex)
 
             if type(c.model) in substitution_map_OS.OS_anno2substitution_fn.keys():

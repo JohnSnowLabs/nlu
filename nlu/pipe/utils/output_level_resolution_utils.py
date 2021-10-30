@@ -22,7 +22,7 @@ class OutputLevelUtils():
     }
     annotator_levels_approach_based = {
         'document': [DocumentAssembler, Chunk2Doc,
-                     YakeModel,
+                     YakeKeywordExtraction,DocumentNormalizer
                      ],
         'sentence': [SentenceDetector, SentenceDetectorDLApproach, ],
         'chunk': [Chunker, ChunkEmbeddings,  ChunkTokenizer, Token2Chunk, TokenAssembler,
@@ -41,8 +41,7 @@ class OutputLevelUtils():
         # these can be document or sentence
         'input_dependent': [ViveknSentimentApproach, SentimentDLApproach, ClassifierDLApproach,
                             LanguageDetectorDL,
-                            MultiClassifierDLApproach,  SentenceEmbeddings, NorvigSweetingApproach,
-                            ],
+                            MultiClassifierDLApproach,  SentenceEmbeddings, NorvigSweetingApproach,],
         'multi' : [MultiClassifierDLApproach,  SentenceEmbeddings, NorvigSweetingApproach,]
         # 'unclassified': [Yake, Ngram]
     }
@@ -60,6 +59,10 @@ class OutputLevelUtils():
                   TextMatcherModel, BigTextMatcherModel, RegexMatcherModel,
                   WordSegmenterModel, TokenizerModel,
                   XlmRoBertaEmbeddings, RoBertaEmbeddings, DistilBertEmbeddings,
+                  BertForTokenClassification,DistilBertForTokenClassification,
+                  AlbertForTokenClassification, XlmRoBertaForTokenClassification,
+                  RoBertaForTokenClassification, LongformerForTokenClassification,
+                  XlnetForTokenClassification,
                   ],
         # 'sub_token': [TextMatcherModel, BigTextMatcherModel, RegexMatcherModel, ],
         # sub token is when annotator is token based but some tokens may be missing since dropped/cleaned
@@ -207,6 +210,7 @@ class OutputLevelUtils():
                 if isinstance(component.model,t) :
                     if level == 'input_dependent' : return OutputLevelUtils.resolve_input_dependent_component_to_output_level(pipe,component)
                     else : return level
+
         if pipe.has_licensed_components:
             from nlu.pipe.extractors.output_level_HC_map import HC_anno2output_level
             for level in HC_anno2output_level.keys():
@@ -215,12 +219,13 @@ class OutputLevelUtils():
                         if level == 'input_dependent' : return OutputLevelUtils.resolve_input_dependent_component_to_output_level(pipe,component)
                         else : return level
     @staticmethod
-    def get_output_level_mappings(pipe,df,anno_2_ex_config):
+    def get_output_level_mappings(pipe,df,anno_2_ex_config,get_embeddings):
         """Get a dict where key=spark_colname and val=output_level, inferred from processed dataframe and pipe that is currently running"""
         output_level_map = {}
         same_output_level_map = {}
         not_same_output_level_map = {}
         for c in pipe.components:
+            if 'embedding' in c.info.type and get_embeddings == False  : continue
             generated_cols = ColSubstitutionUtils.get_final_output_cols_of_component(c,df,anno_2_ex_config)
             output_level = OutputLevelUtils.resolve_component_to_output_level(pipe,c)
             if output_level == pipe.output_level :

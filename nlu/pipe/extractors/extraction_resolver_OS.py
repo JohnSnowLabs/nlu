@@ -36,15 +36,44 @@ OS_anno2config = {
         'default_full': default_full_config,
     },
 
+
+
     BertForTokenClassification: {
-        'default': default_word_embedding_config,
+        'default': default_token_classifier_config,
         'default_full': default_full_config,
     },
 
     DistilBertForTokenClassification: {
-        'default': default_word_embedding_config,
+        'default': default_token_classifier_config,
         'default_full': default_full_config,
     },
+
+    RoBertaForTokenClassification: {
+        'default': default_token_classifier_config,
+        'default_full': default_full_config,
+    },
+
+    XlmRoBertaForTokenClassification: {
+        'default': default_token_classifier_config,
+        'default_full': default_full_config,
+    },
+
+    XlnetForTokenClassification: {
+        'default': default_token_classifier_config,
+        'default_full': default_full_config,
+    },
+    AlbertForTokenClassification: {
+        'default': default_token_classifier_config,
+        'default_full': default_full_config,
+    },
+    LongformerForTokenClassification: {
+        'default': default_token_classifier_config,
+        'default_full': default_full_config,
+    },
+
+
+
+
 
     LongformerEmbeddings: {
         'default': default_word_embedding_config,
@@ -79,6 +108,10 @@ OS_anno2config = {
         'default_full': default_full_config,
     },
     BertSentenceEmbeddings: {
+        'default': default_sentence_embedding_config,
+        'default_full': default_full_config,
+    },
+    XlmRoBertaSentenceEmbeddings: {
         'default': default_sentence_embedding_config,
         'default_full': default_full_config,
     },
@@ -241,7 +274,7 @@ OS_anno2config = {
         'default': default_marian_config,
         'default_full': default_full_config,
     },
-    YakeModel: {
+    YakeKeywordExtraction: {
         'default': default_yake_config,
         'default_full': default_full_config,
     },

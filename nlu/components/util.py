@@ -39,4 +39,4 @@ class Util(SparkNLUComponent):
                 from nlu.components.utils.chunk_2_doc.doc_2_chunk import Chunk_2_Doc
                 self.model = Chunk_2_Doc.get_default_model()
 
-        SparkNLUComponent.__init__(self, annotator_class, component_type, nlu_ref, lang,loaded_from_pretrained_pipe )
+        SparkNLUComponent.__init__(self, annotator_class, component_type, nlu_ref, lang,loaded_from_pretrained_pipe= loaded_from_pretrained_pipe )

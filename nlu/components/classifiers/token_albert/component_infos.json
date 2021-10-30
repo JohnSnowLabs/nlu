@@ -1,22 +1,22 @@
 {
-  "name": "token_bert",
+  "name": "token_roberta",
   "output_level": "token",
   "description": "todo",
   "trainable": false,
   "outputs": [
-    "word_embeddings"
+    "ner"
   ],
   "inputs": [
     "sentence",
     "token"
   ],
-  "type": "word_embeddings",
+  "type": "token_classifier",
   "spark_input_column_names": [
     "sentence",
     "token"
   ],
   "spark_output_column_names": [
-    "tokenbert"
+    "ner"
   ],
   "provider": "sparknlp",
   "license": "open source",

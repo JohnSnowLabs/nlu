@@ -1,7 +1,7 @@
 from nlu.pipe.pipe_components import SparkNLUComponent
 
 class Normalizer(SparkNLUComponent):
-    def __init__(self, annotator_class='normalizer', language='en', component_type='normalizer', get_default=True, nlp_ref='',nlu_ref='',model=None, is_licensed=False):
+    def __init__(self, annotator_class='normalizer', language='en', component_type='normalizer', get_default=True, nlp_ref='',nlu_ref='',model=None, is_licensed=False, loaded_from_pretrained_pipe=False):
         if model != None :self.model = model
         else :
             if 'norm_document' in nlu_ref : annotator_class = 'document_normalizer'
@@ -23,4 +23,4 @@ class Normalizer(SparkNLUComponent):
                 if get_default : self.model =  DrugNorm.get_default_model()
 
 
-        SparkNLUComponent.__init__(self, annotator_class, component_type)
+        SparkNLUComponent.__init__(self, annotator_class, component_type,loaded_from_pretrained_pipe=loaded_from_pretrained_pipe)

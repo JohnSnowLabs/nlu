@@ -12,7 +12,6 @@ from pyspark.sql.types import StringType, StructType, StructField
 class DataConversionUtils():
     # Modin aswell but optional, so we dont import the type yet
     supported_types = [pyspark.sql.DataFrame, pd.DataFrame, pd.Series, np.ndarray]
-
     @staticmethod
     def except_text_col_not_found(cols):
         print(
@@ -21,6 +20,7 @@ class DataConversionUtils():
     @staticmethod
     def sdf_to_sdf(data, spark_sess, raw_text_column='text'):
         """No casting, Spark to Spark. Just add index col"""
+        logger.info(f"Casting Spark DF to Spark DF")
         output_datatype = 'spark'
         data = data.withColumn('origin_index', monotonically_increasing_id().alias('origin_index'))
         stranger_features = []
@@ -35,6 +35,7 @@ class DataConversionUtils():
     @staticmethod
     def pdf_to_sdf(data, spark_sess, raw_text_column='text'):
         """Casting pandas to spark and add index col"""
+        logger.info(f"Casting Pandas DF to Spark DF")
         output_datatype = 'pandas'
         stranger_features = []
         sdf = None
@@ -55,6 +56,8 @@ class DataConversionUtils():
     @staticmethod
     def pds_to_sdf(data, spark_sess, raw_text_column='text'):
         """Casting pandas series to spark and add index col.  # for df['text'] colum/series passing casting follows pseries->pdf->spark->pd """
+        logger.info(f"Casting Pandas Series to Spark DF")
+
         output_datatype = 'pandas_series'
         sdf = None
         schema = StructType([StructField(raw_text_column, StringType(), True)])
@@ -78,6 +81,7 @@ class DataConversionUtils():
     @staticmethod
     def np_to_sdf(data, spark_sess, raw_text_column='text'):
         """Casting numpy array to spark and add index col. This is a bit inefficient. Casting follow  np->pd->spark->pd. We could cut out the first pd step   """
+        logger.info(f"Casting Numpy Array to Spark DF")
         output_datatype = 'numpy_array'
         if len(data.shape) != 1: ValueError(
             f"Exception : Input numpy array must be 1 Dimensional for prediction.. Input data shape is{data.shape}")
@@ -87,6 +91,7 @@ class DataConversionUtils():
     @staticmethod
     def str_to_sdf(data, spark_sess, raw_text_column='text'):
         """Casting str  to spark and add index col. This is a bit inefficient. Casting follow  # inefficient, str->pd->spark->pd , we can could first pd"""
+        logger.info(f"Casting String to Spark DF")
         output_datatype = 'string'
         sdf = spark_sess.createDataFrame(pd.DataFrame({raw_text_column: data, 'origin_index': [0]}, index=[0]))
         return sdf, [], output_datatype
@@ -94,6 +99,7 @@ class DataConversionUtils():
     @staticmethod
     def str_list_to_sdf(data, spark_sess, raw_text_column='text'):
         """Casting str list  to spark and add index col. This is a bit inefficient. Casting follow  # # inefficient, list->pd->spark->pd , we can could first pd"""
+        logger.info(f"Casting String List to Spark DF")
         output_datatype = 'string_list'
         if all(type(elem) == str for elem in data):
             sdf = spark_sess.createDataFrame(
@@ -105,6 +111,7 @@ class DataConversionUtils():
     @staticmethod
     def fallback_modin_to_sdf(data, spark_sess, raw_text_column='text'):
         """Casting potential Modin data to spark and add index col. # Modin tests, This could crash if Modin not installed """
+        logger.info(f"Casting Modin DF to Spark DF")
         sdf = None
         output_datatype = ''
         try:
@@ -156,3 +163,104 @@ class DataConversionUtils():
                 return DataConversionUtils.fallback_modin_to_sdf(data, spark_sess, raw_text_column)
         except:
             ValueError("Data could not be converted to Spark Dataframe for internal conversion.")
+
+
+
+    @staticmethod
+    def str_to_pdf(data,raw_text_column):
+        logger.info(f"Casting String to Pandas DF")
+        return pd.DataFrame({raw_text_column:[data]}).reset_index().rename(columns = {'index' : 'origin_index'} ), [], 'string'
+
+    @staticmethod
+    def str_list_to_pdf(data,raw_text_column):
+        logger.info(f"Casting String List to Pandas DF")
+        return pd.DataFrame({raw_text_column:data}).reset_index().rename(columns = {'index' : 'origin_index'} ), [], 'string_list'
+
+    @staticmethod
+    def np_to_pdf(data,raw_text_column):
+        logger.info(f"Casting Numpy Array to Pandas DF")
+        return pd.DataFrame({raw_text_column:data}).reset_index().rename(columns = {'index' : 'origin_index'} ), [], 'string_list'
+    @staticmethod
+    def pds_to_pdf(data,raw_text_column):
+        return pd.DataFrame({raw_text_column:data}).reset_index().rename(columns = {'index' : 'origin_index'} ), [], 'string_list'
+
+
+    @staticmethod
+    def pdf_to_pdf(data,raw_text_column):
+        logger.info(f"Casting Pandas DF to Pandas DF")
+        data = data.reset_index().rename(columns = {'index' : 'origin_index'} )
+        stranger_features = list(data.columns)
+        if raw_text_column not in stranger_features:
+            print(f"Could not find {raw_text_column} col in df. Using {stranger_features[0]} col istead")
+            data = data.reset_index().rename(columns = {stranger_features[0] : raw_text_column} )
+        stranger_features.remove('text')
+        stranger_features.remove('origin_index')
+
+        return data , stranger_features, 'pandas'
+
+    @staticmethod
+    def sdf_to_pdf(data,raw_text_column):
+        logger.info(f"Casting Spark DF to Pandas DF")
+        data = data.toPandas().reset_index().rename(columns = {'index' : 'origin_index'} )
+        stranger_features = list(data.columns)
+        if raw_text_column not in stranger_features:
+            print(f"Could not find {raw_text_column} col in df. Using {stranger_features[0]} col istead")
+            data = data.reset_index().rename(columns = {stranger_features[0] : raw_text_column} )
+        stranger_features.remove('text')
+        stranger_features.remove('origin_index')
+
+        return data , stranger_features, 'spark'
+
+    @staticmethod
+    def to_pandas_df(data, raw_text_column='text'):
+        """
+        Convert data to LihgtPipeline Compatible Format, which is np.array[str], list[str] and str  but we need list anyways later.
+        So we create here a pd.Dataframe with a TEXT col if not already given
+        Convert supported datatypes to Pandas and extract extra data for prediction later on.
+
+        """
+        try:
+            if isinstance(data, pyspark.sql.dataframe.DataFrame):
+                return DataConversionUtils.pdf_to_pdf(data, raw_text_column)
+            elif isinstance(data, pd.DataFrame):
+                return DataConversionUtils.pdf_to_pdf(data, raw_text_column)
+            elif isinstance(data, pd.Series):
+                return DataConversionUtils.pds_to_pdf(data, raw_text_column)
+            elif isinstance(data, np.ndarray):
+                return DataConversionUtils.np_to_pdf(data, raw_text_column)
+            elif isinstance(data, str):
+                return DataConversionUtils.str_to_pdf(data, raw_text_column)
+            elif isinstance(data, list):
+                return DataConversionUtils.str_list_to_pdf(data, raw_text_column)
+            else:
+                return DataConversionUtils.fallback_modin_to_pdf(data, raw_text_column)
+        except:
+            ValueError("Data could not be converted to Spark Dataframe for internal conversion.")
+
+
+
+
+
+
+
+
+
+
+
+
+
+    @staticmethod
+    def size_of(data):
+        """
+        Convert data to LihgtPipeline Compatible Format, which is np.array[str], list[str] and str  but we need list anyways later.
+        So we create here a pd.Dataframe with a TEXT col if not already given
+        Convert supported datatypes to Pandas and extract extra data for prediction later on.
+
+        """
+        if isinstance(data, pyspark.sql.dataframe.DataFrame): return data.size()
+        elif isinstance(data, pd.DataFrame): return data.shape[0]
+        elif isinstance(data, pd.Series): return data.shape[0]
+        elif isinstance(data, np.ndarray): return data.shape[0]
+        elif isinstance(data, str): return 1
+        elif isinstance(data, list): return len(data)
+        else: return len(data)

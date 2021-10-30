@@ -361,7 +361,7 @@ class PipelineQueryVerifier():
                 pipe.add(new_component)
 
         logger.info(f"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-        logger.info(f"ALLL DEPENDENCIES SATISFIED")
+        logger.info(f"ALL DEPENDENCIES SATISFIED")
         return pipe
 
     @staticmethod
@@ -383,6 +383,7 @@ class PipelineQueryVerifier():
         # pipe = PipeUtils.enforce_AT_schema_on_pipeline(pipe)
 
         for component_to_check in pipe.components:
+            if component_to_check.info.loaded_from_pretrained_pipe: continue
             input_columns = set(component_to_check.info.spark_input_column_names)
             # a component either has '' storage ref or at most 1
             logger.info(
@@ -478,7 +479,7 @@ class PipelineQueryVerifier():
 
         # 2. Enforce naming schema <col_name>@<storage_ref> for storage_ref consumers and producers and <entity@nlu_ref> and <ner@nlu_ref> for NER and NER-Converters
         # and add NER-IOB to NER-Pretty converters for every NER model that is not already feeding a NER converter
-        pipe = PipeUtils.enforce_AT_schema_on_pipeline(pipe)
+        pipe = PipeUtils.enforce_AT_schema_on_pipeline_and_add_NER_converter(pipe)
 
         # 2.1 In Sentence Resolvers are in pipeline, all Sentence-Embeddings must feed from Chunk2Duc which stems from the entities column to resolve
         pipe = PipelineQueryVerifier.enforce_chunk2doc_on_sentence_embeddings(pipe)
@@ -533,6 +534,9 @@ class PipelineQueryVerifier():
                 if last_type_sorted is None or component.info.type == last_type_sorted:
                     if set(input_columns).issubset(provided_features):
                         correct_order_component_pipeline.append(component)
+
+                        # Leave pretrained pipe components untoeched
+                        if component.info.loaded_from_pretrained_pipe: all_components.remove(component)
                         if component in all_components: all_components.remove(component)
                         # for feature in component.info.spark_output_column_names: provided_features.append(feature)
 
@@ -652,6 +656,7 @@ class PipelineQueryVerifier():
 
         # Find Resolver
         for i, c in enumerate(pipe.components):
+            if c.info.loaded_from_pretrained_pipe: continue
             if isinstance(c.model, SentenceEntityResolverModel): resolvers.append(c)
             if isinstance(c.model, (NerConverter, NerConverterInternal)): ner_converters.append(c)
             if 'sentence_embeddings' == c.info.type: sentence_embeddings.append(c)

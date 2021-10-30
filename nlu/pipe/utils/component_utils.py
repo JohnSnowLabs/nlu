@@ -125,7 +125,8 @@ class ComponentUtils():
     @staticmethod
     def is_NER_provider(component:SparkNLUComponent) -> bool:
         """Check if a NLU Component wraps a NER/NER-Medical model """
-        return component.info.name.split('@')[0] in ['named_entity_recognizer_dl', 'medical_named_entity_recognizer_dl','ner', 'named_entity_recognizer_dl_healthcare', 'med_ner']
+        return component.info.name.split('@')[0] in ['named_entity_recognizer_dl', 'medical_named_entity_recognizer_dl','ner', 'named_entity_recognizer_dl_healthcare', 'med_ner'] \
+               or component.info.type == 'token_classifier'
 
     @staticmethod
     def is_NER_converter(component:SparkNLUComponent) -> bool:

@@ -33,6 +33,7 @@ from nlu.components.labeled_dependency_parser import LabeledDependencyParser as 
 from nlu.components.unlabeled_dependency_parser import UnlabeledDependencyParser as UnlabledDepParser
 from nlu.pipe.utils.pipe_utils import PipeUtils
 from nlu.pipe.utils.component_utils import ComponentUtils
+from sparknlp.base import *
 
 
 def load_offline_model(path):
@@ -577,7 +578,6 @@ def construct_component_from_pipe_identifier(language, nlp_ref, nlu_ref, path=No
         pipe = LightPipeline(PipelineModel.load(path=path))
         iterable_stages = pipe.pipeline_model.stages
     constructed_components = []
-
     # for component in pipe.light_model.pipeline_model.stages:
     for component in iterable_stages:
 
@@ -590,15 +590,16 @@ def construct_component_from_pipe_identifier(language, nlp_ref, nlu_ref, path=No
                      loaded_from_pretrained_pipe=True))
         elif isinstance(component, MultiClassifierDLModel):
             constructed_components.append(
-                nlu.Classifier(model=component, annotator_class='multi_classifier', lang=language, nlu_ref=nlu_ref,
+                nlu.Classifier(model=component, annotator_class='multi_classifier', language=language, nlu_ref=nlu_ref,
                                nlp_ref=nlp_ref, loaded_from_pretrained_pipe=True, do_ref_checks=False))
         elif isinstance(component, PerceptronModel):
             constructed_components.append(
-                nlu.Classifier(annotator_class='pos', model=component, lang=language, nlu_ref=nlu_ref, nlp_ref=nlp_ref,
+                nlu.Classifier(annotator_class='pos', model=component, language=language, nlu_ref=nlu_ref,
+                               nlp_ref=nlp_ref,
                                loaded_from_pretrained_pipe=True, do_ref_checks=False))
         elif isinstance(component, (ClassifierDl, ClassifierDLModel)):
             constructed_components.append(
-                nlu.Classifier(annotator_class='classifier_dl', model=component, lang=language, nlu_ref=nlu_ref,
+                nlu.Classifier(annotator_class='classifier_dl', model=component, language=language, nlu_ref=nlu_ref,
                                nlp_ref=nlp_ref, loaded_from_pretrained_pipe=True, do_ref_checks=False))
         elif isinstance(component, UniversalSentenceEncoder):
             constructed_components.append(
@@ -645,7 +646,7 @@ def construct_component_from_pipe_identifier(language, nlp_ref, nlu_ref, path=No
                                     nlu_ref=nlu_ref, nlp_ref=nlp_ref, loaded_from_pretrained_pipe=True))
         elif parsed in Spellbook.classifiers:
             constructed_components.append(
-                nlu.Classifier(model=component, lang=language, nlu_ref=nlu_ref, nlp_ref=nlp_ref,
+                nlu.Classifier(model=component, language=language, nlu_ref=nlu_ref, nlp_ref=nlp_ref,
                                loaded_from_pretrained_pipe=True))
 
 
@@ -662,31 +663,31 @@ def construct_component_from_pipe_identifier(language, nlp_ref, nlu_ref, path=No
 
 
         elif isinstance(component, RegexMatcherModel) or parsed == 'match':
-            constructed_components.append(nlu.Matcher(model=component, annotator_class='regex', nlu_ref=nlu_ref))
+            constructed_components.append(nlu.Matcher(model=component, annotator_class='regex', nlu_ref=nlu_ref, loaded_from_pretrained_pipe=True))
         elif isinstance(component, TextMatcherModel):
-            constructed_components.append(nlu.Matcher(model=component, annotator_class='text', nlu_ref=nlu_ref))
+            constructed_components.append(nlu.Matcher(model=component, annotator_class='text', nlu_ref=nlu_ref, loaded_from_pretrained_pipe=True))
         elif isinstance(component, DateMatcher):
-            constructed_components.append(nlu.Matcher(model=component, annotator_class='date', nlu_ref=nlu_ref))
+            constructed_components.append(nlu.Matcher(model=component, annotator_class='date', nlu_ref=nlu_ref, loaded_from_pretrained_pipe=True))
         elif isinstance(component, ContextSpellCheckerModel):
-            constructed_components.append(nlu.SpellChecker(model=component, annotator_class='context', nlu_ref=nlu_ref))
+            constructed_components.append(nlu.SpellChecker(model=component, annotator_class='context', nlu_ref=nlu_ref, loaded_from_pretrained_pipe=True))
         elif isinstance(component, SymmetricDeleteModel):
             constructed_components.append(
-                nlu.SpellChecker(model=component, annotator_class='symmetric', nlu_ref=nlu_ref))
+                nlu.SpellChecker(model=component, annotator_class='symmetric', nlu_ref=nlu_ref, loaded_from_pretrained_pipe=True))
         elif isinstance(component, NorvigSweetingModel):
-            constructed_components.append(nlu.SpellChecker(model=component, annotator_class='norvig', nlu_ref=nlu_ref))
+            constructed_components.append(nlu.SpellChecker(model=component, annotator_class='norvig', nlu_ref=nlu_ref, loaded_from_pretrained_pipe=True))
         elif isinstance(component, LemmatizerModel):
-            constructed_components.append(nlu.lemmatizer.Lemmatizer(model=component, nlu_ref=nlu_ref))
+            constructed_components.append(nlu.lemmatizer.Lemmatizer(model=component, nlu_ref=nlu_ref, loaded_from_pretrained_pipe=True))
         elif isinstance(component, NormalizerModel):
-            constructed_components.append(nlu.normalizer.Normalizer(model=component, nlu_ref=nlu_ref))
+            constructed_components.append(nlu.normalizer.Normalizer(model=component, nlu_ref=nlu_ref, loaded_from_pretrained_pipe=True))
         elif isinstance(component, Stemmer):
-            constructed_components.append(nlu.stemmer.Stemmer(model=component, nlu_ref=nlu_ref))
+            constructed_components.append(nlu.stemmer.Stemmer(model=component, nlu_ref=nlu_ref, loaded_from_pretrained_pipe=True))
         elif isinstance(component, (NerDLModel, NerCrfModel)):
             constructed_components.append(
-                nlu.Classifier(model=component, annotator_class='ner', lang=language, nlu_ref=nlu_ref, nlp_ref=nlp_ref,
+                nlu.Classifier(model=component, annotator_class='ner', language=language, nlu_ref=nlu_ref, nlp_ref=nlp_ref,
                                loaded_from_pretrained_pipe=True))
         elif isinstance(component, LanguageDetectorDL):
             constructed_components.append(
-                nlu.Classifier(model=component, annotator_class='language_detector', nlu_ref=nlu_ref))
+                nlu.Classifier(model=component, annotator_class='language_detector', nlu_ref=nlu_ref, loaded_from_pretrained_pipe=True))
         elif isinstance(component, DependencyParserModel):
             constructed_components.append(
                 UnlabledDepParser(model=component, nlu_ref=nlu_ref, loaded_from_pretrained_pipe=True))
@@ -694,15 +695,15 @@ def construct_component_from_pipe_identifier(language, nlp_ref, nlu_ref, path=No
             constructed_components.append(
                 LabledDepParser(model=component, nlu_ref=nlu_ref, loaded_from_pretrained_pipe=True, ))
         elif isinstance(component, MultiClassifierDLModel):
-            constructed_components.append(nlu.Classifier(model=component, nlp_ref='multiclassifierdl', nlu_ref=nlu_ref))
+            constructed_components.append(nlu.Classifier(model=component, nlp_ref='multiclassifierdl', nlu_ref=nlu_ref, loaded_from_pretrained_pipe=True))
         elif isinstance(component, (SentimentDetectorModel, SentimentDLModel)):
-            constructed_components.append(nlu.Classifier(model=component, nlp_ref='sentimentdl', nlu_ref=nlu_ref))
+            constructed_components.append(nlu.Classifier(model=component, nlp_ref='sentimentdl', nlu_ref=nlu_ref, loaded_from_pretrained_pipe=True))
         elif isinstance(component, (SentimentDetectorModel, ViveknSentimentModel)):
-            constructed_components.append(nlu.Classifier(model=component, nlp_ref='vivekn', nlu_ref=nlu_ref))
+            constructed_components.append(nlu.Classifier(model=component, nlp_ref='vivekn', nlu_ref=nlu_ref, loaded_from_pretrained_pipe=True))
 
         elif isinstance(component, NGram):
             constructed_components.append(
-                nlu.chunker.Chunker(annotator_class='ngram', model=component, nlu_ref=nlu_ref))
+                nlu.chunker.Chunker(annotator_class='ngram', model=component, nlu_ref=nlu_ref, loaded_from_pretrained_pipe=True))
         elif isinstance(component, StopWordsCleaner):
             from nlu.components.stopwordscleaner import StopWordsCleaner as Stopw
             constructed_components.append(Stopw(annotator_class='Stopw', model=component, nlu_ref=nlu_ref))
@@ -711,18 +712,18 @@ def construct_component_from_pipe_identifier(language, nlp_ref, nlu_ref, path=No
             constructed_components.append(
                 nlu.Matcher(model=component, nlu_ref=nlu_ref, loaded_from_pretrained_pipe=True))
         elif isinstance(component, (T5Transformer)):
-            constructed_components.append(nlu.Seq2Seq(annotator_class='t5', model=component, nlu_ref=nlu_ref))
+            constructed_components.append(nlu.Seq2Seq(annotator_class='t5', model=component, nlu_ref=nlu_ref, loaded_from_pretrained_pipe=True))
         elif isinstance(component, (MarianTransformer)):
-            constructed_components.append(nlu.Seq2Seq(annotator_class='marian', model=component, nlu_ref=nlu_ref))
+            constructed_components.append(nlu.Seq2Seq(annotator_class='marian', model=component, nlu_ref=nlu_ref, loaded_from_pretrained_pipe=True))
 
         elif isinstance(component, SentenceEmbeddings):
-            constructed_components.append(Util(annotator_class='sentence_embeddings', model=component, nlu_ref=nlu_ref))
+            constructed_components.append(Util(annotator_class='sentence_embeddings', model=component, nlu_ref=nlu_ref,loaded_from_pretrained_pipe=True ))
         elif parsed in Spellbook.word_embeddings + Spellbook.sentence_embeddings:
             constructed_components.append(
                 nlu.Embeddings(model=component, lang=language, nlu_ref=nlu_ref, nlp_ref=nlp_ref,
                                loaded_from_pretrained_pipe=True))
         elif isinstance(component, (Finisher, EmbeddingsFinisher)):
-            continue  # Dont need fnishers since nlu handles finishign
+            continue  # Dont need finishing since nlu handles finishing
         elif is_licensed:
             from sparknlp_jsl.annotator import AssertionDLModel, AssertionFilterer, AssertionLogRegModel, Chunk2Token, \
                 ChunkFilterer
@@ -743,22 +744,15 @@ def construct_component_from_pipe_identifier(language, nlp_ref, nlu_ref, path=No
                     nlu.Asserter(annotator_class='assertion_log_reg', model=component, nlu_ref=nlu_ref, nlp_ref=nlp_ref,
                                  loaded_from_pretrained_pipe=True))
 
-
             elif isinstance(component, SentenceEntityResolverModel):
                 constructed_components.append(
                     nlu.Resolver(annotator_class='sentence_entity_resolver', model=component, nlu_ref=nlu_ref,
                                  nlp_ref=nlp_ref, loaded_from_pretrained_pipe=True))
 
-            # elif isinstance(component, ChunkEntityResolverModel):
-            #     constructed_components.append(
-            #         nlu.Resolver(annotator_class='chunk_entity_resolver', model=component, nlu_ref=nlu_ref,
-            #                      nlp_ref=nlp_ref, loaded_from_pretrained_pipe=True))
-
             elif isinstance(component, RelationExtractionModel):
                 constructed_components.append(
                     nlu.Relation(annotator_class='relation_extractor', model=component, nlu_ref=nlu_ref,
                                  nlp_ref=nlp_ref, loaded_from_pretrained_pipe=True))
-
 
             elif isinstance(component, RelationExtractionDLModel):
                 constructed_components.append(
@@ -769,45 +763,39 @@ def construct_component_from_pipe_identifier(language, nlp_ref, nlu_ref, path=No
                 constructed_components.append(
                     nlu.Classifier(annotator_class='ner_healthcare', model=component, nlu_ref=nlu_ref, nlp_ref=nlp_ref,
                                    loaded_from_pretrained_pipe=True))
-
             elif isinstance(component, ChunkMergeModel):
                 constructed_components.append(
                     nlu.Util(annotator_class='chunk_merger', model=component, nlu_ref=nlu_ref, nlp_ref=nlp_ref,
                              loaded_from_pretrained_pipe=True))
-
             elif isinstance(component, ContextualParserModel):
                 from nlu.components.chunker import Chunker as Chu
                 constructed_components.append(
                     Chu(annotator_class='contextual_parser', model=component, nlu_ref=nlu_ref, nlp_ref=nlp_ref,
                         loaded_from_pretrained_pipe=True))
-
-
             elif isinstance(component, DeIdentificationModel):
                 constructed_components.append(
                     nlu.Deidentification(annotator_class='deidentifier', model=component, nlu_ref=nlu_ref,
                                          nlp_ref=nlp_ref, loaded_from_pretrained_pipe=True))
-
-
-
             else:
                 if strict: raise Exception(
                     f"Could not infer component type for lang={language} and nlp_ref={nlp_ref} of type={component} during pipeline conversion ")
                 logger.warning(
                     f"Warning: Could not infer component type for lang={language} and nlp_ref={nlp_ref} and model {component} during pipeline conversion, using default type Normalizer")
-                constructed_components.append(nlu.normalizer.Normalizer(model=component))
+                constructed_components.append(nlu.normalizer.Normalizer(model=component, loaded_from_pretrained_pipe=True))
         else:
             if strict: raise Exception(
                 f"Could not infer component type for lang={language} and nlp_ref={nlp_ref} of type={component} during pipeline conversion ")
             logger.warning(
                 f"Warning: Could not infer component type for lang={language} and nlp_ref={nlp_ref} and model {component} during pipeline conversion, using default type Normalizer")
-            constructed_components.append(nlu.normalizer.Normalizer(model=component))
+            constructed_components.append(nlu.normalizer.Normalizer(model=component, loaded_from_pretrained_pipe=True))
 
         logger.info(f"Extracted into NLU Component type : {parsed}", )
-        if None in constructed_components: raise Exception(
-            f"Could not infer component type for lang={language} and nlp_ref={nlp_ref} during pipeline conversion,")
+        if None in constructed_components: raise Exception(f"Could not infer component type for lang={language} and nlp_ref={nlp_ref} during pipeline conversion,")
 
-    return PipeUtils.enforece_AT_embedding_provider_output_col_name_schema_for_list_of_components(
-        ComponentUtils.set_storage_ref_attribute_of_embedding_converters(constructed_components))
+    # TODO update input/output cols on Annotators
+    return ComponentUtils.set_storage_ref_attribute_of_embedding_converters(PipeUtils.set_column_values_on_components_from_pretrained_pipe(constructed_components, nlp_ref, language,path))
+    # return PipeUtils.enforece_AT_embedding_provider_output_col_name_schema_for_list_of_components(
+    #     ComponentUtils.set_storage_ref_attribute_of_embedding_converters(constructed_components))
 
 
 def construct_component_from_identifier(language, component_type='', dataset='', component_embeddings='', nlu_ref='',
@@ -845,7 +833,7 @@ def construct_component_from_identifier(language, component_type='', dataset='',
                            configs=dataset, is_licensed=is_licensed)
 
         # if any([component_type in NameSpace.word_embeddings,dataset in NameSpace.word_embeddings, nlu_ref in NameSpace.word_embeddings, nlp_ref in NameSpace.word_embeddings]):
-
+        # TODO new CATEGRRY for token classifiers or smth else??
         elif any(
                 x in Spellbook.classifiers for x in [nlp_ref, nlu_ref, dataset, component_type, ] + dataset.split('_')):
             return Classifier(get_default=False, nlp_ref=nlp_ref, nlu_ref=nlu_ref, language=language,
@@ -863,8 +851,10 @@ def construct_component_from_identifier(language, component_type='', dataset='',
             return Embeddings(get_default=False, nlp_ref=nlp_ref, nlu_ref=nlu_ref, lang=language,
                               is_licensed=is_licensed)
 
-
-
+        if any(x in Spellbook.token_classifiers and not x in Spellbook.classifiers for x in
+               [nlp_ref, nlu_ref, dataset, component_type, ] + dataset.split('_')):
+            return Embeddings(get_default=False, nlp_ref=nlp_ref, nlu_ref=nlu_ref, lang=language,
+                              is_licensed=is_licensed)
 
         elif any('spell' in x for x in [nlp_ref, nlu_ref, dataset, component_type]):
             return SpellChecker(annotator_class=component_type, language=language, get_default=True, nlp_ref=nlp_ref,

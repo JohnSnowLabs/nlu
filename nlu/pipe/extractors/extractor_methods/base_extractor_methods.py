@@ -13,6 +13,19 @@ from nlu.pipe.extractors.extractor_base_data_classes import *
 from functools import reduce, partial
 import pandas as pd
 
+from  sparknlp.annotation import Annotation
+
+def extract_light_pipe_rows(df):
+    """Extract Annotations from Light Pipeline into same represenation as other extractors in thos module"""
+    ff = lambda row : list(map(f,row)) if isinstance( row, List) else row
+    f = lambda anno : dict ( annotatorType = anno.annotator_type,
+                            begin=anno.begin, end=anno.end,
+                            result = anno.result,
+                            metadata=anno.metadata,
+                            embeddings = anno.embeddings if  isinstance(anno,List) else []) \
+                     if isinstance(anno, Annotation) else anno
+    return df.applymap(ff)
+
 
 def extract_pyspark_rows(r: pd.Series, ) -> pd.Series:
     """ Convert pyspark.sql.Row[Annotation] to List(Dict[str,str]) objects. Except for key=metadata in dict, this element in the Dict which is [str,Dict[str,str]]
@@ -187,20 +200,20 @@ def extract_master(row: pd.Series, configs: SparkNLPExtractorConfig) -> pd.Serie
         })
 
 
-def apply_extractors_and_merge(df, column_to_extractor_map, keep_stranger_features, stranger_features):
+def apply_extractors_and_merge(df, anno_2_ex_config, keep_stranger_features, stranger_features):
     """ apply extract_master on all fields with corrosponding configs after converting Pyspark Rows to List[Dict]
     and merge them to a final DF (1 to 1 mapping still)
     df  The Df we want to apply the extractors on
     columns_to_extractor_map Map column names to extractor configs. Columns which are not in these keys will be ignored These configs will be passed to master_extractor for every column
     """
     # keep df and ex_resolver in closure and apply base extractor with configs for each col
-    extractor = lambda c: df[c].apply(extract_master, configs=column_to_extractor_map[c])
+    extractor = lambda c: df[c].apply(extract_master, configs=anno_2_ex_config[c])
     keep_strangers = lambda c: df[c]
 
     # merged_extraction_df
     # apply the extract_master together with it's configs to every column and geenrate a list of output DF's, one per Spark NLP COL
     return pd.concat(
-        list(map(extractor, column_to_extractor_map.keys())) +
+        list(map(extractor, anno_2_ex_config.keys())) +
         list(map(keep_strangers, stranger_features)) if keep_stranger_features else [],
         axis=1)
     # return zip_and_explode(
@@ -208,16 +221,6 @@ def apply_extractors_and_merge(df, column_to_extractor_map, keep_stranger_featur
     #             list(map(extractor,column_to_extractor_map.keys())) +
     #             list(map(keep_stragers,stranger_features)) if keep_stranger_features else [],
     #             axis=1))
-
-
-# !wget https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/scripts/colab_setup.sh -O - | bash
-# ! pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple peanut_butter_data_time==3.0.1rc56 > /dev/null
-# ! pip install spark-nlp-display
-
-# !wget https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/scripts/colab_setup.sh -O - | bash
-# ! pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple peanut_butter_data_time==3.0.1rc71 > /dev/null
-# import nlu
-# import nlu
 
 
 # def pad_series_for_multi_pad(s):

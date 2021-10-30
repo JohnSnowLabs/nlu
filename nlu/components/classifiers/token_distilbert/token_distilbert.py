@@ -5,13 +5,13 @@ class TokenDistilBert:
     def get_default_model():
         return DistilBertForTokenClassification.pretrained() \
         .setInputCols("sentence", "token") \
-        .setOutputCol("tokendistilbert")
+        .setOutputCol("ner")
 
     @staticmethod
-    def get_pretrained_model(name, language):
-        return DistilBertForTokenClassification.pretrained(name, language) \
+    def get_pretrained_model(name, language, bucket=None):
+        return DistilBertForTokenClassification.pretrained(name, language,bucket) \
             .setInputCols("sentence", "token") \
-            .setOutputCol("tokendistilbert")
+            .setOutputCol("ner")
 
 
 
