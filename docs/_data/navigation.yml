@@ -2,20 +2,24 @@ header:
   - title: Home
     url: /
   - title: Docs
-    url: /docs/en/install
+    url: https://nlp.johnsnowlabs.com/docs
     key: docs
+  - title:  NLU for Healthcare
+    url:    /docs/en/nlu_for_healthcare
+    key: docs-nlu-for-healthcare
   - title: Visualizations
     url:  /docs/en/viz_examples
     key: viz
   - title: Streamlit
     url: /docs/en/streamlit_viz_examples
     key: streamlit_viz
-  - title: Tutorial Notebooks
+  - title: Tutorials
     url:    /docs/en/notebooks
     key: tutorial_notebooks
   - title: Spellbook
     url:    /docs/en/spellbook
     key: tutorial_notebooks
+
 #  - title: Articles
 #    url: /articles
 #    key: articles
@@ -29,23 +33,25 @@ header:
   - title: '<span style="color: #FF8A00;"><i class="fab fa-slack-hash fa-2x"></i></span>'
     url: https://join.slack.com/t/spark-nlp/shared_invite/zt-lutct9gm-kuUazcyFKhuGY3_0AMkxqA
 docs-en:
-  - title:     Getting Started
+  - title:     NLU
     children:
-      - title:  Quick Start
+      - title:  Installation
         url:    /docs/en/install
-      - title:  General Concepts
+      - title:  Usage
         url:    /docs/en/concepts
-      - title:  Examples
+      - title:  General Examples
         url:    /docs/en/examples
+      - title:  NLU for Healthcare
+        url:    /docs/en/nlu_for_healthcare
       - title:  NLU for Healthcare Examples
         url:    /docs/en/examples_hc
       - title:  Training Models
         url:    /docs/en/training
-      - title:  Notebook tutorials
+      - title:  Tutorial Notebooks
         url:    /docs/en/notebooks
       - title:  Visualization Examples
         url:    /docs/en/viz_examples
-      - title: Streamlit Visualization
+      - title: Streamlit Visualizations
         url: /docs/en/streamlit_viz_examples
         key: streamlit_viz
       - title:  Spellbook
