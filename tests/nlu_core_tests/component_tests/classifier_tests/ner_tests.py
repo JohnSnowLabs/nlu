@@ -6,7 +6,6 @@ from tests.test_utils import get_sample_pdf_with_labels, get_sample_pdf, get_sam
     get_sample_pdf_with_no_text_col, get_sample_spark_dataframe
 from nlu import *
 
-import tests.nlu_hc_tests.secrets as sct
 
 class TestNer(unittest.TestCase):
 
