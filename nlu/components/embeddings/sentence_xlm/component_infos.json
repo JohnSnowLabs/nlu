@@ -1,10 +1,10 @@
 {
-  "name": "xlm",
+  "name": "sentence_xlm",
   "output_level": "token",
   "description": "todo",
   "trainable": false,
   "outputs": [
-    "word_embeddings"
+    "sentence_embeddings"
   ],
   "inputs": [
     "sentence",
@@ -16,7 +16,7 @@
     "token"
   ],
   "spark_output_column_names": [
-    "xlm_roberta"
+    "sentence_xlm_roberta"
   ],
   "provider": "sparknlp",
   "license": "open source",

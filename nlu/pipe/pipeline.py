@@ -134,6 +134,7 @@ class NLUPipeline(BasePipe):
         self.provider = 'sparknlp'
         self.pipe_ready = False  # ready when we have created a spark df
         self.failed_pyarrow_conversion = False
+        self.anno2final_cols = [] # Maps Anno to output pandas col
         # The NLU pipeline uses  types of Spark NLP annotators to identify how to handle different columns
 
     def get_sample_spark_dataframe(self):

@@ -14,4 +14,4 @@ class NLUSentenceDetector(SparkNLUComponent):
             elif annotator_class == 'pragmatic_sentence_detector' :
                 from nlu import PragmaticSentenceDetector
                 if get_default : self.model =  PragmaticSentenceDetector.get_default_model()
-        SparkNLUComponent.__init__(self, annotator_class, component_type, nlu_ref, lang,loaded_from_pretrained_pipe )
+        SparkNLUComponent.__init__(self, annotator_class, component_type, nlu_ref, lang,loaded_from_pretrained_pipe=loaded_from_pretrained_pipe )

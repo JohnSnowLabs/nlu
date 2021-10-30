@@ -4409,6 +4409,12 @@ class Spellbook():
                 'en.classify.token_bert.ner_clinical': 'bert_token_classifier_ner_clinical',
                 'en.classify.token_bert.ner_jsl': 'bert_token_classifier_ner_jsl',
 
+                # 3.3.1 healthcare
+                'en.classify.token_bert.ner_chemical':'bert_token_classifier_ner_chemicals',
+                'en.resolve.umls_disease_syndrome' : 'sbiobertresolve_umls_disease_syndrome',
+                'en.resolve.umls_clinical_drugs' : 'sbiobertresolve_umls_clinical_drugs',
+
+
             },
 
         'de':
@@ -4443,7 +4449,7 @@ class Spellbook():
     pretrained_healthcare_pipe_references = {
         'en': {
 
-            'en.med_ner.profiling_clinical' :  'ner_profiling_clinical', # TODO wip
+            'en.med_ner.profiling_clinical' :  'ner_profiling_clinical',
             'en.med_ner.profiling_biobert'  :  'ner_profiling_biobert',
             'en.resolve.icd10cm.umls': 'icd10cm_umls_mapping',
             'en.resolve.mesh.umls': 'mesh_umls_mapping',

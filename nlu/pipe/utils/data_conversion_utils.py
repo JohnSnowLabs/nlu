@@ -20,6 +20,7 @@ class DataConversionUtils():
     @staticmethod
     def sdf_to_sdf(data, spark_sess, raw_text_column='text'):
         """No casting, Spark to Spark. Just add index col"""
+        logger.info(f"Casting Spark DF to Spark DF")
         output_datatype = 'spark'
         data = data.withColumn('origin_index', monotonically_increasing_id().alias('origin_index'))
         stranger_features = []
@@ -34,6 +35,7 @@ class DataConversionUtils():
     @staticmethod
     def pdf_to_sdf(data, spark_sess, raw_text_column='text'):
         """Casting pandas to spark and add index col"""
+        logger.info(f"Casting Pandas DF to Spark DF")
         output_datatype = 'pandas'
         stranger_features = []
         sdf = None
@@ -54,6 +56,8 @@ class DataConversionUtils():
     @staticmethod
     def pds_to_sdf(data, spark_sess, raw_text_column='text'):
         """Casting pandas series to spark and add index col.  # for df['text'] colum/series passing casting follows pseries->pdf->spark->pd """
+        logger.info(f"Casting Pandas Series to Spark DF")
+
         output_datatype = 'pandas_series'
         sdf = None
         schema = StructType([StructField(raw_text_column, StringType(), True)])
@@ -77,6 +81,7 @@ class DataConversionUtils():
     @staticmethod
     def np_to_sdf(data, spark_sess, raw_text_column='text'):
         """Casting numpy array to spark and add index col. This is a bit inefficient. Casting follow  np->pd->spark->pd. We could cut out the first pd step   """
+        logger.info(f"Casting Numpy Array to Spark DF")
         output_datatype = 'numpy_array'
         if len(data.shape) != 1: ValueError(
             f"Exception : Input numpy array must be 1 Dimensional for prediction.. Input data shape is{data.shape}")
@@ -86,6 +91,7 @@ class DataConversionUtils():
     @staticmethod
     def str_to_sdf(data, spark_sess, raw_text_column='text'):
         """Casting str  to spark and add index col. This is a bit inefficient. Casting follow  # inefficient, str->pd->spark->pd , we can could first pd"""
+        logger.info(f"Casting String to Spark DF")
         output_datatype = 'string'
         sdf = spark_sess.createDataFrame(pd.DataFrame({raw_text_column: data, 'origin_index': [0]}, index=[0]))
         return sdf, [], output_datatype
@@ -93,6 +99,7 @@ class DataConversionUtils():
     @staticmethod
     def str_list_to_sdf(data, spark_sess, raw_text_column='text'):
         """Casting str list  to spark and add index col. This is a bit inefficient. Casting follow  # # inefficient, list->pd->spark->pd , we can could first pd"""
+        logger.info(f"Casting String List to Spark DF")
         output_datatype = 'string_list'
         if all(type(elem) == str for elem in data):
             sdf = spark_sess.createDataFrame(
@@ -104,6 +111,7 @@ class DataConversionUtils():
     @staticmethod
     def fallback_modin_to_sdf(data, spark_sess, raw_text_column='text'):
         """Casting potential Modin data to spark and add index col. # Modin tests, This could crash if Modin not installed """
+        logger.info(f"Casting Modin DF to Spark DF")
         sdf = None
         output_datatype = ''
         try:
@@ -160,14 +168,17 @@ class DataConversionUtils():
 
     @staticmethod
     def str_to_pdf(data,raw_text_column):
+        logger.info(f"Casting String to Pandas DF")
         return pd.DataFrame({raw_text_column:[data]}).reset_index().rename(columns = {'index' : 'origin_index'} ), [], 'string'
 
     @staticmethod
     def str_list_to_pdf(data,raw_text_column):
+        logger.info(f"Casting String List to Pandas DF")
         return pd.DataFrame({raw_text_column:data}).reset_index().rename(columns = {'index' : 'origin_index'} ), [], 'string_list'
 
     @staticmethod
     def np_to_pdf(data,raw_text_column):
+        logger.info(f"Casting Numpy Array to Pandas DF")
         return pd.DataFrame({raw_text_column:data}).reset_index().rename(columns = {'index' : 'origin_index'} ), [], 'string_list'
     @staticmethod
     def pds_to_pdf(data,raw_text_column):
@@ -176,6 +187,7 @@ class DataConversionUtils():
 
     @staticmethod
     def pdf_to_pdf(data,raw_text_column):
+        logger.info(f"Casting Pandas DF to Pandas DF")
         data = data.reset_index().rename(columns = {'index' : 'origin_index'} )
         stranger_features = list(data.columns)
         if raw_text_column not in stranger_features:
@@ -188,6 +200,7 @@ class DataConversionUtils():
 
     @staticmethod
     def sdf_to_pdf(data,raw_text_column):
+        logger.info(f"Casting Spark DF to Pandas DF")
         data = data.toPandas().reset_index().rename(columns = {'index' : 'origin_index'} )
         stranger_features = list(data.columns)
         if raw_text_column not in stranger_features:

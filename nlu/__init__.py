@@ -1,4 +1,4 @@
-__version__ = '3.2.0'
+__version__ = '3.3.0'
 hard_offline_checks = False
 
 
@@ -57,8 +57,6 @@ from nlu.components.embeddings.roberta.roberta import Roberta
 from nlu.components.embeddings.xlm.xlm import XLM
 
 from nlu.components.embeddings.longformer.longformer import Longformer
-from nlu.components.embeddings.token_bert.token_bert import TokenBert
-from nlu.components.embeddings.token_distilbert.token_distilbert import TokenDistilBert
 from nlu.components.embeddings.xlm.xlm import XLM
 
 from nlu.components.utils.sentence_embeddings.spark_nlp_sentence_embedding import SparkNLPSentenceEmbeddings
@@ -79,7 +77,6 @@ from nlu.components.dependency_untypeds.unlabeled_dependency_parser.unlabeled_de
     UnlabeledDependencyParser
 from nlu.components.dependency_typeds.labeled_dependency_parser.labeled_dependency_parser import \
     LabeledDependencyParser
-
 # 0 Base internal Spark NLP structure.md required for all JSL components
 from nlu.components.utils.document_assembler.spark_nlp_document_assembler import SparkNlpDocumentAssembler
 from nlu.components.utils.ner_to_chunk_converter.ner_to_chunk_converter import NerToChunkConverter
@@ -117,6 +114,15 @@ from nlu.components.classifiers.pos.part_of_speech_jsl import PartOfSpeechJsl
 from nlu.components.matchers.date_matcher.date_matcher import DateMatcher
 from nlu.components.matchers.regex_matcher.regex_matcher import RegexMatcher
 from nlu.components.matchers.text_matcher.text_matcher import TextMatcher
+from nlu.components.classifiers.token_bert.token_bert import TokenBert
+from nlu.components.classifiers.token_distilbert.token_distilbert import TokenDistilBert
+
+from nlu.components.classifiers.token_albert.token_albert import TokenAlbert
+from nlu.components.classifiers.token_roberta.token_roberta import TokenRoBerta
+from nlu.components.classifiers.token_xlm_roberta.token_xlmroberta import TokenXlmRoBerta
+from nlu.components.classifiers.token_longformer.token_longformer import TokenLongFormer
+from nlu.components.classifiers.token_xlnet.token_xlnet import TokenXlnet
+from nlu.components.embeddings.sentence_xlm.sentence_xlm import Sentence_XLM
 
 from nlu.components.matcher import Matcher
 
@@ -311,7 +317,6 @@ def load(request: str = 'from_disk', path: Optional[str] = None, verbose: bool =
     is_authenticated = True
     auth(gpu=gpu)  # check if secets are in default loc, if yes load them and create licensed context automatically
     spark = get_open_source_spark_context(gpu)
-
     spark.catalog.clearCache()
 
     # Enable PyArrow
