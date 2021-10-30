@@ -19,7 +19,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 
 REQUIRED_PKGS = [
     # 'pyspark>=2.4.0,<2.5',
-    'spark-nlp>=3.2.0,<3.3.0',
+    'spark-nlp>=3.3.0,<3.4.0',
     'numpy',
     'pyarrow>=0.16.0',
     'pandas',
