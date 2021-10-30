@@ -105,7 +105,7 @@ nlu.load('sentiment').predict('Why is NLU is awesome? Because of the sauce!')
 
 </div><div class="h3-box" markdown="1">
 
-## Supported data types
+# Supported data types
 
 NLU supports currently the following data formats :
 - Pandas Dataframes 
@@ -116,9 +116,22 @@ NLU supports currently the following data formats :
 - Strings
 - Arrays of Strings
 
+
+## Compatibility with Spark NLP and Spark NLP for Healthcare
+
+NLU 3.X  is compatible with all Spark NLP 3.X versions.
+NOTE : If Spark NLP releases 3.X+1 and NLU is still on 3.X, then NLU will throw errors.
+
+
+
 </div><div class="block-wrapper"><div class="block-box" markdown="1">
 
+
+
 ### Troubleshoot
+
+
+
 # Troubleshoot
 
 - On Arch based distributions like Manjaro you might encounter an error because of missing libffi.so.6.      
