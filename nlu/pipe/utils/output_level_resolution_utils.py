@@ -24,7 +24,7 @@ class OutputLevelUtils():
         'document': [DocumentAssembler, Chunk2Doc,
                      YakeKeywordExtraction,DocumentNormalizer
                      ],
-        'sentence': [SentenceDetector, SentenceDetectorDLApproach, ],
+        'sentence': [SentenceDetector, SentenceDetectorDLApproach,BertForSequenceClassification ],
         'chunk': [Chunker, ChunkEmbeddings,  ChunkTokenizer, Token2Chunk, TokenAssembler,
                   NerConverter, Doc2Chunk,NGramGenerator],
         'token': [ NerCrfApproach, NerDLApproach,
