@@ -1,3 +1,8 @@
+import sparknlp
+
+
+
+
 class Spellbook():
     # NLU model_base_names =
     # These reference tell NLU to which component resolved to route a request, they help NLU map a NLP reference to the correct class
@@ -10,7 +15,7 @@ class Spellbook():
                    'pos', 'trec6', 'trec50', 'questions',
                    'sarcasm', 'emotion', 'spam', 'fakenews', 'cyberbullying',
                    'wiki', 'wiki_7', 'wiki_20', 'yake', 'toxic',
-                   'assert', 'med_ner'
+                   'assert', 'med_ner', 'bert_sequence'
                    ]
 
     token_classifiers = ['classify_token',] # TODO
@@ -2140,6 +2145,17 @@ class Spellbook():
             'en.classify.token_albert.xlarge_token_classifier_conll03'  : 'albert_xlarge_token_classifier_conll03',
             'en.classify.token_xlnet.large_token_classifier_conll03' : 'xlnet_large_token_classifier_conll03',
             'en.classify.token_longformer.base_token_classifier_conll03' : 'longformer_base_token_classifier_conll03',
+
+
+            # Spark NLP 3.3.2
+
+            'en.classify.bert_sequence.imdb_large' : 'bert_large_sequence_classifier_imdb',
+            'en.classify.bert_sequence.imdb' : 'bert_base_sequence_classifier_imdb',
+            'en.classify.bert_sequence.ag_news' : 'bert_base_sequence_classifier_ag_news',
+            'en.classify.bert_sequence.dbpedia_14' : 'bert_base_sequence_classifier_dbpedia_14',
+            'en.classify.bert_sequence.finbert' : 'bert_sequence_classifier_finbert',
+            'en.classify.bert_sequence.dehatebert_mono' : 'bert_sequence_classifier_dehatebert_mono',
+
 
 
         },
@@ -4415,6 +4431,18 @@ class Spellbook():
                 'en.resolve.umls_clinical_drugs' : 'sbiobertresolve_umls_clinical_drugs',
 
 
+                'en.med_ner.covid_trials' : 'ner_covid_trials',
+                'en.med_ner.chemd' : 'ner_chemd_clinical',
+                'en.classify.token_bert.bionlp' : 'bert_token_classifier_ner_bionlp',
+                'en.classify.token_bert.cellular' : 'bert_token_classifier_ner_cellular',
+                'en.classify.token_bert.chemicals' : 'bert_token_classifier_ner_chemicals',
+                'en.resolve.rxnorm_augmented' : 'sbiobertresolve_rxnorm_augmented',
+                'en.resolve.umls_disease_syndrome' : 'sbiobertresolve_umls_disease_syndrome',
+                'en.resolve.umls_clinical_drugs' : 'sbiobertresolve_umls_clinical_drugs',
+                'en.classify.bert_sequence.question_statement_clinical' : 'bert_sequence_classifier_question_statement_clinical',
+
+
+
             },
 
         'de':
@@ -4444,6 +4472,10 @@ class Spellbook():
             'es.med_ner': 'ner_diag_proc',
             'es.med_ner.neoplasm': 'ner_neoplasms',
             'es.med_ner.diag_proc': 'ner_diag_proc',
+
+            'es.embed.roberta_base_biomedical' : 'roberta_base_biomedical',
+            'es.med_ner.roberta_ner_diag_proc' : 'roberta_ner_diag_proc',
+            'es.resolve.snomed' : 'robertaresolve_snomed',
         }
     }
     pretrained_healthcare_pipe_references = {
@@ -4552,6 +4584,10 @@ class Spellbook():
         },
         'es': {
             'embeddings_scielowiki300': 'es.embed.scielowiki.300d',
+            'ROBERTA_EMBEDDINGS_39f3e48e5c3f' : 'es.embed.roberta_base_biomedical',
+            'clinical' : 'es.embed.roberta_base_biomedical',
+            # 'clinical' : 'es.embed.roberta_base_biomedical',
+
 
         }
 
