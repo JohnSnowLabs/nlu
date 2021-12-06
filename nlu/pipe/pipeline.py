@@ -1,13 +1,10 @@
 import logging
-
 logger = logging.getLogger('nlu')
-
 from nlu.pipe.extractors.extraction_resolver_OS import OS_anno2config
 from nlu.pipe.extractors.extractor_methods.base_extractor_methods import *
 from nlu.pipe.pipe_logic import PipeUtils
 
-import nlu
-import nlu.pipe.pipe_components
+import nlu.pipe.pipe_component
 import sparknlp
 from typing import List, Union
 
@@ -18,8 +15,8 @@ import pyspark
 import pandas as pd
 import numpy as np
 from pyspark.sql.types import StructType, StructField, StringType
-from nlu.pipe.component_resolution import extract_classifier_metadata_from_nlu_ref
-from nlu.pipe.utils.storage_ref_utils import StorageRefUtils
+from nlu.pipe.utils.resolution.nlu_ref_utils import extract_classifier_metadata_from_nlu_ref
+from nlu.pipe.utils.resolution.storage_ref_utils import StorageRefUtils
 from nlu.pipe.utils.component_utils import ComponentUtils
 from nlu.pipe.utils.output_level_resolution_utils import OutputLevelUtils
 from nlu.pipe.utils.data_conversion_utils import DataConversionUtils

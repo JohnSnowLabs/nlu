@@ -1,13 +1,13 @@
-from nlu.pipe.pipe_components import SparkNLUComponent
+from nlu.pipe.pipe_component import SparkNLUComponent
 
 
 class Embeddings(SparkNLUComponent):
-
     def __init__(self, annotator_class='glove', lang ='en', component_type='embedding', get_default=True, model = None, nlp_ref ='', nlu_ref ='', is_licensed=False, resolution_ref='',loaded_from_pretrained_pipe=False,do_ref_checks=True ):
         if do_ref_checks:
             if 'use' in nlu_ref and 'bert'  not in nlu_ref or 'tfhub_use' in nlp_ref and 'bert' not in nlp_ref: annotator_class = 'use'
             # first check for sentence then token embeddings.
             elif 'longformer'     in nlu_ref : annotator_class = 'longformer'
+            elif 'doc2vec'        in nlu_ref : annotator_class = 'doc2vec'
 
             elif 'sent' in nlu_ref and 'xlm_roberta' in nlu_ref : annotator_class = 'sentence_xlm'
             elif 'xlm'     in nlu_ref or 'xlm' in nlp_ref : annotator_class = 'xlm'
@@ -53,6 +53,10 @@ class Embeddings(SparkNLUComponent):
                 from nlu import Sentence_XLM
                 if get_default: self.model =  Sentence_XLM.get_default_model()
                 else : self.model = Sentence_XLM.get_pretrained_model(nlp_ref, lang)
+            elif 'doc2vec' == annotator_class :
+                from nlu import Doc2Vec
+                if get_default: self.model =  Doc2Vec.get_default_model()
+                else : self.model = Doc2Vec.get_pretrained_model(nlp_ref, lang)
             elif 'longformer' == annotator_class :
                 from nlu import Longformer
                 if get_default: self.model =  Longformer.get_default_model()

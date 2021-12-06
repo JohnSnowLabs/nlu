@@ -1,10 +1,10 @@
 import os,sys, json
 
 import nlu
-from nlu.pipe.pipe_components import SparkNLUComponent
+from nlu.pipe.pipe_component import SparkNLUComponent
 # from nlu.pipe.pipe_logic import PipelineQueryVerifier
 from nlu.pipe.pipeline import  *
-from nlu.pipe.pipe_components import SparkNLUComponent
+from nlu.pipe.pipe_component import SparkNLUComponent
 from pyspark.ml import PipelineModel
 
 from sparknlp.annotator import *

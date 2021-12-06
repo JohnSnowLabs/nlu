@@ -50,7 +50,8 @@ name_deductable_OS = [
     DistilBertForTokenClassification,
     BertForTokenClassification,
     LongformerEmbeddings,
-
+    DistilBertForSequenceClassification,
+    BertForSequenceClassification,
     # approaches
     ViveknSentimentApproach    ,
     SentimentDLApproach        ,

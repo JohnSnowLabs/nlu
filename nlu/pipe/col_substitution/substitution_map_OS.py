@@ -11,7 +11,7 @@ Every Annotator should have 2 configs. Some might offor multuple configs/method 
 """
 from sparknlp.annotator import *
 from sparknlp.base import *
-from nlu.pipe.extractors.extractor_configs_open_source import *
+from nlu.pipe.extractors.extractor_configs_OS import *
 from nlu.pipe.col_substitution.col_substitution_OS import *
 
 OS_anno2substitution_fn = {
@@ -48,6 +48,10 @@ OS_anno2substitution_fn = {
         'default': substitute_word_embed_cols,
     },
     BertSentenceEmbeddings: {
+        'default': substitute_sent_embed_cols,
+    },
+
+    Doc2VecModel: {
         'default': substitute_sent_embed_cols,
     },
 
@@ -146,7 +150,6 @@ OS_anno2substitution_fn = {
         'default': substitute_stopwords_cols,
     },
 
-
     BertForTokenClassification: {
         'default': substitute_transformer_token_classifier_cols,
     },
@@ -159,11 +162,9 @@ OS_anno2substitution_fn = {
         'default': substitute_transformer_token_classifier_cols,
     },
 
-
     XlmRoBertaForTokenClassification: {
         'default': substitute_transformer_token_classifier_cols,
     },
-
 
     RoBertaForTokenClassification: {
         'default': substitute_transformer_token_classifier_cols,
@@ -173,13 +174,16 @@ OS_anno2substitution_fn = {
         'default': substitute_transformer_token_classifier_cols,
     },
 
-
     AlbertForTokenClassification: {
         'default': substitute_transformer_token_classifier_cols,
     },
 
-
-
+    BertForSequenceClassification: {
+        'default': substitute_seq_bert_classifier_cols
+    },
+    DistilBertForSequenceClassification: {
+        'default': substitute_seq_bert_classifier_cols
+    },
     TextMatcherModel: {
         'default': substitute_text_match_cols,
     },
@@ -196,9 +200,9 @@ OS_anno2substitution_fn = {
     Doc2Chunk: {
         'default': substitute_doc2chunk_cols,
     },
-#
+    #
     Chunk2Doc: {
-        'default': substitute_doc2chunk_cols, # TODO better?
+        'default': substitute_doc2chunk_cols,  # TODO better?
     },
     T5Transformer: {
         'default': substitute_T5_cols,
@@ -213,6 +217,7 @@ OS_anno2substitution_fn = {
         'default': substitute_word_seg_cols,
     },
 
+
     # approaches
     ViveknSentimentApproach: {'default': substitute_sentiment_vivk_approach_cols,
                               'default_full': default_full_config, },
@@ -222,5 +227,6 @@ OS_anno2substitution_fn = {
                                 'default_full': default_full_config, },
     NerDLApproach: {'default': substitute_ner_dl_approach_cols, 'default_full': default_full_config, },
     PerceptronApproach: {'default': substitute_pos_approach_cols, 'default_full': default_full_config, },
+    Doc2VecApproach: {'default': substitute_sent_embed_cols},
 
 }

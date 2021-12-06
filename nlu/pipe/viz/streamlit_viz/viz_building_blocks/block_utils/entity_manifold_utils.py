@@ -1,12 +1,5 @@
-from sparknlp.annotator import NerConverter,DependencyParserModel
-from typing import List, Tuple, Optional, Dict
 import streamlit as st
-from nlu.utils.modelhub.modelhub_utils import ModelHubUtils
-import numpy as np
-import pandas as pd
 from sparknlp.annotator import *
-import nlu
-from nlu.pipe.utils.storage_ref_utils import StorageRefUtils
 from nlu.components import embeddings_chunker
 
 class EntityManifoldUtils():
@@ -71,7 +64,7 @@ class EntityManifoldUtils():
     @staticmethod
     def find_entity_embed_col_pd(df, search_multi=False):
         """Find col that contains embed in pandas df """
-        if not search_multi: # TODO TEST
+        if not search_multi:
             for c in df.columns:
                 if 'embed_entitiy'in c : return c
         else:

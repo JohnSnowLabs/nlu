@@ -1,4 +1,4 @@
-from nlu.pipe.pipe_components import SparkNLUComponent
+from nlu.pipe.pipe_component import SparkNLUComponent
 class Resolver(SparkNLUComponent):
     def __init__(self, annotator_class='sentence_entity_resolver', language='en', component_type='resolution', get_default=True, model = None, nlp_ref ='', nlu_ref='',trainable=False, is_licensed=True, loaded_from_pretrained_pipe=False):
 

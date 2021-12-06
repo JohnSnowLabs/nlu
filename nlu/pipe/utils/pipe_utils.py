@@ -23,7 +23,6 @@ class PipeUtils():
         else:
             pipe_path = os.path.expanduser('~') + '/cache_pretrained/' + f'{nlp_ref}_{lang}'
             # WE do not need to check for Spark Version, since cols should match accors versions
-            # TODO but what about LOCAL pipes!!!! todo fix
             pipe_path = glob.glob(f'{pipe_path}*')[0]
             if not os.path.exists(pipe_path): raise FileNotFoundError(
                 f"Could not find downloaded Pipeline at path={pipe_path}")
@@ -32,7 +31,6 @@ class PipeUtils():
         digits_num = len(str(len(pipe)))
         digit_str = '0' * digits_num
         digit_cur = 0
-
         for c in pipe:
             # c_metadata_path = f'{pipe_path}/stages/{digit_str}_*/metadata/part-00000'
             c_metadata_path = f'{pipe_path}/stages/{digit_str}_*/metadata/part-00000'
@@ -50,7 +48,6 @@ class PipeUtils():
                 c.info.spark_input_column_names = inp if isinstance(inp, List) else [inp]
                 c.info.spark_output_column_names = [out]
                 c.model.setOutputCol(out)
-
             digit_cur += 1
             digit_str = str(digit_cur)
             while len(digit_str) < digits_num:

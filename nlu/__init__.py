@@ -1,8 +1,9 @@
-__version__ = '3.3.0'
+__version__ = '3.3.1'
 hard_offline_checks = False
 
 
 def version(): return __version__
+
 
 # if not check_pyspark_install(): raise Exception()
 def try_import_pyspark_in_streamlit():
@@ -92,6 +93,7 @@ from nlu.components.sentence_detectors.deep_sentence_detector.deep_sentence_dete
 # Embeddings
 from nlu.components.embeddings.albert.spark_nlp_albert import SparkNLPAlbert
 from nlu.components.embeddings.sentence_bert.BertSentenceEmbedding import BertSentence
+from nlu.components.embeddings.doc2vec.doc2vec import Doc2Vec
 
 from nlu.components.embeddings.bert.spark_nlp_bert import SparkNLPBert
 from nlu.components.embeddings.elmo.spark_nlp_elmo import SparkNLPElmo
@@ -109,6 +111,8 @@ from nlu.components.classifiers.ner.ner_dl import NERDL
 from nlu.components.classifiers.sentiment_dl.sentiment_dl import SentimentDl
 from nlu.components.classifiers.vivekn_sentiment.vivekn_sentiment_detector import ViveknSentiment
 from nlu.components.classifiers.pos.part_of_speech_jsl import PartOfSpeechJsl
+from nlu.components.classifiers.seq_bert.seq_bert_classifier import SeqBertClassifier
+from nlu.components.classifiers.seq_distilbert.seq_distilbert_classifier import SeqDilstilBertClassifier
 
 # matchers
 from nlu.components.matchers.date_matcher.date_matcher import DateMatcher
@@ -180,6 +184,76 @@ discoverer = nlu.Discoverer()
 import json
 import sparknlp
 import os
+
+
+def load(request: str = 'from_disk', path: Optional[str] = None, verbose: bool = False, gpu: bool = False,
+         streamlit_caching: bool = False) -> NLUPipeline:
+    '''
+    Load either a prebuild pipeline or a set of components identified by a whitespace seperated list of components
+    You must call nlu.auth() BEFORE calling nlu.load() to access licensed models.
+    If you did not call nlu.auth() but did call nlu.load() you must RESTART your Python Process and call nlu.auth().
+    You cannot authorize once nlu.load() is called because of Spark Context.
+    :param verbose:
+    :param path: If path is not None, the model/pipe for the NLU reference will be loaded from the path. Useful for offline mode. Currently only loading entire NLU pipelines is supported, but not loading singular pipes
+    :param request: A NLU model/pipeline/component reference
+    :param version_checks: Wether to check if Pyspark is properly installed and if the Pyspark version is correct for the NLU version. If set to False, these tests will be skipped
+    :return: returns a non fitted nlu pipeline object
+    '''
+    if streamlit_caching and not nlu.st_cache_enabled:
+        enable_streamlit_caching()
+        return nlu.load(request, path, verbose, gpu, streamlit_caching)
+    global is_authenticated
+    is_authenticated = True
+    auth(gpu=gpu)  # check if secets are in default loc, if yes load them and create licensed context automatically
+    spark = get_open_source_spark_context(gpu)
+    spark.catalog.clearCache()
+
+    # Enable PyArrow
+    spark.conf.set("spark.sql.execution.arrow.pyspark.enabled", "true")
+    spark.conf.set("spark.sql.execution.arrow.pyspark.fallback.enabled.", "true")
+
+    if verbose:
+        enable_verbose()
+    else:
+        disable_verbose()
+
+    if path != None:
+        logger.info(f'Trying to load nlu pipeline from local hard drive, located at {path}')
+        pipe = PipelineQueryVerifier.check_and_fix_nlu_pipeline(load_nlu_pipe_from_hdd(path, request))
+        pipe.nlu_ref = request
+        return pipe
+    components_requested = request.split(' ')  ## sentiment emotion yake
+    pipe = NLUPipeline()
+    language = parse_language_from_nlu_ref(request)
+    pipe.lang = language
+    pipe.nlu_ref = request
+
+    try:
+        for nlu_ref in components_requested:
+            nlu_ref.replace(' ', '')
+            # component = component.lower()
+            if nlu_ref == '': continue
+            nlu_component = nlu_ref_to_component(nlu_ref, authenticated=is_authenticated)
+            # if we get a list of components, then the NLU reference is a pipeline, we do not need to check order
+            if type(nlu_component) == type([]):
+                # lists are parsed down to multiple components
+                for c in nlu_component: pipe.add(c, nlu_ref, pretrained_pipe_component=True)
+            else:
+                pipe.add(nlu_component, nlu_ref)
+        pipe = PipelineQueryVerifier.check_and_fix_nlu_pipeline(pipe)
+        pipe.nlu_ref = request
+        for c in pipe.components:
+            if c.info.license == 'licensed': pipe.has_licensed_components = True
+        return pipe
+
+    except:
+        import sys
+        if verbose:
+            e = sys.exc_info()
+            print(e[0])
+            print(e[1])
+        raise Exception(
+            "Something went wrong during loading and fitting the pipe. Check the other prints for more information and also verbose mode. Did you use a correct model reference?")
 
 
 def auth(SPARK_NLP_LICENSE_OR_JSON_PATH='/content/spark_nlp_for_healthcare.json', AWS_ACCESS_KEY_ID='',
@@ -295,76 +369,6 @@ def enable_hard_offline_checks(): nlu.hard_offline_checks = True
 
 
 def disable_hard_offline_checks(): nlu.hard_offline_checks = False
-
-
-def load(request: str = 'from_disk', path: Optional[str] = None, verbose: bool = False, gpu: bool = False,
-         streamlit_caching: bool = False) -> NLUPipeline:
-    '''
-    Load either a prebuild pipeline or a set of components identified by a whitespace seperated list of components
-    You must call nlu.auth() BEFORE calling nlu.load() to access licensed models.
-    If you did not call nlu.auth() but did call nlu.load() you must RESTART your Python Process and call nlu.auth().
-    You cannot authorize once nlu.load() is called because of Spark Context.
-    :param verbose:
-    :param path: If path is not None, the model/pipe for the NLU reference will be loaded from the path. Useful for offline mode. Currently only loading entire NLU pipelines is supported, but not loading singular pipes
-    :param request: A NLU model/pipeline/component reference
-    :param version_checks: Wether to check if Pyspark is properly installed and if the Pyspark version is correct for the NLU version. If set to False, these tests will be skipped
-    :return: returns a non fitted nlu pipeline object
-    '''
-    if streamlit_caching and not nlu.st_cache_enabled:
-        enable_streamlit_caching()
-        return nlu.load(request, path, verbose, gpu, streamlit_caching)
-    global is_authenticated
-    is_authenticated = True
-    auth(gpu=gpu)  # check if secets are in default loc, if yes load them and create licensed context automatically
-    spark = get_open_source_spark_context(gpu)
-    spark.catalog.clearCache()
-
-    # Enable PyArrow
-    spark.conf.set("spark.sql.execution.arrow.pyspark.enabled", "true")
-    spark.conf.set("spark.sql.execution.arrow.pyspark.fallback.enabled.", "true")
-
-    if verbose:
-        enable_verbose()
-    else:
-        disable_verbose()
-
-    if path != None:
-        logger.info(f'Trying to load nlu pipeline from local hard drive, located at {path}')
-        pipe = PipelineQueryVerifier.check_and_fix_nlu_pipeline(load_nlu_pipe_from_hdd(path, request))
-        pipe.nlu_ref = request
-        return pipe
-    components_requested = request.split(' ')  ## sentiment emotion yake
-    pipe = NLUPipeline()
-    language = parse_language_from_nlu_ref(request)
-    pipe.lang = language
-    pipe.nlu_ref = request
-
-    try:
-        for nlu_ref in components_requested:
-            nlu_ref.replace(' ', '')
-            # component = component.lower()
-            if nlu_ref == '': continue
-            nlu_component = nlu_ref_to_component(nlu_ref, authenticated=is_authenticated)
-            # if we get a list of components, then the NLU reference is a pipeline, we do not need to check order
-            if type(nlu_component) == type([]):
-                # lists are parsed down to multiple components
-                for c in nlu_component: pipe.add(c, nlu_ref, pretrained_pipe_component=True)
-            else:
-                pipe.add(nlu_component, nlu_ref)
-        pipe = PipelineQueryVerifier.check_and_fix_nlu_pipeline(pipe)
-        pipe.nlu_ref = request
-        for c in pipe.components:
-            if c.info.license == 'licensed': pipe.has_licensed_components = True
-        return pipe
-
-    except :
-        import sys
-        if verbose:
-            e = sys.exc_info()
-            print(e[0])
-            print(e[1])
-        raise Exception(
-            "Something went wrong during loading and fitting the pipe. Check the other prints for more information and also verbose mode. Did you use a correct model reference?")
 
 
 class NluError:
