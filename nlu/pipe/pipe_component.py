@@ -1,5 +1,7 @@
 # from nlu import *
 import nlu
+
+
 class NLUComponent():
     '''
         This class loads all the components in the components folder.
@@ -27,15 +29,16 @@ class NLUComponent():
         self.print_parameters()
 
 
-class  SparkNLUComponent(NLUComponent):
-    def __init__(self, component_name, component_type, nlu_ref='', nlp_ref='',lang='',loaded_from_pretrained_pipe=False, is_licensed=False):
+class SparkNLUComponent(NLUComponent):
+    def __init__(self, component_name, component_type, nlu_ref='', nlp_ref='', lang='',
+                 loaded_from_pretrained_pipe=False, is_licensed=False):
         NLUComponent.__init__(self, component_name, component_type)
         self.info.nlu_ref = nlu_ref
         self.info.nlp_ref = nlp_ref
-        self.info.lang    = lang
+        self.info.lang = lang
         self.info.loaded_from_pretrained_pipe = loaded_from_pretrained_pipe
         self.__set_missing_model_attributes__()
-        if is_licensed : self.info.license = 'healthcare'
+        if is_licensed: self.info.license = 'healthcare'
 
     def __set_missing_model_attributes__(self):
         '''
@@ -46,34 +49,30 @@ class  SparkNLUComponent(NLUComponent):
         '''
         for k in self.model.extractParamMap():
             if "inputCol" in str(k):
-                if isinstance(self.model.extractParamMap()[k], str) :
-                    if self.model.extractParamMap()[k] == 'embeddings': # swap name so we have uniform col names
-                        self.model.setInputCols( 'word_embeddings')
-                    self.info.spark_input_column_names =  [self.model.extractParamMap()[k]]
-                else :
-                    if 'embeddings' in self.model.extractParamMap()[k]: # swap name so we have uniform col names
+                if isinstance(self.model.extractParamMap()[k], str):
+                    if self.model.extractParamMap()[k] == 'embeddings':  # swap name so we have uniform col names
+                        self.model.setInputCols('word_embeddings')
+                    self.info.spark_input_column_names = [self.model.extractParamMap()[k]]
+                else:
+                    if 'embeddings' in self.model.extractParamMap()[k]:  # swap name so we have uniform col names
                         new_cols = self.model.extractParamMap()[k]
                         new_cols.remove("embeddings")
                         new_cols.append("word_embeddings")
                         self.model.setInputCols(new_cols)
-                    self.info.spark_input_column_names =  self.model.extractParamMap()[k]
+                    self.info.spark_input_column_names = self.model.extractParamMap()[k]
 
             if "outputCol" in str(k):
-                if isinstance(self.model.extractParamMap()[k], str) :
-                    if self.model.extractParamMap()[k] == 'embeddings': # swap name so we have uniform col names
-                        self.model.setOutputCol( 'word_embeddings')
-                    self.info.spark_output_column_names =  [self.model.extractParamMap()[k]]
-                else :
-                    if 'embeddings' in self.model.extractParamMap()[k]: # swap name so we have uniform col names
+                if isinstance(self.model.extractParamMap()[k], str):
+                    if self.model.extractParamMap()[k] == 'embeddings':  # swap name so we have uniform col names
+                        self.model.setOutputCol('word_embeddings')
+                    self.info.spark_output_column_names = [self.model.extractParamMap()[k]]
+                else:
+                    if 'embeddings' in self.model.extractParamMap()[k]:  # swap name so we have uniform col names
                         new_cols = self.model.extractParamMap()[k]
                         new_cols.remove("embeddings")
                         new_cols.append("word_embeddings")
                         self.model.setOutputCol(new_cols)
-                    self.info.spark_output_column_names =  self.model.extractParamMap()[k]
-
-
-
-
+                    self.info.spark_output_column_names = self.model.extractParamMap()[k]
 
             # if "labelCol" in str(k):
             #     if isinstance(self.model.extractParamMap()[k], str) :

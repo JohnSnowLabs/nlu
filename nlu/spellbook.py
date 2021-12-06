@@ -4413,18 +4413,6 @@ class Spellbook():
 
                 # 3.3.1 healthcare
                 'en.classify.token_bert.ner_chemical': 'bert_token_classifier_ner_chemicals',
-                'en.resolve.umls_disease_syndrome': 'sbiobertresolve_umls_disease_syndrome',
-                'en.resolve.umls_clinical_drugs': 'sbiobertresolve_umls_clinical_drugs',
-
-                'en.med_ner.covid_trials': 'ner_covid_trials',
-                'en.med_ner.chemd': 'ner_chemd_clinical',
-                'en.classify.token_bert.bionlp': 'bert_token_classifier_ner_bionlp',
-                'en.classify.token_bert.cellular': 'bert_token_classifier_ner_cellular',
-                'en.classify.token_bert.chemicals': 'bert_token_classifier_ner_chemicals',
-                'en.resolve.rxnorm_augmented': 'sbiobertresolve_rxnorm_augmented',
-                'en.resolve.umls_disease_syndrome': 'sbiobertresolve_umls_disease_syndrome',
-                'en.resolve.umls_clinical_drugs': 'sbiobertresolve_umls_clinical_drugs',
-                'en.classify.bert_sequence.question_statement_clinical': 'bert_sequence_classifier_question_statement_clinical',
 
                 ## 3.3.3 HC
                 'en.med_ner.deid_subentity_augmented_i2b2': 'ner_deid_subentity_augmented_i2b2',
@@ -4486,7 +4474,6 @@ class Spellbook():
     }
     pretrained_healthcare_pipe_references = {
         'en': {
-
             'en.med_ner.profiling_clinical': 'ner_profiling_clinical',
             'en.med_ner.profiling_biobert': 'ner_profiling_biobert',
             'en.resolve.icd10cm.umls': 'icd10cm_umls_mapping',

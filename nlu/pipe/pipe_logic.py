@@ -2,11 +2,10 @@ import nlu
 import logging
 
 logger = logging.getLogger('nlu')
-from nlu.pipe.pipe_components import SparkNLUComponent
+from nlu.pipe.pipe_component import SparkNLUComponent
 from nlu.pipe.utils.pipe_utils import PipeUtils
 from nlu.pipe.utils.component_utils import ComponentUtils
-from nlu.pipe.utils.storage_ref_utils import StorageRefUtils
-
+from nlu.pipe.utils.resolution.storage_ref_utils import StorageRefUtils
 from dataclasses import dataclass
 from nlu.pipe.component_resolution import get_default_component_of_type
 
@@ -649,7 +648,6 @@ class PipelineQueryVerifier():
         """
         if not pipe.has_licensed_components: return pipe
         from sparknlp_jsl.annotator import SentenceEntityResolverModel, NerConverter, NerConverterInternal
-        from sparknlp.base import Chunk2Doc
         resolvers = []
         ner_converters = []
         sentence_embeddings = []

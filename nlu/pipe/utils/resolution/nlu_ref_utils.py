@@ -1,5 +1,5 @@
-import nlu
-from nlu import Spellbook, logger, AllComponentsInfo
+from nlu import Spellbook, logger
+from nlu.info import AllComponentsInfo
 
 
 def check_if_nlu_ref_is_licensed(nlu_ref):
@@ -35,6 +35,6 @@ def extract_classifier_metadata_from_nlu_ref(nlu_ref):
     '''
     model_infos = []
     for e in nlu_ref.split('.'):
-        if e in nlu.all_components_info.all_languages or e in nlu.spellbook.Spellbook.actions: continue
+        if e in AllComponentsInfo().all_languages or e in Spellbook.actions: continue
         model_infos.append(e)
     return model_infos

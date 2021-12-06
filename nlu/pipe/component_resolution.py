@@ -548,6 +548,10 @@ def construct_component_from_pipe_identifier(language, nlp_ref, nlu_ref, path=No
         elif isinstance(component, DependencyParserModel):
             constructed_components.append(
                 UnlabledDepParser(model=component, nlu_ref=nlu_ref, loaded_from_pretrained_pipe=True))
+        elif isinstance(component, Doc2VecModel):
+            constructed_components.append(
+                nlu.Embeddings(model=component, annotator_class='doc2vec', lang=language, nlu_ref=nlu_ref,
+                               nlp_ref=nlp_ref, loaded_from_pretrained_pipe=True, do_ref_checks=False))
         elif isinstance(component, TypedDependencyParserModel):
             constructed_components.append(
                 LabledDepParser(model=component, nlu_ref=nlu_ref, loaded_from_pretrained_pipe=True, ))

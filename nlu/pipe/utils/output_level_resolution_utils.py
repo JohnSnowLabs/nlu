@@ -24,7 +24,7 @@ class OutputLevelUtils():
         'document': [DocumentAssembler, Chunk2Doc,
                      YakeKeywordExtraction,DocumentNormalizer
                      ],
-        'sentence': [SentenceDetector, SentenceDetectorDLApproach,BertForSequenceClassification ],
+        'sentence': [SentenceDetector, SentenceDetectorDLApproach ],
         'chunk': [Chunker, ChunkEmbeddings,  ChunkTokenizer, Token2Chunk, TokenAssembler,
                   NerConverter, Doc2Chunk,NGramGenerator],
         'token': [ NerCrfApproach, NerDLApproach,
@@ -41,7 +41,7 @@ class OutputLevelUtils():
         # these can be document or sentence
         'input_dependent': [ViveknSentimentApproach, SentimentDLApproach, ClassifierDLApproach,
                             LanguageDetectorDL,
-                            MultiClassifierDLApproach,  SentenceEmbeddings, NorvigSweetingApproach,],
+                            MultiClassifierDLApproach,  SentenceEmbeddings, NorvigSweetingApproach,BertForSequenceClassification, DistilBertForTokenClassification,],
         'multi' : [MultiClassifierDLApproach,  SentenceEmbeddings, NorvigSweetingApproach,]
         # 'unclassified': [Yake, Ngram]
     }
