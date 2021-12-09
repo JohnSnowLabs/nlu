@@ -23,7 +23,7 @@ View the [NLU&Streamlit documentation](https://nlu.johnsnowlabs.com/docs/en/stre
 The entire GIF demo and 
 
 
-## All NLU ressources overview
+## All NLU resources overview
 Take a look at our official NLU page: [https://nlu.johnsnowlabs.com/](https://nlu.johnsnowlabs.com/)  for user documentation and examples
 
 | Ressource                                                                  |                                Description|
