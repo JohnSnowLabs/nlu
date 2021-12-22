@@ -11,7 +11,6 @@ See how easy it is to use any of the **thousands** of models in 1 line of code, 
 
 ## NLU & Streamlit in Action 
 This 1 line let's you visualize and play with **1000+ SOTA NLU & NLP models** in **200** languages 
-for **Named Entitiy Recognition**,  **Dependency Trees & Parts of Speech**, **Classification for 100+ problems**, **Text Summarization & Question Answering using T5** , **Translation with Marian**,  **Text Similarity Matrix** using **BERT, ALBERT, ELMO, XLNET, ELECTRA** with other of the **100+ wordembeddings**  and much more using [Streamlit](http://streamlit.com/) .
 
 ```shell
 streamlit run https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/examples/streamlit/01_dashboard.py
@@ -126,7 +125,6 @@ For NLU models to load, see [the NLU Namespace](https://nlu.johnsnowlabs.com/doc
 
 
 
-# NLU Tutorials : TODO TABLULATEEE
 
 # NLU Demos on Datasets
 - [Kaggle Twitter Airline Sentiment Analysis NLU demo](https://www.kaggle.com/kasimchristianloan/nlu-sentiment-airline-demo)
