@@ -8,13 +8,15 @@ permalink: /docs/en/notebooks
 modify_date: "2019-05-16"
 ---
 
-
+# Tutorials Overview
 The following tables give an overview on the different tutorials with NLU. The tables are splitted by category. By using the correct model, NLU can do anything for you, ranging from simple translations (even from scriptures, based on non-Latin letters) to textprocessing tasks (sentiment prediction, named entity recognition and on on). There are also colab notebooks for you to read.
 
-# Tutorials Overview
+
 
 
 ## Embeddings Tutorials Overview
+
+
 
 {:.table2}
 
