@@ -1,4 +1,4 @@
-__version__ = '3.3.1'
+__version__ = '3.3.2'
 hard_offline_checks = False
 
 
@@ -46,6 +46,7 @@ ch = logging.StreamHandler()
 ch.setLevel(logging.CRITICAL)
 
 logger.addHandler(ch)
+import sys
 
 # NLU Healthcare components
 from nlu.components.assertion import Asserter
@@ -185,6 +186,9 @@ import json
 import sparknlp
 import os
 
+slack_link = 'https://join.slack.com/t/spark-nlp/shared_invite/zt-lutct9gm-kuUazcyFKhuGY3_0AMkxqA'
+github_issues_link = 'https://github.com/JohnSnowLabs/nlu/issues'
+
 
 def load(request: str = 'from_disk', path: Optional[str] = None, verbose: bool = False, gpu: bool = False,
          streamlit_caching: bool = False) -> NLUPipeline:
@@ -207,7 +211,6 @@ def load(request: str = 'from_disk', path: Optional[str] = None, verbose: bool =
     auth(gpu=gpu)  # check if secets are in default loc, if yes load them and create licensed context automatically
     spark = get_open_source_spark_context(gpu)
     spark.catalog.clearCache()
-
     # Enable PyArrow
     spark.conf.set("spark.sql.execution.arrow.pyspark.enabled", "true")
     spark.conf.set("spark.sql.execution.arrow.pyspark.fallback.enabled.", "true")
@@ -222,16 +225,17 @@ def load(request: str = 'from_disk', path: Optional[str] = None, verbose: bool =
         pipe = PipelineQueryVerifier.check_and_fix_nlu_pipeline(load_nlu_pipe_from_hdd(path, request))
         pipe.nlu_ref = request
         return pipe
-    components_requested = request.split(' ')  ## sentiment emotion yake
+    components_requested = request.split(' ')
     pipe = NLUPipeline()
     language = parse_language_from_nlu_ref(request)
     pipe.lang = language
     pipe.nlu_ref = request
 
+    # Try to manifest SparkNLP Annotator from nlu_ref
     try:
         for nlu_ref in components_requested:
+            # Iterate over each nlu_ref in the request. Multiple nlu_refs can be passed by seperating them via whitesapce
             nlu_ref.replace(' ', '')
-            # component = component.lower()
             if nlu_ref == '': continue
             nlu_component = nlu_ref_to_component(nlu_ref, authenticated=is_authenticated)
             # if we get a list of components, then the NLU reference is a pipeline, we do not need to check order
@@ -240,20 +244,30 @@ def load(request: str = 'from_disk', path: Optional[str] = None, verbose: bool =
                 for c in nlu_component: pipe.add(c, nlu_ref, pretrained_pipe_component=True)
             else:
                 pipe.add(nlu_component, nlu_ref)
-        pipe = PipelineQueryVerifier.check_and_fix_nlu_pipeline(pipe)
-        pipe.nlu_ref = request
-        for c in pipe.components:
-            if c.info.license == 'licensed': pipe.has_licensed_components = True
-        return pipe
 
     except:
-        import sys
         if verbose:
             e = sys.exc_info()
             print(e[0])
             print(e[1])
         raise Exception(
-            "Something went wrong during loading and fitting the pipe. Check the other prints for more information and also verbose mode. Did you use a correct model reference?")
+            f"Something went wrong during creating the Spark NLP model for your request =  {request} Did you use a NLU Spell?")
+
+    # Complete Spark NLP Pipeline, which is defined as a DAG given by the starting Annotators
+    try:
+        pipe = PipelineQueryVerifier.check_and_fix_nlu_pipeline(pipe)
+        pipe.nlu_ref = request
+        for c in pipe.components:
+            if c.info.license == 'licensed': pipe.has_licensed_components = True
+        return pipe
+    except:
+        if verbose:
+            e = sys.exc_info()
+            print(e[0])
+            print(e[1])
+        raise Exception(f"Something went wrong during completing the DAG for the Spark NLP Pipeline."
+                        f"If this error persists, please contact us in Slack {slack_link} "
+                        f"Or open an issue on Github {github_issues_link}")
 
 
 def auth(SPARK_NLP_LICENSE_OR_JSON_PATH='/content/spark_nlp_for_healthcare.json', AWS_ACCESS_KEY_ID='',
@@ -338,7 +352,7 @@ def get_open_source_spark_context(gpu):
     if is_env_pyspark_2_4(): return sparknlp.start(spark24=True, gpu=gpu)
     if is_env_pyspark_3_0() or is_env_pyspark_3_1(): return sparknlp.start(gpu=gpu)
     print(f"Current Spark version {get_pyspark_version()} not supported!")
-    raise ValueError
+    raise ValueError(f"Failure starting Spark Context! Current Spark version {get_pyspark_version()} not supported! ")
 
 
 def enable_streamlit_caching():
