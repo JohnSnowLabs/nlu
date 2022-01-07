@@ -197,10 +197,11 @@ def load(request: str = 'from_disk', path: Optional[str] = None, verbose: bool =
     You must call nlu.auth() BEFORE calling nlu.load() to access licensed models.
     If you did not call nlu.auth() but did call nlu.load() you must RESTART your Python Process and call nlu.auth().
     You cannot authorize once nlu.load() is called because of Spark Context.
-    :param verbose:
+    :param verbose: Wether to output debug prints
+    :param gpu: Wether to leverage GPU
+    :param streamlit_caching: Wether streamlit caching should be used in Streamlit visualizations. Trade Speed-Up for repeated requests for larger memory usage
     :param path: If path is not None, the model/pipe for the NLU reference will be loaded from the path. Useful for offline mode. Currently only loading entire NLU pipelines is supported, but not loading singular pipes
-    :param request: A NLU model/pipeline/component reference
-    :param version_checks: Wether to check if Pyspark is properly installed and if the Pyspark version is correct for the NLU version. If set to False, these tests will be skipped
+    :param request: A NLU model/pipeline/component reference. You can requeste multiple components by separating them with whitespace. I.e. nlu.load('elmo bert albert')
     :return: returns a non fitted nlu pipeline object
     '''
     if streamlit_caching and not nlu.st_cache_enabled:
