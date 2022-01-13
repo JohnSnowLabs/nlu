@@ -1,3 +1,5 @@
+from nlu.components.classifiers.ner.ner_dl import NERDL
+
 from nlu.components.chunkers.ngram.ngram import NGram
 
 from nlu.components.classifiers.classifier_dl.classifier_dl import ClassifierDl
@@ -436,9 +438,9 @@ class ComponentMapOS:
         A.NER_DL: NluComponent(
             name=A.NER_DL,
             type=T.TOKEN_CLASSIFIER,
-            get_default_model=NERDLCRF.get_default_model,
-            get_pretrained_model=NERDLCRF.get_pretrained_model,
-            get_trainable_model=NERDLCRF.get_default_trainable_model,
+            get_default_model=NERDL.get_default_model,
+            get_pretrained_model=NERDL.get_pretrained_model,
+            get_trainable_model=NERDL.get_default_trainable_model,
             pdf_extractor_methods={'default': default_NER_config, 'meta': meta_NER_config,
                                    'default_full': default_full_config, },
             pdf_col_name_substitutor=substitute_ner_dl_cols,
@@ -459,9 +461,9 @@ class ComponentMapOS:
         A.TRAINABLE_NER_DL: NluComponent(
             name=A.TRAINABLE_NER_DL,
             type=T.TOKEN_CLASSIFIER,
-            get_default_model=NERDLCRF.get_default_model,
-            get_pretrained_model=NERDLCRF.get_pretrained_model,
-            get_trainable_model=NERDLCRF.get_default_trainable_model,
+            get_default_model=NERDL.get_default_model,
+            get_pretrained_model=NERDL.get_pretrained_model,
+            get_trainable_model=NERDL.get_default_trainable_model,
             pdf_extractor_methods={'default': default_NER_config, 'meta': meta_NER_config,
                                    'default_full': default_full_config, },
             pdf_col_name_substitutor=substitute_ner_dl_cols,
