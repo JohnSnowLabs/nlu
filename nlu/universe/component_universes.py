@@ -1,47 +1,37 @@
+from nlu.components.classifiers.token_bert_healthcare.token_bert_healthcare import TokenBertHealthcare
+from nlu.components.embeddings_chunks.chunk_embedder.chunk_embedder import ChunkEmbedder
 from nlu.components.classifiers.ner.ner_dl import NERDL
-
 from nlu.components.chunkers.ngram.ngram import NGram
-
 from nlu.components.classifiers.classifier_dl.classifier_dl import ClassifierDl
-
+from nlu.components.relation_extractors.relation_extractor_dl.relation_extractor_dl import RelationExtractionDL
+from nlu.ocr_components.text_recognizers.img2text.img2text import Img2Text
+from nlu.ocr_components.utils.binary2image.binary2image import Binary2Image
+from nlu.pipe.col_substitution.col_substitution_OCR import substitute_recognized_text_cols
+from nlu.pipe.extractors.extractor_configs_OCR import default_text_recognizer_config
 from nlu.universe.universes import Licenses, ComputeContexts
 from nlu.universe.feature_universes import NLP_FEATURES
 from nlu.universe.annotator_class_universe import AnnoClassRef
 from nlu.pipe.nlu_component import NluComponent
 from nlu.components.embeddings.distil_bert.distilbert import DistilBert
 from nlu.components.embeddings.xlm.xlm import XLM
-
 from nlu.components.embeddings.longformer.longformer import Longformer
-
 from nlu.components.utils.sentence_embeddings.spark_nlp_sentence_embedding import SparkNLPSentenceEmbeddings
-
-# Main components
-
 from nlu.components.dependency_untypeds.unlabeled_dependency_parser.unlabeled_dependency_parser import \
     UnlabeledDependencyParser
 from nlu.components.dependency_typeds.labeled_dependency_parser.labeled_dependency_parser import \
     LabeledDependencyParser
-# 0 Base internal Spark NLP structure.md required for all JSL components
 from nlu.components.utils.document_assembler.spark_nlp_document_assembler import SparkNlpDocumentAssembler
 from nlu.components.utils.ner_to_chunk_converter.ner_to_chunk_converter import NerToChunkConverter
-
-# we cant call the embdding file "embeddings" because namespacing wont let us import the Embeddings class inside of it then
-
-# sentence
 from nlu.components.sentence_detectors.pragmatic_sentence_detector.sentence_detector import PragmaticSentenceDetector
 from nlu.components.sentence_detectors.deep_sentence_detector.deep_sentence_detector import SentenceDetectorDeep
-# Embeddings
 from nlu.components.embeddings.albert.spark_nlp_albert import SparkNLPAlbert
 from nlu.components.embeddings.sentence_bert.BertSentenceEmbedding import BertSentence
 from nlu.components.embeddings.doc2vec.doc2vec import Doc2Vec
-
 from nlu.components.embeddings.bert.spark_nlp_bert import SparkNLPBert
 from nlu.components.embeddings.elmo.spark_nlp_elmo import SparkNLPElmo
 from nlu.components.embeddings.xlnet.spark_nlp_xlnet import SparkNLPXlnet
 from nlu.components.embeddings.use.spark_nlp_use import SparkNLPUse
 from nlu.components.embeddings.glove.glove import Glove
-
-# classifiers
 from nlu.components.classifiers.multi_classifier.multi_classifier import MultiClassifier
 from nlu.components.classifiers.yake.yake import Yake
 from nlu.components.classifiers.language_detector.language_detector import LanguageDetector
@@ -51,44 +41,59 @@ from nlu.components.classifiers.vivekn_sentiment.vivekn_sentiment_detector impor
 from nlu.components.classifiers.pos.part_of_speech_jsl import PartOfSpeechJsl
 from nlu.components.classifiers.seq_bert.seq_bert_classifier import SeqBertClassifier
 from nlu.components.classifiers.seq_distilbert.seq_distilbert_classifier import SeqDilstilBertClassifier
-
-# matchers
 from nlu.components.classifiers.token_bert.token_bert import TokenBert
 from nlu.components.classifiers.token_distilbert.token_distilbert import TokenDistilBert
-
 from nlu.components.classifiers.token_albert.token_albert import TokenAlbert
 from nlu.components.classifiers.token_roberta.token_roberta import TokenRoBerta
 from nlu.components.classifiers.token_xlm_roberta.token_xlmroberta import TokenXlmRoBerta
 from nlu.components.classifiers.token_longformer.token_longformer import TokenLongFormer
 from nlu.components.classifiers.token_xlnet.token_xlnet import TokenXlnet
 from nlu.components.embeddings.sentence_xlm.sentence_xlm import Sentence_XLM
-
-# token level operators
 from nlu.components.stemmers.stemmer.spark_nlp_stemmer import SparkNLPStemmer
 from nlu.components.normalizers.normalizer.spark_nlp_normalizer import SparkNLPNormalizer
 from nlu.components.normalizers.document_normalizer.spark_nlp_document_normalizer import SparkNLPDocumentNormalizer
-
 from nlu.components.lemmatizers.lemmatizer.spark_nlp_lemmatizer import SparkNLPLemmatizer
 from nlu.components.stopwordscleaners.stopwordcleaner.nlustopwordcleaner import NLUStopWordcleaner
-## spell
 from nlu.components.spell_checkers.norvig_spell.norvig_spell_checker import NorvigSpellChecker
 from nlu.components.spell_checkers.context_spell.context_spell_checker import ContextSpellChecker
 from nlu.components.spell_checkers.symmetric_spell.symmetric_spell_checker import SymmetricSpellChecker
 from nlu.components.tokenizers.default_tokenizer.default_tokenizer import DefaultTokenizer
 from nlu.components.tokenizers.word_segmenter.word_segmenter import WordSegmenter
-
 from nlu.components.chunkers.default_chunker.default_chunker import DefaultChunker
-
-# sentence
-
-# seq2seq
 from nlu.components.seq2seqs.marian.marian import Marian
 from nlu.components.seq2seqs.t5.t5 import T5
 from nlu.components.classifiers.sentiment_detector.sentiment_detector import Sentiment
-from nlu.universe.logic_universes import NLP_LEVELS, NLP_ANNO_TYPES
+from nlu.universe.logic_universes import NLP_LEVELS, AnnoTypes
 from nlu.components.tokenizers.regex_tokenizer.regex_tokenizer import RegexTokenizer
 from nlu.components.utils.chunk_2_doc.doc_2_chunk import Chunk_2_Doc
 from nlu.components.utils.doc2chunk.doc_2_chunk import Doc_2_Chunk
+from nlu.components.assertions.assertion_dl.assertion_dl import AssertionDL
+from nlu.components.assertions.assertion_log_reg.assertion_log_reg import AssertionLogReg
+from nlu.components.chunkers.contextual_parser.contextual_parser import ContextualParser
+from nlu.components.classifiers.generic_classifier.generic_classifier import GenericClassifier
+from nlu.components.classifiers.ner_healthcare.ner_dl_healthcare import NERDLHealthcare
+from nlu.universe.annotator_class_universe import AnnoClassRef
+from nlu.universe.universes import ComponentBackends, ComputeContexts
+from nlu.universe.logic_universes import NLP_LEVELS, AnnoTypes
+from nlu.components.deidentifiers.deidentifier.deidentifier import Deidentifier
+from nlu.components.normalizers.drug_normalizer.drug_normalizer import DrugNorm
+from nlu.components.relation_extractors.relation_extractor.relation_extractor import RelationExtraction
+from nlu.components.resolutions.sentence_entity_resolver.sentence_resolver import SentenceResolver
+from nlu.components.utils.ner_to_chunk_converter_licensed.ner_to_chunk_converter_licensed import \
+    NerToChunkConverterLicensed
+from nlu.pipe.col_substitution.col_substitution_HC import substitute_assertion_cols, substitute_context_parser_cols, \
+    substitute_de_identification_cols, substitute_drug_normalizer_cols, substitute_generic_classifier_parser_cols, \
+    substitute_ner_internal_converter_cols, substitute_relation_cols, substitute_sentence_resolution_cols
+from nlu.pipe.col_substitution.col_substitution_OS import substitute_ner_dl_cols
+from nlu.pipe.extractors.extractor_configs_HC import default_assertion_config, default_full_config, \
+    default_de_identification_config, default_only_result_config, default_generic_classifier_config, default_ner_config, \
+    default_NER_converter_licensed_config, default_relation_extraction_config, \
+    default_relation_extraction_positional_config, default_chunk_resolution_config
+from nlu.universe.feature_node_ids import NLP_NODE_IDS, NLP_HC_NODE_IDS, OCR_NODE_IDS
+from nlu.universe.feature_node_universes import NLP_HC_FEATURE_NODES, OCR_FEATURE_NODES
+from nlu.universe.feature_universes import NLP_FEATURES, OCR_FEATURES, NLP_HC_FEATURES
+from nlu.pipe.nlu_component import NluComponent
+from nlu.universe.universes import Licenses, ComputeContexts
 from nlu.pipe.col_substitution.col_substitution_OS import substitute_doc2chunk_cols, substitute_chunk_embed_cols, \
     substitute_chunk_cols, substitute_classifier_dl_cols, substitute_spell_context_cols, \
     substitute_labled_dependency_cols, substitute_un_labled_dependency_cols, substitute_doc_assembler_cols, \
@@ -115,11 +120,12 @@ from nlu.universe.feature_node_universes import NLP_FEATURE_NODES
 from nlu.universe.universes import ComponentBackends
 
 
-class ComponentMapOS:
+class ComponentMap:
     # Encapsulate all Open Source components Constructors by mappping each individual Annotator class to a specific Construction
     A = NLP_NODE_IDS
     H_A = NLP_HC_NODE_IDS
-    T = NLP_ANNO_TYPES
+    O_A = OCR_NODE_IDS
+    T = AnnoTypes
     F = NLP_FEATURES
     L = NLP_LEVELS
     ACR = AnnoClassRef
@@ -127,7 +133,7 @@ class ComponentMapOS:
         # A.BIG_TEXT_MATCHER : ComponentInfo(),
         A.CHUNK2DOC: NluComponent(
             name=A.CHUNK2DOC,
-            type=T.HELPER_ANNO,  # Classify each n-gram wether they match Pattern or not
+            type=T.HELPER_ANNO,
             get_default_model=Chunk_2_Doc.get_default_model,
             pdf_extractor_methods={'default': '', 'default_full': default_full_config, },  # TODO no extractor
             pdf_col_name_substitutor=substitute_doc2chunk_cols,
@@ -144,8 +150,8 @@ class ComponentMapOS:
         ),
         A.CHUNK_EMBEDDINGS_CONVERTER: NluComponent(
             name=A.CHUNK_EMBEDDINGS_CONVERTER,
-            type=T.HELPER_ANNO,  # Classify each n-gram wether they match Pattern or not
-            get_default_model=Chunk_2_Doc.get_default_model,
+            type=T.HELPER_ANNO,
+            get_default_model=ChunkEmbedder.get_default_model,
             pdf_extractor_methods={'default': default_chunk_embedding_config, 'default_full': default_full_config, },
             # TODO no extractor
             pdf_col_name_substitutor=substitute_chunk_embed_cols,
@@ -165,7 +171,7 @@ class ComponentMapOS:
         A.CHUNK_TOKENIZER: 'TODO NOT INTEGRATED',
         A.CHUNKER: NluComponent(
             name=A.CHUNKER,
-            type=T.CHUNK_CLASSIFIER,  # Classify each n-gram wether they match Pattern or not
+            type=T.CHUNK_CLASSIFIER,
             get_default_model=DefaultChunker.get_default_model,
             pdf_extractor_methods={'default': default_chunk_config, 'default_full': default_full_config, },
             pdf_col_name_substitutor=substitute_chunk_cols,
@@ -232,7 +238,7 @@ class ComponentMapOS:
             pdf_extractor_methods={'default': default_dep_typed_config, 'default_full': default_full_config, },
             pdf_col_name_substitutor=substitute_labled_dependency_cols,
             output_level=L.TOKEN,
-            node=NLP_FEATURE_NODES.nodes[A.TYPED_DEPENDENCY_PARSER],
+            node=NLP_FEATURE_NODES.nodes[A.UNTYPED_DEPENDENCY_PARSER],
             description='todo',
             provider=ComponentBackends.open_source,
             license=Licenses.open_source,
@@ -269,7 +275,7 @@ class ComponentMapOS:
             get_default_model=Doc_2_Chunk.get_default_model,
             pdf_extractor_methods={'default': default_doc2chunk_config, 'default_full': default_full_config, },
             pdf_col_name_substitutor=substitute_doc2chunk_cols,
-            output_level=L.CHUNK,  # TODO Sub type??
+            output_level=L.CHUNK,
             node=NLP_FEATURE_NODES.nodes[A.CHUNKER],
             description='Converts Document type col to Chunk type col',
             provider=ComponentBackends.open_source,
@@ -310,9 +316,9 @@ class ComponentMapOS:
             license=Licenses.open_source,
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
-            jsl_anno_class=A.DOCUMENT_ASSEMBLER,
-            jsl_anno_py_class=ACR.JSL_anno2_py_class[A.DOCUMENT_ASSEMBLER],
-            jsl_anno_java_class=ACR.JSL_anno_ref_2_java_class[A.DOCUMENT_ASSEMBLER],
+            jsl_anno_class=A.DOCUMENT_NORMALIZER,
+            jsl_anno_py_class=ACR.JSL_anno2_py_class[A.DOCUMENT_NORMALIZER],
+            jsl_anno_java_class=ACR.JSL_anno_ref_2_java_class[A.DOCUMENT_NORMALIZER],
         ),
         A.EMBEDDINGS_FINISHER: 'TODO NOT INTEGRATED',
         A.ENTITY_RULER: 'TODO NOT INTEGRATED',
@@ -400,7 +406,7 @@ class ComponentMapOS:
         ),
         A.NER_CONVERTER: NluComponent(
             name=A.NER_CONVERTER,
-            type=T.HELPER_ANNO,  # Classify each n-gram wether they match Pattern or not
+            type=T.HELPER_ANNO,
             get_default_model=NerToChunkConverter.get_default_model,
             pdf_extractor_methods={'default': default_ner_converter_config, 'default_full': default_full_config, },
             pdf_col_name_substitutor=substitute_ner_converter_cols,
@@ -1335,5 +1341,478 @@ class ComponentMapOS:
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.XLNET_FOR_TOKEN_CLASSIFICATION],
             jsl_anno_java_class=ACR.JSL_anno_ref_2_java_class[A.XLNET_FOR_TOKEN_CLASSIFICATION],
         ),
+
+    }
+    hc_components = {
+        # TODO THIS SHOULD BE A SEPERATED CLASS which ONLY INSTATIATE when LICENSE VALIDATE!!!>
+        H_A.ASSERTION_DL: NluComponent(
+            name=H_A.ASSERTION_DL,
+            type=T.CHUNK_CLASSIFIER,
+            get_default_model=AssertionDL.get_default_model,
+            get_pretrained_model=AssertionDL.get_pretrained_model,
+            get_trainable_model=AssertionDL.get_default_trainable_model,
+            pdf_extractor_methods={'default': default_assertion_config, 'default_full': default_full_config, },
+            pdf_col_name_substitutor=substitute_assertion_cols,
+            output_level=L.NER_CHUNK,
+            node=NLP_HC_FEATURE_NODES.nodes[H_A.ASSERTION_DL],
+            description='Deep Learning based Assertion model that maps NER-Chunks into a pre-defined terminology.',
+            provider=ComponentBackends.hc,
+            license=Licenses.hc,
+            computation_context=ComputeContexts.spark,
+            output_context=ComputeContexts.spark,
+            jsl_anno_class=H_A.ASSERTION_DL,
+            jsl_anno_py_class=ACR.JSL_anno_HC_ref_2_py_class[H_A.ASSERTION_DL],
+            jsl_anno_java_class=ACR.JSL_anno_HC_ref_2_java_class[H_A.ASSERTION_DL],
+            has_storage_ref=True,
+            is_storage_ref_consumer=True,
+            trainable_mirror_anno=H_A.TRAINABLE_ASSERTION_DL
+        ),
+        H_A.TRAINABLE_ASSERTION_DL: NluComponent(
+            name=H_A.TRAINABLE_ASSERTION_DL,
+            type=T.CHUNK_CLASSIFIER,
+            get_default_model=AssertionDL.get_default_model,
+            get_pretrained_model=AssertionDL.get_pretrained_model,
+            get_trainable_model=AssertionDL.get_default_trainable_model,
+            pdf_extractor_methods={'default': default_assertion_config, 'default_full': default_full_config, },
+            pdf_col_name_substitutor=substitute_assertion_cols,
+            output_level=L.NER_CHUNK,
+            node=NLP_HC_FEATURE_NODES.nodes[H_A.TRAINABLE_ASSERTION_DL],
+            description='Trainable Deep Learning based Assertion model that maps NER-Chunks into a pre-defined terminology.',
+            provider=ComponentBackends.hc,
+            license=Licenses.hc,
+            computation_context=ComputeContexts.spark,
+            output_context=ComputeContexts.spark,
+            jsl_anno_class=H_A.TRAINABLE_ASSERTION_DL,
+            jsl_anno_py_class=ACR.JSL_anno_HC_ref_2_py_class[H_A.TRAINABLE_ASSERTION_DL],
+            jsl_anno_java_class=ACR.JSL_anno_HC_ref_2_java_class[H_A.TRAINABLE_ASSERTION_DL],
+            has_storage_ref=True,
+            is_storage_ref_consumer=True,
+            trainable=True,
+            trained_mirror_anno=H_A.ASSERTION_DL),
+        # H_A.ASSERTION_FILTERER: NluComponent( # TODO not integrated
+        #     name=H_A.ASSERTION_FILTERER,
+        #     type=T.CHUNK_FILTERER,
+        #     get_default_model=AssertionDL.get_default_model,
+        #     get_pretrained_model=AssertionDL.get_pretrained_model,
+        #     get_trainable_model=AssertionDL.get_default_trainable_model,
+        #     pdf_extractor_methods={'default': default_assertion_config, 'default_full': default_full_config, },
+        #     pdf_col_name_substitutor=substitute_assertion_cols,
+        #     output_level=L.NER_CHUNK,
+        #     node=NLP_HC_FEATURE_NODES.ASSERTION_DL,
+        #     description='Trainable Deep Learning based Assertion model that maps NER-Chunks into a pre-defined terminology.',
+        #     provider=ComponentBackends.hc,
+        #     license=Licenses.hc,
+        #     computation_context=ComputeContexts.spark,
+        #     output_context=ComputeContexts.spark,
+        #     jsl_anno_class=H_A.ASSERTION_FILTERER,
+        #     jsl_anno_py_class=ACR.JSL_anno_HC_ref_2_py_class[H_A.ASSERTION_FILTERER],
+        #     jsl_anno_java_class=ACR.JSL_anno_HC_ref_2_java_class[H_A.ASSERTION_FILTERER],
+        #     has_storage_ref=True,
+        #     is_is_storage_ref_consumer=True,
+        #     trainable=True,
+        #     trained_mirror_anno=H_A.ASSERTION_FILTERER), AssertionLogReg
+        H_A.ASSERTION_LOG_REG: NluComponent(
+            name=H_A.ASSERTION_LOG_REG,
+            type=T.CHUNK_CLASSIFIER,
+            get_default_model=AssertionLogReg.get_default_model,
+            get_pretrained_model=AssertionLogReg.get_pretrained_model,
+            get_trainable_model=AssertionLogReg.get_default_trainable_model,
+            pdf_extractor_methods={'default': default_assertion_config, 'default_full': default_full_config, },
+            pdf_col_name_substitutor=substitute_assertion_cols,
+            output_level=L.NER_CHUNK,
+            node=NLP_HC_FEATURE_NODES.nodes[H_A.ASSERTION_LOG_REG],
+            description='Classical ML based Assertion model that maps NER-Chunks into a pre-defined terminology.',
+            provider=ComponentBackends.hc,
+            license=Licenses.hc,
+            computation_context=ComputeContexts.spark,
+            output_context=ComputeContexts.spark,
+            jsl_anno_class=H_A.ASSERTION_LOG_REG,
+            jsl_anno_py_class=ACR.JSL_anno_HC_ref_2_py_class[H_A.ASSERTION_LOG_REG],
+            jsl_anno_java_class=ACR.JSL_anno_HC_ref_2_java_class[H_A.ASSERTION_LOG_REG],
+            trained_mirror_anno=H_A.TRAINABLE_ASSERTION_LOG_REG),
+        H_A.TRAINABLE_ASSERTION_LOG_REG: NluComponent(
+            name=H_A.TRAINABLE_ASSERTION_LOG_REG,
+            type=T.CHUNK_CLASSIFIER,
+            get_default_model=AssertionLogReg.get_default_model,
+            get_pretrained_model=AssertionLogReg.get_pretrained_model,
+            get_trainable_model=AssertionLogReg.get_default_trainable_model,
+            pdf_extractor_methods={'default': default_assertion_config, 'default_full': default_full_config, },
+            pdf_col_name_substitutor=substitute_assertion_cols,
+            output_level=L.NER_CHUNK,
+            node=NLP_HC_FEATURE_NODES.nodes[H_A.TRAINABLE_ASSERTION_LOG_REG],
+            description='Classical ML based Assertion model that maps NER-Chunks into a pre-defined terminology.',
+            provider=ComponentBackends.hc,
+            license=Licenses.hc,
+            computation_context=ComputeContexts.spark,
+            output_context=ComputeContexts.spark,
+            jsl_anno_class=H_A.TRAINABLE_ASSERTION_LOG_REG,
+            jsl_anno_py_class=ACR.JSL_anno_HC_ref_2_py_class[H_A.TRAINABLE_ASSERTION_LOG_REG],
+            jsl_anno_java_class=ACR.JSL_anno_HC_ref_2_java_class[H_A.TRAINABLE_ASSERTION_LOG_REG],
+            trained_mirror_anno=H_A.ASSERTION_LOG_REG),
+        H_A.CHUNK2TOKEN: 'TODO not integrated',
+        H_A.CHUNK_ENTITY_RESOLVER: 'Deprecated',
+        H_A.TRAINABLE_CHUNK_ENTITY_RESOLVER: 'Deprecated',
+        H_A.CHUNK_FILTERER: 'TODO not integrated',
+        H_A.CHUNK_KEY_PHRASE_EXTRACTION: 'TODO not integrated',
+        H_A.CHUNK_MERGE: 'TODO not integrated',
+        H_A.CONTEXTUAL_PARSER: NluComponent(
+            name=H_A.CONTEXTUAL_PARSER,
+            type=T.CHUNK_CLASSIFIER,
+            get_default_model=ContextualParser.get_default_model,
+            get_trainable_model=ContextualParser.get_trainable_model,
+            pdf_extractor_methods={'default': default_full_config, 'default_full': default_full_config, },
+            # TODO extractr method
+            pdf_col_name_substitutor=substitute_context_parser_cols,
+            output_level=L.NER_CHUNK,
+            node=NLP_HC_FEATURE_NODES.nodes[H_A.CONTEXTUAL_PARSER],
+            description='Rule based entity extractor.',
+            provider=ComponentBackends.hc,
+            license=Licenses.hc,
+            computation_context=ComputeContexts.spark,
+            output_context=ComputeContexts.spark,
+            jsl_anno_class=H_A.CONTEXTUAL_PARSER,
+            jsl_anno_py_class=ACR.JSL_anno_HC_ref_2_py_class[H_A.CONTEXTUAL_PARSER],
+            jsl_anno_java_class=ACR.JSL_anno_HC_ref_2_java_class[H_A.CONTEXTUAL_PARSER]),
+        H_A.DE_IDENTIFICATION: NluComponent(
+            name=H_A.DE_IDENTIFICATION,
+            type=T.CHUNK_CLASSIFIER,
+            get_default_model=Deidentifier.get_default_model,
+            get_pretrained_model=Deidentifier.get_pretrained_model,
+            pdf_extractor_methods={'default': default_de_identification_config, 'default_full': default_full_config, },
+            pdf_col_name_substitutor=substitute_de_identification_cols,
+            output_level=L.DOCUMENT,
+            node=NLP_HC_FEATURE_NODES.nodes[H_A.DE_IDENTIFICATION],
+            description='De-Identify named entity according to various Healthcare Data Protection standards',
+            provider=ComponentBackends.hc,
+            license=Licenses.hc,
+            computation_context=ComputeContexts.spark,
+            output_context=ComputeContexts.spark,
+            jsl_anno_class=H_A.DE_IDENTIFICATION,
+            jsl_anno_py_class=ACR.JSL_anno_HC_ref_2_py_class[H_A.DE_IDENTIFICATION],
+            jsl_anno_java_class=ACR.JSL_anno_HC_ref_2_java_class[H_A.DE_IDENTIFICATION]),
+        H_A.DOCUMENT_LOG_REG_CLASSIFIER: 'TODO not integrated',
+        H_A.TRAINABLE_DOCUMENT_LOG_REG_CLASSIFIER: 'TODO not integrated',
+        H_A.DRUG_NORMALIZER: NluComponent(
+            name=H_A.DRUG_NORMALIZER,
+            type=T.CHUNK_CLASSIFIER,
+            get_default_model=DrugNorm.get_default_model,
+            pdf_extractor_methods={'default': default_only_result_config, 'default_full': default_full_config, },
+            pdf_col_name_substitutor=substitute_drug_normalizer_cols,
+            output_level=L.DOCUMENT,
+            node=NLP_HC_FEATURE_NODES.nodes[H_A.DRUG_NORMALIZER],
+            description='Normalizes raw clinical and crawled text which contains drug names into cleaned and standardized representation',
+            provider=ComponentBackends.hc,
+            license=Licenses.hc,
+            computation_context=ComputeContexts.spark,
+            output_context=ComputeContexts.spark,
+            jsl_anno_class=H_A.DRUG_NORMALIZER,
+            jsl_anno_py_class=ACR.JSL_anno_HC_ref_2_py_class[H_A.DRUG_NORMALIZER],
+            jsl_anno_java_class=ACR.JSL_anno_HC_ref_2_java_class[H_A.DRUG_NORMALIZER]),  #
+        # H_A.FEATURES_ASSEMBLER: NluComponent( # TODO partially integrated. featire mpde ,ossomg
+        #     name=H_A.FEATURES_ASSEMBLER,
+        #     type=T.HELPER_ANNO,
+        #     get_default_model=SparkNLPFeatureAssembler.get_default_model,
+        #     pdf_extractor_methods={'default': default_feature_assembler_config, 'default_full': default_full_config, },
+        #     # pdf_col_name_substitutor=substitute_drug_normalizer_cols, # TODO no substition
+        #     output_level=L.DOCUMENT, # TODO double check output level?
+        #     node=NLP_HC_FEATURE_NODES.FEATURES_ASSEMBLER,
+        #     description='Aggregated features from various annotators into one column for training generic classifiers',
+        #     provider=ComponentBackends.hc,
+        #     license=Licenses.hc,
+        #     computation_context=ComputeContexts.spark,
+        #     output_context=ComputeContexts.spark,
+        #     jsl_anno_class=H_A.FEATURES_ASSEMBLER,
+        #     jsl_anno_py_class=ACR.JSL_anno_HC_ref_2_py_class[H_A.FEATURES_ASSEMBLER],
+        #     jsl_anno_java_class=ACR.JSL_anno_HC_ref_2_java_class[H_A.FEATURES_ASSEMBLER]),
+        H_A.GENERIC_CLASSIFIER: NluComponent(
+            name=H_A.GENERIC_CLASSIFIER,
+            type=T.DOCUMENT_CLASSIFIER,
+            get_default_model=GenericClassifier.get_default_model,
+            get_trainable_model=GenericClassifier.get_default_model,
+            get_pretrained_model=GenericClassifier.get_default_model,
+            pdf_extractor_methods={'default': default_generic_classifier_config, 'default_full': default_full_config, },
+            pdf_col_name_substitutor=substitute_generic_classifier_parser_cols,
+            output_level=L.DOCUMENT,
+            node=NLP_HC_FEATURE_NODES.nodes[H_A.GENERIC_CLASSIFIER],
+            description='Generic Deep Learning based tensorflow classifier',
+            provider=ComponentBackends.hc,
+            license=Licenses.hc,
+            computation_context=ComputeContexts.spark,
+            output_context=ComputeContexts.spark,
+            jsl_anno_class=H_A.GENERIC_CLASSIFIER,
+            jsl_anno_py_class=ACR.JSL_anno_HC_ref_2_py_class[H_A.GENERIC_CLASSIFIER],
+            jsl_anno_java_class=ACR.JSL_anno_HC_ref_2_java_class[H_A.GENERIC_CLASSIFIER],
+            trainable_mirror_anno=H_A.TRAINABLE_GENERIC_CLASSIFIER
+        ),
+        H_A.TRAINABLE_GENERIC_CLASSIFIER: NluComponent(
+            name=H_A.TRAINABLE_GENERIC_CLASSIFIER,
+            type=T.DOCUMENT_CLASSIFIER,
+            get_default_model=GenericClassifier.get_default_model,
+            get_trainable_model=GenericClassifier.get_default_model,
+            get_pretrained_model=GenericClassifier.get_default_model,
+            pdf_extractor_methods={'default': default_generic_classifier_config, 'default_full': default_full_config, },
+            pdf_col_name_substitutor=substitute_generic_classifier_parser_cols,
+            output_level=L.DOCUMENT,
+            node=NLP_HC_FEATURE_NODES.nodes[H_A.GENERIC_CLASSIFIER],
+            description='Generic Deep Learning based tensorflow classifier',
+            provider=ComponentBackends.hc,
+            license=Licenses.hc,
+            computation_context=ComputeContexts.spark,
+            output_context=ComputeContexts.spark,
+            jsl_anno_class=H_A.TRAINABLE_GENERIC_CLASSIFIER,
+            jsl_anno_py_class=ACR.JSL_anno_HC_ref_2_py_class[H_A.TRAINABLE_GENERIC_CLASSIFIER],
+            jsl_anno_java_class=ACR.JSL_anno_HC_ref_2_java_class[H_A.TRAINABLE_GENERIC_CLASSIFIER],
+            trained_mirror_anno=H_A.GENERIC_CLASSIFIER
+        ),
+        H_A.IOB_TAGGER: 'TODO not integrated',
+        H_A.MEDICAL_NER: NluComponent(
+            name=H_A.MEDICAL_NER,
+            type=T.CHUNK_CLASSIFIER,
+            get_default_model=NERDLHealthcare.get_default_model,
+            get_trainable_model=NERDLHealthcare.get_default_trainable_model,
+            get_pretrained_model=NERDLHealthcare.get_pretrained_model,
+            pdf_extractor_methods={'default': default_ner_config, 'default_full': default_full_config, },
+            pdf_col_name_substitutor=substitute_ner_dl_cols,
+            output_level=L.NER_CHUNK,
+            node=NLP_HC_FEATURE_NODES.nodes[H_A.MEDICAL_NER],
+            description='Deep Learning based Medical Named Entity Recognizer (NER)',
+            provider=ComponentBackends.hc,
+            license=Licenses.hc,
+            computation_context=ComputeContexts.spark,
+            output_context=ComputeContexts.spark,
+            jsl_anno_class=H_A.MEDICAL_NER,
+            jsl_anno_py_class=ACR.JSL_anno_HC_ref_2_py_class[H_A.MEDICAL_NER],
+            jsl_anno_java_class=ACR.JSL_anno_HC_ref_2_java_class[H_A.MEDICAL_NER],
+            trainable_mirror_anno=H_A.TRAINABLE_MEDICAL_NER,
+            has_storage_ref=True,
+            is_storage_ref_consumer=True
+        ),
+        H_A.TRAINABLE_MEDICAL_NER: NluComponent(
+            name=H_A.TRAINABLE_MEDICAL_NER,
+            type=T.CHUNK_CLASSIFIER,
+            get_default_model=NERDLHealthcare.get_default_model,
+            get_trainable_model=NERDLHealthcare.get_default_model,
+            get_pretrained_model=NERDLHealthcare.get_default_model,
+            pdf_extractor_methods={'default': default_ner_config, 'default_full': default_full_config, },
+            pdf_col_name_substitutor=substitute_ner_dl_cols,
+            output_level=L.NER_CHUNK,
+            node=NLP_HC_FEATURE_NODES.nodes[H_A.TRAINABLE_MEDICAL_NER],
+            description='Trainable Deep Learning based Medical Named Entity Recognizer (NER)',
+            provider=ComponentBackends.hc,
+            license=Licenses.hc,
+            computation_context=ComputeContexts.spark,
+            output_context=ComputeContexts.spark,
+            jsl_anno_class=H_A.TRAINABLE_MEDICAL_NER,
+            jsl_anno_py_class=ACR.JSL_anno_HC_ref_2_py_class[H_A.TRAINABLE_MEDICAL_NER],
+            jsl_anno_java_class=ACR.JSL_anno_HC_ref_2_java_class[H_A.TRAINABLE_MEDICAL_NER],
+            trained_mirror_anno=H_A.TRAINABLE_MEDICAL_NER,
+            has_storage_ref=True,
+            is_storage_ref_consumer=True
+        ),
+        H_A.NER_CHUNKER: 'TODO not integrated',
+        H_A.NER_CONVERTER_INTERNAL: NluComponent(
+            name=H_A.NER_CONVERTER_INTERNAL,
+            type=T.HELPER_ANNO,
+            get_default_model=NerToChunkConverterLicensed.get_default_model,
+            pdf_extractor_methods={'default': default_NER_converter_licensed_config,
+                                   'default_full': default_full_config, },
+            pdf_col_name_substitutor=substitute_ner_internal_converter_cols,
+            output_level=L.NER_CHUNK,
+            node=NLP_HC_FEATURE_NODES.nodes[H_A.NER_CONVERTER_INTERNAL],
+            description='Convert NER-IOB tokens into concatenated strings (aka chunks)',
+            provider=ComponentBackends.hc,
+            license=Licenses.hc,
+            computation_context=ComputeContexts.spark,
+            output_context=ComputeContexts.spark,
+            jsl_anno_class=H_A.NER_CONVERTER_INTERNAL,
+            jsl_anno_py_class=ACR.JSL_anno_HC_ref_2_py_class[H_A.NER_CONVERTER_INTERNAL],
+            jsl_anno_java_class=ACR.JSL_anno_HC_ref_2_java_class[H_A.NER_CONVERTER_INTERNAL],
+        ),
+        H_A.NER_DISAMBIGUATOR: 'TODO not integrated',
+        H_A.RELATION_NER_CHUNKS_FILTERER: 'TODO not integrated',
+        H_A.RE_IDENTIFICATION: 'TODO not integrated',
+        H_A.RELATION_EXTRACTION: NluComponent(
+            name=H_A.RELATION_EXTRACTION,
+            type=T.RELATION_CLASSIFIER,
+            get_default_model=RelationExtraction.get_default_model,
+            get_pretrained_model=RelationExtraction.get_pretrained_model,
+            get_trainable_model=RelationExtraction.get_default_trainable_model,
+            pdf_extractor_methods={'default': default_relation_extraction_config,
+                                   'positional': default_relation_extraction_positional_config,
+                                   'default_full': default_full_config, },
+            pdf_col_name_substitutor=substitute_relation_cols,
+            output_level=L.RELATION,
+            node=NLP_HC_FEATURE_NODES.nodes[H_A.RELATION_EXTRACTION],
+            description='Classical ML model for predicting relation ship between entity pairs',
+            provider=ComponentBackends.hc,
+            license=Licenses.hc,
+            computation_context=ComputeContexts.spark,
+            output_context=ComputeContexts.spark,
+            jsl_anno_class=H_A.RELATION_EXTRACTION,
+            jsl_anno_py_class=ACR.JSL_anno_HC_ref_2_py_class[H_A.RELATION_EXTRACTION],
+            jsl_anno_java_class=ACR.JSL_anno_HC_ref_2_java_class[H_A.RELATION_EXTRACTION],
+            trainable_mirror_anno=H_A.TRAINABLE_RELATION_EXTRACTION
+        ),
+        H_A.TRAINABLE_RELATION_EXTRACTION: NluComponent(
+            name=H_A.TRAINABLE_RELATION_EXTRACTION,
+            type=T.RELATION_CLASSIFIER,
+            get_default_model=RelationExtraction.get_default_model,
+            get_pretrained_model=RelationExtraction.get_pretrained_model,
+            get_trainable_model=RelationExtraction.get_default_trainable_model,
+            pdf_extractor_methods={'default': default_relation_extraction_config,
+                                   'positional': default_relation_extraction_positional_config,
+                                   'default_full': default_full_config, },
+            pdf_col_name_substitutor=substitute_relation_cols,
+            output_level=L.RELATION,
+            node=NLP_HC_FEATURE_NODES.nodes[H_A.TRAINABLE_RELATION_EXTRACTION],
+            description='Trainable Classical ML model for predicting relation ship between entity pairs',
+            provider=ComponentBackends.hc,
+            license=Licenses.hc,
+            computation_context=ComputeContexts.spark,
+            output_context=ComputeContexts.spark,
+            jsl_anno_class=H_A.TRAINABLE_RELATION_EXTRACTION,
+            jsl_anno_py_class=ACR.JSL_anno_HC_ref_2_py_class[H_A.TRAINABLE_RELATION_EXTRACTION],
+            jsl_anno_java_class=ACR.JSL_anno_HC_ref_2_java_class[H_A.TRAINABLE_RELATION_EXTRACTION],
+            trained_mirror_anno=H_A.RELATION_EXTRACTION,
+            trainable=True
+        ),
+        H_A.RELATION_EXTRACTION_DL: NluComponent(
+            name=H_A.RELATION_EXTRACTION_DL,
+            type=T.RELATION_CLASSIFIER,
+            get_default_model=RelationExtractionDL.get_default_model,
+            get_pretrained_model=RelationExtractionDL.get_pretrained_model,
+            # get_trainable_model=RelationExtractionDL.get_default_trainable_model,
+            pdf_extractor_methods={'default': default_relation_extraction_config,
+                                   'positional': default_relation_extraction_positional_config,
+                                   'default_full': default_full_config, },
+            pdf_col_name_substitutor=substitute_relation_cols,
+            output_level=L.RELATION,
+            node=NLP_HC_FEATURE_NODES.nodes[H_A.RELATION_EXTRACTION_DL],
+            description='Deep Learning based model for predicting relation ship between entity pairs',
+            provider=ComponentBackends.hc,
+            license=Licenses.hc,
+            computation_context=ComputeContexts.spark,
+            output_context=ComputeContexts.spark,
+            jsl_anno_class=H_A.RELATION_EXTRACTION_DL,
+            jsl_anno_py_class=ACR.JSL_anno_HC_ref_2_py_class[H_A.RELATION_EXTRACTION_DL],
+            jsl_anno_java_class=ACR.JSL_anno_HC_ref_2_java_class[H_A.RELATION_EXTRACTION_DL],
+            # trainable_mirror_anno=H_A.TRAINABLE_RELATION_EXTRACTION_DL
+        ),
+        # H_A.TRAINABLE_RELATION_EXTRACTION_DL: NluComponent( # DOES NOT EXIST!
+        #     name=H_A.TRAINABLE_RELATION_EXTRACTION_DL,
+        #     type=T.RELATION_CLASSIFIER,
+        #     get_default_model=RelationExtractionDL.get_default_model,
+        #     get_pretrained_model=RelationExtractionDL.get_pretrained_model,
+        #     pdf_extractor_methods={ 'default': default_relation_extraction_config, 'positional': default_relation_extraction_positional_config, 'default_full'  : default_full_config, },
+        #     pdf_col_name_substitutor=substitute_relation_cols,
+        #     output_level=L.RELATION,
+        #     node=NLP_HC_FEATURE_NODES.TRAINABLE_RELATION_EXTRACTION_DL,
+        #     description='Trainable Deep Learning based model for predicting relation ship between entity pairs',
+        #     provider=ComponentBackends.hc,
+        #     license=Licenses.hc,
+        #     computation_context=ComputeContexts.spark,
+        #     output_context=ComputeContexts.spark,
+        #     jsl_anno_class=H_A.TRAINABLE_RELATION_EXTRACTION_DL,
+        #     jsl_anno_py_class=ACR.JSL_anno_HC_ref_2_py_class[H_A.TRAINABLE_RELATION_EXTRACTION_DL],
+        #     jsl_anno_java_class=ACR.JSL_anno_HC_ref_2_java_class[H_A.TRAINABLE_RELATION_EXTRACTION_DL],
+        #     trained_mirror_anno=H_A.RELATION_EXTRACTION_DL,
+        #     trainable=True
+        # ),
+        H_A.SENTENCE_ENTITY_RESOLVER: NluComponent(
+            name=H_A.SENTENCE_ENTITY_RESOLVER,
+            type=T.CHUNK_CLASSIFIER,
+            get_pretrained_model=SentenceResolver.get_pretrained_model,
+            get_trainable_model=SentenceResolver.get_default_trainable_model,
+            pdf_extractor_methods={'default': default_chunk_resolution_config, 'default_full': default_full_config, },
+            pdf_col_name_substitutor=substitute_sentence_resolution_cols,
+            output_level=L.RELATION,
+            node=NLP_HC_FEATURE_NODES.nodes[H_A.SENTENCE_ENTITY_RESOLVER],
+            description='Deep Learning based entity resolver which extracts resolved entities directly from Sentence Embedding. No NER model required.',
+            provider=ComponentBackends.hc,
+            license=Licenses.hc,
+            computation_context=ComputeContexts.spark,
+            output_context=ComputeContexts.spark,
+            jsl_anno_class=H_A.SENTENCE_ENTITY_RESOLVER,
+            jsl_anno_py_class=ACR.JSL_anno_HC_ref_2_py_class[H_A.SENTENCE_ENTITY_RESOLVER],
+            jsl_anno_java_class=ACR.JSL_anno_HC_ref_2_java_class[H_A.SENTENCE_ENTITY_RESOLVER],
+            trained_mirror_anno=H_A.TRAINABLE_SENTENCE_ENTITY_RESOLVER,
+            is_storage_ref_consumer=True,
+            has_storage_ref=True
+        ),
+        H_A.TRAINABLE_SENTENCE_ENTITY_RESOLVER: NluComponent(
+            name=H_A.TRAINABLE_SENTENCE_ENTITY_RESOLVER,
+            type=T.CHUNK_CLASSIFIER,
+            get_pretrained_model=SentenceResolver.get_pretrained_model,
+            get_trainable_model=SentenceResolver.get_default_trainable_model,
+            pdf_extractor_methods={'default': default_chunk_resolution_config, 'default_full': default_full_config, },
+            pdf_col_name_substitutor=substitute_sentence_resolution_cols,
+            output_level=L.RELATION,
+            node=NLP_HC_FEATURE_NODES.nodes[H_A.TRAINABLE_SENTENCE_ENTITY_RESOLVER],
+            description='Trainable Deep Learning based entity resolver which extracts resolved entities directly from Sentence Embedding. No NER model required.',
+            provider=ComponentBackends.hc,
+            license=Licenses.hc,
+            computation_context=ComputeContexts.spark,
+            output_context=ComputeContexts.spark,
+            jsl_anno_class=H_A.TRAINABLE_SENTENCE_ENTITY_RESOLVER,
+            jsl_anno_py_class=ACR.JSL_anno_HC_ref_2_py_class[H_A.TRAINABLE_SENTENCE_ENTITY_RESOLVER],
+            jsl_anno_java_class=ACR.JSL_anno_HC_ref_2_java_class[H_A.TRAINABLE_SENTENCE_ENTITY_RESOLVER],
+            trained_mirror_anno=H_A.TRAINABLE_SENTENCE_ENTITY_RESOLVER,
+            is_storage_ref_consumer=True,
+            has_storage_ref=True
+        ),
+        H_A.MEDICAL_BERT_FOR_TOKEN_CLASSIFICATION: NluComponent(
+            name=H_A.MEDICAL_BERT_FOR_TOKEN_CLASSIFICATION,
+            type=T.TRANSFORMER_TOKEN_CLASSIFIER,
+            get_default_model=TokenBertHealthcare.get_default_model,
+            get_pretrained_model=TokenBertHealthcare.get_pretrained_model,
+            pdf_extractor_methods={'default': default_token_classifier_config, 'default_full': default_full_config, },
+            pdf_col_name_substitutor=substitute_transformer_token_classifier_cols,
+            output_level=L.CHUNK,  # Handled like NER model
+            node=NLP_HC_FEATURE_NODES.nodes[H_A.MEDICAL_BERT_FOR_TOKEN_CLASSIFICATION],
+            description='MedicalBertForTokenClassification can load Bert Models with a token classification head on top (a linear layer on top of the hidden-states output) e.g. for Named-Entity-Recognition (NER) tasks.',
+            provider=ComponentBackends.open_source,
+            license=Licenses.hc,
+            computation_context=ComputeContexts.spark,
+            output_context=ComputeContexts.spark,
+            jsl_anno_class=H_A.MEDICAL_BERT_FOR_TOKEN_CLASSIFICATION,
+            jsl_anno_py_class=ACR.JSL_anno_HC_ref_2_py_class[H_A.MEDICAL_BERT_FOR_TOKEN_CLASSIFICATION],
+            jsl_anno_java_class=ACR.JSL_anno_HC_ref_2_java_class[H_A.MEDICAL_BERT_FOR_TOKEN_CLASSIFICATION],
+        ),
+        # MEDICAL_BERT_FOR_TOKEN_CLASSIFICATION fTOK
+    }
+    ocr_components = {
+        O_A.IMAGE2TEXT: NluComponent(
+            name=O_A.IMAGE2TEXT,
+            type=T.TEXT_RECOGNIZER,
+            get_default_model=Img2Text.get_default_model,
+            pdf_extractor_methods={'default': default_text_recognizer_config},
+            pdf_col_name_substitutor=substitute_recognized_text_cols,
+            output_level=L.DOCUMENT,  # TODO new output level IMG? Or treat as DOC?
+            node=OCR_FEATURE_NODES.nodes[O_A.IMAGE2TEXT],
+            description='Recognize text from image files',
+            provider=ComponentBackends.ocr,
+            license=Licenses.ocr,
+            computation_context=ComputeContexts.spark,
+            output_context=ComputeContexts.spark,
+            jsl_anno_class=O_A.IMAGE2TEXT,
+            jsl_anno_py_class=ACR.JSL_anno_OCR_ref_2_py_class[O_A.IMAGE2TEXT],
+            jsl_anno_java_class=ACR.JSL_anno_OCR_ref_2_java_class[O_A.IMAGE2TEXT]),
+
+        O_A.BINARY2IMAGE: NluComponent(
+            name=O_A.BINARY2IMAGE,
+            type=T.HELPER_ANNO,
+            get_default_model=Binary2Image.get_default_model,
+            pdf_extractor_methods={'default': default_text_recognizer_config}, # TODO
+            pdf_col_name_substitutor=substitute_recognized_text_cols, # TODO
+            output_level=L.DOCUMENT,  # TODO new output level IMG? Or treat as DOC?
+            node=OCR_FEATURE_NODES.nodes[O_A.BINARY2IMAGE],
+            description='Convert binary image data to OCR image Spark struct representation',
+            provider=ComponentBackends.ocr,
+            license=Licenses.ocr,
+            computation_context=ComputeContexts.spark,
+            output_context=ComputeContexts.spark,
+            jsl_anno_class=O_A.BINARY2IMAGE,
+            jsl_anno_py_class=ACR.JSL_anno_OCR_ref_2_py_class[O_A.BINARY2IMAGE],
+            jsl_anno_java_class=ACR.JSL_anno_OCR_ref_2_java_class[O_A.BINARY2IMAGE]),
 
     }
