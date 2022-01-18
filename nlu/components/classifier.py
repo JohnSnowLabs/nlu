@@ -50,7 +50,6 @@ class Classifier(SparkNLUComponent):
                 annotator_class = 'pos'
             elif 'pos' in nlp_ref and 'ner' not in nlp_ref:
                 annotator_class = 'pos'
-
             elif 'icd' in nlu_ref and 'med_ner' not in nlu_ref:
                 annotator_class = 'classifier_dl'
             elif 'med_ner' in nlu_ref:

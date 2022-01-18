@@ -8,7 +8,7 @@ class SparkNLPLemmatizer:
             .setOutputCol("lemma")
 
     @staticmethod
-    def get_pretrained_model(name, language):
+    def get_pretrained_model(name, language, bucket=None):
         return LemmatizerModel.pretrained(name, language) \
             .setInputCols(["token"]) \
             .setOutputCol("lemma")

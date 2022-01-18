@@ -8,7 +8,7 @@ class Roberta:
         .setOutputCol("roberta")
 
     @staticmethod
-    def get_pretrained_model(name, language):
+    def get_pretrained_model(name, language, bucket=None):
         return RoBertaEmbeddings.pretrained(name, language) \
             .setInputCols("sentence", "token") \
             .setOutputCol("roberta")

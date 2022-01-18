@@ -10,8 +10,8 @@ class SentenceDetectorDeep:
 
 
     @staticmethod
-    def get_pretrained_model(name,lang):
-        return SentenceDetectorDLModel.pretrained(name,lang) \
+    def get_pretrained_model(name,lang, bucket=None):
+        return SentenceDetectorDLModel.pretrained(name,lang,bucket) \
             .pretrained() \
             .setInputCols(["document"]) \
             .setOutputCol("sentence")

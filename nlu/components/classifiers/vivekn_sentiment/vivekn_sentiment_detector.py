@@ -8,8 +8,8 @@ class ViveknSentiment:
             .setOutputCol("sentiment")
 
     @staticmethod
-    def get_pretrained_model(name, language):
-        return ViveknSentimentModel.pretrained(name,language) \
+    def get_pretrained_model(name, language, bucket=None):
+        return ViveknSentimentModel.pretrained(name,language,bucket) \
             .setInputCols(["sentence", "token"]) \
             .setOutputCol("sentiment")
 

@@ -9,8 +9,8 @@ class UnlabeledDependencyParser:
             .setOutputCol("unlabeled_dependency")
 
     @staticmethod
-    def get_pretrained_model(name, language):
-        return DependencyParserModel.pretrained(name,language) \
+    def get_pretrained_model(name, language, bucket=None):
+        return DependencyParserModel.pretrained(name,language,bucket) \
             .setInputCols(["sentence", "pos", "token"]) \
             .setOutputCol("unlabeled_dependency")
 

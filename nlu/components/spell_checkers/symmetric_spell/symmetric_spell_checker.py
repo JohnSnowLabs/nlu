@@ -8,7 +8,7 @@ class SymmetricSpellChecker:
             .setOutputCol("spell")
 
     @staticmethod
-    def get_pretrained_model(name, language):
+    def get_pretrained_model(name, language, bucket=None):
         return SymmetricDeleteModel.pretrained(name, language) \
             .setInputCols(["token"]) \
             .setOutputCol("spell")

@@ -1,4 +1,4 @@
-from sparknlp.annotator import *
+from sparknlp.annotator import DistilBertEmbeddings
 
 class DistilBert:
     @staticmethod
@@ -8,7 +8,7 @@ class DistilBert:
         .setOutputCol("distilbert")
 
     @staticmethod
-    def get_pretrained_model(name, language):
+    def get_pretrained_model(name, language, bucket=None):
         return DistilBertEmbeddings.pretrained(name, language) \
             .setInputCols("sentence", "token") \
             .setOutputCol("distilbert")

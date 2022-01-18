@@ -1,8 +1,14 @@
-from sparknlp_jsl.annotator import SentenceEntityResolverModel,SentenceEntityResolverApproach
 
+
+"""
+for sentence resolvers
+SENTENCE EMBEDS must be generated from CHUNK2DOC!!!!!!!!!!!!!
+chunk2doc = Chunk2Doc().setInputCols("entities@modifier").setOutputCol("chunk2doc")
+"""
 class SentenceResolver:
     @staticmethod
     def get_pretrained_model(name, language, bucket='clinical/models'):
+        from sparknlp_jsl.annotator import SentenceEntityResolverModel
         return SentenceEntityResolverModel.pretrained(name, language,bucket) \
             .setInputCols(['entities',"sentence_embeddings"]) \
             .setDistanceFunction("COSINE") \
@@ -11,6 +17,7 @@ class SentenceResolver:
 
     @staticmethod
     def get_default_trainable_model():
+        from sparknlp_jsl.annotator import SentenceEntityResolverApproach
         return SentenceEntityResolverApproach() \
             .setNeighbours(25) \
             .setThreshold(1000) \
@@ -22,13 +29,3 @@ class SentenceResolver:
             .setCaseSensitive(False)
 
 
-""":cvar
-TODO
-
-for sentence resolvers
-SENTENCE EMBEDS must be generated from CHUNK2DOC!!!!!!!!!!!!!
-chunk2doc = Chunk2Doc().setInputCols("entities@modifier").setOutputCol("chunk2doc")
-
-
-
-"""

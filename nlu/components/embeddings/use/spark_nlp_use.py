@@ -1,4 +1,4 @@
-from sparknlp.annotator import *
+from sparknlp.annotator import UniversalSentenceEncoder
 
 class SparkNLPUse:
     @staticmethod
@@ -8,7 +8,7 @@ class SparkNLPUse:
             .setOutputCol("use_embeddings")
 
     @staticmethod
-    def get_pretrained_model(name, language):
+    def get_pretrained_model(name, language, bucket=None):
         return UniversalSentenceEncoder.pretrained(name, language) \
             .setInputCols("sentence") \
             .setOutputCol("use_embeddings")

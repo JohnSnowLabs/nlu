@@ -12,7 +12,7 @@ class Yake:
 
 
     @staticmethod
-    def get_pretrained_model(name, language):
+    def get_pretrained_model(name, language, bucket=None):
         return Yake.get_default_model()
 
 

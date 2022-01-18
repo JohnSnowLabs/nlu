@@ -8,7 +8,8 @@ class SparkNLPNormalizer:
             .setOutputCol("normalized")
 
     @staticmethod
-    def get_pretrained_model(name, language):
-        return NormalizerModel \
+    def get_pretrained_model(name, language, bucket=None):
+        # There are no pretrained normalizers
+        return Normalizer() \
             .setInputCols(["token"]) \
             .setOutputCol("normalized")

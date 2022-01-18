@@ -1,4 +1,4 @@
-from sparknlp.annotator import *
+from sparknlp.annotator import ElmoEmbeddings
 
 class SparkNLPElmo:
     @staticmethod
@@ -10,8 +10,8 @@ class SparkNLPElmo:
 
 
     @staticmethod
-    def get_pretrained_model(name, language):
-        return ElmoEmbeddings.pretrained(name,language) \
+    def get_pretrained_model(name, language, bucket=None):
+        return ElmoEmbeddings.pretrained(name,language,bucket) \
             .setInputCols("sentence", "token") \
             .setOutputCol("word_embeddings")
 
