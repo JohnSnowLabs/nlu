@@ -1,4 +1,4 @@
-from typing import List, Dict, Set, Dict, Tuple, Optional, Any,Callable, Dict
+from typing import List, Dict, Set, Dict, Tuple, Optional, Any, Callable, Dict
 from dataclasses import dataclass, field
 
 """
@@ -6,47 +6,38 @@ Contains dataclases which represent Extractors and their configuration
 
 """
 
-
-""" Cool ideas but maybe overkill
-- What abotu multiple exctracotrs? Make attribute extractor attrivbute a luist of methods? People of can just write phat mehtods? Buy what about combing n
-- white/black list based application of specific methods to specirfic keywords . 
-- What if you want multiple output cols, one per extractor method? 
-
-"""
 from typing import List, Dict, Set, Dict, Tuple, Optional, Any
 from typing import Callable
 from typing import List, Dict, Set, Dict, Tuple, Optional
 from dataclasses import dataclass, field
-"""
-Contains dataclases which represent Extractors and their configuration
 
-"""
 
 @dataclass
 class SparkNLPExtractor:
     """
-    Define and describe a **extractor_method** that will be called on every anotators output row.
-    The extractor method will recieve a list of dictionaries of type Dict[Str,Any] and must return a List[Any]
-    It will recieve a list of annotation results of a particular field for a given row of spark nlp pipeline transformation results.
+    Define and describe a **extractor_method** that will be called on every annotator's output row.
+    The extractor method will receive a list of dictionaries of type Dict[Str,Any] and must return a List[Any]
+    It will receive a list of annotation results of a particular field for a given row of spark nlp pipeline transformation results.
     Wrap a extractor method, description and name in a dataclass that is used as part of a SparkNLPExtractorConfig
 
     Parameters
     ----------
 
     extractor_method    : Callable[[List[Dict[str,Any]]], List[Any]]  :
-          An extractor is a method that takes in [Dict[str,Any]] and returs [Any]. Will be applied to every output row's metadata for that particular
+          An extractor is a method that takes in [Dict[str,Any]] and returns [Any].
+          Will be applied to every output row's metadata for that particular
     description         : str
-          Descrioptioon
+          Description
     name                :str
-          Descrioptioon
+          Description
     """
-    extractor_method    :Callable[[List[Dict[str,Any]]], List[Any]] = field(repr=False, default=lambda x : x)
-    description         :str                                        = field(default='')
-    name                :str                                        = field(default='')
+    extractor_method: Callable[[List[Dict[str, Any]]], List[Any]] = field(repr=False, default=lambda x: x)
+    description: str = field(default='')
+    name: str = field(default='')
 
 
 ## TODO extra config for getting "to which sentence did chunk/x/y/z belong to?"
-## TODO What abotu PARAMTERIXED extractor methods, like get_k_confidence for lang classifier??
+## TODO What abotu Parametericed extractor methods, like get_k_confidence for lang classifier??
 @dataclass
 class SparkNLPExtractorConfig:
     """
@@ -109,28 +100,52 @@ class SparkNLPExtractorConfig:
 
     """
     ## TODO pretty __repr__ or __to__string() method! Leverage  SparkNLPExtractor fields
-    output_col_prefix   :str
-    get_positions       :bool              = field(default = False)
-    get_begin           :bool              = field(default = False)
-    get_end             :bool              = field(default = False)
-    get_embeds          :bool              = field(default = False)
-    get_result          :bool              = field(default = False)
-    get_meta            :bool              = field(default = False)
-    get_sentence_origin :bool              = field(default = False) # Should extract from which sentence a prediction was generated from. If output level is Document, this field is irrelevant and should be set to false
-    get_full_meta       :bool              = field(default = False)
-    get_annotator_type  :bool              = field(default = False)
-    pop_result_list     :bool              = field(default = False) # TODO implement in ex
-    pop_begin_list      :bool              = field(default = False) # TODO implement in ex
-    pop_end_list        :bool              = field(default = False) # TODO implement in ex
-    pop_embeds_list     :bool              = field(default = False) # TODO implement in ex
-    pop_meta_list       :bool              = field(default = False) # TODO implement in ex
-    pop_never           :bool              = field(default = False) # never ever pop
-    meta_black_list     :List[str]         = field(default = list)
-    meta_white_list     :List[str]         = field(default = list)
-    meta_data_extractor :SparkNLPExtractor = field(default = SparkNLPExtractor())
-    begin_extractor     :SparkNLPExtractor = field(default = SparkNLPExtractor())
-    end_extractor       :SparkNLPExtractor = field(default = SparkNLPExtractor())
-    result_extractor    :SparkNLPExtractor = field(default = SparkNLPExtractor())
-    embedding_extractor :SparkNLPExtractor = field(default = SparkNLPExtractor())
-    description         :str               = field(default = '')
-    name                :str               = field(default = '')
+    output_col_prefix: str
+    get_positions: bool = field(default=False)
+    get_begin: bool = field(default=False)
+    get_end: bool = field(default=False)
+    get_embeds: bool = field(default=False)
+    get_result: bool = field(default=False)
+    get_meta: bool = field(default=False)
+    get_sentence_origin: bool = field(
+        default=False)  # Should extract from which sentence a prediction was generated from. If output level is Document, this field is irrelevant and should be set to false
+    get_full_meta: bool = field(default=False)
+    get_annotator_type: bool = field(default=False)
+    pop_result_list: bool = field(default=False)  # TODO implement in ex
+    pop_begin_list: bool = field(default=False)  # TODO implement in ex
+    pop_end_list: bool = field(default=False)  # TODO implement in ex
+    pop_embeds_list: bool = field(default=False)  # TODO implement in ex
+    pop_meta_list: bool = field(default=False)  # TODO implement in ex
+    pop_never: bool = field(default=False)  # never ever pop
+    meta_black_list: List[str] = field(default=list)
+    meta_white_list: List[str] = field(default=list)
+    meta_data_extractor: SparkNLPExtractor = field(default=SparkNLPExtractor())
+    begin_extractor: SparkNLPExtractor = field(default=SparkNLPExtractor())
+    end_extractor: SparkNLPExtractor = field(default=SparkNLPExtractor())
+    result_extractor: SparkNLPExtractor = field(default=SparkNLPExtractor())
+    embedding_extractor: SparkNLPExtractor = field(default=SparkNLPExtractor())
+    description: str = field(default='')
+    name: str = field(default='')
+
+
+@dataclass
+class SparkOCRExtractorConfig(SparkNLPExtractorConfig):
+    get_text: bool = field(default=False)
+    # Image struct fields
+    get_image: bool = field(default=False)
+    get_image_origin: bool = field(default=False)
+    get_image_height: bool = field(default=False)
+    get_image_width: bool = field(default=False)
+    get_image_n_channels: bool = field(default=False)
+    get_image_mode: bool = field(default=False)
+    get_image_resolution: bool = field(default=False)
+    get_image_data: bool = field(default=False)
+    # General OCR fields
+    # get_path          :bool              = field(default = False)# origin is path
+    get_modification_time: bool = field(default=False)
+    get_length: bool = field(default=False)
+    get_page_num: bool = field(default=False)
+    get_confidence: bool = field(default=False)
+    get_exception: bool = field(default=False)
+    # Position struct fields
+    get_img_positions: bool = field(default=False)

@@ -42,8 +42,8 @@ class VizUtilsOS():
             if isinstance(c.model, NerConverter) :        entities_component  = c
             if isinstance(c.model, DocumentAssembler) :   doc_component = c
 
-        document_col     = doc_component.info.outputs[0]
-        entities_col = entities_component.info.outputs[0]
+        document_col     = doc_component.out_types[0]
+        entities_col = entities_component.out_types[0]
         return document_col, entities_col
 
 
@@ -76,9 +76,9 @@ class VizUtilsOS():
             if isinstance(c.model, TypedDependencyParserModel) :   dep_typed_component  = c
             if isinstance(c.model, DependencyParserModel) :        dep_untyped_component  = c
 
-        pos_col       = pos_component.info.outputs[0]
-        dep_typ_col   = dep_typed_component.info.outputs[0]
-        dep_untyp_col = dep_untyped_component.info.outputs[0]
+        pos_col       = pos_component.out_types[0]
+        dep_typ_col   = dep_typed_component.out_types[0]
+        dep_untyp_col = dep_untyped_component.out_types[0]
         return pos_col,dep_typ_col,dep_untyp_col
 
 

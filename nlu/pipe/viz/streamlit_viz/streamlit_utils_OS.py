@@ -36,26 +36,26 @@ class StreamlitUtilsOS():
 
     @staticmethod
     def find_embed_component(p):
-        """Find first embed  component in pipe"""
+        """Find first embed  component in component_list"""
         for c in p.components :
-            if 'embed' in c.info.outputs[0] : return c
-        st.warning("No Embed model in pipe")
+            if 'embed' in c.out_types[0] : return c
+        st.warning("No Embed model in component_list")
         return None
 
     @staticmethod
     def find_all_classifier_components(pipe):
-        """Find ALL classifier component in pipe"""
+        """Find ALL classifier component in component_list"""
         classifier_comps = []
         for c in pipe.components:
             if type(c.model) in StreamlitUtilsOS.classifers_OS :classifier_comps.append(c)
         return  classifier_comps
     @staticmethod
     def find_all_embed_components(p):
-        """Find ALL  embed component in pipe"""
+        """Find ALL  embed component in component_list"""
         cs = []
         for c in p.components :
-            if 'embed' in c.info.outputs[0] and 'chunk' not  in c.info.outputs[0]: cs.append(c)
-        if len(cs) == 0 : st.warning("No Embed model in pipe")
+            if 'embed' in c.out_types[0] and 'chunk' not  in c.out_types[0]: cs.append(c)
+        if len(cs) == 0 : st.warning("No Embed model in component_list")
         return cs
 
     @staticmethod
@@ -71,16 +71,16 @@ class StreamlitUtilsOS():
 
     @staticmethod
     def find_ner_model(p):
-        """Find NER component in pipe"""
+        """Find NER component in component_list"""
         from sparknlp.annotator import NerDLModel,NerCrfModel
         for c in p.components :
             if isinstance(c.model,(NerDLModel,NerCrfModel)):return c.model
-        st.warning("No NER model in pipe")
+        st.warning("No NER model in component_list")
         return None
 
     @staticmethod
     def get_NER_tags_in_pipe(p):
-        """Get NER tags in pipe, used for showing visualizable tags"""
+        """Get NER tags in component_list, used for showing visualizable tags"""
         n = StreamlitUtilsOS.find_ner_model(p)
         if n is None : return []
         classes_predicted_by_ner_model = n.getClasses()
@@ -119,7 +119,7 @@ class StreamlitUtilsOS():
 
     @staticmethod
     def merge_token_classifiers_with_embed_pipe(embed_pipe, token_pipe):
-        """Merge token feature generators into embed pipe. i.e. Pos/Dep_depdency/Untyped_dep if not already present in pipe"""
+        """Merge token feature generators into embed component_list. i.e. Pos/Dep_depdency/Untyped_dep if not already present in component_list"""
         for c in token_pipe.components :
             if c.info.name == 'pos' :
                 for emb_c in embed_pipe.components :
@@ -127,10 +127,10 @@ class StreamlitUtilsOS():
                         embed_pipe.is_fitted=False
                         embed_pipe.fit()
                         return embed_pipe
-                    # only merge if pos not already in pipe
+                    # only merge if pos not already in component_list
                 embed_pipe.components.append(c)
-            # if c.info.name == 'unlabeled_dependency_parser' : embed_pipe.components.append(c)
-            # if c.info.name == 'labeled_dependency_parser' : embed_pipe.components.append(c)
+            # if os_components.info.name == 'unlabeled_dependency_parser' : embed_pipe.components.append(os_components)
+            # if os_components.info.name == 'labeled_dependency_parser' : embed_pipe.components.append(os_components)
         embed_pipe.is_fitted=False
         embed_pipe.fit()
         return embed_pipe

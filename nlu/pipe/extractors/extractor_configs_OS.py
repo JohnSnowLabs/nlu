@@ -213,7 +213,8 @@ def default_T5_config(output_col_prefix='T5'):
     return default_only_result_config(output_col_prefix)
 def default_marian_config(output_col_prefix='translated'):
     return default_only_result_config(output_col_prefix)
-
+def default_gpt2_config(output_col_prefix='generated'):
+    return default_only_result_config(output_col_prefix)
 
 # EMBEDS
 def default_sentence_embedding_config(output_col_prefix='sentence_embedding'):

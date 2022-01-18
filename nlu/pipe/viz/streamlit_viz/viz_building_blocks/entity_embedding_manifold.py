@@ -13,7 +13,7 @@ from nlu.pipe.viz.streamlit_viz.viz_building_blocks.block_utils.entity_manifold_
 class EntityEmbeddingManifoldStreamlitBlock():
     @staticmethod
     def viz_streamlit_entity_embed_manifold(
-            pipe,  # nlu pipe
+            pipe,  # nlu component_list
             default_texts: List[str] = ("Donald Trump likes to visit New York", "Angela Merkel likes to visit Berlin!", 'Peter hates visiting Paris'),
             title: Optional[str] = "Lower dimensional Manifold visualization for Entity embeddings",
             sub_title: Optional[str] = "Apply any of the 10+ `Manifold` or `Matrix Decomposition` algorithms to reduce the dimensionality of `Entity Embeddings` to `1-D`, `2-D` and `3-D` ",
@@ -52,7 +52,7 @@ class EntityEmbeddingManifoldStreamlitBlock():
         ner_emebed_pipe_algo_selection = []
         loaded_ner_embed_nlu_refs = []
         algos = ['TSNE']
-        # A pipe should have a NER and a Word Embedding
+        # A component_list should have a NER and a Word Embedding
         if pipe not in StreamlitVizTracker.loaded_ner_word_embeding_pipes: StreamlitVizTracker.loaded_ner_word_embeding_pipes.append(
             pipe)
         if pipe not in StreamlitVizTracker.loaded_word_embeding_pipes: StreamlitVizTracker.loaded_word_embeding_pipes.append(
@@ -70,7 +70,7 @@ class EntityEmbeddingManifoldStreamlitBlock():
             ner_emb_components_usable = [e for e in Discoverer.get_components('ner', True, include_aliases=True) if
                                          'embed' not in e and 'sentence' not in e]
 
-            # Find nlu_ref of currenlty loaded pipe
+            # Find nlu_ref of currenlty loaded component_list
             for p in StreamlitVizTracker.loaded_ner_word_embeding_pipes:
                 loaded_ner_embed_nlu_refs.append(p.nlu_ref)
 

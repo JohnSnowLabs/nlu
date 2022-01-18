@@ -4,7 +4,7 @@ Collection JSL Annotator IDs used by NLU internally
 from nlu.universe.atoms import JslAnnoId
 
 
-class NLP_NODE_IDS(JslAnnoId):
+class NLP_NODE_IDS:
     """All avaiable Feature nodes in NLP..
     Used to cast the pipeline dependency resolution algorithm into an abstract graph
     """
@@ -83,8 +83,14 @@ class NLP_NODE_IDS(JslAnnoId):
     XLM_ROBERTA_SENTENCE_EMBEDDINGS = JslAnnoId('xlm_roberta_sentence_embeddings')
     XLNET_EMBEDDINGS = JslAnnoId('xlnet_embeddings')
     XLNET_FOR_TOKEN_CLASSIFICATION = JslAnnoId('xlnet_for_token_classification')
+    XLM_ROBERTA_FOR_SEQUENCE_CLASSIFICATION = JslAnnoId('xlm_roberta_for_sequence_classification')
+    ROBERTA_FOR_SEQUENCE_CLASSIFICATION = JslAnnoId('roberta_for_sequence_classification')
+    LONGFORMER_FOR_SEQUENCE_CLASSIFICATION = JslAnnoId('longformer_for_sequence_classification')
+    ALBERT_FOR_SEQUENCE_CLASSIFICATION = JslAnnoId('albert_for_sequence_classification')
+    XLNET_FOR_SEQUENCE_CLASSIFICATION = JslAnnoId('xlnet_for_sequence_classification')
+    GPT2 = JslAnnoId('gpt2')
 
-    ## APPROACHES TODO INTEGRATE
+
     TRAINABLE_CONTEXT_SPELL_CHECKER = JslAnnoId('trainable_context_spell_checker')
     TRAINABLE_VIVEKN_SENTIMENT = JslAnnoId('trainable_vivekn_sentiment')
     TRAINABLE_SENTIMENT_DL = JslAnnoId('trainable_sentiment_dl')
@@ -93,25 +99,25 @@ class NLP_NODE_IDS(JslAnnoId):
     TRAINABLE_NER_DL = JslAnnoId('trainable_ner_dl')
     TRAINABLE_NER_CRF = JslAnnoId('trainable_ner_crf')
     TRAINABLE_POS = JslAnnoId('trainable_pos')
-    TRAINABLE_DEP_PARSE_TYPED = JslAnnoId('trainable_dependency_parser')  # TODO NODE!!
-    TRAINABLE_DEP_PARSE_UN_TYPED = JslAnnoId('trainable_dependency_parser_untyped')  # TODO NODE!!
-    TRAINABLE_DOC2VEC = JslAnnoId('trainable_doc2vec')  # TODO NDOE!!!
-    TRAINABLE_ENTITY_RULER = JslAnnoId('trainable_entity_ruler')  # TODO NDOE!!!
-    TRAINABLE_LEMMATIZER = JslAnnoId('trainable_lemmatizer')  # TODO NDOE!!!
-    TRAINABLE_NORMALIZER = JslAnnoId('trainable_normalizer')  # TODO NDOE!!!
-    TRAINABLE_NORVIG_SPELL_CHECKER = JslAnnoId('trainable_norvig_spell')  # TODO NDOE!!!
-    TRAINABLE_RECURISVE_TOKENIZER = JslAnnoId('trainable_recursive_tokenizer')  # TODO NDOE!!!
-    TRAINABLE_REGEX_MATCHER = JslAnnoId('trainable_regex_tokenizer')  # TODO NDOE!!!
-    TRAINABLE_SENTENCE_DETECTOR_DL = JslAnnoId('trainable_sentence_detector_dl')  # TODO NDOE!!!
-    TRAINABLE_SENTIMENT = JslAnnoId('trainable_sentiment')  # TODO NDOE!!!
-    TRAINABLE_WORD_EMBEDDINGS = JslAnnoId('trainable_word_embeddings')  # TODO NDOE!!!
-    TRAINABLE_SYMMETRIC_DELETE_SPELLCHECKER = JslAnnoId('trainable_symmetric_spell_checker')  # TODO NDOE!!!
-    TRAINABLE_TEXT_MATCHER = JslAnnoId('trainable_text_matcher')  # TODO NDOE!!!
-    TRAINABLE_TOKENIZER = JslAnnoId('trainable_tokenizer')  # TODO NDOE!!!
-    TRAINABLE_WORD_SEGMENTER = JslAnnoId('trainable_word_segmenter')  # TODO NDOE!!!
+    TRAINABLE_DEP_PARSE_TYPED = JslAnnoId('trainable_dependency_parser')
+    TRAINABLE_DEP_PARSE_UN_TYPED = JslAnnoId('trainable_dependency_parser_untyped')
+    TRAINABLE_DOC2VEC = JslAnnoId('trainable_doc2vec')
+    TRAINABLE_ENTITY_RULER = JslAnnoId('trainable_entity_ruler')
+    TRAINABLE_LEMMATIZER = JslAnnoId('trainable_lemmatizer')
+    TRAINABLE_NORMALIZER = JslAnnoId('trainable_normalizer')
+    TRAINABLE_NORVIG_SPELL_CHECKER = JslAnnoId('trainable_norvig_spell')
+    TRAINABLE_RECURISVE_TOKENIZER = JslAnnoId('trainable_recursive_tokenizer')
+    TRAINABLE_REGEX_MATCHER = JslAnnoId('trainable_regex_tokenizer')
+    TRAINABLE_SENTENCE_DETECTOR_DL = JslAnnoId('trainable_sentence_detector_dl')
+    TRAINABLE_SENTIMENT = JslAnnoId('trainable_sentiment')
+    TRAINABLE_WORD_EMBEDDINGS = JslAnnoId('trainable_word_embeddings')
+    TRAINABLE_SYMMETRIC_DELETE_SPELLCHECKER = JslAnnoId('trainable_symmetric_spell_checker')
+    TRAINABLE_TEXT_MATCHER = JslAnnoId('trainable_text_matcher')
+    TRAINABLE_TOKENIZER = JslAnnoId('trainable_tokenizer')
+    TRAINABLE_WORD_SEGMENTER = JslAnnoId('trainable_word_segmenter')
 
 
-class NLP_HC_NODE_IDS():  # or Mode Node?
+class NLP_HC_NODE_IDS:  # or Mode Node?
     """All avaiable Feature nodes in Healthcare Library.
     Defines High Level Identifiers
 
@@ -155,9 +161,10 @@ class NLP_HC_NODE_IDS():  # or Mode Node?
     # TRAINABLE_RELATION_EXTRACTION_DL = JslAnnoId('trainable_relation_extraction_dl')
     SENTENCE_ENTITY_RESOLVER = JslAnnoId('sentence_entity_resolver')
     TRAINABLE_SENTENCE_ENTITY_RESOLVER = JslAnnoId('trainable_sentence_entity_resolver')
+    MEDICAL_BERT_FOR_TOKEN_CLASSIFICATION = JslAnnoId('medical_bert_for_token_classification')
 
 
-class OCR_NODE_IDS():  # or Mode Node?
+class OCR_NODE_IDS:
     """All available Feature nodes in OCR
     Used to cast the pipeline dependency resolution algorithm into an abstract graph
     """
@@ -223,3 +230,4 @@ class OCR_NODE_IDS():  # or Mode Node?
     FOUNDATION_ONE_REPORT_PARSER = JslAnnoId('foundation_one_report_parser')
     HOCR_DOCUMENT_ASSEMBLER = JslAnnoId('hocr_document_assembler')
     HOCR_TOKENIZER = JslAnnoId('hocr_tokenizer')
+

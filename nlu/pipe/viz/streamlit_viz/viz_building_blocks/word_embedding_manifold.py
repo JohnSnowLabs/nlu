@@ -10,7 +10,7 @@ from nlu.pipe.viz.streamlit_viz.streamlit_viz_tracker import StreamlitVizTracker
 class WordEmbeddingManifoldStreamlitBlock():
     @staticmethod
     def viz_streamlit_word_embed_manifold(
-            pipe, # nlu pipe
+            pipe, # nlu component_list
             default_texts: List[str] = ("Donald Trump likes to party!", "Angela Merkel likes to party!", 'Peter HATES TO PARTTY!!!! :('),
             title: Optional[str] = "Lower dimensional Manifold visualization for word embeddings",
             sub_title: Optional[str] = "Apply any of the 11 `Manifold` or `Matrix Decomposition` algorithms to reduce the dimensionality of `Word Embeddings` to `1-D`, `2-D` and `3-D` ",
@@ -121,7 +121,7 @@ class WordEmbeddingManifoldStreamlitBlock():
         def are_cols_full(): return col_index == num_cols
         token_feature_pipe = StreamlitUtilsOS.get_pipe('pos')
         #not all pipes have sentiment/pos etc.. models for hueing loaded....
-        ## Lets FIRST predict with the classifiers/Token level feature generators and THEN apply embed pipe
+        ## Lets FIRST predict with the classifiers/Token level feature generators and THEN apply embed component_list
 
 
         data = original_text.copy()

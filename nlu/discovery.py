@@ -101,7 +101,7 @@ class Discoverer:
 
         # Print entire Namespace below
         for nlu_reference in nlu.Spellbook.component_alias_references.keys():
-            component_type = nlu.Spellbook.component_alias_references[nlu_reference][1][0],  # pipe or model
+            component_type = nlu.Spellbook.component_alias_references[nlu_reference][1][0],  # component_list or model
             print("nlu.load('" + nlu_reference + "') '  returns Spark NLP " + str(component_type) + ': ' +
                   nlu.Spellbook.component_alias_references[nlu_reference][0])
 

@@ -1,13 +1,21 @@
+from nlu.components.classifiers.seq_albert.seq_albert import SeqAlbertClassifier
+from nlu.components.classifiers.seq_longformer.seq_longformer import SeqLongformerClassifier
+from nlu.components.classifiers.seq_roberta.seq_roberta import SeqRobertaClassifier
+from nlu.components.classifiers.seq_xlm_roberta.seq_xlm_roberta import SeqXlmRobertaClassifier
+from nlu.components.classifiers.seq_xlnet.seq_xlnet import SeqXlnetClassifier
 from nlu.components.classifiers.token_bert_healthcare.token_bert_healthcare import TokenBertHealthcare
 from nlu.components.embeddings_chunks.chunk_embedder.chunk_embedder import ChunkEmbedder
 from nlu.components.classifiers.ner.ner_dl import NERDL
 from nlu.components.chunkers.ngram.ngram import NGram
 from nlu.components.classifiers.classifier_dl.classifier_dl import ClassifierDl
 from nlu.components.relation_extractors.relation_extractor_dl.relation_extractor_dl import RelationExtractionDL
+from nlu.components.seq2seqs.gpt2.gpt2 import GPT2
+from nlu.ocr_components.text_recognizers.doc2text.doc2text import Doc2Text
 from nlu.ocr_components.text_recognizers.img2text.img2text import Img2Text
+from nlu.ocr_components.text_recognizers.pdf2text.pdf2text import Pdf2Text
 from nlu.ocr_components.utils.binary2image.binary2image import Binary2Image
 from nlu.pipe.col_substitution.col_substitution_OCR import substitute_recognized_text_cols
-from nlu.pipe.extractors.extractor_configs_OCR import default_text_recognizer_config
+from nlu.pipe.extractors.extractor_configs_OCR import default_text_recognizer_config, default_binary_to_image_config
 from nlu.universe.universes import Licenses, ComputeContexts
 from nlu.universe.feature_universes import NLP_FEATURES
 from nlu.universe.annotator_class_universe import AnnoClassRef
@@ -84,7 +92,7 @@ from nlu.components.utils.ner_to_chunk_converter_licensed.ner_to_chunk_converter
 from nlu.pipe.col_substitution.col_substitution_HC import substitute_assertion_cols, substitute_context_parser_cols, \
     substitute_de_identification_cols, substitute_drug_normalizer_cols, substitute_generic_classifier_parser_cols, \
     substitute_ner_internal_converter_cols, substitute_relation_cols, substitute_sentence_resolution_cols
-from nlu.pipe.col_substitution.col_substitution_OS import substitute_ner_dl_cols
+from nlu.pipe.col_substitution.col_substitution_OS import substitute_ner_dl_cols, substitute_gpt2_cols
 from nlu.pipe.extractors.extractor_configs_HC import default_assertion_config, default_full_config, \
     default_de_identification_config, default_only_result_config, default_generic_classifier_config, default_ner_config, \
     default_NER_converter_licensed_config, default_relation_extraction_config, \
@@ -114,10 +122,12 @@ from nlu.pipe.extractors.extractor_configs_OS import default_chunk_embedding_con
     default_stemm_config, default_stopwords_config, default_spell_symmetric_config, default_sentiment_dl_config, \
     default_sentiment_config, default_sentiment_vivk_config, default_word_embedding_config, \
     default_word_segmenter_config, default_yake_config, default_token_classifier_config, default_marian_config, \
-    default_T5_config
+    default_T5_config, default_gpt2_config
 from nlu.universe.feature_node_ids import NLP_NODE_IDS, NLP_HC_NODE_IDS
 from nlu.universe.feature_node_universes import NLP_FEATURE_NODES
 from nlu.universe.universes import ComponentBackends
+
+
 
 
 class ComponentMap:
@@ -144,9 +154,9 @@ class ComponentMap:
             license=Licenses.open_source,
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
-            jsl_anno_class=A.CHUNK2DOC,
+            jsl_anno_class_id=A.CHUNK2DOC,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.CHUNK2DOC],
-            jsl_anno_java_class=ACR.JSL_anno_ref_2_java_class[A.CHUNK2DOC],
+
         ),
         A.CHUNK_EMBEDDINGS_CONVERTER: NluComponent(
             name=A.CHUNK_EMBEDDINGS_CONVERTER,
@@ -162,9 +172,8 @@ class ComponentMap:
             license=Licenses.open_source,
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
-            jsl_anno_class=A.CHUNK_EMBEDDINGS_CONVERTER,
+            jsl_anno_class_id=A.CHUNK_EMBEDDINGS_CONVERTER,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.CHUNK_EMBEDDINGS_CONVERTER],
-            jsl_anno_java_class=ACR.JSL_anno_ref_2_java_class[A.CHUNK_EMBEDDINGS_CONVERTER],
             is_storage_ref_producer=True,
             has_storage_ref=True,
         ),
@@ -182,9 +191,9 @@ class ComponentMap:
             license=Licenses.open_source,
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
-            jsl_anno_class=A.CHUNKER,
+            jsl_anno_class_id=A.CHUNKER,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.CHUNKER],
-            jsl_anno_java_class=ACR.JSL_anno_ref_2_java_class[A.CHUNKER],
+
         ),
         A.CLASSIFIER_DL: NluComponent(
             name=A.CLASSIFIER_DL,
@@ -201,12 +210,33 @@ class ComponentMap:
             license=Licenses.open_source,
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
-            jsl_anno_class=A.CLASSIFIER_DL,
+            jsl_anno_class_id=A.CLASSIFIER_DL,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.CLASSIFIER_DL],
-            jsl_anno_java_class=ACR.JSL_anno_ref_2_java_class[A.CLASSIFIER_DL],
             has_storage_ref=True,
             is_storage_ref_consumer=True,
             trainable_mirror_anno=A.TRAINABLE_CLASSIFIER_DL,
+        ),
+        A.TRAINABLE_CLASSIFIER_DL: NluComponent(
+            name=A.TRAINABLE_CLASSIFIER_DL,
+            type=T.DOCUMENT_CLASSIFIER,
+            get_default_model=ClassifierDl.get_default_model,
+            get_pretrained_model=ClassifierDl.get_pretrained_model,
+            get_trainable_model=ClassifierDl.get_trainable_model,
+            pdf_extractor_methods={'default': default_classifier_dl_config, 'default_full': default_full_config, },
+            pdf_col_name_substitutor=substitute_classifier_dl_cols,
+            output_level=L.INPUT_DEPENDENT_DOCUMENT_CLASSIFIER,
+            node=NLP_FEATURE_NODES.nodes[A.TRAINABLE_CLASSIFIER_DL],
+            description='Deep Learning based general classifier for many problems',
+            provider=ComponentBackends.open_source,
+            license=Licenses.open_source,
+            computation_context=ComputeContexts.spark,
+            output_context=ComputeContexts.spark,
+            jsl_anno_class_id=A.TRAINABLE_CLASSIFIER_DL,
+            jsl_anno_py_class=ACR.JSL_anno2_py_class[A.TRAINABLE_CLASSIFIER_DL],
+            has_storage_ref=True,
+            is_storage_ref_consumer=True,
+            trainable=True,
+            trained_mirror_anno=A.CLASSIFIER_DL,
         ),
         A.CONTEXT_SPELL_CHECKER: NluComponent(
             name=A.CONTEXT_SPELL_CHECKER,
@@ -223,9 +253,8 @@ class ComponentMap:
             license=Licenses.open_source,
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
-            jsl_anno_class=A.CONTEXT_SPELL_CHECKER,
+            jsl_anno_class_id=A.CONTEXT_SPELL_CHECKER,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.CONTEXT_SPELL_CHECKER],
-            jsl_anno_java_class=ACR.JSL_anno_ref_2_java_class[A.CONTEXT_SPELL_CHECKER],
             trainable_mirror_anno=A.TRAINABLE_CONTEXT_SPELL_CHECKER,
         ),
         A.DATE_MATCHER: 'TODO no Extractor Implemented',
@@ -244,9 +273,8 @@ class ComponentMap:
             license=Licenses.open_source,
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
-            jsl_anno_class=A.UNTYPED_DEPENDENCY_PARSER,
+            jsl_anno_class_id=A.UNTYPED_DEPENDENCY_PARSER,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.UNTYPED_DEPENDENCY_PARSER],
-            jsl_anno_java_class=ACR.JSL_anno_ref_2_java_class[A.UNTYPED_DEPENDENCY_PARSER],
             trainable_mirror_anno=A.TRAINABLE_DEP_PARSE_UN_TYPED,
         ),
         A.TYPED_DEPENDENCY_PARSER: NluComponent(
@@ -264,9 +292,8 @@ class ComponentMap:
             license=Licenses.open_source,
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
-            jsl_anno_class=A.TYPED_DEPENDENCY_PARSER,
+            jsl_anno_class_id=A.TYPED_DEPENDENCY_PARSER,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.TYPED_DEPENDENCY_PARSER],
-            jsl_anno_java_class=ACR.JSL_anno_ref_2_java_class[A.TYPED_DEPENDENCY_PARSER],
             trainable_mirror_anno=A.TRAINABLE_DEP_PARSE_TYPED,
         ),
         A.DOC2CHUNK: NluComponent(
@@ -282,9 +309,8 @@ class ComponentMap:
             license=Licenses.open_source,
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
-            jsl_anno_class=A.CHUNKER,
+            jsl_anno_class_id=A.CHUNKER,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.CHUNKER],
-            jsl_anno_java_class=ACR.JSL_anno_ref_2_java_class[A.CHUNKER],
         ),
         A.DOCUMENT_ASSEMBLER: NluComponent(
             name=A.DOCUMENT_ASSEMBLER,
@@ -299,9 +325,8 @@ class ComponentMap:
             license=Licenses.open_source,
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
-            jsl_anno_class=A.DOCUMENT_ASSEMBLER,
+            jsl_anno_class_id=A.DOCUMENT_ASSEMBLER,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.DOCUMENT_ASSEMBLER],
-            jsl_anno_java_class=ACR.JSL_anno_ref_2_java_class[A.DOCUMENT_ASSEMBLER],
         ),
         A.DOCUMENT_NORMALIZER: NluComponent(
             name=A.DOCUMENT_NORMALIZER,
@@ -316,9 +341,8 @@ class ComponentMap:
             license=Licenses.open_source,
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
-            jsl_anno_class=A.DOCUMENT_NORMALIZER,
+            jsl_anno_class_id=A.DOCUMENT_NORMALIZER,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.DOCUMENT_NORMALIZER],
-            jsl_anno_java_class=ACR.JSL_anno_ref_2_java_class[A.DOCUMENT_NORMALIZER],
         ),
         A.EMBEDDINGS_FINISHER: 'TODO NOT INTEGRATED',
         A.ENTITY_RULER: 'TODO NOT INTEGRATED',
@@ -339,9 +363,8 @@ class ComponentMap:
             license=Licenses.open_source,
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
-            jsl_anno_class=A.LANGUAGE_DETECTOR_DL,
+            jsl_anno_class_id=A.LANGUAGE_DETECTOR_DL,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.LANGUAGE_DETECTOR_DL],
-            jsl_anno_java_class=ACR.JSL_anno_ref_2_java_class[A.LANGUAGE_DETECTOR_DL],
         ),
         A.LEMMATIZER: NluComponent(
             name=A.LEMMATIZER,
@@ -358,9 +381,8 @@ class ComponentMap:
             license=Licenses.open_source,
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
-            jsl_anno_class=A.LEMMATIZER,
+            jsl_anno_class_id=A.LEMMATIZER,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.LEMMATIZER],
-            jsl_anno_java_class=ACR.JSL_anno_ref_2_java_class[A.LEMMATIZER],
             trainable_mirror_anno=A.TRAINABLE_LEMMATIZER
         ),
         A.MULTI_CLASSIFIER_DL: NluComponent(
@@ -379,13 +401,36 @@ class ComponentMap:
             license=Licenses.open_source,
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
-            jsl_anno_class=A.MULTI_CLASSIFIER_DL,
+            jsl_anno_class_id=A.MULTI_CLASSIFIER_DL,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.MULTI_CLASSIFIER_DL],
-            jsl_anno_java_class=ACR.JSL_anno_ref_2_java_class[A.MULTI_CLASSIFIER_DL],
             has_storage_ref=True,
             is_storage_ref_consumer=True,
             trainable_mirror_anno=A.TRAINABLE_MULTI_CLASSIFIER_DL,
         ),
+        A.TRAINABLE_MULTI_CLASSIFIER_DL: NluComponent(
+            name=A.TRAINABLE_MULTI_CLASSIFIER_DL,
+            type=T.DOCUMENT_CLASSIFIER,
+            get_default_model=MultiClassifier.get_default_model,
+            get_pretrained_model=MultiClassifier.get_pretrained_model,
+            get_trainable_model=MultiClassifier.get_default_trainable_model,
+            pdf_extractor_methods={'default': default_multi_classifier_dl_config,
+                                   'default_full': default_full_config, },
+            pdf_col_name_substitutor=substitute_multi_classifier_dl_cols,
+            output_level=L.INPUT_DEPENDENT_DOCUMENT_CLASSIFIER,
+            node=NLP_FEATURE_NODES.nodes[A.TRAINABLE_MULTI_CLASSIFIER_DL],
+            description='Trainable Deep Learning based general classifier for multi-label classification problem. I.e. problems, where one document may be labled with multiple labels at the same time.',
+            provider=ComponentBackends.open_source,
+            license=Licenses.open_source,
+            computation_context=ComputeContexts.spark,
+            output_context=ComputeContexts.spark,
+            jsl_anno_class_id=A.TRAINABLE_MULTI_CLASSIFIER_DL,
+            jsl_anno_py_class=ACR.JSL_anno2_py_class[A.TRAINABLE_MULTI_CLASSIFIER_DL],
+            has_storage_ref=True,
+            is_storage_ref_consumer=True,
+            trainable=True,
+            trained_mirror_anno=A.MULTI_CLASSIFIER_DL,
+        ),
+
         A.MULTI_DATE_MATCHER: 'TODO NOT INTEGRATED',
         A.N_GRAMM_GENERATOR: NluComponent(
             name=A.N_GRAMM_GENERATOR,
@@ -400,9 +445,8 @@ class ComponentMap:
             license=Licenses.open_source,
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
-            jsl_anno_class=A.N_GRAMM_GENERATOR,
+            jsl_anno_class_id=A.N_GRAMM_GENERATOR,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.N_GRAMM_GENERATOR],
-            jsl_anno_java_class=ACR.JSL_anno_ref_2_java_class[A.N_GRAMM_GENERATOR],
         ),
         A.NER_CONVERTER: NluComponent(
             name=A.NER_CONVERTER,
@@ -417,9 +461,8 @@ class ComponentMap:
             license=Licenses.open_source,
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
-            jsl_anno_class=A.NER_CONVERTER,
+            jsl_anno_class_id=A.NER_CONVERTER,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.NER_CONVERTER],
-            jsl_anno_java_class=ACR.JSL_anno_ref_2_java_class[A.NER_CONVERTER],
         ),
         A.NER_CRF: NluComponent(
             name=A.NER_CRF,
@@ -436,9 +479,8 @@ class ComponentMap:
             license=Licenses.open_source,
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
-            jsl_anno_class=A.NER_CRF,
+            jsl_anno_class_id=A.NER_CRF,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.NER_CRF],
-            jsl_anno_java_class=ACR.JSL_anno_ref_2_java_class[A.NER_CRF],
             trainable_mirror_anno=A.TRAINABLE_NER_CRF,
         ),
         A.NER_DL: NluComponent(
@@ -457,9 +499,8 @@ class ComponentMap:
             license=Licenses.open_source,
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
-            jsl_anno_class=A.NER_DL,
+            jsl_anno_class_id=A.NER_DL,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.NER_DL],
-            jsl_anno_java_class=ACR.JSL_anno_ref_2_java_class[A.NER_DL],
             trainable_mirror_anno=A.TRAINABLE_NER_DL,
             has_storage_ref=True,
             is_storage_ref_consumer=True
@@ -480,9 +521,8 @@ class ComponentMap:
             license=Licenses.open_source,
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
-            jsl_anno_class=A.TRAINABLE_NER_DL,
+            jsl_anno_class_id=A.TRAINABLE_NER_DL,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.TRAINABLE_NER_DL],
-            jsl_anno_java_class=ACR.JSL_anno_ref_2_java_class[A.TRAINABLE_NER_DL],
             trained_mirror_anno=A.NER_DL,
             has_storage_ref=True,
             is_storage_ref_consumer=True
@@ -503,9 +543,8 @@ class ComponentMap:
             license=Licenses.open_source,
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
-            jsl_anno_class=A.NORMALIZER,
+            jsl_anno_class_id=A.NORMALIZER,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.NORMALIZER],
-            jsl_anno_java_class=ACR.JSL_anno_ref_2_java_class[A.NORMALIZER],
             trainable_mirror_anno=A.TRAINABLE_NORMALIZER
         ),
         A.NORVIG_SPELL_CHECKER: NluComponent(
@@ -523,9 +562,8 @@ class ComponentMap:
             license=Licenses.open_source,
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
-            jsl_anno_class=A.NORVIG_SPELL_CHECKER,
+            jsl_anno_class_id=A.NORVIG_SPELL_CHECKER,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.NORVIG_SPELL_CHECKER],
-            jsl_anno_java_class=ACR.JSL_anno_ref_2_java_class[A.NORVIG_SPELL_CHECKER],
             trainable_mirror_anno=A.TRAINABLE_NORVIG_SPELL_CHECKER
         ),
         A.POS: NluComponent(
@@ -543,11 +581,31 @@ class ComponentMap:
             license=Licenses.open_source,
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
-            jsl_anno_class=A.POS,
+            jsl_anno_class_id=A.POS,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.POS],
-            jsl_anno_java_class=ACR.JSL_anno_ref_2_java_class[A.POS],
             trainable_mirror_anno=A.TRAINABLE_POS,
         ),
+        A.TRAINABLE_POS: NluComponent(
+            name=A.TRAINABLE_POS,
+            type=T.TOKEN_CLASSIFIER,
+            get_default_model=PartOfSpeechJsl.get_default_model,
+            get_pretrained_model=PartOfSpeechJsl.get_pretrained_model,
+            get_trainable_model=PartOfSpeechJsl.get_default_trainable_model,
+            pdf_extractor_methods={'default': default_POS_config, 'default_full': default_full_config, },
+            pdf_col_name_substitutor=substitute_pos_cols,
+            output_level=L.TOKEN,
+            node=NLP_FEATURE_NODES.nodes[A.TRAINABLE_POS],
+            description='todo',
+            provider=ComponentBackends.open_source,
+            license=Licenses.open_source,
+            computation_context=ComputeContexts.spark,
+            output_context=ComputeContexts.spark,
+            jsl_anno_class_id=A.TRAINABLE_POS,
+            jsl_anno_py_class=ACR.JSL_anno2_py_class[A.TRAINABLE_POS],
+            trained_mirror_anno=A.POS,
+            trainable=True
+        ),
+
         A.RECURISVE_TOKENIZER: 'TODO NOT INTEGRATED',
         A.REGEX_MATCHER: 'TODO no Extractor Implemented',
         A.TRAINABLE_REGEX_MATCHER: 'TODO no Extractor Implemented',
@@ -564,9 +622,8 @@ class ComponentMap:
             license=Licenses.open_source,
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
-            jsl_anno_class=A.REGEX_TOKENIZER,
+            jsl_anno_class_id=A.REGEX_TOKENIZER,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.REGEX_TOKENIZER],
-            jsl_anno_java_class=ACR.JSL_anno_ref_2_java_class[A.REGEX_TOKENIZER],
         ),
         A.SENTENCE_DETECTOR: NluComponent(
             name=A.SENTENCE_DETECTOR,
@@ -582,9 +639,8 @@ class ComponentMap:
             license=Licenses.open_source,
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
-            jsl_anno_class=A.SENTENCE_DETECTOR,
+            jsl_anno_class_id=A.SENTENCE_DETECTOR,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.SENTENCE_DETECTOR],
-            jsl_anno_java_class=ACR.JSL_anno_ref_2_java_class[A.SENTENCE_DETECTOR],
         ),
         A.SENTENCE_DETECTOR_DL: NluComponent(
             name=A.SENTENCE_DETECTOR_DL,
@@ -602,9 +658,8 @@ class ComponentMap:
             license=Licenses.open_source,
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
-            jsl_anno_class=A.SENTENCE_DETECTOR_DL,
+            jsl_anno_class_id=A.SENTENCE_DETECTOR_DL,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.SENTENCE_DETECTOR_DL],
-            jsl_anno_java_class=ACR.JSL_anno_ref_2_java_class[A.SENTENCE_DETECTOR_DL],
             trainable_mirror_anno=A.TRAINABLE_SENTENCE_DETECTOR_DL
         ),
         A.SENTENCE_EMBEDDINGS_CONVERTER: NluComponent(
@@ -620,9 +675,8 @@ class ComponentMap:
             license=Licenses.open_source,
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
-            jsl_anno_class=A.SENTENCE_EMBEDDINGS_CONVERTER,
+            jsl_anno_class_id=A.SENTENCE_EMBEDDINGS_CONVERTER,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.SENTENCE_EMBEDDINGS_CONVERTER],
-            jsl_anno_java_class=ACR.JSL_anno_ref_2_java_class[A.SENTENCE_EMBEDDINGS_CONVERTER],
             is_storage_ref_producer=True,
             has_storage_ref=True
         ),
@@ -639,9 +693,8 @@ class ComponentMap:
             license=Licenses.open_source,
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
-            jsl_anno_class=A.STEMMER,
+            jsl_anno_class_id=A.STEMMER,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.STEMMER],
-            jsl_anno_java_class=ACR.JSL_anno_ref_2_java_class[A.STEMMER],
         ),
         A.STOP_WORDS_CLEANER: NluComponent(
             name=A.STOP_WORDS_CLEANER,
@@ -657,9 +710,8 @@ class ComponentMap:
             license=Licenses.open_source,
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
-            jsl_anno_class=A.STOP_WORDS_CLEANER,
+            jsl_anno_class_id=A.STOP_WORDS_CLEANER,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.STOP_WORDS_CLEANER],
-            jsl_anno_java_class=ACR.JSL_anno_ref_2_java_class[A.STOP_WORDS_CLEANER],
         ),
         A.SYMMETRIC_DELETE_SPELLCHECKER: NluComponent(
             name=A.SYMMETRIC_DELETE_SPELLCHECKER,
@@ -676,9 +728,8 @@ class ComponentMap:
             license=Licenses.open_source,
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
-            jsl_anno_class=A.SYMMETRIC_DELETE_SPELLCHECKER,
+            jsl_anno_class_id=A.SYMMETRIC_DELETE_SPELLCHECKER,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.SYMMETRIC_DELETE_SPELLCHECKER],
-            jsl_anno_java_class=ACR.JSL_anno_ref_2_java_class[A.SYMMETRIC_DELETE_SPELLCHECKER],
             trainable_mirror_anno=A.TRAINABLE_SYMMETRIC_DELETE_SPELLCHECKER
         ),
         A.TEXT_MATCHER: 'TODO EXTRACTOR METHOD MISSING',  # TODO
@@ -698,9 +749,8 @@ class ComponentMap:
             license=Licenses.open_source,
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
-            jsl_anno_class=A.TOKENIZER,
+            jsl_anno_class_id=A.TOKENIZER,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.TOKENIZER],
-            jsl_anno_java_class=ACR.JSL_anno_ref_2_java_class[A.TOKENIZER],
         ),
         A.SENTIMENT_DL: NluComponent(
             name=A.SENTIMENT_DL,
@@ -717,9 +767,8 @@ class ComponentMap:
             license=Licenses.open_source,
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
-            jsl_anno_class=A.SENTIMENT_DL,
+            jsl_anno_class_id=A.SENTIMENT_DL,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.SENTIMENT_DL],
-            jsl_anno_java_class=ACR.JSL_anno_ref_2_java_class[A.SENTIMENT_DL],
             trainable_mirror_anno=A.TRAINABLE_SENTIMENT_DL,
             is_storage_ref_consumer=True,
             has_storage_ref=True
@@ -739,12 +788,12 @@ class ComponentMap:
             license=Licenses.open_source,
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
-            jsl_anno_class=A.TRAINABLE_SENTIMENT_DL,
+            jsl_anno_class_id=A.TRAINABLE_SENTIMENT_DL,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.TRAINABLE_SENTIMENT_DL],
-            jsl_anno_java_class=ACR.JSL_anno_ref_2_java_class[A.TRAINABLE_SENTIMENT_DL],
             trained_mirror_anno=A.TRAINABLE_SENTIMENT_DL,
             is_storage_ref_consumer=True,
-            has_storage_ref=True
+            has_storage_ref=True,
+            trainable=True
         ),
         A.SENTIMENT_DETECTOR: NluComponent(
             name=A.SENTIMENT_DETECTOR,
@@ -761,9 +810,8 @@ class ComponentMap:
             license=Licenses.open_source,
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
-            jsl_anno_class=A.SENTIMENT_DETECTOR,
+            jsl_anno_class_id=A.SENTIMENT_DETECTOR,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.SENTIMENT_DETECTOR],
-            jsl_anno_java_class=ACR.JSL_anno_ref_2_java_class[A.SENTIMENT_DETECTOR],
             trainable_mirror_anno=A.TRAINABLE_SENTIMENT,
         ),
         A.VIVEKN_SENTIMENT: NluComponent(
@@ -781,9 +829,8 @@ class ComponentMap:
             license=Licenses.open_source,
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
-            jsl_anno_class=A.VIVEKN_SENTIMENT,
+            jsl_anno_class_id=A.VIVEKN_SENTIMENT,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.VIVEKN_SENTIMENT],
-            jsl_anno_java_class=ACR.JSL_anno_ref_2_java_class[A.VIVEKN_SENTIMENT],
             trainable_mirror_anno=A.TRAINABLE_VIVEKN_SENTIMENT
         ),
         A.WORD_EMBEDDINGS: NluComponent(
@@ -800,9 +847,8 @@ class ComponentMap:
             license=Licenses.open_source,
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
-            jsl_anno_class=A.WORD_EMBEDDINGS,
+            jsl_anno_class_id=A.WORD_EMBEDDINGS,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.WORD_EMBEDDINGS],
-            jsl_anno_java_class=ACR.JSL_anno_ref_2_java_class[A.WORD_EMBEDDINGS],
             is_storage_ref_producer=True,
             has_storage_ref=True,
         ),
@@ -821,9 +867,8 @@ class ComponentMap:
             license=Licenses.open_source,
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
-            jsl_anno_class=A.WORD_SEGMENTER,
+            jsl_anno_class_id=A.WORD_SEGMENTER,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.WORD_SEGMENTER],
-            jsl_anno_java_class=ACR.JSL_anno_ref_2_java_class[A.WORD_SEGMENTER],
             trainable_mirror_anno=A.TRAINABLE_WORD_SEGMENTER
         ),
         A.YAKE_KEYWORD_EXTRACTION: NluComponent(
@@ -839,9 +884,8 @@ class ComponentMap:
             license=Licenses.open_source,
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
-            jsl_anno_class=A.YAKE_KEYWORD_EXTRACTION,
+            jsl_anno_class_id=A.YAKE_KEYWORD_EXTRACTION,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.YAKE_KEYWORD_EXTRACTION],
-            jsl_anno_java_class=ACR.JSL_anno_ref_2_java_class[A.YAKE_KEYWORD_EXTRACTION],
             has_storage_ref=False,
             is_storage_ref_consumer=False,
             is_storage_ref_producer=False,
@@ -862,9 +906,8 @@ class ComponentMap:
             license=Licenses.open_source,
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
-            jsl_anno_class=A.DOC2VEC,
+            jsl_anno_class_id=A.DOC2VEC,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.DOC2VEC],
-            jsl_anno_java_class=ACR.JSL_anno_ref_2_java_class[A.DOC2VEC],
             has_storage_ref=True,
             is_storage_ref_producer=True,
             trainable_mirror_anno=A.TRAINABLE_DOC2VEC
@@ -885,9 +928,8 @@ class ComponentMap:
             license=Licenses.open_source,
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
-            jsl_anno_class=A.TRAINABLE_DOC2VEC,
+            jsl_anno_class_id=A.TRAINABLE_DOC2VEC,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.TRAINABLE_DOC2VEC],
-            jsl_anno_java_class=ACR.JSL_anno_ref_2_java_class[A.TRAINABLE_DOC2VEC],
             has_storage_ref=True,
             is_storage_ref_producer=True,
             trained_mirror_anno=A.DOC2VEC,
@@ -909,9 +951,8 @@ class ComponentMap:
             license=Licenses.open_source,
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
-            jsl_anno_class=A.ALBERT_EMBEDDINGS,
+            jsl_anno_class_id=A.ALBERT_EMBEDDINGS,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.ALBERT_EMBEDDINGS],
-            jsl_anno_java_class=ACR.JSL_anno_ref_2_java_class[A.ALBERT_EMBEDDINGS],
             has_storage_ref=True,
             is_storage_ref_producer=True,
         ),
@@ -930,9 +971,8 @@ class ComponentMap:
             license=Licenses.open_source,
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
-            jsl_anno_class=A.ALBERT_FOR_TOKEN_CLASSIFICATION,
+            jsl_anno_class_id=A.ALBERT_FOR_TOKEN_CLASSIFICATION,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.ALBERT_FOR_TOKEN_CLASSIFICATION],
-            jsl_anno_java_class=ACR.JSL_anno_ref_2_java_class[A.ALBERT_FOR_TOKEN_CLASSIFICATION],
         ),
         A.BERT_EMBEDDINGS: NluComponent(
             name=A.BERT_EMBEDDINGS,
@@ -948,9 +988,8 @@ class ComponentMap:
             license=Licenses.open_source,
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
-            jsl_anno_class=A.BERT_EMBEDDINGS,
+            jsl_anno_class_id=A.BERT_EMBEDDINGS,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.BERT_EMBEDDINGS],
-            jsl_anno_java_class=ACR.JSL_anno_ref_2_java_class[A.BERT_EMBEDDINGS],
             has_storage_ref=True,
             is_storage_ref_producer=True,
         ),
@@ -968,9 +1007,8 @@ class ComponentMap:
             license=Licenses.open_source,
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
-            jsl_anno_class=A.BERT_SENTENCE_EMBEDDINGS,
+            jsl_anno_class_id=A.BERT_SENTENCE_EMBEDDINGS,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.BERT_SENTENCE_EMBEDDINGS],
-            jsl_anno_java_class=ACR.JSL_anno_ref_2_java_class[A.BERT_SENTENCE_EMBEDDINGS],
             has_storage_ref=True,
             is_storage_ref_producer=True,
         ),
@@ -988,9 +1026,8 @@ class ComponentMap:
             license=Licenses.open_source,
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
-            jsl_anno_class=A.BERT_FOR_TOKEN_CLASSIFICATION,
+            jsl_anno_class_id=A.BERT_FOR_TOKEN_CLASSIFICATION,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.BERT_FOR_TOKEN_CLASSIFICATION],
-            jsl_anno_java_class=ACR.JSL_anno_ref_2_java_class[A.BERT_FOR_TOKEN_CLASSIFICATION],
         ),
 
         A.BERT_FOR_SEQUENCE_CLASSIFICATION: NluComponent(
@@ -1007,9 +1044,8 @@ class ComponentMap:
             license=Licenses.open_source,
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
-            jsl_anno_class=A.BERT_FOR_SEQUENCE_CLASSIFICATION,
+            jsl_anno_class_id=A.BERT_FOR_SEQUENCE_CLASSIFICATION,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.BERT_FOR_SEQUENCE_CLASSIFICATION],
-            jsl_anno_java_class=ACR.JSL_anno_ref_2_java_class[A.BERT_FOR_SEQUENCE_CLASSIFICATION],
         ),
         A.DISTIL_BERT_EMBEDDINGS: NluComponent(
             name=A.DISTIL_BERT_EMBEDDINGS,
@@ -1025,9 +1061,8 @@ class ComponentMap:
             license=Licenses.open_source,
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
-            jsl_anno_class=A.DISTIL_BERT_EMBEDDINGS,
+            jsl_anno_class_id=A.DISTIL_BERT_EMBEDDINGS,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.DISTIL_BERT_EMBEDDINGS],
-            jsl_anno_java_class=ACR.JSL_anno_ref_2_java_class[A.DISTIL_BERT_EMBEDDINGS],
             has_storage_ref=True,
             is_storage_ref_producer=True,
         ),
@@ -1045,9 +1080,8 @@ class ComponentMap:
             license=Licenses.open_source,
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
-            jsl_anno_class=A.DISTIL_BERT_FOR_SEQUENCE_CLASSIFICATION,
+            jsl_anno_class_id=A.DISTIL_BERT_FOR_SEQUENCE_CLASSIFICATION,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.DISTIL_BERT_FOR_SEQUENCE_CLASSIFICATION],
-            jsl_anno_java_class=ACR.JSL_anno_ref_2_java_class[A.DISTIL_BERT_FOR_SEQUENCE_CLASSIFICATION],
         ),
         A.DISTIL_BERT_FOR_TOKEN_CLASSIFICATION: NluComponent(
             name=A.DISTIL_BERT_FOR_TOKEN_CLASSIFICATION,
@@ -1063,9 +1097,8 @@ class ComponentMap:
             license=Licenses.open_source,
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
-            jsl_anno_class=A.DISTIL_BERT_FOR_TOKEN_CLASSIFICATION,
+            jsl_anno_class_id=A.DISTIL_BERT_FOR_TOKEN_CLASSIFICATION,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.DISTIL_BERT_FOR_TOKEN_CLASSIFICATION],
-            jsl_anno_java_class=ACR.JSL_anno_ref_2_java_class[A.DISTIL_BERT_FOR_TOKEN_CLASSIFICATION],
         ),
         A.ELMO_EMBEDDINGS: NluComponent(
             name=A.ELMO_EMBEDDINGS,
@@ -1081,9 +1114,8 @@ class ComponentMap:
             license=Licenses.open_source,
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
-            jsl_anno_class=A.ELMO_EMBEDDINGS,
+            jsl_anno_class_id=A.ELMO_EMBEDDINGS,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.ELMO_EMBEDDINGS],
-            jsl_anno_java_class=ACR.JSL_anno_ref_2_java_class[A.ELMO_EMBEDDINGS],
             has_storage_ref=True,
             is_storage_ref_producer=True,
         ),
@@ -1101,9 +1133,8 @@ class ComponentMap:
             license=Licenses.open_source,
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
-            jsl_anno_class=A.LONGFORMER_EMBEDDINGS,
+            jsl_anno_class_id=A.LONGFORMER_EMBEDDINGS,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.LONGFORMER_EMBEDDINGS],
-            jsl_anno_java_class=ACR.JSL_anno_ref_2_java_class[A.LONGFORMER_EMBEDDINGS],
             has_storage_ref=True,
             is_storage_ref_producer=True,
         ),
@@ -1122,9 +1153,8 @@ class ComponentMap:
             license=Licenses.open_source,
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
-            jsl_anno_class=A.LONGFORMER_FOR_TOKEN_CLASSIFICATION,
+            jsl_anno_class_id=A.LONGFORMER_FOR_TOKEN_CLASSIFICATION,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.LONGFORMER_FOR_TOKEN_CLASSIFICATION],
-            jsl_anno_java_class=ACR.JSL_anno_ref_2_java_class[A.LONGFORMER_FOR_TOKEN_CLASSIFICATION],
         ),
         A.MARIAN_TRANSFORMER: NluComponent(
             name=A.MARIAN_TRANSFORMER,
@@ -1140,11 +1170,9 @@ class ComponentMap:
             license=Licenses.open_source,
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
-            jsl_anno_class=A.MARIAN_TRANSFORMER,
+            jsl_anno_class_id=A.MARIAN_TRANSFORMER,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.MARIAN_TRANSFORMER],
-            jsl_anno_java_class=ACR.JSL_anno_ref_2_java_class[A.MARIAN_TRANSFORMER],
         ),
-
         A.ROBERTA_EMBEDDINGS: NluComponent(
             name=A.ROBERTA_EMBEDDINGS,
             type=T.TOKEN_EMBEDDING,
@@ -1159,9 +1187,8 @@ class ComponentMap:
             license=Licenses.open_source,
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
-            jsl_anno_class=A.ROBERTA_EMBEDDINGS,
+            jsl_anno_class_id=A.ROBERTA_EMBEDDINGS,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.ROBERTA_EMBEDDINGS],
-            jsl_anno_java_class=ACR.JSL_anno_ref_2_java_class[A.ROBERTA_EMBEDDINGS],
             has_storage_ref=True,
             is_storage_ref_producer=True,
         ),
@@ -1180,9 +1207,8 @@ class ComponentMap:
             license=Licenses.open_source,
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
-            jsl_anno_class=A.ROBERTA_FOR_TOKEN_CLASSIFICATION,
+            jsl_anno_class_id=A.ROBERTA_FOR_TOKEN_CLASSIFICATION,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.ROBERTA_FOR_TOKEN_CLASSIFICATION],
-            jsl_anno_java_class=ACR.JSL_anno_ref_2_java_class[A.ROBERTA_FOR_TOKEN_CLASSIFICATION],
         ),
         # A.ROBERTA_SENTENCE_EMBEDDINGS: NluComponent( # TODO not integrated
         #     name=A.ROBERTA_SENTENCE_EMBEDDINGS,
@@ -1198,9 +1224,9 @@ class ComponentMap:
         #     license=Licenses.open_source,
         #     computation_context=ComputeContexts.spark,
         #     output_context=ComputeContexts.spark,
-        #     jsl_anno_class=A.ROBERTA_SENTENCE_EMBEDDINGS,
+        #     jsl_anno_class_id_id=A.ROBERTA_SENTENCE_EMBEDDINGS,
         #     jsl_anno_py_class=ACR.JSL_anno2_py_class[A.ROBERTA_SENTENCE_EMBEDDINGS],
-        #     jsl_anno_java_class=ACR.JSL_anno_ref_2_java_class[A.ROBERTA_SENTENCE_EMBEDDINGS],
+        #
         #     has_storage_ref=True,
         #     is_is_storage_ref_producer=True,
         # ),
@@ -1219,9 +1245,8 @@ class ComponentMap:
             license=Licenses.open_source,
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
-            jsl_anno_class=A.T5_TRANSFORMER,
+            jsl_anno_class_id=A.T5_TRANSFORMER,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.T5_TRANSFORMER],
-            jsl_anno_java_class=ACR.JSL_anno_ref_2_java_class[A.T5_TRANSFORMER],
         ),
         A.UNIVERSAL_SENTENCE_ENCODER: NluComponent(
             name=A.UNIVERSAL_SENTENCE_ENCODER,
@@ -1237,9 +1262,8 @@ class ComponentMap:
             license=Licenses.open_source,
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
-            jsl_anno_class=A.UNIVERSAL_SENTENCE_ENCODER,
+            jsl_anno_class_id=A.UNIVERSAL_SENTENCE_ENCODER,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.UNIVERSAL_SENTENCE_ENCODER],
-            jsl_anno_java_class=ACR.JSL_anno_ref_2_java_class[A.UNIVERSAL_SENTENCE_ENCODER],
             has_storage_ref=True,
             is_storage_ref_producer=True,
         ),
@@ -1258,9 +1282,8 @@ class ComponentMap:
             license=Licenses.open_source,
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
-            jsl_anno_class=A.XLM_ROBERTA_EMBEDDINGS,
+            jsl_anno_class_id=A.XLM_ROBERTA_EMBEDDINGS,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.XLM_ROBERTA_EMBEDDINGS],
-            jsl_anno_java_class=ACR.JSL_anno_ref_2_java_class[A.XLM_ROBERTA_EMBEDDINGS],
             has_storage_ref=True,
             is_storage_ref_producer=True,
         ),
@@ -1279,9 +1302,8 @@ class ComponentMap:
             license=Licenses.open_source,
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
-            jsl_anno_class=A.XLM_ROBERTA_FOR_TOKEN_CLASSIFICATION,
+            jsl_anno_class_id=A.XLM_ROBERTA_FOR_TOKEN_CLASSIFICATION,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.XLM_ROBERTA_FOR_TOKEN_CLASSIFICATION],
-            jsl_anno_java_class=ACR.JSL_anno_ref_2_java_class[A.XLM_ROBERTA_FOR_TOKEN_CLASSIFICATION],
         ),
         A.XLM_ROBERTA_SENTENCE_EMBEDDINGS: NluComponent(
             name=A.XLM_ROBERTA_SENTENCE_EMBEDDINGS,
@@ -1297,9 +1319,8 @@ class ComponentMap:
             license=Licenses.open_source,
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
-            jsl_anno_class=A.XLM_ROBERTA_SENTENCE_EMBEDDINGS,
+            jsl_anno_class_id=A.XLM_ROBERTA_SENTENCE_EMBEDDINGS,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.XLM_ROBERTA_SENTENCE_EMBEDDINGS],
-            jsl_anno_java_class=ACR.JSL_anno_ref_2_java_class[A.XLM_ROBERTA_SENTENCE_EMBEDDINGS],
             has_storage_ref=True,
             is_storage_ref_producer=True,
         ),
@@ -1317,9 +1338,8 @@ class ComponentMap:
             license=Licenses.open_source,
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
-            jsl_anno_class=A.XLNET_EMBEDDINGS,
+            jsl_anno_class_id=A.XLNET_EMBEDDINGS,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.XLNET_EMBEDDINGS],
-            jsl_anno_java_class=ACR.JSL_anno_ref_2_java_class[A.XLNET_EMBEDDINGS],
             has_storage_ref=True,
             is_storage_ref_producer=True,
         ),
@@ -1337,10 +1357,118 @@ class ComponentMap:
             license=Licenses.open_source,
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
-            jsl_anno_class=A.XLNET_FOR_TOKEN_CLASSIFICATION,
+            jsl_anno_class_id=A.XLNET_FOR_TOKEN_CLASSIFICATION,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.XLNET_FOR_TOKEN_CLASSIFICATION],
-            jsl_anno_java_class=ACR.JSL_anno_ref_2_java_class[A.XLNET_FOR_TOKEN_CLASSIFICATION],
         ),
+
+        A.XLM_ROBERTA_FOR_SEQUENCE_CLASSIFICATION: NluComponent(
+            name=A.XLM_ROBERTA_FOR_SEQUENCE_CLASSIFICATION,
+            type=T.TRANSFORMER_SEQUENCE_CLASSIFIER,
+            get_default_model=SeqXlmRobertaClassifier.get_default_model,
+            get_pretrained_model=SeqXlmRobertaClassifier.get_pretrained_model,
+            pdf_extractor_methods={'default': default_classifier_dl_config, 'default_full': default_full_config, },
+            pdf_col_name_substitutor=substitute_seq_bert_classifier_cols,
+            output_level=L.INPUT_DEPENDENT_DOCUMENT_CLASSIFIER,
+            node=NLP_FEATURE_NODES.nodes[A.XLM_ROBERTA_FOR_SEQUENCE_CLASSIFICATION],
+            description='XlmRoBertaForSequenceClassification can load XLM-RoBERTa Models with sequence classification/regression head on top (a linear layer on top of the pooled output) e.g. for multi-class document classification task',
+            provider=ComponentBackends.open_source,
+            license=Licenses.open_source,
+            computation_context=ComputeContexts.spark,
+            output_context=ComputeContexts.spark,
+            jsl_anno_class_id=A.XLM_ROBERTA_FOR_SEQUENCE_CLASSIFICATION,
+            jsl_anno_py_class=ACR.JSL_anno2_py_class[A.XLM_ROBERTA_FOR_SEQUENCE_CLASSIFICATION],
+        ),
+        A.ROBERTA_FOR_SEQUENCE_CLASSIFICATION: NluComponent(
+            name=A.ROBERTA_FOR_SEQUENCE_CLASSIFICATION,
+            type=T.TRANSFORMER_SEQUENCE_CLASSIFIER,
+            get_default_model=SeqRobertaClassifier.get_default_model,
+            get_pretrained_model=SeqRobertaClassifier.get_pretrained_model,
+            pdf_extractor_methods={'default': default_classifier_dl_config, 'default_full': default_full_config, },
+            pdf_col_name_substitutor=substitute_seq_bert_classifier_cols,
+            output_level=L.INPUT_DEPENDENT_DOCUMENT_CLASSIFIER,
+            node=NLP_FEATURE_NODES.nodes[A.ROBERTA_FOR_SEQUENCE_CLASSIFICATION],
+            description='RoBertaForSequenceClassification can load RoBERTa Models with sequence classification/regression head on top (a linear layer on top of the pooled output) e.g. for multi-class document classification tasks',
+            provider=ComponentBackends.open_source,
+            license=Licenses.open_source,
+            computation_context=ComputeContexts.spark,
+            output_context=ComputeContexts.spark,
+            jsl_anno_class_id=A.ROBERTA_FOR_SEQUENCE_CLASSIFICATION,
+            jsl_anno_py_class=ACR.JSL_anno2_py_class[A.ROBERTA_FOR_SEQUENCE_CLASSIFICATION],
+        ),
+
+        A.LONGFORMER_FOR_SEQUENCE_CLASSIFICATION: NluComponent(
+            name=A.LONGFORMER_FOR_SEQUENCE_CLASSIFICATION,
+            type=T.TRANSFORMER_SEQUENCE_CLASSIFIER,
+            get_default_model=SeqLongformerClassifier.get_default_model,
+            get_pretrained_model=SeqLongformerClassifier.get_pretrained_model,
+            pdf_extractor_methods={'default': default_classifier_dl_config, 'default_full': default_full_config, },
+            pdf_col_name_substitutor=substitute_seq_bert_classifier_cols,
+            output_level=L.INPUT_DEPENDENT_DOCUMENT_CLASSIFIER,
+            node=NLP_FEATURE_NODES.nodes[A.LONGFORMER_FOR_SEQUENCE_CLASSIFICATION],
+            description='RoBertaForSequenceClassification can load RoBERTa Models with sequence classification/regression head on top (a linear layer on top of the pooled output) e.g. for multi-class document classification tasks',
+            provider=ComponentBackends.open_source,
+            license=Licenses.open_source,
+            computation_context=ComputeContexts.spark,
+            output_context=ComputeContexts.spark,
+            jsl_anno_class_id=A.LONGFORMER_FOR_SEQUENCE_CLASSIFICATION,
+            jsl_anno_py_class=ACR.JSL_anno2_py_class[A.LONGFORMER_FOR_SEQUENCE_CLASSIFICATION],
+        ),
+        A.ALBERT_FOR_SEQUENCE_CLASSIFICATION: NluComponent(
+            name=A.ALBERT_FOR_SEQUENCE_CLASSIFICATION,
+            type=T.TRANSFORMER_SEQUENCE_CLASSIFIER,
+            get_default_model=SeqAlbertClassifier.get_default_model,
+            get_pretrained_model=SeqAlbertClassifier.get_pretrained_model,
+            pdf_extractor_methods={'default': default_classifier_dl_config, 'default_full': default_full_config, },
+            pdf_col_name_substitutor=substitute_seq_bert_classifier_cols,
+            output_level=L.INPUT_DEPENDENT_DOCUMENT_CLASSIFIER,
+            node=NLP_FEATURE_NODES.nodes[A.ALBERT_FOR_SEQUENCE_CLASSIFICATION],
+            description='AlbertForSequenceClassification can load ALBERT Models with sequence classification/regression head on top (a linear layer on top of the pooled output) e.g. for multi-class document classification tasks.',
+            provider=ComponentBackends.open_source,
+            license=Licenses.open_source,
+            computation_context=ComputeContexts.spark,
+            output_context=ComputeContexts.spark,
+            jsl_anno_class_id=A.ALBERT_FOR_SEQUENCE_CLASSIFICATION,
+            jsl_anno_py_class=ACR.JSL_anno2_py_class[A.ALBERT_FOR_SEQUENCE_CLASSIFICATION],
+        ),
+
+        A.XLNET_FOR_SEQUENCE_CLASSIFICATION: NluComponent(
+            name=A.XLNET_FOR_SEQUENCE_CLASSIFICATION,
+            type=T.TRANSFORMER_SEQUENCE_CLASSIFIER,
+            get_default_model=SeqXlnetClassifier.get_default_model,
+            get_pretrained_model=SeqXlnetClassifier.get_pretrained_model,
+            pdf_extractor_methods={'default': default_classifier_dl_config, 'default_full': default_full_config, },
+            pdf_col_name_substitutor=substitute_seq_bert_classifier_cols,
+            output_level=L.INPUT_DEPENDENT_DOCUMENT_CLASSIFIER,
+            node=NLP_FEATURE_NODES.nodes[A.XLNET_FOR_SEQUENCE_CLASSIFICATION],
+            description='AlbertForSequenceClassification can load ALBERT Models with sequence classification/regression head on top (a linear layer on top of the pooled output) e.g. for multi-class document classification tasks.',
+            provider=ComponentBackends.open_source,
+            license=Licenses.open_source,
+            computation_context=ComputeContexts.spark,
+            output_context=ComputeContexts.spark,
+            jsl_anno_class_id=A.XLNET_FOR_SEQUENCE_CLASSIFICATION,
+            jsl_anno_py_class=ACR.JSL_anno2_py_class[A.XLNET_FOR_SEQUENCE_CLASSIFICATION],
+        ),
+
+
+        A.GPT2: NluComponent(
+            name=A.GPT2,
+            type=T.TRANSFORMER_SEQUENCE_CLASSIFIER,
+            get_default_model=GPT2.get_default_model,
+            get_pretrained_model=GPT2.get_pretrained_model,
+            pdf_extractor_methods={'default': default_gpt2_config, 'default_full': default_full_config, },
+            pdf_col_name_substitutor=substitute_gpt2_cols ,  # TIODO TESt
+            output_level=L.INPUT_DEPENDENT_DOCUMENT_CLASSIFIER,
+            node=NLP_FEATURE_NODES.nodes[A.GPT2],
+            description='AlbertForSequenceClassification can load ALBERT Models with sequence classification/regression head on top (a linear layer on top of the pooled output) e.g. for multi-class document classification tasks.',
+            provider=ComponentBackends.open_source,
+            license=Licenses.open_source,
+            computation_context=ComputeContexts.spark,
+            output_context=ComputeContexts.spark,
+            jsl_anno_class_id=A.GPT2,
+            jsl_anno_py_class=ACR.JSL_anno2_py_class[A.GPT2],
+        ),
+
+
 
     }
     hc_components = {
@@ -1360,9 +1488,8 @@ class ComponentMap:
             license=Licenses.hc,
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
-            jsl_anno_class=H_A.ASSERTION_DL,
+            jsl_anno_class_id=H_A.ASSERTION_DL,
             jsl_anno_py_class=ACR.JSL_anno_HC_ref_2_py_class[H_A.ASSERTION_DL],
-            jsl_anno_java_class=ACR.JSL_anno_HC_ref_2_java_class[H_A.ASSERTION_DL],
             has_storage_ref=True,
             is_storage_ref_consumer=True,
             trainable_mirror_anno=H_A.TRAINABLE_ASSERTION_DL
@@ -1382,9 +1509,8 @@ class ComponentMap:
             license=Licenses.hc,
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
-            jsl_anno_class=H_A.TRAINABLE_ASSERTION_DL,
+            jsl_anno_class_id=H_A.TRAINABLE_ASSERTION_DL,
             jsl_anno_py_class=ACR.JSL_anno_HC_ref_2_py_class[H_A.TRAINABLE_ASSERTION_DL],
-            jsl_anno_java_class=ACR.JSL_anno_HC_ref_2_java_class[H_A.TRAINABLE_ASSERTION_DL],
             has_storage_ref=True,
             is_storage_ref_consumer=True,
             trainable=True,
@@ -1404,9 +1530,9 @@ class ComponentMap:
         #     license=Licenses.hc,
         #     computation_context=ComputeContexts.spark,
         #     output_context=ComputeContexts.spark,
-        #     jsl_anno_class=H_A.ASSERTION_FILTERER,
+        #     jsl_anno_class_id_id=H_A.ASSERTION_FILTERER,
         #     jsl_anno_py_class=ACR.JSL_anno_HC_ref_2_py_class[H_A.ASSERTION_FILTERER],
-        #     jsl_anno_java_class=ACR.JSL_anno_HC_ref_2_java_class[H_A.ASSERTION_FILTERER],
+        #
         #     has_storage_ref=True,
         #     is_is_storage_ref_consumer=True,
         #     trainable=True,
@@ -1426,9 +1552,8 @@ class ComponentMap:
             license=Licenses.hc,
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
-            jsl_anno_class=H_A.ASSERTION_LOG_REG,
+            jsl_anno_class_id=H_A.ASSERTION_LOG_REG,
             jsl_anno_py_class=ACR.JSL_anno_HC_ref_2_py_class[H_A.ASSERTION_LOG_REG],
-            jsl_anno_java_class=ACR.JSL_anno_HC_ref_2_java_class[H_A.ASSERTION_LOG_REG],
             trained_mirror_anno=H_A.TRAINABLE_ASSERTION_LOG_REG),
         H_A.TRAINABLE_ASSERTION_LOG_REG: NluComponent(
             name=H_A.TRAINABLE_ASSERTION_LOG_REG,
@@ -1445,9 +1570,8 @@ class ComponentMap:
             license=Licenses.hc,
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
-            jsl_anno_class=H_A.TRAINABLE_ASSERTION_LOG_REG,
+            jsl_anno_class_id=H_A.TRAINABLE_ASSERTION_LOG_REG,
             jsl_anno_py_class=ACR.JSL_anno_HC_ref_2_py_class[H_A.TRAINABLE_ASSERTION_LOG_REG],
-            jsl_anno_java_class=ACR.JSL_anno_HC_ref_2_java_class[H_A.TRAINABLE_ASSERTION_LOG_REG],
             trained_mirror_anno=H_A.ASSERTION_LOG_REG),
         H_A.CHUNK2TOKEN: 'TODO not integrated',
         H_A.CHUNK_ENTITY_RESOLVER: 'Deprecated',
@@ -1470,9 +1594,8 @@ class ComponentMap:
             license=Licenses.hc,
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
-            jsl_anno_class=H_A.CONTEXTUAL_PARSER,
-            jsl_anno_py_class=ACR.JSL_anno_HC_ref_2_py_class[H_A.CONTEXTUAL_PARSER],
-            jsl_anno_java_class=ACR.JSL_anno_HC_ref_2_java_class[H_A.CONTEXTUAL_PARSER]),
+            jsl_anno_class_id=H_A.CONTEXTUAL_PARSER,
+            jsl_anno_py_class=ACR.JSL_anno_HC_ref_2_py_class[H_A.CONTEXTUAL_PARSER], ),
         H_A.DE_IDENTIFICATION: NluComponent(
             name=H_A.DE_IDENTIFICATION,
             type=T.CHUNK_CLASSIFIER,
@@ -1487,9 +1610,8 @@ class ComponentMap:
             license=Licenses.hc,
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
-            jsl_anno_class=H_A.DE_IDENTIFICATION,
-            jsl_anno_py_class=ACR.JSL_anno_HC_ref_2_py_class[H_A.DE_IDENTIFICATION],
-            jsl_anno_java_class=ACR.JSL_anno_HC_ref_2_java_class[H_A.DE_IDENTIFICATION]),
+            jsl_anno_class_id=H_A.DE_IDENTIFICATION,
+            jsl_anno_py_class=ACR.JSL_anno_HC_ref_2_py_class[H_A.DE_IDENTIFICATION], ),
         H_A.DOCUMENT_LOG_REG_CLASSIFIER: 'TODO not integrated',
         H_A.TRAINABLE_DOCUMENT_LOG_REG_CLASSIFIER: 'TODO not integrated',
         H_A.DRUG_NORMALIZER: NluComponent(
@@ -1505,9 +1627,8 @@ class ComponentMap:
             license=Licenses.hc,
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
-            jsl_anno_class=H_A.DRUG_NORMALIZER,
-            jsl_anno_py_class=ACR.JSL_anno_HC_ref_2_py_class[H_A.DRUG_NORMALIZER],
-            jsl_anno_java_class=ACR.JSL_anno_HC_ref_2_java_class[H_A.DRUG_NORMALIZER]),  #
+            jsl_anno_class_id=H_A.DRUG_NORMALIZER,
+            jsl_anno_py_class=ACR.JSL_anno_HC_ref_2_py_class[H_A.DRUG_NORMALIZER], ),
         # H_A.FEATURES_ASSEMBLER: NluComponent( # TODO partially integrated. featire mpde ,ossomg
         #     name=H_A.FEATURES_ASSEMBLER,
         #     type=T.HELPER_ANNO,
@@ -1521,9 +1642,9 @@ class ComponentMap:
         #     license=Licenses.hc,
         #     computation_context=ComputeContexts.spark,
         #     output_context=ComputeContexts.spark,
-        #     jsl_anno_class=H_A.FEATURES_ASSEMBLER,
+        #     jsl_anno_class_id_id=H_A.FEATURES_ASSEMBLER,
         #     jsl_anno_py_class=ACR.JSL_anno_HC_ref_2_py_class[H_A.FEATURES_ASSEMBLER],
-        #     jsl_anno_java_class=ACR.JSL_anno_HC_ref_2_java_class[H_A.FEATURES_ASSEMBLER]),
+        #
         H_A.GENERIC_CLASSIFIER: NluComponent(
             name=H_A.GENERIC_CLASSIFIER,
             type=T.DOCUMENT_CLASSIFIER,
@@ -1539,9 +1660,8 @@ class ComponentMap:
             license=Licenses.hc,
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
-            jsl_anno_class=H_A.GENERIC_CLASSIFIER,
+            jsl_anno_class_id=H_A.GENERIC_CLASSIFIER,
             jsl_anno_py_class=ACR.JSL_anno_HC_ref_2_py_class[H_A.GENERIC_CLASSIFIER],
-            jsl_anno_java_class=ACR.JSL_anno_HC_ref_2_java_class[H_A.GENERIC_CLASSIFIER],
             trainable_mirror_anno=H_A.TRAINABLE_GENERIC_CLASSIFIER
         ),
         H_A.TRAINABLE_GENERIC_CLASSIFIER: NluComponent(
@@ -1559,9 +1679,9 @@ class ComponentMap:
             license=Licenses.hc,
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
-            jsl_anno_class=H_A.TRAINABLE_GENERIC_CLASSIFIER,
+            jsl_anno_class_id=H_A.TRAINABLE_GENERIC_CLASSIFIER,
             jsl_anno_py_class=ACR.JSL_anno_HC_ref_2_py_class[H_A.TRAINABLE_GENERIC_CLASSIFIER],
-            jsl_anno_java_class=ACR.JSL_anno_HC_ref_2_java_class[H_A.TRAINABLE_GENERIC_CLASSIFIER],
+
             trained_mirror_anno=H_A.GENERIC_CLASSIFIER
         ),
         H_A.IOB_TAGGER: 'TODO not integrated',
@@ -1580,9 +1700,8 @@ class ComponentMap:
             license=Licenses.hc,
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
-            jsl_anno_class=H_A.MEDICAL_NER,
+            jsl_anno_class_id=H_A.MEDICAL_NER,
             jsl_anno_py_class=ACR.JSL_anno_HC_ref_2_py_class[H_A.MEDICAL_NER],
-            jsl_anno_java_class=ACR.JSL_anno_HC_ref_2_java_class[H_A.MEDICAL_NER],
             trainable_mirror_anno=H_A.TRAINABLE_MEDICAL_NER,
             has_storage_ref=True,
             is_storage_ref_consumer=True
@@ -1602,9 +1721,8 @@ class ComponentMap:
             license=Licenses.hc,
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
-            jsl_anno_class=H_A.TRAINABLE_MEDICAL_NER,
+            jsl_anno_class_id=H_A.TRAINABLE_MEDICAL_NER,
             jsl_anno_py_class=ACR.JSL_anno_HC_ref_2_py_class[H_A.TRAINABLE_MEDICAL_NER],
-            jsl_anno_java_class=ACR.JSL_anno_HC_ref_2_java_class[H_A.TRAINABLE_MEDICAL_NER],
             trained_mirror_anno=H_A.TRAINABLE_MEDICAL_NER,
             has_storage_ref=True,
             is_storage_ref_consumer=True
@@ -1624,9 +1742,9 @@ class ComponentMap:
             license=Licenses.hc,
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
-            jsl_anno_class=H_A.NER_CONVERTER_INTERNAL,
+            jsl_anno_class_id=H_A.NER_CONVERTER_INTERNAL,
             jsl_anno_py_class=ACR.JSL_anno_HC_ref_2_py_class[H_A.NER_CONVERTER_INTERNAL],
-            jsl_anno_java_class=ACR.JSL_anno_HC_ref_2_java_class[H_A.NER_CONVERTER_INTERNAL],
+
         ),
         H_A.NER_DISAMBIGUATOR: 'TODO not integrated',
         H_A.RELATION_NER_CHUNKS_FILTERER: 'TODO not integrated',
@@ -1648,9 +1766,8 @@ class ComponentMap:
             license=Licenses.hc,
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
-            jsl_anno_class=H_A.RELATION_EXTRACTION,
+            jsl_anno_class_id=H_A.RELATION_EXTRACTION,
             jsl_anno_py_class=ACR.JSL_anno_HC_ref_2_py_class[H_A.RELATION_EXTRACTION],
-            jsl_anno_java_class=ACR.JSL_anno_HC_ref_2_java_class[H_A.RELATION_EXTRACTION],
             trainable_mirror_anno=H_A.TRAINABLE_RELATION_EXTRACTION
         ),
         H_A.TRAINABLE_RELATION_EXTRACTION: NluComponent(
@@ -1670,9 +1787,8 @@ class ComponentMap:
             license=Licenses.hc,
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
-            jsl_anno_class=H_A.TRAINABLE_RELATION_EXTRACTION,
+            jsl_anno_class_id=H_A.TRAINABLE_RELATION_EXTRACTION,
             jsl_anno_py_class=ACR.JSL_anno_HC_ref_2_py_class[H_A.TRAINABLE_RELATION_EXTRACTION],
-            jsl_anno_java_class=ACR.JSL_anno_HC_ref_2_java_class[H_A.TRAINABLE_RELATION_EXTRACTION],
             trained_mirror_anno=H_A.RELATION_EXTRACTION,
             trainable=True
         ),
@@ -1693,9 +1809,9 @@ class ComponentMap:
             license=Licenses.hc,
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
-            jsl_anno_class=H_A.RELATION_EXTRACTION_DL,
+            jsl_anno_class_id=H_A.RELATION_EXTRACTION_DL,
             jsl_anno_py_class=ACR.JSL_anno_HC_ref_2_py_class[H_A.RELATION_EXTRACTION_DL],
-            jsl_anno_java_class=ACR.JSL_anno_HC_ref_2_java_class[H_A.RELATION_EXTRACTION_DL],
+
             # trainable_mirror_anno=H_A.TRAINABLE_RELATION_EXTRACTION_DL
         ),
         # H_A.TRAINABLE_RELATION_EXTRACTION_DL: NluComponent( # DOES NOT EXIST!
@@ -1712,9 +1828,9 @@ class ComponentMap:
         #     license=Licenses.hc,
         #     computation_context=ComputeContexts.spark,
         #     output_context=ComputeContexts.spark,
-        #     jsl_anno_class=H_A.TRAINABLE_RELATION_EXTRACTION_DL,
+        #     jsl_anno_class_id_id=H_A.TRAINABLE_RELATION_EXTRACTION_DL,
         #     jsl_anno_py_class=ACR.JSL_anno_HC_ref_2_py_class[H_A.TRAINABLE_RELATION_EXTRACTION_DL],
-        #     jsl_anno_java_class=ACR.JSL_anno_HC_ref_2_java_class[H_A.TRAINABLE_RELATION_EXTRACTION_DL],
+        #
         #     trained_mirror_anno=H_A.RELATION_EXTRACTION_DL,
         #     trainable=True
         # ),
@@ -1732,9 +1848,9 @@ class ComponentMap:
             license=Licenses.hc,
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
-            jsl_anno_class=H_A.SENTENCE_ENTITY_RESOLVER,
+            jsl_anno_class_id=H_A.SENTENCE_ENTITY_RESOLVER,
             jsl_anno_py_class=ACR.JSL_anno_HC_ref_2_py_class[H_A.SENTENCE_ENTITY_RESOLVER],
-            jsl_anno_java_class=ACR.JSL_anno_HC_ref_2_java_class[H_A.SENTENCE_ENTITY_RESOLVER],
+
             trained_mirror_anno=H_A.TRAINABLE_SENTENCE_ENTITY_RESOLVER,
             is_storage_ref_consumer=True,
             has_storage_ref=True
@@ -1753,9 +1869,8 @@ class ComponentMap:
             license=Licenses.hc,
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
-            jsl_anno_class=H_A.TRAINABLE_SENTENCE_ENTITY_RESOLVER,
+            jsl_anno_class_id=H_A.TRAINABLE_SENTENCE_ENTITY_RESOLVER,
             jsl_anno_py_class=ACR.JSL_anno_HC_ref_2_py_class[H_A.TRAINABLE_SENTENCE_ENTITY_RESOLVER],
-            jsl_anno_java_class=ACR.JSL_anno_HC_ref_2_java_class[H_A.TRAINABLE_SENTENCE_ENTITY_RESOLVER],
             trained_mirror_anno=H_A.TRAINABLE_SENTENCE_ENTITY_RESOLVER,
             is_storage_ref_consumer=True,
             has_storage_ref=True
@@ -1774,9 +1889,9 @@ class ComponentMap:
             license=Licenses.hc,
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
-            jsl_anno_class=H_A.MEDICAL_BERT_FOR_TOKEN_CLASSIFICATION,
+            jsl_anno_class_id=H_A.MEDICAL_BERT_FOR_TOKEN_CLASSIFICATION,
             jsl_anno_py_class=ACR.JSL_anno_HC_ref_2_py_class[H_A.MEDICAL_BERT_FOR_TOKEN_CLASSIFICATION],
-            jsl_anno_java_class=ACR.JSL_anno_HC_ref_2_java_class[H_A.MEDICAL_BERT_FOR_TOKEN_CLASSIFICATION],
+
         ),
         # MEDICAL_BERT_FOR_TOKEN_CLASSIFICATION fTOK
     }
@@ -1786,7 +1901,7 @@ class ComponentMap:
             type=T.TEXT_RECOGNIZER,
             get_default_model=Img2Text.get_default_model,
             pdf_extractor_methods={'default': default_text_recognizer_config},
-            pdf_col_name_substitutor=substitute_recognized_text_cols,
+            pdf_col_name_substitutor=substitute_recognized_text_cols,  # TODO substitor
             output_level=L.DOCUMENT,  # TODO new output level IMG? Or treat as DOC?
             node=OCR_FEATURE_NODES.nodes[O_A.IMAGE2TEXT],
             description='Recognize text from image files',
@@ -1794,16 +1909,56 @@ class ComponentMap:
             license=Licenses.ocr,
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
-            jsl_anno_class=O_A.IMAGE2TEXT,
+            jsl_anno_class_id=O_A.IMAGE2TEXT,
             jsl_anno_py_class=ACR.JSL_anno_OCR_ref_2_py_class[O_A.IMAGE2TEXT],
-            jsl_anno_java_class=ACR.JSL_anno_OCR_ref_2_java_class[O_A.IMAGE2TEXT]),
+
+            applicable_file_types=['JPEG', 'PNG', 'BMP', 'WBMP', 'GIF', 'JPG', '.TIFF']
+        ),
+
+        O_A.DOC2TEXT: NluComponent(
+            name=O_A.DOC2TEXT,
+            type=T.TEXT_RECOGNIZER,
+            get_default_model=Doc2Text.get_default_model,
+            pdf_extractor_methods={'default': default_text_recognizer_config},
+            pdf_col_name_substitutor=substitute_recognized_text_cols,  # TODO substitor
+            output_level=L.DOCUMENT,  # TODO new output level IMG? Or treat as DOC?
+            node=OCR_FEATURE_NODES.nodes[O_A.DOC2TEXT],
+            description='Recognize text from DOC/DOCX files',
+            provider=ComponentBackends.ocr,
+            license=Licenses.ocr,
+            computation_context=ComputeContexts.spark,
+            output_context=ComputeContexts.spark,
+            jsl_anno_class_id=O_A.DOC2TEXT,
+            jsl_anno_py_class=ACR.JSL_anno_OCR_ref_2_py_class[O_A.DOC2TEXT],
+
+            applicable_file_types=['DOC', 'DOCX']
+        ),
+
+        O_A.PDF2TEXT: NluComponent(
+            name=O_A.PDF2TEXT,
+            type=T.TEXT_RECOGNIZER,
+            get_default_model=Pdf2Text.get_default_model,
+            pdf_extractor_methods={'default': default_text_recognizer_config},
+            pdf_col_name_substitutor=substitute_recognized_text_cols,  # TODO substitor
+            output_level=L.DOCUMENT,  # TODO new output level IMG? Or treat as DOC?
+            node=OCR_FEATURE_NODES.nodes[O_A.PDF2TEXT],
+            description='Recognize text from PDF files',
+            provider=ComponentBackends.ocr,
+            license=Licenses.ocr,
+            computation_context=ComputeContexts.spark,
+            output_context=ComputeContexts.spark,
+            jsl_anno_class_id=O_A.PDF2TEXT,
+            jsl_anno_py_class=ACR.JSL_anno_OCR_ref_2_py_class[O_A.PDF2TEXT],
+
+            applicable_file_types=['PDF']
+        ),
 
         O_A.BINARY2IMAGE: NluComponent(
             name=O_A.BINARY2IMAGE,
             type=T.HELPER_ANNO,
             get_default_model=Binary2Image.get_default_model,
-            pdf_extractor_methods={'default': default_text_recognizer_config}, # TODO
-            pdf_col_name_substitutor=substitute_recognized_text_cols, # TODO
+            pdf_extractor_methods={'default': default_binary_to_image_config},
+            pdf_col_name_substitutor=substitute_recognized_text_cols,  # TODO substitor
             output_level=L.DOCUMENT,  # TODO new output level IMG? Or treat as DOC?
             node=OCR_FEATURE_NODES.nodes[O_A.BINARY2IMAGE],
             description='Convert binary image data to OCR image Spark struct representation',
@@ -1811,8 +1966,10 @@ class ComponentMap:
             license=Licenses.ocr,
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
-            jsl_anno_class=O_A.BINARY2IMAGE,
+            jsl_anno_class_id=O_A.BINARY2IMAGE,
             jsl_anno_py_class=ACR.JSL_anno_OCR_ref_2_py_class[O_A.BINARY2IMAGE],
-            jsl_anno_java_class=ACR.JSL_anno_OCR_ref_2_java_class[O_A.BINARY2IMAGE]),
+            applicable_file_types=['JPEG', 'PNG', 'BMP', 'WBMP', 'GIF', 'JPG', '.TIFF']
+
+        ),
 
     }

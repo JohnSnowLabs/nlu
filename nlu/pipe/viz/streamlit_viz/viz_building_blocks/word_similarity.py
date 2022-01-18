@@ -16,7 +16,7 @@ from nlu.pipe.viz.streamlit_viz.streamlit_viz_tracker import StreamlitVizTracker
 class WordSimilarityStreamlitBlock():
     @staticmethod
     def display_word_similarity(
-            pipe,  # nlu pipe
+            pipe,  # nlu component_list
             default_texts: Tuple[str, str] = ("Donald Trump likes to party!", "Angela Merkel likes to party!"),
             threshold: float = 0.5,
             title: Optional[str] = "Embeddings Similarity Matrix &  Visualizations  ",

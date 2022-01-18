@@ -8,6 +8,8 @@ Helper Classes for Type Checking and IDE Compiler Hints because NewType lib does
 class JslUniverse(str):
     pass
 
+class NluRef(str):
+    pass
 
 # Lang ISO TODO define universe
 class LanguageIso(str):

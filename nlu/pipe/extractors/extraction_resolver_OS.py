@@ -35,38 +35,30 @@ OS_anno2config = {
         'default': default_word_embedding_config,
         'default_full': default_full_config,
     },
-
     BertForSequenceClassification : {
         'default': default_classifier_dl_config,
         'default_full': default_full_config,
     },
-
     DistilBertForSequenceClassification : {
         'default': default_classifier_dl_config,
         'default_full': default_full_config,
     },
-
-
     BertForTokenClassification: {
         'default': default_token_classifier_config,
         'default_full': default_full_config,
     },
-
     DistilBertForTokenClassification: {
         'default': default_token_classifier_config,
         'default_full': default_full_config,
     },
-
     RoBertaForTokenClassification: {
         'default': default_token_classifier_config,
         'default_full': default_full_config,
     },
-
     XlmRoBertaForTokenClassification: {
         'default': default_token_classifier_config,
         'default_full': default_full_config,
     },
-
     XlnetForTokenClassification: {
         'default': default_token_classifier_config,
         'default_full': default_full_config,
@@ -79,11 +71,6 @@ OS_anno2config = {
         'default': default_token_classifier_config,
         'default_full': default_full_config,
     },
-
-
-
-
-
     LongformerEmbeddings: {
         'default': default_word_embedding_config,
         'default_full': default_full_config,
@@ -132,7 +119,6 @@ OS_anno2config = {
         'default': default_sentence_embedding_config,
         'default_full': default_full_config,
     },
-
     UniversalSentenceEncoder: {
         'default': default_sentence_embedding_config,
         'default_full': default_full_config,
@@ -254,7 +240,6 @@ OS_anno2config = {
         'default': '',  # TODO
         'default_full': default_full_config,
     },
-
     RegexMatcherModel: {
         'default': '',  # TODO
         'default_full': default_full_config,
@@ -267,12 +252,10 @@ OS_anno2config = {
         'default': '',  # TODO
         'default_full': default_full_config,
     },
-
     MultiDateMatcher: {
         'default': '',  # TODO
         'default_full': default_full_config,
     },
-
     Doc2Chunk: {
         'default': default_doc2chunk_config,
         'default_full': default_full_config,
@@ -281,9 +264,6 @@ OS_anno2config = {
         'default': '',  # TODO
         'default_full': default_full_config,
     },
-
-
-
     T5Transformer: {
         'default': default_T5_config,
         'default_full': default_full_config,
@@ -300,7 +280,6 @@ OS_anno2config = {
         'default': default_word_segmenter_config,
         'default_full': default_full_config,
     },
-
     # approaches
     ViveknSentimentApproach: {'default': '', 'default_full': default_full_config, },
     SentimentDLApproach: {'default': default_sentiment_dl_config, 'default_full': default_full_config, },

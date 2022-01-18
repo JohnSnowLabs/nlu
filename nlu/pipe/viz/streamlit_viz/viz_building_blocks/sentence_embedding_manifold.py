@@ -12,7 +12,7 @@ from nlu.pipe.viz.streamlit_viz.streamlit_viz_tracker import StreamlitVizTracker
 class SentenceEmbeddingManifoldStreamlitBlock():
     @staticmethod
     def viz_streamlit_sentence_embed_manifold(
-            pipe,  # nlu pipe
+            pipe,  # nlu component_list
             default_texts: List[str] = (
             "Donald Trump likes to party!", "Angela Merkel likes to party!", 'Peter HATES TO PARTTY!!!! :('),
             title: Optional[str] = "Lower dimensional Manifold visualization for Sentence embeddings",

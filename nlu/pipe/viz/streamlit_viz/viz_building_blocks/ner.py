@@ -8,7 +8,7 @@ from nlu.pipe.viz.streamlit_viz.streamlit_viz_tracker import StreamlitVizTracker
 class NERStreamlitBlock():
     @staticmethod
     def visualize_ner(
-            pipe, # Nlu pipe
+            pipe, # Nlu component_list
             text:str,
             ner_tags: Optional[List[str]] = None,
             show_label_select: bool = True,

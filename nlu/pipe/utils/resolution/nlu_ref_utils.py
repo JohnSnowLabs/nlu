@@ -1,7 +1,6 @@
 from nlu import Spellbook, logger
 from nlu.info import AllComponentsInfo
 
-
 def check_if_nlu_ref_is_licensed(nlu_ref):
     """check if a nlu_ref is pointing to a licensed or open source model.
     This works by just checking if the NLU ref points to a healthcare model or not"""
@@ -11,9 +10,7 @@ def check_if_nlu_ref_is_licensed(nlu_ref):
     for lang, universe in Spellbook.pretrained_healthcare_model_references.items():
         for hc_nlu_ref, hc_nlp_ref in universe.items():
             if hc_nlu_ref == nlu_ref: return True
-
     return False
-
 
 def parse_language_from_nlu_ref(nlu_ref):
     """Parse a ISO language identifier from a NLU reference which can be used to load a Spark NLP model"""

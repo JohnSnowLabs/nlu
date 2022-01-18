@@ -46,9 +46,6 @@ HC_anno2substitution_fn = {
     RelationExtractionDLModel : {
         'default': substitute_relation_cols,
     },
-    Chunk2Token : {
-        'default': '',# TODO
-    },
 
     ContextualParserApproach : {
         'default' :substitute_context_parser_cols,#
@@ -88,7 +85,11 @@ HC_anno2substitution_fn = {
     },
     PosologyREModel : {
         'default': substitute_relation_cols,
-    }
+    },
+    Chunk2Token : {
+        'default': '',# TODO
+    },
+
 
 }
 

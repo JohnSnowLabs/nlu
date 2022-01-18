@@ -8,8 +8,8 @@ class EntityManifoldUtils():
     @staticmethod
     def insert_chunk_embedder_to_pipe_if_missing(pipe):
 
-        """Scan pipe for chunk_embeddings. If missing, add new. Validate NER model is loaded"""
-        # pipe.predict('Donald Trump and Angela Merkel love Berlin')
+        """Scan component_list for chunk_embeddings. If missing, add new. Validate NER model is loaded"""
+        # component_list.predict('Donald Trump and Angela Merkel love Berlin')
 
         classifier_cols = []
         has_ner = False
@@ -35,7 +35,7 @@ class EntityManifoldUtils():
         chunker.info.spark_input_column_names  = ner_conveter_c.info.spark_output_column_names + word_embed_c.info.spark_output_column_names
         chunker.info.spark_output_column_names = ['chunk_embedding']
         chunker.info.inputs  = ner_conveter_c.info.spark_output_column_names + word_embed_c.info.spark_output_column_names
-        chunker.info.outputs = ['chunk_embedding']
+        chunker.out_types = ['chunk_embedding']
 
         pipe.components.append(chunker)
         pipe.is_fitted=False
@@ -76,9 +76,9 @@ class EntityManifoldUtils():
 
     @staticmethod
     def find_embed_component(p):
-        """Find first embed  component in pipe"""
+        """Find first embed  component in component_list"""
         for c in p.components :
-            if 'embed' in c.info.outputs[0] : return c
-        st.warning("No Embed model in pipe")
+            if 'embed' in c.out_types[0] : return c
+        st.warning("No Embed model in component_list")
         return None
 

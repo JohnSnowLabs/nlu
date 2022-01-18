@@ -111,7 +111,7 @@ word-wrap: break-word;
                   'Vector Name':name})
     @staticmethod
     def display_model_info(model2viz=' ',pipes=[],apply_style=True, display_component_wise_info=True,display_component_summary=True):
-        """Display Links to Modelhub for every NLU Ref loaded and also every component in pipe"""
+        """Display Links to Modelhub for every NLU Ref loaded and also every component in component_list"""
         default_modelhub_link = 'https://nlp.johnsnowlabs.com/models'
         nlu_refs = model2viz.split(' ')
         # for p in classifier_pipes + embed_pipes + token_pipes  :nlu_refs.append(p.nlu_ref)
@@ -178,7 +178,7 @@ word-wrap: break-word;
 
     # @staticmethod
     # def viz_streamlit(
-    #         pipe,
+    #         component_list,
     #         # Base Params
     #         text:Union[str, List[str], pd.DataFrame, pd.Series],
     #         model_selection:List[str]=[],
@@ -219,13 +219,13 @@ word-wrap: break-word;
     #     if show_logo :StreamlitVizTracker.show_logo()
     #     if side_info : st.sidebar.markdown(side_info)
     #     text    = st.text_area("Enter text you want to visualize below", text, key=key)
-    #     ner_model_2_viz     = pipe.nlu_ref
+    #     ner_model_2_viz     = component_list.nlu_ref
     #     if show_model_select :
     #         show_code_snippets = st.sidebar.checkbox('Generate code snippets', value=show_code_snippets)
     #         if model_selection == [] : model_selection = Discoverer.get_components('ner',include_pipes=True)
     #         model_selection.sort()
-    #         if model_select_position == 'side':ner_model_2_viz = st.sidebar.selectbox("Select a NER model.",model_selection,index=model_selection.index(pipe.nlu_ref.split(' ')[0]))
-    #         else : ner_model_2_viz = st.selectbox("Select a NER model",model_selection,index=model_selection.index(pipe.nlu_ref.split(' ')[0]))
+    #         if model_select_position == 'side':ner_model_2_viz = st.sidebar.selectbox("Select a NER model.",model_selection,index=model_selection.index(component_list.nlu_ref.split(' ')[0]))
+    #         else : ner_model_2_viz = st.selectbox("Select a NER model",model_selection,index=model_selection.index(component_list.nlu_ref.split(' ')[0]))
     #
     #     active_visualizers = visualizers
     #     if show_viz_selection: active_visualizers = st.sidebar.multiselect("Visualizers",options=visualizers,default=visualizers,key=key)
@@ -233,22 +233,22 @@ word-wrap: break-word;
     #     all_models = ner_model_2_viz + ' en.dep.typed '  if 'dependency_tree' in active_visualizers  else ner_model_2_viz
     #     ner_pipe, tree_pipe =  None,None
     #     if 'ner' in active_visualizers :
-    #         ner_pipe = pipe if pipe.nlu_ref == ner_model_2_viz else StreamlitUtilsOS.get_pipe(ner_model_2_viz)
+    #         ner_pipe = component_list if component_list.nlu_ref == ner_model_2_viz else StreamlitUtilsOS.get_pipe(ner_model_2_viz)
     #         StreamlitVizTracker.visualize_ner(ner_pipe, text, generate_code_sample=show_code_snippets, key=key, show_model_select=False, show_text_input=True, show_logo=False, show_infos=False)
     #     if 'dependency_tree' in active_visualizers :
-    #         tree_pipe = StreamlitUtilsOS.get_pipe('en.dep.typed') # if not ValidateVizPipe.viz_tree_satisfied(pipe) else pipe
+    #         tree_pipe = StreamlitUtilsOS.get_pipe('en.dep.typed') # if not ValidateVizPipe.viz_tree_satisfied(component_list) else component_list
     #         StreamlitVizTracker.visualize_dep_tree(tree_pipe, text, generate_code_sample=show_code_snippets, key=key, show_infos=False, show_logo=False)
     #     if 'token_features' in active_visualizers:
-    #         ner_pipe = pipe if pipe.nlu_ref == ner_model_2_viz else StreamlitUtilsOS.get_pipe(ner_model_2_viz)
+    #         ner_pipe = component_list if component_list.nlu_ref == ner_model_2_viz else StreamlitUtilsOS.get_pipe(ner_model_2_viz)
     #         StreamlitVizTracker.visualize_tokens_information(ner_pipe, text, generate_code_sample=show_code_snippets, key=key, model_select_position=model_select_position, show_infos=False, show_logo=False, )
     #     if 'classification' in active_visualizers:
-    #         ner_pipe = pipe if pipe.nlu_ref == ner_model_2_viz else StreamlitUtilsOS.get_pipe(ner_model_2_viz)
+    #         ner_pipe = component_list if component_list.nlu_ref == ner_model_2_viz else StreamlitUtilsOS.get_pipe(ner_model_2_viz)
     #         StreamlitVizTracker.visualize_classes(ner_pipe, text, generate_code_sample=show_code_snippets, key=key, model_select_position=model_select_position, show_infos=False, show_logo=False)
     #     if 'similarity' in active_visualizers:
-    #         ner_pipe = pipe if pipe.nlu_ref == ner_model_2_viz else StreamlitUtilsOS.get_pipe(ner_model_2_viz)
+    #         ner_pipe = component_list if component_list.nlu_ref == ner_model_2_viz else StreamlitUtilsOS.get_pipe(ner_model_2_viz)
     #         StreamlitVizTracker.display_word_similarity(ner_pipe, similarity_texts, generate_code_sample=show_code_snippets, model_select_position=model_select_position, show_infos=False, show_logo=False, num_cols=num_similarity_cols)
     #     if 'manifold' in active_visualizers :
-    #         ner_pipe = pipe if ner_model_2_viz in pipe.nlu_ref.split(' ')  else StreamlitUtilsOS.get_pipe(ner_model_2_viz)
+    #         ner_pipe = component_list if ner_model_2_viz in component_list.nlu_ref.split(' ')  else StreamlitUtilsOS.get_pipe(ner_model_2_viz)
     #         StreamlitVizTracker.display_low_dim_embed_viz_token(ner_pipe, similarity_texts, generate_code_sample=show_code_snippets, model_select_position=model_select_position, show_infos=False, show_logo=False, num_cols=num_manifold_cols)
     #
     #     StreamlitVizTracker.display_model_info(all_models, [ner_pipe, tree_pipe])
@@ -259,7 +259,7 @@ word-wrap: break-word;
     #
     # @staticmethod
     # def visualize_classes(
-    #         pipe, # nlu pipe
+    #         component_list, # nlu component_list
     #         text:Union[str,list,pd.DataFrame, pd.Series, List[str]]=('I love NLU and Streamlit and sunny days!', 'I hate rainy daiys','CALL NOW AND WIN 1000$M'),
     #         output_level:Optional[str]='document',
     #         title: Optional[str] = "Text Classification",
@@ -279,15 +279,15 @@ word-wrap: break-word;
     #     if title:st.header(title)
     #     if sub_title:st.subheader(sub_title)
     #
-    #     # if generate_code_sample: st.code(get_code_for_viz('CLASSES',StreamlitUtilsOS.extract_name(pipe),text))
+    #     # if generate_code_sample: st.code(get_code_for_viz('CLASSES',StreamlitUtilsOS.extract_name(component_list),text))
     #     if not isinstance(text, (pd.DataFrame, pd.Series)):
     #         text = st.text_area('Enter N texts, seperated by new lines to view classification results for','\n'.join(text) if isinstance(text,list) else text, key=key)
     #         text = text.split("\n")
     #         while '' in text : text.remove('')
-    #     classifier_pipes = [pipe]
+    #     classifier_pipes = [component_list]
     #     classifier_components_usable = [e for e in Discoverer.get_components('classify',True, include_aliases=True)]
-    #     classifier_components = StreamlitUtilsOS.find_all_classifier_components(pipe)
-    #     loaded_classifier_nlu_refs = [c.info.nlu_ref for c in classifier_components]
+    #     classifier_components = StreamlitUtilsOS.find_all_classifier_components(component_list)
+    #     loaded_classifier_nlu_refs = [os_components.info.nlu_ref for os_components in classifier_components]
     #
     #     for l in loaded_classifier_nlu_refs:
     #         if 'converter' in l :
@@ -310,8 +310,8 @@ word-wrap: break-word;
     #     for p in classifier_pipes :
     #         df = p.predict(text, output_level=output_level, metadata=metadata, positions=positions)
     #         classifier_cols = StreamlitUtilsOS.get_classifier_cols(p)
-    #         for c in classifier_cols :
-    #             if c not in df.columns : classifier_cols.remove(c)
+    #         for os_components in classifier_cols :
+    #             if os_components not in df.columns : classifier_cols.remove(os_components)
     #
     #         if 'text' in df.columns: classifier_cols += ['text']
     #         elif 'document' in df.columns: classifier_cols += ['document']
@@ -319,22 +319,22 @@ word-wrap: break-word;
     #         dfs.append(df)
     #     df = pd.concat(dfs, axis=1)
     #     df = df.loc[:,~df.columns.duplicated()]
-    #     for c in all_classifier_cols :
-    #         if c not in df.columns : all_classifier_cols.remove(c)
+    #     for os_components in all_classifier_cols :
+    #         if os_components not in df.columns : all_classifier_cols.remove(os_components)
     #     all_classifier_cols = list(set(all_classifier_cols))
     #
     #     if len(all_classifier_cols) == 0: st.error('No classes detected')
     #     else :st.write(df[all_classifier_cols],key=key)
     #     if show_infos :
     #         # VizUtilsStreamlitOS.display_infos()
-    #         StreamlitVizTracker.display_model_info(pipe.nlu_ref, pipes = [pipe])
+    #         StreamlitVizTracker.display_model_info(component_list.nlu_ref, pipes = [component_list])
     #         StreamlitVizTracker.display_footer()
     #
     #
     #
     # @staticmethod
     # def visualize_tokens_information(
-    #         pipe, # nlu pipe
+    #         component_list, # nlu component_list
     #         text:str,
     #         title: Optional[str] = "Token Features",
     #         sub_title: Optional[str] ='Pick from `over 1000+ models` on the left and `view the generated features`',
@@ -357,13 +357,13 @@ word-wrap: break-word;
     #     if show_logo :StreamlitVizTracker.show_logo()
     #     if set_wide_layout_CSS : _set_block_container_style()
     #     if title:st.header(title)
-    #     # if generate_code_sample: st.code(get_code_for_viz('TOKEN',StreamlitUtilsOS.extract_name(pipe),text))
+    #     # if generate_code_sample: st.code(get_code_for_viz('TOKEN',StreamlitUtilsOS.extract_name(component_list),text))
     #     if sub_title:st.subheader(sub_title)
-    #     token_pipes = [pipe]
+    #     token_pipes = [component_list]
     #     if show_text_input : text = st.text_area("Enter text you want to view token features for", text, key=key)
     #     if show_model_select :
     #         token_pipes_components_usable = [e for e in Discoverer.get_components(get_all=True)]
-    #         loaded_nlu_refs = [c.info.nlu_ref for c in pipe.components]
+    #         loaded_nlu_refs = [os_components.info.nlu_ref for os_components in component_list.components]
     #
     #         for l in loaded_nlu_refs:
     #             if 'converter' in l :
@@ -401,13 +401,13 @@ word-wrap: break-word;
     #     st.dataframe(df[features])
     #     if show_infos :
     #         # VizUtilsStreamlitOS.display_infos()
-    #         StreamlitVizTracker.display_model_info(pipe.nlu_ref, pipes = [pipe])
+    #         StreamlitVizTracker.display_model_info(component_list.nlu_ref, pipes = [component_list])
     #         StreamlitVizTracker.display_footer()
     #
     #
     # @staticmethod
     # def visualize_dep_tree(
-    #         pipe, #nlu pipe
+    #         component_list, #nlu component_list
     #         text:str = 'Billy likes to swim',
     #         title: Optional[str] = "Dependency Parse & Part-of-speech tags",
     #         sub_title: Optional[str] = 'POS tags define a `grammatical label` for `each token` and the `Dependency Tree` classifies `Relations between the tokens` ',
@@ -424,18 +424,18 @@ word-wrap: break-word;
     #     if title:st.header(title)
     #     if show_text_input : text = st.text_area("Enter text you want to visualize dependency tree for ", text, key=key)
     #     if sub_title:st.subheader(sub_title)
-    #     if generate_code_sample: st.code(get_code_for_viz('TREE',StreamlitUtilsOS.extract_name(pipe),text))
-    #     pipe.viz(text,write_to_streamlit=True,viz_type='dep', streamlit_key=key)
+    #     if generate_code_sample: st.code(get_code_for_viz('TREE',StreamlitUtilsOS.extract_name(component_list),text))
+    #     component_list.viz(text,write_to_streamlit=True,viz_type='dep', streamlit_key=key)
     #     if show_infos :
     #         # VizUtilsStreamlitOS.display_infos()
-    #         StreamlitVizTracker.display_model_info(pipe.nlu_ref, pipes = [pipe])
+    #         StreamlitVizTracker.display_model_info(component_list.nlu_ref, pipes = [component_list])
     #         StreamlitVizTracker.display_footer()
     #
     #
     #
     # @staticmethod
     # def visualize_ner(
-    #         pipe, # Nlu pipe
+    #         component_list, # Nlu component_list
     #         text:str,
     #         ner_tags: Optional[List[str]] = None,
     #         show_label_select: bool = True,
@@ -460,14 +460,14 @@ word-wrap: break-word;
     #     if show_model_select :
     #         model_selection = Discoverer.get_components('ner',include_pipes=True)
     #         model_selection.sort()
-    #         if model_select_position == 'side':ner_model_2_viz = st.sidebar.selectbox("Select a NER model",model_selection,index=model_selection.index(pipe.nlu_ref.split(' ')[0]))
-    #         else : ner_model_2_viz = st.selectbox("Select a NER model",model_selection,index=model_selection.index(pipe.nlu_ref.split(' ')[0]))
-    #         pipe = pipe if pipe.nlu_ref == ner_model_2_viz else StreamlitUtilsOS.get_pipe(ner_model_2_viz)
+    #         if model_select_position == 'side':ner_model_2_viz = st.sidebar.selectbox("Select a NER model",model_selection,index=model_selection.index(component_list.nlu_ref.split(' ')[0]))
+    #         else : ner_model_2_viz = st.selectbox("Select a NER model",model_selection,index=model_selection.index(component_list.nlu_ref.split(' ')[0]))
+    #         component_list = component_list if component_list.nlu_ref == ner_model_2_viz else StreamlitUtilsOS.get_pipe(ner_model_2_viz)
     #     if title: st.header(title)
     #     if show_text_input : text = st.text_area("Enter text you want to visualize NER classes for below", text, key=key)
     #     if sub_title : st.subheader(sub_title)
-    #     if generate_code_sample: st.code(get_code_for_viz('NER',StreamlitUtilsOS.extract_name(pipe),text))
-    #     if ner_tags is None: ner_tags = StreamlitUtilsOS.get_NER_tags_in_pipe(pipe)
+    #     if generate_code_sample: st.code(get_code_for_viz('NER',StreamlitUtilsOS.extract_name(component_list),text))
+    #     if ner_tags is None: ner_tags = StreamlitUtilsOS.get_NER_tags_in_pipe(component_list)
     #
     #     if not show_color_selector :
     #         if show_label_select:
@@ -476,7 +476,7 @@ word-wrap: break-word;
     #                 "These labels are predicted by the NER model. Select which ones you want to display",
     #                 options=ner_tags,default=list(ner_tags))
     #         else : label_select = ner_tags
-    #         pipe.viz(text,write_to_streamlit=True, viz_type='ner',labels_to_viz=label_select,viz_colors=colors, streamlit_key=key)
+    #         component_list.viz(text,write_to_streamlit=True, viz_type='ner',labels_to_viz=label_select,viz_colors=colors, streamlit_key=key)
     #     else : # TODO WIP color select
     #         cols = st.beta_columns(3)
     #         exp = cols[0].beta_expander("Select entity labels to display")
@@ -484,16 +484,16 @@ word-wrap: break-word;
     #         color = cols[2].color_picker('Pick A Color for a specific entity label', '#00f900',key = key)
     #         tag2color = cols[1].selectbox('Pick a ner tag to color', ner_tags,key = key)
     #         colors[tag2color]=color
-    #     if show_table : st.write(pipe.predict(text, output_level='chunk'),key = key)
+    #     if show_table : st.write(component_list.predict(text, output_level='chunk'),key = key)
     #
     #     if show_infos :
     #         # VizUtilsStreamlitOS.display_infos()
-    #         StreamlitVizTracker.display_model_info(pipe.nlu_ref, pipes = [pipe])
+    #         StreamlitVizTracker.display_model_info(component_list.nlu_ref, pipes = [component_list])
     #         StreamlitVizTracker.display_footer()
     #
     # @staticmethod
     # def display_word_similarity(
-    #         pipe, #nlu pipe
+    #         component_list, #nlu component_list
     #         default_texts: Tuple[str, str] = ("Donald Trump likes to party!", "Angela Merkel likes to party!"),
     #         threshold: float = 0.5,
     #         title: Optional[str] = "Embeddings Similarity Matrix &  Visualizations  ",
@@ -544,25 +544,25 @@ word-wrap: break-word;
     #     text1 = cols[0].text_input("Text or word1",default_texts[0],key = key)
     #     text2 = cols[1].text_input("Text or word2",default_texts[1], key=key) if len(default_texts) >1  else cols[1].text_input("Text or word2",'Please enter second string',key = key)
     #     # exp = st.sidebar.beta_expander("Select additional Embedding Models and distance metric to compare ")
-    #     e_coms = StreamlitUtilsOS.find_all_embed_components(pipe)
+    #     e_coms = StreamlitUtilsOS.find_all_embed_components(component_list)
     #     embed_algos_to_load = []
-    #     embed_pipes = [pipe]
+    #     embed_pipes = [component_list]
     #     dist_algo_selection = dist_metrics
     #     if show_algo_select :
     #         # emb_components_usable = Discoverer.get_components('embed')
     #         emb_components_usable = [e for e in Discoverer.get_components('embed',True, include_aliases=True) if 'chunk' not in e and 'sentence' not in e]
     #         loaded_embed_nlu_refs = []
     #         loaded_storage_refs = []
-    #         for c in e_coms :
-    #             if not  hasattr(c.info,'nlu_ref'): continue
-    #             r = c.info.nlu_ref
+    #         for os_components in e_coms :
+    #             if not  hasattr(os_components.info,'nlu_ref'): continue
+    #             r = os_components.info.nlu_ref
     #             if 'en.' not in r and 'embed.' not  in r and 'ner' not in r : loaded_embed_nlu_refs.append('en.embed.' + r)
     #             elif 'en.'  in r and 'embed.' not  in r  and 'ner' not in r:
     #                 r = r.split('en.')[0]
     #                 loaded_embed_nlu_refs.append('en.embed.' + r)
     #             else :
-    #                 loaded_embed_nlu_refs.append(StorageRefUtils.extract_storage_ref(c))
-    #             loaded_storage_refs.append(StorageRefUtils.extract_storage_ref(c))
+    #                 loaded_embed_nlu_refs.append(StorageRefUtils.extract_storage_ref(os_components))
+    #             loaded_storage_refs.append(StorageRefUtils.extract_storage_ref(os_components))
     #
     #         for l in loaded_embed_nlu_refs:
     #             if l not in emb_components_usable : emb_components_usable.append(l)
@@ -594,7 +594,7 @@ word-wrap: break-word;
     #         data1 = p.predict(text1,output_level='token').dropna()
     #         data2 = p.predict(text2,output_level='token').dropna()
     #         e_coms = StreamlitUtilsOS.find_all_embed_components(p)
-    #         modelhub_links = [ModelHubUtils.get_url_by_nlu_refrence(c.info.nlu_ref) if hasattr(c.info,'nlu_ref') else ModelHubUtils.get_url_by_nlu_refrence('') for c in e_coms]
+    #         modelhub_links = [ModelHubUtils.get_url_by_nlu_refrence(os_components.info.nlu_ref) if hasattr(os_components.info,'nlu_ref') else ModelHubUtils.get_url_by_nlu_refrence('') for os_components in e_coms]
     #         e_cols = StreamlitUtilsOS.get_embed_cols(p)
     #         for num_emb,e_col in enumerate(e_cols):
     #             if col_index == num_cols-1 :cols_full=True
@@ -671,7 +671,7 @@ word-wrap: break-word;
     #
     #     if show_infos :
     #         # VizUtilsStreamlitOS.display_infos()
-    #         StreamlitVizTracker.display_model_info(pipe.nlu_ref, pipes = [pipe])
+    #         StreamlitVizTracker.display_model_info(component_list.nlu_ref, pipes = [component_list])
     #         StreamlitVizTracker.display_footer()
     #
     #
@@ -679,7 +679,7 @@ word-wrap: break-word;
     #
     # @staticmethod
     # def display_low_dim_embed_viz_token(
-    #         pipe, # nlu pipe
+    #         component_list, # nlu component_list
     #         default_texts: List[str] = ("Donald Trump likes to party!", "Angela Merkel likes to party!", 'Peter HATES TO PARTTY!!!! :('),
     #         title: Optional[str] = "Lower dimensional Manifold visualization for word embeddings",
     #         sub_title: Optional[str] = "Apply any of the 11 `Manifold` or `Matrix Decomposition` algorithms to reduce the dimensionality of `Word Embeddings` to `1-D`, `2-D` and `3-D` ",
@@ -707,7 +707,7 @@ word-wrap: break-word;
     #     # todo dynamic deduct Tok vs Sent vs Doc vs Chunk embeds
     #     # todo selectable color features
     #     # todo selectable mouseover features
-    #     from nlu.pipe.viz.streamlit_viz.streamlit_utils_OS import StreamlitUtilsOS
+    #     from nlu.component_list.viz.streamlit_viz.streamlit_utils_OS import StreamlitUtilsOS
     #
     #     # VizUtilsStreamlitOS.footer_displayed=False
     #     try :
@@ -735,8 +735,8 @@ word-wrap: break-word;
     #     if show_color_select: feature_to_color_by =  st.selectbox('Feature to color plots by ',['pos','sentiment',],0)
     #     text_col = 'token'
     #     embed_algos_to_load = []
-    #     embed_pipes = [pipe]
-    #     e_coms = StreamlitUtilsOS.find_all_embed_components(pipe)
+    #     embed_pipes = [component_list]
+    #     e_coms = StreamlitUtilsOS.find_all_embed_components(component_list)
     #
     #     if show_algo_select :
     #         exp = st.beta_expander("Select dimension reduction technique to apply")
@@ -748,16 +748,16 @@ word-wrap: break-word;
     #         loaded_embed_nlu_refs = []
     #         loaded_classifier_nlu_refs = []
     #         loaded_storage_refs = []
-    #         for c in e_coms :
-    #             if not  hasattr(c.info,'nlu_ref'): continue
-    #             r = c.info.nlu_ref
+    #         for os_components in e_coms :
+    #             if not  hasattr(os_components.info,'nlu_ref'): continue
+    #             r = os_components.info.nlu_ref
     #             if 'en.' not in r and 'embed.' not  in r and 'ner' not in r : loaded_embed_nlu_refs.append('en.embed.' + r)
     #             elif 'en.'  in r and 'embed.' not  in r  and 'ner' not in r:
     #                 r = r.split('en.')[0]
     #                 loaded_embed_nlu_refs.append('en.embed.' + r)
     #             else :
-    #                 loaded_embed_nlu_refs.append(StorageRefUtils.extract_storage_ref(c))
-    #             loaded_storage_refs.append(StorageRefUtils.extract_storage_ref(c))
+    #                 loaded_embed_nlu_refs.append(StorageRefUtils.extract_storage_ref(os_components))
+    #             loaded_storage_refs.append(StorageRefUtils.extract_storage_ref(os_components))
     #
     #         for p in StreamlitVizTracker.loaded_word_embeding_pipes : loaded_embed_nlu_refs.append(p.nlu_ref)
     #         loaded_embed_nlu_refs = list(set(loaded_embed_nlu_refs))
@@ -792,7 +792,7 @@ word-wrap: break-word;
     #     def are_cols_full(): return col_index == num_cols
     #     token_feature_pipe = StreamlitUtilsOS.get_pipe('en.dep.typed')
     #     ## TODO , not all pipes have sentiment/pos etc.. models for hueing loaded....
-    #     ## Lets FIRST predict with the classifiers/Token level feature generators and THEN apply embed pipe??
+    #     ## Lets FIRST predict with the classifiers/Token level feature generators and THEN apply embed component_list??
     #     for p in StreamlitVizTracker.loaded_word_embeding_pipes :
     #         # TODO, run all classifiers pipes. FOr Sentence/Doc level stuff, we can only use Senc/Doc/Input dependent level annotators
     #         #  TODO token features TYPED DEP/ UNTYPED DEP/ POS  ---> LOAD DEP/UNTYPED DEP/ POS and then APPEN NLU_COMPONENTS!!!!! TO EXISTING PIPE

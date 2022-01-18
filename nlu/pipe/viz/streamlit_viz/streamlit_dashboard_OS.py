@@ -89,7 +89,7 @@ class StreamlitVizBlockHandler():
                 ner_pipe = pipe if pipe.nlu_ref == ner_model_2_viz else StreamlitUtilsOS.get_pipe(ner_model_2_viz)
                 NERStreamlitBlock.visualize_ner(ner_pipe, text, generate_code_sample=show_code_snippets, key=key+'_ner', show_model_select=False, show_text_input=True, show_logo=False, show_infos=False)
             if 'dependency_tree' == viz :
-                tree_pipe = StreamlitUtilsOS.get_pipe('en.dep.typed') # if not ValidateVizPipe.viz_tree_satisfied(pipe) else pipe
+                tree_pipe = StreamlitUtilsOS.get_pipe('en.dep.typed') # if not ValidateVizPipe.viz_tree_satisfied(component_list) else component_list
                 DepTreeStreamlitBlock.visualize_dep_tree(tree_pipe, text, generate_code_sample=show_code_snippets, key=key+'_dep', show_infos=False, show_logo=False)
             if 'token_features' == viz :
                 ner_pipe = pipe if pipe.nlu_ref == ner_model_2_viz else StreamlitUtilsOS.get_pipe(ner_model_2_viz)
@@ -116,7 +116,7 @@ class StreamlitVizBlockHandler():
 
     @staticmethod
     def viz_streamlit_entity_embed_manifold(
-            pipe,  # nlu pipe
+            pipe,  # nlu component_list
             default_texts: List[str] = ("Donald Trump likes to visit New York", "Angela Merkel likes to visit Berlin!", 'Peter hates visiting Paris'),
             title: Optional[str] = "Lower dimensional Manifold visualization for Entity embeddings",
             sub_title: Optional[str] = "Apply any of the 11 `Manifold` or `Matrix Decomposition` algorithms to reduce the dimensionality of `Entity Embeddings` to `1-D`, `2-D` and `3-D` ",
@@ -153,7 +153,7 @@ class StreamlitVizBlockHandler():
 
     @staticmethod
     def viz_streamlit_sentence_embed_manifold(
-            pipe, # nlu pipe
+            pipe, # nlu component_list
             default_texts: List[str] = ("Donald Trump likes to party!", "Angela Merkel likes to party!", 'Peter HATES TO PARTTY!!!! :('),
             title: Optional[str] = "Lower dimensional Manifold visualization for word embeddings",
             sub_title: Optional[str] = "Apply any of the 11 `Manifold` or `Matrix Decomposition` algorithms to reduce the dimensionality of `Word Embeddings` to `1-D`, `2-D` and `3-D` ",
@@ -201,7 +201,7 @@ class StreamlitVizBlockHandler():
 
     @staticmethod
     def viz_streamlit_word_embed_manifold(
-            pipe, # nlu pipe
+            pipe, # nlu component_list
             default_texts: List[str] = ("Donald Trump likes to party!", "Angela Merkel likes to party!", 'Peter HATES TO PARTTY!!!! :('),
             title: Optional[str] = "Lower dimensional Manifold visualization for word embeddings",
             sub_title: Optional[str] = "Apply any of the 11 `Manifold` or `Matrix Decomposition` algorithms to reduce the dimensionality of `Word Embeddings` to `1-D`, `2-D` and `3-D` ",
@@ -248,7 +248,7 @@ class StreamlitVizBlockHandler():
 
     @staticmethod
     def visualize_dep_tree(
-            pipe, #nlu pipe
+            pipe, #nlu component_list
             text:str = 'Billy likes to swim',
             title: Optional[str] = "Dependency Parse & Part-of-speech tags",
             sub_title: Optional[str] = 'POS tags define a `grammatical label` for `each token` and the `Dependency Tree` classifies `Relations between the tokens` ',
@@ -270,7 +270,7 @@ class StreamlitVizBlockHandler():
 
     @staticmethod
     def display_word_similarity(
-            pipe, #nlu pipe
+            pipe, #nlu component_list
             default_texts: Tuple[str, str] = ("Donald Trump likes to party!", "Angela Merkel likes to party!"),
             threshold: float = 0.5,
             title: Optional[str] = "Embeddings Similarity Matrix &  Visualizations  ",
@@ -318,7 +318,7 @@ class StreamlitVizBlockHandler():
 
     @staticmethod
     def visualize_tokens_information(
-            pipe, # nlu pipe
+            pipe, # nlu component_list
             text:str,
             title: Optional[str] = "Token Features",
             sub_title: Optional[str] ='Pick from `over 1000+ models` on the left and `view the generated features`',
@@ -358,7 +358,7 @@ class StreamlitVizBlockHandler():
 
     @staticmethod
     def visualize_ner(
-            pipe, # Nlu pipe
+            pipe, # Nlu component_list
             text:str,
             ner_tags: Optional[List[str]] = None,
             show_label_select: bool = True,
@@ -399,7 +399,7 @@ class StreamlitVizBlockHandler():
 
     @staticmethod
     def visualize_classes(
-            pipe, # nlu pipe
+            pipe, # nlu component_list
             text:Union[str,list,pd.DataFrame, pd.Series, List[str]]=('I love NLU and Streamlit and sunny days!', 'I hate rainy daiys','CALL NOW AND WIN 1000$M'),
             output_level:Optional[str]='document',
             title: Optional[str] = "Text Classification",

@@ -10,7 +10,7 @@ from nlu.pipe.viz.streamlit_viz.streamlit_viz_tracker import StreamlitVizTracker
 class TokenFeaturesStreamlitBlock():
     @staticmethod
     def visualize_tokens_information(
-            pipe, # nlu pipe
+            pipe, # nlu component_list
             text:str,
             title: Optional[str] = "Token Features",
             sub_title: Optional[str] ='Pick from `over 1000+ models` on the left and `view the generated features`',
@@ -33,7 +33,7 @@ class TokenFeaturesStreamlitBlock():
         if show_logo :StreamlitVizTracker.show_logo()
         if set_wide_layout_CSS : _set_block_container_style()
         if title:st.header(title)
-        # if generate_code_sample: st.code(get_code_for_viz('TOKEN',StreamlitUtilsOS.extract_name(pipe),text))
+        # if generate_code_sample: st.code(get_code_for_viz('TOKEN',StreamlitUtilsOS.extract_name(component_list),text))
         if sub_title:st.subheader(sub_title)
         token_pipes = [pipe]
         if show_text_input : text = st.text_area("Enter text you want to view token features for", text, key=key)
