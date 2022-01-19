@@ -184,47 +184,52 @@ def auth(HEALTHCARE_LICENSE_OR_JSON_PATH='/content/spark_nlp_for_healthcare.json
     ocr_creds = [OCR_LICENSE, OCR_SECRET]
     aws_creds = [AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY]
 
-    if not has_empty_strings(hc_creds) and not has_empty_strings(ocr_creds) and not has_empty_strings(aws_creds):
-        # HC + OCR credentials provided
-        auth_utils.get_authenticated_spark_HC_and_OCR(HEALTHCARE_LICENSE_OR_JSON_PATH, HEALTHCARE_SECRET, OCR_LICENSE,
-                                                      OCR_SECRET, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, gpu)
-        return nlu
-
-    elif not has_empty_strings(hc_creds) and has_empty_strings(ocr_creds) and not has_empty_strings(aws_creds):
-        # HC Creds provided but no OCR
-        # TODO REFACTOR, QUICK HACK TO MAKE TEST WORKS!!
-        auth_utils.get_authenticated_spark(HEALTHCARE_LICENSE_OR_JSON_PATH, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY,
-                                           HEALTHCARE_SECRET, gpu)
-        # auth_utils.get_authenticated_spark_HC(HEALTHCARE_LICENSE_OR_JSON_PATH, HEALTHCARE_SECRET, AWS_ACCESS_KEY_ID,
-        #                                       AWS_SECRET_ACCESS_KEY, gpu)
-        return nlu
-    elif has_empty_strings(hc_creds) and not has_empty_strings(ocr_creds) and not has_empty_strings(aws_creds):
-        # OCR creds provided but no HC
-        auth_utils.get_authenticated_spark_OCR(OCR_LICENSE, OCR_SECRET, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, gpu)
-        return nlu
-
-    #### TODO OLD BELOW REFACTOR!
-    if os.path.exists(HEALTHCARE_LICENSE_OR_JSON_PATH):  # TODO THIS RUNS FIRST!
+    if os.path.exists(HEALTHCARE_LICENSE_OR_JSON_PATH):
+        # Credentials provided via JSON file
         with open(HEALTHCARE_LICENSE_OR_JSON_PATH) as json_file:
             j = json.load(json_file)
             if 'SPARK_NLP_LICENSE' in j.keys() and 'SPARK_OCR_LICENSE' in j.keys():
                 # HC and OCR creds provided
-                pass
-            if 'SPARK_NLP_LICENSE' in j.keys() and not 'SPARK_OCR_LICENSE':
-                # HC creds provided but no OCR
-                pass
-            if 'SPARK_NLP_LICENSE' in j.keys() and not 'SPARK_OCR_LICENSE':
-                # OCR creds provided but no HC
-                pass
+                auth_utils.get_authenticated_spark_HC_and_OCR(j['SPARK_NLP_LICENSE'], j['SECRET'],
+                                                              j['SPARK_OCR_LICENSE'], j['SPARK_OCR_SECRET'],
+                                                              j['AWS_ACCESS_KEY_ID'], j['AWS_SECRET_ACCESS_KEY'], gpu)
 
-            auth_utils.get_authenticated_spark(j['SPARK_NLP_LICENSE'], j['AWS_ACCESS_KEY_ID'],
-                                               j['AWS_SECRET_ACCESS_KEY'], j['SECRET'], gpu)
+                return nlu
+
+            if 'SPARK_NLP_LICENSE' in j.keys() and 'SPARK_OCR_LICENSE' not in j.keys():
+                # HC creds provided but no OCR
+                auth_utils.get_authenticated_spark_HC(j['SPARK_NLP_LICENSE'], j['SECRET'], j['AWS_ACCESS_KEY_ID'],
+                                                      j['AWS_SECRET_ACCESS_KEY'], gpu)
+                return nlu
+
+            if 'SPARK_NLP_LICENSE' not in j.keys() and 'SPARK_OCR_LICENSE' in j.keys():
+                # OCR creds provided but no HC
+                auth_utils.get_authenticated_spark_OCR(j['SPARK_OCR_LICENSE'], j['SPARK_OCR_SECRET'],
+                                                       j['AWS_ACCESS_KEY_ID'], j['AWS_SECRET_ACCESS_KEY'], gpu)
+                return nlu
+
+            auth_utils.get_authenticated_spark(gpu)
         return nlu
-    if AWS_ACCESS_KEY_ID != '':  # TODO DELETE BELOW
-        auth_utils.get_authenticated_spark(HEALTHCARE_LICENSE_OR_JSON_PATH, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY,
-                                           HEALTHCARE_SECRET, gpu)
     else:
-        return nlu
+        # Credentials provided as parameter
+        if not has_empty_strings(hc_creds) and not has_empty_strings(ocr_creds) and not has_empty_strings(aws_creds):
+            # HC + OCR credentials provided
+            auth_utils.get_authenticated_spark_HC_and_OCR(HEALTHCARE_LICENSE_OR_JSON_PATH, HEALTHCARE_SECRET,
+                                                          OCR_LICENSE,
+                                                          OCR_SECRET, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, gpu)
+            return nlu
+
+        elif not has_empty_strings(hc_creds) and has_empty_strings(ocr_creds) and not has_empty_strings(aws_creds):
+            # HC creds provided, but no HC
+            auth_utils.get_authenticated_spark_HC(HEALTHCARE_LICENSE_OR_JSON_PATH, HEALTHCARE_SECRET, AWS_ACCESS_KEY_ID,
+                                                  AWS_SECRET_ACCESS_KEY, gpu)
+            return nlu
+        elif has_empty_strings(hc_creds) and not has_empty_strings(ocr_creds) and not has_empty_strings(aws_creds):
+            # OCR creds provided but no HC
+            auth_utils.get_authenticated_spark_OCR(OCR_LICENSE, OCR_SECRET, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY,
+                                                   gpu)
+            return nlu
+
     return nlu
 
 

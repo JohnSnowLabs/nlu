@@ -62,24 +62,48 @@ def authenticate_enviroment_HC(SPARK_NLP_LICENSE, AWS_ACCESS_KEY_ID, AWS_SECRET_
     os.environ['AWS_ACCESS_KEY_ID'] = AWS_ACCESS_KEY_ID
     os.environ['AWS_SECRET_ACCESS_KEY'] = AWS_SECRET_ACCESS_KEY
 
+
 def authenticate_enviroment_OCR(SPARK_OCR_LICENSE, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY):
     """Set Secret environ variables for Spark Context"""
     os.environ['SPARK_OCR_LICENSE'] = SPARK_OCR_LICENSE
     os.environ['AWS_ACCESS_KEY_ID'] = AWS_ACCESS_KEY_ID
     os.environ['AWS_SECRET_ACCESS_KEY'] = AWS_SECRET_ACCESS_KEY
 
-def authenticate_enviroment_HC_and_OCR(SPARK_NLP_LICENSE,SPARK_OCR_LICENSE, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY ):
+
+def authenticate_enviroment_HC_and_OCR(SPARK_NLP_LICENSE, SPARK_OCR_LICENSE, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY):
     """Set Secret environ variables for Spark Context"""
-    authenticate_enviroment_HC(SPARK_NLP_LICENSE,AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY)
-    authenticate_enviroment_OCR(SPARK_OCR_LICENSE,AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY)
+    authenticate_enviroment_HC(SPARK_NLP_LICENSE, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY)
+    authenticate_enviroment_OCR(SPARK_OCR_LICENSE, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY)
 
 
 def get_authenticated_spark_HC(HC_LICENSE, HC_SECRET, AWS_ACCESS_KEY, AWS_SECRET_KEY, gpu):
-    pass
+    import_or_install_licensed_lib(HC_SECRET, 'healthcare')
+    authenticate_enviroment_HC(HC_LICENSE, AWS_ACCESS_KEY, AWS_SECRET_KEY)
+    import sparknlp
+    import sparknlp_jsl
+    params = {"spark.driver.memory": "16G",
+              "spark.kryoserializer.buffer.max": "2000M",
+              "spark.driver.maxResultSize": "2000M"}
+
+    if is_env_pyspark_2_3():
+        return sparknlp_jsl.start(HC_SECRET, spark23=True, gpu=gpu, public=sparknlp.version(), params=params)
+    if is_env_pyspark_2_4():
+        return sparknlp_jsl.start(HC_SECRET, spark24=True, gpu=gpu, public=sparknlp.version(), params=params)
+    if is_env_pyspark_3_0() or is_env_pyspark_3_1():
+        return sparknlp_jsl.start(HC_SECRET, gpu=gpu, public=sparknlp.version(), params=params)
+    raise ValueError(f"Current Spark version {get_pyspark_version()} not supported!")
 
 
 def get_authenticated_spark_OCR(OCR_LICENSE, OCR_SECRET, AWS_ACCESS_KEY, AWS_SECRET_KEY, gpu):
-    pass
+    import_or_install_licensed_lib(OCR_SECRET, 'ocr')
+    authenticate_enviroment_OCR(OCR_LICENSE, AWS_ACCESS_KEY, AWS_SECRET_KEY)
+    import sparkocr
+    import sparknlp
+    params = {"spark.driver.memory": "16G", "spark.kryoserializer.buffer.max": "2000M",
+              "spark.driver.maxResultSize": "2000M"}
+    OS_version = sparknlp.version()
+    spark = sparkocr.start(secret=OCR_SECRET, nlp_version=OS_version, )
+    spark.sparkContext.setLogLevel('ERROR')
 
 
 def get_authenticated_spark_HC_and_OCR(HC_LICENSE, HC_SECRET, OCR_LICENSE, OCR_SECRET, AWS_ACCESS_KEY, AWS_SECRET_KEY,
@@ -87,10 +111,8 @@ def get_authenticated_spark_HC_and_OCR(HC_LICENSE, HC_SECRET, OCR_LICENSE, OCR_S
     import_or_install_licensed_lib(HC_SECRET, 'healthcare')
     import_or_install_licensed_lib(OCR_SECRET, 'ocr')
     authenticate_enviroment_HC_and_OCR(HC_LICENSE, OCR_LICENSE, AWS_ACCESS_KEY, AWS_SECRET_KEY)
-    import sparknlp_jsl
     import sparkocr
     import sparknlp
-
     params = {"spark.driver.memory": "16G", "spark.kryoserializer.buffer.max": "2000M",
               "spark.driver.maxResultSize": "2000M"}
 
@@ -114,16 +136,16 @@ def get_authenticated_spark(SPARK_NLP_LICENSE, AWS_ACCESS_KEY_ID, AWS_SECRET_ACC
     params = {"spark.driver.memory": "16G",
               "spark.kryoserializer.buffer.max": "2000M",
               "spark.driver.maxResultSize": "2000M"}
-
-    if is_env_pyspark_2_3(): return sparknlp_jsl.start(JSL_SECRET, spark23=True, gpu=gpu, params=params)
-    if is_env_pyspark_2_4(): return sparknlp_jsl.start(JSL_SECRET, spark24=True, gpu=gpu, params=params)
+    if is_env_pyspark_2_3():
+        return sparknlp_jsl.start(JSL_SECRET, spark23=True, gpu=gpu, params=params)
+    if is_env_pyspark_2_4():
+        return sparknlp_jsl.start(JSL_SECRET, spark24=True, gpu=gpu, params=params)
     if is_env_pyspark_3_0() or is_env_pyspark_3_1():
         return sparknlp_jsl.start(JSL_SECRET, gpu=gpu, public=sparknlp.version(), params=params)
-    print(f"Current Spark version {get_pyspark_version()} not supported!")
-    raise ValueError
+    raise ValueError(f"Current Spark version {get_pyspark_version()} not supported!")
 
 
-def is_authorized_enviroment():
+def is_authorized_environment():
     """Check if auth secrets are set in environment"""
     SPARK_NLP_LICENSE = os.getenv('SPARK_NLP_LICENSE')
     AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
