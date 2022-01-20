@@ -44,14 +44,14 @@ class NERStreamlitBlock():
 
         if not show_color_selector :
             if show_label_select:
-                exp = st.beta_expander("Select entity labels to highlight")
+                exp = st.expander("Select entity labels to highlight")
                 label_select = exp.multiselect(
                     "These labels are predicted by the NER model. Select which ones you want to display",
                     options=ner_tags,default=list(ner_tags))
             else : label_select = ner_tags
             pipe.viz(text,write_to_streamlit=True, viz_type='ner',labels_to_viz=label_select,viz_colors=colors, streamlit_key=key)
         else : # TODO WIP color select
-            cols = st.beta_columns(3)
+            cols = st.columns(3)
             exp = cols[0].beta_expander("Select entity labels to display")
             color = st.color_picker('Pick A Color', '#00f900',key = key)
             color = cols[2].color_picker('Pick A Color for a specific entity label', '#00f900',key = key)

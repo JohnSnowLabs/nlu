@@ -73,7 +73,7 @@ class SentenceEmbeddingManifoldStreamlitBlock():
         e_coms = StreamlitUtilsOS.find_all_embed_components(pipe)
 
         if show_algo_select:
-            exp = st.beta_expander("Select additional manifold and dimension reduction techniques to apply")
+            exp = st.expander("Select additional manifold and dimension reduction techniques to apply")
 
             algos = exp.multiselect(
                 "Reduce embedding dimensionality to something visualizable",
@@ -120,20 +120,20 @@ class SentenceEmbeddingManifoldStreamlitBlock():
                     default=loaded_embed_nlu_refs, key=key)
                 embed_algo_selection = [embed_algo_selection[-1]]
 
-                exp = st.beta_expander("Pick additional Classifiers")
+                exp = st.expander("Pick additional Classifiers")
                 class_algo_selection = exp.multiselect("Pick additional Classifiers to load for coloring points",
                                                        options=classifier_components_usable,
                                                        default=loaded_classifier_nlu_refs, key=key)
                 class_algo_selection = [class_algo_selection[-1]]
 
             else:
-                exp = st.beta_expander("Pick additional Sentence Embeddings")
+                exp = st.expander("Pick additional Sentence Embeddings")
                 embed_algo_selection = exp.multiselect(
                     "Pick additional Sentence Embeddings for the Dimension Reduction", options=emb_components_usable,
                     default=loaded_embed_nlu_refs, key=key)
                 embed_algo_selection = [embed_algo_selection[-1]]
 
-                exp = st.beta_expander("Pick additional Classifiers")
+                exp = st.expander("Pick additional Classifiers")
                 class_algo_selection = exp.multiselect("Pick additional Classifiers to load for coloring points",
                                                        options=classifier_components_usable,
                                                        default=loaded_classifier_nlu_refs, key=key)
@@ -159,7 +159,7 @@ class SentenceEmbeddingManifoldStreamlitBlock():
                 StreamlitVizTracker.loaded_document_classifier_pipes.append(nlu.load(nlu_ref))
 
         col_index = 0
-        cols = st.beta_columns(num_cols)
+        cols = st.columns(num_cols)
 
         data = original_text.copy()
         # Get classifier predictions
@@ -187,7 +187,7 @@ class SentenceEmbeddingManifoldStreamlitBlock():
             predictions = embed_pipe.predict(data, output_level=output_level, multithread=False).dropna()
             e_col = StreamlitUtilsOS.find_embed_col(predictions)
             e_com = StreamlitUtilsOS.find_embed_component(embed_pipe)
-            e_com_storage_ref = StorageRefUtils.extract_storage_ref(e_com, True)
+            e_com_storage_ref = StorageRefUtils.extract_storage_ref(e_com)
             emb = predictions[e_col]
             mat = np.array([x for x in emb])
             for algo in algos:
@@ -211,7 +211,7 @@ class SentenceEmbeddingManifoldStreamlitBlock():
                     cols[col_index].write(fig, key=key)
                     col_index += 1
                     if are_cols_full():
-                        cols = st.beta_columns(num_cols)
+                        cols = st.columns(num_cols)
                         col_index = 0
                 if 2 in target_dimensions:
                     low_dim_data = StreamlitUtilsOS.get_manifold_algo(algo, 2, n_jobs).fit_transform(mat)
@@ -227,7 +227,7 @@ class SentenceEmbeddingManifoldStreamlitBlock():
                     cols[col_index].write(fig, key=key)
                     col_index += 1
                     if are_cols_full():
-                        cols = st.beta_columns(num_cols)
+                        cols = st.columns(num_cols)
                         col_index = 0
                 if 3 in target_dimensions:
                     low_dim_data = StreamlitUtilsOS.get_manifold_algo(algo, 3, n_jobs).fit_transform(mat)
@@ -244,14 +244,14 @@ class SentenceEmbeddingManifoldStreamlitBlock():
                     cols[col_index].write(fig, key=key)
                     col_index += 1
                     if are_cols_full():
-                        cols = st.beta_columns(num_cols)
+                        cols = st.columns(num_cols)
                         col_index = 0
 
             # Todo fancy embed infos etc
             # if display_embed_information: display_embed_vetor_information(e_com,mat)
 
         # if display_embed_information:
-        #     exp = st.beta_expander("Embedding vector information")
+        #     exp = st.expander("Embedding vector information")
         #     exp.write(embed_vector_info)
 
         if show_infos:

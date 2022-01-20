@@ -60,7 +60,7 @@ class EntityEmbeddingManifoldStreamlitBlock():
 
         if show_algo_select:
             # Manifold Selection
-            exp = st.beta_expander("Select additional manifold and dimension reduction techniques to apply")
+            exp = st.expander("Select additional manifold and dimension reduction techniques to apply")
             algos = exp.multiselect(
                 "Reduce embedding dimensionality to something visualizable",
                 options=(
@@ -98,8 +98,7 @@ class EntityEmbeddingManifoldStreamlitBlock():
                 p)
 
         col_index = 0
-        cols = st.beta_columns(num_cols)
-        entity_cols = EntityManifoldUtils.get_ner_cols(None)
+        cols = st.columns(num_cols)
 
         def are_cols_full():
             return col_index == num_cols
@@ -107,13 +106,14 @@ class EntityEmbeddingManifoldStreamlitBlock():
         for p in StreamlitVizTracker.loaded_ner_word_embeding_pipes:
             p = EntityManifoldUtils.insert_chunk_embedder_to_pipe_if_missing(p)
             predictions = p.predict(data, metadata=True, output_level=output_level, multithread=False).dropna()
+            entity_cols = EntityManifoldUtils.get_ner_cols(predictions)
             chunk_embed_col = EntityManifoldUtils.find_chunk_embed_col(predictions)
 
-            # TODO get cols for non default NER??? or multi ner setups??
-            features = predictions[EntityManifoldUtils.get_ner_cols(predictions)]
+            # TODO get cols for non default NER? or multi ner setups?
+            # features = predictions[EntityManifoldUtils.get_ner_cols(predictions)]
             # e_col = StreamlitUtilsOS.find_embed_col(predictions)
             e_com = StreamlitUtilsOS.find_embed_component(p)
-            e_com_storage_ref = StorageRefUtils.extract_storage_ref(e_com, True)
+            e_com_storage_ref = StorageRefUtils.extract_storage_ref(e_com)
             emb = predictions[chunk_embed_col]
             mat = np.array([x for x in emb])
             # for ner_emb_p in ps:
@@ -123,7 +123,7 @@ class EntityEmbeddingManifoldStreamlitBlock():
                 if len(mat.shape) > 2: mat = mat.reshape(len(emb), mat.shape[-1])
                 hover_data = entity_cols + ['text']
                 # calc reduced dimensionality with every algo
-                feature_to_color_by = 'entities_class'
+                feature_to_color_by = entity_cols[0]
                 if 1 in target_dimensions:
                     low_dim_data = StreamlitUtilsOS.get_manifold_algo(algo, 1, n_jobs).fit_transform(mat)
                     x = low_dim_data[:, 0]
@@ -132,7 +132,7 @@ class EntityEmbeddingManifoldStreamlitBlock():
                     # predictions['text'] = original_text
                     tsne_df = pd.DataFrame({**{'x': x, 'y': y},
                                             **{k: predictions[k] for k in entity_cols},
-                                            **{'text': predictions['entities']}
+                                            **{'text': predictions[entity_cols[-1]]}
                                             })
                     fig = px.scatter(tsne_df, x="x", y="y", color=feature_to_color_by, hover_data=hover_data)
                     subh = f"""Word-Embeddings =`{e_com_storage_ref}`, NER-Model =`{p.nlu_ref}`, Manifold-Algo =`{algo}` for `D=1`"""
@@ -140,7 +140,7 @@ class EntityEmbeddingManifoldStreamlitBlock():
                     cols[col_index].write(fig, key=key)
                     col_index += 1
                     if are_cols_full():
-                        cols = st.beta_columns(num_cols)
+                        cols = st.columns(num_cols)
                         col_index = 0
                 if 2 in target_dimensions:
                     low_dim_data = StreamlitUtilsOS.get_manifold_algo(algo, 2, n_jobs).fit_transform(mat)
@@ -148,7 +148,7 @@ class EntityEmbeddingManifoldStreamlitBlock():
                     y = low_dim_data[:, 1]
                     tsne_df = pd.DataFrame({**{'x': x, 'y': y},
                                             **{k: predictions[k] for k in entity_cols},
-                                            **{'text': predictions['entities']}
+                                            **{'text': predictions[entity_cols[-1]]}
                                             })
                     fig = px.scatter(tsne_df, x="x", y="y", color=feature_to_color_by, hover_data=hover_data)
                     subh = f"""Word-Embeddings =`{e_com_storage_ref}`, NER-Model =`{p.nlu_ref}`, Manifold-Algo =`{algo}` for `D=2`"""
@@ -156,7 +156,7 @@ class EntityEmbeddingManifoldStreamlitBlock():
                     cols[col_index].write(fig, key=key)
                     col_index += 1
                     if are_cols_full():
-                        cols = st.beta_columns(num_cols)
+                        cols = st.columns(num_cols)
                         col_index = 0
                 if 3 in target_dimensions:
                     low_dim_data = StreamlitUtilsOS.get_manifold_algo(algo, 3, n_jobs).fit_transform(mat)
@@ -165,7 +165,7 @@ class EntityEmbeddingManifoldStreamlitBlock():
                     z = low_dim_data[:, 2]
                     tsne_df = pd.DataFrame({**{'x': x, 'y': y, 'z': z},
                                             **{k: predictions[k] for k in entity_cols},
-                                            **{'text': predictions['entities']}
+                                            **{'text': predictions[entity_cols[-1]]}
                                             })
                     fig = px.scatter_3d(tsne_df, x="x", y="y", z='z', color=feature_to_color_by, hover_data=hover_data)
                     subh = f"""Word-Embeddings =`{e_com_storage_ref}`, NER-Model =`{p.nlu_ref}`, Manifold-Algo =`{algo}` for `D=3`"""
@@ -173,14 +173,14 @@ class EntityEmbeddingManifoldStreamlitBlock():
                     cols[col_index].write(fig, key=key)
                     col_index += 1
                     if are_cols_full():
-                        cols = st.beta_columns(num_cols)
+                        cols = st.columns(num_cols)
                         col_index = 0
 
                 # Todo fancy embed infos etc
                 # if display_embed_information: display_embed_vetor_information(e_com,mat)
 
             # if display_embed_information:
-            #     exp = st.beta_expander("Embedding vector information")
+            #     exp = st.expander("Embedding vector information")
             #     exp.write(embed_vector_info)
 
         if show_infos:

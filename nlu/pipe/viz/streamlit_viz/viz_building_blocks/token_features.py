@@ -39,7 +39,7 @@ class TokenFeaturesStreamlitBlock():
         if show_text_input : text = st.text_area("Enter text you want to view token features for", text, key=key)
         if show_model_select :
             token_pipes_components_usable = [e for e in Discoverer.get_components(get_all=True)]
-            loaded_nlu_refs = [c.info.nlu_ref for c in pipe.components]
+            loaded_nlu_refs = [c.nlu_ref for c in pipe.components]
 
             for l in loaded_nlu_refs:
                 if 'converter' in l :
@@ -68,7 +68,7 @@ class TokenFeaturesStreamlitBlock():
         df = pd.concat(dfs,axis=1)
         df = df.loc[:,~df.columns.duplicated()]
         if show_feature_select :
-            exp = st.beta_expander("Select token features to display")
+            exp = st.expander("Select token features to display")
             features = exp.multiselect(
                 "Token features",
                 options=list(df.columns),

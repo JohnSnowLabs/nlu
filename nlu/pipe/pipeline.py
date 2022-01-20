@@ -578,7 +578,7 @@ class NLUPipeline(BasePipe):
                 multithread=True,
                 drop_irrelevant_cols=True,
                 return_spark_df=False,
-                get_embeddings=None
+                get_embeddings=True
                 ):
         '''
         Annotates a Pandas Dataframe/Pandas Series/Numpy Array/Spark DataFrame/Python List strings /Python String

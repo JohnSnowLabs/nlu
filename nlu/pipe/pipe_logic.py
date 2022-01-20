@@ -241,7 +241,7 @@ class PipelineQueryVerifier:
 
     @staticmethod
     def add_chunk_embedding_converter(
-            resolution_data: StorageRefConversionResolutionData) -> NluComponent:  # ner_converter_provider:SparkNLUComponent,
+            resolution_data: StorageRefConversionResolutionData) -> NluComponent:
         """ Return a Word to CHUNK Embedding converter for a given Component. The input cols with match the Sentence Embedder ones
             The converter is a NLU Component Embelishement of the Spark NLP Sentence Embeddings Annotator
             The CHUNK embedder requires entities and also embeddings to generate data from. Since there could be multiple entities generators, we neeed to pass the correct one
@@ -252,7 +252,14 @@ class PipelineQueryVerifier:
         entities_col = 'entities'
         embed_provider_col = word_embedding_provider.info.spark_output_column_names[0]
 
-        c = nlu.embeddings_chunker.EmbeddingsChunker(annotator_class='chunk_embedder')
+        c = ComponentMap.os_components[NLP_NODE_IDS.CHUNK_EMBEDDINGS_CONVERTER]
+        c.set_metadata(c.get_default_model(),
+                                   NLP_NODE_IDS.CHUNK_EMBEDDINGS_CONVERTER, NLP_NODE_IDS.CHUNK_EMBEDDINGS_CONVERTER,
+                                   'xx',
+                                   False, Licenses.open_source)
+
+
+        # c = nlu.embeddings_chunker.EmbeddingsChunker(annotator_class='chunk_embedder')
         storage_ref = StorageRefUtils.extract_storage_ref(word_embedding_provider)
         c.model.setStorageRef(storage_ref)
         c.info.storage_ref = storage_ref

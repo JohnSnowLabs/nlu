@@ -1,4 +1,7 @@
-from nlu import Spellbook, logger
+from nlu.spellbook import Spellbook
+import logging
+logger = logging.getLogger('nlu')
+
 from nlu.info import AllComponentsInfo
 
 def check_if_nlu_ref_is_licensed(nlu_ref):

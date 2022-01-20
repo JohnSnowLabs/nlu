@@ -1,6 +1,11 @@
 import os, json
+
+from nlu.pipe.component_resolution import construct_component_from_identifier
+from nlu.universe.component_universes import ComponentMap
+from nlu.universe.universes import Licenses
 from nlu.pipe.pipe_component import SparkNLUComponent
 from sparknlp.annotator import *
+from nlu.universe.annotator_class_universe import AnnoClassRef
 
 def is_pipe(model_path):
     """Check wether there is a pyspark component_list stored in path"""
@@ -36,25 +41,45 @@ def verify_and_create_model(model_path: str, nlu_referenced_requirements=[], nlp
         except:
             from nlu.utils.environment.offline_load_utils_licensed import verify_model_licensed
             m = verify_model_licensed(class_name, model_path)
+    os_annos = AnnoClassRef.get_os_pyclass_2_anno_id_dict()
+    hc_annos = AnnoClassRef.get_hc_pyclass_2_anno_id_dict()
+    ocr_annos = AnnoClassRef.get_ocr_pyclass_2_anno_id_dict()
+
 
     component_type, nlu_anno_class, = resolve_annotator_class_to_nlu_component_info(class_name)
+
+    # construct_component_from_identifier('xx', nlu_ref = class_name, nlp_ref = class_name, anno_class_name=class_name)
+    if class_name in os_annos.keys():
+        jsl_anno_id = os_annos[class_name]
+        nlu_component = ComponentMap.os_components[jsl_anno_id]
+        return nlu_component.set_metadata(m,
+                                          jsl_anno_id, jsl_anno_id,
+                                          'xx',
+                                          False, Licenses.open_source)
+
+    elif class_name in hc_annos.keys():
+        pass
+    elif class_name in ocr_annos.keys():
+        pass
+
     # Wrap model with NLU Custom Model class so the NLU pipeline Logic knows what to do with it
-    c = CustomModel(annotator_class=nlu_anno_class, component_type=component_type, model=m)
-    if nlu.hard_offline_checks:
-        storage_ref = m.getStorageRef() if hasattr(m, 'getStorageRef') else -1
-        feeds_from_embeddings = False
-        for inp in c.info.inputs():
-            if 'embed' in inp: feeds_from_embeddings = True
-        if type(m) not in [SentenceEmbeddings, ChunkEmbeddings] and storage_ref != -1 and feeds_from_embeddings:
-            # Check storage ref is matching either some NLU or NLP ref.
-            if not check_if_storage_ref_exists(storage_ref):
-                pass
-            raise ValueError(
-                "When loading a model from disk with embeddings in it's inputs or you must set the Storage Reference attribute on the model."
-                "Additionaly, the configured Storage Reference must either match to a NLU-Model-Reference or a Spark-NLP-Model-Reference."
-                "To view all references visit the modelshub or view https://github.com/JohnSnowLabs/nlu/blob/master/nlu/spellbook.py "
-                "You can set a storage reference via calling model.setStorageRef(storage_reference)"
-                "To disable this check, run nlu.disable_hard_offline_checks()")
+
+    # c = CustomModel(annotator_class=nlu_anno_class, component_type=component_type, model=m)
+    # if nlu.hard_offline_checks:
+    #     storage_ref = m.getStorageRef() if hasattr(m, 'getStorageRef') else -1
+    #     feeds_from_embeddings = False
+    #     for inp in c.info.inputs():
+    #         if 'embed' in inp: feeds_from_embeddings = True
+    #     if type(m) not in [SentenceEmbeddings, ChunkEmbeddings] and storage_ref != -1 and feeds_from_embeddings:
+    #         # Check storage ref is matching either some NLU or NLP ref.
+    #         if not check_if_storage_ref_exists(storage_ref):
+    #             pass
+    #         raise ValueError(
+    #             "When loading a model from disk with embeddings in it's inputs or you must set the Storage Reference attribute on the model."
+    #             "Additionaly, the configured Storage Reference must either match to a NLU-Model-Reference or a Spark-NLP-Model-Reference."
+    #             "To view all references visit the modelshub or view https://github.com/JohnSnowLabs/nlu/blob/master/nlu/spellbook.py "
+    #             "You can set a storage reference via calling model.setStorageRef(storage_reference)"
+    #             "To disable this check, run nlu.disable_hard_offline_checks()")
 
     return c
 
@@ -85,8 +110,7 @@ def resolve_annotator_class_to_nlu_component_info(anno_class='LemmatizerModel'):
                 nlu_anno_class = parts[-1]
                 component_type = component_type[:-1]
                 return component_type, nlu_anno_class,
-    print("COULD NOT FIND COMPONENT INFO FOR ANNO_CLASS", anno_class)
-    return False
+    raise ValueError("COULD NOT FIND COMPONENT INFO FOR ANNO_CLASS", anno_class)
 
 
 def test_check_if_string_in_file(file_name, string_to_search, regex=False):

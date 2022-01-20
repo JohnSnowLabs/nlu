@@ -39,7 +39,7 @@ class ClassifierStreamlitBlock():
         classifier_pipes = [pipe]
         classifier_components_usable = [e for e in Discoverer.get_components('classify',True, include_aliases=True)]
         classifier_components = StreamlitUtilsOS.find_all_classifier_components(pipe)
-        loaded_classifier_nlu_refs = [c.info.nlu_ref for c in classifier_components ]
+        loaded_classifier_nlu_refs = [c.nlu_ref for c in classifier_components ]
 
         for l in loaded_classifier_nlu_refs:
             if 'converter' in l :

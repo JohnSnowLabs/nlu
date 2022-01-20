@@ -1,6 +1,6 @@
 import logging
 from nlu.pipe.utils.resolution.nlu_ref_utils import *
-from nlu import Spellbook
+from nlu.spellbook import Spellbook
 from nlu.universe.feature_universes import NLP_FEATURES
 
 logger = logging.getLogger('nlu')

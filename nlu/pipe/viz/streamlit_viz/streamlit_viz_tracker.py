@@ -105,7 +105,7 @@ word-wrap: break-word;
     def display_embed_vetor_information(embed_component,embed_mat):
         name = StreamlitUtilsOS.extract_name(embed_component)
         if name =='': name = 'See modelshub for more details'
-        exp = st.beta_expander("Vector information")
+        exp = st.expander("Vector information")
         exp.code({"Vector Dimension ":embed_mat.shape[1],
                   "Num Vectors":embed_mat.shape[0] + embed_mat.shape[0],
                   'Vector Name':name})
@@ -157,7 +157,7 @@ word-wrap: break-word;
             for p in pipes :
                 if p is None : continue
                 parameter_infos[p.nlu_ref]=StreamlitVizTracker.get_pipe_param_dict(p)
-            exp = st.beta_expander("NLU Pipeline components and parameters information")
+            exp = st.expander("NLU Pipeline components and parameters information")
             exp.write(parameter_infos)
     @staticmethod
     def get_pipe_param_dict(pipe):
@@ -392,7 +392,7 @@ word-wrap: break-word;
     #     df = pd.concat(dfs,axis=1)
     #     df = df.loc[:,~df.columns.duplicated()]
     #     if show_feature_select :
-    #         exp = st.beta_expander("Select token features to display")
+    #         exp = st.expander("Select token features to display")
     #         features = exp.multiselect(
     #             "Token features",
     #             options=list(df.columns),
@@ -471,14 +471,14 @@ word-wrap: break-word;
     #
     #     if not show_color_selector :
     #         if show_label_select:
-    #             exp = st.beta_expander("Select entity labels to highlight")
+    #             exp = st.expander("Select entity labels to highlight")
     #             label_select = exp.multiselect(
     #                 "These labels are predicted by the NER model. Select which ones you want to display",
     #                 options=ner_tags,default=list(ner_tags))
     #         else : label_select = ner_tags
     #         component_list.viz(text,write_to_streamlit=True, viz_type='ner',labels_to_viz=label_select,viz_colors=colors, streamlit_key=key)
     #     else : # TODO WIP color select
-    #         cols = st.beta_columns(3)
+    #         cols = st.columns(3)
     #         exp = cols[0].beta_expander("Select entity labels to display")
     #         color = st.color_picker('Pick A Color', '#00f900',key = key)
     #         color = cols[2].color_picker('Pick A Color for a specific entity label', '#00f900',key = key)
@@ -540,7 +540,7 @@ word-wrap: break-word;
     #     # TODO NORMALIZE DISTANCES TO [0,1] for non cosine
     #     if 'haversine'   in dist_algos    : dist_algos.remove('haversine') # not applicable in >2D
     #     if 'precomputed' in dist_algos  : dist_algos.remove('precomputed') # Not a dist
-    #     cols = st.beta_columns(2)
+    #     cols = st.columns(2)
     #     text1 = cols[0].text_input("Text or word1",default_texts[0],key = key)
     #     text2 = cols[1].text_input("Text or word2",default_texts[1], key=key) if len(default_texts) >1  else cols[1].text_input("Text or word2",'Please enter second string',key = key)
     #     # exp = st.sidebar.beta_expander("Select additional Embedding Models and distance metric to compare ")
@@ -576,7 +576,7 @@ word-wrap: break-word;
     #             embed_algo_selection   = st.sidebar.multiselect("Pick additional Word Embeddings for the Similarity Matrix",options=emb_components_usable,default=loaded_embed_nlu_refs,key = key)
     #             dist_algo_selection =  st.sidebar.multiselect("Pick additional Similarity Metrics ", options=dist_algos, default=dist_metrics, key = key)
     #         else :
-    #             exp = st.beta_expander("Pick additional Word Embeddings and Similarity Metrics")
+    #             exp = st.expander("Pick additional Word Embeddings and Similarity Metrics")
     #             embed_algo_selection   = exp.multiselect("Pick additional Word Embeddings for the Similarity Matrix",options=emb_components_usable,default=loaded_embed_nlu_refs,key = key)
     #             dist_algo_selection =  exp.multiselect("Pick additional Similarity Metrics ", options=dist_algos, default=dist_metrics, key = key)
     #         embed_algos_to_load = list(set(embed_algo_selection) - set(loaded_embed_nlu_refs))
@@ -599,7 +599,7 @@ word-wrap: break-word;
     #         for num_emb,e_col in enumerate(e_cols):
     #             if col_index == num_cols-1 :cols_full=True
     #             if cols_full :
-    #                 cols = st.beta_columns(num_cols)
+    #                 cols = st.columns(num_cols)
     #                 col_index = 0
     #                 cols_full = False
     #             else:col_index+=1
@@ -663,10 +663,10 @@ word-wrap: break-word;
     #                         else : pass # todo fallback plots
     #
     #     if display_similarity_summary:
-    #         exp = st.beta_expander("Similarity summary")
+    #         exp = st.expander("Similarity summary")
     #         exp.write(similarity_metrics)
     #     if display_embed_information:
-    #         exp = st.beta_expander("Embedding vector information")
+    #         exp = st.expander("Embedding vector information")
     #         exp.write(embed_vector_info)
     #
     #     if show_infos :
@@ -739,7 +739,7 @@ word-wrap: break-word;
     #     e_coms = StreamlitUtilsOS.find_all_embed_components(component_list)
     #
     #     if show_algo_select :
-    #         exp = st.beta_expander("Select dimension reduction technique to apply")
+    #         exp = st.expander("Select dimension reduction technique to apply")
     #         algos = exp.multiselect(
     #             "Reduce embedding dimensionality to something visualizable",
     #             options=("TSNE", "ISOMAP",'LLE','Spectral Embedding','MDS','PCA','SVD aka LSA','DictionaryLearning','FactorAnalysis','FastICA','KernelPCA',),default=applicable_algos,)
@@ -768,7 +768,7 @@ word-wrap: break-word;
     #         if model_select_position =='side':
     #             embed_algo_selection   = st.sidebar.multiselect("Pick additional Word Embeddings for the Dimension Reduction",options=emb_components_usable,default=loaded_embed_nlu_refs,key = key)
     #         else :
-    #             exp = st.beta_expander("Pick additional Word Embeddings")
+    #             exp = st.expander("Pick additional Word Embeddings")
     #             embed_algo_selection   = exp.multiselect("Pick additional Word Embeddings for the Dimension Reduction",options=emb_components_usable,default=loaded_embed_nlu_refs,key = key)
     #         embed_algos_to_load = list(set(embed_algo_selection) - set(loaded_embed_nlu_refs))
     #
@@ -788,7 +788,7 @@ word-wrap: break-word;
     #             if not already_loaded : StreamlitVizTracker.loaded_document_classifier_pipes.append(nlu.load(nlu_ref))
     #
     #     col_index = 0
-    #     cols = st.beta_columns(num_cols)
+    #     cols = st.columns(num_cols)
     #     def are_cols_full(): return col_index == num_cols
     #     token_feature_pipe = StreamlitUtilsOS.get_pipe('en.dep.typed')
     #     ## TODO , not all pipes have sentiment/pos etc.. models for hueing loaded....
@@ -825,7 +825,7 @@ word-wrap: break-word;
     #                 cols[col_index].write(fig,key=key)
     #                 col_index+=1
     #                 if are_cols_full() :
-    #                     cols = st.beta_columns(num_cols)
+    #                     cols = st.columns(num_cols)
     #                     col_index = 0
     #             if 2 in target_dimensions:
     #                 low_dim_data = StreamlitUtilsOS.get_manifold_algo(algo,2).fit_transform(mat)
@@ -839,7 +839,7 @@ word-wrap: break-word;
     #                 # st.write(fig)
     #                 col_index+=1
     #                 if are_cols_full() :
-    #                     cols = st.beta_columns(num_cols)
+    #                     cols = st.columns(num_cols)
     #                     col_index = 0
     #             if 3 in target_dimensions:
     #                 low_dim_data = StreamlitUtilsOS.get_manifold_algo(algo,3).fit_transform(mat)
@@ -855,7 +855,7 @@ word-wrap: break-word;
     #                 # st.write(fig)
     #                 col_index+=1
     #                 if are_cols_full() :
-    #                     cols = st.beta_columns(num_cols)
+    #                     cols = st.columns(num_cols)
     #                     col_index = 0
     #         # Todo fancy embed infos etc
     #         # if display_embed_information: display_embed_vetor_information(e_com,mat)

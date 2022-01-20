@@ -11,7 +11,7 @@ from nlu.pipe.utils.pipe_utils import PipeUtils
 from nlu.pipe.utils.component_utils import ComponentUtils
 from typing import Union, List
 from nlu.pipe.utils.resolution.storage_ref_resolution_utils import *
-from nlu import Spellbook
+from nlu.spellbook import Spellbook
 from sparknlp.pretrained import PretrainedPipeline, LightPipeline
 
 from nlu.universe.feature_node_ids import NLP_NODE_IDS, NLP_HC_NODE_IDS
@@ -93,7 +93,6 @@ def resolve_feature(missing_feature_type, language='en', is_licensed=False,
                                                    model_bucket), feature_resolution.nlu_ref,
                 feature_resolution.nlp_ref, language, False, license_type)
 
-        # TODO LCIENSED RESOLUTIN>??
         nlu_ref, nlp_ref, is_licensed, language = resolve_storage_ref(language, storage_ref, missing_feature_type)
         anno_class_name = Spellbook.nlp_ref_to_anno_class[nlp_ref]
         # All storage ref providers are defined in open source
@@ -313,7 +312,7 @@ def resolve_component_from_parsed_query_data(lang, component_type, dataset, comp
         logger.info(
             'Could not find reference in NLU namespace. Assuming it is a component that is an ragmatic NLP annotator with NO model to download behind it.')
 
-    if not auth_utils.is_authorized_enviroment() and is_licensed:
+    if not auth_utils.is_authorized_environment() and is_licensed:
         print(f"The nlu_ref=[{nlu_ref}] is pointing to a licensed Spark NLP Annotator or Model [{nlp_ref}]. \n"
               f"Your environment does not seem to be Authorized!\n"
               f"Please RESTART your Python environment and run nlu.auth(SPARK_NLP_LICENSE,AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY,JSL_SECRET)  \n"
@@ -508,7 +507,7 @@ def construct_component_from_pipe_identifier(language, nlp_ref, nlu_ref, path=No
 
 
 def construct_component_from_identifier(language, component_type='', dataset='', component_embeddings='', nlu_ref='',
-                                        nlp_ref='', is_licensed=False) -> NluComponent:
+                                        nlp_ref='', is_licensed=False, anno_class_name = None) -> NluComponent:
     '''
     Creates a NLU component from a pretrained SparkNLP model reference or Class reference. First step to get the Root of the NLP DAG
     Class references will return default pretrained models
@@ -520,7 +519,9 @@ def construct_component_from_identifier(language, component_type='', dataset='',
     :param nlp_ref: Full Spark NLP reference
     :return: Returns a NLU component which embelished the Spark NLP pretrained model and class for that model
     '''
-    anno_class_name = Spellbook.nlp_ref_to_anno_class[nlp_ref]
+    if not anno_class_name:
+        # anno_class_name != None for models loaded from Disk, otherwise we need to infer it
+        anno_class_name = Spellbook.nlp_ref_to_anno_class[nlp_ref]
     os_annos = AnnoClassRef.get_os_pyclass_2_anno_id_dict()
     hc_annos = AnnoClassRef.get_hc_pyclass_2_anno_id_dict()
     ocr_annos = AnnoClassRef.get_ocr_pyclass_2_anno_id_dict()
