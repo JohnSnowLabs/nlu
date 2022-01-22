@@ -2,7 +2,7 @@ import unittest
 import pandas as pd
 import nlu
 from sparknlp.annotator import BertSentenceEmbeddings
-import tests.nlu_hc_tests.secrets as sct
+import tests.secrets as sct
 
 class SentenceResolverTrainingTests(unittest.TestCase):
     def test_sentence_resolver_training(self):

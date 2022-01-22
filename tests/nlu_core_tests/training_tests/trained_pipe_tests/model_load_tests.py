@@ -14,8 +14,8 @@ class PipelineLoadingTests(unittest.TestCase):
         pipe.save(store_path, overwrite=True)
         print(pipe.predict('I Love offline mode!'))
         # Too heavy for Github actions  :
-        # pipe = nlu.load(path=store_path)
-        # print(pipe.predict('I Love offline mode!'))
+        # component_list = nlu.load(path=store_path)
+        # print(component_list.predict('I Love offline mode!'))
 
     def test_pipeline_load_from_hdd_from_spark_nlp(self):
         p_path = '/home/ckl/Downloads/tmp/analyze_sentiment_en_3.0.0_3.0_1616544471011'

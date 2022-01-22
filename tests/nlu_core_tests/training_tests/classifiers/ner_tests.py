@@ -17,7 +17,7 @@ class NerTrainingTests(unittest.TestCase):
 
 
     def test_sentiment_with_embed_save(self):
-        df_train = self.load_sentiment_dl_dataset()
+        df_train = self.load_ner_train_dataset_and_get_path()
         # the text data to use for classification should be in a column named 'text'
         df_train['text'] = df_train['text_data']
         # the label column must have name 'y' name be of type str
@@ -41,13 +41,13 @@ class NerTrainingTests(unittest.TestCase):
 # Too heavy running on github actions
 
     # def test_ner_training_with_custom_embeddings(self):
-    #     # Test using custom pipe embed composistion
+    #     # Test using custom component_list embed composistion
     #     #CONLL data
     #     # train_path = '/home/loan/Documents/freelancework/jsl/nlu/4realnlugit/tests/datasets/ner/eng.train.txt'
     #     train_path = self.load_ner_train_dataset_and_get_path()
     #
-    #     pipe = nlu.load('elmo train.ner',verbose=True)
-    #     fitted_pipe = pipe.fit(dataset_path=train_path)
+    #     component_list = nlu.load('elmo train.ner',verbose=True)
+    #     fitted_pipe = component_list.fit(dataset_path=train_path)
     #     df = fitted_pipe.predict(' Hello Donald Trump and Hello Angela Merkel')
     #     print(df)
     #     print(df.columns)
@@ -59,8 +59,8 @@ class NerTrainingTests(unittest.TestCase):
     #     # train_path = '/home/loan/Documents/freelancework/jsl/nlu/4realnlugit/tests/datasets/ner/eng.train.txt'
     #     train_path = self.load_ner_train_dataset_and_get_path()
     #
-    #     pipe = nlu.load('elmo it.pos train.ner',verbose=True)
-    #     fitted_pipe = pipe.fit(dataset_path=train_path)
+    #     component_list = nlu.load('elmo it.pos train.ner',verbose=True)
+    #     fitted_pipe = component_list.fit(dataset_path=train_path)
     #     df = fitted_pipe.predict(' Hello Donald Trump and Hello Angela Merkel')
     #     print(df)
     #     print(df.columns)

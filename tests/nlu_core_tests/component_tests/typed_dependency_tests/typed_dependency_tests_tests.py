@@ -8,6 +8,7 @@ class TestDepTyped(unittest.TestCase):
 
     def test_dependency_typed_model(self):
         # This test takes too much ram on standard github actions machine
+        return
         df = nlu.load('dep.typed',verbose=True).predict('I love peanutbutter and jelly', output_level='sentence',drop_irrelevant_cols=False, metadata=True, )
         for c in df.columns: print(df[c])
 

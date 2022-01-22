@@ -20,8 +20,8 @@ class NLP_NODE_IDS:
     UNTYPED_DEPENDENCY_PARSER = JslAnnoId('untyped_dependency_parser')
     TYPED_DEPENDENCY_PARSER = JslAnnoId('typed_dependency_parser')
     DOC2CHUNK = JslAnnoId('doc2chunk')
-    DOC2VEC = JslAnnoId('doc2vec')  # TODO ADD NODE!!
-    TRAIANBLE_DOC2VEC = JslAnnoId('trainable_doc2vec')  # TODO ADD NODE!!
+    DOC2VEC = JslAnnoId('doc2vec')
+    TRAIANBLE_DOC2VEC = JslAnnoId('trainable_doc2vec')
     DOCUMENT_ASSEMBLER = JslAnnoId('document_assembler')
     DOCUMENT_NORMALIZER = JslAnnoId('document_normalizer')
     EMBEDDINGS_FINISHER = JslAnnoId('embeddings_finisher')
@@ -89,6 +89,7 @@ class NLP_NODE_IDS:
     ALBERT_FOR_SEQUENCE_CLASSIFICATION = JslAnnoId('albert_for_sequence_classification')
     XLNET_FOR_SEQUENCE_CLASSIFICATION = JslAnnoId('xlnet_for_sequence_classification')
     GPT2 = JslAnnoId('gpt2')
+    WORD_2_VEC = JslAnnoId('word_2_vec')
 
 
     TRAINABLE_CONTEXT_SPELL_CHECKER = JslAnnoId('trainable_context_spell_checker')
@@ -152,7 +153,7 @@ class NLP_HC_NODE_IDS:  # or Mode Node?
     NER_CHUNKER = JslAnnoId('ner_chunker')
     NER_CONVERTER_INTERNAL = JslAnnoId('ner_converter_internal')
     NER_DISAMBIGUATOR = JslAnnoId('ner_disambiguator')
-    TRAINABLE_NER_DISAMBIGUATOR = JslAnnoId('trainable_ner_disambiguator')  # TODO feature node !!!
+    TRAINABLE_NER_DISAMBIGUATOR = JslAnnoId('trainable_ner_disambiguator')
     RELATION_NER_CHUNKS_FILTERER = JslAnnoId('relation_ner_chunks_filterer')
     RE_IDENTIFICATION = JslAnnoId('re_identification')
     RELATION_EXTRACTION = JslAnnoId('relation_extraction')

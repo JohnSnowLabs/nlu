@@ -4,6 +4,8 @@ from nlu.components.classifiers.seq_roberta.seq_roberta import SeqRobertaClassif
 from nlu.components.classifiers.seq_xlm_roberta.seq_xlm_roberta import SeqXlmRobertaClassifier
 from nlu.components.classifiers.seq_xlnet.seq_xlnet import SeqXlnetClassifier
 from nlu.components.classifiers.token_bert_healthcare.token_bert_healthcare import TokenBertHealthcare
+from nlu.components.embeddings.roberta.roberta import Roberta
+from nlu.components.embeddings.word2vec.word2vec import Word2Vec
 from nlu.components.embeddings_chunks.chunk_embedder.chunk_embedder import ChunkEmbedder
 from nlu.components.classifiers.ner.ner_dl import NERDL
 from nlu.components.chunkers.ngram.ngram import NGram
@@ -126,9 +128,7 @@ from nlu.pipe.extractors.extractor_configs_OS import default_chunk_embedding_con
 from nlu.universe.feature_node_ids import NLP_NODE_IDS, NLP_HC_NODE_IDS
 from nlu.universe.feature_node_universes import NLP_FEATURE_NODES
 from nlu.universe.universes import ComponentBackends
-
-
-
+from copy import copy
 
 class ComponentMap:
     # Encapsulate all Open Source components Constructors by mappping each individual Annotator class to a specific Construction
@@ -140,8 +140,8 @@ class ComponentMap:
     L = NLP_LEVELS
     ACR = AnnoClassRef
     os_components = {
-        # A.BIG_TEXT_MATCHER : ComponentInfo(),
-        A.CHUNK2DOC: NluComponent(
+        # A.BIG_TEXT_MATCHER : ComponentInfo()),
+        A.CHUNK2DOC: copy(NluComponent(
             name=A.CHUNK2DOC,
             type=T.HELPER_ANNO,
             get_default_model=Chunk_2_Doc.get_default_model,
@@ -157,8 +157,8 @@ class ComponentMap:
             jsl_anno_class_id=A.CHUNK2DOC,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.CHUNK2DOC],
 
-        ),
-        A.CHUNK_EMBEDDINGS_CONVERTER: NluComponent(
+        )),
+        A.CHUNK_EMBEDDINGS_CONVERTER: copy(NluComponent(
             name=A.CHUNK_EMBEDDINGS_CONVERTER,
             type=T.HELPER_ANNO,
             get_default_model=ChunkEmbedder.get_default_model,
@@ -176,9 +176,9 @@ class ComponentMap:
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.CHUNK_EMBEDDINGS_CONVERTER],
             is_storage_ref_producer=True,
             has_storage_ref=True,
-        ),
+        )),
         A.CHUNK_TOKENIZER: 'TODO NOT INTEGRATED',
-        A.CHUNKER: NluComponent(
+        A.CHUNKER: copy(NluComponent(
             name=A.CHUNKER,
             type=T.CHUNK_CLASSIFIER,
             get_default_model=DefaultChunker.get_default_model,
@@ -194,8 +194,8 @@ class ComponentMap:
             jsl_anno_class_id=A.CHUNKER,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.CHUNKER],
 
-        ),
-        A.CLASSIFIER_DL: NluComponent(
+        )),
+        A.CLASSIFIER_DL: copy(NluComponent(
             name=A.CLASSIFIER_DL,
             type=T.DOCUMENT_CLASSIFIER,
             get_default_model=ClassifierDl.get_default_model,
@@ -215,8 +215,8 @@ class ComponentMap:
             has_storage_ref=True,
             is_storage_ref_consumer=True,
             trainable_mirror_anno=A.TRAINABLE_CLASSIFIER_DL,
-        ),
-        A.TRAINABLE_CLASSIFIER_DL: NluComponent(
+        )),
+        A.TRAINABLE_CLASSIFIER_DL: copy(NluComponent(
             name=A.TRAINABLE_CLASSIFIER_DL,
             type=T.DOCUMENT_CLASSIFIER,
             get_default_model=ClassifierDl.get_default_model,
@@ -237,8 +237,8 @@ class ComponentMap:
             is_storage_ref_consumer=True,
             trainable=True,
             trained_mirror_anno=A.CLASSIFIER_DL,
-        ),
-        A.CONTEXT_SPELL_CHECKER: NluComponent(
+        )),
+        A.CONTEXT_SPELL_CHECKER: copy(NluComponent(
             name=A.CONTEXT_SPELL_CHECKER,
             type=T.SPELL_CHECKER,
             get_default_model=ContextSpellChecker.get_default_model,
@@ -256,9 +256,9 @@ class ComponentMap:
             jsl_anno_class_id=A.CONTEXT_SPELL_CHECKER,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.CONTEXT_SPELL_CHECKER],
             trainable_mirror_anno=A.TRAINABLE_CONTEXT_SPELL_CHECKER,
-        ),
+        )),
         A.DATE_MATCHER: 'TODO no Extractor Implemented',
-        A.UNTYPED_DEPENDENCY_PARSER: NluComponent(
+        A.UNTYPED_DEPENDENCY_PARSER: copy(NluComponent(
             name=A.UNTYPED_DEPENDENCY_PARSER,
             type=T.TOKEN_CLASSIFIER,
             get_default_model=LabeledDependencyParser.get_default_model,
@@ -276,8 +276,8 @@ class ComponentMap:
             jsl_anno_class_id=A.UNTYPED_DEPENDENCY_PARSER,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.UNTYPED_DEPENDENCY_PARSER],
             trainable_mirror_anno=A.TRAINABLE_DEP_PARSE_UN_TYPED,
-        ),
-        A.TYPED_DEPENDENCY_PARSER: NluComponent(
+        )),
+        A.TYPED_DEPENDENCY_PARSER: copy(NluComponent(
             name=A.TYPED_DEPENDENCY_PARSER,
             type=T.TOKEN_CLASSIFIER,
             get_default_model=UnlabeledDependencyParser.get_default_model,
@@ -295,8 +295,8 @@ class ComponentMap:
             jsl_anno_class_id=A.TYPED_DEPENDENCY_PARSER,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.TYPED_DEPENDENCY_PARSER],
             trainable_mirror_anno=A.TRAINABLE_DEP_PARSE_TYPED,
-        ),
-        A.DOC2CHUNK: NluComponent(
+        )),
+        A.DOC2CHUNK: copy(NluComponent(
             name=A.DOC2CHUNK,
             type=T.HELPER_ANNO,
             get_default_model=Doc_2_Chunk.get_default_model,
@@ -311,8 +311,8 @@ class ComponentMap:
             output_context=ComputeContexts.spark,
             jsl_anno_class_id=A.CHUNKER,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.CHUNKER],
-        ),
-        A.DOCUMENT_ASSEMBLER: NluComponent(
+        )),
+        A.DOCUMENT_ASSEMBLER: copy(NluComponent(
             name=A.DOCUMENT_ASSEMBLER,
             type=T.HELPER_ANNO,
             get_default_model=SparkNlpDocumentAssembler.get_default_model,
@@ -327,8 +327,8 @@ class ComponentMap:
             output_context=ComputeContexts.spark,
             jsl_anno_class_id=A.DOCUMENT_ASSEMBLER,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.DOCUMENT_ASSEMBLER],
-        ),
-        A.DOCUMENT_NORMALIZER: NluComponent(
+        )),
+        A.DOCUMENT_NORMALIZER: copy(NluComponent(
             name=A.DOCUMENT_NORMALIZER,
             type=T.TEXT_NORMALIZER,
             get_default_model=SparkNLPDocumentNormalizer.get_default_model,
@@ -343,13 +343,13 @@ class ComponentMap:
             output_context=ComputeContexts.spark,
             jsl_anno_class_id=A.DOCUMENT_NORMALIZER,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.DOCUMENT_NORMALIZER],
-        ),
+        )),
         A.EMBEDDINGS_FINISHER: 'TODO NOT INTEGRATED',
         A.ENTITY_RULER: 'TODO NOT INTEGRATED',
         A.FINISHER: 'TODO NOT INTEGRATED',
         A.GRAPH_EXTRACTION: 'TODO NOT INTEGRATED',
         A.GRAPH_FINISHER: 'TODO NOT INTEGRATED',
-        A.LANGUAGE_DETECTOR_DL: NluComponent(
+        A.LANGUAGE_DETECTOR_DL: copy(NluComponent(
             name=A.LANGUAGE_DETECTOR_DL,
             type=T.DOCUMENT_CLASSIFIER,
             get_default_model=LanguageDetector.get_default_model,
@@ -365,8 +365,8 @@ class ComponentMap:
             output_context=ComputeContexts.spark,
             jsl_anno_class_id=A.LANGUAGE_DETECTOR_DL,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.LANGUAGE_DETECTOR_DL],
-        ),
-        A.LEMMATIZER: NluComponent(
+        )),
+        A.LEMMATIZER: copy(NluComponent(
             name=A.LEMMATIZER,
             type=T.TOKEN_NORMALIZER,
             get_default_model=SparkNLPLemmatizer.get_default_model,
@@ -384,8 +384,8 @@ class ComponentMap:
             jsl_anno_class_id=A.LEMMATIZER,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.LEMMATIZER],
             trainable_mirror_anno=A.TRAINABLE_LEMMATIZER
-        ),
-        A.MULTI_CLASSIFIER_DL: NluComponent(
+        )),
+        A.MULTI_CLASSIFIER_DL: copy(NluComponent(
             name=A.MULTI_CLASSIFIER_DL,
             type=T.DOCUMENT_CLASSIFIER,
             get_default_model=MultiClassifier.get_default_model,
@@ -406,8 +406,8 @@ class ComponentMap:
             has_storage_ref=True,
             is_storage_ref_consumer=True,
             trainable_mirror_anno=A.TRAINABLE_MULTI_CLASSIFIER_DL,
-        ),
-        A.TRAINABLE_MULTI_CLASSIFIER_DL: NluComponent(
+        )),
+        A.TRAINABLE_MULTI_CLASSIFIER_DL: copy(NluComponent(
             name=A.TRAINABLE_MULTI_CLASSIFIER_DL,
             type=T.DOCUMENT_CLASSIFIER,
             get_default_model=MultiClassifier.get_default_model,
@@ -429,10 +429,10 @@ class ComponentMap:
             is_storage_ref_consumer=True,
             trainable=True,
             trained_mirror_anno=A.MULTI_CLASSIFIER_DL,
-        ),
+        )),
 
         A.MULTI_DATE_MATCHER: 'TODO NOT INTEGRATED',
-        A.N_GRAMM_GENERATOR: NluComponent(
+        A.N_GRAMM_GENERATOR: copy(NluComponent(
             name=A.N_GRAMM_GENERATOR,
             type=T.CHUNK_CLASSIFIER,  # Classify each n-gram wether they match Pattern or not
             get_default_model=NGram.get_default_model,
@@ -447,8 +447,8 @@ class ComponentMap:
             output_context=ComputeContexts.spark,
             jsl_anno_class_id=A.N_GRAMM_GENERATOR,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.N_GRAMM_GENERATOR],
-        ),
-        A.NER_CONVERTER: NluComponent(
+        )),
+        A.NER_CONVERTER: copy(NluComponent(
             name=A.NER_CONVERTER,
             type=T.HELPER_ANNO,
             get_default_model=NerToChunkConverter.get_default_model,
@@ -463,8 +463,8 @@ class ComponentMap:
             output_context=ComputeContexts.spark,
             jsl_anno_class_id=A.NER_CONVERTER,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.NER_CONVERTER],
-        ),
-        A.NER_CRF: NluComponent(
+        )),
+        A.NER_CRF: copy(NluComponent(
             name=A.NER_CRF,
             type=T.TOKEN_CLASSIFIER,
             get_default_model=NERDLCRF.get_default_model,
@@ -482,8 +482,8 @@ class ComponentMap:
             jsl_anno_class_id=A.NER_CRF,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.NER_CRF],
             trainable_mirror_anno=A.TRAINABLE_NER_CRF,
-        ),
-        A.NER_DL: NluComponent(
+        )),
+        A.NER_DL: copy(NluComponent(
             name=A.NER_DL,
             type=T.TOKEN_CLASSIFIER,
             get_default_model=NERDL.get_default_model,
@@ -504,8 +504,8 @@ class ComponentMap:
             trainable_mirror_anno=A.TRAINABLE_NER_DL,
             has_storage_ref=True,
             is_storage_ref_consumer=True
-        ),
-        A.TRAINABLE_NER_DL: NluComponent(
+        )),
+        A.TRAINABLE_NER_DL: copy(NluComponent(
             name=A.TRAINABLE_NER_DL,
             type=T.TOKEN_CLASSIFIER,
             get_default_model=NERDL.get_default_model,
@@ -526,9 +526,9 @@ class ComponentMap:
             trained_mirror_anno=A.NER_DL,
             has_storage_ref=True,
             is_storage_ref_consumer=True
-        ),
+        )),
         A.NER_OVERWRITER: 'TODO NOT INTEGRATED',
-        A.NORMALIZER: NluComponent(
+        A.NORMALIZER: copy(NluComponent(
             name=A.NORMALIZER,
             type=T.TOKEN_NORMALIZER,
             get_default_model=SparkNLPNormalizer.get_default_model,
@@ -546,8 +546,8 @@ class ComponentMap:
             jsl_anno_class_id=A.NORMALIZER,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.NORMALIZER],
             trainable_mirror_anno=A.TRAINABLE_NORMALIZER
-        ),
-        A.NORVIG_SPELL_CHECKER: NluComponent(
+        )),
+        A.NORVIG_SPELL_CHECKER: copy(NluComponent(
             name=A.NORVIG_SPELL_CHECKER,
             type=T.SPELL_CHECKER,
             get_default_model=NorvigSpellChecker.get_default_model,
@@ -565,8 +565,8 @@ class ComponentMap:
             jsl_anno_class_id=A.NORVIG_SPELL_CHECKER,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.NORVIG_SPELL_CHECKER],
             trainable_mirror_anno=A.TRAINABLE_NORVIG_SPELL_CHECKER
-        ),
-        A.POS: NluComponent(
+        )),
+        A.POS: copy(NluComponent(
             name=A.POS,
             type=T.TOKEN_CLASSIFIER,
             get_default_model=PartOfSpeechJsl.get_default_model,
@@ -584,8 +584,8 @@ class ComponentMap:
             jsl_anno_class_id=A.POS,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.POS],
             trainable_mirror_anno=A.TRAINABLE_POS,
-        ),
-        A.TRAINABLE_POS: NluComponent(
+        )),
+        A.TRAINABLE_POS: copy(NluComponent(
             name=A.TRAINABLE_POS,
             type=T.TOKEN_CLASSIFIER,
             get_default_model=PartOfSpeechJsl.get_default_model,
@@ -604,12 +604,12 @@ class ComponentMap:
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.TRAINABLE_POS],
             trained_mirror_anno=A.POS,
             trainable=True
-        ),
+        )),
 
         A.RECURISVE_TOKENIZER: 'TODO NOT INTEGRATED',
         A.REGEX_MATCHER: 'TODO no Extractor Implemented',
         A.TRAINABLE_REGEX_MATCHER: 'TODO no Extractor Implemented',
-        A.REGEX_TOKENIZER: NluComponent(
+        A.REGEX_TOKENIZER: copy(NluComponent(
             name=A.POS,
             type=T.TOKEN_CLASSIFIER,
             get_default_model=RegexTokenizer.get_default_model,
@@ -624,8 +624,8 @@ class ComponentMap:
             output_context=ComputeContexts.spark,
             jsl_anno_class_id=A.REGEX_TOKENIZER,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.REGEX_TOKENIZER],
-        ),
-        A.SENTENCE_DETECTOR: NluComponent(
+        )),
+        A.SENTENCE_DETECTOR: copy(NluComponent(
             name=A.SENTENCE_DETECTOR,
             type=T.SENTENCE_DETECTOR,
             get_default_model=PragmaticSentenceDetector.get_default_model,
@@ -641,13 +641,13 @@ class ComponentMap:
             output_context=ComputeContexts.spark,
             jsl_anno_class_id=A.SENTENCE_DETECTOR,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.SENTENCE_DETECTOR],
-        ),
-        A.SENTENCE_DETECTOR_DL: NluComponent(
+        )),
+        A.SENTENCE_DETECTOR_DL: copy(NluComponent(
             name=A.SENTENCE_DETECTOR_DL,
             type=T.SENTENCE_DETECTOR,
             get_default_model=SentenceDetectorDeep.get_default_model,
             get_pretrained_model=SentenceDetectorDeep.get_pretrained_model,
-            get_trainable_model=SentenceDetectorDeep.get_trainable_model,
+            # get_trainable_model=SentenceDetectorDeep.get_trainable_model,
             pdf_extractor_methods={'default': default_sentence_detector_DL_config,
                                    'default_full': default_full_config, },
             pdf_col_name_substitutor=substitute_sentence_detector_dl_cols,
@@ -661,8 +661,8 @@ class ComponentMap:
             jsl_anno_class_id=A.SENTENCE_DETECTOR_DL,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.SENTENCE_DETECTOR_DL],
             trainable_mirror_anno=A.TRAINABLE_SENTENCE_DETECTOR_DL
-        ),
-        A.SENTENCE_EMBEDDINGS_CONVERTER: NluComponent(
+        )),
+        A.SENTENCE_EMBEDDINGS_CONVERTER: copy(NluComponent(
             name=A.SENTENCE_EMBEDDINGS_CONVERTER,
             type=T.DOCUMENT_EMBEDDING,
             get_default_model=SparkNLPSentenceEmbeddings.get_default_model,
@@ -679,8 +679,8 @@ class ComponentMap:
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.SENTENCE_EMBEDDINGS_CONVERTER],
             is_storage_ref_producer=True,
             has_storage_ref=True
-        ),
-        A.STEMMER: NluComponent(
+        )),
+        A.STEMMER: copy(NluComponent(
             name=A.STEMMER,
             type=T.TOKEN_NORMALIZER,
             get_default_model=SparkNLPStemmer.get_default_model,
@@ -695,8 +695,8 @@ class ComponentMap:
             output_context=ComputeContexts.spark,
             jsl_anno_class_id=A.STEMMER,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.STEMMER],
-        ),
-        A.STOP_WORDS_CLEANER: NluComponent(
+        )),
+        A.STOP_WORDS_CLEANER: copy(NluComponent(
             name=A.STOP_WORDS_CLEANER,
             type=T.TEXT_NORMALIZER,
             get_default_model=NLUStopWordcleaner.get_default_model,
@@ -712,8 +712,8 @@ class ComponentMap:
             output_context=ComputeContexts.spark,
             jsl_anno_class_id=A.STOP_WORDS_CLEANER,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.STOP_WORDS_CLEANER],
-        ),
-        A.SYMMETRIC_DELETE_SPELLCHECKER: NluComponent(
+        )),
+        A.SYMMETRIC_DELETE_SPELLCHECKER: copy(NluComponent(
             name=A.SYMMETRIC_DELETE_SPELLCHECKER,
             type=T.SPELL_CHECKER,
             get_default_model=SymmetricSpellChecker.get_default_model,
@@ -731,12 +731,12 @@ class ComponentMap:
             jsl_anno_class_id=A.SYMMETRIC_DELETE_SPELLCHECKER,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.SYMMETRIC_DELETE_SPELLCHECKER],
             trainable_mirror_anno=A.TRAINABLE_SYMMETRIC_DELETE_SPELLCHECKER
-        ),
+        )),
         A.TEXT_MATCHER: 'TODO EXTRACTOR METHOD MISSING',  # TODO
         A.TRAINABLE_TEXT_MATCHER: 'TODO EXTRACTOR METHOD MISSING',  # TODO
         A.TOKEN2CHUNK: 'TODO NOT INTEGRATED',  # TODO
         A.TOKEN_ASSEMBLER: 'TODO EXTRACTORS MISSING',  # TODO
-        A.TOKENIZER: NluComponent(
+        A.TOKENIZER: copy(NluComponent(
             name=A.TOKENIZER,
             type=T.TOKENIZER,
             get_default_model=DefaultTokenizer.get_default_model,
@@ -751,8 +751,8 @@ class ComponentMap:
             output_context=ComputeContexts.spark,
             jsl_anno_class_id=A.TOKENIZER,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.TOKENIZER],
-        ),
-        A.SENTIMENT_DL: NluComponent(
+        )),
+        A.SENTIMENT_DL: copy(NluComponent(
             name=A.SENTIMENT_DL,
             type=T.DOCUMENT_CLASSIFIER,
             get_default_model=SentimentDl.get_default_model,
@@ -772,8 +772,8 @@ class ComponentMap:
             trainable_mirror_anno=A.TRAINABLE_SENTIMENT_DL,
             is_storage_ref_consumer=True,
             has_storage_ref=True
-        ),
-        A.TRAINABLE_SENTIMENT_DL: NluComponent(
+        )),
+        A.TRAINABLE_SENTIMENT_DL: copy(NluComponent(
             name=A.TRAINABLE_SENTIMENT_DL,
             type=T.DOCUMENT_CLASSIFIER,
             get_default_model=SentimentDl.get_default_model,
@@ -794,8 +794,8 @@ class ComponentMap:
             is_storage_ref_consumer=True,
             has_storage_ref=True,
             trainable=True
-        ),
-        A.SENTIMENT_DETECTOR: NluComponent(
+        )),
+        A.SENTIMENT_DETECTOR: copy(NluComponent(
             name=A.SENTIMENT_DETECTOR,
             type=T.DOCUMENT_CLASSIFIER,
             get_default_model=Sentiment.get_default_model,
@@ -813,8 +813,8 @@ class ComponentMap:
             jsl_anno_class_id=A.SENTIMENT_DETECTOR,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.SENTIMENT_DETECTOR],
             trainable_mirror_anno=A.TRAINABLE_SENTIMENT,
-        ),
-        A.VIVEKN_SENTIMENT: NluComponent(
+        )),
+        A.VIVEKN_SENTIMENT: copy(NluComponent(
             name=A.VIVEKN_SENTIMENT,
             type=T.DOCUMENT_CLASSIFIER,
             get_default_model=ViveknSentiment.get_default_model,
@@ -832,8 +832,8 @@ class ComponentMap:
             jsl_anno_class_id=A.VIVEKN_SENTIMENT,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.VIVEKN_SENTIMENT],
             trainable_mirror_anno=A.TRAINABLE_VIVEKN_SENTIMENT
-        ),
-        A.WORD_EMBEDDINGS: NluComponent(
+        )),
+        A.WORD_EMBEDDINGS: copy(NluComponent(
             name=A.WORD_EMBEDDINGS,
             type=T.TOKEN_EMBEDDING,
             get_default_model=Glove.get_default_model,
@@ -851,8 +851,8 @@ class ComponentMap:
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.WORD_EMBEDDINGS],
             is_storage_ref_producer=True,
             has_storage_ref=True,
-        ),
-        A.WORD_SEGMENTER: NluComponent(
+        )),
+        A.WORD_SEGMENTER: copy(NluComponent(
             name=A.WORD_SEGMENTER,
             type=T.TOKENIZER,
             get_default_model=WordSegmenter.get_default_model,
@@ -870,8 +870,8 @@ class ComponentMap:
             jsl_anno_class_id=A.WORD_SEGMENTER,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.WORD_SEGMENTER],
             trainable_mirror_anno=A.TRAINABLE_WORD_SEGMENTER
-        ),
-        A.YAKE_KEYWORD_EXTRACTION: NluComponent(
+        )),
+        A.YAKE_KEYWORD_EXTRACTION: copy(NluComponent(
             name=A.YAKE_KEYWORD_EXTRACTION,
             type=T.CHUNK_CLASSIFIER,  # TODO??? Classifies each chunks/ngram likelyhood of beeing a Ketyword
             get_default_model=Yake.get_default_model,
@@ -889,9 +889,9 @@ class ComponentMap:
             has_storage_ref=False,
             is_storage_ref_consumer=False,
             is_storage_ref_producer=False,
-        ),
+        )),
 
-        A.DOC2VEC: NluComponent(
+        A.DOC2VEC: copy(NluComponent(
             name=A.DOC2VEC,
             type=T.TOKEN_EMBEDDING,
             get_default_model=Doc2Vec.get_default_model,
@@ -911,9 +911,9 @@ class ComponentMap:
             has_storage_ref=True,
             is_storage_ref_producer=True,
             trainable_mirror_anno=A.TRAINABLE_DOC2VEC
-        ),
+        )),
 
-        A.TRAINABLE_DOC2VEC: NluComponent(
+        A.TRAINABLE_DOC2VEC: copy(NluComponent(
             name=A.TRAINABLE_DOC2VEC,
             type=T.TOKEN_EMBEDDING,
             get_default_model=Doc2Vec.get_default_model,
@@ -934,10 +934,10 @@ class ComponentMap:
             is_storage_ref_producer=True,
             trained_mirror_anno=A.DOC2VEC,
             trainable=True
-        ),
+        )),
 
         ### ________ TRANSFORMERS BELOW _________
-        A.ALBERT_EMBEDDINGS: NluComponent(
+        A.ALBERT_EMBEDDINGS: copy(NluComponent(
             name=A.ALBERT_EMBEDDINGS,
             type=T.TOKEN_EMBEDDING,
             get_default_model=SparkNLPAlbert.get_default_model,
@@ -955,9 +955,9 @@ class ComponentMap:
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.ALBERT_EMBEDDINGS],
             has_storage_ref=True,
             is_storage_ref_producer=True,
-        ),
+        )),
 
-        A.ALBERT_FOR_TOKEN_CLASSIFICATION: NluComponent(
+        A.ALBERT_FOR_TOKEN_CLASSIFICATION: copy(NluComponent(
             name=A.ALBERT_FOR_TOKEN_CLASSIFICATION,
             type=T.TRANSFORMER_TOKEN_CLASSIFIER,
             get_default_model=TokenAlbert.get_default_model,
@@ -973,8 +973,8 @@ class ComponentMap:
             output_context=ComputeContexts.spark,
             jsl_anno_class_id=A.ALBERT_FOR_TOKEN_CLASSIFICATION,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.ALBERT_FOR_TOKEN_CLASSIFICATION],
-        ),
-        A.BERT_EMBEDDINGS: NluComponent(
+        )),
+        A.BERT_EMBEDDINGS: copy(NluComponent(
             name=A.BERT_EMBEDDINGS,
             type=T.TOKEN_EMBEDDING,
             get_default_model=SparkNLPBert.get_default_model,
@@ -992,8 +992,8 @@ class ComponentMap:
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.BERT_EMBEDDINGS],
             has_storage_ref=True,
             is_storage_ref_producer=True,
-        ),
-        A.BERT_SENTENCE_EMBEDDINGS: NluComponent(
+        )),
+        A.BERT_SENTENCE_EMBEDDINGS: copy(NluComponent(
             name=A.BERT_SENTENCE_EMBEDDINGS,
             type=T.DOCUMENT_EMBEDDING,
             get_default_model=BertSentence.get_default_model,
@@ -1011,8 +1011,8 @@ class ComponentMap:
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.BERT_SENTENCE_EMBEDDINGS],
             has_storage_ref=True,
             is_storage_ref_producer=True,
-        ),
-        A.BERT_FOR_TOKEN_CLASSIFICATION: NluComponent(
+        )),
+        A.BERT_FOR_TOKEN_CLASSIFICATION: copy(NluComponent(
             name=A.BERT_FOR_TOKEN_CLASSIFICATION,
             type=T.TRANSFORMER_TOKEN_CLASSIFIER,
             get_default_model=TokenBert.get_default_model,
@@ -1028,9 +1028,9 @@ class ComponentMap:
             output_context=ComputeContexts.spark,
             jsl_anno_class_id=A.BERT_FOR_TOKEN_CLASSIFICATION,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.BERT_FOR_TOKEN_CLASSIFICATION],
-        ),
+        )),
 
-        A.BERT_FOR_SEQUENCE_CLASSIFICATION: NluComponent(
+        A.BERT_FOR_SEQUENCE_CLASSIFICATION: copy(NluComponent(
             name=A.BERT_FOR_SEQUENCE_CLASSIFICATION,
             type=T.TRANSFORMER_SEQUENCE_CLASSIFIER,
             get_default_model=SeqBertClassifier.get_default_model,
@@ -1046,8 +1046,8 @@ class ComponentMap:
             output_context=ComputeContexts.spark,
             jsl_anno_class_id=A.BERT_FOR_SEQUENCE_CLASSIFICATION,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.BERT_FOR_SEQUENCE_CLASSIFICATION],
-        ),
-        A.DISTIL_BERT_EMBEDDINGS: NluComponent(
+        )),
+        A.DISTIL_BERT_EMBEDDINGS: copy(NluComponent(
             name=A.DISTIL_BERT_EMBEDDINGS,
             type=T.TOKEN_EMBEDDING,
             get_default_model=DistilBert.get_default_model,
@@ -1065,8 +1065,8 @@ class ComponentMap:
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.DISTIL_BERT_EMBEDDINGS],
             has_storage_ref=True,
             is_storage_ref_producer=True,
-        ),
-        A.DISTIL_BERT_FOR_SEQUENCE_CLASSIFICATION: NluComponent(
+        )),
+        A.DISTIL_BERT_FOR_SEQUENCE_CLASSIFICATION: copy(NluComponent(
             name=A.DISTIL_BERT_FOR_SEQUENCE_CLASSIFICATION,
             type=T.TRANSFORMER_SEQUENCE_CLASSIFIER,
             get_default_model=SeqDilstilBertClassifier.get_default_model,
@@ -1082,8 +1082,8 @@ class ComponentMap:
             output_context=ComputeContexts.spark,
             jsl_anno_class_id=A.DISTIL_BERT_FOR_SEQUENCE_CLASSIFICATION,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.DISTIL_BERT_FOR_SEQUENCE_CLASSIFICATION],
-        ),
-        A.DISTIL_BERT_FOR_TOKEN_CLASSIFICATION: NluComponent(
+        )),
+        A.DISTIL_BERT_FOR_TOKEN_CLASSIFICATION: copy(NluComponent(
             name=A.DISTIL_BERT_FOR_TOKEN_CLASSIFICATION,
             type=T.TRANSFORMER_TOKEN_CLASSIFIER,
             get_default_model=TokenDistilBert.get_default_model,
@@ -1099,8 +1099,8 @@ class ComponentMap:
             output_context=ComputeContexts.spark,
             jsl_anno_class_id=A.DISTIL_BERT_FOR_TOKEN_CLASSIFICATION,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.DISTIL_BERT_FOR_TOKEN_CLASSIFICATION],
-        ),
-        A.ELMO_EMBEDDINGS: NluComponent(
+        )),
+        A.ELMO_EMBEDDINGS: copy(NluComponent(
             name=A.ELMO_EMBEDDINGS,
             type=T.TOKEN_EMBEDDING,
             get_default_model=SparkNLPElmo.get_default_model,
@@ -1109,7 +1109,7 @@ class ComponentMap:
             pdf_col_name_substitutor=substitute_word_embed_cols,
             output_level=L.TOKEN,
             node=NLP_FEATURE_NODES.nodes[A.ELMO_EMBEDDINGS],
-            description='Word embeddings from ELMo (Embeddings from Language Models), a language model trained on the 1 Billion Word Benchmark.',
+            description='Word embeddings from ELMo (Embeddings from Language Models)), a language model trained on the 1 Billion Word Benchmark.',
             provider=ComponentBackends.open_source,
             license=Licenses.open_source,
             computation_context=ComputeContexts.spark,
@@ -1118,8 +1118,8 @@ class ComponentMap:
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.ELMO_EMBEDDINGS],
             has_storage_ref=True,
             is_storage_ref_producer=True,
-        ),
-        A.LONGFORMER_EMBEDDINGS: NluComponent(
+        )),
+        A.LONGFORMER_EMBEDDINGS: copy(NluComponent(
             name=A.LONGFORMER_EMBEDDINGS,
             type=T.TOKEN_EMBEDDING,
             get_default_model=Longformer.get_default_model,
@@ -1137,9 +1137,9 @@ class ComponentMap:
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.LONGFORMER_EMBEDDINGS],
             has_storage_ref=True,
             is_storage_ref_producer=True,
-        ),
+        )),
 
-        A.LONGFORMER_FOR_TOKEN_CLASSIFICATION: NluComponent(
+        A.LONGFORMER_FOR_TOKEN_CLASSIFICATION: copy(NluComponent(
             name=A.LONGFORMER_FOR_TOKEN_CLASSIFICATION,
             type=T.TRANSFORMER_TOKEN_CLASSIFIER,
             get_default_model=TokenLongFormer.get_default_model,
@@ -1155,8 +1155,8 @@ class ComponentMap:
             output_context=ComputeContexts.spark,
             jsl_anno_class_id=A.LONGFORMER_FOR_TOKEN_CLASSIFICATION,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.LONGFORMER_FOR_TOKEN_CLASSIFICATION],
-        ),
-        A.MARIAN_TRANSFORMER: NluComponent(
+        )),
+        A.MARIAN_TRANSFORMER: copy(NluComponent(
             name=A.MARIAN_TRANSFORMER,
             type=T.DOCUMENT_CLASSIFIER,
             get_default_model=Marian.get_default_model,
@@ -1172,12 +1172,12 @@ class ComponentMap:
             output_context=ComputeContexts.spark,
             jsl_anno_class_id=A.MARIAN_TRANSFORMER,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.MARIAN_TRANSFORMER],
-        ),
-        A.ROBERTA_EMBEDDINGS: NluComponent(
+        )),
+        A.ROBERTA_EMBEDDINGS: copy(NluComponent(
             name=A.ROBERTA_EMBEDDINGS,
             type=T.TOKEN_EMBEDDING,
-            get_default_model=TokenRoBerta.get_default_model,
-            get_pretrained_model=TokenRoBerta.get_pretrained_model,
+            get_default_model=Roberta.get_default_model,
+            get_pretrained_model=Roberta.get_pretrained_model,
             pdf_extractor_methods={'default': default_word_embedding_config, 'default_full': default_full_config, },
             pdf_col_name_substitutor=substitute_word_embed_cols,
             output_level=L.TOKEN,
@@ -1191,9 +1191,9 @@ class ComponentMap:
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.ROBERTA_EMBEDDINGS],
             has_storage_ref=True,
             is_storage_ref_producer=True,
-        ),
+        )),
 
-        A.ROBERTA_FOR_TOKEN_CLASSIFICATION: NluComponent(
+        A.ROBERTA_FOR_TOKEN_CLASSIFICATION: copy(NluComponent(
             name=A.ROBERTA_FOR_TOKEN_CLASSIFICATION,
             type=T.TRANSFORMER_SEQUENCE_CLASSIFIER,
             get_default_model=TokenRoBerta.get_default_model,
@@ -1209,8 +1209,8 @@ class ComponentMap:
             output_context=ComputeContexts.spark,
             jsl_anno_class_id=A.ROBERTA_FOR_TOKEN_CLASSIFICATION,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.ROBERTA_FOR_TOKEN_CLASSIFICATION],
-        ),
-        # A.ROBERTA_SENTENCE_EMBEDDINGS: NluComponent( # TODO not integrated
+        )),
+        # A.ROBERTA_SENTENCE_EMBEDDINGS: copy(NluComponent( # TODO not integrated
         #     name=A.ROBERTA_SENTENCE_EMBEDDINGS,
         #     type=T.DOCUMENT_EMBEDDING,
         #     get_default_model=BertSentence.get_default_model,
@@ -1229,8 +1229,8 @@ class ComponentMap:
         #
         #     has_storage_ref=True,
         #     is_is_storage_ref_producer=True,
-        # ),
-        A.T5_TRANSFORMER: NluComponent(
+        # )),
+        A.T5_TRANSFORMER: copy(NluComponent(
             # TODO  task based construction, i.e. get_preconfigured_model
             name=A.T5_TRANSFORMER,
             type=T.DOCUMENT_CLASSIFIER,
@@ -1247,8 +1247,8 @@ class ComponentMap:
             output_context=ComputeContexts.spark,
             jsl_anno_class_id=A.T5_TRANSFORMER,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.T5_TRANSFORMER],
-        ),
-        A.UNIVERSAL_SENTENCE_ENCODER: NluComponent(
+        )),
+        A.UNIVERSAL_SENTENCE_ENCODER: copy(NluComponent(
             name=A.UNIVERSAL_SENTENCE_ENCODER,
             type=T.DOCUMENT_EMBEDDING,
             get_default_model=SparkNLPUse.get_default_model,
@@ -1266,9 +1266,9 @@ class ComponentMap:
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.UNIVERSAL_SENTENCE_ENCODER],
             has_storage_ref=True,
             is_storage_ref_producer=True,
-        ),
+        )),
 
-        A.XLM_ROBERTA_EMBEDDINGS: NluComponent(
+        A.XLM_ROBERTA_EMBEDDINGS: copy(NluComponent(
             name=A.XLM_ROBERTA_EMBEDDINGS,
             type=T.TOKEN_EMBEDDING,
             get_default_model=XLM.get_default_model,
@@ -1286,9 +1286,9 @@ class ComponentMap:
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.XLM_ROBERTA_EMBEDDINGS],
             has_storage_ref=True,
             is_storage_ref_producer=True,
-        ),
+        )),
 
-        A.XLM_ROBERTA_FOR_TOKEN_CLASSIFICATION: NluComponent(
+        A.XLM_ROBERTA_FOR_TOKEN_CLASSIFICATION: copy(NluComponent(
             name=A.XLM_ROBERTA_FOR_TOKEN_CLASSIFICATION,
             type=T.TRANSFORMER_TOKEN_CLASSIFIER,
             get_default_model=TokenXlmRoBerta.get_default_model,
@@ -1304,8 +1304,8 @@ class ComponentMap:
             output_context=ComputeContexts.spark,
             jsl_anno_class_id=A.XLM_ROBERTA_FOR_TOKEN_CLASSIFICATION,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.XLM_ROBERTA_FOR_TOKEN_CLASSIFICATION],
-        ),
-        A.XLM_ROBERTA_SENTENCE_EMBEDDINGS: NluComponent(
+        )),
+        A.XLM_ROBERTA_SENTENCE_EMBEDDINGS: copy(NluComponent(
             name=A.XLM_ROBERTA_SENTENCE_EMBEDDINGS,
             type=T.DOCUMENT_EMBEDDING,
             get_default_model=Sentence_XLM.get_default_model,
@@ -1323,8 +1323,8 @@ class ComponentMap:
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.XLM_ROBERTA_SENTENCE_EMBEDDINGS],
             has_storage_ref=True,
             is_storage_ref_producer=True,
-        ),
-        A.XLNET_EMBEDDINGS: NluComponent(
+        )),
+        A.XLNET_EMBEDDINGS: copy(NluComponent(
             name=A.XLNET_EMBEDDINGS,
             type=T.TOKEN_EMBEDDING,
             get_default_model=SparkNLPXlnet.get_default_model,
@@ -1342,8 +1342,8 @@ class ComponentMap:
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.XLNET_EMBEDDINGS],
             has_storage_ref=True,
             is_storage_ref_producer=True,
-        ),
-        A.XLNET_FOR_TOKEN_CLASSIFICATION: NluComponent(
+        )),
+        A.XLNET_FOR_TOKEN_CLASSIFICATION: copy(NluComponent(
             name=A.XLNET_FOR_TOKEN_CLASSIFICATION,
             type=T.TRANSFORMER_TOKEN_CLASSIFIER,
             get_default_model=TokenXlnet.get_default_model,
@@ -1359,9 +1359,9 @@ class ComponentMap:
             output_context=ComputeContexts.spark,
             jsl_anno_class_id=A.XLNET_FOR_TOKEN_CLASSIFICATION,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.XLNET_FOR_TOKEN_CLASSIFICATION],
-        ),
+        )),
 
-        A.XLM_ROBERTA_FOR_SEQUENCE_CLASSIFICATION: NluComponent(
+        A.XLM_ROBERTA_FOR_SEQUENCE_CLASSIFICATION: copy(NluComponent(
             name=A.XLM_ROBERTA_FOR_SEQUENCE_CLASSIFICATION,
             type=T.TRANSFORMER_SEQUENCE_CLASSIFIER,
             get_default_model=SeqXlmRobertaClassifier.get_default_model,
@@ -1377,8 +1377,8 @@ class ComponentMap:
             output_context=ComputeContexts.spark,
             jsl_anno_class_id=A.XLM_ROBERTA_FOR_SEQUENCE_CLASSIFICATION,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.XLM_ROBERTA_FOR_SEQUENCE_CLASSIFICATION],
-        ),
-        A.ROBERTA_FOR_SEQUENCE_CLASSIFICATION: NluComponent(
+        )),
+        A.ROBERTA_FOR_SEQUENCE_CLASSIFICATION: copy(NluComponent(
             name=A.ROBERTA_FOR_SEQUENCE_CLASSIFICATION,
             type=T.TRANSFORMER_SEQUENCE_CLASSIFIER,
             get_default_model=SeqRobertaClassifier.get_default_model,
@@ -1394,9 +1394,9 @@ class ComponentMap:
             output_context=ComputeContexts.spark,
             jsl_anno_class_id=A.ROBERTA_FOR_SEQUENCE_CLASSIFICATION,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.ROBERTA_FOR_SEQUENCE_CLASSIFICATION],
-        ),
+        )),
 
-        A.LONGFORMER_FOR_SEQUENCE_CLASSIFICATION: NluComponent(
+        A.LONGFORMER_FOR_SEQUENCE_CLASSIFICATION: copy(NluComponent(
             name=A.LONGFORMER_FOR_SEQUENCE_CLASSIFICATION,
             type=T.TRANSFORMER_SEQUENCE_CLASSIFIER,
             get_default_model=SeqLongformerClassifier.get_default_model,
@@ -1412,8 +1412,8 @@ class ComponentMap:
             output_context=ComputeContexts.spark,
             jsl_anno_class_id=A.LONGFORMER_FOR_SEQUENCE_CLASSIFICATION,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.LONGFORMER_FOR_SEQUENCE_CLASSIFICATION],
-        ),
-        A.ALBERT_FOR_SEQUENCE_CLASSIFICATION: NluComponent(
+        )),
+        A.ALBERT_FOR_SEQUENCE_CLASSIFICATION: copy(NluComponent(
             name=A.ALBERT_FOR_SEQUENCE_CLASSIFICATION,
             type=T.TRANSFORMER_SEQUENCE_CLASSIFIER,
             get_default_model=SeqAlbertClassifier.get_default_model,
@@ -1429,9 +1429,9 @@ class ComponentMap:
             output_context=ComputeContexts.spark,
             jsl_anno_class_id=A.ALBERT_FOR_SEQUENCE_CLASSIFICATION,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.ALBERT_FOR_SEQUENCE_CLASSIFICATION],
-        ),
+        )),
 
-        A.XLNET_FOR_SEQUENCE_CLASSIFICATION: NluComponent(
+        A.XLNET_FOR_SEQUENCE_CLASSIFICATION: copy(NluComponent(
             name=A.XLNET_FOR_SEQUENCE_CLASSIFICATION,
             type=T.TRANSFORMER_SEQUENCE_CLASSIFIER,
             get_default_model=SeqXlnetClassifier.get_default_model,
@@ -1447,16 +1447,15 @@ class ComponentMap:
             output_context=ComputeContexts.spark,
             jsl_anno_class_id=A.XLNET_FOR_SEQUENCE_CLASSIFICATION,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.XLNET_FOR_SEQUENCE_CLASSIFICATION],
-        ),
+        )),
 
-
-        A.GPT2: NluComponent(
+        A.GPT2: copy(NluComponent(
             name=A.GPT2,
             type=T.TRANSFORMER_SEQUENCE_CLASSIFIER,
             get_default_model=GPT2.get_default_model,
             get_pretrained_model=GPT2.get_pretrained_model,
             pdf_extractor_methods={'default': default_gpt2_config, 'default_full': default_full_config, },
-            pdf_col_name_substitutor=substitute_gpt2_cols ,  # TIODO TESt
+            pdf_col_name_substitutor=substitute_gpt2_cols,  # TIODO TESt
             output_level=L.INPUT_DEPENDENT_DOCUMENT_CLASSIFIER,
             node=NLP_FEATURE_NODES.nodes[A.GPT2],
             description='AlbertForSequenceClassification can load ALBERT Models with sequence classification/regression head on top (a linear layer on top of the pooled output) e.g. for multi-class document classification tasks.',
@@ -1466,14 +1465,34 @@ class ComponentMap:
             output_context=ComputeContexts.spark,
             jsl_anno_class_id=A.GPT2,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.GPT2],
-        ),
+        )),
 
-
+        A.WORD_2_VEC: copy(NluComponent(  # TOOD
+            name=A.WORD_2_VEC,
+            type=T.TOKEN_EMBEDDING,
+            get_default_model=Word2Vec.get_default_model,
+            get_pretrained_model=Word2Vec.get_pretrained_model,
+            get_trainable_model=Word2Vec.get_trainable_model,
+            pdf_extractor_methods={'default': default_word_embedding_config, 'default_full': default_full_config, },
+            # TODO test
+            pdf_col_name_substitutor=substitute_word_embed_cols,  # TODO
+            output_level=L.TOKEN,
+            node=NLP_FEATURE_NODES.nodes[A.WORD_2_VEC],
+            description='We use Word2Vec implemented in Spark ML. It uses skip-gram model in our implementation and a hierarchical softmax method to train the model. The variable names in the implementation match the original C implementation.',
+            provider=ComponentBackends.open_source,
+            license=Licenses.open_source,
+            computation_context=ComputeContexts.spark,
+            output_context=ComputeContexts.spark,
+            jsl_anno_class_id=A.WORD_2_VEC,
+            jsl_anno_py_class=ACR.JSL_anno2_py_class[A.WORD_2_VEC],
+            has_storage_ref=True,
+            is_storage_ref_producer=True,
+        )),
 
     }
     hc_components = {
         # TODO THIS SHOULD BE A SEPERATED CLASS which ONLY INSTATIATE when LICENSE VALIDATE!!!>
-        H_A.ASSERTION_DL: NluComponent(
+        H_A.ASSERTION_DL: copy(NluComponent(
             name=H_A.ASSERTION_DL,
             type=T.CHUNK_CLASSIFIER,
             get_default_model=AssertionDL.get_default_model,
@@ -1493,8 +1512,8 @@ class ComponentMap:
             has_storage_ref=True,
             is_storage_ref_consumer=True,
             trainable_mirror_anno=H_A.TRAINABLE_ASSERTION_DL
-        ),
-        H_A.TRAINABLE_ASSERTION_DL: NluComponent(
+        )),
+        H_A.TRAINABLE_ASSERTION_DL: copy(NluComponent(
             name=H_A.TRAINABLE_ASSERTION_DL,
             type=T.CHUNK_CLASSIFIER,
             get_default_model=AssertionDL.get_default_model,
@@ -1514,8 +1533,8 @@ class ComponentMap:
             has_storage_ref=True,
             is_storage_ref_consumer=True,
             trainable=True,
-            trained_mirror_anno=H_A.ASSERTION_DL),
-        # H_A.ASSERTION_FILTERER: NluComponent( # TODO not integrated
+            trained_mirror_anno=H_A.ASSERTION_DL)),
+        # H_A.ASSERTION_FILTERER: copy(NluComponent( # TODO not integrated
         #     name=H_A.ASSERTION_FILTERER,
         #     type=T.CHUNK_FILTERER,
         #     get_default_model=AssertionDL.get_default_model,
@@ -1536,8 +1555,8 @@ class ComponentMap:
         #     has_storage_ref=True,
         #     is_is_storage_ref_consumer=True,
         #     trainable=True,
-        #     trained_mirror_anno=H_A.ASSERTION_FILTERER), AssertionLogReg
-        H_A.ASSERTION_LOG_REG: NluComponent(
+        #     trained_mirror_anno=H_A.ASSERTION_FILTERER)), AssertionLogReg
+        H_A.ASSERTION_LOG_REG: copy(NluComponent(
             name=H_A.ASSERTION_LOG_REG,
             type=T.CHUNK_CLASSIFIER,
             get_default_model=AssertionLogReg.get_default_model,
@@ -1554,8 +1573,8 @@ class ComponentMap:
             output_context=ComputeContexts.spark,
             jsl_anno_class_id=H_A.ASSERTION_LOG_REG,
             jsl_anno_py_class=ACR.JSL_anno_HC_ref_2_py_class[H_A.ASSERTION_LOG_REG],
-            trained_mirror_anno=H_A.TRAINABLE_ASSERTION_LOG_REG),
-        H_A.TRAINABLE_ASSERTION_LOG_REG: NluComponent(
+            trained_mirror_anno=H_A.TRAINABLE_ASSERTION_LOG_REG)),
+        H_A.TRAINABLE_ASSERTION_LOG_REG: copy(NluComponent(
             name=H_A.TRAINABLE_ASSERTION_LOG_REG,
             type=T.CHUNK_CLASSIFIER,
             get_default_model=AssertionLogReg.get_default_model,
@@ -1572,14 +1591,14 @@ class ComponentMap:
             output_context=ComputeContexts.spark,
             jsl_anno_class_id=H_A.TRAINABLE_ASSERTION_LOG_REG,
             jsl_anno_py_class=ACR.JSL_anno_HC_ref_2_py_class[H_A.TRAINABLE_ASSERTION_LOG_REG],
-            trained_mirror_anno=H_A.ASSERTION_LOG_REG),
+            trained_mirror_anno=H_A.ASSERTION_LOG_REG)),
         H_A.CHUNK2TOKEN: 'TODO not integrated',
         H_A.CHUNK_ENTITY_RESOLVER: 'Deprecated',
         H_A.TRAINABLE_CHUNK_ENTITY_RESOLVER: 'Deprecated',
         H_A.CHUNK_FILTERER: 'TODO not integrated',
         H_A.CHUNK_KEY_PHRASE_EXTRACTION: 'TODO not integrated',
         H_A.CHUNK_MERGE: 'TODO not integrated',
-        H_A.CONTEXTUAL_PARSER: NluComponent(
+        H_A.CONTEXTUAL_PARSER: copy(NluComponent(
             name=H_A.CONTEXTUAL_PARSER,
             type=T.CHUNK_CLASSIFIER,
             get_default_model=ContextualParser.get_default_model,
@@ -1595,8 +1614,8 @@ class ComponentMap:
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
             jsl_anno_class_id=H_A.CONTEXTUAL_PARSER,
-            jsl_anno_py_class=ACR.JSL_anno_HC_ref_2_py_class[H_A.CONTEXTUAL_PARSER], ),
-        H_A.DE_IDENTIFICATION: NluComponent(
+            jsl_anno_py_class=ACR.JSL_anno_HC_ref_2_py_class[H_A.CONTEXTUAL_PARSER], )),
+        H_A.DE_IDENTIFICATION: copy(NluComponent(
             name=H_A.DE_IDENTIFICATION,
             type=T.CHUNK_CLASSIFIER,
             get_default_model=Deidentifier.get_default_model,
@@ -1611,10 +1630,10 @@ class ComponentMap:
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
             jsl_anno_class_id=H_A.DE_IDENTIFICATION,
-            jsl_anno_py_class=ACR.JSL_anno_HC_ref_2_py_class[H_A.DE_IDENTIFICATION], ),
+            jsl_anno_py_class=ACR.JSL_anno_HC_ref_2_py_class[H_A.DE_IDENTIFICATION], )),
         H_A.DOCUMENT_LOG_REG_CLASSIFIER: 'TODO not integrated',
         H_A.TRAINABLE_DOCUMENT_LOG_REG_CLASSIFIER: 'TODO not integrated',
-        H_A.DRUG_NORMALIZER: NluComponent(
+        H_A.DRUG_NORMALIZER: copy(NluComponent(
             name=H_A.DRUG_NORMALIZER,
             type=T.CHUNK_CLASSIFIER,
             get_default_model=DrugNorm.get_default_model,
@@ -1628,8 +1647,8 @@ class ComponentMap:
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
             jsl_anno_class_id=H_A.DRUG_NORMALIZER,
-            jsl_anno_py_class=ACR.JSL_anno_HC_ref_2_py_class[H_A.DRUG_NORMALIZER], ),
-        # H_A.FEATURES_ASSEMBLER: NluComponent( # TODO partially integrated. featire mpde ,ossomg
+            jsl_anno_py_class=ACR.JSL_anno_HC_ref_2_py_class[H_A.DRUG_NORMALIZER], )),
+        # H_A.FEATURES_ASSEMBLER: copy(NluComponent( # TODO partially integrated. featire mpde ,ossomg
         #     name=H_A.FEATURES_ASSEMBLER,
         #     type=T.HELPER_ANNO,
         #     get_default_model=SparkNLPFeatureAssembler.get_default_model,
@@ -1645,7 +1664,7 @@ class ComponentMap:
         #     jsl_anno_class_id_id=H_A.FEATURES_ASSEMBLER,
         #     jsl_anno_py_class=ACR.JSL_anno_HC_ref_2_py_class[H_A.FEATURES_ASSEMBLER],
         #
-        H_A.GENERIC_CLASSIFIER: NluComponent(
+        H_A.GENERIC_CLASSIFIER: copy(NluComponent(
             name=H_A.GENERIC_CLASSIFIER,
             type=T.DOCUMENT_CLASSIFIER,
             get_default_model=GenericClassifier.get_default_model,
@@ -1663,8 +1682,8 @@ class ComponentMap:
             jsl_anno_class_id=H_A.GENERIC_CLASSIFIER,
             jsl_anno_py_class=ACR.JSL_anno_HC_ref_2_py_class[H_A.GENERIC_CLASSIFIER],
             trainable_mirror_anno=H_A.TRAINABLE_GENERIC_CLASSIFIER
-        ),
-        H_A.TRAINABLE_GENERIC_CLASSIFIER: NluComponent(
+        )),
+        H_A.TRAINABLE_GENERIC_CLASSIFIER: copy(NluComponent(
             name=H_A.TRAINABLE_GENERIC_CLASSIFIER,
             type=T.DOCUMENT_CLASSIFIER,
             get_default_model=GenericClassifier.get_default_model,
@@ -1683,9 +1702,9 @@ class ComponentMap:
             jsl_anno_py_class=ACR.JSL_anno_HC_ref_2_py_class[H_A.TRAINABLE_GENERIC_CLASSIFIER],
 
             trained_mirror_anno=H_A.GENERIC_CLASSIFIER
-        ),
+        )),
         H_A.IOB_TAGGER: 'TODO not integrated',
-        H_A.MEDICAL_NER: NluComponent(
+        H_A.MEDICAL_NER: copy(NluComponent(
             name=H_A.MEDICAL_NER,
             type=T.CHUNK_CLASSIFIER,
             get_default_model=NERDLHealthcare.get_default_model,
@@ -1705,8 +1724,8 @@ class ComponentMap:
             trainable_mirror_anno=H_A.TRAINABLE_MEDICAL_NER,
             has_storage_ref=True,
             is_storage_ref_consumer=True
-        ),
-        H_A.TRAINABLE_MEDICAL_NER: NluComponent(
+        )),
+        H_A.TRAINABLE_MEDICAL_NER: copy(NluComponent(
             name=H_A.TRAINABLE_MEDICAL_NER,
             type=T.CHUNK_CLASSIFIER,
             get_default_model=NERDLHealthcare.get_default_model,
@@ -1726,9 +1745,9 @@ class ComponentMap:
             trained_mirror_anno=H_A.TRAINABLE_MEDICAL_NER,
             has_storage_ref=True,
             is_storage_ref_consumer=True
-        ),
+        )),
         H_A.NER_CHUNKER: 'TODO not integrated',
-        H_A.NER_CONVERTER_INTERNAL: NluComponent(
+        H_A.NER_CONVERTER_INTERNAL: copy(NluComponent(
             name=H_A.NER_CONVERTER_INTERNAL,
             type=T.HELPER_ANNO,
             get_default_model=NerToChunkConverterLicensed.get_default_model,
@@ -1745,11 +1764,11 @@ class ComponentMap:
             jsl_anno_class_id=H_A.NER_CONVERTER_INTERNAL,
             jsl_anno_py_class=ACR.JSL_anno_HC_ref_2_py_class[H_A.NER_CONVERTER_INTERNAL],
 
-        ),
+        )),
         H_A.NER_DISAMBIGUATOR: 'TODO not integrated',
         H_A.RELATION_NER_CHUNKS_FILTERER: 'TODO not integrated',
         H_A.RE_IDENTIFICATION: 'TODO not integrated',
-        H_A.RELATION_EXTRACTION: NluComponent(
+        H_A.RELATION_EXTRACTION: copy(NluComponent(
             name=H_A.RELATION_EXTRACTION,
             type=T.RELATION_CLASSIFIER,
             get_default_model=RelationExtraction.get_default_model,
@@ -1769,8 +1788,8 @@ class ComponentMap:
             jsl_anno_class_id=H_A.RELATION_EXTRACTION,
             jsl_anno_py_class=ACR.JSL_anno_HC_ref_2_py_class[H_A.RELATION_EXTRACTION],
             trainable_mirror_anno=H_A.TRAINABLE_RELATION_EXTRACTION
-        ),
-        H_A.TRAINABLE_RELATION_EXTRACTION: NluComponent(
+        )),
+        H_A.TRAINABLE_RELATION_EXTRACTION: copy(NluComponent(
             name=H_A.TRAINABLE_RELATION_EXTRACTION,
             type=T.RELATION_CLASSIFIER,
             get_default_model=RelationExtraction.get_default_model,
@@ -1791,8 +1810,8 @@ class ComponentMap:
             jsl_anno_py_class=ACR.JSL_anno_HC_ref_2_py_class[H_A.TRAINABLE_RELATION_EXTRACTION],
             trained_mirror_anno=H_A.RELATION_EXTRACTION,
             trainable=True
-        ),
-        H_A.RELATION_EXTRACTION_DL: NluComponent(
+        )),
+        H_A.RELATION_EXTRACTION_DL: copy(NluComponent(
             name=H_A.RELATION_EXTRACTION_DL,
             type=T.RELATION_CLASSIFIER,
             get_default_model=RelationExtractionDL.get_default_model,
@@ -1813,8 +1832,8 @@ class ComponentMap:
             jsl_anno_py_class=ACR.JSL_anno_HC_ref_2_py_class[H_A.RELATION_EXTRACTION_DL],
 
             # trainable_mirror_anno=H_A.TRAINABLE_RELATION_EXTRACTION_DL
-        ),
-        # H_A.TRAINABLE_RELATION_EXTRACTION_DL: NluComponent( # DOES NOT EXIST!
+        )),
+        # H_A.TRAINABLE_RELATION_EXTRACTION_DL: copy(NluComponent( # DOES NOT EXIST!
         #     name=H_A.TRAINABLE_RELATION_EXTRACTION_DL,
         #     type=T.RELATION_CLASSIFIER,
         #     get_default_model=RelationExtractionDL.get_default_model,
@@ -1833,8 +1852,8 @@ class ComponentMap:
         #
         #     trained_mirror_anno=H_A.RELATION_EXTRACTION_DL,
         #     trainable=True
-        # ),
-        H_A.SENTENCE_ENTITY_RESOLVER: NluComponent(
+        # )),
+        H_A.SENTENCE_ENTITY_RESOLVER: copy(NluComponent(
             name=H_A.SENTENCE_ENTITY_RESOLVER,
             type=T.CHUNK_CLASSIFIER,
             get_pretrained_model=SentenceResolver.get_pretrained_model,
@@ -1854,8 +1873,8 @@ class ComponentMap:
             trained_mirror_anno=H_A.TRAINABLE_SENTENCE_ENTITY_RESOLVER,
             is_storage_ref_consumer=True,
             has_storage_ref=True
-        ),
-        H_A.TRAINABLE_SENTENCE_ENTITY_RESOLVER: NluComponent(
+        )),
+        H_A.TRAINABLE_SENTENCE_ENTITY_RESOLVER: copy(NluComponent(
             name=H_A.TRAINABLE_SENTENCE_ENTITY_RESOLVER,
             type=T.CHUNK_CLASSIFIER,
             get_pretrained_model=SentenceResolver.get_pretrained_model,
@@ -1874,8 +1893,8 @@ class ComponentMap:
             trained_mirror_anno=H_A.TRAINABLE_SENTENCE_ENTITY_RESOLVER,
             is_storage_ref_consumer=True,
             has_storage_ref=True
-        ),
-        H_A.MEDICAL_BERT_FOR_TOKEN_CLASSIFICATION: NluComponent(
+        )),
+        H_A.MEDICAL_BERT_FOR_TOKEN_CLASSIFICATION: copy(NluComponent(
             name=H_A.MEDICAL_BERT_FOR_TOKEN_CLASSIFICATION,
             type=T.TRANSFORMER_TOKEN_CLASSIFIER,
             get_default_model=TokenBertHealthcare.get_default_model,
@@ -1892,11 +1911,11 @@ class ComponentMap:
             jsl_anno_class_id=H_A.MEDICAL_BERT_FOR_TOKEN_CLASSIFICATION,
             jsl_anno_py_class=ACR.JSL_anno_HC_ref_2_py_class[H_A.MEDICAL_BERT_FOR_TOKEN_CLASSIFICATION],
 
-        ),
+        )),
         # MEDICAL_BERT_FOR_TOKEN_CLASSIFICATION fTOK
     }
     ocr_components = {
-        O_A.IMAGE2TEXT: NluComponent(
+        O_A.IMAGE2TEXT: copy(NluComponent(
             name=O_A.IMAGE2TEXT,
             type=T.TEXT_RECOGNIZER,
             get_default_model=Img2Text.get_default_model,
@@ -1913,9 +1932,9 @@ class ComponentMap:
             jsl_anno_py_class=ACR.JSL_anno_OCR_ref_2_py_class[O_A.IMAGE2TEXT],
 
             applicable_file_types=['JPEG', 'PNG', 'BMP', 'WBMP', 'GIF', 'JPG', '.TIFF']
-        ),
+        )),
 
-        O_A.DOC2TEXT: NluComponent(
+        O_A.DOC2TEXT: copy(NluComponent(
             name=O_A.DOC2TEXT,
             type=T.TEXT_RECOGNIZER,
             get_default_model=Doc2Text.get_default_model,
@@ -1932,9 +1951,9 @@ class ComponentMap:
             jsl_anno_py_class=ACR.JSL_anno_OCR_ref_2_py_class[O_A.DOC2TEXT],
 
             applicable_file_types=['DOC', 'DOCX']
-        ),
+        )),
 
-        O_A.PDF2TEXT: NluComponent(
+        O_A.PDF2TEXT: copy(NluComponent(
             name=O_A.PDF2TEXT,
             type=T.TEXT_RECOGNIZER,
             get_default_model=Pdf2Text.get_default_model,
@@ -1949,11 +1968,10 @@ class ComponentMap:
             output_context=ComputeContexts.spark,
             jsl_anno_class_id=O_A.PDF2TEXT,
             jsl_anno_py_class=ACR.JSL_anno_OCR_ref_2_py_class[O_A.PDF2TEXT],
-
             applicable_file_types=['PDF']
-        ),
+        )),
 
-        O_A.BINARY2IMAGE: NluComponent(
+        O_A.BINARY2IMAGE: copy(NluComponent(
             name=O_A.BINARY2IMAGE,
             type=T.HELPER_ANNO,
             get_default_model=Binary2Image.get_default_model,
@@ -1968,8 +1986,8 @@ class ComponentMap:
             output_context=ComputeContexts.spark,
             jsl_anno_class_id=O_A.BINARY2IMAGE,
             jsl_anno_py_class=ACR.JSL_anno_OCR_ref_2_py_class[O_A.BINARY2IMAGE],
-            applicable_file_types=['JPEG', 'PNG', 'BMP', 'WBMP', 'GIF', 'JPG', '.TIFF']
+            applicable_file_types=['JPEG', 'PNG', 'BMP', 'WBMP', 'GIF', 'JPG', 'TIFF']
 
-        ),
+        )),
 
     }

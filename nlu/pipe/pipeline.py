@@ -256,7 +256,7 @@ class NLUPipeline(BasePipe):
         # todo doc level annos and same level annos can be popped always.
         anno_2_ex_config = {}
         for c in self.components:
-            if c.license == Licenses.ocr :
+            if c.license == Licenses.ocr:
                 anno_2_ex_config[c.spark_output_column_names[0]] = c.pdf_extractor_methods['default'](
 
                     output_col_prefix=c.out_types[0])
@@ -325,7 +325,7 @@ class NLUPipeline(BasePipe):
            Can process Spark DF output from Vanilla pipes and Pandas Converts outputs of Lightpipeline
            """
 
-        if light_pipe_enabled and not get_embeddings and not isinstance(pdf,pyspark.sql.dataframe.DataFrame):
+        if light_pipe_enabled and not get_embeddings and not isinstance(pdf, pyspark.sql.dataframe.DataFrame):
             return apply_extractors_and_merge(extract_light_pipe_rows(pdf),
                                               anno_2_ex_config, keep_stranger_features, stranger_features)
 

@@ -2272,7 +2272,7 @@ class Spellbook:
             # Missing no emb ds
             'no.ner.norne.100d': 'norne_6B_100',  # ner default no
             'no.ner.norne': 'norne_6B_100',
-            'no.ner.norne.glove.6B_100': 'norne_6B_100',
+            # 'no.ner.norne.glove.6B_100': 'norne_6B_100', # bad storage ref resolution
             'no.ner.norne.glove.6B_300': 'norne_6B_300',
             'no.ner.norne.glove.840B_300': 'norne_840B_300',
 
@@ -2438,9 +2438,9 @@ class Spellbook:
             'fi.ner.6B_100d': 'finnish_ner_6B_100',
             'fi.ner.6B_300d': 'finnish_ner_6B_300',
             'fi.ner.840B_300d': 'finnish_ner_840B_300',
-            'fi.embed.bert.uncased': 'bert_base_finnish_uncased',
-            'fi.embed.bert': 'bert_base_finnish_uncased',
-            'fi.embed.bert.cased': 'bert_base_finnish_cased',
+            'fi.embed_sentence.bert.uncased': 'bert_base_finnish_uncased',
+            'fi.embed_sentence.bert': 'bert_base_finnish_uncased',
+            'fi.embed_sentence.bert.cased': 'bert_base_finnish_cased',
         },
         'gl': {
             'gl.stopwords': 'stopwords_gl',
@@ -2498,7 +2498,7 @@ class Spellbook:
             'id.pos': 'pos_ud_gsd',
             'id.detect_sentence': 'sentence_detector_dl',
             'id.pos': 'roberta_token_classifier_pos_tagger',
-            'id.ner': 'xlm_roberta_large_token_classifier_ner',
+            'id.ner': 'xlm_roberta_large_token_classification_ner',
 
         },
         'ga': {
@@ -4190,18 +4190,17 @@ class Spellbook:
         'en':
             {
                 # 3.4.0
-                'en.med_ner.deid_subentity': 'ner_deid_subentity',
-                'en.med_ner.deid_generic': 'ner_deid_generic',
+
                 'en.med_ner.abbreviation_clinical': 'ner_abbreviation_clinical',
                 'en.med_ner.drugprot_clinical': 'ner_drugprot_clinical',
                 'en.ner.drug_development_trials': 'bert_token_classifier_drug_development_trials',
-                'en.med_ner.chemprot': 'bert_token_classifier_ner_chemprot',
+                'en.med_ner.chemprot.bert': 'bert_token_classifier_ner_chemprot',
                 'en.relation.drugprot': 'redl_drugprot_biobert',
                 'en.relation.drugprot.clinical': 're_drugprot_clinical',
                 'en.resolve.clinical_abbreviation_acronym': 'sbiobertresolve_clinical_abbreviation_acronym',
                 'en.resolve.umls_drug_substance': 'sbiobertresolve_umls_drug_substance',
                 'en.resolve.loinc_cased': 'sbiobertresolve_loinc_cased',
-                'en.resolve._loinc_uncased': 'sbluebertresolve_loinc_uncased',
+                'en.resolve.loinc_uncased': 'sbluebertresolve_loinc_uncased',
                 'en.embed_sentence.biobert.rxnorm': 'sbiobert_jsl_rxnorm_cased',
                 'en.embed_sentence.bert_uncased.rxnorm': 'sbert_jsl_medium_rxnorm_uncased',
                 'en.resolve.snomed_drug': 'sbiobertresolve_snomed_drug',
@@ -4512,7 +4511,7 @@ class Spellbook:
                 'en.classify.token_bert.bionlp': 'bert_token_classifier_ner_bionlp',
                 'en.classify.token_bert.cellular': 'bert_token_classifier_ner_cellular',
                 'en.classify.token_bert.chemicals': 'bert_token_classifier_ner_chemicals',
-                'en.resolve.rxnorm_augmented': 'sbiobertresolve_rxnorm_augmented',
+                'en.resolve.rxnen.med_ner.deid_subentityorm_augmented': 'sbiobertresolve_rxnorm_augmented',
                 'en.resolve.umls_disease_syndrome': 'sbiobertresolve_umls_disease_syndrome',
                 'en.resolve.umls_clinical_drugs': 'sbiobertresolve_umls_clinical_drugs',
                 'en.classify.bert_sequence.question_statement_clinical': 'bert_sequence_classifier_question_statement_clinical',
@@ -4588,10 +4587,17 @@ class Spellbook:
         'doc2text': OCR_NODE_IDS.DOC2TEXT,
 
     }
-    # map storage ref to nlu ref
+    # map storage ref to nlu refner_jsl
     storage_ref_2_nlu_ref = {
+        'it': {
+            'glove_6B_300': 'xx.embed.glove.6B_300',
+
+        },
+
         'nl': {
             'glove_6B_300': 'xx.embed.glove.6B_300',
+            'glove_840B_300': 'xx.embed.glove.840B_300',
+
         },
 
         'en': {
@@ -4599,7 +4605,7 @@ class Spellbook:
             'glove_100d': 'en.embed.glove.100d',
             'xlm_roberta_base': 'xx.embed.xlm',
             'glove_6B_300': 'xx.embed.glove.6B_300',
-            'glove_840B_300': 'xx.embed.glove.840B_300'
+            'glove_840B_300': 'xx.embed.glove.840B_300',
         },
         'zh': {
             'bert_base_chinese': 'zh.embed',
@@ -4611,14 +4617,19 @@ class Spellbook:
         },
         'ur': {
             'glove_300d': 'ur.embed',
+            'labse': 'xx.embed_sentence.labse',
         },
         'fr':
             {
-                'labse': 'xx.embed_sentence.labse'
+                'labse': 'xx.embed_sentence.labse',
+                'glove_840B_300': 'xx.embed.glove.840B_300',
+                'glove_6B_300': 'xx.embed.glove.6B_300',
+
             },
         'tr':
             {'bert_multi_cased': 'xx.embed.bert',
-             'labse': 'xx.embed_sentence.labse'
+             'labse': 'xx.embed_sentence.labse',
+             'glove_840B_300': 'xx.embed.glove.840B_300',
              },
         'sv':
             {'glove_100d': 'xx.embed.glove.glove_6B_100',
@@ -4643,6 +4654,8 @@ class Spellbook:
                 'sent_bert_multi_cased': 'xx.embed_sentence',
                 'labse': 'xx.embed_sentence.labse',
                 'clinical': 'de.embed_sentence.bert.base_cased',
+                'glove_840B_300': 'xx.embed.glove.840B_300',
+                'glove_6B_300': 'xx.embed.glove.6B_300',
 
             },
         'ja':
@@ -4653,6 +4666,8 @@ class Spellbook:
             },
         'no': {
             'glove_100d': 'xx.embed.glove.glove_6B_100',
+            'glove_6B_300': 'xx.embed.glove.6B_300',
+
         },
         'pl': {
             'glove_100d': 'xx.embed.glove.glove_6B_100',
@@ -4767,7 +4782,7 @@ class Spellbook:
         'roberta_token_classifier_timex_semeval': 'RoBertaForTokenClassification',
         'xlm_roberta_large_token_classifier_masakhaner': 'XlmRoBertaForTokenClassification',
         'xlm_roberta_base_token_classifier_ner': 'XlmRoBertaForTokenClassification',
-        'xlm_roberta_large_token_classifier_ner': 'XlmRoBertaForTokenClassification',
+        'xlm_roberta_large_token_classification_ner': 'XlmRoBertaForTokenClassification',
         'xlm_roberta_large_token_classifier_conll03': 'XlmRoBertaForTokenClassification',
         'xlm_roberta_large_token_classifier_hrl': 'XlmRoBertaForTokenClassification',
         'bert_hi_en_ner': 'BertForTokenClassification',
@@ -4776,8 +4791,8 @@ class Spellbook:
         'bert_token_classifier_dutch_udlassy_ner': 'BertForTokenClassification',
         'bert_token_classifier_chinese_ner': 'BertForTokenClassification',
         'distilbert_uncased': 'DistilBertEmbeddings',
-        'bert_base_finnish_uncased': 'BertEmbeddings',
-        'bert_base_finnish_cased': 'BertEmbeddings',
+        'bert_base_finnish_uncased': 'BertSentenceEmbeddings',
+        'bert_base_finnish_cased': 'BertSentenceEmbeddings',
         'electra_medal_acronym': 'BertEmbeddings',
         'classifierdl_urduvec_fakenews': 'ClassifierDLModel',
         'nerdl_restaurant_100d': 'NerDLModel',
@@ -4796,7 +4811,7 @@ class Spellbook:
         'ner_deid_generic': 'MedicalNerModel',
         'ner_abbreviation_clinical': 'MedicalNerModel',
         'ner_drugprot_clinical': 'MedicalNerModel',
-        'bert_token_classifier_drug_development_trials': 'MedicalBertForTokenClassifier',
+        'bert_token_classifier_drug_development_trials': 'BertForTokenClassification',
         'bert_token_classifier_ner_chemprot': 'MedicalBertForTokenClassifier',
         'redl_drugprot_biobert': 'RelationExtractionDLModel',
         're_drugprot_clinical': 'RelationExtractionModel',

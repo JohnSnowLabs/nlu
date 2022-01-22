@@ -15,10 +15,10 @@ class SentenceDetectorDeep:
             .pretrained() \
             .setInputCols(["document"]) \
             .setOutputCol("sentence")
-
-
-    @staticmethod
-    def get_trainable_model():
-        return SentenceDetectorDLApproach \
-            .setInputCol("document") \
-            .setOutputCol("sentence")
+    #
+    #
+    # @staticmethod
+    # def get_trainable_model():
+    #     return SentenceDetectorDLApproach \
+    #         .setInputCol("document") \
+    #         .setOutputCol("sentence")

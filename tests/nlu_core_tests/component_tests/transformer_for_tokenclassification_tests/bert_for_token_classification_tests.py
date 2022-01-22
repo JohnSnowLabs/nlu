@@ -1,5 +1,5 @@
 
-import tests.nlu_hc_tests.secrets as sct
+import tests.secrets as sct
 
 import unittest
 from nlu import *

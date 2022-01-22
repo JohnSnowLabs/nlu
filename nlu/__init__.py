@@ -28,7 +28,8 @@ def try_import_pyspark_in_streamlit():
     return True
 
 
-if not try_import_pyspark_in_streamlit(): raise ImportError("You ned to install Pyspark")
+if not try_import_pyspark_in_streamlit():
+    raise ImportError("You ned to install Pyspark")
 st_cache_enabled = False
 from typing import Optional
 
@@ -261,7 +262,7 @@ def load_nlu_pipe_from_hdd(pipe_path, request) -> NLUPipeline:
         # Resource in path is a single model
         elif offline_utils.is_model(pipe_path):
             c = offline_utils.verify_and_create_model(pipe_path)
-            c.info.nlu_ref = nlu_ref
+            c.nlu_ref = nlu_ref
             pipe.add(c, nlu_ref, pretrained_pipe_component=True)
             return PipelineQueryVerifier.check_and_fix_nlu_pipeline(pipe)
 

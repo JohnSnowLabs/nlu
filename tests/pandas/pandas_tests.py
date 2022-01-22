@@ -3,7 +3,7 @@ import pandas as pd
 import nlu
 from memory_profiler import memory_usage
 import tests.test_utils as t
-import tests.nlu_hc_tests.secrets as sct
+import tests.secrets as sct
 class PandasTests(unittest.TestCase):
 
     def test_memory_batching_benchmark(self):
@@ -65,7 +65,7 @@ class PandasTests(unittest.TestCase):
 
         # test 1 series chunk
         # res = nlu.auth(secrets_json_path).load('med_ner.jsl.wip.clinical resolve.icd10pcs',verbose=True).predict(pdf.text.iloc[0], output_level='chunk')
-        # for c in res.columns:print(res[c])
+        # for os_components in res.columns:print(res[os_components])
 
         # Test longer series chunk
         # res = nlu.auth(secrets_json_path).load('med_ner.jsl.wip.clinical resolve.icd10pcs',verbose=True).predict(pdf.text.iloc[0:10], output_level='chunk')
@@ -73,7 +73,7 @@ class PandasTests(unittest.TestCase):
         # Test df with text col chunk
 
         # res = nlu.auth(secrets_json_path).load('med_ner.jsl.wip.clinical', verbose=True).predict(pdf.text.iloc[:10], output_level='document')
-        # for c in res.columns:print(res[c])
+        # for os_components in res.columns:print(res[os_components])
 
         #en.resolve_chunk.icd10cm.clinical
         res = nlu.auth(secrets_json_path).load('en.resolve_chunk.icd10cm.clinical',verbose=True).predict(pdf.text[0:7], output_level='chunk')
@@ -83,7 +83,7 @@ class PandasTests(unittest.TestCase):
 
 
         # res = nlu.auth(secrets_json_path).load('med_ner.jsl.wip.clinical resolve.icd10pcs',verbose=True).predict(pdf.text[0:7], output_level='sentence')
-        # for c in res.columns:print(res[c])
+        # for os_components in res.columns:print(res[os_components])
 
     def load_pandas_dataset(self):
         output_file_name = 'news_category_test.csv'

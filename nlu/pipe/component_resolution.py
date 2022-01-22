@@ -100,7 +100,8 @@ def resolve_feature(missing_feature_type, language='en', is_licensed=False,
         license_type = Licenses.hc if is_licensed else Licenses.open_source
         model_bucket = 'clinical/models' if is_licensed else None
         jsl_anno_id = os_annos[anno_class_name]
-        nlu_component = ComponentMap.os_components[jsl_anno_id]
+        import copy
+        nlu_component = copy.copy(ComponentMap.os_components[jsl_anno_id]) # TODO FUCKKKKKKKK CALL BY REFERENCE NOT VALUE!!! FUCK multiple same annoes fuck shit up!!!fuck
         # We write storage ref to nlu_component, for the case of accumulated chunk and sentence embeddings.
         # Anno Class has no storage ref in these cases, but it is still an embedding provider
         return nlu_component.set_metadata(nlu_component.get_pretrained_model(nlp_ref, language, model_bucket),

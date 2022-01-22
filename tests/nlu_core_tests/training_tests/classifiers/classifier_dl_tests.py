@@ -29,7 +29,7 @@ class ClassifierDlTests(unittest.TestCase):
         train_df.columns = ['y','text']
         test_df.columns = ['y','text']
         pipe = nlu.load('train.classifier',verbose=True,)
-        pipe['classifier_dl'].setMaxEpochs(2)
+        # pipe['classifier_dl'].setMaxEpochs(2)
         pipe = pipe.fit(train_df)
         df = pipe.predict(train_df)
         # print(df[['category','y']])
@@ -40,16 +40,16 @@ class ClassifierDlTests(unittest.TestCase):
         # print(df[['category','y']])
         # print (classification_report(df['y'], df['category']))
         for c in df.columns : print (df[c])
-        # pipe.save('/home/loan/Documents/freelance/jsl/nlu/nlu4realgit/tests/trained_models/quick_classifi')
+        # component_list.save('/home/loan/Documents/freelance/jsl/nlu/nlu4realgit/tests/trained_models/quick_classifi')
 # Too heavy running on github actions
     # def test_classifier_dl_custom_embeds_doc_level(self):
     #     test_df = self.load_classifier_dl_dataset()
     #     train_df = test_df
     #     train_df.columns = ['y','text']
     #     test_df.columns = ['y','text']
-    #     pipe = nlu.load('embed_sentence.bert train.classifier',verbose=True,)
-    #     pipe['classifier_dl'].setMaxEpochs(2)
-    #     fitted_model = pipe.fit(train_df)
+    #     component_list = nlu.load('embed_sentence.bert train.classifier',verbose=True,)
+    #     component_list['classifier_dl'].setMaxEpochs(2)
+    #     fitted_model = component_list.fit(train_df)
     #     df = fitted_model.predict(train_df, output_level='document')
     #     print(df.columns)
     #     print(df[['category','y']])
@@ -67,9 +67,9 @@ class ClassifierDlTests(unittest.TestCase):
     #     train_df = test_df
     #     train_df.columns = ['y','text']
     #     test_df.columns = ['y','text']
-    #     pipe = nlu.load('embed_sentence.bert train.classifier',verbose=True,)
-    #     pipe['classifier_dl'].setMaxEpochs(2)
-    #     fitted_model = pipe.fit(train_df)
+    #     component_list = nlu.load('embed_sentence.bert train.classifier',verbose=True,)
+    #     component_list['classifier_dl'].setMaxEpochs(2)
+    #     fitted_model = component_list.fit(train_df)
     #     df = fitted_model.predict(train_df, output_level='sentence')
     #
     #     print(df.columns)
@@ -89,9 +89,9 @@ class ClassifierDlTests(unittest.TestCase):
     #     train_df = test_df
     #     train_df.columns = ['y','text']
     #     test_df.columns = ['y','text']
-    #     pipe = nlu.load('embed_sentence.bert train.classifier',verbose=True,)
-    #     pipe['classifier_dl'].setMaxEpochs(2)
-    #     fitted_model = pipe.fit(train_df)
+    #     component_list = nlu.load('embed_sentence.bert train.classifier',verbose=True,)
+    #     component_list['classifier_dl'].setMaxEpochs(2)
+    #     fitted_model = component_list.fit(train_df)
     #     df = fitted_model.predict(train_df)
     #     print(df.columns)
     #     print(df[['category','y']])

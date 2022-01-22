@@ -11,11 +11,10 @@ from nlu.universe.feature_universes import NLP_FEATURES, OCR_FEATURES, NLP_HC_FE
 
 ### ____ Pipeline Graph Representation Logik Building Blocks ______
 
-
 @dataclass
 class FeatureNode:  # or Mode Node?
     """Defines a Node in a ML Dependency Feature Graph.
-    Anno= Node, In = In arrous, Out = out Arrows
+    Anno= Node, In = In arrows, Out = out Arrows
     Each NLU Component will output one of these
     NODE = Anno Class
     INPUTS = Array of ML-Features
@@ -186,18 +185,19 @@ class NLP_FEATURE_NODES:  # or Mode Node?
                                                                   [F.DOCUMENT, F.TOKEN],
                                                                   [F.TOKEN_CLASSIFICATION]),
         A.ROBERTA_FOR_SEQUENCE_CLASSIFICATION: NlpFeatureNode(A.ROBERTA_FOR_SEQUENCE_CLASSIFICATION,
-                                                                  [F.DOCUMENT, F.TOKEN],
-                                                                  [F.TOKEN_CLASSIFICATION]),
-        A.LONGFORMER_FOR_SEQUENCE_CLASSIFICATION: NlpFeatureNode(A.LONGFORMER_FOR_SEQUENCE_CLASSIFICATION,
                                                               [F.DOCUMENT, F.TOKEN],
                                                               [F.TOKEN_CLASSIFICATION]),
-        A.ALBERT_FOR_SEQUENCE_CLASSIFICATION: NlpFeatureNode(A.ALBERT_FOR_SEQUENCE_CLASSIFICATION,
+        A.LONGFORMER_FOR_SEQUENCE_CLASSIFICATION: NlpFeatureNode(A.LONGFORMER_FOR_SEQUENCE_CLASSIFICATION,
                                                                  [F.DOCUMENT, F.TOKEN],
                                                                  [F.TOKEN_CLASSIFICATION]),
-        A.XLNET_FOR_SEQUENCE_CLASSIFICATION: NlpFeatureNode(A.XLNET_FOR_SEQUENCE_CLASSIFICATION,
+        A.ALBERT_FOR_SEQUENCE_CLASSIFICATION: NlpFeatureNode(A.ALBERT_FOR_SEQUENCE_CLASSIFICATION,
                                                              [F.DOCUMENT, F.TOKEN],
                                                              [F.TOKEN_CLASSIFICATION]),
-        A.GPT2: NlpFeatureNode(A.GPT2,[F.DOCUMENT],[F.DOCUMENT_GENERATED]),
+        A.XLNET_FOR_SEQUENCE_CLASSIFICATION: NlpFeatureNode(A.XLNET_FOR_SEQUENCE_CLASSIFICATION,
+                                                            [F.DOCUMENT, F.TOKEN],
+                                                            [F.TOKEN_CLASSIFICATION]),
+        A.GPT2: NlpFeatureNode(A.GPT2, [F.DOCUMENT], [F.DOCUMENT_GENERATED]),
+        A.WORD_2_VEC: NlpFeatureNode(A.WORD_2_VEC, [F.TOKEN], [F.WORD_EMBEDDINGS]),
     }
 
 
@@ -330,31 +330,32 @@ class NLP_HC_FEATURE_NODES():
                                                         [F.CHUNK]),
         A.CHUNK_MERGE: NlpHcFeatureNode(A.CHUNK_MERGE, [F.CHUNK, F.CHUNK], [F.CHUNK]),
         A.CONTEXTUAL_PARSER: NlpHcFeatureNode(A.CONTEXTUAL_PARSER, [F.DOCUMENT, F.TOKEN], [F.CHUNK]),
-        A.DE_IDENTIFICATION: NlpHcFeatureNode(A.DE_IDENTIFICATION, [F.DOCUMENT, F.TOKEN, F.CHUNK], [F.DOCUMENT]),
+        A.DE_IDENTIFICATION: NlpHcFeatureNode(A.DE_IDENTIFICATION, [F.DOCUMENT, F.TOKEN, F.NAMED_ENTITY_CONVERTED],
+                                              [F.DOCUMENT_DE_IDENTIFIED]),
         A.TRAINABLE_DE_IDENTIFICATION: NlpHcFeatureNode(A.DE_IDENTIFICATION, [F.DOCUMENT, F.TOKEN, F.CHUNK],
                                                         [F.DOCUMENT]),
         A.DOCUMENT_LOG_REG_CLASSIFIER: NlpHcFeatureNode(A.DOCUMENT_LOG_REG_CLASSIFIER, [F.TOKEN],
                                                         [F.DOCUMENT_CLASSIFICATION]),
         A.TRAINABLE_DOCUMENT_LOG_REG_CLASSIFIER: NlpHcFeatureNode(A.TRAINABLE_DOCUMENT_LOG_REG_CLASSIFIER, [F.TOKEN],
                                                                   [F.DOCUMENT_CLASSIFICATION]),
-        A.DRUG_NORMALIZER: NlpHcFeatureNode(A.DRUG_NORMALIZER, [F.DOCUMENT], [F.DOCUMENT]),
-        # A.# FEATURES_ASSEMBLER : NlpHcFeatureNode( [H_F.FEATURE_VECTOR]) # TODO data types??,
+        A.DRUG_NORMALIZER: NlpHcFeatureNode(A.DRUG_NORMALIZER, [F.DOCUMENT], [F.DOCUMENT_NORMALIZED]),
+        # A.# FEATURES_ASSEMBLER : NlpHcFeatureNode( [H_F.FEATURE_VECTOR]) # TODO data types?,
         A.GENERIC_CLASSIFIER: NlpHcFeatureNode(A.GENERIC_CLASSIFIER, [H_F.FEATURE_VECTOR], [F.DOCUMENT_CLASSIFICATION]),
         A.TRAINABLE_GENERIC_CLASSIFIER: NlpHcFeatureNode(A.TRAINABLE_GENERIC_CLASSIFIER, [H_F.FEATURE_VECTOR],
                                                          [F.DOCUMENT_CLASSIFICATION]),
-        A.IOB_TAGGER: NlpHcFeatureNode(A.IOB_TAGGER, [F.TOKEN, F.CHUNK], [F.NAMED_ENTITY_IOB]),  # TODO chunk subtype?,
+        A.IOB_TAGGER: NlpHcFeatureNode(A.IOB_TAGGER, [F.TOKEN, F.CHUNK], [F.NAMED_ENTITY_IOB]),
         A.MEDICAL_NER: NlpHcFeatureNode(A.MEDICAL_NER, [F.DOCUMENT, F.TOKEN, F.WORD_EMBEDDINGS], [F.NAMED_ENTITY_IOB]),
         A.TRAINABLE_MEDICAL_NER: NlpHcFeatureNode(A.TRAINABLE_MEDICAL_NER, [F.DOCUMENT, F.TOKEN, F.WORD_EMBEDDINGS],
                                                   [F.NAMED_ENTITY_IOB]),
         A.NER_CHUNKER: NlpHcFeatureNode(A.NER_CHUNKER, [F.DOCUMENT, F.NAMED_ENTITY_IOB], [F.CHUNK]),
         A.NER_CONVERTER_INTERNAL: NlpHcFeatureNode(A.NER_CONVERTER_INTERNAL, [F.DOCUMENT, F.TOKEN, F.NAMED_ENTITY_IOB],
-                                                   [F.NAMED_ENTITY_CONVERTED]),  # TODO chunk subtype?,
+                                                   [F.NAMED_ENTITY_CONVERTED]),
         A.NER_DISAMBIGUATOR: NlpHcFeatureNode(A.NER_DISAMBIGUATOR, [F.CHUNK, F.SENTENCE_EMBEDDINGS],
                                               [H_F.DISAMBIGUATION]),
         A.RELATION_NER_CHUNKS_FILTERER: NlpHcFeatureNode(A.RELATION_NER_CHUNKS_FILTERER,
                                                          [F.CHUNK, F.UNLABLED_DEPENDENCY],
                                                          [F.CHUNK]),  # TODO chunk subtype?,
-        A.RE_IDENTIFICATION: NlpHcFeatureNode(A.RE_IDENTIFICATION, [F.DOCUMENT, F.CHUNK], [F.DOCUMENT]),
+        A.RE_IDENTIFICATION: NlpHcFeatureNode(A.RE_IDENTIFICATION, [F.DOCUMENT, F.CHUNK], [F.DOCUMENT_RE_IDENTIFIED]),
         A.RELATION_EXTRACTION: NlpHcFeatureNode(A.RELATION_EXTRACTION,
                                                 [F.WORD_EMBEDDINGS, F.POS, F.CHUNK, F.UNLABLED_DEPENDENCY],
                                                 [H_F.RELATION]),

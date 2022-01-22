@@ -122,6 +122,9 @@ class AnnoClassRef:
         A_N.TRAINABLE_TOKENIZER: 'Tokenizer',
         A_N.TRAINABLE_WORD_SEGMENTER: 'WordSegmenterApproach',
         A_N.DISTIL_BERT_FOR_TOKEN_CLASSIFICATION: 'DistilBertForTokenClassification',
+        A_N.WORD_2_VEC: 'Word2VecModel',
+
+
     }
     JSL_anno_HC_ref_2_py_class: Dict[JslAnnoId, JslAnnoPyClass] = {
         HC_A_N.ASSERTION_DL: 'AssertionDLModel',

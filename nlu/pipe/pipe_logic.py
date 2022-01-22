@@ -538,7 +538,7 @@ class PipelineQueryVerifier:
             if len(unsorted_components) == 0:
                 all_components_ordered = True
 
-            # Trainable Pipe handling # TODO REFACTOR!!!
+            # Trainable Pipe handling # TODO REFACTOR?
             if not all_components_ordered and len(
                     unsorted_components) <= 2 and pipe.has_trainable_components and not trainable_updated and \
                     unsorted_components[0].trainable and 'sentence_embeddings@' in unsorted_components[

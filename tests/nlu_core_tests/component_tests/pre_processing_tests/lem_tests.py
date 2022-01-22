@@ -10,6 +10,8 @@ class TestLem(unittest.TestCase):
         for c in df.columns: print(df[c])
 
 
+
+
 if __name__ == '__main__':
     unittest.main()
 
