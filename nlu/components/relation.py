@@ -1,4 +1,4 @@
-from nlu.pipe.pipe_components import SparkNLUComponent
+from nlu.pipe.pipe_component import SparkNLUComponent
 class Relation(SparkNLUComponent):
     def __init__(self, annotator_class='relation_extractor', lang='en', component_type='relation_extractor', get_default=True, model = None, nlp_ref ='', nlu_ref='', trainable=False, is_licensed=False,loaded_from_pretrained_pipe=False):
 

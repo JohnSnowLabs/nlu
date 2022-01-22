@@ -1,5 +1,6 @@
 import logging
-from  nlu.pipe.utils import uid_to_storageref as uid2storageref
+from nlu.pipe.utils.resolution import uid_to_storage_ref as uid2storageref
+
 logger = logging.getLogger('nlu')
 
 
@@ -9,7 +10,6 @@ class StorageRefUtils():
     def has_storage_ref(component):
         """Storage ref is either on the model or nlu component defined """
         return StorageRefUtils.has_component_storage_ref_or_anno_storage_ref(component)
-
 
     @staticmethod
     def extract_storage_ref(component, prefer_anno=False):
@@ -30,7 +30,6 @@ class StorageRefUtils():
             return uid2storageref.mappings[storage_ref]
         else : return storage_ref
 
-
     ### SUB HELPERS
 
     @staticmethod
@@ -39,14 +38,12 @@ class StorageRefUtils():
         if StorageRefUtils.nlp_component_has_storage_ref(component.model): return True
         if StorageRefUtils.nlu_component_has_storage_ref(component) : return True
 
-
     @staticmethod
     def nlp_component_has_storage_ref(model):
         """Check if a storage ref is defined on the Spark NLP Annotator model"""
         for k, _ in model.extractParamMap().items():
             if k.name == 'storageRef': return True
         return False
-
 
     @staticmethod
     def extract_storage_ref_from_component(component):
@@ -57,7 +54,6 @@ class StorageRefUtils():
             return StorageRefUtils.nlp_extract_storage_ref_nlp_model(component)
         else:
             return ''
-
 
     @staticmethod
     def nlu_extract_storage_ref_nlp_model(component):
@@ -74,5 +70,8 @@ class StorageRefUtils():
     def nlp_extract_storage_ref_nlp_model(model):
         """Extract storage ref from a NLU component which embelished a Spark NLP Annotator"""
         return model.extractParamMap()[model.model.getParam('storageRef')]
+
+
+
 
 

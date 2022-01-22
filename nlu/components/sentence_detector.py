@@ -1,4 +1,4 @@
-from nlu.pipe.pipe_components import SparkNLUComponent
+from nlu.pipe.pipe_component import SparkNLUComponent
 
 class NLUSentenceDetector(SparkNLUComponent):
     def __init__(self, annotator_class='sentence_detector', language='en', component_type='sentence_detector', get_default=True, model = None, nlp_ref='', nlu_ref='', trainable=False, is_licensed=False,lang='en',loaded_from_pretrained_pipe=False):

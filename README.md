@@ -11,7 +11,6 @@ See how easy it is to use any of the **thousands** of models in 1 line of code, 
 
 ## NLU & Streamlit in Action 
 This 1 line let's you visualize and play with **1000+ SOTA NLU & NLP models** in **200** languages 
-for **Named Entitiy Recognition**,  **Dependency Trees & Parts of Speech**, **Classification for 100+ problems**, **Text Summarization & Question Answering using T5** , **Translation with Marian**,  **Text Similarity Matrix** using **BERT, ALBERT, ELMO, XLNET, ELECTRA** with other of the **100+ wordembeddings**  and much more using [Streamlit](http://streamlit.com/) .
 
 ```shell
 streamlit run https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/examples/streamlit/01_dashboard.py
@@ -23,7 +22,7 @@ View the [NLU&Streamlit documentation](https://nlu.johnsnowlabs.com/docs/en/stre
 The entire GIF demo and 
 
 
-## All NLU ressources overview
+## All NLU resources overview
 Take a look at our official NLU page: [https://nlu.johnsnowlabs.com/](https://nlu.johnsnowlabs.com/)  for user documentation and examples
 
 | Ressource                                                                  |                                Description|
@@ -217,8 +216,6 @@ Symbol or unwanted syntax, spellchecking, detecting entities, analyzing sentimen
 | Overview of some Multilingual modes avaiable with State Of the Art accuracy (1-liner)               |   `bn.ner.cc_300d`, `ja.ner`, `zh.ner`, `th.ner.lst20.glove_840B_300D`, `ar.ner`                                          | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/JohnSnowLabs/nlu/blob/master/examples/webinars_conferences_etc/python_web_conf/Multi_Linigual_examples.ipynb)                                                                | [Bengali-NER](https://nlp.johnsnowlabs.com/2021/01/27/ner_jifs_glove_840B_300d_bn.html)                                                                                                                                                                                                                                                                                                           
 | NLU 20 Minutes Crashcourse - the fast Data Science route                                            |     -                                                                                                                     | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/JohnSnowLabs/nlu/blob/master/examples/webinars_conferences_etc/python_web_conf/NLU_crashcourse_py_web.ipynb)                                                                 |        -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |               
                                                                                                                                                                                                                                    
-
-
 
 # Need help? 
 - [Ping us on Slack](https://spark-nlp.slack.com/archives/C0196BQCDPY) 

@@ -1,3 +1,6 @@
+import sparknlp
+
+
 class Spellbook():
     # NLU model_base_names =
     # These reference tell NLU to which component resolved to route a request, they help NLU map a NLP reference to the correct class
@@ -5,15 +8,15 @@ class Spellbook():
                        'tfhub_use', 'distil', 'sentence_xlm.py', 'roberta', 'longformer', 'token_bert',
                        'token_distilbert'
                        ]
-    sentence_embeddings = ['embed_sentence', 'use', 'bert', 'electra', 'tfhub_use']
+    sentence_embeddings = ['embed_sentence', 'use', 'bert', 'electra', 'tfhub_use', 'doc2vec']
     classifiers = ['classify', 'e2e', 'emotion', 'sentiment', 'ner',
                    'pos', 'trec6', 'trec50', 'questions',
                    'sarcasm', 'emotion', 'spam', 'fakenews', 'cyberbullying',
                    'wiki', 'wiki_7', 'wiki_20', 'yake', 'toxic',
-                   'assert', 'med_ner'
+                   'assert', 'med_ner', 'bert_sequence', 'distilbert_sequence'
                    ]
 
-    token_classifiers = ['classify_token',] # TODO
+    token_classifiers = ['classify_token', ]  # TODO
     seq2seq = ['t5', 'marian', 'translate_to']
     actions = ['tokenize', 'sentence', 'embed', 'embed_sentence', 'embed_chunk', 'classify', 'chunk', 'pos', 'ner',
                'dep', 'dep.untyped', 'lemma', 'match', 'norm', 'spell', 'stem', 'stopwords', 'clean', 'ngram',
@@ -1816,7 +1819,7 @@ class Spellbook():
             'nl.ner.wikiner.glove.840B_300': 'wikiner_840B_300',
             'nl.embed.bert': 'bert_base_dutch_cased',
             'nl.embed_sentence.bert.base_cased': 'sent_bert_base_cased',
-            'nl.embed.bert.base_cased' : 'bert_base_cased',
+            'nl.embed.bert.base_cased': 'bert_base_cased',
 
         },
         'en': {
@@ -2097,7 +2100,7 @@ class Spellbook():
             'en.ner.conll_longformer_large_4096': 'ner_conll_longformer_large_4096',
 
             # Spark NLP 3.2.2  NerDLModel
-            'en.ner.conll_elmo': 'ner_conll_elmo',
+            # 'en.ner.conll_elmo': 'ner_conll_elmo', # broken
             'en.ner.conll_albert_base_uncased': 'ner_conll_albert_base_uncased',
             'en.ner.conll_albert_large_uncased': 'ner_conll_albert_large_uncased',
             'en.ner.conll_xlnet_base_cased': 'ner_conll_xlnet_base_cased',
@@ -2121,26 +2124,47 @@ class Spellbook():
             'en.embed_sentence.bert.wiki_books': 'sent_bert_wiki_books',
             'en.embed_sentence.bert.pubmed_squad2': 'sent_bert_pubmed_squad2',
             'en.embed_sentence.bert.pubmed': 'sent_bert_pubmed',
-            'en.embed.bert.base_uncased_legal' : 'bert_base_uncased_legal',
+            'en.embed.bert.base_uncased_legal': 'bert_base_uncased_legal',
             'en.embed_sentence.bert.base_uncased_legal': 'sent_bert_base_uncased_legal',
-           'en.classify.token_bert.classifier_ner_btc'	:'bert_token_classifier_ner_btc',
-
-
+            'en.classify.token_bert.classifier_ner_btc': 'bert_token_classifier_ner_btc',
 
             # Spark NLP 3.3.0
-            'en.classify.token_roberta_large_token_classifier_conll03'	:'roberta_large_token_classifier_conll03',
-            'en.classify.token_roberta_base_token_classifier_ontonotes'	:'roberta_base_token_classifier_ontonotes',
-            'en.classify.token_roberta_base_token_classifier_conll03'	:'roberta_base_token_classifier_conll03',
-            'en.classify.token_distilroberta_base_token_classifier_ontonotes'	:'distilroberta_base_token_classifier_ontonotes',
-            'en.classify.token_albert_large_token_classifier_conll03'	:'albert_large_token_classifier_conll03',
-            'en.classify.token_albert_base_token_classifier_conll03'	:'albert_base_token_classifier_conll03',
-            'en.classify.token_xlnet_base_token_classifier_conll03'	:'xlnet_base_token_classifier_conll03',
+            'en.classify.token_roberta_large_token_classifier_conll03': 'roberta_large_token_classifier_conll03',
+            'en.classify.token_roberta_base_token_classifier_ontonotes': 'roberta_base_token_classifier_ontonotes',
+            'en.classify.token_roberta_base_token_classifier_conll03': 'roberta_base_token_classifier_conll03',
+            'en.classify.token_distilroberta_base_token_classifier_ontonotes': 'distilroberta_base_token_classifier_ontonotes',
+            'en.classify.token_albert_large_token_classifier_conll03': 'albert_large_token_classifier_conll03',
+            'en.classify.token_albert_base_token_classifier_conll03': 'albert_base_token_classifier_conll03',
+            'en.classify.token_xlnet_base_token_classifier_conll03': 'xlnet_base_token_classifier_conll03',
 
-            'en.classify.token_roberta.large_token_classifier_ontonotes' : 'roberta_large_token_classifier_ontonotes',
-            'en.classify.token_albert.xlarge_token_classifier_conll03'  : 'albert_xlarge_token_classifier_conll03',
-            'en.classify.token_xlnet.large_token_classifier_conll03' : 'xlnet_large_token_classifier_conll03',
-            'en.classify.token_longformer.base_token_classifier_conll03' : 'longformer_base_token_classifier_conll03',
+            'en.classify.token_roberta.large_token_classifier_ontonotes': 'roberta_large_token_classifier_ontonotes',
+            'en.classify.token_albert.xlarge_token_classifier_conll03': 'albert_xlarge_token_classifier_conll03',
+            'en.classify.token_xlnet.large_token_classifier_conll03': 'xlnet_large_token_classifier_conll03',
+            'en.classify.token_longformer.base_token_classifier_conll03': 'longformer_base_token_classifier_conll03',
 
+            # Spark NLP 3.3.2
+
+            'en.classify.bert_sequence.imdb_large': 'bert_large_sequence_classifier_imdb',
+            'en.classify.bert_sequence.imdb': 'bert_base_sequence_classifier_imdb',
+            'en.classify.bert_sequence.ag_news': 'bert_base_sequence_classifier_ag_news',
+            'en.classify.bert_sequence.dbpedia_14': 'bert_base_sequence_classifier_dbpedia_14',
+            'en.classify.bert_sequence.finbert': 'bert_sequence_classifier_finbert',
+            'en.classify.bert_sequence.dehatebert_mono': 'bert_sequence_classifier_dehatebert_mono',
+
+            # Spark NLP 3.3.3
+            'en.classify.distilbert_sequence.sst2': 'distilbert_sequence_classifier_sst2',
+            'en.classify.distilbert_sequence.policy': 'distilbert_sequence_classifier_policy',
+            'en.classify.distilbert_sequence.industry': 'distilbert_sequence_classifier_industry',
+            'en.classify.distilbert_sequence.emotion': 'distilbert_sequence_classifier_emotion',
+            'en.classify.distilbert_sequence.banking77': 'distilbert_sequence_classifier_banking77',
+
+            'en.classify.distilbert_sequence.imdb': 'distilbert_base_sequence_classifier_imdb',
+            'en.classify.distilbert_sequence.amazon_polarity': 'distilbert_base_sequence_classifier_amazon_polarity',
+            'en.classify.distilbert_sequence.ag_news': 'distilbert_base_sequence_classifier_ag_news',
+
+            'en.embed_sentence.doc2vec': 'doc2vec_gigaword_300',
+            'en.embed_sentence.doc2vec.gigaword_300': 'doc2vec_gigaword_300',
+            'en.embed_sentence.doc2vec.gigaword_wiki_300': 'doc2vec_gigaword_wiki_300',
 
         },
 
@@ -2148,7 +2172,6 @@ class Spellbook():
             'yi.detect_sentence': 'sentence_detector_dl',
 
         },
-
 
         'fr': {
             'fr.lemma': 'lemma',
@@ -2159,7 +2182,8 @@ class Spellbook():
             'fr.ner.wikiner.glove.840B_300': 'wikiner_840B_300',
             'fr.stopwords': 'stopwords_fr',
             'fr.ner.wikiner.glove.6B_300': 'wikiner_6B_300',
-            'fr.classify.sentiment.bert' :	'classifierdl_bert_sentiment'
+            'fr.classify.sentiment.bert': 'classifierdl_bert_sentiment',
+            'fr.classify.distilbert_sequence.allocine': 'distilbert_multilingual_sequence_classifier_allocine',
 
         },
         'de': {
@@ -2176,15 +2200,14 @@ class Spellbook():
             'de.embed.bert.uncased': 'bert_base_german_uncased',
             'de.classify.news': 'classifierdl_bert_news',
             'de.embed_sentence.bert.base_cased': 'sent_bert_base_cased',
-            'de.classify.sentiment.bert' :	'classifierdl_bert_sentiment'
-
+            'de.classify.sentiment.bert': 'classifierdl_bert_sentiment'
 
         },
         'it': {
             'it.lemma': 'lemma_dxc',  # default lemma it
             'it.lemma.dxc': 'lemma_dxc',
-            'it.sentiment.dxc': 'sentiment_dxc',
-            'it.sentiment': 'sentiment_dxc',  # defauult sentiment it
+            # 'it.sentiment.dxc': 'sentiment_dxc', # Depracated
+            # 'it.sentiment': 'sentiment_dxc',  # # Depracated
             'it.pos': 'pos_ud_isdt',  # default pos it
             'it.pos.ud_isdt': 'pos_ud_isdt',
             'it.ner': 'wikiner_840B_300',  # default ner it
@@ -2196,12 +2219,13 @@ class Spellbook():
         },
         'nb': {
             'nb.lemma': 'lemma',
-            'nb.pos.ud_bokmaal': 'pos_ud_bokmaal',
+            # 'nb.pos.ud_bokmaal': 'pos_ud_bokmaal', # Depracated
 
         },
         'no': {
-            'no.ner': 'norne_6B_100',  # ner default no
-            'no.ner.norne': 'norne_6B_100',  # ner default no embeds
+            # Missing no emb ds
+            'no.ner.norne.100d': 'norne_6B_100',  # ner default no
+            'no.ner.norne': 'norne_6B_100',
             'no.ner.norne.glove.6B_100': 'norne_6B_100',
             'no.ner.norne.glove.6B_300': 'norne_6B_300',
             'no.ner.norne.glove.840B_300': 'norne_840B_300',
@@ -2251,16 +2275,14 @@ class Spellbook():
 
         },
 
-        'pa' : {
+        'pa': {
             'pa.detect_sentence': 'sentence_detector_dl',
 
         },
-        'ne' : {
+        'ne': {
             'ne.detect_sentence': 'sentence_detector_dl',
 
         },
-
-
 
         'es': {
             'es.lemma': 'lemma',
@@ -2273,11 +2295,10 @@ class Spellbook():
             'es.ner.wikiner.glove.840B_300': 'wikiner_840B_300',
             'es.stopwords_es': 'stopwords_es',
             'es.classify.token_bert.spanish_ner': 'bert_token_classifier_spanish_ner',
-            'es.embed.bert.base_uncased' : 'bert_base_uncased',
-            'es.embed.bert.base_cased' : 'bert_base_cased',
+            'es.embed.bert.base_uncased': 'bert_base_uncased',
+            'es.embed.bert.base_cased': 'bert_base_cased',
             'es.embed_sentence.bert.base_uncased': 'sent_bert_base_uncased',
             'es.embed_sentence.bert.base_cased': 'sent_bert_base_cased',
-
 
         },
         'af': {
@@ -2364,9 +2385,9 @@ class Spellbook():
             'fi.embed.bert': 'bert_finnish_cased',
             'fi.embed.bert.cased': 'bert_finnish_cased',
             'fi.embed.bert.uncased': 'bert_finnish_uncased',
-            'fi.embed_sentence': 'sent_bert_finnish_cased',
-            'fi.embed_sentence.bert.cased': 'sent_bert_finnish_cased',
-            'fi.embed_sentence.bert.uncased': 'sent_bert_finnish_uncased',
+            # 'fi.embed_sentence': 'sent_bert_finnish_cased', # Broken bad TF Graph
+            # 'fi.embed_sentence.bert.cased': 'sent_bert_finnish_cased', # Broken bad TF Graph
+            # 'fi.embed_sentence.bert.uncased': 'sent_bert_finnish_uncased', # Broken bad TF Graph
             'fi.ner.6B_100d': 'finnish_ner_6B_100',
             'fi.ner.6B_300d': 'finnish_ner_6B_300',
             'fi.ner.840B_300d': 'finnish_ner_840B_300',
@@ -2384,15 +2405,14 @@ class Spellbook():
             'el.pos.ud_gdt': 'pos_ud_gdt',
             'el.stopwords': 'stopwords_el',
 
-            'el.embed.bert.base_uncased' : 'bert_base_uncased',
+            'el.embed.bert.base_uncased': 'bert_base_uncased',
             'el.embed_sentence.bert.base_uncased': 'sent_bert_base_uncased',
 
         },
         'ha': {
             'ha.stopwords': 'stopwords_ha',
-            'ha.embed.xlm_roberta'  : 'xlm_roberta_base_finetuned_hausa',
-            'ha.embed_sentence.xlm_roberta' : 'sent_xlm_roberta_base_finetuned_hausa',  #Default Sentence XLM
-
+            'ha.embed.xlm_roberta': 'xlm_roberta_base_finetuned_hausa',
+            'ha.embed_sentence.xlm_roberta': 'sent_xlm_roberta_base_finetuned_hausa',  # Default Sentence XLM
 
         },
         'he': {
@@ -2425,13 +2445,13 @@ class Spellbook():
             'id.stopwords': 'stopwords_id',
             'id.lemma': 'lemma',
             'id.pos': 'pos_ud_gsd',
+            'id.detect_sentence': 'sentence_detector_dl',
 
         },
         'ga': {
             'ga.stopwords': 'stopwords_ga',
             'ga.lemma': 'lemma',
             'ga.pos': 'pos_ud_idt',
-            'id.detect_sentence': 'sentence_detector_dl',
 
         },
         'da': {
@@ -2452,10 +2472,10 @@ class Spellbook():
             'ja.ner.ud_gsd.glove_840B_300D': 'ner_ud_gsd_glove_840B_300d',
             'ja.pos.ud_gsd': 'pos_ud_gsd',
             "ja.lemma": "lemma",
-            'ja.embed.glove.cc_300d' : 	'japanese_cc_300d',
-            'ja.ner.ud_gsd_cc_300d'	: 'ner_ud_gsd_cc_300d',
-            'ja.ner.ud_gsd_xlm_roberta_base'	: 'ner_ud_gsd_xlm_roberta_base',
-            'ja.classify.token_bert.classifier_ner_ud_gsd'	:'bert_token_classifier_ner_ud_gsd',
+            'ja.embed.glove.cc_300d': 'japanese_cc_300d',
+            'ja.ner.ud_gsd_cc_300d': 'ner_ud_gsd_cc_300d',
+            'ja.ner.ud_gsd_xlm_roberta_base': 'ner_ud_gsd_xlm_roberta_base',
+            'ja.classify.token_bert.classifier_ner_ud_gsd': 'bert_token_classifier_ner_ud_gsd',
         },
         'la': {
             'la.stopwords': 'stopwords_la',
@@ -2501,7 +2521,7 @@ class Spellbook():
             'fa.classify.token_bert.parsbert_armanner': 'bert_token_classifier_parsbert_armanner',
             'fa.classify.token_bert.parsbert_ner': 'bert_token_classifier_parsbert_ner',
             'fa.classify.token_bert.parsbert_peymaner': 'bert_token_classifier_parsbert_peymaner',
-            'fa.classify.token_roberta_token_classifier_zwnj_base_ner'	:'roberta_token_classifier_zwnj_base_ner',
+            'fa.classify.token_roberta_token_classifier_zwnj_base_ner': 'roberta_token_classifier_zwnj_base_ner',
 
         },
         'ro': {
@@ -2533,16 +2553,13 @@ class Spellbook():
 
         },
 
-
-
-
         'st': {
             'st.stopwords': 'stopwords_st'
         },
         'sw': {
             'sw.stopwords': 'stopwords_sw',
-             'sw.embed_sentence.xlm_roberta' : 'sent_xlm_roberta_base_finetuned_swahili',  #Default Sentence XLM
-            'sw.embed.xlm_roberta' : 	'xlm_roberta_base_finetuned_swahili', # Default XLM Word Embd
+            'sw.embed_sentence.xlm_roberta': 'sent_xlm_roberta_base_finetuned_swahili',  # Default Sentence XLM
+            'sw.embed.xlm_roberta': 'xlm_roberta_base_finetuned_swahili',  # Default XLM Word Embd
 
         },
         'sv': {
@@ -2555,8 +2572,8 @@ class Spellbook():
             'sv.ner.6B_300': 'swedish_ner_6B_300',
             'sv.ner.840B_300': 'swedish_ner_840B_300',
             'sv.classify.token_bert.swedish_ner': 'bert_token_classifier_swedish_ner',
-            'sv.embed.bert.base_cased' : 'bert_base_cased',
-            'sv.embed_sentence.bert.base_cased':'sent_bert_base_cased',
+            'sv.embed.bert.base_cased': 'bert_base_cased',
+            'sv.embed_sentence.bert.base_cased': 'sent_bert_base_cased',
 
         },
         'th': {
@@ -2589,62 +2606,50 @@ class Spellbook():
 
         },
 
-
         'te': {
             'te.detect_sentence': 'sentence_detector_dl',
 
         },
 
-
         'yo': {
             'yo.stopwords': 'stopwords_yo',
             'yo.lemma': 'lemma',
             'yo.pos': 'pos_ud_ytb',
-            'yo.embed_sentence.xlm_roberta' : 'sent_xlm_roberta_base_finetuned_yoruba',  #Default Sentence XLM
-            'yo.embed.xlm_roberta' : 	'xlm_roberta_base_finetuned_yoruba', # Default XLM Word Embd
-
-
+            'yo.embed_sentence.xlm_roberta': 'sent_xlm_roberta_base_finetuned_yoruba',  # Default Sentence XLM
+            'yo.embed.xlm_roberta': 'xlm_roberta_base_finetuned_yoruba',  # Default XLM Word Embd
 
         },
 
         'ig': {
-            'ig.embed.xlm_roberta'  : 'xlm_roberta_base_finetuned_igbo',
-            'ig.embed_sentence.xlm_roberta' : 'sent_xlm_roberta_base_finetuned_igbo',  #Default Sentence XLM
-                    },
-
-        'lg': {
-            'lg.embed.xlm_roberta'  : 'xlm_roberta_base_finetuned_luganda',
-            'lg.embed_sentence.xlm_roberta' : 'sent_xlm_roberta_base_finetuned_luganda',  #Default Sentence XLM
+            'ig.embed.xlm_roberta': 'xlm_roberta_base_finetuned_igbo',
+            'ig.embed_sentence.xlm_roberta': 'sent_xlm_roberta_base_finetuned_igbo',  # Default Sentence XLM
         },
 
+        'lg': {
+            'lg.embed.xlm_roberta': 'xlm_roberta_base_finetuned_luganda',
+            'lg.embed_sentence.xlm_roberta': 'sent_xlm_roberta_base_finetuned_luganda',  # Default Sentence XLM
+        },
 
         'lou': {
-            'lou.embed.xlm_roberta' : 	'xlm_roberta_base_finetuned_luo', # Default XLM Word Embd
+            'lou.embed.xlm_roberta': 'xlm_roberta_base_finetuned_luo',  # Default XLM Word Embd
 
         },
 
         'pcm': {
-            'pcm.embed.xlm_roberta' : 	'xlm_roberta_base_finetuned_naija', # Default XLM Word Embd
-            'pcm.embed_sentence.xlm_roberta' : 'sent_xlm_roberta_base_finetuned_naija',  #Default Sentence XLM
+            'pcm.embed.xlm_roberta': 'xlm_roberta_base_finetuned_naija',  # Default XLM Word Embd
+            'pcm.embed_sentence.xlm_roberta': 'sent_xlm_roberta_base_finetuned_naija',  # Default Sentence XLM
         },
 
         'wo': {
-            'wo.embed_sentence.xlm_roberta' : 'sent_xlm_roberta_base_finetuned_wolof',  #Default Sentence XLM
-            'wo.embed.xlm_roberta' : 	'xlm_roberta_base_finetuned_wolof', # Default XLM Word Embd
+            'wo.embed_sentence.xlm_roberta': 'sent_xlm_roberta_base_finetuned_wolof',  # Default Sentence XLM
+            'wo.embed.xlm_roberta': 'xlm_roberta_base_finetuned_wolof',  # Default XLM Word Embd
 
         },
 
         'rw': {
-            'rw.embed_sentence.xlm_roberta' : 'sent_xlm_roberta_base_finetuned_kinyarwanda',  #Default Sentence XLM
-            'rw.embed.xlm_roberta'  : 'xlm_roberta_base_finetuned_kinyarwanda',
+            'rw.embed_sentence.xlm_roberta': 'sent_xlm_roberta_base_finetuned_kinyarwanda',  # Default Sentence XLM
+            'rw.embed.xlm_roberta': 'xlm_roberta_base_finetuned_kinyarwanda',
         },
-
-
-
-
-
-
-
 
         'zu': {
             'zu.stopwords': 'stopwords_zu'
@@ -2663,7 +2668,7 @@ class Spellbook():
 
             'zh.pos': 'pos_ud_gsd',  # default zh pos,
             'zh.pos.ud_gsd': 'pos_ud_gsd',
-            'zh.pos.ctb9': 'pos_ctb9',
+            # 'zh.pos.ctb9': 'pos_ctb9',
             "zh.pos.ud_gsd_trad": "pos_ud_gsd_trad",
 
             'zh.ner': 'ner_msra_bert_768d',  # default zh ner,
@@ -2681,7 +2686,7 @@ class Spellbook():
 
         'et': {
             'et.lemma': 'lemma',
-            'et.pos': 'pos_ud_edt',
+            # 'et.pos': 'pos_ud_edt',
         },
         'ur': {
             'ur.lemma': 'lemma',
@@ -2694,15 +2699,16 @@ class Spellbook():
             'ur.embed.urdu_vec_140M_300d': 'urduvec_140M_300d',
             'ur.ner': 'uner_mk_140M_300d',
             'ur.ner.mk_140M_300d': 'uner_mk_140M_300d',
+            'ur.classify.distilbert_sequence.imdb': 'distilbert_base_sequence_classifier_imdb',
 
         },
 
         'ko': {
 
             'ko.segment_words': 'wordseg_kaist_ud',
-            'ko.pos': 'pos_ud_kaist',  # default ko pos
+            # 'ko.pos': 'pos_ud_kaist',  # default ko pos
             'ko.ner': 'ner_kmou_glove_840B_300d',  # default ko ner
-            'ko.pos.ud_kaist': 'pos_ud_kaist',
+            # 'ko.pos.ud_kaist': 'pos_ud_kaist',
             'ko.ner.kmou': 'ner_kmou_glove_840B_300d',  # default ner kmou
             'ko.ner.kmou.glove_840B_300d': 'ner_kmou_glove_840B_300d',
             "ko.lemma": "lemma",
@@ -2716,15 +2722,15 @@ class Spellbook():
         'am': {
             "am.pos": "pos_ud_att",
             "am.lemma": "lemma",
-            'am.embed.xlm_roberta'  : 'xlm_roberta_base_finetuned_amharic',
-            'am.embed_sentence.xlm_roberta' : 'sent_xlm_roberta_base_finetuned_amharic',  #Default Sentence XLM
+            'am.embed.xlm_roberta': 'xlm_roberta_base_finetuned_amharic',
+            'am.embed_sentence.xlm_roberta': 'sent_xlm_roberta_base_finetuned_amharic',  # Default Sentence XLM
 
         },
 
         'xx': {
             # NLU 3.3.0
-            'xx.embed.xlm_roberta_large'  : 'xlm_roberta_large',
-            'xx.classify.token_xlm_roberta.token_classifier_ner_40_lang' : 'xlm_roberta_token_classifier_ner_40_lang',
+            'xx.embed.xlm_roberta_large': 'xlm_roberta_large',
+            'xx.classify.token_xlm_roberta.token_classifier_ner_40_lang': 'xlm_roberta_token_classifier_ner_40_lang',
 
             # Spark NLP 3.2.2
             'xx.embed.bert.muril': 'bert_muril',
@@ -2753,8 +2759,8 @@ class Spellbook():
             'xx.embed.bert_multi_cased': 'bert_multi_cased',
             'xx.embed.bert': 'bert_multi_cased',
 
-            'xx.classify.wiki_7': 'ld_wiki_7',
-            'xx.classify.wiki_20': 'ld_wiki_20',
+            # 'xx.classify.wiki_7': 'ld_wiki_7',  # Depcrecated
+            # 'xx.classify.wiki_20': 'ld_wiki_20' # Depcrecated ,
             'xx.classify.wiki_21': 'ld_wiki_tatoeba_cnn_21',
             'xx.classify.wiki_21.bigru': 'ld_tatoeba_bigru_21',
             'xx.classify.wiki_99': 'ld_tatoeba_cnn_99',
@@ -2779,10 +2785,10 @@ class Spellbook():
             # 2.7
             'xx.use.multi': 'tfhub_use_multi',
             'xx.use.multi_lg': 'tfhub_use_multi_lg',
-            'xx.use.xling_en_de': 'tfhub_use_xling_en_de',
-            'xx.use.xling_en_es': 'tfhub_use_xling_en_es',
-            'xx.use.xling_en_fr': 'tfhub_use_xling_en_fr',
-            'xx.use.xling_many': 'tfhub_use_xling_many',
+            # 'xx.use.xling_en_de': 'tfhub_use_xling_en_de',
+            # 'xx.use.xling_en_es': 'tfhub_use_xling_en_es',
+            # 'xx.use.xling_en_fr': 'tfhub_use_xling_en_fr',
+            # 'xx.use.xling_many': 'tfhub_use_xling_many',
             'xx.use.multi'
 
             # 2.7.0 marian translate model references
@@ -4126,22 +4132,19 @@ class Spellbook():
                 # 'en.spell.context.med':'context_spell_med', #todo crashing Byteerror
 
                 # 3.3.0 Healthcare
-                'en.spell.drug_norvig':'spellcheck_drug_norvig',
+                'en.spell.drug_norvig': 'spellcheck_drug_norvig',
                 'en.classify.token_bert.ner_bacteria': 'bert_token_classifier_ner_bacteria',
                 'en.classify.token_bert.ner_anatomy': 'bert_token_classifier_ner_anatomy',
                 'en.classify.token_bert.ner_drugs': 'bert_token_classifier_ner_drugs',
                 'en.classify.token_bert.ner_jsl_slim': 'bert_token_classifier_ner_jsl_slim',
                 'en.classify.token_bert.ner_ade': 'bert_token_classifier_ner_ade',
-                'en.resolve.rxnorm_ndc' : 'sbiobertresolve_rxnorm_ndc',
-                'en.resolve.icd10cm_generalised' : 'sbiobertresolve_icd10cm_generalised',
-                'en.resolve.hcpcs' : 'sbiobertresolve_hcpcs',
-                'en.med_ner.chexpert' : 'ner_chexpert',
-
-
+                'en.resolve.rxnorm_ndc': 'sbiobertresolve_rxnorm_ndc',
+                'en.resolve.icd10cm_generalised': 'sbiobertresolve_icd10cm_generalised',
+                'en.resolve.hcpcs': 'sbiobertresolve_hcpcs',
+                'en.med_ner.chexpert': 'ner_chexpert',
 
                 # 3.2.3 Healthcare
-                'en.classify.token_bert.ner_deid' : 'bert_token_classifier_ner_deid',
-
+                'en.classify.token_bert.ner_deid': 'bert_token_classifier_ner_deid',
 
                 'en.detect_sentence.clinical': 'sentence_detector_dl_healthcare',
                 'en.norm_drugs': 'drug_normalizer',  # TODO!?!??!
@@ -4360,7 +4363,7 @@ class Spellbook():
 
                 'en.med_ner.ade_biobert': 'ner_ade_biobert',
                 'en.classify.ade.clinicalbert': 'classifierdl_ade_clinicalbert',
-                'en.med_ner.large': 'ner_large_clinical',
+                # 'en.med_ner.large': 'ner_large_clinical', # Deprecated
 
                 # DeIdentificationModel
 
@@ -4371,7 +4374,6 @@ class Spellbook():
                 'en.de_identify.large': 'deidentify_large',
                 'en.de_identify.rb': 'deidentify_rb',
                 'en.de_identify.rb_no_regex': 'deidentify_rb_no_regex',
-
 
                 # 'en.classify.icd10.clinical':'classifier_icd10cm_hcc_clinical',      #  WHCIH CLASS? # TODO NOT LAODING
                 # 'en.classify.icd10.healthcare':'classifier_icd10cm_hcc_healthcare', # TODO NOT LOADING CORRECt
@@ -4402,7 +4404,7 @@ class Spellbook():
                 'en.resolve.rxnorm_disposition': 'sbiobertresolve_rxnorm_disposition',
                 'en.resolve.rxnorm_disposition.sbert': 'sbertresolve_rxnorm_disposition',
 
-                'en.resolve.biobert_base_cased_mli': 'sbiobert_base_cased_mli',
+                # 'en.resolve.biobert_base_cased_mli': 'sbiobert_base_cased_mli',
 
                 'en.med_ner.jsl_slim': 'ner_jsl_slim',
                 'en.med_ner.jsl_greedy_biobert': 'ner_jsl_greedy_biobert',
@@ -4410,10 +4412,30 @@ class Spellbook():
                 'en.classify.token_bert.ner_jsl': 'bert_token_classifier_ner_jsl',
 
                 # 3.3.1 healthcare
-                'en.classify.token_bert.ner_chemical':'bert_token_classifier_ner_chemicals',
-                'en.resolve.umls_disease_syndrome' : 'sbiobertresolve_umls_disease_syndrome',
-                'en.resolve.umls_clinical_drugs' : 'sbiobertresolve_umls_clinical_drugs',
+                'en.classify.token_bert.ner_chemical': 'bert_token_classifier_ner_chemicals',
 
+                ## 3.3.3 HC
+                'en.med_ner.deid_subentity_augmented_i2b2': 'ner_deid_subentity_augmented_i2b2',
+                'en.med_ner.biomarker': 'ner_biomarker',
+                'en.med_ner.nihss': 'ner_nihss',
+                'en.extract_relation.nihss': 'redl_nihss_biobert',
+                'en.resolve.mesh': 'sbiobertresolve_mesh',
+                'en.resolve.mli': 'sbiobert_base_cased_mli',
+                'en.resolve.ndc': 'sbiobertresolve_ndc',
+                'en.resolve.loinc.augmented': 'sbiobertresolve_loinc_augmented',
+                'en.resolve.clinical_snomed_procedures_measurements': 'sbiobertresolve_clinical_snomed_procedures_measurements',
+                'es.embed.roberta_base_biomedical': 'roberta_base_biomedical',
+                'es.med_ner.roberta_ner_diag_proc': 'roberta_ner_diag_proc',
+                'es.resolve.snomed': 'robertaresolve_snomed',
+                'en.med_ner.covid_trials': 'ner_covid_trials',
+                'en.med_ner.chemd': 'ner_chemd_clinical',
+                'en.classify.token_bert.bionlp': 'bert_token_classifier_ner_bionlp',
+                'en.classify.token_bert.cellular': 'bert_token_classifier_ner_cellular',
+                'en.classify.token_bert.chemicals': 'bert_token_classifier_ner_chemicals',
+                'en.resolve.rxnorm_augmented': 'sbiobertresolve_rxnorm_augmented',
+                'en.resolve.umls_disease_syndrome': 'sbiobertresolve_umls_disease_syndrome',
+                'en.resolve.umls_clinical_drugs': 'sbiobertresolve_umls_clinical_drugs',
+                'en.classify.bert_sequence.question_statement_clinical': 'bert_sequence_classifier_question_statement_clinical',
 
             },
 
@@ -4426,8 +4448,8 @@ class Spellbook():
                 #  'de.med_ner.healthcare' :'ner_healthcare', # BAD NER TRAINED ON STORAGE_REF embeddings_healthcare_100d which only exist in EN
                 'de.med_ner': 'ner_healthcare_slim',
                 'de.med_ner.traffic': 'ner_traffic',
-                'de.resolve.icd10gm' :'sbertresolve_icd10gm',
-                'de.resolve.snomed' :'sbertresolve_snomed',
+                'de.resolve.icd10gm': 'sbertresolve_icd10gm',
+                'de.resolve.snomed': 'sbertresolve_snomed',
 
             },
 
@@ -4444,13 +4466,16 @@ class Spellbook():
             'es.med_ner': 'ner_diag_proc',
             'es.med_ner.neoplasm': 'ner_neoplasms',
             'es.med_ner.diag_proc': 'ner_diag_proc',
+
+            'es.embed.roberta_base_biomedical': 'roberta_base_biomedical',
+            'es.med_ner.roberta_ner_diag_proc': 'roberta_ner_diag_proc',
+            'es.resolve.snomed': 'robertaresolve_snomed',
         }
     }
     pretrained_healthcare_pipe_references = {
         'en': {
-
-            'en.med_ner.profiling_clinical' :  'ner_profiling_clinical',
-            'en.med_ner.profiling_biobert'  :  'ner_profiling_biobert',
+            'en.med_ner.profiling_clinical': 'ner_profiling_clinical',
+            'en.med_ner.profiling_biobert': 'ner_profiling_biobert',
             'en.resolve.icd10cm.umls': 'icd10cm_umls_mapping',
             'en.resolve.mesh.umls': 'mesh_umls_mapping',
             'en.resolve.rxnorm.umls': 'rxnorm_umls_mapping',
@@ -4472,68 +4497,88 @@ class Spellbook():
     }
     # map storage ref to nlu ref
     storage_ref_2_nlu_ref = {
-    
-    'en': {
-        'tfhub_use': 'en.embed_sentence.use',
-        'glove_100d': 'en.embed.glove.100d',
-        'xlm_roberta_base': 'xx.embed.xlm'
-    },
-    'zh': {
-        'bert_base_chinese': 'zh.embed',
-    },
-    'th': {
-        'tfhub_use_multi_lg': 'xx.use.multi'
 
-    },
-    'ur': {
-        'glove_300d': 'ur.embed',
-    },
-    'fr':
-        {
-            'labse': 'xx.embed_sentence.labse'
+        'en': {
+            'tfhub_use': 'en.embed_sentence.use',
+            'glove_100d': 'en.embed.glove.100d',
+            'xlm_roberta_base': 'xx.embed.xlm'
         },
-    'tr':
-        {'bert_multi_cased': 'xx.embed.bert',
-         'labse': 'xx.embed_sentence.labse'
-         },
-    'sv':
-        {'glove_100d': 'xx.embed.glove.glove_6B_100',
-         },
-    'fa':
-        {'glove_300d': 'fa.embed',
-         },
-    'he':
-        {'glove_300d': 'he.embed',
-         },
-    'fi':
-        {'glove_100d': 'fi.embed.bert',
-         },
-    'ar':
-        {'glove_300d': 'ar.embed',
-         },
-    'de':
-        {
-            'sent_bert_multi_cased': 'xx.embed_sentence',
-            'labse': 'xx.embed_sentence.labse',
-         'clinical' : 'de.embed_sentence.bert.base_cased',
+        'zh': {
+            'bert_base_chinese': 'zh.embed',
+        },
+        'th': {
+            'tfhub_use_multi_lg': 'xx.use.multi'
 
         },
-    'ja':
-        {
-            'fasttext_300_ja': 'ja.embed.glove.cc_300d',
-            'xlm_roberta_base': 'xx.embed.xlm',
+        'ur': {
+            'glove_300d': 'ur.embed',
+        },
+        'fr':
+            {
+                'labse': 'xx.embed_sentence.labse'
+            },
+        'tr':
+            {'bert_multi_cased': 'xx.embed.bert',
+             'labse': 'xx.embed_sentence.labse'
+             },
+        'sv':
+            {'glove_100d': 'xx.embed.glove.glove_6B_100',
+             },
+        'fa':
+            {'glove_300d': 'fa.embed',
+             },
+        'he':
+            {'glove_300d': 'he.embed',
+             },
+        'fi':
+            {
 
-        }
+                'glove_100d': 'xx.embed.glove.glove_6B_100',
 
+            },
+        'ar':
+            {'glove_300d': 'ar.embed',
+             },
+        'de':
+            {
+                'sent_bert_multi_cased': 'xx.embed_sentence',
+                'labse': 'xx.embed_sentence.labse',
+                'clinical': 'de.embed_sentence.bert.base_cased',
 
-}  #
+            },
+        'ja':
+            {
+                'fasttext_300_ja': 'ja.embed.glove.cc_300d',
+                'xlm_roberta_base': 'xx.embed.xlm',
 
+            },
+        'no': {
+            'glove_100d': 'xx.embed.glove.glove_6B_100',
+        },
+        'pl': {
+            'glove_100d': 'xx.embed.glove.glove_6B_100',
+        },
+        'pt': {
+            'glove_100d': 'xx.embed.glove.glove_6B_100',
+        },
+        'ru': {
+            'glove_100d': 'xx.embed.glove.glove_6B_100',
+        },
+        'es': {
+            'glove_100d': 'xx.embed.glove.glove_6B_100',
+        },
+
+        'da': {
+            'glove_100d': 'xx.embed.glove.glove_6B_100',
+        },
+
+    }  #
 
     licensed_storage_ref_2_nlu_ref = {
         'en': {
             'clinical': 'en.embed.glove.clinical',
             'biobert_pubmed_base_cased': 'biobert',
-
+            'ROBERTA_EMBEDDINGS_39f3e48e5c3f': 'en.embed_sentence.biobert.clinical_base_cased',
             # 'embeddings_healthcare100' : 'en.embed.glove.clinical',
             'embeddings_healthcare100': 'en.embed.glove.healthcare_100d',
             'BERT_SENTENCE_EMBEDDINGS_0bee53f1b2cc': 'en.embed_sentence.biobert.mli',
@@ -4552,7 +4597,13 @@ class Spellbook():
         },
         'es': {
             'embeddings_scielowiki300': 'es.embed.scielowiki.300d',
+            'ROBERTA_EMBEDDINGS_39f3e48e5c3f': 'es.embed.roberta_base_biomedical',
+            'clinical': 'es.embed.roberta_base_biomedical',
+            # 'clinical' : 'es.embed.roberta_base_biomedical',
+
+        },
+        'de': {
+            'clinical' : 'de.embed_sentence.bert.base_cased',
 
         }
-
     }

@@ -1,5 +1,5 @@
 import nlu
-from nlu.pipe.pipe_components import SparkNLUComponent
+from nlu.pipe.pipe_component import SparkNLUComponent
 
 
 class Matcher(SparkNLUComponent):

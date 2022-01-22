@@ -2,8 +2,8 @@ from typing import List
 import logging
 logger = logging.getLogger('nlu')
 import inspect
-from nlu.pipe.pipe_components import SparkNLUComponent
-from nlu.pipe.utils.storage_ref_utils import StorageRefUtils
+from nlu.pipe.pipe_component import SparkNLUComponent
+from nlu.pipe.utils.resolution.storage_ref_utils import StorageRefUtils
 
 class ComponentUtils():
     """Component and Column Level logic operations and utils"""

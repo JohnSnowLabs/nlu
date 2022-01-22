@@ -11,7 +11,7 @@ Every Annotator should have 2 configs. Some might offor multuple configs/method 
 """
 from sparknlp.annotator import *
 from sparknlp.base import *
-from nlu.pipe.extractors.extractor_configs_open_source import *
+from nlu.pipe.extractors.extractor_configs_OS import *
 
 OS_anno2config = {
     NerConverter: {
@@ -36,6 +36,15 @@ OS_anno2config = {
         'default_full': default_full_config,
     },
 
+    BertForSequenceClassification : {
+        'default': default_classifier_dl_config,
+        'default_full': default_full_config,
+    },
+
+    DistilBertForSequenceClassification : {
+        'default': default_classifier_dl_config,
+        'default_full': default_full_config,
+    },
 
 
     BertForTokenClassification: {
@@ -115,6 +124,15 @@ OS_anno2config = {
         'default': default_sentence_embedding_config,
         'default_full': default_full_config,
     },
+    Doc2VecModel: {
+        'default': default_sentence_embedding_config,
+        'default_full': default_full_config,
+    },
+    Doc2VecApproach: {
+        'default': default_sentence_embedding_config,
+        'default_full': default_full_config,
+    },
+
     UniversalSentenceEncoder: {
         'default': default_sentence_embedding_config,
         'default_full': default_full_config,
