@@ -74,6 +74,9 @@ class TokenFeaturesStreamlitBlock():
                 options=list(df.columns),
                 default=list(df.columns)
             )
+        for f in features:
+            if 'entities' and 'embedding' in f :
+                features.remove(f)
         st.dataframe(df[features])
         if show_infos :
             # VizUtilsStreamlitOS.display_infos()
