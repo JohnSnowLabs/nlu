@@ -8,8 +8,8 @@ class NorvigSpellChecker:
                    .setOutputCol("checked")
 
     @staticmethod
-    def get_pretrained_model(name, language):
-        return NorvigSweetingModel.pretrained(name,language) \
+    def get_pretrained_model(name, language, bucket=None):
+        return NorvigSweetingModel.pretrained(name,language,bucket) \
             .setInputCols(["token"]) \
             .setOutputCol("checked")
 

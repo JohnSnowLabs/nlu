@@ -16,7 +16,7 @@ from nlu.pipe.viz.streamlit_viz.streamlit_viz_tracker import StreamlitVizTracker
 class WordSimilarityStreamlitBlock():
     @staticmethod
     def display_word_similarity(
-            pipe,  # nlu pipe
+            pipe,  # nlu component_list
             default_texts: Tuple[str, str] = ("Donald Trump likes to party!", "Angela Merkel likes to party!"),
             threshold: float = 0.5,
             title: Optional[str] = "Embeddings Similarity Matrix &  Visualizations  ",
@@ -65,9 +65,10 @@ class WordSimilarityStreamlitBlock():
         dist_algos = list(dist_metric_algos.keys())
         if 'haversine' in dist_algos: dist_algos.remove('haversine')  # not applicable in >2D
         if 'precomputed' in dist_algos: dist_algos.remove('precomputed')  # Not a dist
-        cols = st.beta_columns(2)
-        text1 = cols[0].text_input("Text or word1", default_texts[0], key=key+'field_1')
-        text2 = cols[1].text_input("Text or word2", default_texts[1], key=key+'field_2') if len(default_texts) > 1 else cols[
+        cols = st.columns(2)
+        text1 = cols[0].text_input("Text or word1", default_texts[0], key=key + 'field_1')
+        text2 = cols[1].text_input("Text or word2", default_texts[1], key=key + 'field_2') if len(
+            default_texts) > 1 else cols[
             1].text_input("Text or word2", 'Please enter second string', key=key)
         # exp = st.sidebar.beta_expander("Select additional Embedding Models and distance metric to compare ")
         e_coms = StreamlitUtilsOS.find_all_embed_components(pipe)
@@ -83,8 +84,7 @@ class WordSimilarityStreamlitBlock():
             loaded_embed_nlu_refs = list(set(loaded_embed_nlu_refs))
 
             for c in e_coms:
-                if not hasattr(c.info, 'nlu_ref'): continue
-                r = c.info.nlu_ref
+                r = c.nlu_ref
                 if 'en.' not in r and 'embed.' not in r and 'ner' not in r:
                     loaded_embed_nlu_refs.append('en.embed.' + r)
                 elif 'en.' in r and 'embed.' not in r and 'ner' not in r:
@@ -109,7 +109,7 @@ class WordSimilarityStreamlitBlock():
                 dist_algo_selection = st.sidebar.multiselect("Pick additional Similarity Metrics ", options=dist_algos,
                                                              default=dist_metrics, key=key)
             else:
-                exp = st.beta_expander("Pick additional Word Embeddings and Similarity Metrics")
+                exp = st.expander("Pick additional Word Embeddings and Similarity Metrics")
                 embed_algo_selection = exp.multiselect("Pick additional Word Embeddings for the Similarity Matrix",
                                                        options=emb_components_usable, default=loaded_embed_nlu_refs,
                                                        key=key)
@@ -132,14 +132,12 @@ class WordSimilarityStreamlitBlock():
             data1 = p.predict(text1, output_level='token', get_embeddings=True).dropna()
             data2 = p.predict(text2, output_level='token', get_embeddings=True).dropna()
             e_coms = StreamlitUtilsOS.find_all_embed_components(p)
-            modelhub_links = [ModelHubUtils.get_url_by_nlu_refrence(c.info.nlu_ref) if hasattr(c.info,
-                                                                                               'nlu_ref') else ModelHubUtils.get_url_by_nlu_refrence(
-                '') for c in e_coms]
+            modelhub_links = [ModelHubUtils.get_url_by_nlu_refrence(c.nlu_ref) for c in e_coms]
             e_cols = StreamlitUtilsOS.get_embed_cols(p)
             for num_emb, e_col in enumerate(e_cols):
                 if col_index == num_cols - 1: cols_full = True
                 if cols_full:
-                    cols = st.beta_columns(num_cols)
+                    cols = st.columns(num_cols)
                     col_index = 0
                     cols_full = False
                 else:
@@ -155,18 +153,15 @@ class WordSimilarityStreamlitBlock():
                 embed_mat1 = normalize_matrix(np.array([x for x in emb1]))
                 embed_mat2 = normalize_matrix(np.array([x for x in emb2]))
                 # e_name = e_col.split('word_embedding_')[-1]
-                e_name = e_coms[num_emb].info.nlu_ref if hasattr(e_coms[num_emb].info, 'nlu_ref') else \
-                e_col.split('word_embedding_')[-1] if 'en.' in e_col else e_col
+                e_name = e_coms[num_emb].nlu_ref
                 e_name = e_name.split('embed.')[-1] if 'en.' in e_name else e_name
                 if 'ner' in e_name: e_name = loaded_storage_refs[num_emb]
 
                 embed_vector_info[e_name] = {"Vector Dimension ": embed_mat1.shape[1],
                                              "Num Vectors": embed_mat1.shape[0] + embed_mat1.shape[0],
-                                             "NLU_reference": e_coms[num_emb].info.nlu_ref if hasattr(
-                                                 e_coms[num_emb].info, 'nlu_ref') else ' ',
+                                             "NLU_reference": e_coms[num_emb].nlu_ref,
                                              "Spark_NLP_reference": ModelHubUtils.NLU_ref_to_NLP_ref(
-                                                 e_coms[num_emb].info.nlu_ref if hasattr(e_coms[num_emb].info,
-                                                                                         'nlu_ref') else ' '),
+                                                 e_coms[num_emb].nlu_ref),
                                              "Storage Reference": loaded_storage_refs[num_emb],
                                              'Modelhub info': modelhub_links[num_emb]}
                 for dist_algo in dist_algo_selection:
@@ -219,10 +214,10 @@ class WordSimilarityStreamlitBlock():
                                 pass  # todo fallback plots
 
         if display_similarity_summary:
-            exp = st.beta_expander("Similarity summary")
+            exp = st.expander("Similarity summary")
             exp.write(similarity_metrics)
         if display_embed_information:
-            exp = st.beta_expander("Embedding vector information")
+            exp = st.expander("Embedding vector information")
             exp.write(embed_vector_info)
         if show_infos:
             # VizUtilsStreamlitOS.display_infos()

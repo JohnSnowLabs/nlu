@@ -9,8 +9,8 @@ class TextMatcher:
 
 
     @staticmethod
-    def get_pretrained_model(name, language):
-        return sparknlp.annotator.TextMatcherModel.pretrained(name,language) \
+    def get_pretrained_model(name, language, bucket=None):
+        return sparknlp.annotator.TextMatcherModel.pretrained(name,language,bucket) \
             .setInputCols("sentence","token") \
             .setOutputCol("matched_entity") \
 

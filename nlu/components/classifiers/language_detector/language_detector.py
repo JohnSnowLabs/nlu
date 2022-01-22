@@ -8,13 +8,7 @@ class LanguageDetector:
         .setOutputCol("language")
 
     @staticmethod
-    def get_pretrained_model(name, language):
-        return LanguageDetectorDL.pretrained(name,language) \
+    def get_pretrained_model(name, language, bucket=None):
+        return LanguageDetectorDL.pretrained(name,language,bucket) \
             .setInputCols("document") \
             .setOutputCol("language")
-
-
-    @staticmethod
-    def get_default_trainable_model():
-        print ("TRAINING LANGUAGE DETECTORS NOT SUPPORTED")
-        return -1  # todo throw rexception

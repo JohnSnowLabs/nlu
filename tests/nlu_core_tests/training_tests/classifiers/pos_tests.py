@@ -9,7 +9,7 @@ class posTrainingTests(unittest.TestCase):
 
     def test_pos_training(self):
         # Just put in one of the many special 'trainable' references, to load
-        # trainable components into the pipe
+        # trainable components into the component_list
         # nlu.load('pos classifier_dl bert') will only give trainable classifier dl
         #
 
@@ -28,9 +28,9 @@ class posTrainingTests(unittest.TestCase):
         for c in df.columns : print (df[c])
         p = 'saved_test_models/pos_training'
         pipe.save(p)
-        # pipe = nlu.load(path=p)
-        # df = pipe.predict('Test 123 ')
-        # for c in df.columns : print (df[c])
+        # component_list = nlu.load(path=p)
+        # df = component_list.predict('Test 123 ')
+        # for os_components in df.columns : print (df[os_components])
 
     def load_pos_train_dataset_and_get_path(self):
         output_file_name = 'ud_french.txt'

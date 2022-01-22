@@ -1,4 +1,4 @@
-from sparknlp.annotator import *
+from sparknlp.annotator import BertSentenceEmbeddings
 
 
 class BertSentence:

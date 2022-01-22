@@ -8,7 +8,7 @@ class NLUStopWordcleaner:
             .setOutputCol("stopword_less")
 
     @staticmethod
-    def get_pretrained_model(name, language):
+    def get_pretrained_model(name, language, bucket=None):
         return StopWordsCleaner.pretrained(name, language) \
             .setInputCols(["token"]) \
             .setOutputCol("stopword_less")

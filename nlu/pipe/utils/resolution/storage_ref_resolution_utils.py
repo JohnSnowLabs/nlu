@@ -1,6 +1,7 @@
 import logging
 from nlu.pipe.utils.resolution.nlu_ref_utils import *
-from nlu import Spellbook
+from nlu.spellbook import Spellbook
+from nlu.universe.feature_universes import NLP_FEATURES
 
 logger = logging.getLogger('nlu')
 
@@ -68,12 +69,12 @@ def resolve_storage_ref(lang, storage_ref, missing_component_type):
         # todo enfore storage ref when trainin
         logger.info(f"COULD NOT RESOLVE STORAGE_REF={storage_ref}")
         if storage_ref == '':
-            if missing_component_type == 'sentence_embeddings':
+            if missing_component_type == NLP_FEATURES.SENTENCE_EMBEDDINGS:
                 logger.info("Using default storage_ref USE, assuming training mode")
                 storage_ref = 'en.embed_sentence.use'  # this enables default USE embeds for traianble components
                 nlp_ref = 'tfhub_use'
                 nlu_ref = storage_ref
-            elif missing_component_type == 'word_embeddings':
+            elif missing_component_type == NLP_FEATURES.WORD_EMBEDDINGS:
                 logger.info("Using default storage_ref GLOVE, assuming training mode")
                 storage_ref = 'en.glove'  # this enables default USE embeds for traianble components
                 nlp_ref = 'glove_100d'
@@ -82,9 +83,9 @@ def resolve_storage_ref(lang, storage_ref, missing_component_type):
         else:
             nlp_ref = storage_ref
             nlu_ref = storage_ref
-        # raise  ValueError
 
-    if nlu_ref is not None: is_licensed = check_if_nlu_ref_is_licensed(nlu_ref)
+    if nlu_ref is not None:
+        is_licensed = check_if_nlu_ref_is_licensed(nlu_ref)
 
     logger.info(f'Resolved storageref = {storage_ref} to NLU_ref = {nlu_ref} and NLP_ref = {nlp_ref}')
     return nlu_ref, nlp_ref, is_licensed, lang
@@ -92,5 +93,5 @@ def resolve_storage_ref(lang, storage_ref, missing_component_type):
 
 def set_storage_ref_and_resolution_on_component_info(c, storage_ref):
     """Sets a storage ref on a components component info and returns the component """
-    c.info.storage_ref = storage_ref
+    c.storage_ref = storage_ref
     return c

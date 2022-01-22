@@ -1,4 +1,4 @@
-from sparknlp.annotator import *
+from sparknlp.annotator import DistilBertForSequenceClassification
 class SeqDilstilBertClassifier:
     @staticmethod
     def get_default_model():

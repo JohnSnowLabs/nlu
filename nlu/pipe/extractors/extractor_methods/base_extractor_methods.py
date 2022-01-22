@@ -13,26 +13,26 @@ from nlu.pipe.extractors.extractor_base_data_classes import *
 from functools import reduce, partial
 import pandas as pd
 
-from  sparknlp.annotation import Annotation
+from sparknlp.annotation import Annotation
+
 
 def extract_light_pipe_rows(df):
     """Extract Annotations from Light Pipeline into same represenation as other extractors in thos module"""
-    ff = lambda row : list(map(f,row)) if isinstance( row, List) else row
-    f = lambda anno : dict ( annotatorType = anno.annotator_type,
-                            begin=anno.begin, end=anno.end,
-                            result = anno.result,
-                            metadata=anno.metadata,
-                            embeddings = anno.embeddings if  isinstance(anno,List) else []) \
-                     if isinstance(anno, Annotation) else anno
+    ff = lambda row: list(map(f, row)) if isinstance(row, List) else row
+    f = lambda anno: dict(annotatorType=anno.annotator_type,
+                          begin=anno.begin, end=anno.end,
+                          result=anno.result,
+                          metadata=anno.metadata,
+                          embeddings=anno.embeddings if isinstance(anno, List) else []) \
+        if isinstance(anno, Annotation) else anno
     return df.applymap(ff)
 
 
 def extract_pyspark_rows(r: pd.Series, ) -> pd.Series:
-    """ Convert pyspark.sql.Row[Annotation] to List(Dict[str,str]) objects. Except for key=metadata in dict, this element in the Dict which is [str,Dict[str,str]]
-
-    Checks if elements are of type list and wether they contain Pyspark Rows.
-     If PysparkRow, call .asDict() on every row element to generate the dicts
-    First method that runs after toPandas() call
+    """ Convert pyspark.sql.Row[Annotation] to List(Dict[str,str]) objects. Except for key=metadata in dict,
+    this element in the Dict which is [str,Dict[str,str]] Checks if elements are of type list and whether they contain
+    Pyspark Rows. If PysparkRow, call .asDict() on every row element to generate the dicts First method that runs
+    after toPandas() call
     """
     if isinstance(r, str):
         return r
@@ -46,9 +46,9 @@ def extract_pyspark_rows(r: pd.Series, ) -> pd.Series:
 
 
 def extract_pyarrow_rows(r: pd.Series, ) -> pd.Series:
-    """ Convert pyspark.sql.Row[Annotation] to List(Dict[str,str]) objects. Except for key=metadata in dict, this element in the Dict which is [str,Dict[str,str]]
-
-    Checks if elements are of type list and wether they contain Pyspark Rows.
+    """ Convert pyspark.sql.Row[Annotation] to List(Dict[str,str]) objects. Except for key=metadata in dict,
+    this element in the Dict which is [str,Dict[str,str]]
+    Checks if elements are of type list and whether they contain Pyspark Rows.
      If PysparkRow, call .asDict() on every row element to generate the dicts
     First method that runs after toPandas() call
     """
@@ -62,6 +62,66 @@ def extract_pyarrow_rows(r: pd.Series, ) -> pd.Series:
             return r
     return r
 
+def extract_base_sparkocr_features(row: pd.Series, configs: SparkOCRExtractorConfig) -> dict:
+    ###### OCR EXTRACTOR
+    # for now only text recognizer outputs fetched
+    if configs.name == 'default text recognizer config':
+        if configs.get_text:
+            return {'text': row}
+
+
+
+    else:
+        # # OCR unpackers (TODO WIP)
+        # unpack_text = lambda x: unpack_dict_list(x, 'text')
+        # # unpack_image = lambda x : unpack_dict_list(x, 'TODO') # is data?
+        # unpack_image_origin = lambda x: unpack_dict_list(x, 'origin')
+        # unpack_image_height = lambda x: unpack_dict_list(x, 'height')
+        # unpack_image_width = lambda x: unpack_dict_list(x, 'width')
+        # unpack_image_n_channels = lambda x: unpack_dict_list(x, 'nChannels')
+        # unpack_image_mode = lambda x: unpack_dict_list(x, 'mode')
+        # unpack_image_resolution = lambda x: unpack_dict_list(x, 'resolution')
+        # unpack_image_data = lambda x: unpack_dict_list(x, 'data')
+        # # unpack_path = lambda x : unpack_dict_list(x, 'TODO')
+        # unpack_modification_time = lambda x: unpack_dict_list(x, 'TODO')
+        # unpack_length = lambda x: unpack_dict_list(x, 'TODO')
+        # unpack_page_num = lambda x: unpack_dict_list(x, 'TODO')
+        # unpack_confidence = lambda x: unpack_dict_list(x, 'TODO')
+        # unpack_exception = lambda x: unpack_dict_list(x, 'TODO')
+        # unpack_img_positions = lambda x: unpack_dict_list(x, 'TODO')
+        # if configs.get_image:
+        #     pass
+        # if configs.get_image_origin:
+        #     pass
+        # if configs.get_image_height:
+        #     pass
+        # if configs.get_image_width:
+        #     pass
+        # if configs.get_image_n_channels:
+        #     pass
+        # if configs.get_image_mode:
+        #     pass
+        # if configs.get_image_resolution:
+        #     pass
+        # if configs.get_image_data:
+        #     pass
+        # if configs.get_path:
+        #     pass
+        # if configs.get_modification_time:
+        #     pass
+        # if configs.get_length:
+        #     pass
+        # if configs.get_page_num:
+        #     pass
+        # if configs.get_confidence:
+        #     pass
+        # if configs.get_exception:
+        #     pass
+        # if configs.get_img_positions:
+        #     pass
+        # return {**beginnings, **endings, **results, **annotator_types, **embeddings}  # Merge dicts OCR output
+
+        return {}
 
 def extract_base_sparknlp_features(row: pd.Series, configs: SparkNLPExtractorConfig) -> dict:
     """
@@ -94,12 +154,16 @@ def extract_base_sparknlp_features(row: pd.Series, configs: SparkNLPExtractorCon
 
     returns a DICT
     """
+
+
+
     unpack_dict_list = lambda d, k: d[k]
     unpack_begin = lambda x: unpack_dict_list(x, 'begin')
     unpack_end = lambda x: unpack_dict_list(x, 'end')
     unpack_annotator_type = lambda x: unpack_dict_list(x, 'annotatorType')
     unpack_result = lambda x: unpack_dict_list(x, 'result')
     unpack_embeddings = lambda x: unpack_dict_list(x, 'embeddings')
+
     # Either extract list of anno results and put them in a dict with corrosponding key name or return empty dict {} for easy merge in return
     annotator_types = {configs.output_col_prefix + '_types': list(
         map(unpack_annotator_type, row))} if configs.get_annotator_type else {}
@@ -129,7 +193,7 @@ def extract_base_sparknlp_features(row: pd.Series, configs: SparkNLPExtractorCon
         embeddings = {
             configs.output_col_prefix + '_embeddings': list(map(unpack_embeddings, row))} if configs.get_embeds else {}
 
-    return {**beginnings, **endings, **results, **annotator_types, **embeddings}  # Merge dicts
+    return {**beginnings, **endings, **results, **annotator_types, **embeddings}  # Merge dicts NLP output
 
 
 def extract_sparknlp_metadata(row: pd.Series, configs: SparkNLPExtractorConfig) -> dict:
@@ -183,8 +247,11 @@ def extract_master(row: pd.Series, configs: SparkNLPExtractorConfig) -> pd.Serie
     row = a list or Spark-NLP annotations as dictionary
     """
     if len(row) == 0: return pd.Series({})
-    # Get base annotations
-    base_annos = extract_base_sparknlp_features(row, configs)
+    # Get base annotations # TODO type check configs and make custum OCR extractor
+    if isinstance(configs, SparkOCRExtractorConfig):
+        base_annos = extract_base_sparkocr_features(row, configs)
+    else:
+        base_annos = extract_base_sparknlp_features(row, configs)
     # Get Metadata
     all_metas = extract_sparknlp_metadata(row, configs) if configs.get_meta or configs.get_full_meta else {}
 
@@ -232,7 +299,7 @@ def apply_extractors_and_merge(df, anno_2_ex_config, keep_stranger_features, str
 #
 # def store_idx_and_explode(df):
 #     # index rest and re-merging for concat
-#     df = df.explode(next(filter(lambda c : 'origin' not in c, list(df.columns))))
+#     df = df.explode(next(filter(lambda os_components : 'origin' not in os_components, list(df.columns))))
 #     df.index.name = "old_idx"
 #     df["num"] = range(0, len(df.index))
 #     df = df.set_index("num", append=True)
@@ -259,7 +326,7 @@ def zip_and_explode(df: pd.DataFrame, origin_cols_to_explode, origin_cols_not_to
     # Some queries will result in index duplication
     same_level_cols_filter = lambda c: any(og_c == c for og_c in origin_cols_to_explode)
     cols_to_explode = list(filter(same_level_cols_filter, df.columns))
-    # not_same_level_cols_filter  = lambda c : any( og_c in c  for og_c in origin_cols_not_to_explode)
+    # not_same_level_cols_filter  = lambda os_components : any( og_c in os_components  for og_c in origin_cols_not_to_explode)
     # not_same_level_cols         = list(filter(not_same_level_cols_filter,df.columns))
 
     # if NUM component at same output level >1 and outputlevel is CHUNK we need the following padding logick
@@ -294,7 +361,6 @@ def zip_and_explode(df: pd.DataFrame, origin_cols_to_explode, origin_cols_not_to
         exploded_df_list = list(map(pd.DataFrame, exploded_series_list))
         # merge results into final pd.DataFrame
         merged_explosions = pd.concat([df.drop(cols_to_explode, axis=1)] + exploded_df_list, axis=1)
-
     return merged_explosions
 
 

@@ -9,8 +9,8 @@ class NERDLCRF:
             .setOutputCol("ner")
 
     @staticmethod
-    def get_pretrained_model(name, language):
-        return NerCrfModel.pretrained(name,language) \
+    def get_pretrained_model(name, language, bucket=None):
+        return NerCrfModel.pretrained(name,language,bucket) \
             .setInputCols(["sentence", "token", "pos", "word_embeddings"]) \
             .setOutputCol("ner")
 

@@ -8,7 +8,7 @@ class Longformer:
         .setOutputCol("longformer")
 
     @staticmethod
-    def get_pretrained_model(name, language):
+    def get_pretrained_model(name, language, bucket=None):
         return LongformerEmbeddings.pretrained(name, language) \
             .setInputCols("sentence", "token") \
             .setOutputCol("longformer")

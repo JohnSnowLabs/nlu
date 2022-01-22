@@ -1,7 +1,7 @@
 import unittest
-import tests.nlu_hc_tests.secrets as sct
+import tests.secrets as sct
 import nlu
-import nlu.pipe.pipe_components
+import nlu.pipe.pipe_component
 from sparknlp.annotator import *
 from sparknlp_jsl.annotator import ContextualParserApproach,ContextualParserModel
 from typing import *

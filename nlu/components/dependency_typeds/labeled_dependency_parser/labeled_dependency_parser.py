@@ -9,8 +9,8 @@ class LabeledDependencyParser:
             .setOutputCol("labled_dependency")
 
     @staticmethod
-    def get_pretrained_model(name, language):
-        return TypedDependencyParserModel.pretrained(name,language) \
+    def get_pretrained_model(name, language, bucket=None):
+        return TypedDependencyParserModel.pretrained(name,language,bucket) \
             .setInputCols(["token", "pos", "unlabeled_dependency"]) \
             .setOutputCol("labled_dependency")
 

@@ -8,8 +8,8 @@ class MultiClassifier:
             .setOutputCol("category")
 
     @staticmethod
-    def get_pretrained_model(name, language):
-        return MultiClassifierDLModel.pretrained(name,language) \
+    def get_pretrained_model(name, language, bucket=None):
+        return MultiClassifierDLModel.pretrained(name,language,bucket) \
             .setInputCols("sentence_embeddings") \
             .setOutputCol("multi_category")
     

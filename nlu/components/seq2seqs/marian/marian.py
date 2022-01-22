@@ -1,4 +1,4 @@
-from sparknlp.annotator import *
+from sparknlp.annotator import MarianTransformer
 
 class Marian:
 
@@ -9,7 +9,7 @@ class Marian:
             .setOutputCol("marian")
 
     @staticmethod
-    def get_pretrained_model(name, language):
+    def get_pretrained_model(name, language, bucket=None):
         return MarianTransformer.pretrained(name, language) \
             .setInputCols("document") \
             .setOutputCol("marian")

@@ -12,7 +12,7 @@ class MultiClassifierDlTests(unittest.TestCase):
 
     def test_multi_classifier_dl_training(self):
         # Too much RAM usage in CI
-        return
+        # return
         # The y column must be a string seperated with ```,``` . Custom seperators can be configured by passing
         test_df = self.load_multi_classifier_dl_dataset()
         # test_df.columns = ['y_str','text']
@@ -28,12 +28,12 @@ class MultiClassifierDlTests(unittest.TestCase):
 
         # test_df.drop('y_str',inplace=True,axis=1)
         train_df = test_df
-
-        pipe = nlu.load('embed_sentence.bert train.multi_classifier',verbose=True,)
+        # embed_sentence.bert
+        pipe = nlu.load('train.multi_classifier',verbose=True,)
 #: java.lang.IllegalArgumentException: requirement failed: The label column MultiClassifierDLApproach_cbfe97978b3c__labelColumn type is StringType and it's not compatible. Compatible types are ArrayType(StringType).
 
-        # pipe['multi_classifier_dl'].setMaxEpochs(2)
-        # pipe.print_info()
+        # component_list['multi_classifier_dl'].setMaxEpochs(2)
+        # component_list.print_info()
         pipe = pipe.fit(train_df)
         df = pipe.predict(train_df)
         print(df.columns)
@@ -66,17 +66,17 @@ class MultiClassifierDlTests(unittest.TestCase):
     #     # test_df.drop('y_str',inplace=True,axis=1)
     #     train_df = test_df
     #
-    #     pipe = nlu.load('embed_sentence.bert    train.multi_classifier',verbose=True,)
+    #     component_list = nlu.load('embed_sentence.bert    train.multi_classifier',verbose=True,)
     #     #: java.lang.IllegalArgumentException: requirement failed: The label column MultiClassifierDLApproach_cbfe97978b3c__labelColumn type is StringType and it's not compatible. Compatible types are ArrayType(StringType).
     #
-    #     # pipe['multi_classifier_dl'].setMaxEpochs(2)
-    #     pipe.print_info()
-    #     pipe = pipe.fit(train_df)
-    #     df = pipe.predict(train_df)
+    #     # component_list['multi_classifier_dl'].setMaxEpochs(2)
+    #     component_list.print_info()
+    #     component_list = component_list.fit(train_df)
+    #     df = component_list.predict(train_df)
     #     print(df.columns)
     #     print(df[['multi_classifier','y']])
     #     print(df[['multi_classifier_confidence','y']])
-    #     df = pipe.predict(test_df)
+    #     df = component_list.predict(test_df)
     #     print(df.columns)
     #     print(df[['multi_classifier','y']])
     #     print(df[['multi_classifier_confidence','y']])
@@ -89,13 +89,13 @@ class MultiClassifierDlTests(unittest.TestCase):
     #     train_df = test_df
     #     train_df.columns = ['y','text']
     #     test_df.columns = ['y','text']
-    #     pipe = nlu.load('embed_sentence.bert train.multi_classifier',verbose=True,)
-    #     pipe['multi_classifier_dl'].setMaxEpochs(2)
-    #     pipe = pipe.fit(train_df)
-    #     df = pipe.predict(train_df, output_level='sentence')
+    #     component_list = nlu.load('embed_sentence.bert train.multi_classifier',verbose=True,)
+    #     component_list['multi_classifier_dl'].setMaxEpochs(2)
+    #     component_list = component_list.fit(train_df)
+    #     df = component_list.predict(train_df, output_level='sentence')
     #     print(df.columns)
     #     print(df[['category','y']])
-    #     df = pipe.predict(test_df, output_level='sentence')
+    #     df = component_list.predict(test_df, output_level='sentence')
     #     print(df.columns)
     #     print(df[['category','y']])
     #     # Eval results
@@ -109,13 +109,13 @@ class MultiClassifierDlTests(unittest.TestCase):
     #     train_df = test_df
     #     train_df.columns = ['y','text']
     #     test_df.columns = ['y','text']
-    #     pipe = nlu.load('embed_sentence.bert train.multi_classifier',verbose=True,)
-    #     pipe['multi_classifier_dl'].setMaxEpochs(2)
-    #     pipe = pipe.fit(train_df)
-    #     df = pipe.predict(train_df)
+    #     component_list = nlu.load('embed_sentence.bert train.multi_classifier',verbose=True,)
+    #     component_list['multi_classifier_dl'].setMaxEpochs(2)
+    #     component_list = component_list.fit(train_df)
+    #     df = component_list.predict(train_df)
     #     print(df.columns)
     #     print(df[['category','y']])
-    #     df = pipe.predict(test_df)
+    #     df = component_list.predict(test_df)
     #     print(df.columns)
     #     print(df[['category','y']])
     #     # Eval results

@@ -10,7 +10,7 @@ class DepTreeStreamlitBlock():
 
     @staticmethod
     def visualize_dep_tree(
-            pipe,  # nlu pipe
+            pipe,  # nlu component_list
             text: str = 'Billy likes to swim',
             title: Optional[str] = "Dependency Parse & Part-of-speech tags",
             sub_title: Optional[

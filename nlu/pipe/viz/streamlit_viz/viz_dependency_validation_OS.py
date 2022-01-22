@@ -1,7 +1,7 @@
 from sparknlp.annotator import *
 
 class ValidateVizPipe():
-    """Verify for various visualizatins of dependenciesa re satisfied by pipe """
+    """Verify for various visualizatins of dependenciesa re satisfied by component_list """
 
     @staticmethod
     def viz_tree_satisfied(pipe):

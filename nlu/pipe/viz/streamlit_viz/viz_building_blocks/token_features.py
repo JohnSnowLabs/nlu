@@ -10,7 +10,7 @@ from nlu.pipe.viz.streamlit_viz.streamlit_viz_tracker import StreamlitVizTracker
 class TokenFeaturesStreamlitBlock():
     @staticmethod
     def visualize_tokens_information(
-            pipe, # nlu pipe
+            pipe, # nlu component_list
             text:str,
             title: Optional[str] = "Token Features",
             sub_title: Optional[str] ='Pick from `over 1000+ models` on the left and `view the generated features`',
@@ -33,13 +33,13 @@ class TokenFeaturesStreamlitBlock():
         if show_logo :StreamlitVizTracker.show_logo()
         if set_wide_layout_CSS : _set_block_container_style()
         if title:st.header(title)
-        # if generate_code_sample: st.code(get_code_for_viz('TOKEN',StreamlitUtilsOS.extract_name(pipe),text))
+        # if generate_code_sample: st.code(get_code_for_viz('TOKEN',StreamlitUtilsOS.extract_name(component_list),text))
         if sub_title:st.subheader(sub_title)
         token_pipes = [pipe]
         if show_text_input : text = st.text_area("Enter text you want to view token features for", text, key=key)
         if show_model_select :
             token_pipes_components_usable = [e for e in Discoverer.get_components(get_all=True)]
-            loaded_nlu_refs = [c.info.nlu_ref for c in pipe.components]
+            loaded_nlu_refs = [c.nlu_ref for c in pipe.components]
 
             for l in loaded_nlu_refs:
                 if 'converter' in l :
@@ -68,12 +68,15 @@ class TokenFeaturesStreamlitBlock():
         df = pd.concat(dfs,axis=1)
         df = df.loc[:,~df.columns.duplicated()]
         if show_feature_select :
-            exp = st.beta_expander("Select token features to display")
+            exp = st.expander("Select token features to display")
             features = exp.multiselect(
                 "Token features",
                 options=list(df.columns),
                 default=list(df.columns)
             )
+        for f in features:
+            if 'entities' and 'embedding' in f :
+                features.remove(f)
         st.dataframe(df[features])
         if show_infos :
             # VizUtilsStreamlitOS.display_infos()

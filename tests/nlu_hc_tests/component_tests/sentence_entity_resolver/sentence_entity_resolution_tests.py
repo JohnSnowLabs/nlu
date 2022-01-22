@@ -1,11 +1,11 @@
 import unittest
 import pandas as pd
 import nlu
-import tests.nlu_hc_tests.secrets as sct
+import tests.secrets as sct
 from sparknlp.annotator import BertSentenceEmbeddings
 from tests.test_utils import *
 
-class AssertionTests(unittest.TestCase):
+class SentenceResolutionTests(unittest.TestCase):
     def test_assertion_dl_model(self):
 
 
@@ -22,9 +22,8 @@ class AssertionTests(unittest.TestCase):
         s3='COVID 21 has been diagnosed on the patient'
         data = [s1,s2,s3]
         # en.resolve_sentence.icd10cm
-        #TODO Not correct
-        resolver_ref = 'en.resolve_sentence.icd10cm.augmented_billable'
-        res = nlu.load(f'en.ner.diseases {resolver_ref}', verbose=True).predict(data, drop_irrelevant_cols=False, metadata=True)
+        resolver_ref = 'en.resolve.icd10cm.augmented_billable'
+        res = nlu.load(f'en.med_ner.diseases {resolver_ref}', verbose=True).predict(data, drop_irrelevant_cols=False, metadata=True)
 
         # res = nlu.load('en.ner.anatomy', verbose=True).predict(['The patient has cancer and a tumor and high fever and will die next week. He has pain in his left food and right upper brain', ' She had a seizure.'], drop_irrelevant_cols=False, metadata=True)
         print(res.columns)
@@ -36,6 +35,6 @@ class AssertionTests(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    AssertionTests().test_entities_config()
+    SentenceResolutionTests().test_entities_config()
 
 

@@ -142,7 +142,7 @@ def substitute_assertion_cols(c, cols, nlu_identifier=True):
     Assert should always be unique
     """
     new_cols = {}
-    # c_name   = extract_nlu_identifier(c)
+    # c_name   = extract_nlu_identifier(os_components)
     new_base_name = f'assertion'# if is_unique else f'sentence_resolution_{c_name}'
     for col in cols :
         if '_results'      in col     :  new_cols[col] = f'{new_base_name}' # resolved code

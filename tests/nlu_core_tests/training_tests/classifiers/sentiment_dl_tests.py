@@ -84,16 +84,15 @@ class SentimentTrainingTests(unittest.TestCase):
 
         pipe = nlu.load('en.embed_sentence.small_bert_L12_768 train.sentiment',verbose=True, )
         pipe.print_info()
-        pipe['sentiment_dl'].setMaxEpochs(1)
         pipe = pipe.fit(df_train)
         # df = fitted_pipe.predict(' I love NLU!')
 
         df = pipe.predict(df_train.iloc[0:50],output_level='sentence')
         # s_path = 'saved_models/training_custom_embeds'
-        # pipe.save(s_path)
+        # component_list.save(s_path)
         # hdd_pipe = nlu.load(path=s_path)
         # print(hdd_pipe.predict("test 123 "))
-        # for c in df.columns : print (df[c])
+        # for os_components in df.columns : print (df[os_components])
 
         # print(df.columns)
         # print(df)

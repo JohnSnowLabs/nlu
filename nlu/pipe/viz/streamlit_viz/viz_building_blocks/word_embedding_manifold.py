@@ -10,7 +10,7 @@ from nlu.pipe.viz.streamlit_viz.streamlit_viz_tracker import StreamlitVizTracker
 class WordEmbeddingManifoldStreamlitBlock():
     @staticmethod
     def viz_streamlit_word_embed_manifold(
-            pipe, # nlu pipe
+            pipe, # nlu component_list
             default_texts: List[str] = ("Donald Trump likes to party!", "Angela Merkel likes to party!", 'Peter HATES TO PARTTY!!!! :('),
             title: Optional[str] = "Lower dimensional Manifold visualization for word embeddings",
             sub_title: Optional[str] = "Apply any of the 11 `Manifold` or `Matrix Decomposition` algorithms to reduce the dimensionality of `Word Embeddings` to `1-D`, `2-D` and `3-D` ",
@@ -61,7 +61,7 @@ class WordEmbeddingManifoldStreamlitBlock():
         e_coms = StreamlitUtilsOS.find_all_embed_components(pipe)
 
         if show_algo_select :
-            exp = st.beta_expander("Select additional manifold and dimension reduction techniques to apply")
+            exp = st.expander("Select additional manifold and dimension reduction techniques to apply")
 
             algos = exp.multiselect(
                 "Reduce embedding dimensionality to something visualizable",
@@ -72,8 +72,7 @@ class WordEmbeddingManifoldStreamlitBlock():
             loaded_classifier_nlu_refs = []
             loaded_storage_refs = []
             for c in e_coms :
-                if not  hasattr(c.info,'nlu_ref'): continue
-                r = c.info.nlu_ref
+                r = c.nlu_ref
                 if 'en.' not in r and 'embed.' not  in r and 'ner' not in r : loaded_embed_nlu_refs.append('en.embed.' + r)
                 elif 'en.'  in r and 'embed.' not  in r  and 'ner' not in r:
                     r = r.split('en.')[0]
@@ -96,7 +95,7 @@ class WordEmbeddingManifoldStreamlitBlock():
                 embed_algo_selection   = st.sidebar.multiselect("Pick additional Word Embeddings for the Dimension Reduction",options=emb_components_usable,default=loaded_embed_nlu_refs,key = key)
                 embed_algo_selection=[embed_algo_selection[-1]]
             else :
-                exp = st.beta_expander("Pick additional Word Embeddings")
+                exp = st.expander("Pick additional Word Embeddings")
                 embed_algo_selection   = exp.multiselect("Pick additional Word Embeddings for the Dimension Reduction",options=emb_components_usable,default=loaded_embed_nlu_refs,key = key)
                 embed_algo_selection=[embed_algo_selection[-1]]
             embed_algos_to_load = list(set(embed_algo_selection) - set(loaded_embed_nlu_refs))
@@ -117,11 +116,11 @@ class WordEmbeddingManifoldStreamlitBlock():
                     StreamlitVizTracker.loaded_document_classifier_pipes.append(nlu.load(nlu_ref))
 
         col_index = 0
-        cols = st.beta_columns(num_cols)
+        cols = st.columns(num_cols)
         def are_cols_full(): return col_index == num_cols
         token_feature_pipe = StreamlitUtilsOS.get_pipe('pos')
         #not all pipes have sentiment/pos etc.. models for hueing loaded....
-        ## Lets FIRST predict with the classifiers/Token level feature generators and THEN apply embed pipe
+        ## Lets FIRST predict with the classifiers/Token level feature generators and THEN apply embed component_list
 
 
         data = original_text.copy()
@@ -148,7 +147,7 @@ class WordEmbeddingManifoldStreamlitBlock():
             predictions =   p.predict(data,output_level='token',multithread=False).dropna()
             e_col = StreamlitUtilsOS.find_embed_col(predictions)
             e_com = StreamlitUtilsOS.find_embed_component(p)
-            e_com_storage_ref = StorageRefUtils.extract_storage_ref(e_com, True)
+            e_com_storage_ref = StorageRefUtils.extract_storage_ref(e_com)
             emb = predictions[e_col]
             mat = np.array([x for x in emb])
             for algo in algos :
@@ -168,7 +167,7 @@ class WordEmbeddingManifoldStreamlitBlock():
                     cols[col_index].write(fig,key=key)
                     col_index+=1
                     if are_cols_full() :
-                        cols = st.beta_columns(num_cols)
+                        cols = st.columns(num_cols)
                         col_index = 0
                 if 2 in target_dimensions:
                     low_dim_data = StreamlitUtilsOS.get_manifold_algo(algo,2,n_jobs).fit_transform(mat)
@@ -183,7 +182,7 @@ class WordEmbeddingManifoldStreamlitBlock():
                     # st.write(fig)
                     col_index+=1
                     if are_cols_full() :
-                        cols = st.beta_columns(num_cols)
+                        cols = st.columns(num_cols)
                         col_index = 0
                 if 3 in target_dimensions:
                     low_dim_data = StreamlitUtilsOS.get_manifold_algo(algo,3,n_jobs).fit_transform(mat)
@@ -200,13 +199,13 @@ class WordEmbeddingManifoldStreamlitBlock():
                     # st.write(fig)
                     col_index+=1
                     if are_cols_full() :
-                        cols = st.beta_columns(num_cols)
+                        cols = st.columns(num_cols)
                         col_index = 0
             # Todo fancy embed infos etc
             # if display_embed_information: display_embed_vetor_information(e_com,mat)
 
         # if display_embed_information:
-        #     exp = st.beta_expander("Embedding vector information")
+        #     exp = st.expander("Embedding vector information")
         #     exp.write(embed_vector_info)
         if show_infos :
             # VizUtilsStreamlitOS.display_infos()

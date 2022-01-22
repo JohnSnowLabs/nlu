@@ -9,9 +9,10 @@ import pandas as pd
 from pyspark.sql.types import StringType, StructType, StructField
 
 
-class DataConversionUtils():
+class DataConversionUtils:
     # Modin aswell but optional, so we dont import the type yet
     supported_types = [pyspark.sql.DataFrame, pd.DataFrame, pd.Series, np.ndarray]
+
     @staticmethod
     def except_text_col_not_found(cols):
         print(
@@ -164,52 +165,54 @@ class DataConversionUtils():
         except:
             ValueError("Data could not be converted to Spark Dataframe for internal conversion.")
 
-
-
     @staticmethod
-    def str_to_pdf(data,raw_text_column):
+    def str_to_pdf(data, raw_text_column):
         logger.info(f"Casting String to Pandas DF")
-        return pd.DataFrame({raw_text_column:[data]}).reset_index().rename(columns = {'index' : 'origin_index'} ), [], 'string'
+        return pd.DataFrame({raw_text_column: [data]}).reset_index().rename(
+            columns={'index': 'origin_index'}), [], 'string'
 
     @staticmethod
-    def str_list_to_pdf(data,raw_text_column):
+    def str_list_to_pdf(data, raw_text_column):
         logger.info(f"Casting String List to Pandas DF")
-        return pd.DataFrame({raw_text_column:data}).reset_index().rename(columns = {'index' : 'origin_index'} ), [], 'string_list'
+        return pd.DataFrame({raw_text_column: data}).reset_index().rename(
+            columns={'index': 'origin_index'}), [], 'string_list'
 
     @staticmethod
-    def np_to_pdf(data,raw_text_column):
+    def np_to_pdf(data, raw_text_column):
         logger.info(f"Casting Numpy Array to Pandas DF")
-        return pd.DataFrame({raw_text_column:data}).reset_index().rename(columns = {'index' : 'origin_index'} ), [], 'string_list'
-    @staticmethod
-    def pds_to_pdf(data,raw_text_column):
-        return pd.DataFrame({raw_text_column:data}).reset_index().rename(columns = {'index' : 'origin_index'} ), [], 'string_list'
-
+        return pd.DataFrame({raw_text_column: data}).reset_index().rename(
+            columns={'index': 'origin_index'}), [], 'string_list'
 
     @staticmethod
-    def pdf_to_pdf(data,raw_text_column):
+    def pds_to_pdf(data, raw_text_column):
+        return pd.DataFrame({raw_text_column: data}).reset_index().rename(
+            columns={'index': 'origin_index'}), [], 'string_list'
+
+    @staticmethod
+    def pdf_to_pdf(data, raw_text_column):
         logger.info(f"Casting Pandas DF to Pandas DF")
-        data = data.reset_index().rename(columns = {'index' : 'origin_index'} )
+        data = data.reset_index().rename(columns={'index': 'origin_index'})
         stranger_features = list(data.columns)
         if raw_text_column not in stranger_features:
             print(f"Could not find {raw_text_column} col in df. Using {stranger_features[0]} col istead")
-            data = data.reset_index().rename(columns = {stranger_features[0] : raw_text_column} )
+            data = data.reset_index().rename(columns={stranger_features[0]: raw_text_column})
         stranger_features.remove('text')
         stranger_features.remove('origin_index')
 
-        return data , stranger_features, 'pandas'
+        return data, stranger_features, 'pandas'
 
     @staticmethod
-    def sdf_to_pdf(data,raw_text_column):
+    def sdf_to_pdf(data, raw_text_column):
         logger.info(f"Casting Spark DF to Pandas DF")
-        data = data.toPandas().reset_index().rename(columns = {'index' : 'origin_index'} )
+        data = data.toPandas().reset_index().rename(columns={'index': 'origin_index'})
         stranger_features = list(data.columns)
         if raw_text_column not in stranger_features:
             print(f"Could not find {raw_text_column} col in df. Using {stranger_features[0]} col istead")
-            data = data.reset_index().rename(columns = {stranger_features[0] : raw_text_column} )
+            data = data.reset_index().rename(columns={stranger_features[0]: raw_text_column})
         stranger_features.remove('text')
         stranger_features.remove('origin_index')
 
-        return data , stranger_features, 'spark'
+        return data, stranger_features, 'spark'
 
     @staticmethod
     def to_pandas_df(data, raw_text_column='text'):
@@ -237,18 +240,6 @@ class DataConversionUtils():
         except:
             ValueError("Data could not be converted to Spark Dataframe for internal conversion.")
 
-
-
-
-
-
-
-
-
-
-
-
-
     @staticmethod
     def size_of(data):
         """
@@ -257,10 +248,17 @@ class DataConversionUtils():
         Convert supported datatypes to Pandas and extract extra data for prediction later on.
 
         """
-        if isinstance(data, pyspark.sql.dataframe.DataFrame): return data.size()
-        elif isinstance(data, pd.DataFrame): return data.shape[0]
-        elif isinstance(data, pd.Series): return data.shape[0]
-        elif isinstance(data, np.ndarray): return data.shape[0]
-        elif isinstance(data, str): return 1
-        elif isinstance(data, list): return len(data)
-        else: return len(data)
+        if isinstance(data, pyspark.sql.dataframe.DataFrame):
+            return data.size()
+        elif isinstance(data, pd.DataFrame):
+            return data.shape[0]
+        elif isinstance(data, pd.Series):
+            return data.shape[0]
+        elif isinstance(data, np.ndarray):
+            return data.shape[0]
+        elif isinstance(data, str):
+            return 1
+        elif isinstance(data, list):
+            return len(data)
+        else:
+            return len(data)

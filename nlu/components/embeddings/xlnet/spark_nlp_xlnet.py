@@ -10,7 +10,7 @@ class SparkNLPXlnet:
 
 
     @staticmethod
-    def get_pretrained_model(name, language):
-        return XlnetEmbeddings.pretrained(name,language) \
+    def get_pretrained_model(name, language, bucket=None):
+        return XlnetEmbeddings.pretrained(name,language,bucket) \
             .setInputCols("sentence", "token") \
             .setOutputCol("word_embeddings")

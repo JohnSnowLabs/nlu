@@ -1,7 +1,7 @@
 import unittest
 import pandas as pd
 import nlu
-import tests.nlu_hc_tests.secrets as sct
+import tests.secrets as sct
 
 class MultiNerTests(unittest.TestCase):
 

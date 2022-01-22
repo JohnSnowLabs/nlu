@@ -1,0 +1,23 @@
+{
+  "name": "doc2vec",
+  "description": "todo",
+  "output_level": "input_dependent",
+  "trainable": false,
+  "outputs": [
+    "sentence_embeddings"
+  ],
+  "inputs": [
+    "token"
+  ],
+  "type": "sentence_embeddings",
+  "spark_input_column_names": [
+    "token"
+  ],
+  "spark_output_column_names": [
+    "sentence_embeddings"
+  ],
+  "provider": "sparknlp",
+  "license": "open source",
+  "computation_context": "spark",
+  "output_context": "spark"
+}

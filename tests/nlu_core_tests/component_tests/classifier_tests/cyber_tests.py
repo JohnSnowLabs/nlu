@@ -11,6 +11,9 @@ class TestCyber(unittest.TestCase):
         df = pipe.predict(['Peter love pancaces. I hate Mondays', 'I love Fridays'], output_level='token',drop_irrelevant_cols=False, metadata=True, )
         for c in df.columns: print(df[c])
 
+
+
+
 if __name__ == '__main__':
     unittest.main()
 

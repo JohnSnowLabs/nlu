@@ -4,7 +4,7 @@ import nlu
 import sparknlp_jsl
 from sparknlp.annotator import BertSentenceEmbeddings
 from sparknlp_jsl.annotator import *
-import tests.nlu_hc_tests.secrets as sct
+import tests.secrets as sct
 
 class RelationExtractionTests(unittest.TestCase):
     def test_relation_extraction(self):

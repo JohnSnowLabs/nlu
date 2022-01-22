@@ -4,7 +4,7 @@ import nlu
 import sparknlp_jsl
 from sparknlp.annotator import BertSentenceEmbeddings
 from sparknlp_jsl.annotator import *
-import tests.nlu_hc_tests.secrets as sct
+import tests.secrets as sct
 
 class DeidentificationTests(unittest.TestCase):
     def test_generic_classifier(self):
@@ -22,9 +22,9 @@ class DeidentificationTests(unittest.TestCase):
         # elmo_embeddings and bert_embeddings   is what should be passed 2 the feature asselmber/generic classifier
 
         # res.show()
-        # for c in res.columns:
-        #     print(c)
-        #     res.select(c).show(truncate=False)
+        # for os_components in res.columns:
+        #     print(os_components)
+        #     res.select(os_components).show(truncate=False)
         # res = nlu.load('en.extract_relation', verbose=True).predict('The patient got cancer in my foot and damage in his brain')
 
 
