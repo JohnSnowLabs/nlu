@@ -51,7 +51,17 @@ class PipeUtils:
                 else:
                     inp = data['paramMap']['inputCol']
                     c.model.setInputCol(inp)
-                out = data['paramMap']['outputCol']
+
+                if 'outputCol' in data['paramMap'].keys():
+                    out = data['paramMap']['outputCol']
+                else:
+                    # Sometimes paramMap is missing outputCol, so we have to use this hack
+                    model_name = c.model.uid.split('_')[0]
+                    if model_name == 'DocumentAssembler':
+                        out = 'document'
+                    else:
+                        out = c.model.uid.split('_')[0] + '_out'
+
                 c.spark_input_column_names = inp if isinstance(inp, List) else [inp]
                 c.spark_output_column_names = [out]
                 c.model.setOutputCol(out)
