@@ -17,6 +17,7 @@ class NLP_FEATURES(JslFeature):
     DOCUMENT_DE_IDENTIFIED = JslFeature("document_de_identified")
     DOCUMENT_RE_IDENTIFIED = JslFeature("document_re_identified")
     DOCUMENT_NORMALIZED = JslFeature("document_normalized")
+    DOCUMENT_TRANSLATED = JslFeature("document_translated")
 
     # GPT, T5, X2IMG (PDF2IMG, IMG2IMG, etc..)
     DOCUMENT_GENERATED = JslFeature("document_generated")
