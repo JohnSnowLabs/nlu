@@ -45,6 +45,8 @@ class NLP_FEATURES(JslFeature):
     MULTI_DOCUMENT_CLASSIFICATION = JslFeature('multi_document_classification')
     DOCUMENT_CLASSIFICATION = JslFeature('document_classification')
     TOKEN_CLASSIFICATION = JslFeature('token_classification')
+    SEQUENCE_CLASSIFICATION = JslFeature('sequence_classification')
+
     SENTIMENT = JslFeature("sentiment")
     POS = JslFeature("pos")
     CHUNK = JslFeature("chunk")
