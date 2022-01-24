@@ -4,7 +4,7 @@ header:
   - title: Docs
     url: https://nlp.johnsnowlabs.com/docs
     key: docs
-  - title:  NLU for Healthcare
+  - title: Healthcare
     url:    /docs/en/nlu_for_healthcare
     key: docs-nlu-for-healthcare
   - title: OCR
@@ -13,9 +13,6 @@ header:
   - title: Visualizations
     url:  /docs/en/viz_examples
     key: viz
-  - title: Streamlit
-    url: /docs/en/streamlit_viz_examples
-    key: streamlit_viz
   - title: Tutorials
     url:    /docs/en/notebooks
     key: tutorial_notebooks
