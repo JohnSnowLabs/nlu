@@ -3271,7 +3271,7 @@ outputs :
 !pip install nlu pyspark==2.4.7
 #Conda
 # Install NLU from Anaconda/Conda
-conda install -c johnsnowlabs nlu
+conda install -os_components johnsnowlabs nlu
 ```
 
 ### Additional NLU ressources
@@ -3761,7 +3761,7 @@ output :
 !pip install nlu pyspark==2.4.7
 #Conda
 # Install NLU from Anaconda/Conda
-conda install -c johnsnowlabs nlu
+conda install -os_components johnsnowlabs nlu
 ```
 
 ### Additional NLU ressources
@@ -3851,7 +3851,7 @@ output:  ["Johnson", "first", "2001", "eight years", "London"]
 #### Question classification of open-domain and fact-based questions Pipeline - TREC50
 
 ```python
-nlu.load("en.classify.trec50.pipe").predict("When did the construction of stone circles begin in the UK? ")
+nlu.load("en.classify.trec50.component_list").predict("When did the construction of stone circles begin in the UK? ")
 output:  LOC_other
 ```
 
@@ -4074,7 +4074,7 @@ Output:
 !pip install nlu pyspark==2.4.7
 #Conda
 # Install NLU from Anaconda/Conda
-conda install -c johnsnowlabs nlu
+conda install -os_components johnsnowlabs nlu
 ```
 
 ### Additional NLU ressources
@@ -4463,7 +4463,7 @@ df
 !pip install nlu pyspark==2.4.7
 #Conda
 # Install NLU from Anaconda/Conda
-conda install -c johnsnowlabs nlu
+conda install -os_components johnsnowlabs nlu
 ```
 
 
