@@ -93,7 +93,6 @@ nlu.load('doc2text').predict('path/to/haiku.docx')
 | Petals on a wet, black bough.               |
 
 ## Combine OCR and NLP models
-## DOCX to text
 
 Sample image containing named entities [from U.S. Presidents Wikipedia](https://en.wikipedia.org/wiki/List_of_presidents_of_the_United_States):
 
