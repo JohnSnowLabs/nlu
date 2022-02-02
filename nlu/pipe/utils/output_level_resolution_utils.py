@@ -103,7 +103,7 @@ class OutputLevelUtils():
         '''
         if pipe.output_level == '':
             # Loop in reverse over component_list and get first non util/sentence_detecotr/tokenizer/doc_assember. If there is non, take last
-            bad_types = [AnnoTypes.HELPER_ANNO, AnnoTypes.SENTENCE_DETECTOR]
+            bad_types = [ AnnoTypes.SENTENCE_DETECTOR] # AnnoTypes.HELPER_ANNO,
             bad_names = [NLP_NODE_IDS.TOKENIZER]
             for c in pipe.components[::-1]:
                 if any(t in c.type for t in bad_types):
