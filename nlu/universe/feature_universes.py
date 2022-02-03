@@ -52,6 +52,7 @@ class NLP_FEATURES(JslFeature):
     CHUNK = JslFeature("chunk")
     NAMED_ENTITY_IOB = JslFeature("named_entity_iob")
     NAMED_ENTITY_CONVERTED = JslFeature("named_entity_converted")
+    NAMED_ENTITY_CONVERTED_AND_CONVERTED_TO_DOC = JslFeature("NAMED_ENTITY_CONVERTED_AND_CONVERTED_TO_DOC")
     NEGEX = JslFeature("negex")
     UNLABLED_DEPENDENCY = JslFeature("unlabeled_dependency")
     LABELED_DEPENDENCY = JslFeature("labeled_dependency")

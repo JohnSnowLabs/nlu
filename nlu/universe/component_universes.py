@@ -145,7 +145,7 @@ class ComponentMap:
             name=A.CHUNK2DOC,
             type=T.HELPER_ANNO,
             get_default_model=Chunk_2_Doc.get_default_model,
-            pdf_extractor_methods={'default': '', 'default_full': default_full_config, },  # TODO no extractor
+            pdf_extractor_methods={'default_full': default_full_config, },  # 'default': '',   TODO no extractor
             pdf_col_name_substitutor=substitute_doc2chunk_cols,
             output_level=L.DOCUMENT,
             node=NLP_FEATURE_NODES.nodes[A.CHUNK2DOC],
@@ -303,14 +303,14 @@ class ComponentMap:
             pdf_extractor_methods={'default': default_doc2chunk_config, 'default_full': default_full_config, },
             pdf_col_name_substitutor=substitute_doc2chunk_cols,
             output_level=L.CHUNK,
-            node=NLP_FEATURE_NODES.nodes[A.CHUNKER],
+            node=NLP_FEATURE_NODES.nodes[A.DOC2CHUNK],
             description='Converts Document type col to Chunk type col',
             provider=ComponentBackends.open_source,
             license=Licenses.open_source,
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
-            jsl_anno_class_id=A.CHUNKER,
-            jsl_anno_py_class=ACR.JSL_anno2_py_class[A.CHUNKER],
+            jsl_anno_class_id=A.DOC2CHUNK,
+            jsl_anno_py_class=ACR.JSL_anno2_py_class[A.DOC2CHUNK],
         )),
         A.DOCUMENT_ASSEMBLER: copy(NluComponent(
             name=A.DOCUMENT_ASSEMBLER,
