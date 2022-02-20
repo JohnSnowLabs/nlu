@@ -13,10 +13,37 @@ logger = logging.getLogger('nlu')
 from nlu.pipe.utils.component_utils import ComponentUtils
 from typing import List
 from nlu.universe.annotator_class_universe import AnnoClassRef
+from nlu.utils.environment.env_utils import is_running_in_databricks
+import os
+import glob
+import json
 
 
 class PipeUtils:
     """Pipe Level logic operations and utils"""
+
+    @staticmethod
+    def get_json_data_for_pipe_model_at_stage_number(pipe_path, stage_number_as_string):
+        """Gets the json metadata from a model for a given base path at a specific stage index"""
+        c_metadata_path = f'{pipe_path}/stages/{stage_number_as_string}_*/metadata/part-00000'
+        c_metadata_path = glob.glob(f'{c_metadata_path}*')[0]
+        with open(c_metadata_path, "r") as f:
+            data = json.load(f)
+        return data
+
+    @staticmethod
+    def get_json_data_for_pipe_model_at_stage_number_on_databricks(nlp_ref, lang, digit_str):
+        """Gets the json metadata from a model for a given base path at a specific stage index on databricks"""
+        import sparknlp
+        spark = sparknlp.start()
+        pipe_df = spark.read.json(
+            f'dbfs:/root/cache_pretrained/{nlp_ref}_{lang}*/stages/{digit_str}_*/metadata/part-00000')
+        data = pipe_df.toPandas().to_dict()
+        data = {k: v[0] for k, v in data.items()}
+        if 'inputCols' in data['paramMap'].keys():
+            data['paramMap']['inputCols'] = data['paramMap']['inputCols'].tolist()
+        data
+        return data
 
     @staticmethod
     def set_column_values_on_components_from_pretrained_pipe(component_list: List[NluComponent], nlp_ref, lang, path):
@@ -24,47 +51,54 @@ class PipeUtils:
         annotator data to find them Expects a list of NLU Component objects which all stem from the same pipeline
         defined by nlp_ref
         """
-        import os
-        import glob
-        import json
+
         if path:
             pipe_path = path
         else:
             pipe_path = os.path.expanduser('~') + '/cache_pretrained/' + f'{nlp_ref}_{lang}'
-            # WE do not need to check for Spark Version, since cols should match accors versions
-            pipe_path = glob.glob(f'{pipe_path}*')[0]
-            if not os.path.exists(pipe_path): raise FileNotFoundError(
-                f"Could not find downloaded Pipeline at path={pipe_path}")
+            # We do not need to check for Spark Version, since cols should match across versions
+            pipe_path = glob.glob(f'{pipe_path}*')
+            if len(pipe_path) == 0:
+                # try databricks env path
+                if is_running_in_databricks():
+                    pipe_path = [f'dbfs:/root/cache_pretrained/{nlp_ref}_{lang}']
+                else:
+                    raise FileNotFoundError(f"Could not find downloaded Pipeline at path={pipe_path}")
+            pipe_path = pipe_path[0]
+            if not os.path.exists(pipe_path) and not is_running_in_databricks():
+                raise FileNotFoundError(f"Could not find downloaded Pipeline at path={pipe_path}")
 
         # Find HDD location of component_list and read out input/output cols
         digits_num = len(str(len(component_list)))
         digit_str = '0' * digits_num
         digit_cur = 0
+
         for c in component_list:
-            c_metadata_path = f'{pipe_path}/stages/{digit_str}_*/metadata/part-00000'
-            c_metadata_path = glob.glob(f'{c_metadata_path}*')[0]
-            with open(c_metadata_path, "r") as f:
-                data = json.load(f)
-                if 'inputCols' in data['paramMap'].keys():
-                    inp = data['paramMap']['inputCols']
-                    c.model.setInputCols(inp)
-                else:
-                    inp = data['paramMap']['inputCol']
-                    c.model.setInputCol(inp)
+            if is_running_in_databricks():
+                data = PipeUtils.get_json_data_for_pipe_model_at_stage_number_on_databricks(nlp_ref, lang, digit_str)
+            else:
+                data = PipeUtils.get_json_data_for_pipe_model_at_stage_number(pipe_path, digit_str)
 
-                if 'outputCol' in data['paramMap'].keys():
-                    out = data['paramMap']['outputCol']
-                else:
-                    # Sometimes paramMap is missing outputCol, so we have to use this hack
-                    model_name = c.model.uid.split('_')[0]
-                    if model_name == 'DocumentAssembler':
-                        out = 'document'
-                    else:
-                        out = c.model.uid.split('_')[0] + '_out'
+            if 'inputCols' in data['paramMap'].keys():
+                inp = data['paramMap']['inputCols']
+                c.model.setInputCols(inp)
+            else:
+                inp = data['paramMap']['inputCol']
+                c.model.setInputCol(inp)
 
-                c.spark_input_column_names = inp if isinstance(inp, List) else [inp]
-                c.spark_output_column_names = [out]
-                c.model.setOutputCol(out)
+            if 'outputCol' in data['paramMap'].keys():
+                out = data['paramMap']['outputCol']
+            else:
+                # Sometimes paramMap is missing outputCol, so we have to use this hack
+                model_name = c.model.uid.split('_')[0]
+                if model_name == 'DocumentAssembler':
+                    out = 'document'
+                else:
+                    out = c.model.uid.split('_')[0] + '_out'
+
+            c.spark_input_column_names = inp if isinstance(inp, List) else [inp]
+            c.spark_output_column_names = [out]
+            c.model.setOutputCol(out)
             digit_cur += 1
             digit_str = str(digit_cur)
             while len(digit_str) < digits_num:
@@ -247,6 +281,8 @@ class PipeUtils:
         logger.info('Configuring components to sentence level')
         for c in pipe.components:
             # update in/out spark cols
+            if c.loaded_from_pretrained_pipe:
+                continue
             if NLP_FEATURES.DOCUMENT in c.spark_input_column_names and NLP_FEATURES.SENTENCE not in c.spark_input_column_names and NLP_FEATURES.SENTENCE not in c.spark_output_column_names:
                 logger.info(f"Configuring C={c.name}  of Type={type(c.model)} to Sentence Level")
                 c.spark_input_column_names.remove(NLP_FEATURES.DOCUMENT)
@@ -268,6 +304,8 @@ class PipeUtils:
         '''
         logger.info('Configuring components to document level')
         for c in pipe.components:
+            if c.loaded_from_pretrained_pipe:
+                continue
             # Update in/out spark cols
             if NLP_FEATURES.SENTENCE in c.spark_input_column_names and NLP_FEATURES.DOCUMENT not in c.spark_input_column_names and NLP_FEATURES.DOCUMENT not in c.spark_output_column_names:
                 logger.info(f"Configuring C={c.name} to document output level")
