@@ -166,6 +166,12 @@ class AnnoClassRef:
         HC_A_N.SENTENCE_ENTITY_RESOLVER: 'SentenceEntityResolverModel',
         HC_A_N.TRAINABLE_SENTENCE_ENTITY_RESOLVER: 'SentenceEntityResolverApproach',
         HC_A_N.MEDICAL_BERT_FOR_TOKEN_CLASSIFICATION: 'MedicalBertForTokenClassifier',
+
+        # 3.4.1
+        HC_A_N.MEDICAL_BERT_FOR_SEQUENCE_CLASSIFICATION : 'MedicalBertForSequenceClassification',
+        HC_A_N.MEDICAL_DISTILBERT_FOR_SEQUENCE_CLASSIFICATION : 'MedicalDistilBertForSequenceClassification',
+        HC_A_N.ENTITY_CHUNK_EMBEDDING : 'EntityChunkEmbeddings',
+
     }
 
     JSL_anno_OCR_ref_2_py_class: Dict[JslAnnoId, JslAnnoPyClass] = {

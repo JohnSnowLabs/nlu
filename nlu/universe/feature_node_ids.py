@@ -164,6 +164,10 @@ class NLP_HC_NODE_IDS:  # or Mode Node?
     TRAINABLE_SENTENCE_ENTITY_RESOLVER = JslAnnoId('trainable_sentence_entity_resolver')
     MEDICAL_BERT_FOR_TOKEN_CLASSIFICATION = JslAnnoId('medical_bert_for_token_classification')
 
+    MEDICAL_BERT_FOR_SEQUENCE_CLASSIFICATION = JslAnnoId('medical_bert_for_sequence_classification')
+    MEDICAL_DISTILBERT_FOR_SEQUENCE_CLASSIFICATION = JslAnnoId('medical_distilbert_for_sequence_classification')
+    ENTITY_CHUNK_EMBEDDING = JslAnnoId('entity_chunk_embedding')
+
 
 class OCR_NODE_IDS:
     """All available Feature nodes in OCR

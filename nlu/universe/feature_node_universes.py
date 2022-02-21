@@ -310,12 +310,10 @@ class NLP_HC_FEATURE_NODES():
     nodes = {
         A.ASSERTION_DL: NlpHcFeatureNode(A.ASSERTION_DL, [F.DOCUMENT, F.NAMED_ENTITY_CONVERTED, F.WORD_EMBEDDINGS],
                                          [H_F.ASSERTION]),
-        # TODO chunk subtype?,
         A.TRAINABLE_ASSERTION_DL: NlpHcFeatureNode(A.TRAINABLE_ASSERTION_DL,
                                                    [F.DOCUMENT, F.NAMED_ENTITY_CONVERTED, F.WORD_EMBEDDINGS],
                                                    [H_F.ASSERTION]),
         A.ASSERTION_FILTERER: NlpHcFeatureNode(A.ASSERTION_FILTERER, [F.DOCUMENT, F.CHUNK, H_F.ASSERTION], [F.CHUNK]),
-        # TODO chunk subtype?,TRAINABLE_RELATION_EXTRACTION
         A.ASSERTION_LOG_REG: NlpHcFeatureNode(A.ASSERTION_LOG_REG, [F.DOCUMENT, F.CHUNK, F.WORD_EMBEDDINGS],
                                               [H_F.ASSERTION]),
         A.TRAINABLE_ASSERTION_LOG_REG: NlpHcFeatureNode(A.TRAINABLE_ASSERTION_LOG_REG,
@@ -354,18 +352,20 @@ class NLP_HC_FEATURE_NODES():
                                               [H_F.DISAMBIGUATION]),
         A.RELATION_NER_CHUNKS_FILTERER: NlpHcFeatureNode(A.RELATION_NER_CHUNKS_FILTERER,
                                                          [F.CHUNK, F.UNLABLED_DEPENDENCY],
-                                                         [F.CHUNK]),  # TODO chunk subtype?,
+                                                         [F.CHUNK]),
         A.RE_IDENTIFICATION: NlpHcFeatureNode(A.RE_IDENTIFICATION, [F.DOCUMENT, F.CHUNK], [F.DOCUMENT_RE_IDENTIFIED]),
         A.RELATION_EXTRACTION: NlpHcFeatureNode(A.RELATION_EXTRACTION,
-                                                [F.WORD_EMBEDDINGS, F.POS, F.CHUNK, F.UNLABLED_DEPENDENCY],
+                                                [F.NAMED_ENTITY_CONVERTED, F.WORD_EMBEDDINGS, F.POS,
+                                                 F.UNLABLED_DEPENDENCY],
                                                 [H_F.RELATION]),
         A.TRAINABLE_RELATION_EXTRACTION: NlpHcFeatureNode(A.TRAINABLE_RELATION_EXTRACTION,
-                                                          [F.WORD_EMBEDDINGS, F.POS, F.CHUNK, F.UNLABLED_DEPENDENCY],
+                                                          [F.NAMED_ENTITY_CONVERTED, F.WORD_EMBEDDINGS, F.POS,
+                                                           F.UNLABLED_DEPENDENCY],
                                                           [H_F.RELATION]),
         A.RELATION_EXTRACTION_DL: NlpHcFeatureNode(A.RELATION_EXTRACTION_DL,
                                                    [F.NAMED_ENTITY_CONVERTED, F.DOCUMENT], [H_F.RELATION]),
-        # A.# TRAINABLE_RELATION_EXTRACTION_DL : NlpHcFeatureNode(A.TRAINABLE_RELATION_EXTRACTION_DL, [F.CHUNK, F.DOCUMENT,], [H_F.RELATION]),
-        A.SENTENCE_ENTITY_RESOLVER: NlpHcFeatureNode(A.SENTENCE_ENTITY_RESOLVER, [ F.DOCUMENT_FROM_CHUNK, F.SENTENCE_EMBEDDINGS],
+        A.SENTENCE_ENTITY_RESOLVER: NlpHcFeatureNode(A.SENTENCE_ENTITY_RESOLVER,
+                                                     [F.DOCUMENT_FROM_CHUNK, F.SENTENCE_EMBEDDINGS],
                                                      [H_F.RESOLVED_ENTITY]),
         A.TRAINABLE_SENTENCE_ENTITY_RESOLVER: NlpHcFeatureNode(A.TRAINABLE_SENTENCE_ENTITY_RESOLVER,
                                                                [F.SENTENCE_EMBEDDINGS], [H_F.ASSERTION]),
@@ -373,6 +373,11 @@ class NLP_HC_FEATURE_NODES():
                                                                 [F.DOCUMENT, F.TOKEN],
                                                                 [F.TOKEN_CLASSIFICATION]),
 
-        # MEDICAL_BERT_FOR_TOKEN_CLASSIFICATION = JslAnnoId('medical_bert_for_token_classification')
+        A.MEDICAL_BERT_FOR_SEQUENCE_CLASSIFICATION: NlpFeatureNode(A.MEDICAL_BERT_FOR_SEQUENCE_CLASSIFICATION,
+                                                                   [F.DOCUMENT, F.TOKEN],
+                                                                   [F.SEQUENCE_CLASSIFICATION]),
+        A.MEDICAL_DISTILBERT_FOR_SEQUENCE_CLASSIFICATION: NlpFeatureNode(
+            A.MEDICAL_DISTILBERT_FOR_SEQUENCE_CLASSIFICATION, [F.DOCUMENT, F.TOKEN],
+            [F.SEQUENCE_CLASSIFICATION]),
 
     }
