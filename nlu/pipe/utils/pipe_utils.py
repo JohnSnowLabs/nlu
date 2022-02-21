@@ -1,6 +1,8 @@
 from sparknlp.annotator import *
 import inspect
 import logging
+
+import nlu
 from nlu.pipe.nlu_component import NluComponent
 from nlu.pipe.utils.resolution.storage_ref_utils import StorageRefUtils
 from nlu.universe.logic_universes import NLP_LEVELS, AnnoTypes
@@ -22,6 +24,27 @@ import json
 class PipeUtils:
     """Pipe Level logic operations and utils"""
 
+    @staticmethod
+    def update_relation_extractor_models(pipe):
+        # if provided, because the sometimes have unresolvable storage refs 
+        # we can find the actual storage ref only after its mapped is sresolved to an model defined by an nlp ref 
+        # If RelationExtractor is not loaded from a pretrained pipe we update its storage ref to the resolving models storage ref
+
+        for relation_extractor_component in pipe.components:
+            if relation_extractor_component.jsl_anno_class_id == NLP_HC_NODE_IDS.RELATION_EXTRACTION and not relation_extractor_component.loaded_from_pretrained_pipe:
+                storage_ref = StorageRefUtils.extract_storage_ref(relation_extractor_component)
+                # After updating the storage ref it will not be in the licensed_storage_ref_2_nlu_ref mapping anymore,
+                # so we have to check here if it exists in the mapping before accessing it
+                if pipe.lang in nlu.Spellbook.licensed_storage_ref_2_nlu_ref.keys():
+                    if storage_ref in nlu.Spellbook.licensed_storage_ref_2_nlu_ref[pipe.lang].keys():
+                        # We need to find  a component in the pipeline which has this storage ref
+                        storage_ref_resolver_nlu_ref = nlu.Spellbook.licensed_storage_ref_2_nlu_ref[pipe.lang][storage_ref]
+                        for storage_resolver in pipe.components:
+                            if storage_resolver.nlu_ref == storage_ref_resolver_nlu_ref:
+                                # Update the storage ref of the RL-Extractor to the storage ref of the resolving model according to licensed_storage_ref_2_nlu_ref
+                                resolving_storage_ref = StorageRefUtils.extract_storage_ref(storage_resolver)
+                                relation_extractor_component.model.set(relation_extractor_component.model.storageRef, resolving_storage_ref)
+        return pipe
     @staticmethod
     def get_json_data_for_pipe_model_at_stage_number(pipe_path, stage_number_as_string):
         """Gets the json metadata from a model for a given base path at a specific stage index"""
@@ -500,4 +523,5 @@ class PipeUtils:
             # Check for licensed components
             if c.license in [Licenses.ocr, Licenses.hc]:
                 pipe.has_licensed_components = True
+
         return pipe
