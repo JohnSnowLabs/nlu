@@ -186,23 +186,6 @@ class PipelineQueryVerifier:
                     # This case is for when 1 Embed is preloaded and we still need to load the converter
                     if any(NLP_FEATURES.WORD_EMBEDDINGS in c for c in provided_features_ref):
                         required_features_no_ref.append(embed_type)
-                # else:
-                # set storage ref
-                # if embed_type == NLP_FEATURES.CHUNK_EMBEDDINGS and len(provided_features_ref) > 1:
-                #     # TODO UPDATE HERE ALL REFS TO THE ONE THATS NOT NONE !!!
-                #     training_storage_ref = ''
-                #     for c in pipe.components:
-                #         if c.type == AnnoTypes.TOKEN_EMBEDDING or c.type == AnnoTypes.SENTENCE_EMBEDDING:
-                #             training_storage_ref = StorageRefUtils.extract_storage_ref(c)
-                # for c in pipe.components:
-                #     if c.info.type == NLP_FEATURES.CHUNK_EMBEDDINGS:
-                #         c.storage_ref = training_storage_ref
-                #         c.info.inputs = ['entities', f'word_embeddings@{training_storage_ref}']
-                #         c.info.spark_input_column_names = ['entities',
-                #                                            f'word_embeddings@{training_storage_ref}']
-                #         c.out_types = [f'chunk_embeddings@{training_storage_ref}']
-                #         c.info.spark_output_column_names = [f'chunk_embeddings@{training_storage_ref}']
-                #
 
             if len(provided_features_ref) >= 1:
                 # TODO Appraoches / Trainable models have no setStorageRef, we must set it after fitting
@@ -219,9 +202,6 @@ class PipelineQueryVerifier:
                                                     conversion_candidates, missing_features_no_ref,
                                                     missing_features_ref, )
         return missing_features_no_ref, missing_features_ref, conversion_candidates
-        # # default requirements so we can support all output levels. minimal extra comoputation effort. If we add CHUNK here, we will aalwayshave POS default
-        # if not PipeUtils.check_if_component_is_in_pipe(component_list,'sentence',False ) : pipe_requirements.append(['sentence'])
-        # if not PipeUtils.check_if_component_is_in_pipe(component_list,'token',False )    : pipe_requirements.append(['token'])
 
     @staticmethod
     def add_sentence_embedding_converter(resolution_data: StorageRefConversionResolutionData) -> NluComponent:
@@ -353,8 +333,9 @@ class PipelineQueryVerifier:
                 pipe.add(new_component)
 
 
-            # For relation extractors we update storage ref to the entry in mapping
-            pipe = PipeUtils.update_relation_extractor_models(pipe)
+            # For some models we update storage ref to the resovling models storageref.
+            # We need to update them so dependencies can properly be deducted as satisfied
+            pipe = PipeUtils.update_bad_storage_refs(pipe)
 
 
 
@@ -492,7 +473,6 @@ class PipelineQueryVerifier:
         pipe = PipeUtils.rename_duplicate_cols(pipe)
 
         # 7. enfore again because trainable pipes might mutate component_list cols
-
         pipe = PipeUtils.enforce_NLU_columns_to_NLP_columns(pipe)
 
         logger.info('Done with component_list optimizing')
