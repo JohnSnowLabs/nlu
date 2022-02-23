@@ -59,12 +59,13 @@ class WordSimilarityStreamlitBlock():
         if title: st.header(title)
         if show_logo: StreamlitVizTracker.show_logo()
         if sub_tile: st.subheader(sub_tile)
-
         StreamlitVizTracker.loaded_word_embeding_pipes = []
         dist_metric_algos = distance_metrics()
         dist_algos = list(dist_metric_algos.keys())
-        if 'haversine' in dist_algos: dist_algos.remove('haversine')  # not applicable in >2D
-        if 'precomputed' in dist_algos: dist_algos.remove('precomputed')  # Not a dist
+        if 'haversine' in dist_algos:
+            dist_algos.remove('haversine')  # not applicable in >2D
+        if 'precomputed' in dist_algos:
+            dist_algos.remove('precomputed')  # Not a dist
         cols = st.columns(2)
         text1 = cols[0].text_input("Text or word1", default_texts[0], key=key + 'field_1')
         text2 = cols[1].text_input("Text or word2", default_texts[1], key=key + 'field_2') if len(
@@ -94,9 +95,11 @@ class WordSimilarityStreamlitBlock():
                     loaded_embed_nlu_refs.append(StorageRefUtils.extract_storage_ref(c))
                 loaded_storage_refs.append(StorageRefUtils.extract_storage_ref(c))
             for p in StreamlitVizTracker.loaded_word_embeding_pipes:
-                if p != pipe: loaded_embed_nlu_refs.append(p.nlu_ref)
+                if p != pipe:
+                    loaded_embed_nlu_refs.append(p.nlu_ref)
             for l in loaded_embed_nlu_refs:
-                if l not in emb_components_usable: emb_components_usable.append(l)
+                if l not in emb_components_usable:
+                    emb_components_usable.append(l)
             # embed_algo_selection = exp.multiselect("Click to pick additional Embedding Algorithm",options=emb_components_usable,default=loaded_embed_nlu_refs,key = key)
             # dist_algo_selection = exp.multiselect("Click to pick additional Distance Metric", options=dist_algos, default=dist_metrics, key = key)
             emb_components_usable.sort()
@@ -117,10 +120,12 @@ class WordSimilarityStreamlitBlock():
                                                       default=dist_metrics, key=key)
             embed_algos_to_load = list(set(embed_algo_selection) - set(loaded_embed_nlu_refs))
 
-        for embedder in embed_algos_to_load: embed_pipes.append(nlu.load(embedder))
+        for embedder in embed_algos_to_load:
+            embed_pipes.append(nlu.load(embedder))
 
-        if generate_code_sample: st.code(
-            get_code_for_viz('SIMILARITY', [StreamlitUtilsOS.extract_name(p) for p in embed_pipes], default_texts))
+        if generate_code_sample:
+            st.code(
+                get_code_for_viz('SIMILARITY', [StreamlitUtilsOS.extract_name(p) for p in embed_pipes], default_texts))
 
         StreamlitVizTracker.loaded_word_embeding_pipes += embed_pipes
         similarity_metrics = {}
@@ -155,7 +160,8 @@ class WordSimilarityStreamlitBlock():
                 # e_name = e_col.split('word_embedding_')[-1]
                 e_name = e_coms[num_emb].nlu_ref
                 e_name = e_name.split('embed.')[-1] if 'en.' in e_name else e_name
-                if 'ner' in e_name: e_name = loaded_storage_refs[num_emb]
+                if 'ner' in e_name:
+                    e_name = loaded_storage_refs[num_emb]
 
                 embed_vector_info[e_name] = {"Vector Dimension ": embed_mat1.shape[1],
                                              "Num Vectors": embed_mat1.shape[0] + embed_mat1.shape[0],
@@ -209,7 +215,7 @@ class WordSimilarityStreamlitBlock():
                                 }
                                 subh = f"""Embedding-Model=`{e_name}`, Similarity-Score=`{scalar_sim_score}`,  distance metric=`{dist_algo}`"""
                                 cols[col_index].markdown(subh)
-                                cols[col_index].write(fig, key=key)
+                                cols[col_index].plotly_chart(fig, key=key, use_container_width=True)
                             else:
                                 pass  # todo fallback plots
 

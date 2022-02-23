@@ -1,4 +1,7 @@
 from nlu.components.classifiers.seq_albert.seq_albert import SeqAlbertClassifier
+from nlu.components.classifiers.seq_bert_medical.seq_bert_medical_classifier import SeqBertMedicalClassifier
+from nlu.components.classifiers.seq_distilbert_medical.seq_distilbert_medical_classifier import \
+    SeqDilstilBertMedicalClassifier
 from nlu.components.classifiers.seq_longformer.seq_longformer import SeqLongformerClassifier
 from nlu.components.classifiers.seq_roberta.seq_roberta import SeqRobertaClassifier
 from nlu.components.classifiers.seq_xlm_roberta.seq_xlm_roberta import SeqXlmRobertaClassifier
@@ -139,13 +142,13 @@ class ComponentMap:
     F = NLP_FEATURES
     L = NLP_LEVELS
     ACR = AnnoClassRef
+    dict()
     os_components = {
-        # A.BIG_TEXT_MATCHER : ComponentInfo()),
         A.CHUNK2DOC: copy(NluComponent(
             name=A.CHUNK2DOC,
             type=T.HELPER_ANNO,
             get_default_model=Chunk_2_Doc.get_default_model,
-            pdf_extractor_methods={'default': '', 'default_full': default_full_config, },  # TODO no extractor
+            pdf_extractor_methods={'default_full': default_full_config, },  # 'default': '',   TODO no extractor
             pdf_col_name_substitutor=substitute_doc2chunk_cols,
             output_level=L.DOCUMENT,
             node=NLP_FEATURE_NODES.nodes[A.CHUNK2DOC],
@@ -303,14 +306,14 @@ class ComponentMap:
             pdf_extractor_methods={'default': default_doc2chunk_config, 'default_full': default_full_config, },
             pdf_col_name_substitutor=substitute_doc2chunk_cols,
             output_level=L.CHUNK,
-            node=NLP_FEATURE_NODES.nodes[A.CHUNKER],
+            node=NLP_FEATURE_NODES.nodes[A.DOC2CHUNK],
             description='Converts Document type col to Chunk type col',
             provider=ComponentBackends.open_source,
             license=Licenses.open_source,
             computation_context=ComputeContexts.spark,
             output_context=ComputeContexts.spark,
-            jsl_anno_class_id=A.CHUNKER,
-            jsl_anno_py_class=ACR.JSL_anno2_py_class[A.CHUNKER],
+            jsl_anno_class_id=A.DOC2CHUNK,
+            jsl_anno_py_class=ACR.JSL_anno2_py_class[A.DOC2CHUNK],
         )),
         A.DOCUMENT_ASSEMBLER: copy(NluComponent(
             name=A.DOCUMENT_ASSEMBLER,
@@ -1787,7 +1790,10 @@ class ComponentMap:
             output_context=ComputeContexts.spark,
             jsl_anno_class_id=H_A.RELATION_EXTRACTION,
             jsl_anno_py_class=ACR.JSL_anno_HC_ref_2_py_class[H_A.RELATION_EXTRACTION],
-            trainable_mirror_anno=H_A.TRAINABLE_RELATION_EXTRACTION
+            trainable_mirror_anno=H_A.TRAINABLE_RELATION_EXTRACTION,
+            has_storage_ref=True,
+            is_storage_ref_consumer=True
+
         )),
         H_A.TRAINABLE_RELATION_EXTRACTION: copy(NluComponent(
             name=H_A.TRAINABLE_RELATION_EXTRACTION,
@@ -1809,7 +1815,9 @@ class ComponentMap:
             jsl_anno_class_id=H_A.TRAINABLE_RELATION_EXTRACTION,
             jsl_anno_py_class=ACR.JSL_anno_HC_ref_2_py_class[H_A.TRAINABLE_RELATION_EXTRACTION],
             trained_mirror_anno=H_A.RELATION_EXTRACTION,
-            trainable=True
+            trainable=True,
+            has_storage_ref=True,
+            is_storage_ref_consumer=True
         )),
         H_A.RELATION_EXTRACTION_DL: copy(NluComponent(
             name=H_A.RELATION_EXTRACTION_DL,
@@ -1912,6 +1920,44 @@ class ComponentMap:
             jsl_anno_py_class=ACR.JSL_anno_HC_ref_2_py_class[H_A.MEDICAL_BERT_FOR_TOKEN_CLASSIFICATION],
 
         )),
+
+        H_A.MEDICAL_BERT_FOR_SEQUENCE_CLASSIFICATION: copy(NluComponent(
+            name=H_A.MEDICAL_BERT_FOR_SEQUENCE_CLASSIFICATION,
+            type=T.TRANSFORMER_SEQUENCE_CLASSIFIER,
+            get_default_model=SeqBertMedicalClassifier.get_default_model,
+            get_pretrained_model=SeqBertMedicalClassifier.get_pretrained_model,
+            pdf_extractor_methods={'default': default_classifier_dl_config, 'default_full': default_full_config, },
+            pdf_col_name_substitutor=substitute_seq_bert_classifier_cols,
+            output_level=L.INPUT_DEPENDENT_DOCUMENT_CLASSIFIER,  # Handled like NER model
+            node=NLP_HC_FEATURE_NODES.nodes[H_A.MEDICAL_BERT_FOR_SEQUENCE_CLASSIFICATION],
+            description='Custom Architecture John Snow labs developed, called MedicalBertForSequenceClassification. It can load BERT Models with sequence classification/regression head on top (a linear layer on top of the pooled output) e.g. for multi-class document classification tasks.',
+            provider=ComponentBackends.hc,
+            license=Licenses.hc,
+            computation_context=ComputeContexts.spark,
+            output_context=ComputeContexts.spark,
+            jsl_anno_class_id=H_A.MEDICAL_BERT_FOR_SEQUENCE_CLASSIFICATION,
+            jsl_anno_py_class=ACR.JSL_anno_HC_ref_2_py_class[H_A.MEDICAL_BERT_FOR_SEQUENCE_CLASSIFICATION],
+        )),
+
+        H_A.MEDICAL_DISTILBERT_FOR_SEQUENCE_CLASSIFICATION: copy(NluComponent(
+            name=H_A.MEDICAL_DISTILBERT_FOR_SEQUENCE_CLASSIFICATION,
+            type=T.TRANSFORMER_SEQUENCE_CLASSIFIER,
+            get_default_model=SeqDilstilBertMedicalClassifier.get_default_model,
+            get_pretrained_model=SeqDilstilBertMedicalClassifier.get_pretrained_model,
+            pdf_extractor_methods={'default': default_classifier_dl_config, 'default_full': default_full_config, },
+            pdf_col_name_substitutor=substitute_seq_bert_classifier_cols,
+            output_level=L.INPUT_DEPENDENT_DOCUMENT_CLASSIFIER,  # Handled like NER model
+            node=NLP_HC_FEATURE_NODES.nodes[H_A.MEDICAL_DISTILBERT_FOR_SEQUENCE_CLASSIFICATION],
+            description='Custom Architecture John Snow labs developed, called MedicalDistilBertForSequenceClassification. It can load DistilBERT Models with sequence classification/regression head on top (a linear layer on top of the pooled output) e.g. for multi-class document classification tasks.',
+            provider=ComponentBackends.hc,
+            license=Licenses.hc,
+            computation_context=ComputeContexts.spark,
+            output_context=ComputeContexts.spark,
+            jsl_anno_class_id=H_A.MEDICAL_DISTILBERT_FOR_SEQUENCE_CLASSIFICATION,
+            jsl_anno_py_class=ACR.JSL_anno_HC_ref_2_py_class[H_A.MEDICAL_DISTILBERT_FOR_SEQUENCE_CLASSIFICATION],
+        ))
+
+
         # MEDICAL_BERT_FOR_TOKEN_CLASSIFICATION fTOK
     }
     ocr_components = {

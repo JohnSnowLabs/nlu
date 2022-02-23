@@ -66,7 +66,7 @@ def resolve_storage_ref(lang, storage_ref, missing_component_type):
             nlu_ref = inv_namespace[nlp_ref]
 
     if nlu_ref == None and nlp_ref == None:
-        # todo enfore storage ref when trainin
+        # todo enfore storage ref when training
         logger.info(f"COULD NOT RESOLVE STORAGE_REF={storage_ref}")
         if storage_ref == '':
             if missing_component_type == NLP_FEATURES.SENTENCE_EMBEDDINGS:

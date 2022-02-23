@@ -73,8 +73,8 @@ class NlpFeatureResolutions:
         NLP_FEATURES.CHUNK: ResolvedFeature('en.chunk', 'default_chunker', 'xx', False,
                                             ComponentMap.os_components[NLP_NODE_IDS.CHUNKER]),
 
-        NLP_FEATURES.DOCUMENT_FROM_CHUNK: ResolvedFeature(NLP_NODE_IDS.DOC2CHUNK, NLP_NODE_IDS.DOC2CHUNK, 'xx', False,
-                                            ComponentMap.os_components[NLP_NODE_IDS.DOC2CHUNK]),
+        NLP_FEATURES.DOCUMENT_FROM_CHUNK: ResolvedFeature(NLP_NODE_IDS.CHUNK2DOC, NLP_NODE_IDS.CHUNK2DOC, 'xx', False,
+                                            ComponentMap.os_components[NLP_NODE_IDS.CHUNK2DOC]),
 
 
     }

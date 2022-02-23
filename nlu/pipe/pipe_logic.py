@@ -104,7 +104,8 @@ class PipelineQueryVerifier:
 
     @staticmethod
     def extract_provided_features_ref_from_pipe(pipe):
-        """Extract provided features from component_list, which have  storage ref"""
+        """Extract provided features from component_list, which have  storage ref.
+        """
         provided_features_ref = []
         for c in pipe.components:
             for feat in c.out_types:
@@ -154,6 +155,9 @@ class PipelineQueryVerifier:
             PipelineQueryVerifier.extract_provided_features_ref_from_pipe(pipe))
         required_features_ref = ComponentUtils.clean_irrelevant_features(
             PipelineQueryVerifier.extract_required_features_ref_from_pipe(pipe))
+
+
+
         is_trainable = PipeUtils.is_trainable_pipe(pipe)
         conversion_candidates = PipelineQueryVerifier.extract_sentence_embedding_conversion_candidates(
             pipe)
@@ -168,7 +172,7 @@ class PipelineQueryVerifier:
 
         if is_trainable:
 
-            trainable_index, embed_type = PipeUtils.find_trainable_embed_consumer(pipe)  # TODO REFACTOR THIS!!!
+            trainable_index, embed_type = PipeUtils.find_trainable_embed_consumer(pipe)
 
             required_features_ref = []
             if embed_type is not None:
@@ -182,23 +186,6 @@ class PipelineQueryVerifier:
                     # This case is for when 1 Embed is preloaded and we still need to load the converter
                     if any(NLP_FEATURES.WORD_EMBEDDINGS in c for c in provided_features_ref):
                         required_features_no_ref.append(embed_type)
-                # else:
-                # set storage ref
-                # if embed_type == NLP_FEATURES.CHUNK_EMBEDDINGS and len(provided_features_ref) > 1:
-                #     # TODO UPDATE HERE ALL REFS TO THE ONE THATS NOT NONE !!!
-                #     training_storage_ref = ''
-                #     for c in pipe.components:
-                #         if c.type == AnnoTypes.TOKEN_EMBEDDING or c.type == AnnoTypes.SENTENCE_EMBEDDING:
-                #             training_storage_ref = StorageRefUtils.extract_storage_ref(c)
-                # for c in pipe.components:
-                #     if c.info.type == NLP_FEATURES.CHUNK_EMBEDDINGS:
-                #         c.storage_ref = training_storage_ref
-                #         c.info.inputs = ['entities', f'word_embeddings@{training_storage_ref}']
-                #         c.info.spark_input_column_names = ['entities',
-                #                                            f'word_embeddings@{training_storage_ref}']
-                #         c.out_types = [f'chunk_embeddings@{training_storage_ref}']
-                #         c.info.spark_output_column_names = [f'chunk_embeddings@{training_storage_ref}']
-                #
 
             if len(provided_features_ref) >= 1:
                 # TODO Appraoches / Trainable models have no setStorageRef, we must set it after fitting
@@ -215,9 +202,6 @@ class PipelineQueryVerifier:
                                                     conversion_candidates, missing_features_no_ref,
                                                     missing_features_ref, )
         return missing_features_no_ref, missing_features_ref, conversion_candidates
-        # # default requirements so we can support all output levels. minimal extra comoputation effort. If we add CHUNK here, we will aalwayshave POS default
-        # if not PipeUtils.check_if_component_is_in_pipe(component_list,'sentence',False ) : pipe_requirements.append(['sentence'])
-        # if not PipeUtils.check_if_component_is_in_pipe(component_list,'token',False )    : pipe_requirements.append(['token'])
 
     @staticmethod
     def add_sentence_embedding_converter(resolution_data: StorageRefConversionResolutionData) -> NluComponent:
@@ -254,10 +238,9 @@ class PipelineQueryVerifier:
 
         c = ComponentMap.os_components[NLP_NODE_IDS.CHUNK_EMBEDDINGS_CONVERTER]
         c.set_metadata(c.get_default_model(),
-                                   NLP_NODE_IDS.CHUNK_EMBEDDINGS_CONVERTER, NLP_NODE_IDS.CHUNK_EMBEDDINGS_CONVERTER,
-                                   'xx',
-                                   False, Licenses.open_source)
-
+                       NLP_NODE_IDS.CHUNK_EMBEDDINGS_CONVERTER, NLP_NODE_IDS.CHUNK_EMBEDDINGS_CONVERTER,
+                       'xx',
+                       False, Licenses.open_source)
 
         # c = nlu.embeddings_chunker.EmbeddingsChunker(annotator_class='chunk_embedder')
         storage_ref = StorageRefUtils.extract_storage_ref(word_embedding_provider)
@@ -349,6 +332,15 @@ class PipelineQueryVerifier:
                 logger.info(f'adding {new_component.name}')
                 pipe.add(new_component)
 
+
+            # For some models we update storage ref to the resovling models storageref.
+            # We need to update them so dependencies can properly be deducted as satisfied
+            pipe = PipeUtils.update_bad_storage_refs(pipe)
+
+
+
+
+
         logger.info(f"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
         logger.info(f"ALL DEPENDENCIES SATISFIED")
         return pipe
@@ -391,7 +383,7 @@ class PipelineQueryVerifier:
                 for missing_column in input_columns:
                     for other_component in pipe.components:
                         if component_to_check.name == other_component.name: continue
-                        if other_component.type == missing_column:  #########
+                        if other_component.type == missing_column:
                             # We update the output name for the component which consumes our feature
                             if StorageRefUtils.has_storage_ref(
                                     other_component) and ComponentUtils.is_embedding_provider(component_to_check):
@@ -462,12 +454,12 @@ class PipelineQueryVerifier:
         # and add NER-IOB to NER-Pretty converters for every NER model that is not already feeding a NER converter
         pipe = PipeUtils.enforce_AT_schema_on_pipeline_and_add_NER_converter(pipe)
 
-        # 2.1 If Sentence Resolvers are in pipeline, all Sentence-Embeddings must feed from Chunk2Duc which stems from the entities column to resolve
-        # pipe = PipelineQueryVerifier.enforce_chunk2doc_on_sentence_embeddings(pipe)  # TODO irrelevant or only in train?!!
+        # 2.1 If Sentence Resolvers are in pipeline, all Sentence-Embeddings must feed from Chunk2Doc which stems from the entities column to resolve
+        pipe = PipelineQueryVerifier.enforce_chunk2doc_on_sentence_embeddings(pipe)
 
         # 3. Validate naming of output columns is correct and no error will be thrown in spark
         logger.info('Fixing column names')
-        pipe = PipelineQueryVerifier.check_and_fix_component_output_column_name_satisfaction(pipe)  # TODO REFACTOR!!!
+        pipe = PipelineQueryVerifier.check_and_fix_component_output_column_name_satisfaction(pipe)
 
         # 4. Set on every NLP Annotator the output columns
         pipe = PipeUtils.enforce_NLU_columns_to_NLP_columns(pipe)
@@ -538,7 +530,6 @@ class PipelineQueryVerifier:
             if len(unsorted_components) == 0:
                 all_components_ordered = True
 
-            # Trainable Pipe handling # TODO REFACTOR?
             if not all_components_ordered and len(
                     unsorted_components) <= 2 and pipe.has_trainable_components and not trainable_updated and \
                     unsorted_components[0].trainable and 'sentence_embeddings@' in unsorted_components[
@@ -621,9 +612,9 @@ class PipelineQueryVerifier:
     @staticmethod
     def enforce_chunk2doc_on_sentence_embeddings(pipe):
         """
-        #2.1 In Sentence Resolvers are in pipeline, all Sentence-Embeddings must feed from Chunk2Doc which stems from
+        #If Sentence Resolvers are in pipeline, all Sentence-Embeddings must feed from Chunk2Doc which stems from
         the entities column to resolve We need to update input/output types of sentence Resolver, to the component
-        sorting does not get confused
+        so sorting does not get confused
         """
         if not pipe.has_licensed_components:
             return pipe
@@ -654,9 +645,9 @@ class PipelineQueryVerifier:
         if NLP_FEATURES.SENTENCE in sentence_embeddings[0].in_types:
             sentence_embeddings[0].in_types.remove(NLP_FEATURES.SENTENCE)
         if NLP_FEATURES.DOCUMENT in sentence_embeddings[0].spark_input_column_names:
-            sentence_embeddings[0].in_types.remove(NLP_FEATURES.DOCUMENT)
+            sentence_embeddings[0].spark_input_column_names.remove(NLP_FEATURES.DOCUMENT)
         if NLP_FEATURES.SENTENCE in sentence_embeddings[0].spark_input_column_names:
-            sentence_embeddings[0].in_types.remove(NLP_FEATURES.SENTENCE)
+            sentence_embeddings[0].spark_input_column_names.remove(NLP_FEATURES.SENTENCE)
         sentence_embeddings[0].in_types.append(NLP_FEATURES.DOCUMENT_FROM_CHUNK)
         sentence_embeddings[0].spark_input_column_names.append(NLP_FEATURES.DOCUMENT_FROM_CHUNK)
 

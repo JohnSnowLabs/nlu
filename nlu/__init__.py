@@ -1,4 +1,4 @@
-__version__ = '3.4.0'
+__version__ = '3.4.1'
 
 from nlu.universe.universes import Licenses
 import nlu.utils.environment.offline_load_utils as offline_utils
@@ -155,8 +155,6 @@ def load(request: str = 'from_disk', path: Optional[str] = None, verbose: bool =
     try:
         pipe = PipelineQueryVerifier.check_and_fix_nlu_pipeline(pipe)
         pipe.nlu_ref = request
-        for c in pipe.components:
-            if c.license in [Licenses.ocr, Licenses.hc]: pipe.has_licensed_components = True
         return pipe
     except:
         if verbose:
@@ -294,10 +292,16 @@ def disable_verbose() -> None:
 
 
 def get_open_source_spark_context(gpu):
-    if is_env_pyspark_2_3(): return sparknlp.start(spark23=True, gpu=gpu)
-    if is_env_pyspark_2_4(): return sparknlp.start(spark24=True, gpu=gpu)
-    if is_env_pyspark_3_0() or is_env_pyspark_3_1(): return sparknlp.start(gpu=gpu)
-    print(f"Current Spark version {get_pyspark_version()} not supported!")
+    if is_env_pyspark_2_3():
+        return sparknlp.start(spark23=True, gpu=gpu)
+    if is_env_pyspark_2_4():
+        return sparknlp.start(spark24=True, gpu=gpu)
+    if is_env_pyspark_3_0() or is_env_pyspark_3_1():
+        return sparknlp.start(gpu=gpu)
+    if is_env_pyspark_3_2():
+        return sparknlp.start(spark32=True, gpu=gpu)
+    print(f"Current Spark version {get_pyspark_version()} not supported!\n"
+          f"Please install any of the Pyspark versions 3.1.x, 3.2.x, 3.0.x, 2.4.x, 2.3.x")
     raise ValueError(f"Failure starting Spark Context! Current Spark version {get_pyspark_version()} not supported! ")
 
 
@@ -305,7 +309,7 @@ def enable_streamlit_caching():
     # dynamically monkeypatch aka replace the nlu.load() method with the wrapped st.cache if streamlit_caching
     nlu.st_cache_enabled = True
     nlu.non_caching_load = load
-    nlu.load = wrap_with_st_cache_if_avaiable(nlu.load)
+    nlu.load = wrap_with_st_cache_if_available_and_set_layout_to_wide(nlu.load)
 
 
 # def disable_streamlit_caching(): # WIP not working
@@ -313,10 +317,11 @@ def enable_streamlit_caching():
 #     else : print("Could not disable caching.")
 
 
-def wrap_with_st_cache_if_avaiable(f):
+def wrap_with_st_cache_if_available_and_set_layout_to_wide(f):
     """Wrap function with ST cache method if streamlit is importable"""
     try:
         import streamlit as st
+        st.set_page_config(layout='wide')
         logger.info("Using streamlit cache for load")
         return st.cache(f, allow_output_mutation=True, show_spinner=False)
     except:

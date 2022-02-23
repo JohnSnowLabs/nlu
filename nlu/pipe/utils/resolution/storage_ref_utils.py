@@ -18,7 +18,6 @@ class StorageRefUtils:
     def extract_storage_ref(component: NluComponent):
         """Extract storage ref from either a NLU component or NLP Annotator. First checks if annotator has storage
         ref, otherwise check NLU attribute """
-        # TODO converters have no getStorageRef() and we must read it from nlu_component if defined!
         if StorageRefUtils.has_storage_ref(component):
             return StorageRefUtils.nlp_extract_storage_ref_nlp_model(component)
         else:

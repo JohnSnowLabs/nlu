@@ -77,25 +77,9 @@ class Spellbook:
 
         # multi lang pipes
         'lang': ('detect_language_375', 'component_list'),  # multi lang alias
-        'lang.7': ('detect_language_7', 'component_list'),  # multi lang detector alias
-        'lang.20': ('detect_language_20', 'component_list'),  # multi lang detector alias
-        'lang.21': ('detect_language_21', 'component_list'),
-        'lang.43': ('detect_language_43', 'component_list'),
-        'lang.95': ('detect_language_95', 'component_list'),
-        'lang.99': ('detect_language_99', 'component_list'),
-        'lang.220': ('detect_language_220', 'component_list'),
-        'lang.231': ('detect_language_231', 'component_list'),
 
         # Aliases
         'classify.lang': ('detect_language_375', 'component_list'),  # multi lang detector default
-        'classify.lang.7': ('detect_language_7', 'component_list'),  # multi lang detector alias
-        'classify.lang.20': ('detect_language_20', 'component_list'),  # multi lang detector alias
-        'classify.lang.21': ('detect_language_21', 'component_list'),
-        'classify.lang.43': ('detect_language_43', 'component_list'),
-        'classify.lang.95': ('detect_language_95', 'component_list'),
-        'classify.lang.99': ('detect_language_99', 'component_list'),
-        'classify.lang.220': ('detect_language_220', 'component_list'),
-        'classify.lang.231': ('detect_language_231', 'component_list'),
 
         # eng pipes
         'classify': ('analyze_sentiment', 'component_list'),  # default classifier
@@ -108,20 +92,16 @@ class Spellbook:
         'ner': ('onto_recognize_entities_sm', 'component_list'),  # default  ner.onto
         'ner.onto': ('onto_recognize_entities_sm', 'component_list'),  # default  ner.onto
         'ner.onto.sm': ('onto_recognize_entities_sm', 'component_list'),
-        'ner.onto.lg': ('onto_recognize_entities_lg', 'component_list'),
-        'match.datetime': ('match_datetime', 'component_list'),
 
-        'match.text': ('text_matcher', 'model'),
-        'match.regex': ('regex_matcher', 'model'),
-        'match.date': ('date_matcher', 'model'),
-        'match.context': ('context_parser', 'model'),  # TODO Licensed!!
+        # 'match.text': ('text_matcher', 'model'),
+        # 'match.regex': ('regex_matcher', 'model'),
+        # 'match.date': ('date_matcher', 'model'),
+        # 'match.context': ('context_parser', 'model'),
         # 'context_parser': ('context_parser', 'model'),
 
-        'match.pattern': ('match_pattern', 'component_list'),
         'match.chunks': ('match_chunks', 'component_list'),
-        'match.phrases': ('match_phrases', 'component_list'),
         'clean.stop': ('clean_stop', 'component_list'),
-        'clean.pattern': ('clean_pattern', 'component_list'),
+        # 'clean.pattern': ('clean_pattern', 'component_list'),
         'clean.slang': ('clean_slang', 'component_list'),
         # 'spell': ('check_spelling','component_list'),  # bad spell_checker,
         'spell': ('spellcheck_dl', 'model'),  # default spell
@@ -132,7 +112,7 @@ class Spellbook:
         'sentiment.imdb.use': ('analyze_sentimentdl_use_imdb', 'component_list'),
         'sentiment.twitter.use': ('analyze_sentimentdl_use_twitter', 'component_list'),
         'sentiment.twitter': ('analyze_sentimentdl_use_twitter', 'component_list'),
-        'dependency': ('dependency_parse', 'component_list'),
+        'dependency':  ('dependency_conllu', 'model'),
 
         'tokenize': ('spark_nlp_tokenizer', 'model'),  # tokenizer rule based model
         'stem': ('stemmer', 'model'),  # stem rule based model
@@ -156,7 +136,7 @@ class Spellbook:
         'sentence_detector': ('sentence_detector_dl', 'model'),
         'sentence_detector.deep': ('sentence_detector_dl', 'model'),  # ALIAS
 
-        'sentence_detector.pragmatic': ('pragmatic_sentence_detector', 'model'),  # todo
+        'sentence_detector.pragmatic': ('pragmatic_sentence_detector', 'model'),
 
         'spell.symmetric': ('spellcheck_sd', 'model'),  # TODO erronous
         'spell.norivg': ('spellcheck_norvig', 'model'),
@@ -243,10 +223,6 @@ class Spellbook:
         'sarcasm': ('classifierdl_use_sarcasm', 'model'),  # Alias withouth embedding
 
         'embed.glove.840B_300': ('glove_840B_300', 'model'),
-        # 'embed.glove.6B_300': ('glove_6B_300', 'model'),
-        'embed.bert_multi_cased': ('bert_multi_cased', 'model'),
-        'classify.wiki_7': ('ld_wiki_7', 'model'),
-        'classify.wiki_20': ('ld_wiki_20', 'model'),
         'yake': ('yake', 'model'),
 
         # 2.7.0 new aliases
@@ -301,12 +277,10 @@ class Spellbook:
             # 'en.ner.onto': 'onto_recognize_entities_sm',  # default  ner.onto
             'en.ner.onto.sm': 'onto_recognize_entities_sm',
             'en.ner.onto.lg': 'onto_recognize_entities_lg',
-            'en.match.datetime': 'match_datetime',
-            'en.match.pattern': 'match_pattern',
+            # 'en.match.datetime': 'match_datetime',
             'en.match.chunks': 'match_chunks',
-            'en.match.phrases': 'match_phrases',
             'en.clean.stop': 'clean_stop',
-            'en.clean.pattern': 'clean_pattern',
+            # 'en.clean.pattern': 'clean_pattern',
             'en.clean.slang': 'clean_slang',
             'en.spell': 'check_spelling_dl',  # dfault spell
 
@@ -319,7 +293,7 @@ class Spellbook:
             'en.sentiment.imdb.use': 'analyze_sentimentdl_use_imdb',
             # 'en.sentiment.twitter.use': 'analyze_sentimentdl_use_twitter',
             'en.sentiment.twitter': 'analyze_sentimentdl_use_twitter',
-            'en.dependency': 'dependency_parse',
+            # 'en.dependency': 'dependency_parse',
 
             # 2.7
             'en.ner.onto.bert.base': 'onto_recognize_entities_bert_base',
@@ -1799,6 +1773,7 @@ class Spellbook:
     }
     pretrained_models_references = {
         'vi': {
+            'vi.embed.distilbert.cased': 'distilbert_base_cased',
             'vi.lemma': 'lemma',
         },
         'is': {
@@ -1852,7 +1827,6 @@ class Spellbook:
             # 'en.ner.crf' :'ner_crf', # crf not supported in NLU
             'en.ner': 'ner_dl',  # ner default en
             'en.ner.dl': 'ner_dl',  # ner embeds  default  en
-            'en.ner.dl.glove.6B_100d': 'ner_dl',
             'en.ner.dl.bert': 'ner_dl_bert',  # points ner bert
             'en.ner.onto': 'onto_100',  # ner  onto default embeds en
             'en.ner.onto.glove.6B_100d': 'onto_100',
@@ -1871,7 +1845,7 @@ class Spellbook:
             'en.ner.bert_base_cased': 'ner_dl_bert_base_cased',
 
             # 'en.ner.ade': 'ade_ner_100d', # FORBIDDEN?
-            'en.ner.aspect_sentiment': 'ner_aspect_based_sentiment',
+            # 'en.ner.aspect_sentiment': 'ner_aspect_based_sentiment',
 
             'en.ner.glove.100d': 'ner_dl_sentence',
             'en.ner.glove': 'ner_dl_sentence',
@@ -2209,6 +2183,11 @@ class Spellbook:
             'en.t5.passive_to_active_styletransfer': 't5_passive_to_active_styletransfer',
             'en.t5.wikiSQL': 't5_small_wikiSQL',
 
+            # NLP 3.4.1
+            'en.embed.longformer.clinical': 'clinical_longformer',
+            'en.classify.emotion.bert': 'bert_sequence_classifier_emotion',
+            'en.classify.typos.distilbert': 'distilbert_token_classifier_typo_detector',
+
         },
 
         'yi': {
@@ -2217,6 +2196,9 @@ class Spellbook:
         },
 
         'fr': {
+            'fr.embed.word2vec_wiki_1000': 'word2vec_wiki_1000',
+            'fr.embed.word2vec_wac_200': 'word2vec_wac_200',
+            'fr.embed.w2v_cc_300d': 'w2v_cc_300d',
             'fr.lemma': 'lemma',
             'fr.pos': 'pos_ud_gsd',  # default pos fr
             'fr.pos.ud_gsd': 'pos_ud_gsd',
@@ -2231,6 +2213,7 @@ class Spellbook:
 
         },
         'de': {
+            'de.classify.news_sentiment.bert': 'bert_sequence_classifier_news_sentiment',
             'de.lemma': 'lemma',
             'de.pos.ud_hdt': 'pos_ud_hdt',
             'de.pos': 'pos_ud_hdt',  # default pos de
@@ -2786,8 +2769,11 @@ class Spellbook:
         },
 
         'xx': {
+            'xx.embed.albert.indic': 'albert_indic',
+            'xx.ner.masakhaner.distilbert': 'distilbert_base_token_classifier_masakhaner',
             # 3.4.0
             'xx.ner.masakhaner': 'xlm_roberta_large_token_classifier_masakhaner',
+            'xx.ner.masakhaner.xlm_roberta': 'xlm_roberta_large_token_classifier_masakhaner',
             'xx.ner.high_resourced_lang': 'xlm_roberta_large_token_classifier_hrl',
             'xx.ner.scandinavian': 'bert_token_classifier_scandi_ner',
 
@@ -2822,8 +2808,6 @@ class Spellbook:
             'xx.embed.bert_multi_cased': 'bert_multi_cased',
             'xx.embed.bert': 'bert_multi_cased',
 
-            # 'xx.classify.wiki_7': 'ld_wiki_7',  # Depcrecated
-            # 'xx.classify.wiki_20': 'ld_wiki_20' # Depcrecated ,
             'xx.classify.wiki_21': 'ld_wiki_tatoeba_cnn_21',
             'xx.classify.wiki_21.bigru': 'ld_tatoeba_bigru_21',
             'xx.classify.wiki_99': 'ld_tatoeba_cnn_99',
@@ -4185,12 +4169,47 @@ class Spellbook:
     }
 
     healthcare_component_alias_references = {}
+    pretrained_healthcare_pipe_references = {
+        'en': {
+            'en.med_ner.profiling_clinical': 'ner_profiling_clinical',
+            'en.med_ner.profiling_biobert': 'ner_profiling_biobert',
+            'en.resolve.icd10cm.umls': 'icd10cm_umls_mapping',
+            'en.resolve.mesh.umls': 'mesh_umls_mapping',
+            'en.resolve.rxnorm.umls': 'rxnorm_umls_mapping',
+            'en.resolve.rxnorm.mesh': 'rxnorm_mesh_mapping',
+            'en.resolve.snomed.umls': 'snomed_umls_mapping',
+
+            # '' :'clinical_analysis', # Not 3+ compatible
+            # '' :'clinical_deidentification', # todo to big ner consumer stack for NLU to handle..
+            # '' :'clinical_ner_assertion', Not 3+ compatible
+
+            # Explain Pipes
+            'en.explain_doc.carp': 'explain_clinical_doc_carp',
+            'en.explain_doc.era': 'explain_clinical_doc_era',
+            # 'en.explain_doc.ade':'explain_clinical_doc_ade', # todo wierd 2x Converter 1x NER component_list, messes up component_list logic
+
+            'en.recognize_entities.posology': 'recognize_entities_posology',  # PIPE
+
+        },
+
+    }
     pretrained_healthcare_model_references = {
 
         'en':
             {
-                # 3.4.0
+                # 3.4.1
+                'en.med_ner.supplement_clinical': 'ner_supplement_clinical',
+                'en.resolve.rxnorm.augmented_re': 'sbiobertresolve_rxnorm_augmented_re',
+                'en.classify.ade.seq_biobert': 'bert_sequence_classifier_ade',
+                'en.classify.gender.seq_biobert': 'bert_sequence_classifier_gender_biobert',
+                'en.classify.pico.seq_biobert': 'bert_sequence_classifier_pico_biobert',
+                'en.classify.ade.seq_distilbert': 'distilbert_sequence_classifier_ade',
+                'en.relation.temporal_events_clinical': 're_temporal_events_clinical',
+                'en.relation.adverse_drug_events.clinical': 're_ade_clinical',
+                'en.relation.adverse_drug_events.clinical.biobert': 'redl_ade_biobert',
 
+
+                # 3.4.0
                 'en.med_ner.abbreviation_clinical': 'ner_abbreviation_clinical',
                 'en.med_ner.drugprot_clinical': 'ner_drugprot_clinical',
                 'en.ner.drug_development_trials': 'bert_token_classifier_drug_development_trials',
@@ -4469,7 +4488,6 @@ class Spellbook:
                 'en.resolve.umls.findings': 'sbiobertresolve_umls_findings',
                 'en.resolve.loinc': 'sbiobertresolve_loinc',
                 'en.resolve.loinc.biobert': 'sbiobertresolve_loinc',
-                'en.resolve.loinc.bluebert': 'sbluebertresolve_loinc',
                 'en.resolve.HPO': 'sbiobertresolve_HPO',
                 'en.resolve.snomed_conditions': 'sbertresolve_snomed_conditions',
 
@@ -4479,7 +4497,7 @@ class Spellbook:
                 'en.relation.ade_biobert': 're_ade_biobert',
                 'en.assert.jsl': 'assertion_jsl',
                 'en.assert.jsl_large': 'assertion_jsl_large',
-                'en.resolve.snomed_findings_aux_concepts': 'sbiobertresolve_snomed_findings_aux_concepts',
+                # 'en.resolve.snomed_findings_aux_concepts': 'sbiobertresolve_snomed_findings_aux_concepts',
                 'en.resolve.rxnorm_disposition': 'sbiobertresolve_rxnorm_disposition',
                 'en.resolve.rxnorm_disposition.sbert': 'sbertresolve_rxnorm_disposition',
 
@@ -4537,6 +4555,11 @@ class Spellbook:
             },
 
         'es': {
+            # 3.4.1
+            'es.embed.sciwiki_300d': 'embeddings_sciwiki_300d',
+            'es.med_ner.deid.generic': 'ner_deid_generic',
+            'es.med_ner.deid.subentity': 'ner_deid_subentity',
+
             'es.embed.scielo.150d': 'embeddings_scielo_150d',
             'es.embed.scielo.300d': 'embeddings_scielo_300d',
             'es.embed.scielo.50d': 'embeddings_scielo_50d',
@@ -4554,29 +4577,6 @@ class Spellbook:
             'es.med_ner.roberta_ner_diag_proc': 'roberta_ner_diag_proc',
             'es.resolve.snomed': 'robertaresolve_snomed',
         }
-    }
-    pretrained_healthcare_pipe_references = {
-        'en': {
-            'en.med_ner.profiling_clinical': 'ner_profiling_clinical',
-            'en.med_ner.profiling_biobert': 'ner_profiling_biobert',
-            'en.resolve.icd10cm.umls': 'icd10cm_umls_mapping',
-            'en.resolve.mesh.umls': 'mesh_umls_mapping',
-            'en.resolve.rxnorm.umls': 'rxnorm_umls_mapping',
-            'en.resolve.rxnorm.mesh': 'rxnorm_mesh_mapping',
-            'en.resolve.snomed.umls': 'snomed_umls_mapping',
-
-            # '' :'clinical_analysis', # Not 3+ compatible
-            # '' :'clinical_deidentification', # todo to big ner consumer stack for NLU to handle..
-            # '' :'clinical_ner_assertion', Not 3+ compatible
-
-            # Explain Pipes
-            'en.explain_doc.carp': 'explain_clinical_doc_carp',
-            'en.explain_doc.era': 'explain_clinical_doc_era',
-            # 'en.explain_doc.ade':'explain_clinical_doc_ade', # todo wierd 2x Converter 1x NER component_list, messes up component_list logic
-
-            'en.recognize_entities.posology': 'recognize_entities_posology',  # PIPE
-
-        },
     }
 
     ocr_model_references = {
@@ -4690,29 +4690,47 @@ class Spellbook:
 
     }  #
 
+    bad_storage_refs = [
+
+        'BERT_SENTENCE_EMBEDDINGS_c7e5b6a772f5',
+        'RelationExtractionModel_ce79d77d1bf1',
+        'RelationExtractionModel_1fb1dfa024c7',
+        'RelationExtractionModel_6a65c9992836',
+        'BERT_SENTENCE_EMBEDDINGS_0bee53f1b2cc',
+        'BERT_SENTENCE_EMBEDDINGS_59c3cd1e17c4',
+        'RelationExtractionModel_3ab4750ad5b6',
+        'RelationExtractionModel_6b61602c8303',
+        'RelationExtractionModel_9c255241fec3',
+        'ROBERTA_EMBEDDINGS_39f3e48e5c3f',
+        'RelationExtractionModel_14b00157fc1a',
+        'RelationExtractionModel_53a12cc975cb',
+        'ROBERTA_EMBEDDINGS_39f3e48e5c3f',
+
+    ]
     licensed_storage_ref_2_nlu_ref = {
         'en': {
             'clinical': 'en.embed.glove.clinical',
             'biobert_pubmed_base_cased': 'biobert',
-            'ROBERTA_EMBEDDINGS_39f3e48e5c3f': 'en.embed_sentence.biobert.clinical_base_cased',
-            # 'embeddings_healthcare100' : 'en.embed.glove.clinical',
             'embeddings_healthcare100': 'en.embed.glove.healthcare_100d',
-            'BERT_SENTENCE_EMBEDDINGS_0bee53f1b2cc': 'en.embed_sentence.biobert.mli',
-            # 'BERT_SENTENCE_EMBEDDINGS_0bee53f1b2cc': 'en.embed_sentence.biobert.pubmed_base_cased',
-            'BERT_SENTENCE_EMBEDDINGS_59c3cd1e17c4': 'en.embed_sentence.bluebert.mli',
-            'RelationExtractionModel_3ab4750ad5b6': 'en.embed.glove.clinical',
-            'RelationExtractionModel_6b61602c8303': 'en.embed.glove.clinical',
-            'RelationExtractionModel_9c255241fec3': 'en.embed.glove.clinical',
-            # 'bert_base_cased' : 'en.embed.glove.clinical'
             'bert_base_cased': 'en.embed.bert.base_cased',
+            'sent_bluebert_base_uncased_mednli': 'en.embed_sentence.bluebert.mli',
+
             'BERT_SENTENCE_EMBEDDINGS_c7e5b6a772f5': 'en.embed_sentence.bert.jsl_medium_uncased',
             'RelationExtractionModel_ce79d77d1bf1': 'en.embed.glove.clinical',
             'RelationExtractionModel_1fb1dfa024c7': 'en.embed.glove.clinical',
             'RelationExtractionModel_6a65c9992836': 'biobert',
-            'sent_bluebert_base_uncased_mednli': 'en.embed_sentence.bluebert.mli',
+            'BERT_SENTENCE_EMBEDDINGS_0bee53f1b2cc': 'en.embed_sentence.biobert.mli',
+            'BERT_SENTENCE_EMBEDDINGS_59c3cd1e17c4': 'en.embed_sentence.bluebert.mli',
+            'RelationExtractionModel_3ab4750ad5b6': 'en.embed.glove.clinical',
+            'RelationExtractionModel_6b61602c8303': 'en.embed.glove.clinical',
+            'RelationExtractionModel_9c255241fec3': 'en.embed.glove.clinical',
+            'ROBERTA_EMBEDDINGS_39f3e48e5c3f': 'en.embed_sentence.biobert.clinical_base_cased',
+            'RelationExtractionModel_14b00157fc1a': 'en.embed.glove.clinical',
+            'RelationExtractionModel_53a12cc975cb': 'en.embed.glove.clinical',
         },
         'es': {
             'embeddings_scielowiki300': 'es.embed.scielowiki.300d',
+            'embeddings_wiki300': 'es.embed.sciwiki_300d',
             'ROBERTA_EMBEDDINGS_39f3e48e5c3f': 'es.embed.roberta_base_biomedical',
             'clinical': 'es.embed.roberta_base_biomedical',
             # 'clinical' : 'es.embed.roberta_base_biomedical',
@@ -4755,6 +4773,34 @@ class Spellbook:
         OCR_NODE_IDS.PDF2TEXT: 'PdfToText',
         OCR_NODE_IDS.DOC2TEXT: 'DocToText',
         OCR_NODE_IDS.BINARY2IMAGE: 'BinaryToImage',
+
+        'default_chunker' : 'Chunker' ,
+
+        # NLP HC
+        'embeddings_sciwiki_300d': 'WordEmbeddingsModel',
+        'ner_deid_generic': 'MedicalNerModel',
+        'ner_deid_subentity': 'MedicalNerModel',
+        'ner_supplement_clinical': 'MedicalNerModel',
+        'sbiobertresolve_rxnorm_augmented_re': 'SentenceEntityResolverModel',
+        'bert_sequence_classifier_ade': 'MedicalBertForSequenceClassification',
+        'bert_sequence_classifier_gender_biobert': 'MedicalBertForSequenceClassification',
+        'bert_sequence_classifier_pico_biobert': 'MedicalBertForSequenceClassification',
+        'distilbert_sequence_classifier_ade': 'MedicalDistilBertForSequenceClassification',
+        're_temporal_events_clinical': 'RelationExtractionModel',
+        're_ade_clinical': 'RelationExtractionModel',
+        'redl_ade_biobert': 'RelationExtractionDLModel',
+
+        # NLP 3.4.1
+        'clinical_longformer': 'LongformerEmbeddings',
+        'albert_indic': 'AlbertEmbeddings',
+        'distilbert_base_cased': 'DistilBertEmbeddings',
+        'bert_sequence_classifier_news_sentiment': 'BertForSequenceClassification',
+        'bert_sequence_classifier_emotion': 'BertForSequenceClassification',
+        'distilbert_token_classifier_typo_detector': 'DistilBertForTokenClassification',
+        'distilbert_base_token_classifier_masakhaner': 'DistilBertForTokenClassification',
+        'word2vec_wiki_1000': 'WordEmbeddingsModel',
+        'word2vec_wac_200': 'WordEmbeddingsModel',
+        'w2v_cc_300d': 'WordEmbeddingsModel',
 
         # NLP 3.4.0
         'gpt2_distilled': 'GPT2Transformer',
@@ -4830,7 +4876,7 @@ class Spellbook:
         'bert_base_dutch_cased': 'BertEmbeddings',
         'sent_bert_base_cased': 'BertSentenceEmbeddings', 'bert_base_cased': 'BertEmbeddings',
         'stemmer': 'Stemmer', 'spark_nlp_tokenizer': 'TokenizerModel', 'norm': 'NormalizerModel',
-        'default_chunker': 'Chunker', 'ngram': 'NGramGenerator',
+        'defaen.resolve.loinc.bluebertult_chunker': 'Chunker', 'ngram': 'NGramGenerator',
         'chunk_embeddings': 'ChunkEmbeddings', 'lemma_antbnc': 'LemmatizerModel',
         'pos_anc': 'PerceptronModel', 'pos_ud_ewt': 'PerceptronModel', 'ner_dl': 'NerDLModel',
         'ner_dl_bert': 'NerDLModel', 'onto_100': 'NerDLModel', 'onto_300': 'NerDLModel',
@@ -4839,7 +4885,7 @@ class Spellbook:
         'onto_small_bert_L4_256': 'NerDLModel', 'onto_small_bert_L4_512': 'NerDLModel',
         'onto_small_bert_L8_512': 'NerDLModel', 'onto_electra_small_uncased': 'NerDLModel',
         'onto_electra_base_uncased': 'NerDLModel', 'ner_dl_bert_base_cased': 'NerDLModel',
-        'ner_aspect_based_sentiment': 'NerDLModel', 'ner_dl_sentence': 'NerDLModel',
+        'ner_aspect_based_sentiment': 'MedicalNerModel', 'ner_dl_sentence': 'NerDLModel',
         'spellcheck_norvig': 'NorvigSweetingModel', 'sentiment_vivekn': 'ViveknSentimentModel',
         'dependency_conllu': 'DependencyParserModel',
         'dependency_typed_conllu': 'TypedDependencyParserModel',

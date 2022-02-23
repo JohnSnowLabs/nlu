@@ -20,6 +20,12 @@ def is_env_pyspark_3_1():
         return True
     return False
 
+def is_env_pyspark_3_2():
+    v = get_pyspark_major_and_minor()
+    if v[0] == '3' and v[1] == '2':
+        return True
+    return False
+
 
 def is_env_pyspark_3_0():
     v = get_pyspark_major_and_minor()

@@ -87,11 +87,13 @@ class ComponentUtils:
         '''
         if type(component) == type(list) or type(component) == type(set):
             for feature in component:
-                if 'embed' in feature: return True
+                if 'embed' in feature:
+                    return True
             return False
         else:
             for feature in component.out_types:
-                if 'embed' in feature: return True
+                if 'embed' in feature:
+                    return True
         return False
 
     @staticmethod

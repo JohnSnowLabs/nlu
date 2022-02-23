@@ -133,12 +133,12 @@ class NLP_HC_NODE_IDS:  # or Mode Node?
     CHUNK_ENTITY_RESOLVER = JslAnnoId('chunk_entity_resolver')
     TRAINABLE_CHUNK_ENTITY_RESOLVER = JslAnnoId('traianble_chunk_entity_resolver')
     CHUNK_FILTERER = JslAnnoId('chunk_filterer')
-    TRAINABLE_CHUNK_FILTERER = JslAnnoId('trainable_chunk_filterer')  # TODO feature node entires!!!
+    TRAINABLE_CHUNK_FILTERER = JslAnnoId('trainable_chunk_filterer')  # Todo not integrated
     CHUNK_KEY_PHRASE_EXTRACTION = JslAnnoId('chunk_key_phrase_extraction')
     CHUNK_MERGE = JslAnnoId('chunk_merge')
-    TRAINABLE_CHUNK_MERGE = JslAnnoId('trainable_chunk_merge')  # TODO feature node entriess!!
+    TRAINABLE_CHUNK_MERGE = JslAnnoId('trainable_chunk_merge')  # Todo not integrated
     CONTEXTUAL_PARSER = JslAnnoId('contextual_parser')
-    TRAIANBLE_CONTEXTUAL_PARSER = JslAnnoId('trainable_contextual_parser')  # TODO feature node entriess!!
+    TRAIANBLE_CONTEXTUAL_PARSER = JslAnnoId('trainable_contextual_parser') # Todo not integrated
     DE_IDENTIFICATION = JslAnnoId('de_identification')
     TRAINABLE_DE_IDENTIFICATION = JslAnnoId('trainable_de_identification')
     DOCUMENT_LOG_REG_CLASSIFIER = JslAnnoId('document_log_reg_classifier')
@@ -163,6 +163,10 @@ class NLP_HC_NODE_IDS:  # or Mode Node?
     SENTENCE_ENTITY_RESOLVER = JslAnnoId('sentence_entity_resolver')
     TRAINABLE_SENTENCE_ENTITY_RESOLVER = JslAnnoId('trainable_sentence_entity_resolver')
     MEDICAL_BERT_FOR_TOKEN_CLASSIFICATION = JslAnnoId('medical_bert_for_token_classification')
+
+    MEDICAL_BERT_FOR_SEQUENCE_CLASSIFICATION = JslAnnoId('medical_bert_for_sequence_classification')
+    MEDICAL_DISTILBERT_FOR_SEQUENCE_CLASSIFICATION = JslAnnoId('medical_distilbert_for_sequence_classification')
+    ENTITY_CHUNK_EMBEDDING = JslAnnoId('entity_chunk_embedding')
 
 
 class OCR_NODE_IDS:

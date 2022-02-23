@@ -37,7 +37,7 @@ def __predict_standard_spark(pipe, data, output_level, positions, keep_stranger_
 
 
 def __predict_multi_threaded_light_pipe(pipe, data, output_level, positions, keep_stranger_features, metadata,
-                                        drop_irrelevant_cols,get_embeddings ):
+                                        drop_irrelevant_cols, get_embeddings):
     # 1. Try light component_list predcit
     # 2. if vanilla Fails use Vanilla
     # 3.  if vanilla fails raise error
@@ -56,8 +56,9 @@ def __predict_multi_threaded_light_pipe(pipe, data, output_level, positions, kee
                                           get_embeddings=get_embeddings
                                           )
 
+
 def __predict_ocr_spark(pipe, data, output_level, positions, keep_stranger_features, metadata,
-                        drop_irrelevant_cols,get_embeddings ):
+                        drop_irrelevant_cols, get_embeddings):
     """
         Check if there are any OCR components in the Pipe.
         If yes, we verify data contains pointer to folder or image files.
@@ -72,7 +73,8 @@ def __predict_ocr_spark(pipe, data, output_level, positions, keep_stranger_featu
     accepted_file_types = OcrDataConversionUtils.get_accepted_ocr_file_types(pipe)
     file_paths = OcrDataConversionUtils.glob_files_of_accepted_type(paths, accepted_file_types)
     spark = sparknlp.start()  # Fetches Spark Session that has already been licensed
-    data = pipe.spark_transformer_pipe.transform(spark.read.format("binaryFile").load(file_paths)).withColumn('origin_index', monotonically_increasing_id().alias('origin_index'))
+    data = pipe.spark_transformer_pipe.transform(spark.read.format("binaryFile").load(file_paths)).withColumn(
+        'origin_index', monotonically_increasing_id().alias('origin_index'))
     return pipe.pythonify_spark_dataframe(data,
                                           keep_stranger_features=keep_stranger_features,
                                           output_metadata=metadata,
@@ -97,13 +99,17 @@ def __predict__(pipe, data, output_level, positions, keep_stranger_features, met
     :param return_spark_df: Prediction results will be returned right after transforming with the Spark NLP pipeline
     :return:
     '''
-    if output_level != '': pipe.output_level = output_level
-    if output_level == 'sentence' or output_level == 'document': pipe.components = PipeUtils.configure_component_output_levels(
-        pipe)
-    if output_level in ['token', 'chunk', 'relation']: pipe.components = PipeUtils.configure_component_output_levels(
-        pipe, 'document')
+    if output_level == '':
+        # Default sentence level for all components
+        if not pipe.has_trainable_components :
+            pipe.output_level = 'sentence'
+            pipe.components = PipeUtils.configure_component_output_levels(pipe, 'sentence')
+    else:
+        pipe.output_level = output_level
+        if not pipe.has_trainable_components :
+            pipe.components = PipeUtils.configure_component_output_levels(pipe, 'sentence')
 
-    if get_embeddings == None:
+    if get_embeddings is None:
         # Grab embeds if nlu ref is of type embed
         get_embeddings = True if 'embed' in pipe.nlu_ref else False
 
@@ -116,10 +122,9 @@ def __predict__(pipe, data, output_level, positions, keep_stranger_features, met
     # configure Lightpipline usage
     pipe.configure_light_pipe_usage(DataConversionUtils.size_of(data), multithread)
 
-
     if pipe.contains_ocr_components:
         # Ocr processing
-        try :
+        try:
             return __predict_ocr_spark(pipe, data, output_level, positions, keep_stranger_features,
                                        metadata, drop_irrelevant_cols, get_embeddings=get_embeddings)
         except Exception as err:
@@ -129,7 +134,7 @@ def __predict__(pipe, data, output_level, positions, keep_stranger_features, met
     if return_spark_df:
         try:
             return __predict_standard_spark(pipe, data, output_level, positions, keep_stranger_features, metadata,
-                                            drop_irrelevant_cols, return_spark_df)
+                                            drop_irrelevant_cols, return_spark_df, get_embeddings)
         except Exception as err:
             logger.warning(f"Predictions Failed={err}")
             pipe.print_exception_err(err)
@@ -143,7 +148,8 @@ def __predict__(pipe, data, output_level, positions, keep_stranger_features, met
 
         except Exception as err:
             logger.warning(
-                f"Multithreaded mode with Lightpipeline failed. trying to predict again with non multithreaded mode, err={err}")
+                f"Multithreaded mode with Light pipeline failed. trying to predict again with non multithreaded mode, "
+                f"err={err}")
             try:
                 return __predict_standard_spark(pipe, data, output_level, positions, keep_stranger_features, metadata,
                                                 drop_irrelevant_cols, return_spark_df, get_embeddings)
@@ -162,9 +168,6 @@ def __predict__(pipe, data, output_level, positions, keep_stranger_features, met
             raise Exception("Failure to process data with NLU")
 
 
-
-
 def debug_print_pipe_cols(pipe):
     for c in pipe.components:
         print(f'{c.spark_input_column_names}->{c.name}->{c.spark_output_column_names}')
-

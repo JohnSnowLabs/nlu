@@ -1,6 +1,8 @@
 from sparknlp.annotator import *
 import inspect
 import logging
+
+import nlu
 from nlu.pipe.nlu_component import NluComponent
 from nlu.pipe.utils.resolution.storage_ref_utils import StorageRefUtils
 from nlu.universe.logic_universes import NLP_LEVELS, AnnoTypes
@@ -13,10 +15,86 @@ logger = logging.getLogger('nlu')
 from nlu.pipe.utils.component_utils import ComponentUtils
 from typing import List
 from nlu.universe.annotator_class_universe import AnnoClassRef
+from nlu.utils.environment.env_utils import is_running_in_databricks
+import os
+import glob
+import json
 
 
 class PipeUtils:
     """Pipe Level logic operations and utils"""
+
+    @staticmethod
+    def update_bad_storage_refs(pipe):
+        """
+        Some models have bad storage refs. The list of these bad models is defined by nlu.spellbook.Spellbook.bad_storage_refs.
+        The correct storage ref is given by the resolving moels storage ref defined by nlu.Spellbook.licensed_storage_ref_2_nlu_ref[pipe.lang][storage_ref].
+        Once the resolving model is loaded in the pipe, this method will take its storage ref and write it to the bad_storage_ref model defined by nlu.spellbook.Spellbook.bad_storage_refs.
+        If storage ref is already updated, this method will leave the pipe unchanged.
+        We only check for healthcare storage refs
+        :param pipe: Pipe to update bad storage refs on
+        :return: Pipe where each component has storage ref updated, if it was not already updated
+
+        """
+        for bad_storage_ref_component in pipe.components:
+            if not bad_storage_ref_component.loaded_from_pretrained_pipe and bad_storage_ref_component.has_storage_ref:
+                storage_ref = StorageRefUtils.extract_storage_ref(bad_storage_ref_component)
+                # After updating the storage ref it will not be in the licensed_storage_ref_2_nlu_ref mapping anymore,
+                if storage_ref in nlu.spellbook.Spellbook.bad_storage_refs:
+                    # since its a bad storage ref, we can resolve its storage ref by checking licensed_storage_ref_2_nlu_ref
+                    if pipe.lang in nlu.Spellbook.licensed_storage_ref_2_nlu_ref.keys():
+                        if storage_ref in nlu.Spellbook.licensed_storage_ref_2_nlu_ref[pipe.lang].keys():
+                            storage_ref_resolver_nlu_ref = nlu.Spellbook.licensed_storage_ref_2_nlu_ref[pipe.lang][storage_ref]
+                            for storage_resolver in pipe.components:
+                                if storage_resolver.nlu_ref == storage_ref_resolver_nlu_ref:
+                                    # Update the storage ref of the bad_component to the storage ref of the resolving model according to licensed_storage_ref_2_nlu_ref
+                                    resolving_storage_ref = StorageRefUtils.extract_storage_ref(storage_resolver)
+                                    bad_storage_ref_component.model.set(bad_storage_ref_component.model.storageRef, resolving_storage_ref)
+        return pipe
+
+    @staticmethod
+    def update_relation_extractor_models_storage_ref(pipe):
+        # if provided, because the sometimes have unresolvable storage refs 
+        # we can find the actual storage ref only after its mapped is sresolved to an model defined by an nlp ref 
+        # If RelationExtractor is not loaded from a pretrained pipe we update its storage ref to the resolving models storage ref
+
+        for relation_extractor_component in pipe.components:
+            if relation_extractor_component.jsl_anno_class_id == NLP_HC_NODE_IDS.RELATION_EXTRACTION and not relation_extractor_component.loaded_from_pretrained_pipe:
+                storage_ref = StorageRefUtils.extract_storage_ref(relation_extractor_component)
+                # After updating the storage ref it will not be in the licensed_storage_ref_2_nlu_ref mapping anymore,
+                # so we have to check here if it exists in the mapping before accessing it
+                if pipe.lang in nlu.Spellbook.licensed_storage_ref_2_nlu_ref.keys():
+                    if storage_ref in nlu.Spellbook.licensed_storage_ref_2_nlu_ref[pipe.lang].keys():
+                        # We need to find  a component in the pipeline which has this storage ref
+                        storage_ref_resolver_nlu_ref = nlu.Spellbook.licensed_storage_ref_2_nlu_ref[pipe.lang][storage_ref]
+                        for storage_resolver in pipe.components:
+                            if storage_resolver.nlu_ref == storage_ref_resolver_nlu_ref:
+                                # Update the storage ref of the RL-Extractor to the storage ref of the resolving model according to licensed_storage_ref_2_nlu_ref
+                                resolving_storage_ref = StorageRefUtils.extract_storage_ref(storage_resolver)
+                                relation_extractor_component.model.set(relation_extractor_component.model.storageRef, resolving_storage_ref)
+        return pipe
+    @staticmethod
+    def get_json_data_for_pipe_model_at_stage_number(pipe_path, stage_number_as_string):
+        """Gets the json metadata from a model for a given base path at a specific stage index"""
+        c_metadata_path = f'{pipe_path}/stages/{stage_number_as_string}_*/metadata/part-00000'
+        c_metadata_path = glob.glob(f'{c_metadata_path}*')[0]
+        with open(c_metadata_path, "r") as f:
+            data = json.load(f)
+        return data
+
+    @staticmethod
+    def get_json_data_for_pipe_model_at_stage_number_on_databricks(nlp_ref, lang, digit_str):
+        """Gets the json metadata from a model for a given base path at a specific stage index on databricks"""
+        import sparknlp
+        spark = sparknlp.start()
+        pipe_df = spark.read.json(
+            f'dbfs:/root/cache_pretrained/{nlp_ref}_{lang}*/stages/{digit_str}_*/metadata/part-00000')
+        data = pipe_df.toPandas().to_dict()
+        data = {k: v[0] for k, v in data.items()}
+        if 'inputCols' in data['paramMap'].keys():
+            data['paramMap']['inputCols'] = data['paramMap']['inputCols'].tolist()
+        data
+        return data
 
     @staticmethod
     def set_column_values_on_components_from_pretrained_pipe(component_list: List[NluComponent], nlp_ref, lang, path):
@@ -24,37 +102,54 @@ class PipeUtils:
         annotator data to find them Expects a list of NLU Component objects which all stem from the same pipeline
         defined by nlp_ref
         """
-        import os
-        import glob
-        import json
+
         if path:
             pipe_path = path
         else:
             pipe_path = os.path.expanduser('~') + '/cache_pretrained/' + f'{nlp_ref}_{lang}'
-            # WE do not need to check for Spark Version, since cols should match accors versions
-            pipe_path = glob.glob(f'{pipe_path}*')[0]
-            if not os.path.exists(pipe_path): raise FileNotFoundError(
-                f"Could not find downloaded Pipeline at path={pipe_path}")
+            # We do not need to check for Spark Version, since cols should match across versions
+            pipe_path = glob.glob(f'{pipe_path}*')
+            if len(pipe_path) == 0:
+                # try databricks env path
+                if is_running_in_databricks():
+                    pipe_path = [f'dbfs:/root/cache_pretrained/{nlp_ref}_{lang}']
+                else:
+                    raise FileNotFoundError(f"Could not find downloaded Pipeline at path={pipe_path}")
+            pipe_path = pipe_path[0]
+            if not os.path.exists(pipe_path) and not is_running_in_databricks():
+                raise FileNotFoundError(f"Could not find downloaded Pipeline at path={pipe_path}")
 
         # Find HDD location of component_list and read out input/output cols
         digits_num = len(str(len(component_list)))
         digit_str = '0' * digits_num
         digit_cur = 0
+
         for c in component_list:
-            c_metadata_path = f'{pipe_path}/stages/{digit_str}_*/metadata/part-00000'
-            c_metadata_path = glob.glob(f'{c_metadata_path}*')[0]
-            with open(c_metadata_path, "r") as f:
-                data = json.load(f)
-                if 'inputCols' in data['paramMap'].keys():
-                    inp = data['paramMap']['inputCols']
-                    c.model.setInputCols(inp)
-                else:
-                    inp = data['paramMap']['inputCol']
-                    c.model.setInputCol(inp)
+            if is_running_in_databricks():
+                data = PipeUtils.get_json_data_for_pipe_model_at_stage_number_on_databricks(nlp_ref, lang, digit_str)
+            else:
+                data = PipeUtils.get_json_data_for_pipe_model_at_stage_number(pipe_path, digit_str)
+
+            if 'inputCols' in data['paramMap'].keys():
+                inp = data['paramMap']['inputCols']
+                c.model.setInputCols(inp)
+            else:
+                inp = data['paramMap']['inputCol']
+                c.model.setInputCol(inp)
+
+            if 'outputCol' in data['paramMap'].keys():
                 out = data['paramMap']['outputCol']
-                c.spark_input_column_names = inp if isinstance(inp, List) else [inp]
-                c.spark_output_column_names = [out]
-                c.model.setOutputCol(out)
+            else:
+                # Sometimes paramMap is missing outputCol, so we have to use this hack
+                model_name = c.model.uid.split('_')[0]
+                if model_name == 'DocumentAssembler':
+                    out = 'document'
+                else:
+                    out = c.model.uid.split('_')[0] + '_out'
+
+            c.spark_input_column_names = inp if isinstance(inp, List) else [inp]
+            c.spark_output_column_names = [out]
+            c.model.setOutputCol(out)
             digit_cur += 1
             digit_str = str(digit_cur)
             while len(digit_str) < digits_num:
@@ -237,6 +332,8 @@ class PipeUtils:
         logger.info('Configuring components to sentence level')
         for c in pipe.components:
             # update in/out spark cols
+            if c.loaded_from_pretrained_pipe:
+                continue
             if NLP_FEATURES.DOCUMENT in c.spark_input_column_names and NLP_FEATURES.SENTENCE not in c.spark_input_column_names and NLP_FEATURES.SENTENCE not in c.spark_output_column_names:
                 logger.info(f"Configuring C={c.name}  of Type={type(c.model)} to Sentence Level")
                 c.spark_input_column_names.remove(NLP_FEATURES.DOCUMENT)
@@ -258,6 +355,8 @@ class PipeUtils:
         '''
         logger.info('Configuring components to document level')
         for c in pipe.components:
+            if c.loaded_from_pretrained_pipe:
+                continue
             # Update in/out spark cols
             if NLP_FEATURES.SENTENCE in c.spark_input_column_names and NLP_FEATURES.DOCUMENT not in c.spark_input_column_names and NLP_FEATURES.DOCUMENT not in c.spark_output_column_names:
                 logger.info(f"Configuring C={c.name} to document output level")
@@ -452,4 +551,5 @@ class PipeUtils:
             # Check for licensed components
             if c.license in [Licenses.ocr, Licenses.hc]:
                 pipe.has_licensed_components = True
+
         return pipe

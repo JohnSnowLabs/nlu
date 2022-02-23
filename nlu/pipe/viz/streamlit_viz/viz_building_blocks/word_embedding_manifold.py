@@ -164,7 +164,7 @@ class WordEmbeddingManifoldStreamlitBlock():
                     fig = px.scatter(tsne_df, x="x", y="y",color=feature_to_color_by, hover_data=hover_data)
                     subh = f"""Word-Embeddings =`{e_com_storage_ref}`, Manifold-Algo =`{algo}` for `D=1`"""
                     cols[col_index].markdown(subh)
-                    cols[col_index].write(fig,key=key)
+                    cols[col_index].plotly_chart(fig, key=key, use_container_width=True)
                     col_index+=1
                     if are_cols_full() :
                         cols = st.columns(num_cols)
@@ -178,8 +178,7 @@ class WordEmbeddingManifoldStreamlitBlock():
                     fig = px.scatter(tsne_df, x="x", y="y",color=feature_to_color_by, hover_data=hover_data)
                     subh = f"""Word-Embeddings =`{e_com_storage_ref}`, Manifold-Algo =`{algo}` for `D=2`"""
                     cols[col_index].markdown(subh)
-                    cols[col_index].write(fig,key=key)
-                    # st.write(fig)
+                    cols[col_index].plotly_chart(fig, key=key, use_container_width=True)
                     col_index+=1
                     if are_cols_full() :
                         cols = st.columns(num_cols)
@@ -194,9 +193,7 @@ class WordEmbeddingManifoldStreamlitBlock():
                     fig = px.scatter_3d(tsne_df, x="x", y="y", z='z',color=feature_to_color_by, hover_data=hover_data)
                     subh = f"""Word-Embeddings =`{e_com_storage_ref}`, Manifold-Algo =`{algo}` for `D=3`"""
                     cols[col_index].markdown(subh)
-                    cols[col_index].write(fig,key=key)
-
-                    # st.write(fig)
+                    cols[col_index].plotly_chart(fig, key=key, use_container_width=True)
                     col_index+=1
                     if are_cols_full() :
                         cols = st.columns(num_cols)

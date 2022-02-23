@@ -103,7 +103,7 @@ class OutputLevelUtils():
         '''
         if pipe.output_level == '':
             # Loop in reverse over component_list and get first non util/sentence_detecotr/tokenizer/doc_assember. If there is non, take last
-            bad_types = [AnnoTypes.HELPER_ANNO, AnnoTypes.SENTENCE_DETECTOR]
+            bad_types = [AnnoTypes.SENTENCE_DETECTOR]  # AnnoTypes.HELPER_ANNO,
             bad_names = [NLP_NODE_IDS.TOKENIZER]
             for c in pipe.components[::-1]:
                 if any(t in c.type for t in bad_types):
@@ -204,7 +204,7 @@ class OutputLevelUtils():
         # We iterate over the component_list and check which Embed component is feeding the classifier and what the input that embed annotator is (sent or doc)
         for c in pipe.components:
             # check if os_components is of sentence embedding class  which is always input dependent
-            if any(isinstance(c.model, e) for e in OutputLevelUtils.all_embeddings['input_dependent']): # TODO refactor
+            if any(isinstance(c.model, e) for e in OutputLevelUtils.all_embeddings['input_dependent']):  # TODO refactor
                 if NLP_FEATURES.DOCUMENT in c.spark_input_column_names:  return NLP_FEATURES.DOCUMENT
                 if NLP_FEATURES.SENTENCE in c.spark_input_column_names:  return NLP_FEATURES.SENTENCE
 
@@ -280,7 +280,7 @@ class OutputLevelUtils():
         """Get a dict where key=colname and val=output_level, inferred from processed dataframe and component_list
         that is currently running """
         nlp_levels = {c: OutputLevelUtils.resolve_component_to_output_level(pipe, c) for c in pipe.components}
-        for c in pipe.components :
+        for c in pipe.components:
             if c.license == Licenses.ocr:
                 nlp_levels[c] = c.output_level
         return {c: OutputLevelUtils.resolve_component_to_output_level(pipe, c) for c in pipe.components}

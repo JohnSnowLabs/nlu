@@ -17,6 +17,7 @@ class NLP_FEATURES(JslFeature):
     DOCUMENT_DE_IDENTIFIED = JslFeature("document_de_identified")
     DOCUMENT_RE_IDENTIFIED = JslFeature("document_re_identified")
     DOCUMENT_NORMALIZED = JslFeature("document_normalized")
+    DOCUMENT_TRANSLATED = JslFeature("document_translated")
 
     # GPT, T5, X2IMG (PDF2IMG, IMG2IMG, etc..)
     DOCUMENT_GENERATED = JslFeature("document_generated")
@@ -44,11 +45,14 @@ class NLP_FEATURES(JslFeature):
     MULTI_DOCUMENT_CLASSIFICATION = JslFeature('multi_document_classification')
     DOCUMENT_CLASSIFICATION = JslFeature('document_classification')
     TOKEN_CLASSIFICATION = JslFeature('token_classification')
+    SEQUENCE_CLASSIFICATION = JslFeature('sequence_classification')
+
     SENTIMENT = JslFeature("sentiment")
     POS = JslFeature("pos")
     CHUNK = JslFeature("chunk")
     NAMED_ENTITY_IOB = JslFeature("named_entity_iob")
     NAMED_ENTITY_CONVERTED = JslFeature("named_entity_converted")
+    NAMED_ENTITY_CONVERTED_AND_CONVERTED_TO_DOC = JslFeature("NAMED_ENTITY_CONVERTED_AND_CONVERTED_TO_DOC")
     NEGEX = JslFeature("negex")
     UNLABLED_DEPENDENCY = JslFeature("unlabeled_dependency")
     LABELED_DEPENDENCY = JslFeature("labeled_dependency")
