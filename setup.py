@@ -18,8 +18,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 REQUIRED_PKGS = [
-    # 'pyspark>=2.4.0,<2.5',
-    'spark-nlp>=3.3.0,<3.4.0',
+    'spark-nlp>=3.4.0,<3.5.0',
     'numpy',
     'pyarrow>=0.16.0',
     'pandas',
@@ -39,7 +38,7 @@ setup(
     #
     # There are some restrictions on what makes a valid project name
     # specification here:    # https://packaging.python.org/specifications/core-metadata/#name
-    name='nlu',  #  Required #nlu
+    name='nlu',  # Required #nlu
 
     # Versions should comply with PEP 440:
     # https://www.python.org/dev/peps/pep-0440/
@@ -47,7 +46,7 @@ setup(
     # For a discussion on single-sourcing the version across setup.py and the
     # project code, see
     # https://packaging.python.org/en/latest/single_source_version.html
-    version='3.3.0',  # Required
+    version='3.4.1',  # Required
 
     # This is a one-line description or tagline of what your project does. This
     # corresponds to the "Summary" metadata field:
@@ -130,9 +129,9 @@ setup(
     #
     #   py_modules=["my_module"],
 
-    packages=find_packages(exclude=['test*','tmp*']) , # exclude=['test']
+    packages=find_packages(exclude=['test*', 'tmp*']),  # exclude=['test']
     data_files=[
-        #classifiers
+        # classifiers
         ('', ['nlu/components/classifiers/classifier_dl/component_infos.json']),
         ('', ['nlu/components/classifiers/language_detector/component_infos.json']),
         ('', ['nlu/components/classifiers/named_entity_recognizer_crf/component_infos.json']),
@@ -150,12 +149,14 @@ setup(
         ('', ['nlu/components/classifiers/token_roberta/component_infos.json']),
         ('', ['nlu/components/classifiers/token_xlm_roberta/component_infos.json']),
         ('', ['nlu/components/classifiers/token_xlnet/component_infos.json']),
+        ('', ['nlu/components/classifiers/seq_distilbert/component_infos.json']),
+        ('', ['nlu/components/classifiers/seq_bert/component_infos.json']),
 
-        #dependency
+        # dependency
         ('', ['nlu/components/dependency_typeds/labeled_dependency_parser/component_infos.json']),
         ('', ['nlu/components/dependency_untypeds/unlabeled_dependency_parser/component_infos.json']),
 
-        #embeds
+        # embeds
         ('', ['nlu/components/embeddings/elmo/component_infos.json']),
         ('', ['nlu/components/embeddings/albert/component_infos.json']),
         ('', ['nlu/components/embeddings/bert/component_infos.json']),
@@ -163,67 +164,62 @@ setup(
         ('', ['nlu/components/embeddings/xlnet/component_infos.json']),
         ('', ['nlu/components/embeddings/use/component_infos.json']),
         ('', ['nlu/components/embeddings/sentence_bert/component_infos.json']),
+        ('', ['nlu/components/embeddings/doc2vec/component_infos.json']),
 
         ('', ['nlu/components/embeddings/distil_bert/component_infos.json']),
         ('', ['nlu/components/embeddings/roberta/component_infos.json']),
         ('', ['nlu/components/embeddings/xlm/component_infos.json']),
 
-
         ('', ['nlu/components/embeddings/distil_bert/component_infos.json']),
         ('', ['nlu/components/embeddings/longformer/component_infos.json']),
         ('', ['nlu/components/embeddings/sentence_xlm/component_infos.json']),
 
-        #Seq2Seq
+        # Seq2Seq
 
         ('', ['nlu/components/seq2seqs/marian/component_infos.json']),
         ('', ['nlu/components/seq2seqs/t5/component_infos.json']),
 
-
-
-        #lemma
+        # lemma
         ('', ['nlu/components/lemmatizers/lemmatizer/component_infos.json']),
 
-
-        #matcher
+        # matcher
         ('', ['nlu/components/matchers/date_matcher/component_infos.json']),
         ('', ['nlu/components/matchers/regex_matcher/component_infos.json']),
         ('', ['nlu/components/matchers/text_matcher/component_infos.json']),
         ('', ['nlu/components/matchers/context_parser/component_infos.json']),
 
-
-        #normalizer
+        # normalizer
         ('', ['nlu/components/normalizers/normalizer/component_infos.json']),
         ('', ['nlu/components/normalizers/document_normalizer/component_infos.json']),
         ('', ['nlu/components/normalizers/drug_normalizer/component_infos.json']),
 
-        #sentence detector
+        # sentence detector
         ('', ['nlu/components/sentence_detectors/deep_sentence_detector/component_infos.json']),
         ('', ['nlu/components/sentence_detectors/pragmatic_sentence_detector/component_infos.json']),
 
-        #spell checker
+        # spell checker
         ('', ['nlu/components/spell_checkers/context_spell/component_infos.json']),
         ('', ['nlu/components/spell_checkers/norvig_spell/component_infos.json']),
         ('', ['nlu/components/spell_checkers/symmetric_spell/component_infos.json']),
 
-        #stemmer
+        # stemmer
         ('', ['nlu/components/stemmers/stemmer/component_infos.json']),
-        #tokenizer
+        # tokenizer
         ('', ['nlu/components/tokenizers/default_tokenizer/component_infos.json']),
         ('', ['nlu/components/tokenizers/regex_tokenizer/component_infos.json']),
         ('', ['nlu/components/tokenizers/word_segmenter/component_infos.json']),
 
-        #stopwords
+        # stopwords
         ('', ['nlu/components/stopwordscleaners/stopwordcleaner/component_infos.json']),
 
-        #chunker
+        # chunker
         ('', ['nlu/components/chunkers/default_chunker/component_infos.json']),
         ('', ['nlu/components/chunkers/ngram/component_infos.json']),
         ('', ['nlu/components/chunkers/contextual_parser/component_infos.json']),
 
         ('', ['nlu/components/embeddings_chunks/chunk_embedder/component_infos.json']),
 
-
-        #utils
+        # utils
         ('', ['nlu/components/utils/chunk_2_doc/component_infos.json']),
         ('', ['nlu/components/utils/doc2chunk/component_infos.json']),
         ('', ['nlu/components/utils/deep_sentence_detector/component_infos.json']),
@@ -246,9 +242,23 @@ setup(
         ('', ['nlu/components/classifiers/ner_healthcare/component_infos.json']),
         ('', ['nlu/components/utils/ner_to_chunk_converter_licensed/component_infos.json']),
 
+        ('', ['nlu/components/seq2seqs/gpt2/component_infos.json']),
+        ('', ['nlu/components/classifiers/seq_albert/component_infos.json']),
+        ('', ['nlu/components/classifiers/seq_roberta/component_infos.json']),
+        ('', ['nlu/components/classifiers/seq_longformer/component_infos.json']),
+        ('', ['nlu/components/classifiers/seq_xlm_roberta/component_infos.json']),
+        ('', ['nlu/components/classifiers/seq_xlnet/component_infos.json']),
+        ('', ['nlu/components/classifiers/token_bert_healthcare/component_infos.json']),
+        ('', ['nlu/components/classifiers/token_bert_healthcare/component_infos.json']),
+        ('', ['nlu/components/embeddings/doc2vec/component_infos.json']),
+        ('', ['nlu/components/embeddings/word2vec/component_infos.json']),
+
+        ('', ['nlu/components/classifiers/seq_bert_medical/component_infos.json']),
+        ('', ['nlu/components/classifiers/seq_distilbert_medical/component_infos.json']),
+        #
+
     ],
 
     include_package_data=True  # Needed to install jar file
 
 )
-
