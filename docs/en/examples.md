@@ -993,26 +993,26 @@ pipe.predict("Jim and Joe went to the big blue market next to the town hall")
 ```
 
 ```bash
-# the outputs of pipe.print_info()
+# the outputs of component_list.print_info()
 The following parameters are configurable for this NLU pipeline (You can copy paste the examples) :
->>> pipe['document_assembler'] has settable params:
-pipe['document_assembler'].setCleanupMode('disabled')         | Info: possible values: disabled, inplace, inplace_full, shrink, shrink_full, each, each_full, delete_full | Currently set to : disabled
->>> pipe['sentence_detector'] has settable params:
-pipe['sentence_detector'].setCustomBounds([])                 | Info: characters used to explicitly mark sentence bounds | Currently set to : []
-pipe['sentence_detector'].setDetectLists(True)                | Info: whether detect lists during sentence detection | Currently set to : True
-pipe['sentence_detector'].setExplodeSentences(False)          | Info: whether to explode each sentence into a different row, for better parallelization. Defaults to false. | Currently set to : False
-pipe['sentence_detector'].setMaxLength(99999)                 | Info: Set the maximum allowed length for each sentence | Currently set to : 99999
-pipe['sentence_detector'].setMinLength(0)                     | Info: Set the minimum allowed length for each sentence. | Currently set to : 0
-pipe['sentence_detector'].setUseAbbreviations(True)           | Info: whether to apply abbreviations at sentence detection | Currently set to : True
-pipe['sentence_detector'].setUseCustomBoundsOnly(False)       | Info: Only utilize custom bounds in sentence detection | Currently set to : False
->>> pipe['regex_matcher'] has settable params:
-pipe['regex_matcher'].setCaseSensitiveExceptions(True)        | Info: Whether to care for case sensitiveness in exceptions | Currently set to : True
-pipe['regex_matcher'].setTargetPattern('\S+')                 | Info: pattern to grab from text as token candidates. Defaults \S+ | Currently set to : \S+
-pipe['regex_matcher'].setMaxLength(99999)                     | Info: Set the maximum allowed length for each token | Currently set to : 99999
-pipe['regex_matcher'].setMinLength(0)                         | Info: Set the minimum allowed length for each token | Currently set to : 0
->>> pipe['sentiment_dl'] has settable params:
->>> pipe['default_chunker'] has settable params:
-pipe['default_chunker'].setRegexParsers(['<DT>?<JJ>*<NN>+'])  | Info: an array of grammar based chunk parsers | Currently set to : ['<DT>?<JJ>*<NN>+']```
+>>> component_list['document_assembler'] has settable params:
+component_list['document_assembler'].setCleanupMode('disabled')         | Info: possible values: disabled, inplace, inplace_full, shrink, shrink_full, each, each_full, delete_full | Currently set to : disabled
+>>> component_list['sentence_detector'] has settable params:
+component_list['sentence_detector'].setCustomBounds([])                 | Info: characters used to explicitly mark sentence bounds | Currently set to : []
+component_list['sentence_detector'].setDetectLists(True)                | Info: whether detect lists during sentence detection | Currently set to : True
+component_list['sentence_detector'].setExplodeSentences(False)          | Info: whether to explode each sentence into a different row, for better parallelization. Defaults to false. | Currently set to : False
+component_list['sentence_detector'].setMaxLength(99999)                 | Info: Set the maximum allowed length for each sentence | Currently set to : 99999
+component_list['sentence_detector'].setMinLength(0)                     | Info: Set the minimum allowed length for each sentence. | Currently set to : 0
+component_list['sentence_detector'].setUseAbbreviations(True)           | Info: whether to apply abbreviations at sentence detection | Currently set to : True
+component_list['sentence_detector'].setUseCustomBoundsOnly(False)       | Info: Only utilize custom bounds in sentence detection | Currently set to : False
+>>> component_list['regex_matcher'] has settable params:
+component_list['regex_matcher'].setCaseSensitiveExceptions(True)        | Info: Whether to care for case sensitiveness in exceptions | Currently set to : True
+component_list['regex_matcher'].setTargetPattern('\S+')                 | Info: pattern to grab from text as token candidates. Defaults \S+ | Currently set to : \S+
+component_list['regex_matcher'].setMaxLength(99999)                     | Info: Set the maximum allowed length for each token | Currently set to : 99999
+component_list['regex_matcher'].setMinLength(0)                         | Info: Set the minimum allowed length for each token | Currently set to : 0
+>>> component_list['sentiment_dl'] has settable params:
+>>> component_list['default_chunker'] has settable params:
+component_list['default_chunker'].setRegexParsers(['<DT>?<JJ>*<NN>+'])  | Info: an array of grammar based chunk parsers | Currently set to : ['<DT>?<JJ>*<NN>+']```
 ```
 
 <div class="table-wrapper"><div class="table-inner" markdown="1">

@@ -4,15 +4,15 @@ header:
   - title: Docs
     url: https://nlp.johnsnowlabs.com/docs
     key: docs
-  - title:  NLU for Healthcare
+  - title: Healthcare
     url:    /docs/en/nlu_for_healthcare
     key: docs-nlu-for-healthcare
+  - title: OCR
+    url:    /docs/en/nlu_for_ocr
+    key: tutorial_notebooks
   - title: Visualizations
     url:  /docs/en/viz_examples
     key: viz
-  - title: Streamlit
-    url: /docs/en/streamlit_viz_examples
-    key: streamlit_viz
   - title: Tutorials
     url:    /docs/en/notebooks
     key: tutorial_notebooks
@@ -20,14 +20,6 @@ header:
     url:    /docs/en/spellbook
     key: tutorial_notebooks
 
-#  - title: Articles
-#    url: /articles
-#    key: articles
-#  - title: Videos
-#    url: /videos
-#    key: videos
-#  - title: Demo
-#    url: https://demo.nlp.johnsnowlabs.com
   - title: '<span style="color: #FF8A00;"><i class="fab fa-github fa-2x"></i></span>'
     url: https://github.com/JohnSnowLabs/nlu
   - title: '<span style="color: #FF8A00;"><i class="fab fa-slack-hash fa-2x"></i></span>'
@@ -45,6 +37,8 @@ docs-en:
         url:    /docs/en/nlu_for_healthcare
       - title:  NLU for Healthcare Examples
         url:    /docs/en/examples_hc
+      - title:  NLU for OCR
+        url:    /docs/en/nlu_for_ocr
       - title:  Training Models
         url:    /docs/en/training
       - title:  Tutorial Notebooks
@@ -56,6 +50,7 @@ docs-en:
         key: streamlit_viz
       - title:  Spellbook
         url:    /docs/en/spellbook
+
 
   - title:      Documentation
     children:
