@@ -1791,7 +1791,8 @@ class ComponentMap:
             jsl_anno_class_id=H_A.RELATION_EXTRACTION,
             jsl_anno_py_class=ACR.JSL_anno_HC_ref_2_py_class[H_A.RELATION_EXTRACTION],
             trainable_mirror_anno=H_A.TRAINABLE_RELATION_EXTRACTION,
-            has_storage_ref=True
+            has_storage_ref=True,
+            is_storage_ref_consumer=True
 
         )),
         H_A.TRAINABLE_RELATION_EXTRACTION: copy(NluComponent(
@@ -1815,7 +1816,8 @@ class ComponentMap:
             jsl_anno_py_class=ACR.JSL_anno_HC_ref_2_py_class[H_A.TRAINABLE_RELATION_EXTRACTION],
             trained_mirror_anno=H_A.RELATION_EXTRACTION,
             trainable=True,
-            has_storage_ref=True
+            has_storage_ref=True,
+            is_storage_ref_consumer=True
         )),
         H_A.RELATION_EXTRACTION_DL: copy(NluComponent(
             name=H_A.RELATION_EXTRACTION_DL,

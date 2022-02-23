@@ -156,7 +156,6 @@ class NLUPipeline(BasePipe):
         :param label_seperator: If multi_classifier is trained, this seperator is used to split the elements into an Array column for Pyspark
         :return: A nlu pipeline with models fitted.
         '''
-        self.is_fitted = True
         stages = []
         for component in self.components: stages.append(component.model)
         self.spark_estimator_pipe = Pipeline(stages=stages)
@@ -239,10 +238,11 @@ class NLUPipeline(BasePipe):
 
         else:
             # fit on empty dataframe since no data provided
-            logger.info(
-                'Fitting on empty Dataframe, could not infer correct training method. This is intended for non-trainable pipelines.')
-            self.spark_transformer_pipe = self.spark_estimator_pipe.fit(self.get_sample_spark_dataframe())
-            self.light_spark_transformer_pipe = LightPipeline(self.spark_transformer_pipe)
+            if not self.is_fitted:
+                logger.info(
+                    'Fitting on empty Dataframe, could not infer correct training method. This is intended for non-trainable pipelines.')
+                self.spark_transformer_pipe = self.spark_estimator_pipe.fit(self.get_sample_spark_dataframe())
+                self.light_spark_transformer_pipe = LightPipeline(self.spark_transformer_pipe)
 
         self.is_fitted = True
         self.light_pipe_configured = True
@@ -258,41 +258,22 @@ class NLUPipeline(BasePipe):
         for c in self.components:
             if c.license == Licenses.ocr:
                 anno_2_ex_config[c.spark_output_column_names[0]] = c.pdf_extractor_methods['default'](
-
-                    output_col_prefix=c.out_types[0])
+                    output_col_prefix=c.spark_output_column_names[0])
                 continue
             if 'embedding' in c.type and not get_embeddings:
                 continue
 
             if 'default' in c.pdf_extractor_methods.keys() and not full_meta:
                 anno_2_ex_config[c.spark_output_column_names[0]] = c.pdf_extractor_methods['default'](
-                    output_col_prefix=c.out_types[0])
+                    output_col_prefix=c.spark_output_column_names[0])
             elif 'default_full' in c.pdf_extractor_methods.keys() and full_meta:
                 anno_2_ex_config[c.spark_output_column_names[0]] = c.pdf_extractor_methods['default_full'](
-                    output_col_prefix=c.out_types[0])
+                    output_col_prefix=c.spark_output_column_names[0])
             else:
                 # Fallback if no output defined
-                anno_2_ex_config[c.spark_output_column_names[0]] = default_full_config(output_col_prefix=c.out_types[0])
+                anno_2_ex_config[c.spark_output_column_names[0]] = default_full_config(output_col_prefix=c.spark_output_column_names[0])
 
-            # if type(c.model) in OS_anno2config.keys():
-            #     if OS_anno2config[type(c.model)]['default'] == '' or full_meta:
-            #         if not full_meta:logger.info(f'could not find default configs, using full default for model ={c.model}')
-            #         anno_2_ex_config[c.info.spark_output_column_names[0]] = OS_anno2config[type(c.model)]['default_full'](output_col_prefix=c.out_types[0])
-            #     else:
-            #         anno_2_ex_config[c.info.spark_output_column_names[0]] = OS_anno2config[type(c.model)]['default'](
-            #             output_col_prefix=c.out_types[0])
-            # else:
-            #     from nlu.pipe.extractors.extraction_resolver_HC import HC_anno2config
-            #     if HC_anno2config[type(c.model)]['default'] == '' or full_meta:
-            #         if not full_meta: logger.info(
-            #             f'could not find default configs in hc resolver space, using full default for model ={c.model}')
-            #         anno_2_ex_config[c.info.spark_output_column_names[0]] = HC_anno2config[type(c.model)][
-            #             'default_full'](output_col_prefix=c.out_types[0])
-            #     else:
-            #         anno_2_ex_config[c.info.spark_output_column_names[0]] = HC_anno2config[type(c.model)]['default'](
-            #             output_col_prefix=c.out_types[0])
-
-            # Tune the Extractor configs based on rediction parameters
+            # Tune the Extractor configs based on prediction parameters
             if c_level_mapping[c] == 'document' and not anno_2_ex_config[c.spark_output_column_names[0]].pop_never:
                 # Disable popping for doc level outputs, output will not be [element] but instead element in each row.
                 anno_2_ex_config[c.spark_output_column_names[0]].pop_meta_list = True
@@ -362,7 +343,6 @@ class NLUPipeline(BasePipe):
         columns to keep 3. Rename columns 4. Create Pandas Dataframe object
         :param processed: Spark dataframe which an NLU pipeline has transformed
         :param output_level: The output level at which returned pandas Dataframe should be
-        # :param get_different_level_output: Whether to get features from different levels
         :param keep_stranger_features : Whether to keep additional features from the input DF when generating the output
                                         DF or if they should be discarded for the final output DF
         :param stranger_features: A list of features which are not known to NLU and inside the input DF.
@@ -374,19 +354,13 @@ class NLUPipeline(BasePipe):
         '''
         stranger_features += ['origin_index']
         if output_level == '':
+            # Distinguish between prediction and pipeline composition output level
+            self.output_level = ''
             OutputLevelUtils.infer_output_level(self)
 
         c_level_mapping = OutputLevelUtils.get_output_level_mapping_by_component(self)
-        # TODO dedut here if should get embeds or not! because otherwise get_annotator_extraction_configs() causes it to be dropped
         anno_2_ex_config = self.get_annotator_extraction_configs(output_metadata, c_level_mapping, positions,
                                                                  get_embeddings)
-        #
-        # def remove_embedding_references(c_level_mapping, anno_2_ex_config):
-        #     """Removes all embedding information from c_level_mapping and anno_2_ex_config"""
-        #     return c_level_mapping, anno_2_ex_config
-        #
-        # if not get_embeddings: c_level_mapping, anno_2_ex_config = remove_embedding_references(c_level_mapping,
-        #                                                                                        anno_2_ex_config)
 
         # Processed becomes pandas
         processed = self.unpack_and_apply_extractors(processed, keep_stranger_features, stranger_features,
@@ -397,6 +371,7 @@ class NLUPipeline(BasePipe):
                                                                                                                 get_embeddings)
         logger.info(
             f"Extracting for same_level_cols = {same_output_level}\nand different_output_level_cols = {not_same_output_level}")
+
         processed = zip_and_explode(processed, same_output_level, not_same_output_level, self.output_level)
         processed = self.convert_embeddings_to_np(processed)
         processed = ColSubstitutionUtils.substitute_col_names(processed, anno_2_ex_config, self, stranger_features,

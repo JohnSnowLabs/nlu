@@ -4169,6 +4169,30 @@ class Spellbook:
     }
 
     healthcare_component_alias_references = {}
+    pretrained_healthcare_pipe_references = {
+        'en': {
+            'en.med_ner.profiling_clinical': 'ner_profiling_clinical',
+            'en.med_ner.profiling_biobert': 'ner_profiling_biobert',
+            'en.resolve.icd10cm.umls': 'icd10cm_umls_mapping',
+            'en.resolve.mesh.umls': 'mesh_umls_mapping',
+            'en.resolve.rxnorm.umls': 'rxnorm_umls_mapping',
+            'en.resolve.rxnorm.mesh': 'rxnorm_mesh_mapping',
+            'en.resolve.snomed.umls': 'snomed_umls_mapping',
+
+            # '' :'clinical_analysis', # Not 3+ compatible
+            # '' :'clinical_deidentification', # todo to big ner consumer stack for NLU to handle..
+            # '' :'clinical_ner_assertion', Not 3+ compatible
+
+            # Explain Pipes
+            'en.explain_doc.carp': 'explain_clinical_doc_carp',
+            'en.explain_doc.era': 'explain_clinical_doc_era',
+            # 'en.explain_doc.ade':'explain_clinical_doc_ade', # todo wierd 2x Converter 1x NER component_list, messes up component_list logic
+
+            'en.recognize_entities.posology': 'recognize_entities_posology',  # PIPE
+
+        },
+
+    }
     pretrained_healthcare_model_references = {
 
         'en':
@@ -4182,7 +4206,7 @@ class Spellbook:
                 'en.classify.ade.seq_distilbert': 'distilbert_sequence_classifier_ade',
                 'en.relation.temporal_events_clinical': 're_temporal_events_clinical',
                 'en.relation.adverse_drug_events.clinical': 're_ade_clinical',
-                'en.adverse_drug_events.clinical.biobert': 'redl_ade_biobert',
+                'en.relation.adverse_drug_events.clinical.biobert': 'redl_ade_biobert',
 
 
                 # 3.4.0
@@ -4473,7 +4497,7 @@ class Spellbook:
                 'en.relation.ade_biobert': 're_ade_biobert',
                 'en.assert.jsl': 'assertion_jsl',
                 'en.assert.jsl_large': 'assertion_jsl_large',
-                'en.resolve.snomed_findings_aux_concepts': 'sbiobertresolve_snomed_findings_aux_concepts',
+                # 'en.resolve.snomed_findings_aux_concepts': 'sbiobertresolve_snomed_findings_aux_concepts',
                 'en.resolve.rxnorm_disposition': 'sbiobertresolve_rxnorm_disposition',
                 'en.resolve.rxnorm_disposition.sbert': 'sbertresolve_rxnorm_disposition',
 
@@ -4553,30 +4577,6 @@ class Spellbook:
             'es.med_ner.roberta_ner_diag_proc': 'roberta_ner_diag_proc',
             'es.resolve.snomed': 'robertaresolve_snomed',
         }
-    }
-    pretrained_healthcare_pipe_references = {
-        'en': {
-            'en.med_ner.profiling_clinical': 'ner_profiling_clinical',
-            'en.med_ner.profiling_biobert': 'ner_profiling_biobert',
-            'en.resolve.icd10cm.umls': 'icd10cm_umls_mapping',
-            'en.resolve.mesh.umls': 'mesh_umls_mapping',
-            'en.resolve.rxnorm.umls': 'rxnorm_umls_mapping',
-            'en.resolve.rxnorm.mesh': 'rxnorm_mesh_mapping',
-            'en.resolve.snomed.umls': 'snomed_umls_mapping',
-
-            # '' :'clinical_analysis', # Not 3+ compatible
-            # '' :'clinical_deidentification', # todo to big ner consumer stack for NLU to handle..
-            # '' :'clinical_ner_assertion', Not 3+ compatible
-
-            # Explain Pipes
-            'en.explain_doc.carp': 'explain_clinical_doc_carp',
-            'en.explain_doc.era': 'explain_clinical_doc_era',
-            # 'en.explain_doc.ade':'explain_clinical_doc_ade', # todo wierd 2x Converter 1x NER component_list, messes up component_list logic
-
-            'en.recognize_entities.posology': 'recognize_entities_posology',  # PIPE
-
-        },
-
     }
 
     ocr_model_references = {
@@ -4690,7 +4690,23 @@ class Spellbook:
 
     }  #
 
+    bad_storage_refs = [
 
+        'BERT_SENTENCE_EMBEDDINGS_c7e5b6a772f5',
+        'RelationExtractionModel_ce79d77d1bf1',
+        'RelationExtractionModel_1fb1dfa024c7',
+        'RelationExtractionModel_6a65c9992836',
+        'BERT_SENTENCE_EMBEDDINGS_0bee53f1b2cc',
+        'BERT_SENTENCE_EMBEDDINGS_59c3cd1e17c4',
+        'RelationExtractionModel_3ab4750ad5b6',
+        'RelationExtractionModel_6b61602c8303',
+        'RelationExtractionModel_9c255241fec3',
+        'ROBERTA_EMBEDDINGS_39f3e48e5c3f',
+        'RelationExtractionModel_14b00157fc1a',
+        'RelationExtractionModel_53a12cc975cb',
+        'ROBERTA_EMBEDDINGS_39f3e48e5c3f',
+
+    ]
     licensed_storage_ref_2_nlu_ref = {
         'en': {
             'clinical': 'en.embed.glove.clinical',

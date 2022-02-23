@@ -101,7 +101,7 @@ def resolve_feature(missing_feature_type, language='en', is_licensed=False,
         model_bucket = 'clinical/models' if is_licensed else None
         jsl_anno_id = os_annos[anno_class_name]
         import copy
-        nlu_component = copy.copy(ComponentMap.os_components[jsl_anno_id]) # TODO FUCKKKKKKKK CALL BY REFERENCE NOT VALUE!!! FUCK multiple same annoes fuck shit up!!!fuck
+        nlu_component = copy.copy(ComponentMap.os_components[jsl_anno_id])
         # We write storage ref to nlu_component, for the case of accumulated chunk and sentence embeddings.
         # Anno Class has no storage ref in these cases, but it is still an embedding provider
         return nlu_component.set_metadata(nlu_component.get_pretrained_model(nlp_ref, language, model_bucket),
@@ -259,11 +259,13 @@ def resolve_component_from_parsed_query_data(lang, component_type, dataset, comp
         nlp_ref = sparknlp_data[0]
         logger.info('Found Spark NLP reference in language free aliases namespace')
         resolved = True
+        lang = 'en'
         if len(sparknlp_data) > 2:
             dataset = sparknlp_data[2]
         if len(sparknlp_data) > 3:
             # special case overwrite for T5
             nlu_ref = sparknlp_data[3]
+        # Check if alias is referring to multi lingual model and set lang accordingly
 
     # 4. Check Healthcare Pipe Namespace
     if resolved == False and lang in Spellbook.pretrained_healthcare_pipe_references.keys():
@@ -397,51 +399,6 @@ def construct_trainable_component_from_identifier(nlu_ref, nlp_ref, authenticate
 
         else:
             raise ValueError(f'Could not find trainable Model for nlu_spell ={nlu_ref}')
-        # if nlu_ref in ['train.deep_sentence_detector', 'train.sentence_detector']:
-        #     # no label col but trainable?
-        #     return nlu.NLUSentenceDetector(annotator_class='deep_sentence_detector', trainable='True',
-        #                                    nlu_ref=nlu_ref, )
-        # if nlu_ref in ['train.classifier_dl', 'train.classifier']:
-        #     return nlu.Classifier(annotator_class='classifier_dl', trainable=True, nlu_ref=nlu_ref, )
-        # if nlu_ref in ['train.ner', 'train.named_entity_recognizer_dl']:
-        #     ComponentMap.os_components[NLP_NODE_IDS.TRAINABLE_NER_DL]
-        #     return nlu.Classifier(annotator_class='ner', trainable=True, nlu_ref=nlu_ref, )
-        # if nlu_ref in ['train.sentiment_dl', 'train.sentiment']:
-        #     return nlu.Classifier(annotator_class='sentiment_dl', trainable=True, nlu_ref=nlu_ref, )
-        # if nlu_ref in ['train.pos']:
-        #     return nlu.Classifier(annotator_class='pos', trainable=True, nlu_ref=nlu_ref, )
-        # if nlu_ref in ['train.multi_classifier']:
-        #     return nlu.Classifier(annotator_class='multi_classifier', trainable=True, nlu_ref=nlu_ref, )
-        # if nlu_ref in ['train.word_seg', 'train.word_segmenter']:
-        #     return nlu.Nlu_Tokenizer(annotator_class='word_segmenter', trainable=True, nlu_ref=nlu_ref, )
-        #
-        # if nlu_ref in ['train.generic_classifier']:
-        #     if not authenticated: print(
-        #         "WARNING! You are trying to train a Licensed Model and your environment does not seem to be Authenticated.\n"
-        #         "Please restart your runtime and run nlu.auth() and for more details see https://nlu.johnsnowlabs.com/docs/en/examples_hc#authorize-access-to-licensed-features-and-install-healthcare-dependencies  ")
-        #
-        #     return nlu.Classifier(annotator_class='generic_classifier', trainable=True, nlu_ref=nlu_ref,
-        #                           is_licensed=True)
-        #
-        # if nlu_ref in ['train.resolve_chunks']:
-        #     if not authenticated: print(
-        #         "WARNING! You are trying to train a Licensed Model and your environment does not seem to be Authenticated.\n"
-        #         "Please restart your runtime and run nlu.auth() and for more details see https://nlu.johnsnowlabs.com/docs/en/examples_hc#authorize-access-to-licensed-features-and-install-healthcare-dependencies  ")
-        #
-        #     return nlu.Resolver(annotator_class='chunk_entity_resolver', trainable=True, nlu_ref=nlu_ref,
-        #                         is_licensed=True)
-        #
-        # if nlu_ref in ['train.resolve_sentence', 'train.resolve']:
-        #     if not authenticated: print(
-        #         "WARNING! You are trying to train a Licensed Model and your environment does not seem to be Authenticated.\n"
-        #         "Please restart your runtime and run nlu.auth() and for more details see https://nlu.johnsnowlabs.com/docs/en/examples_hc#authorize-access-to-licensed-features-and-install-healthcare-dependencies  ")
-        #     return nlu.Resolver(annotator_class='sentence_entity_resolver', trainable=True, nlu_ref=nlu_ref,
-        #                         is_licensed=True)
-        #
-        # if nlu_ref in ['train.assertion', 'train.assertion_dl']:  # TODO
-        #     return nlu.Classifier(annotator_class='sentiment_dl', trainable=True, nlu_ref=nlu_ref, )
-        #
-
 
     except:  # if reference is not in namespace and not a component it will cause a unrecoverable crash
         ValueError(

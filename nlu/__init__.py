@@ -155,8 +155,6 @@ def load(request: str = 'from_disk', path: Optional[str] = None, verbose: bool =
     try:
         pipe = PipelineQueryVerifier.check_and_fix_nlu_pipeline(pipe)
         pipe.nlu_ref = request
-        for c in pipe.components:
-            if c.license in [Licenses.ocr, Licenses.hc]: pipe.has_licensed_components = True
         return pipe
     except:
         if verbose:
