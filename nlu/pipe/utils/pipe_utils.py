@@ -25,7 +25,35 @@ class PipeUtils:
     """Pipe Level logic operations and utils"""
 
     @staticmethod
-    def update_relation_extractor_models(pipe):
+    def update_bad_storage_refs(pipe):
+        """
+        Some models have bad storage refs. The list of these bad models is defined by nlu.spellbook.Spellbook.bad_storage_refs.
+        The correct storage ref is given by the resolving moels storage ref defined by nlu.Spellbook.licensed_storage_ref_2_nlu_ref[pipe.lang][storage_ref].
+        Once the resolving model is loaded in the pipe, this method will take its storage ref and write it to the bad_storage_ref model defined by nlu.spellbook.Spellbook.bad_storage_refs.
+        If storage ref is already updated, this method will leave the pipe unchanged.
+        We only check for healthcare storage refs
+        :param pipe: Pipe to update bad storage refs on
+        :return: Pipe where each component has storage ref updated, if it was not already updated
+
+        """
+        for bad_storage_ref_component in pipe.components:
+            if not bad_storage_ref_component.loaded_from_pretrained_pipe and bad_storage_ref_component.has_storage_ref:
+                storage_ref = StorageRefUtils.extract_storage_ref(bad_storage_ref_component)
+                # After updating the storage ref it will not be in the licensed_storage_ref_2_nlu_ref mapping anymore,
+                if storage_ref in nlu.spellbook.Spellbook.bad_storage_refs:
+                    # since its a bad storage ref, we can resolve its storage ref by checking licensed_storage_ref_2_nlu_ref
+                    if pipe.lang in nlu.Spellbook.licensed_storage_ref_2_nlu_ref.keys():
+                        if storage_ref in nlu.Spellbook.licensed_storage_ref_2_nlu_ref[pipe.lang].keys():
+                            storage_ref_resolver_nlu_ref = nlu.Spellbook.licensed_storage_ref_2_nlu_ref[pipe.lang][storage_ref]
+                            for storage_resolver in pipe.components:
+                                if storage_resolver.nlu_ref == storage_ref_resolver_nlu_ref:
+                                    # Update the storage ref of the bad_component to the storage ref of the resolving model according to licensed_storage_ref_2_nlu_ref
+                                    resolving_storage_ref = StorageRefUtils.extract_storage_ref(storage_resolver)
+                                    bad_storage_ref_component.model.set(bad_storage_ref_component.model.storageRef, resolving_storage_ref)
+        return pipe
+
+    @staticmethod
+    def update_relation_extractor_models_storage_ref(pipe):
         # if provided, because the sometimes have unresolvable storage refs 
         # we can find the actual storage ref only after its mapped is sresolved to an model defined by an nlp ref 
         # If RelationExtractor is not loaded from a pretrained pipe we update its storage ref to the resolving models storage ref
