@@ -444,7 +444,7 @@ class PipelineQueryVerifier:
         # pipe = PipeUtils.clean_AT_storage_refs(pipe)
 
         # 1. Resolve dependencies, builds a DAG in reverse and satisfies dependencies with a Breadth-First-Search approach
-        # 0. Write additional metadata to the pipe
+        # 0. Write additional metadata to the pipe pre pipe construction
         pipe = PipeUtils.add_metadata_to_pipe(pipe)
 
         logger.info('Satisfying dependencies')
@@ -474,6 +474,9 @@ class PipelineQueryVerifier:
 
         # 7. enfore again because trainable pipes might mutate component_list cols
         pipe = PipeUtils.enforce_NLU_columns_to_NLP_columns(pipe)
+
+        # 8. Write additional metadata to the pipe post pipe construction
+        pipe = PipeUtils.add_metadata_to_pipe(pipe)
 
         logger.info('Done with component_list optimizing')
 

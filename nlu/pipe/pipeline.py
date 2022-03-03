@@ -137,6 +137,7 @@ class NLUPipeline(BasePipe):
         self.anno2final_cols = []  # Maps Anno to output pandas col
         self.light_spark_transformer_pipe = None
         self.contains_ocr_components = False
+        self.has_nlp_components = False
         # The NLU pipeline uses  types of Spark NLP annotators to identify how to handle different columns
 
     def get_sample_spark_dataframe(self):

@@ -72,7 +72,7 @@ def __predict_ocr_spark(pipe, data, output_level, positions, keep_stranger_featu
     paths = OcrDataConversionUtils.extract_iterable_paths_from_data(data)
     accepted_file_types = OcrDataConversionUtils.get_accepted_ocr_file_types(pipe)
     file_paths = OcrDataConversionUtils.glob_files_of_accepted_type(paths, accepted_file_types)
-    spark = sparknlp.start()  # Fetches Spark Session that has already been licensed
+    spark = sparknlp.start()  # Fetches Spark Session that has already been licensed at this point
     data = pipe.spark_transformer_pipe.transform(spark.read.format("binaryFile").load(file_paths)).withColumn(
         'origin_index', monotonically_increasing_id().alias('origin_index'))
     return pipe.pythonify_spark_dataframe(data,
@@ -101,12 +101,12 @@ def __predict__(pipe, data, output_level, positions, keep_stranger_features, met
     '''
     if output_level == '':
         # Default sentence level for all components
-        if not pipe.has_trainable_components :
+        if not pipe.has_trainable_components and pipe.has_nlp_components:
             pipe.output_level = 'sentence'
             pipe.components = PipeUtils.configure_component_output_levels(pipe, 'sentence')
     else:
         pipe.output_level = output_level
-        if not pipe.has_trainable_components :
+        if not pipe.has_trainable_components and pipe.has_nlp_components:
             pipe.components = PipeUtils.configure_component_output_levels(pipe, 'sentence')
 
     if get_embeddings is None:
