@@ -5944,7 +5944,7 @@ class Spellbook:
         'sbiobertresolve_rxnorm_disposition': 'SentenceEntityResolverModel',
         'ner_jsl_slim': 'MedicalNerModel', 'ner_jsl_greedy_biobert': 'MedicalNerModel',
         'bert_token_classifier_ner_clinical': 'MedicalBertForTokenClassifier',
-        'bert_token_classifier_ner_jsl': 'MedicalBertForTokenClassifier',
+        'bert_token_classifier_ner_jsl': 'BertForTokenClassification',
         'bert_token_classifier_ner_chemicals': 'MedicalBertForTokenClassifier',
         'ner_deid_subentity_augmented_i2b2': 'MedicalNerModel', 'ner_biomarker': 'MedicalNerModel',
         'ner_nihss': 'MedicalNerModel', 'redl_nihss_biobert': 'RelationExtractionDLModel',
