@@ -5,29 +5,29 @@ from nlu.universe.atoms import LicenseType, NlpLevel
 
 
 class NLP_LEVELS(NlpLevel):
-    """:cvar
+    """
     XXX_SUPER is a N to M Mapping, with M <= N
     XXX_SUB is a N to M mapping, with M >=N
     no prefix implies a N to N mapping to be expected
     """
     DOCUMENT = NlpLevel('document')
     CHUNK = NlpLevel('chunk')
-    NER_CHUNK = NlpLevel("ner_chunk")
-    KEYWORD_CHUNK = NlpLevel('KEYWORD_CHUNK')
-    POS_CHUNK = NlpLevel('POS_CHUNK')
-    NGRAM_CHUNK = NlpLevel('NGRAM_CHUNK')
-    SUB_CHUNK = NlpLevel('sub_chunk')
-    SUPER_CHUNK = NlpLevel('super_chunk')
     SENTENCE = NlpLevel('sentence')
     RELATION = NlpLevel('relation')
     TOKEN = NlpLevel('token')
-    SUB_TOKEN = NlpLevel('sub_token')
-    SUPER_TOKEN = NlpLevel('super_token')
 
-    INPUT_DEPENDENT_DOCUMENT_CLASSIFIER = NlpLevel('INPUT_DEPENDENT_DOCUMENT_CLASSIFIER')
-    INPUT_DEPENDENT_DOCUMENT_EMBEDDING = NlpLevel('INPUT_DEPENDENT_DOCUMENT_EMBEDDING')
-    # Same output level as the anno that generates the chunks
-    INPUT_DEPENDENT_CHUNK_EMBEDDING = NlpLevel('INPUT_DEPENDENT_CHUNK_EMBEDDING')
+    INPUT_DEPENDENT_DOCUMENT_CLASSIFIER = NlpLevel('input_dependent_document_classifier')
+    INPUT_DEPENDENT_DOCUMENT_EMBEDDING = NlpLevel('input_dependent_document_embedding')
+
+    # Not used for nwo
+    # NGRAM_CHUNK = NlpLevel('NGRAM_CHUNK')
+    # SUB_TOKEN = NlpLevel('sub_token')
+    # SUPER_TOKEN = NlpLevel('super_token')
+    # SUPER_CHUNK = NlpLevel('super_chunk')
+    # SUB_CHUNK = NlpLevel('sub_chunk')
+    # POS_CHUNK = NlpLevel('POS_CHUNK')
+    # KEYWORD_CHUNK = NlpLevel('KEYWORD_CHUNK')
+    # NER_CHUNK = NlpLevel("ner_chunk")
 
 
 class OCR_OUTPUT_LEVELS:
