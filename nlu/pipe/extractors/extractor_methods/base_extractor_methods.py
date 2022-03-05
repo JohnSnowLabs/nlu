@@ -62,6 +62,7 @@ def extract_pyarrow_rows(r: pd.Series, ) -> pd.Series:
             return r
     return r
 
+
 def extract_base_sparkocr_features(row: pd.Series, configs: SparkOCRExtractorConfig) -> dict:
     ###### OCR EXTRACTOR
     # for now only text recognizer outputs fetched
@@ -123,6 +124,7 @@ def extract_base_sparkocr_features(row: pd.Series, configs: SparkOCRExtractorCon
 
         return {}
 
+
 def extract_base_sparknlp_features(row: pd.Series, configs: SparkNLPExtractorConfig) -> dict:
     """
     Extract base features common in all saprk NLP annotators
@@ -154,8 +156,6 @@ def extract_base_sparknlp_features(row: pd.Series, configs: SparkNLPExtractorCon
 
     returns a DICT
     """
-
-
 
     unpack_dict_list = lambda d, k: d[k]
     unpack_begin = lambda x: unpack_dict_list(x, 'begin')
@@ -283,90 +283,13 @@ def apply_extractors_and_merge(df, anno_2_ex_config, keep_stranger_features, str
         list(map(extractor, anno_2_ex_config.keys())) +
         list(map(keep_strangers, stranger_features)) if keep_stranger_features else [],
         axis=1)
-    # return zip_and_explode(
-    #         pd.concat(
-    #             list(map(extractor,column_to_extractor_map.keys())) +
-    #             list(map(keep_stragers,stranger_features)) if keep_stranger_features else [],
-    #             axis=1))
 
 
-# def pad_series_for_multi_pad(s):
-#     """Sub token output level """
-#     # index_df.columns=cols_to_explode
-#     # df.explode
-#     # index_sizes = [d.groupby(d.index).size() for d in exploded_df_list]
-#     # index_df = pd.concat(index_sizes, axis=1)
-#
-# def store_idx_and_explode(df):
-#     # index rest and re-merging for concat
-#     df = df.explode(next(filter(lambda os_components : 'origin' not in os_components, list(df.columns))))
-#     df.index.name = "old_idx"
-#     df["num"] = range(0, len(df.index))
-#     df = df.set_index("num", append=True)
-#     return df
-
-# def zip_and_explode(df:pd.DataFrame, cols_to_explode:List[str], output_level, lower_output_level, higher_output_level, same_output_level):
-def zip_and_explode(df: pd.DataFrame, origin_cols_to_explode, origin_cols_not_to_explode, output_level):
-    """ returns a NEW dataframe where cols_to_explode are all exploded together
-
-    Used to extract SAME OUTPUT LEVEL annotator outputs.
-    if cols_to_explode  are passed which are not at same output level, this will crash!
-    Takes in a Dataframe and a list of columns to explode. Basically works like exploding multiple columns should work.
-    Returns a new DataFrame, with cols_to_explode ziped and exploeded and the other column concatet back and left untouched otherwise
-
-    This method needs to know
-    1. What are columns at zip (same) level . They will be zip/exploded
-    2. What are  columns higher than those at zip level. They will be unpacked from list
-    3. What are columns below zip level? They will be left unotuched
-
-
-
-
-    """
-    # Some queries will result in index duplication
-    same_level_cols_filter = lambda c: any(og_c == c for og_c in origin_cols_to_explode)
-    cols_to_explode = list(filter(same_level_cols_filter, df.columns))
-    # not_same_level_cols_filter  = lambda os_components : any( og_c in os_components  for og_c in origin_cols_not_to_explode)
-    # not_same_level_cols         = list(filter(not_same_level_cols_filter,df.columns))
-
-    # if NUM component at same output level >1 and outputlevel is CHUNK we need the following padding logick
-    if output_level == 'chunk' and len(cols_to_explode) > 2:
-        df[cols_to_explode] = df[cols_to_explode].apply(pad_same_level_cols, axis=1)
-
-    pd_col_extractor_generator = lambda col: lambda x: df[col]
-    explode_series = lambda s: s.explode()  # .reset_index(drop=True)#.rename({'index':'origin_index'})#(drop=True)
-    pd_col_extractors = list(map(pd_col_extractor_generator, cols_to_explode))
-    # We call the pd series generator that needs a dummy call
-    call = lambda x: x(0)
-    list_of_pd_series_to_explod = list(map(call, pd_col_extractors))
-    # Call explode on every series object, returns a list of pd.Series objects, which have been exploded
-    exploded_series_list = list(map(explode_series, list_of_pd_series_to_explod))
-    # Create pd.Dataframes from the pd.Series
-    exploded_df_list = list(map(pd.DataFrame, exploded_series_list))
-    # merge results into final pd.DataFrame
-    try:
-        merged_explosions = pd.concat([df.drop(cols_to_explode, axis=1)] + exploded_df_list, axis=1)
-    except:
-        # if fails, try again but with  padding
-        df[cols_to_explode] = df[cols_to_explode].apply(pad_same_level_cols, axis=1)
-        pd_col_extractor_generator = lambda col: lambda x: df[col]
-        explode_series = lambda s: s.explode()  # .reset_index(drop=True)#.rename({'index':'origin_index'})#(drop=True)
-        pd_col_extractors = list(map(pd_col_extractor_generator, cols_to_explode))
-        # We call the pd series generator that needs a dummy call
-        call = lambda x: x(0)
-        list_of_pd_series_to_explod = list(map(call, pd_col_extractors))
-        # Call explode on every series object, returns a list of pd.Series objects, which have been exploded
-        exploded_series_list = list(map(explode_series, list_of_pd_series_to_explod))
-        # Create pd.Dataframes from the pd.Series
-        exploded_df_list = list(map(pd.DataFrame, exploded_series_list))
-        # merge results into final pd.DataFrame
-        merged_explosions = pd.concat([df.drop(cols_to_explode, axis=1)] + exploded_df_list, axis=1)
-    return merged_explosions
 
 
 def pad_same_level_cols(row):
     """We must ensure that the cols which are going to be exploded have all the same amount of elements.
-    To ensure this,w e aply this methods on the cols we wish to explode. It ensures, they have all the same
+    To ensure this, we apply this methods on the cols we wish to explode. It ensures, they have all the same
     length and can be exploded eronous free
     """
     max_len = 0
@@ -379,16 +302,27 @@ def pad_same_level_cols(row):
             lens[c] = 1
             row[c] = [row[c]]
 
-    for c, lenght in lens.items():
-        if lenght < max_len:
-            row[c] += [np.nan] * (max_len - lenght)
+    for c, length in lens.items():
+        if length < max_len:
+            row[c] += [np.nan] * (max_len - length)
     return row
 
 
-"""
- We basically need to know the longest series for each Column and Index in the exploded serieses
-1. get longest series for each element
-2. Pad all series that are shortet than the longest for each index
-2.1 Exploded fields that are too short paddedw ith NONE
-2.2 Non-Exploded fields padded with repititoon of it self to fill the gap for index
-"""
+def zip_and_explode(df: pd.DataFrame, cols_to_explode: List[str]) -> pd.DataFrame:
+    """
+    Returns a new dataframe, where columns in cols_to_explode should have all array elements.
+    :param df: Dataframe to explode columns on. Each column in cols_to_explode should be of type array
+    :param cols_to_explode: list of columns to explode
+    :return: new dataframe, where each array element of a row in cols_to_explode is in a new row.
+            For exploding Rows where the lists are same length,
+            lists will be padded to length of the longest list in that row (sub-levels)
+            Elements of columns which are not in cols_to_explode, will be in lists
+    """
+    # Check cols we want to explode actually exist, if no data extracted cols can be missing
+    for col in cols_to_explode:
+        if col not in df.columns:
+            cols_to_explode.remove(col)
+
+    # We must pad all cols we want to explode to the same length
+    df[cols_to_explode] = df[cols_to_explode].apply(pad_same_level_cols, axis=1)
+    return pd.concat([df.drop(cols_to_explode, axis=1)] + [df.explode(cols_to_explode)], axis=1)
