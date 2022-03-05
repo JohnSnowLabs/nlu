@@ -1,4 +1,4 @@
-"""Collection of methods to substitute cols of open source component results
+"""Collection of methods to substitute cols of open source component_to_resolve results
 For most annotators we can re-use a common name.
 Some make an exception and need special names derives, i.e. ClassifierDl/MultiClassifierDl/ etc.. which should be derived from nlu_ref.
 
