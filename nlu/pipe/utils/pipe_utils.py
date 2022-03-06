@@ -33,7 +33,7 @@ class PipeUtils:
         If storage ref is already updated, this method will leave the pipe unchanged.
         We only check for healthcare storage refs
         :param pipe: Pipe to update bad storage refs on
-        :return: Pipe where each component has storage ref updated, if it was not already updated
+        :return: Pipe where each component_to_resolve has storage ref updated, if it was not already updated
 
         """
         for bad_storage_ref_component in pipe.components:
@@ -44,18 +44,20 @@ class PipeUtils:
                     # since its a bad storage ref, we can resolve its storage ref by checking licensed_storage_ref_2_nlu_ref
                     if pipe.lang in nlu.Spellbook.licensed_storage_ref_2_nlu_ref.keys():
                         if storage_ref in nlu.Spellbook.licensed_storage_ref_2_nlu_ref[pipe.lang].keys():
-                            storage_ref_resolver_nlu_ref = nlu.Spellbook.licensed_storage_ref_2_nlu_ref[pipe.lang][storage_ref]
+                            storage_ref_resolver_nlu_ref = nlu.Spellbook.licensed_storage_ref_2_nlu_ref[pipe.lang][
+                                storage_ref]
                             for storage_resolver in pipe.components:
                                 if storage_resolver.nlu_ref == storage_ref_resolver_nlu_ref:
                                     # Update the storage ref of the bad_component to the storage ref of the resolving model according to licensed_storage_ref_2_nlu_ref
                                     resolving_storage_ref = StorageRefUtils.extract_storage_ref(storage_resolver)
-                                    bad_storage_ref_component.model.set(bad_storage_ref_component.model.storageRef, resolving_storage_ref)
+                                    bad_storage_ref_component.model.set(bad_storage_ref_component.model.storageRef,
+                                                                        resolving_storage_ref)
         return pipe
 
     @staticmethod
     def update_relation_extractor_models_storage_ref(pipe):
-        # if provided, because the sometimes have unresolvable storage refs 
-        # we can find the actual storage ref only after its mapped is sresolved to an model defined by an nlp ref 
+        # if provided, because the sometimes have unresolvable storage refs
+        # we can find the actual storage ref only after its mapped is sresolved to an model defined by an nlp ref
         # If RelationExtractor is not loaded from a pretrained pipe we update its storage ref to the resolving models storage ref
 
         for relation_extractor_component in pipe.components:
@@ -65,14 +67,17 @@ class PipeUtils:
                 # so we have to check here if it exists in the mapping before accessing it
                 if pipe.lang in nlu.Spellbook.licensed_storage_ref_2_nlu_ref.keys():
                     if storage_ref in nlu.Spellbook.licensed_storage_ref_2_nlu_ref[pipe.lang].keys():
-                        # We need to find  a component in the pipeline which has this storage ref
-                        storage_ref_resolver_nlu_ref = nlu.Spellbook.licensed_storage_ref_2_nlu_ref[pipe.lang][storage_ref]
+                        # We need to find  a component_to_resolve in the pipeline which has this storage ref
+                        storage_ref_resolver_nlu_ref = nlu.Spellbook.licensed_storage_ref_2_nlu_ref[pipe.lang][
+                            storage_ref]
                         for storage_resolver in pipe.components:
                             if storage_resolver.nlu_ref == storage_ref_resolver_nlu_ref:
                                 # Update the storage ref of the RL-Extractor to the storage ref of the resolving model according to licensed_storage_ref_2_nlu_ref
                                 resolving_storage_ref = StorageRefUtils.extract_storage_ref(storage_resolver)
-                                relation_extractor_component.model.set(relation_extractor_component.model.storageRef, resolving_storage_ref)
+                                relation_extractor_component.model.set(relation_extractor_component.model.storageRef,
+                                                                       resolving_storage_ref)
         return pipe
+
     @staticmethod
     def get_json_data_for_pipe_model_at_stage_number(pipe_path, stage_number_as_string):
         """Gets the json metadata from a model for a given base path at a specific stage index"""
@@ -165,7 +170,7 @@ class PipeUtils:
 
     @staticmethod
     def enforece_AT_embedding_provider_output_col_name_schema_for_list_of_components(pipe_list):
-        """For every embedding provider, enforce that their output col is named <output_level>@storage_ref for
+        """For every embedding provider, enforce that their output col is named <pipe_prediction_output_level>@storage_ref for
         output_levels word,chunk,sentence aka document , TODO update the classifier models swell i.e.
         word_embed@elmo or sentence_embed@elmo etc. """
         for c in pipe_list:
@@ -184,7 +189,7 @@ class PipeUtils:
 
     @staticmethod
     def enforce_AT_schema_on_NER_processors_and_add_missing_NER_converters(pipe):
-        """For every NER provider and consumer, enforce that their output col is named <output_level>@storage_ref for
+        """For every NER provider and consumer, enforce that their output col is named <pipe_prediction_output_level>@storage_ref for
         output_levels word,chunk,sentence aka document , i.e. word_embed@elmo or sentence_embed@elmo etc. We also
         add NER converters for every NER model that no Converter converting its inputs In addition, returns the
         pipeline with missing NER converters added, for every NER model. The converters transform the IOB schema in a
@@ -280,7 +285,7 @@ class PipeUtils:
     @staticmethod
     def enforce_AT_schema_on_embedding_processors(pipe):
         """For every embedding provider and consumer, enforce that their output col is named
-        <output_level>@storage_ref for output_levels word,chunk,sentence aka document , i.e. word_embed@elmo or
+        <pipe_prediction_output_level>@storage_ref for output_levels word,chunk,sentence aka document , i.e. word_embed@elmo or
         sentence_embed@elmo etc. """
         for c in pipe.components:
             # Leave pretrained component_list models untouched
@@ -303,7 +308,7 @@ class PipeUtils:
 
     @staticmethod
     def enforce_NLU_columns_to_NLP_columns(pipe):
-        """for every component, set its inputs and outputs to the ones configured on the NLU component."""
+        """for every component_to_resolve, set its inputs and outputs to the ones configured on the NLU component_to_resolve."""
         for c in pipe.components:
             if c.loaded_from_pretrained_pipe:
                 continue
@@ -326,7 +331,8 @@ class PipeUtils:
     def configure_component_output_levels_to_sentence(pipe):
         '''
         Configure component_list components to output level document. Substitute every occurrence of <document> to
-        <sentence> for every component that feeds from <document :param pipe: component_list to be configured
+        <sentence> for every component_to_resolve that feeds from <document
+        :param pipe: component_list to be configured
         :return: configured component_list
         '''
         logger.info('Configuring components to sentence level')
@@ -339,7 +345,8 @@ class PipeUtils:
                 c.spark_input_column_names.remove(NLP_FEATURES.DOCUMENT)
                 c.spark_input_column_names.append(NLP_FEATURES.SENTENCE)
                 c.model.setInputCols(c.spark_input_column_names)
-                c.output_level = NLP_LEVELS.SENTENCE
+                if 'input_dependent' in c.output_level :
+                    c.output_level = NLP_LEVELS.SENTENCE
             # update in/out col types
             if NLP_FEATURES.DOCUMENT in c.in_types and NLP_FEATURES.SENTENCE not in c.in_types and NLP_FEATURES.SENTENCE not in c.out_types:
                 c.in_types.remove(NLP_FEATURES.DOCUMENT)
@@ -349,7 +356,7 @@ class PipeUtils:
     @staticmethod
     def configure_component_output_levels_to_document(pipe):
         '''
-        Configure component_list components to output level document. Substitute every occurence of <sentence> to <document> for every component that feeds from <sentence>
+        Configure component_list components to output level document. Substitute every occurence of <sentence> to <document> for every component_to_resolve that feeds from <sentence>
         :param pipe: component_list to be configured
         :return: configured component_list coonents only
         '''
@@ -363,7 +370,8 @@ class PipeUtils:
                 c.spark_input_column_names.remove(NLP_FEATURES.SENTENCE)
                 c.spark_input_column_names.append(NLP_FEATURES.DOCUMENT)
                 c.model.setInputCols(c.spark_input_column_names)
-                c.output_level = NLP_LEVELS.DOCUMENT
+                if 'input_dependent' in c.output_level :
+                    c.output_level = NLP_LEVELS.DOCUMENT
             # Update in/out col types
             if NLP_FEATURES.SENTENCE in c.in_types and NLP_FEATURES.DOCUMENT not in c.in_types and NLP_FEATURES.DOCUMENT not in c.out_types:
                 c.in_types.remove(NLP_FEATURES.SENTENCE)
@@ -378,30 +386,93 @@ class PipeUtils:
         return False
 
     @staticmethod
-    def configure_component_output_levels(pipe, force_level=''):
+    def has_document_assembler(pipe):
+        """Check for NLUPipieline if it contains sentence detector"""
+        for c in pipe.components:
+            if c.name == NLP_NODE_IDS.DOCUMENT_ASSEMBLER:
+                return True
+        return False
+
+    @staticmethod
+    def find_doc_assembler_idx_in_pipe(pipe):
+        """Find idx of document assembler in list of nlu components
+        :param pipe:  pipe
+        :return: idx of Document Assembler in list of components. If none present, returns -1
+        """
+        for i, c in enumerate(pipe.components):
+            if c.name == NLP_NODE_IDS.DOCUMENT_ASSEMBLER:
+                return i
+        return -1
+
+    @staticmethod
+    def add_tokenizer_to_pipe_if_missing(pipe):
+        """add tokenizer to pipe if it is missing
+        :param pipe:  pipe
+        :return: Pipe with tokenizer if missing
+        """
+        for c in pipe.components:
+            if c.name in [NLP_NODE_IDS.TOKENIZER, NLP_NODE_IDS.TOKEN_ASSEMBLER, NLP_NODE_IDS.REGEX_TOKENIZER,
+                          NLP_NODE_IDS.RECURISVE_TOKENIZER, NLP_NODE_IDS.WORD_SEGMENTER]:
+                return pipe
+
+        # No tokenizer found, so we add one which either feeds from document or sentences, depending on pipe.prediction_output_level
+        from nlu.pipe.component_resolution import resolve_feature
+        tokenizer = resolve_feature(NLP_FEATURES.TOKEN)
+        tokenizer.spark_input_column_names = [pipe.component_output_level]
+        tokenizer.spark_output_column_names = [NLP_FEATURES.TOKEN]
+        tokenizer.model.setInputCols(pipe.component_output_level)
+        tokenizer.model.setOutputCol(NLP_FEATURES.TOKEN)
+
+        # Find the document/sentence component and add tokenizer right after that
+        for i, c in enumerate(pipe.components):
+            if pipe.component_output_level in c.spark_output_column_names :
+                pipe.components.insert(i + 1,tokenizer)
+
+        return pipe
+
+    @staticmethod
+    def configure_component_output_levels(pipe, new_output_level=''):
         '''
-        This method configures sentenceEmbeddings and Classifier components to output at a specific level
-        This method is called the first time .predit() is called and every time the output_level changed
-        If output_level == Document, then sentence embeddings will be fed on Document col and classifiers recieve doc_embeds/doc_raw column, depending on if the classifier works with or withouth embeddings
-        If output_level == sentence, then sentence embeddings will be fed on sentence col and classifiers recieve sentence_embeds/sentence_raw column, depending on if the classifier works with or withouth embeddings. IF sentence detector is missing, one will be added.
-        component_list : NLU pipeline
-        return : a new list of components, which columns cnfigured for output level
+        This method configures sentenceEmbeddings and Classifier components to output at a specific level.
+        Generally this substitutes all `sentence` columns to `document` and vice versa.
+        Adds SentenceDetector to pipeline if none exists
+        This method is called the first time .predict() is called and every time the pipe_prediction_output_level changed
+        If pipe_prediction_output_level == Document, then sentence embeddings will be fed on Document col and
+            classifiers receive doc_embeds/doc_raw column,
+            depending on if the classifier works with or without embeddings
+        If pipe_prediction_output_level == sentence, then sentence embeddings will be fed on sentence col and
+            classifiers receive sentence_embeds/sentence_raw column,
+            depending on if the classifier works with or without embeddings.
+            If sentence detector is missing, one will be added.
+        :param pipe: NLU pipeline
+        :param new_output_level: The new output level to apply, either sentence or document
+        :return: Nlu pipeline, with all components output levels configured to new_output_level
         '''
-        if pipe.output_level == 'sentence' or force_level == 'sentence':
+        if not PipeUtils.has_document_assembler(pipe):
+            # When loaded from OCR, we might not have a documentAssembler in pipe
+            pipe.is_fitted = False
+            document_assembler = ComponentMap.os_components[NLP_NODE_IDS.DOCUMENT_ASSEMBLER]
+            document_assembler.set_metadata(document_assembler.get_default_model(), 'document_assembler',
+                                            'document_assembler', 'xx', False, Licenses.open_source)
+            pipe.components.insert(0, document_assembler)
+
+        if new_output_level == 'sentence':
             if not PipeUtils.has_sentence_detector(pipe):
                 logger.info("Adding missing Sentence Detector")
                 pipe.is_fitted = False
                 sentence_detector = ComponentMap.os_components[NLP_NODE_IDS.SENTENCE_DETECTOR_DL]
                 sentence_detector.set_metadata(sentence_detector.get_default_model(), 'detect_sentence',
                                                'sentence_detector_dl', 'en', False, Licenses.open_source)
-                pipe.components.insert(1, sentence_detector)
+                insert_idx = PipeUtils.find_doc_assembler_idx_in_pipe(pipe)
+                # insert After doc assembler
+                pipe.components.insert(insert_idx + 1, sentence_detector)
             return PipeUtils.configure_component_output_levels_to_sentence(pipe)
-        elif pipe.output_level == 'document' or force_level == 'document':
+        elif new_output_level == 'document':
             return PipeUtils.configure_component_output_levels_to_document(pipe)
 
     @staticmethod
     def check_if_component_is_in_pipe(pipe, component_name_to_check, check_strong=True):
-        """Check if a component with a given name is already in a component_list """
+        """Check if a component_to_resolve with a given name is already in a component_list """
         for c in pipe.components:
             if check_strong and component_name_to_check == c.info.name:
                 return True
@@ -423,7 +494,7 @@ class PipeUtils:
 
     @staticmethod
     def is_leaf_node(c, pipe) -> bool:
-        """Check if a component is a leaf in the DAG.
+        """Check if a component_to_resolve is a leaf in the DAG.
         We verify by checking if any other_c is feeding from os_components.
         If yes, it is not a leaf. If nobody feeds from os_components, it's a leaf.
         """
@@ -464,8 +535,8 @@ class PipeUtils:
 
     @staticmethod
     def find_trainable_embed_consumer(pipe):
-        """Find traianble component which consumes emeddings.
-        Returns index of component and type of embedding if found, otherwise returns -1 and None"""
+        """Find traianble component_to_resolve which consumes emeddings.
+        Returns index of component_to_resolve and type of embedding if found, otherwise returns -1 and None"""
         for i, c in enumerate(pipe.components):
             if c.trainable and c.has_storage_ref:
                 return pipe.components.index(c), ComponentUtils.extract_embed_col(c, 'input')
@@ -546,10 +617,11 @@ class PipeUtils:
             # Check for OCR componments
             if c.jsl_anno_py_class in py_class_to_anno_id.keys():
                 pipe.contains_ocr_components = True
-
-        for c in pipe.components:
             # Check for licensed components
             if c.license in [Licenses.ocr, Licenses.hc]:
                 pipe.has_licensed_components = True
+            # Check for NLP Component, which is any open source
+            if c.license == Licenses.open_source:
+                pipe.has_nlp_components = True
 
         return pipe
