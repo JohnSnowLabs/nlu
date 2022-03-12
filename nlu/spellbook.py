@@ -9,7 +9,7 @@ from nlu.universe.atoms import JslAnnoId
 
 class Spellbook:
     # NLU model_base_names =
-    # These reference tell NLU to which component resolved to route a request, they help NLU map a NLP reference to the correct class
+    # These reference tell NLU to which component_to_resolve resolved to route a request, they help NLU map a NLP reference to the correct class
     word_embeddings = ['embed', 'bert', 'electra', 'albert', 'elmo', 'glove', 'xlnet', 'biobert', 'covidbert',
                        'tfhub_use', 'distil', 'sentence_xlm.py', 'roberta', 'longformer', 'token_bert',
                        'token_distilbert'
@@ -61,6 +61,7 @@ class Spellbook:
         'train.resolve_sentence': NLP_HC_NODE_IDS.TRAINABLE_SENTENCE_ENTITY_RESOLVER,
         'train.resolve': NLP_HC_NODE_IDS.TRAINABLE_SENTENCE_ENTITY_RESOLVER,
         'train.assertion': NLP_HC_NODE_IDS.TRAINABLE_ASSERTION_DL,
+        'train.assert': NLP_HC_NODE_IDS.TRAINABLE_ASSERTION_DL,
         'train.assertion_dl': NLP_HC_NODE_IDS.TRAINABLE_ASSERTION_DL,
 
     }
@@ -112,7 +113,7 @@ class Spellbook:
         'sentiment.imdb.use': ('analyze_sentimentdl_use_imdb', 'component_list'),
         'sentiment.twitter.use': ('analyze_sentimentdl_use_twitter', 'component_list'),
         'sentiment.twitter': ('analyze_sentimentdl_use_twitter', 'component_list'),
-        'dependency':  ('dependency_conllu', 'model'),
+        'dependency': ('dependency_conllu', 'model'),
 
         'tokenize': ('spark_nlp_tokenizer', 'model'),  # tokenizer rule based model
         'stem': ('stemmer', 'model'),  # stem rule based model
@@ -1882,7 +1883,6 @@ class Spellbook:
             'en.embed.bert.base_cased': 'bert_base_cased',
             'en.embed.bert.large_uncased': 'bert_large_uncased',
             'en.embed.bert.large_cased': 'bert_large_cased',
-            'biobert': 'biobert_pubmed_base_cased',  # alias
             'en.embed.biobert': 'biobert_pubmed_base_cased',  # default bio bert
             'en.embed.biobert.pubmed_base_cased': 'biobert_pubmed_base_cased',
             # 'en.embed_sentence.bluebert_cased_mli' :  'sbluebert_base_cased_mli', # NOT FOUND
@@ -4208,7 +4208,6 @@ class Spellbook:
                 'en.relation.adverse_drug_events.clinical': 're_ade_clinical',
                 'en.relation.adverse_drug_events.clinical.biobert': 'redl_ade_biobert',
 
-
                 # 3.4.0
                 'en.med_ner.abbreviation_clinical': 'ner_abbreviation_clinical',
                 'en.med_ner.drugprot_clinical': 'ner_drugprot_clinical',
@@ -4497,11 +4496,9 @@ class Spellbook:
                 'en.relation.ade_biobert': 're_ade_biobert',
                 'en.assert.jsl': 'assertion_jsl',
                 'en.assert.jsl_large': 'assertion_jsl_large',
-                # 'en.resolve.snomed_findings_aux_concepts': 'sbiobertresolve_snomed_findings_aux_concepts',
+                # 'en.resolve.snomed_findings_aux_concepts': 'sbiobertresolve_snomed_findings_aux_concepts', # bad storage  sbiobert_base_cased_mli, but the model does not have that ref
                 'en.resolve.rxnorm_disposition': 'sbiobertresolve_rxnorm_disposition',
                 'en.resolve.rxnorm_disposition.sbert': 'sbertresolve_rxnorm_disposition',
-
-                # 'en.resolve.biobert_base_cased_mli': 'sbiobert_base_cased_mli',
 
                 'en.med_ner.jsl_slim': 'ner_jsl_slim',
                 'en.med_ner.jsl_greedy_biobert': 'ner_jsl_greedy_biobert',
@@ -4517,7 +4514,6 @@ class Spellbook:
                 'en.med_ner.nihss': 'ner_nihss',
                 'en.extract_relation.nihss': 'redl_nihss_biobert',
                 'en.resolve.mesh': 'sbiobertresolve_mesh',
-                'en.resolve.mli': 'sbiobert_base_cased_mli',
                 'en.resolve.ndc': 'sbiobertresolve_ndc',
                 'en.resolve.loinc.augmented': 'sbiobertresolve_loinc_augmented',
                 'en.resolve.clinical_snomed_procedures_measurements': 'sbiobertresolve_clinical_snomed_procedures_measurements',
@@ -4606,6 +4602,29 @@ class Spellbook:
             'xlm_roberta_base': 'xx.embed.xlm',
             'glove_6B_300': 'xx.embed.glove.6B_300',
             'glove_840B_300': 'xx.embed.glove.840B_300',
+            'bert_large_cased': "en.embed.bert.large_cased",
+            'albert_base_uncased': 'en.embed_sentence.albert',
+            'small_bert_L2_128': 'en.embed.bert.small_L2_128',
+            'elmo': 'en.embed.elmo',
+            'distilbert_base_cased': 'en.embed.distilbert.base',
+            'electra_base_uncased': 'en.embed_sentence.electra_base_uncased',
+
+            'roberta_large': 'en.embed.roberta.large',
+            'roberta_base': 'en.embed.roberta.base',
+
+            'small_bert_L4_256': 'en.embed.bert.small_L4_256',
+            'small_bert_L4_512': 'en.embed.bert.small_L4_512',
+            'small_bert_L8_512': 'en.embed.bert.small_L8_512',
+
+            'albert_large_uncased': 'en.embed.albert.large_uncased',
+
+            'electra_small_uncased': 'en.embed.electra.small_uncased',
+            'xlnet_base_cased': 'en.embed.xlnet_base_cased',
+
+            'longformer_large_4096': 'en.embed.longformer.large',
+            'electra_large_uncased': 'en.embed.electra.large_uncased',
+            'xlm_roberta_xtreme_base': 'xx.embed.xlm_roberta_xtreme_base',
+
         },
         'zh': {
             'bert_base_chinese': 'zh.embed',
@@ -4630,10 +4649,14 @@ class Spellbook:
             {'bert_multi_cased': 'xx.embed.bert',
              'labse': 'xx.embed_sentence.labse',
              'glove_840B_300': 'xx.embed.glove.840B_300',
+             'bert_base_turkish_uncased': 'tr.embed.bert.uncased',
              },
         'sv':
-            {'glove_100d': 'xx.embed.glove.glove_6B_100',
-             },
+            {
+                'glove_100d': 'xx.embed.glove.glove_6B_100',
+                'glove_6B_300': 'xx.embed.glove.6B_300',
+
+            },
         'fa':
             {'glove_300d': 'fa.embed',
              },
@@ -4644,7 +4667,14 @@ class Spellbook:
             {
 
                 'glove_100d': 'xx.embed.glove.glove_6B_100',
+                'glove_840B_300': 'xx.embed.glove.840B_300',
+                'glove_6B_300': 'xx.embed.glove.6B_300',
 
+            },
+        'bn':
+            {
+                'glove_840B_300': 'xx.embed.glove.840B_300',
+                'bengali_cc_300d': 'bn.embed.glove',
             },
         'ar':
             {'glove_300d': 'ar.embed',
@@ -4656,31 +4686,40 @@ class Spellbook:
                 'clinical': 'de.embed_sentence.bert.base_cased',
                 'glove_840B_300': 'xx.embed.glove.840B_300',
                 'glove_6B_300': 'xx.embed.glove.6B_300',
+                'w2v_cc_300d': 'de.embed.w2v',
+                'sent_bert_base_cased': 'de.embed_sentence.bert.base_cased',
 
             },
         'ja':
             {
                 'fasttext_300_ja': 'ja.embed.glove.cc_300d',
                 'xlm_roberta_base': 'xx.embed.xlm',
+                'glove_840B_300': 'xx.embed.glove.840B_300',
 
             },
         'no': {
             'glove_100d': 'xx.embed.glove.glove_6B_100',
             'glove_6B_300': 'xx.embed.glove.6B_300',
-
+            'glove_840B_300': 'xx.embed.glove.840B_300',
         },
         'pl': {
             'glove_100d': 'xx.embed.glove.glove_6B_100',
+
         },
         'pt': {
             'glove_100d': 'xx.embed.glove.glove_6B_100',
+            'glove_840B_300': 'xx.embed.glove.840B_300',
+
         },
         'ru': {
             'glove_100d': 'xx.embed.glove.glove_6B_100',
+            'glove_840B_300': 'xx.embed.glove.840B_300',
         },
         'es': {
             'glove_100d': 'xx.embed.glove.glove_6B_100',
             'es.ner': 'roberta_token_classifier_bne_capitel_ner',
+            'glove_840B_300': 'xx.embed.glove.840B_300',
+            'glove_6B_300': 'xx.embed.glove.6B_300',
 
         },
 
@@ -4710,7 +4749,7 @@ class Spellbook:
     licensed_storage_ref_2_nlu_ref = {
         'en': {
             'clinical': 'en.embed.glove.clinical',
-            'biobert_pubmed_base_cased': 'biobert',
+            'biobert_pubmed_base_cased': 'en.embed.biobert',
             'embeddings_healthcare100': 'en.embed.glove.healthcare_100d',
             'bert_base_cased': 'en.embed.bert.base_cased',
             'sent_bluebert_base_uncased_mednli': 'en.embed_sentence.bluebert.mli',
@@ -4718,7 +4757,7 @@ class Spellbook:
             'BERT_SENTENCE_EMBEDDINGS_c7e5b6a772f5': 'en.embed_sentence.bert.jsl_medium_uncased',
             'RelationExtractionModel_ce79d77d1bf1': 'en.embed.glove.clinical',
             'RelationExtractionModel_1fb1dfa024c7': 'en.embed.glove.clinical',
-            'RelationExtractionModel_6a65c9992836': 'biobert',
+            'RelationExtractionModel_6a65c9992836': 'en.embed.biobert',
             'BERT_SENTENCE_EMBEDDINGS_0bee53f1b2cc': 'en.embed_sentence.biobert.mli',
             'BERT_SENTENCE_EMBEDDINGS_59c3cd1e17c4': 'en.embed_sentence.bluebert.mli',
             'RelationExtractionModel_3ab4750ad5b6': 'en.embed.glove.clinical',
@@ -4727,6 +4766,9 @@ class Spellbook:
             'ROBERTA_EMBEDDINGS_39f3e48e5c3f': 'en.embed_sentence.biobert.clinical_base_cased',
             'RelationExtractionModel_14b00157fc1a': 'en.embed.glove.clinical',
             'RelationExtractionModel_53a12cc975cb': 'en.embed.glove.clinical',
+            'biobert_clinical_base_cased': 'en.embed.biobert.clinical_base_cased',
+            'sent_biobert_clinical_base_cased': 'en.embed_sentence.biobert.clinical_base_cased',
+
         },
         'es': {
             'embeddings_scielowiki300': 'es.embed.scielowiki.300d',
@@ -4759,8 +4801,9 @@ class Spellbook:
         'train.generic_classifier': NLP_HC_NODE_IDS.TRAINABLE_GENERIC_CLASSIFIER,
         'train.resolve_sentence': NLP_HC_NODE_IDS.TRAINABLE_SENTENCE_ENTITY_RESOLVER,
         'train.resolve': NLP_HC_NODE_IDS.TRAINABLE_SENTENCE_ENTITY_RESOLVER,
-        # 'train.assertion': NLP_HC_NODE_IDS.TRAINABLE_ASSERTION_DL,
-        # 'train.assertion_dl': NLP_HC_NODE_IDS.TRAINABLE_ASSERTION_DL,
+        'train.assertion': NLP_HC_NODE_IDS.TRAINABLE_ASSERTION_DL,
+        'train.assert': NLP_HC_NODE_IDS.TRAINABLE_ASSERTION_DL,
+        'train.assertion_dl': NLP_HC_NODE_IDS.TRAINABLE_ASSERTION_DL,
 
     }
 
@@ -4774,7 +4817,7 @@ class Spellbook:
         OCR_NODE_IDS.DOC2TEXT: 'DocToText',
         OCR_NODE_IDS.BINARY2IMAGE: 'BinaryToImage',
 
-        'default_chunker' : 'Chunker' ,
+        'default_chunker': 'Chunker',
 
         # NLP HC
         'embeddings_sciwiki_300d': 'WordEmbeddingsModel',
