@@ -18,7 +18,7 @@ class VizUtils():
 
     @staticmethod
     def viz_OS(anno_res, pipe, viz_type,viz_colors,labels_to_viz,is_databricks_env,write_to_streamlit,streamlit_key):
-        """Vizualize open source component"""
+        """Vizualize open source component_to_resolve"""
         streamlit_key = VizUtils.get_random() if streamlit_key == "RANDOM" else streamlit_key
         if   viz_type == 'ner' : return VizUtilsOS.viz_ner(anno_res, pipe,labels_to_viz,viz_colors,is_databricks_env,write_to_streamlit,streamlit_key)
         elif viz_type == 'dep' : return VizUtilsOS.viz_dep(anno_res, pipe,is_databricks_env,write_to_streamlit,streamlit_key)
@@ -26,7 +26,7 @@ class VizUtils():
 
     @staticmethod
     def viz_HC(anno_res, pipe, viz_type,viz_colors,labels_to_viz,is_databricks_env,write_to_streamlit):
-        """Vizualize licensed component"""
+        """Vizualize licensed component_to_resolve"""
         from nlu.pipe.viz.vis_utils_HC import VizUtilsHC
         if   viz_type == 'ner' : return  VizUtilsHC.viz_ner(anno_res, pipe,labels_to_viz,viz_colors,is_databricks_env,write_to_streamlit)
         elif viz_type == 'dep' : return  VizUtilsHC.viz_dep(anno_res, pipe,is_databricks_env,write_to_streamlit)

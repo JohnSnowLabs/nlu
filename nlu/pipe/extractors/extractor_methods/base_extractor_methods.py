@@ -298,7 +298,7 @@ def pad_same_level_cols(row):
         if isinstance(row[c], list):
             lens[c] = len(row[c])
             if lens[c] > max_len: max_len = lens[c]
-        if isinstance(row[c], float):
+        else:
             lens[c] = 1
             row[c] = [row[c]]
 
@@ -322,7 +322,8 @@ def zip_and_explode(df: pd.DataFrame, cols_to_explode: List[str]) -> pd.DataFram
     for col in cols_to_explode:
         if col not in df.columns:
             cols_to_explode.remove(col)
-
+    # Drop duplicate cols
+    df = df.loc[:, ~df.columns.duplicated()]
     # We must pad all cols we want to explode to the same length
     df[cols_to_explode] = df[cols_to_explode].apply(pad_same_level_cols, axis=1)
     return pd.concat([df.drop(cols_to_explode, axis=1)] + [df.explode(cols_to_explode)], axis=1)

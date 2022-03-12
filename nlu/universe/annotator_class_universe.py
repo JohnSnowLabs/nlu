@@ -6,7 +6,6 @@ from nlu.universe.feature_node_ids import OCR_NODE_IDS, NLP_NODE_IDS, NLP_HC_NOD
 class AnnoClassRef:
     # Reference of every Annotator class name in OS/HC/OCR
     # Maps JslAnnoID to ClassNames in Python/Java from Spark NLP/Healthcare/ OCR
-    # todo PY and JVM  should have same name AWLAYS?? So we can omit it here?
     A_O = OCR_NODE_IDS
     A_H = None  # NLP_HC_ANNO
     A_N = NLP_NODE_IDS

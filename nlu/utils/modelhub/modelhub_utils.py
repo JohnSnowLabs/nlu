@@ -1,21 +1,21 @@
 import logging
-
-logger = logging.getLogger('nlu')
 import nlu
 import requests
 
+logger = logging.getLogger('nlu')
+
 
 class ModelHubUtils():
+    """Modelhub utils"""
     modelhub_json_url = 'https://nlp.johnsnowlabs.com/models.json'
     data = requests.get(modelhub_json_url).json()
-    """Modelhub utils"""
 
     @staticmethod
     def NLU_ref_to_NLP_ref(nlu_ref: str, lang: str = None) -> str:
-        """Resolve a Spark NLU reference to q NLP reference.
-        Args :
-        NLU_ref : which nlu model's nlp refrence to return.
-        lang : what language is the model in.
+        """Resolve a Spark NLU reference to a NLP reference.
+        :param nlu_ref: which nlu model's nlp refrence to return.
+        :param lang: what language is the model in.
+        :return: Spark nlp model name
         """
         nlu_namespaces_to_check = [nlu.Spellbook.pretrained_pipe_references, nlu.Spellbook.pretrained_models_references,
                                    nlu.Spellbook.pretrained_healthcare_model_references,
@@ -35,46 +35,45 @@ class ModelHubUtils():
                                 return dict_[lang][reference]
         for _nlp_ref, nlp_ref_type in nlu.Spellbook.component_alias_references.items():
             if _nlp_ref == nlu_ref: return nlp_ref_type[0]
-
         return ''
 
     @staticmethod
-    def get_url_by_nlu_refrence(nlu_refrence: str) -> str:
-        """Rsolves  a  URL for an NLU refrence.
-
-        Args :
-            nlu_refrence : Which nlu refrence's url to return.
-
+    def get_url_by_nlu_refrence(nlu_ref: str) -> str:
+        """Resolves a URL for an NLU reference.
+        :param nlu_ref: Which nlu refrence's url to return.
+        :return: url to modelhub
         """
 
         # getting spark refrence for given nlu refrence
-        if nlu_refrence == '': return 'https://nlp.johnsnowlabs.com/models'
-        if nlu_refrence.split(".")[0] not in nlu.AllComponentsInfo().all_languages:
-            nlu_refrence = "en." + nlu_refrence
-        nlp_refrence = ModelHubUtils.NLU_ref_to_NLP_ref(nlu_refrence)
+        if not nlu_ref: return 'https://nlp.johnsnowlabs.com/models'
+        if nlu_ref.split(".")[0] not in nlu.Spellbook.pretrained_models_references.keys():
+            nlu_ref = "en." + nlu_ref
+        nlp_refrence = ModelHubUtils.NLU_ref_to_NLP_ref(nlu_ref)
         if nlp_refrence == None:
-            print(f"{nlp_refrence}         {nlu_refrence}")
+            print(f"{nlp_refrence}         {nlu_ref}")
             return 'https://nlp.johnsnowlabs.com/models'
         else:
             for model in ModelHubUtils.data:
-                if (model['language'] in nlu_refrence.split(".") or model['language'] in nlp_refrence.split('_')) and \
+                if (model['language'] in nlu_ref.split(".") or model['language'] in nlp_refrence.split('_')) and \
                         model['name'] == nlp_refrence:
+                    return f"https://nlp.johnsnowlabs.com/{model['url']}"
+            for model in ModelHubUtils.data:
+                # Retry, but no respect to lang
+                if model['name'] == nlp_refrence:
                     return f"https://nlp.johnsnowlabs.com/{model['url']}"
         return 'https://nlp.johnsnowlabs.com/models'
 
     @staticmethod
-    def return_json_entry(nlu_refrence: str) -> dict:
-        """Resolves a Json entry for an nlp_refrence.
-
-        Args:
-            nlp_refrence: What nlp_refrence to resolve.
+    def return_json_entry(nlu_ref: str) -> dict:
+        """Resolves a Json entry for annlu_refrence.
+        :param nlu_ref:  What nlp_refrence to resolve
+        :return: Json entry of that nlu reference
         """
+        if nlu_ref.split(".")[0] not in nlu.AllComponentsInfo().all_languages:
+            nlu_ref = "en." + nlu_ref
+        nlp_refrence = ModelHubUtils.NLU_ref_to_NLP_ref(nlu_ref)
 
-        if nlu_refrence.split(".")[0] not in nlu.AllComponentsInfo().all_languages:
-            nlu_refrence = "en." + nlu_refrence
-        nlp_refrence = ModelHubUtils.NLU_ref_to_NLP_ref(nlu_refrence)
-
-        language = nlu_refrence.split(".")[0]
+        language = nlu_ref.split(".")[0]
         for model in ModelHubUtils.data:
             if model['language'] == language and model["name"] == nlp_refrence:
                 return model

@@ -5,6 +5,7 @@ import logging
 import nlu
 from nlu.pipe.nlu_component import NluComponent
 from nlu.pipe.utils.resolution.storage_ref_utils import StorageRefUtils
+from nlu.universe.atoms import JslAnnoId
 from nlu.universe.logic_universes import NLP_LEVELS, AnnoTypes
 from nlu import Licenses
 from nlu.universe.feature_node_ids import NLP_NODE_IDS, NLP_HC_NODE_IDS
@@ -345,7 +346,7 @@ class PipeUtils:
                 c.spark_input_column_names.remove(NLP_FEATURES.DOCUMENT)
                 c.spark_input_column_names.append(NLP_FEATURES.SENTENCE)
                 c.model.setInputCols(c.spark_input_column_names)
-                if 'input_dependent' in c.output_level :
+                if 'input_dependent' in c.output_level:
                     c.output_level = NLP_LEVELS.SENTENCE
             # update in/out col types
             if NLP_FEATURES.DOCUMENT in c.in_types and NLP_FEATURES.SENTENCE not in c.in_types and NLP_FEATURES.SENTENCE not in c.out_types:
@@ -370,7 +371,7 @@ class PipeUtils:
                 c.spark_input_column_names.remove(NLP_FEATURES.SENTENCE)
                 c.spark_input_column_names.append(NLP_FEATURES.DOCUMENT)
                 c.model.setInputCols(c.spark_input_column_names)
-                if 'input_dependent' in c.output_level :
+                if 'input_dependent' in c.output_level:
                     c.output_level = NLP_LEVELS.DOCUMENT
             # Update in/out col types
             if NLP_FEATURES.SENTENCE in c.in_types and NLP_FEATURES.DOCUMENT not in c.in_types and NLP_FEATURES.DOCUMENT not in c.out_types:
@@ -425,8 +426,8 @@ class PipeUtils:
 
         # Find the document/sentence component and add tokenizer right after that
         for i, c in enumerate(pipe.components):
-            if pipe.component_output_level in c.spark_output_column_names :
-                pipe.components.insert(i + 1,tokenizer)
+            if pipe.component_output_level in c.spark_output_column_names:
+                pipe.components.insert(i + 1, tokenizer)
 
         return pipe
 
@@ -625,3 +626,62 @@ class PipeUtils:
                 pipe.has_nlp_components = True
 
         return pipe
+
+    @staticmethod
+    def replace_untrained_component_with_trained(nlu_pipe, spark_transformer_pipe):
+        """Write metadata fields to pipeline, for now only whether it contains
+        OCR components or not. To be extended in the future
+        :return:
+        :param nlu_pipe: NLU pipeline, which contains one untrained component
+        :param spark_transformer_pipe: Spark Pipeline which contains fitted component version of the untrained one
+        :return: NLU pipeline component list, where untrained component is replaced with a trained one
+        """
+
+        # Go through NLU pip and find the untrained component and replace with the trained one
+        for i, trainable_c in enumerate(nlu_pipe.components):
+            if trainable_c.trainable:
+
+                # Construct trained NLU component with the trained Spark Model
+                if trainable_c.license == Licenses.open_source:
+                    trained_class_name = AnnoClassRef.JSL_anno2_py_class[trainable_c.trained_mirror_anno]
+                    untrained_class_name = AnnoClassRef.JSL_anno2_py_class[trainable_c.jsl_anno_class_id]
+                    trained_model = PipeUtils.get_model_of_class_from_spark_pipe(spark_transformer_pipe,
+                                                                                 trained_class_name)
+                    trained_component = ComponentMap.os_components[trainable_c.trained_mirror_anno].set_metadata(
+                        trained_model, trainable_c.trained_mirror_anno, trainable_c.trained_mirror_anno, nlu_pipe.lang,
+                        False,
+                        Licenses.open_source)
+                elif trainable_c.license == Licenses.hc:
+                    trained_class_name = AnnoClassRef.JSL_anno_HC_ref_2_py_class[trainable_c.trained_mirror_anno]
+                    untrained_class_name = AnnoClassRef.JSL_anno_HC_ref_2_py_class[trainable_c.jsl_anno_class_id]
+                    trained_model = PipeUtils.get_model_of_class_from_spark_pipe(spark_transformer_pipe,
+                                                                                 trained_class_name)
+                    trained_component = ComponentMap.hc_components[trainable_c.trained_mirror_anno].set_metadata(
+                        trained_model, trainable_c.trained_mirror_anno, trainable_c.trained_mirror_anno, nlu_pipe.lang,
+                        False, Licenses.hc)
+
+                # update col names on new model
+                trained_component.spark_input_column_names = trainable_c.spark_input_column_names
+                trained_component.spark_output_column_names = trainable_c.spark_output_column_names
+                trained_component.model.setInputCols(trained_component.spark_input_column_names)
+                trained_component.model.setOutputCol(trained_component.spark_output_column_names[0])
+
+                # Replace component in pipe
+                nlu_pipe.components.remove(trainable_c)
+                # nlu_pipe.components.insert(i, trained_component)
+
+                #  remove the component from the NlpuPipe dict Keys and add the trained one
+                pipe_key_to_delete = None
+                for k in nlu_pipe.keys():
+                    if nlu_pipe[k].__class__.__name__ == untrained_class_name:
+                        pipe_key_to_delete = k
+                del nlu_pipe[pipe_key_to_delete]
+                nlu_pipe.add(trained_component)
+        return nlu_pipe.components
+
+    @staticmethod
+    def get_model_of_class_from_spark_pipe(spark_transformer_pipe, class_name):
+        for model in spark_transformer_pipe.stages:
+            if model.__class__.name == class_name:
+                return model
+        raise ValueError(f"Could not find model of requested class = {class_name}")

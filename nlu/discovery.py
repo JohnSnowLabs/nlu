@@ -5,7 +5,7 @@ all_components_info = nlu.AllComponentsInfo()
 class Discoverer:
     """Various methods that help discover nlu_refs and functionality"""
     def __init__(self):
-        ''' Initialize every NLU component info object and provide access to them'''
+        ''' Initialize every NLU component_to_resolve info object and provide access to them'''
         self.nlu_info = {}
 
     @staticmethod
@@ -118,12 +118,12 @@ class Discoverer:
 
     @staticmethod
     def print_component_types():
-        ''' Prints all unique component types in NLU'''
+        ''' Prints all unique component_to_resolve types in NLU'''
         types = []
         for key, val in nlu.all_components_info.all_components.items(): types.append(val.type)
 
         types = set(types)
-        print("Provided component types in this NLU version are : ")
+        print("Provided component_to_resolve types in this NLU version are : ")
         for i, type in enumerate(types):
             print(i, '. ', type)
 

@@ -4,8 +4,8 @@ import nlu
 
 class NLUComponent():
     '''
-        This class loads all the components in the components folder.
-        It acts as an accessor to every component.
+        This class loads all the components in the components jsl_folder.
+        It acts as an accessor to every component_to_resolve.
         Pass a string identifier to it and it will construct and return the model.
         It will also take care of setting the initial configuration parameter dict .
      '''

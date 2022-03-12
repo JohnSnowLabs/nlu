@@ -13,8 +13,9 @@ class NLP_LEVELS(NlpLevel):
     DOCUMENT = NlpLevel('document')
     CHUNK = NlpLevel('chunk')
     SENTENCE = NlpLevel('sentence')
-    RELATION = NlpLevel('relation')
     TOKEN = NlpLevel('token')
+    RELATION = NlpLevel('relation')
+    MULTI_TOKEN_CLASSIFIER = NlpLevel('multi_token_classifier')
 
     INPUT_DEPENDENT_DOCUMENT_CLASSIFIER = NlpLevel('input_dependent_document_classifier')
     INPUT_DEPENDENT_DOCUMENT_EMBEDDING = NlpLevel('input_dependent_document_embedding')

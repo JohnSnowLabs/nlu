@@ -94,40 +94,16 @@ from nlu.components.relation_extractors.relation_extractor.relation_extractor im
 from nlu.components.resolutions.sentence_entity_resolver.sentence_resolver import SentenceResolver
 from nlu.components.utils.ner_to_chunk_converter_licensed.ner_to_chunk_converter_licensed import \
     NerToChunkConverterLicensed
-from nlu.pipe.col_substitution.col_substitution_HC import substitute_assertion_cols, substitute_context_parser_cols, \
-    substitute_de_identification_cols, substitute_drug_normalizer_cols, substitute_generic_classifier_parser_cols, \
-    substitute_ner_internal_converter_cols, substitute_relation_cols, substitute_sentence_resolution_cols
-from nlu.pipe.col_substitution.col_substitution_OS import substitute_ner_dl_cols, substitute_gpt2_cols
-from nlu.pipe.extractors.extractor_configs_HC import default_assertion_config, default_full_config, \
-    default_de_identification_config, default_only_result_config, default_generic_classifier_config, default_ner_config, \
-    default_NER_converter_licensed_config, default_relation_extraction_config, \
-    default_relation_extraction_positional_config, default_chunk_resolution_config
+from nlu.pipe.col_substitution.col_substitution_HC import *
+from nlu.pipe.col_substitution.col_substitution_OS import *
+from nlu.pipe.extractors.extractor_configs_HC import *
+from nlu.pipe.extractors.extractor_configs_OS import *
 from nlu.universe.feature_node_ids import NLP_NODE_IDS, NLP_HC_NODE_IDS, OCR_NODE_IDS
 from nlu.universe.feature_node_universes import NLP_HC_FEATURE_NODES, OCR_FEATURE_NODES
 from nlu.universe.feature_universes import NLP_FEATURES, OCR_FEATURES, NLP_HC_FEATURES
 from nlu.pipe.nlu_component import NluComponent
 from nlu.universe.universes import Licenses, ComputeContexts
-from nlu.pipe.col_substitution.col_substitution_OS import substitute_doc2chunk_cols, substitute_chunk_embed_cols, \
-    substitute_chunk_cols, substitute_classifier_dl_cols, substitute_spell_context_cols, \
-    substitute_labled_dependency_cols, substitute_un_labled_dependency_cols, substitute_doc_assembler_cols, \
-    substitute_doc_norm_cols, substitute_lem_cols, substitute_multi_classifier_dl_cols, substitute_ngram_cols, \
-    substitute_ner_converter_cols, substitute_ner_dl_cols, substitute_norm_cols, substitute_spell_norvig_cols, \
-    substitute_pos_cols, substitute_tokenizer_cols, substitute_sentence_detector_dl_cols, substitute_sent_embed_cols, \
-    substitute_stem_cols, substitute_stopwords_cols, substitute_spell_symm_cols, substitute_sentiment_dl_cols, \
-    substitute_sentiment_vivk_cols, substitute_word_embed_cols, substitute_word_seg_cols, substitute_YAKE_cols, \
-    substitute_transformer_token_classifier_cols, substitute_seq_bert_classifier_cols, substitute_marian_cols, \
-    substitute_T5_cols
 from nlu.pipe.extractors.extractor_configs_HC import default_full_config
-from nlu.pipe.extractors.extractor_configs_OS import default_chunk_embedding_config, default_chunk_config, \
-    default_classifier_dl_config, default_spell_context_config, default_dep_typed_config, default_dep_untyped_config, \
-    default_doc2chunk_config, default_document_config, default_norm_document_config, default_lang_classifier_config, \
-    default_lemma_config, default_multi_classifier_dl_config, default_ngram_config, default_ner_converter_config, \
-    default_NER_config, meta_NER_config, default_norm_config, default_spell_norvig_config, default_POS_config, \
-    default_tokenizer_config, default_sentence_detector_DL_config, default_sentence_embedding_config, \
-    default_stemm_config, default_stopwords_config, default_spell_symmetric_config, default_sentiment_dl_config, \
-    default_sentiment_config, default_sentiment_vivk_config, default_word_embedding_config, \
-    default_word_segmenter_config, default_yake_config, default_token_classifier_config, default_marian_config, \
-    default_T5_config, default_gpt2_config
 from nlu.universe.feature_node_ids import NLP_NODE_IDS, NLP_HC_NODE_IDS
 from nlu.universe.feature_node_universes import NLP_FEATURE_NODES
 from nlu.universe.universes import ComponentBackends
@@ -142,7 +118,6 @@ class ComponentMap:
     F = NLP_FEATURES
     L = NLP_LEVELS
     ACR = AnnoClassRef
-    dict()
     os_components = {
         A.CHUNK2DOC: copy(NluComponent(
             name=A.CHUNK2DOC,
@@ -372,6 +347,7 @@ class ComponentMap:
         A.LEMMATIZER: copy(NluComponent(
             name=A.LEMMATIZER,
             type=T.TOKEN_NORMALIZER,
+            output_context=ComputeContexts.spark,
             get_default_model=SparkNLPLemmatizer.get_default_model,
             get_pretrained_model=SparkNLPLemmatizer.get_pretrained_model,
             get_trainable_model=SparkNLPLemmatizer.get_default_trainable_model,
@@ -383,7 +359,6 @@ class ComponentMap:
             provider=ComponentBackends.open_source,
             license=Licenses.open_source,
             computation_context=ComputeContexts.spark,
-            output_context=ComputeContexts.spark,
             jsl_anno_class_id=A.LEMMATIZER,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.LEMMATIZER],
             trainable_mirror_anno=A.TRAINABLE_LEMMATIZER
@@ -391,13 +366,13 @@ class ComponentMap:
         A.MULTI_CLASSIFIER_DL: copy(NluComponent(
             name=A.MULTI_CLASSIFIER_DL,
             type=T.DOCUMENT_CLASSIFIER,
+            output_level=L.MULTI_TOKEN_CLASSIFIER,
             get_default_model=MultiClassifier.get_default_model,
             get_pretrained_model=MultiClassifier.get_pretrained_model,
             get_trainable_model=MultiClassifier.get_default_trainable_model,
             pdf_extractor_methods={'default': default_multi_classifier_dl_config,
                                    'default_full': default_full_config, },
             pdf_col_name_substitutor=substitute_multi_classifier_dl_cols,
-            output_level=L.INPUT_DEPENDENT_DOCUMENT_CLASSIFIER,
             node=NLP_FEATURE_NODES.nodes[A.MULTI_CLASSIFIER_DL],
             description='Deep Learning based general classifier for multi-label classification problem. I.e. problems, where one document may be labled with multiple labels at the same time.',
             provider=ComponentBackends.open_source,
@@ -413,13 +388,13 @@ class ComponentMap:
         A.TRAINABLE_MULTI_CLASSIFIER_DL: copy(NluComponent(
             name=A.TRAINABLE_MULTI_CLASSIFIER_DL,
             type=T.DOCUMENT_CLASSIFIER,
+            output_level=L.MULTI_TOKEN_CLASSIFIER,
             get_default_model=MultiClassifier.get_default_model,
             get_pretrained_model=MultiClassifier.get_pretrained_model,
             get_trainable_model=MultiClassifier.get_default_trainable_model,
             pdf_extractor_methods={'default': default_multi_classifier_dl_config,
                                    'default_full': default_full_config, },
             pdf_col_name_substitutor=substitute_multi_classifier_dl_cols,
-            output_level=L.INPUT_DEPENDENT_DOCUMENT_CLASSIFIER,
             node=NLP_FEATURE_NODES.nodes[A.TRAINABLE_MULTI_CLASSIFIER_DL],
             description='Trainable Deep Learning based general classifier for multi-label classification problem. I.e. problems, where one document may be labled with multiple labels at the same time.',
             provider=ComponentBackends.open_source,
@@ -431,7 +406,7 @@ class ComponentMap:
             has_storage_ref=True,
             is_storage_ref_consumer=True,
             trainable=True,
-            trained_mirror_anno=A.MULTI_CLASSIFIER_DL,
+            trained_mirror_anno=A.CLASSIFIER_DL, # Should be A.MULTI_CLASSIFIER_DL, but fitted class is actually classifier DL, special edge case
         )),
 
         A.MULTI_DATE_MATCHER: 'TODO NOT INTEGRATED',
@@ -527,6 +502,7 @@ class ComponentMap:
             jsl_anno_class_id=A.TRAINABLE_NER_DL,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.TRAINABLE_NER_DL],
             trained_mirror_anno=A.NER_DL,
+            trainable=True,
             has_storage_ref=True,
             is_storage_ref_consumer=True
         )),
@@ -793,7 +769,7 @@ class ComponentMap:
             output_context=ComputeContexts.spark,
             jsl_anno_class_id=A.TRAINABLE_SENTIMENT_DL,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.TRAINABLE_SENTIMENT_DL],
-            trained_mirror_anno=A.TRAINABLE_SENTIMENT_DL,
+            trained_mirror_anno=A.SENTIMENT_DL,
             is_storage_ref_consumer=True,
             has_storage_ref=True,
             trainable=True
@@ -1220,7 +1196,7 @@ class ComponentMap:
         #     get_pretrained_model=BertSentence.get_pretrained_model,
         #     pdf_extractor_methods={'default': default_sentence_embedding_config, 'default_full': default_full_config, },
         #     pdf_col_name_substitutor=substitute_sent_embed_cols,
-        #     output_level=L.INPUT_DEPENDENT_DOCUMENT_EMBEDDING,
+        #     pipe_prediction_output_level=L.INPUT_DEPENDENT_DOCUMENT_EMBEDDING,
         #     node=NLP_FEATURE_NODES.nodes[A.ROBERTA_SENTENCE_EMBEDDINGS],
         #     description='Sentence-level embeddings using BERT. BERT (Bidirectional Encoder Representations from Transformers) provides dense vector representations for natural language by using a deep, pre-trained neural network with the Transformer architecture.',
         #     provider=ComponentBackends.open_source,
@@ -1545,7 +1521,7 @@ class ComponentMap:
         #     get_trainable_model=AssertionDL.get_default_trainable_model,
         #     pdf_extractor_methods={'default': default_assertion_config, 'default_full': default_full_config, },
         #     pdf_col_name_substitutor=substitute_assertion_cols,
-        #     output_level=L.CHUNK,
+        #     pipe_prediction_output_level=L.CHUNK,
         #     node=NLP_HC_FEATURE_NODES.ASSERTION_DL,
         #     description='Trainable Deep Learning based Assertion model that maps NER-Chunks into a pre-defined terminology.',
         #     provider=ComponentBackends.hc,
@@ -1657,7 +1633,7 @@ class ComponentMap:
         #     get_default_model=SparkNLPFeatureAssembler.get_default_model,
         #     pdf_extractor_methods={'default': default_feature_assembler_config, 'default_full': default_full_config, },
         #     # pdf_col_name_substitutor=substitute_drug_normalizer_cols, # TODO no substition
-        #     output_level=L.DOCUMENT, # TODO double check output level?
+        #     pipe_prediction_output_level=L.DOCUMENT, # TODO double check output level?
         #     node=NLP_HC_FEATURE_NODES.FEATURES_ASSEMBLER,
         #     description='Aggregated features from various annotators into one column for training generic classifiers',
         #     provider=ComponentBackends.hc,
@@ -1848,7 +1824,7 @@ class ComponentMap:
         #     get_pretrained_model=RelationExtractionDL.get_pretrained_model,
         #     pdf_extractor_methods={ 'default': default_relation_extraction_config, 'positional': default_relation_extraction_positional_config, 'default_full'  : default_full_config, },
         #     pdf_col_name_substitutor=substitute_relation_cols,
-        #     output_level=L.RELATION,
+        #     pipe_prediction_output_level=L.RELATION,
         #     node=NLP_HC_FEATURE_NODES.TRAINABLE_RELATION_EXTRACTION_DL,
         #     description='Trainable Deep Learning based model for predicting relation ship between entity pairs',
         #     provider=ComponentBackends.hc,
@@ -1898,8 +1874,9 @@ class ComponentMap:
             output_context=ComputeContexts.spark,
             jsl_anno_class_id=H_A.TRAINABLE_SENTENCE_ENTITY_RESOLVER,
             jsl_anno_py_class=ACR.JSL_anno_HC_ref_2_py_class[H_A.TRAINABLE_SENTENCE_ENTITY_RESOLVER],
-            trained_mirror_anno=H_A.TRAINABLE_SENTENCE_ENTITY_RESOLVER,
+            trained_mirror_anno=H_A.SENTENCE_ENTITY_RESOLVER,
             is_storage_ref_consumer=True,
+            trainable = True,
             has_storage_ref=True
         )),
         H_A.MEDICAL_BERT_FOR_TOKEN_CLASSIFICATION: copy(NluComponent(

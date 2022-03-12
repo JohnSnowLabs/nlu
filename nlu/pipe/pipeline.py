@@ -1,20 +1,3 @@
-import logging
-
-from nlu.pipe.extractors.extractor_configs_HC import default_full_config
-
-logger = logging.getLogger('nlu')
-from nlu.universe.universes import Licenses
-from nlu.pipe.nlu_component import NluComponent
-from nlu.pipe.extractors.extractor_methods.base_extractor_methods import *
-from nlu.pipe.pipe_logic import PipeUtils
-import nlu.pipe.pipe_component
-import sparknlp
-from typing import List, Union
-from sparknlp.base import *
-from sparknlp.base import LightPipeline
-import pyspark
-import pandas as pd
-import numpy as np
 from pyspark.sql.types import StructType, StructField, StringType
 from nlu.pipe.utils.resolution.storage_ref_utils import StorageRefUtils
 from nlu.pipe.utils.component_utils import ComponentUtils
@@ -22,13 +5,31 @@ from nlu.pipe.utils.output_level_resolution_utils import OutputLevelUtils
 from nlu.pipe.utils.data_conversion_utils import DataConversionUtils
 from nlu.utils.environment.env_utils import is_running_in_databricks
 from nlu.pipe.col_substitution.col_name_substitution_utils import ColSubstitutionUtils
+from nlu.universe.universes import Licenses
+from nlu.pipe.nlu_component import NluComponent
+from nlu.pipe.extractors.extractor_methods.base_extractor_methods import *
+from typing import List, Union
+from sparknlp.base import *
+from sparknlp.base import LightPipeline
+from nlu.pipe.extractors.extractor_configs_HC import default_full_config
+from nlu.pipe.pipe_logic import PipeUtils
+from nlu.universe.component_universes import NLP_NODE_IDS
+import nlu.pipe.pipe_component
+import sparknlp
+import pyspark
+import pandas as pd
+import numpy as np
+import logging
+
+logger = logging.getLogger('nlu')
+
 
 class NLUPipeline(dict):
     # we inherhit from dict so the component_list is indexable and we have a nice shortcut for accessing the spark nlp model
     def __init__(self):
-
-        super().__init__()
-        """ Initializes a pretrained pipeline  """
+        """ Initializes a pretrained pipeline, should only be created after a
+        Spark Context has been created
+          """
         self.spark = sparknlp.start()
         self.provider = 'sparknlp'
         self.pipe_ready = False  # ready when we have created a spark df
@@ -57,9 +58,8 @@ class NLUPipeline(dict):
         self.spark_estimator_pipe_pipe = None
         self.has_licensed_components = False
 
-
     def add(self, component: NluComponent, nlu_reference="default_name", pretrained_pipe_component=False,
-            name_to_add=''):
+            name_to_add='', idx = None):
         '''
 
         :param component:
@@ -67,7 +67,10 @@ class NLUPipeline(dict):
         :return:
         '''
         nlu_reference = component.nlu_ref
-        self.components.append(component)
+        if idx :
+            self.components.insert(idx,component)
+        else :
+            self.components.append(component)
         # ensure that input/output cols are properly set
         # Spark NLP model reference shortcut
         name = component.name  # .replace(' ', '').replace('train.', '')
@@ -80,7 +83,7 @@ class NLUPipeline(dict):
         logger.info(f"Adding {name} to internal component_list")
 
         # Configure output column names of classifiers from category to something more meaningful
-        # if self.isInstanceOfNlpClassifer(component_to_resolve.model): self.configure_outputs(component_to_resolve, nlu_reference)
+        # if self.isInstanceOfNlpClassifer(component_to_resolve.model): self.configure_outputs(component_to_resolve, nlu_ref)
 
         if name_to_add == '':
             # Add Component as self.index and in attributes
@@ -120,7 +123,6 @@ class NLUPipeline(dict):
             s_df = CoNLL().readDataset(self.spark, path=dataset_path, )
             self.spark_transformer_pipe = self.spark_estimator_pipe.fit(s_df.withColumnRenamed('label', 'y'))
             self.light_spark_transformer_pipe = LightPipeline(self.spark_transformer_pipe)
-
         elif dataset_path != None and 'pos' in self.nlu_ref:
             from sparknlp.training import POS
             s_df = POS().readDataset(self.spark, path=dataset_path, delimiter=label_seperator, outputPosCol="y",
@@ -178,7 +180,7 @@ class NLUPipeline(dict):
 
             stages = []
             for component in self.components: stages.append(component.model)
-            ## TODO SET STORAGE REF ON FITTED ANNOTATORS, especially resoluton...
+            ## TODO set storage ref on fitted model
             self.spark_estimator_pipe = Pipeline(stages=stages)
             self.spark_transformer_pipe = self.spark_estimator_pipe.fit(
                 DataConversionUtils.pdf_to_sdf(dataset, self.spark)[0])
@@ -199,9 +201,13 @@ class NLUPipeline(dict):
                 self.spark_transformer_pipe = self.spark_estimator_pipe.fit(self.get_sample_spark_dataframe())
                 self.light_spark_transformer_pipe = LightPipeline(self.spark_transformer_pipe)
 
+        self.has_trainable_components = False
         self.is_fitted = True
         self.light_pipe_configured = True
+        self.components = PipeUtils.replace_untrained_component_with_trained(self, self.spark_transformer_pipe)
+
         return self
+
 
     def get_extraction_configs(self, full_meta, positions, get_embeddings):
         """Search first OC namespace and if not found the HC Namespace for each Annotator Class in pipeline and get
@@ -291,7 +297,7 @@ class NLUPipeline(dict):
                                   output_metadata=False,
                                   positions=False,
                                   output_level='',
-                                  get_embeddings=True, ):
+                                  get_embeddings=True):
         '''
         This functions takes in a spark dataframe with Spark NLP annotations in it and transforms it into a Pandas
         Dataframe with common feature types for further NLP/NLU downstream tasks. It will recycle Indexes from Pandas
@@ -423,34 +429,6 @@ class NLUPipeline(dict):
                 logger.info("Enabling light pipeline")
                 self.light_spark_transformer_pipe = LightPipeline(self.spark_transformer_pipe, parse_embeddings=True)
 
-    def check_if_sentence_level_requirements_met(self):
-        '''
-        Check if the pipeline currently has an annotator that generate sentence col as output. If not, return False
-        :return:
-        '''
-
-        for c in self.components:
-            if 'sentence' in c.info.spark_output_column_names: return True
-        return False
-
-    def add_missing_sentence_component(self):
-        '''
-        Add Sentence Detector to pipeline and Run it thorugh the Query Verifiyer again.
-        :return: None
-        '''
-
-    def write_nlu_pipe_info(self, path):
-        '''
-        Writes all information required to load a NLU pipeline from disk to path
-        :param path: path where to store the nlu_info.json
-        :return: True if success, False if failure
-        '''
-        import os
-        f = open(os.path.join(path, 'nlu_info.txt'), "w")
-        f.write(self.nlu_ref)
-        f.close()
-        return True
-
     def save(self, path, component='entire_pipeline', overwrite=False):
         if nlu.is_running_in_databricks():
             if path.startswith('/dbfs/') or path.startswith('dbfs/'):
@@ -471,7 +449,6 @@ class NLUPipeline(dict):
                 self.is_fitted = True
             if component == 'entire_pipeline':
                 self.spark_transformer_pipe.save(nlp_path)
-                self.write_nlu_pipe_info(nlu_path)
         if overwrite and not nlu.is_running_in_databricks():
             import shutil
             shutil.rmtree(path, ignore_errors=True)
@@ -529,7 +506,6 @@ class NLUPipeline(dict):
         print('The following parameters are configurable for this NLU pipeline (You can copy paste the examples) :')
         # list of tuples, where first element is component_to_resolve name and second element is list of param tuples, all ready formatted for printing
         all_outputs = []
-        ## TODO CONDINOTAL LOOP either on approaches or transformers
         iterable = None
         for i, component_key in enumerate(self.keys()):
             s = ">>> component_list['" + component_key + "'] has settable params:"

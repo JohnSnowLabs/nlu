@@ -39,7 +39,7 @@ class Embeddings(SparkNLUComponent):
             elif 'albert' in nlu_ref or 'albert' in nlp_ref : annotator_class = 'albert'
             elif 'xlnet' in nlu_ref or 'xlnet' in nlp_ref : annotator_class = 'xlnet'
 
-            # Default component models for nlu actions that dont specify a particular model
+            # Default component_to_resolve models for nlu actions that dont specify a particular model
             elif 'embed_sentence' in nlu_ref : annotator_class = 'glove'
             elif 'embed' in nlu_ref          : annotator_class = 'glove'
 

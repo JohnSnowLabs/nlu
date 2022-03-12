@@ -7,7 +7,7 @@ logger = logging.getLogger('nlu')
 
 
 def resolve_storage_ref(lang, storage_ref, missing_component_type):
-    """Returns a nlp_ref, nlu_ref and wether it is a licensed model or not and an updated languiage, if multi lingual"""
+    """Returns a nlp_ref, nlu_ref and whether it is a licensed model or not and an updated languiage, if multi lingual"""
     logger.info(
         f"Resolving storage_ref={storage_ref} for lang={lang} and missing_component_type={missing_component_type}")
     nlu_ref, nlp_ref, is_licensed = None, None, False
@@ -79,11 +79,9 @@ def resolve_storage_ref(lang, storage_ref, missing_component_type):
                 storage_ref = 'en.glove'  # this enables default USE embeds for traianble components
                 nlp_ref = 'glove_100d'
                 nlu_ref = storage_ref
-
         else:
             nlp_ref = storage_ref
             nlu_ref = storage_ref
-
     if nlu_ref is not None:
         is_licensed = check_if_nlu_ref_is_licensed(nlu_ref)
 
@@ -92,6 +90,6 @@ def resolve_storage_ref(lang, storage_ref, missing_component_type):
 
 
 def set_storage_ref_and_resolution_on_component_info(c, storage_ref):
-    """Sets a storage ref on a components component info and returns the component """
+    """Sets a storage ref on a components component_to_resolve info and returns the component_to_resolve """
     c.storage_ref = storage_ref
     return c

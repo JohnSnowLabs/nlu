@@ -6,7 +6,7 @@ nlu.egg-info
 personal_notes.md
 /tests/nlu_hc_tests/secrets.py
 /tests/nlu_hc_tests/spark_nlp_for_healthcare.json
-
+tmp
 # Created by https://www.gitignore.io/api/sbt,java,scala,python,eclipse,intellij,intellij+all
 
 ### Eclipse ###
@@ -165,7 +165,7 @@ fabric.properties
 # Crashlytics plugin (for Android Studio and IntelliJ)
 
 ### Intellij+all Patch ###
-# Ignores the whole idea folder
+# Ignores the whole idea jsl_folder
 # See https://github.com/joeblau/gitignore.io/issues/186 and https://github.com/joeblau/gitignore.io/issues/360
 
 .idea/

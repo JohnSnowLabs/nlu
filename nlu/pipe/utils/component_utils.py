@@ -19,7 +19,7 @@ class ComponentUtils:
     @staticmethod
     def config_chunk_embed_converter(converter: SparkNLUComponent) -> SparkNLUComponent:
         '''For a Chunk to be added to a pipeline, configure its input/output and set storage ref to amtch the storage ref and
-        enfore storage ref notation. This will be used to infer backward later which component should feed this consumer'''
+        enfore storage ref notation. This will be used to infer backward later which component_to_resolve should feed this consumer'''
         storage_ref = StorageRefUtils.extract_storage_ref(converter)
         input_embed_col = ComponentUtils.extract_embed_col(converter)
         new_embed_col_with_AT_notation = input_embed_col + "@" + storage_ref
@@ -34,7 +34,7 @@ class ComponentUtils:
     @staticmethod
     def clean_irrelevant_features(feature_list, remove_AT_notation=False, remove_text = True):
         '''
-        Remove irrelevant features from a list of component features
+        Remove irrelevant features from a list of component_to_resolve features
         Also remove the @notation from names, since they are irrelevant for ordering
         :param feature_list: list of features
         :param remove_AT_notation: remove AT notation from os_components names if true. Used for sorting
@@ -72,18 +72,18 @@ class ComponentUtils:
     @staticmethod
     def component_has_embeddings_requirement(component: NluComponent):
         '''
-        Check for the input component, wether it depends on some embedding. Returns True if yes, otherwise False.
-        :param component:  The component to check
-        :return: True if the component needs some specifc embedding (i.e.glove, bert, elmo etc..). Otherwise returns False
+        Check for the input component_to_resolve, wether it depends on some embedding. Returns True if yes, otherwise False.
+        :param component:  The component_to_resolve to check
+        :return: True if the component_to_resolve needs some specifc embedding (i.e.glove, bert, elmo etc..). Otherwise returns False
         '''
         return component.is_storage_ref_consumer
 
     @staticmethod
     def component_has_embeddings_provisions(component: SparkNLUComponent):
         '''
-        Check for the input component, wether it depends on some embedding. Returns True if yes, otherwise False.
-        :param component:  The component to check
-        :return: True if the component needs some specifc embedding (i.e.glove, bert, elmo etc..). Otherwise returns False
+        Check for the input component_to_resolve, wether it depends on some embedding. Returns True if yes, otherwise False.
+        :param component:  The component_to_resolve to check
+        :return: True if the component_to_resolve needs some specifc embedding (i.e.glove, bert, elmo etc..). Otherwise returns False
         '''
         if type(component) == type(list) or type(component) == type(set):
             for feature in component:
@@ -99,9 +99,9 @@ class ComponentUtils:
     @staticmethod
     def extract_storage_ref_AT_notation_for_embeds(component: NluComponent, col='input'):
         '''
-        Extract <col>_embed_col@storage_ref notation from a component if it has a storage ref, otherwise '
+        Extract <col>_embed_col@storage_ref notation from a component_to_resolve if it has a storage ref, otherwise '
         :param component:  To extract notation from
-        :cols component:  Wether to extract for the input or output col
+        :cols component_to_resolve:  Wether to extract for the input or output col
         :return: '' if no storage_ref, <col>_embed_col@storage_ref otherwise
         '''
         if col == 'input':
@@ -123,7 +123,7 @@ class ComponentUtils:
 
     @staticmethod
     def is_embedding_converter(component: NluComponent) -> bool:
-        """Check if NLU component is embedding converter """
+        """Check if NLU component_to_resolve is embedding converter """
         return component.name in [NLP_NODE_IDS.SENTENCE_EMBEDDINGS_CONVERTER,
                                   NLP_NODE_IDS.SENTENCE_EMBEDDINGS_CONVERTER]
 
@@ -143,7 +143,7 @@ class ComponentUtils:
 
     @staticmethod
     def extract_NER_col(component: NluComponent, column='input') -> str:
-        """Extract the exact name of the NER column in the component"""
+        """Extract the exact name of the NER column in the component_to_resolve"""
         if column == 'input':
             for f in component.in_types:
                 if f == NLP_FEATURES.NAMED_ENTITY_IOB:
@@ -152,11 +152,11 @@ class ComponentUtils:
             for f in component.out_types:
                 if f == NLP_FEATURES.NAMED_ENTITY_IOB:
                     return f
-        raise ValueError(f"Could not find NER col for component ={component}")
+        raise ValueError(f"Could not find NER col for component_to_resolve ={component}")
 
     @staticmethod
     def extract_NER_converter_col(component: NluComponent, column='input') -> str:
-        """Extract the exact name of the NER-converter  column in the component"""
+        """Extract the exact name of the NER-converter  column in the component_to_resolve"""
         if column == 'input':
             for f in component.in_types:
                 if f == NLP_FEATURES.NAMED_ENTITY_IOB:
@@ -165,23 +165,23 @@ class ComponentUtils:
             for f in component.out_types:
                 if f == NLP_FEATURES.NAMED_ENTITY_CONVERTED:
                     return f
-        raise ValueError(f"Could not find NER Converter col for component ={component}")
+        raise ValueError(f"Could not find NER Converter col for component_to_resolve ={component}")
 
     @staticmethod
     def extract_embed_col(component: NluComponent, column='input') -> str:
-        """Extract the exact name of the embed column in the component"""
+        """Extract the exact name of the embed column in the component_to_resolve"""
         if column == 'input':
             for c in component.spark_input_column_names:
                 if 'embed' in c: return c
         if column == 'output':
             for c in component.spark_output_column_names:
                 if 'embed' in c: return c
-        raise ValueError(f"Could not find Embed col for component ={component}")
+        raise ValueError(f"Could not find Embed col for component_to_resolve ={component}")
 
     @staticmethod
     def is_untrained_model(component: SparkNLUComponent) -> bool:
         '''
-        Check for a given component if it is an embelishment of an traianble model.
+        Check for a given component_to_resolve if it is an embelishment of an traianble model.
         In this case we will ignore embeddings requirements further down the logic pipeline
         :param component: Component to check
         :return: True if it is trainable, False if not
@@ -205,7 +205,7 @@ class ComponentUtils:
 
     @staticmethod
     def extract_embed_level_identity(component, col='input'):
-        """Figure out if component feeds on chunk/sent aka doc/word emb for either nput or output cols"""
+        """Figure out if component_to_resolve feeds on chunk/sent aka doc/word emb for either nput or output cols"""
         if col == 'input':
             if any(filter(lambda s: 'document_embed' in s, component.info.inputs)): return 'document_embeddings'
             if any(filter(lambda s: 'sentence_embed' in s, component.info.inputs)): return 'sentence_embeddings'
@@ -238,7 +238,7 @@ class ComponentUtils:
         tail = component.nlu_ref.split('.')[-1].split('@')[-1]
         if tail == '':
             logger.warning(
-                f"Could not deduct tail from component={component}. This is intended for CustomModelComponents used in offline mode")
+                f"Could not deduct tail from component_to_resolve={component}. This is intended for CustomModelComponents used in offline mode")
             tail = str(component.model)
         return tail
 

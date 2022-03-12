@@ -12,6 +12,7 @@ def import_or_install_licensed_lib(JSL_SECRET, lib='healthcare'):
     ocr_module_name = 'sparkocr'
     ocr_display_name = ' Spark OCR'
 
+    get_deps = True
     lib_version = JSL_SECRET.split('-')[0]
     if lib == 'healthcare':
         target_import = hc_module_name
@@ -28,6 +29,7 @@ def import_or_install_licensed_lib(JSL_SECRET, lib='healthcare'):
             lib_version = lib_version + '+spark24'
         if is_env_pyspark_3_0() or is_env_pyspark_3_1():
             lib_version = lib_version + '+spark30'
+        get_deps = False
 
     else:
         raise ValueError(f'Invalid install licensed install target ={lib}')
@@ -43,11 +45,16 @@ def import_or_install_licensed_lib(JSL_SECRET, lib='healthcare'):
         pip_major_version = int(pip.__version__.split('.')[0])
         if pip_major_version in [10, 18, 19, 20]:
             # for these versions pip module does not support installing from Python, we install via OS command.
-            os.system(
-                f'{sys.executable} -m pip install {target_install}=={lib_version} --extra-index-url https://pypi.johnsnowlabs.com/{JSL_SECRET}')
+            cmd = f'{sys.executable} -m pip install {target_install}=={lib_version} --extra-index-url https://pypi.johnsnowlabs.com/{JSL_SECRET}'
+            if not get_deps:
+                cmd = cmd + '--no-deps'
+            os.system(cmd)
         else:
-            pip.main(['install', f'{target_install}=={lib_version}', '--extra-index-url',
-                      f'https://pypi.johnsnowlabs.com/{JSL_SECRET}'])
+            params = ['install', f'{target_install}=={lib_version}', '--extra-index-url',
+                      f'https://pypi.johnsnowlabs.com/{JSL_SECRET}']
+            if not get_deps:
+                params.append('--no-deps')
+            pip.main(params)
     finally:
         # Import module after installing package
         import site

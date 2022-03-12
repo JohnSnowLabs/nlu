@@ -11,18 +11,18 @@ logger = logging.getLogger('nlu')
 class StorageRefUtils:
     @staticmethod
     def has_storage_ref(component: NluComponent):
-        """Storage ref is either on the model or nlu component defined """
+        """Storage ref is either on the model or nlu component_to_resolve defined """
         return component.has_storage_ref
 
     @staticmethod
     def extract_storage_ref(component: NluComponent):
-        """Extract storage ref from either a NLU component or NLP Annotator. First checks if annotator has storage
+        """Extract storage ref from either a NLU component_to_resolve or NLP Annotator. First checks if annotator has storage
         ref, otherwise check NLU attribute """
         if StorageRefUtils.has_storage_ref(component):
             return StorageRefUtils.nlp_extract_storage_ref_nlp_model(component)
         else:
             raise ValueError(
-                f'Tried to extract storage ref from component which has no storageref ! Component = {component}')
+                f'Tried to extract storage ref from component_to_resolve which has no storageref ! Component = {component}')
 
     @staticmethod
     def fallback_storage_ref_resolutions(storage_ref):
@@ -37,7 +37,7 @@ class StorageRefUtils:
 
     @staticmethod
     def has_component_storage_ref_or_anno_storage_ref(component: NluComponent):
-        """Storage ref is either on the model or nlu component defined """
+        """Storage ref is either on the model or nlu component_to_resolve defined """
         return component.has_storage_ref
 
     @staticmethod
@@ -50,7 +50,7 @@ class StorageRefUtils:
 
     @staticmethod
     def extract_storage_ref_from_component(component):
-        """Extract storage ref from a NLU component which embellished a Spark NLP Annotator"""
+        """Extract storage ref from a NLU component_to_resolve which embellished a Spark NLP Annotator"""
         if StorageRefUtils.nlu_component_has_storage_ref(component):
             return component.info.storage_ref
         elif StorageRefUtils.nlp_component_has_storage_ref(component):
@@ -60,7 +60,7 @@ class StorageRefUtils:
 
     @staticmethod
     def nlu_extract_storage_ref_nlp_model(component):
-        """Extract storage ref from a NLU component which embellished a Spark NLP Annotator"""
+        """Extract storage ref from a NLU component_to_resolve which embellished a Spark NLP Annotator"""
         return component.model.extractParamMap()[component.model.getParam('storageRef')]
 
     @staticmethod
@@ -72,8 +72,8 @@ class StorageRefUtils:
 
     @staticmethod
     def nlp_extract_storage_ref_nlp_model(component: NluComponent):
-        """Extract storage ref from a NLU component which embellished a Spark NLP Annotator"""
-        # Embedding Converters don't have storage ref attribute on class, but NLU component has attribute for it
+        """Extract storage ref from a NLU component_to_resolve which embellished a Spark NLP Annotator"""
+        # Embedding Converters don't have storage ref attribute on class, but NLU component_to_resolve has attribute for it
         params = list(component.model.extractParamMap().keys())
         for p in params:
             if p.name == 'storageRef':

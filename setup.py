@@ -21,7 +21,7 @@ REQUIRED_PKGS = [
     'spark-nlp>=3.4.0,<3.5.0',
     'numpy',
     'pyarrow>=0.16.0',
-    'pandas',
+    'pandas>=1.3.5',
     'dataclasses'
 ]
 # Arguments marked as "Required" below must be included for upload to PyPI.
@@ -38,7 +38,7 @@ setup(
     #
     # There are some restrictions on what makes a valid project name
     # specification here:    # https://packaging.python.org/specifications/core-metadata/#name
-    name='nlu',  # Required #nlu
+    name='nlu_tmp',  # Required #nlu
 
     # Versions should comply with PEP 440:
     # https://www.python.org/dev/peps/pep-0440/
@@ -46,7 +46,7 @@ setup(
     # For a discussion on single-sourcing the version across setup.py and the
     # project code, see
     # https://packaging.python.org/en/latest/single_source_version.html
-    version='3.4.1',  # Required
+    version='3.4.2rc1',  # Required
 
     # This is a one-line description or tagline of what your project does. This
     # corresponds to the "Summary" metadata field:

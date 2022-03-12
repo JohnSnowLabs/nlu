@@ -17,11 +17,11 @@ def debug_print_pipe_cols(pipe):
 
 
 class NluComponent:
-    """Contains various metadata about the loaded component"""
+    """Contains various metadata about the loaded component_to_resolve"""
 
     def __init__(self,
                  name: str,  # Name for this anno
-                 type: str,  # this tells us which kind of component this is
+                 type: str,  # this tells us which kind of component_to_resolve this is
                  # Extractor method applicable to Pandas DF for getting pretty outputs
                  pdf_extractor_methods: Dict[str, Callable[[], any]],
                  pdf_col_name_substitutor: Callable[[], any],
@@ -29,14 +29,14 @@ class NluComponent:
                  # sdf_extractor_methods : Dict[str,Callable[[],any]] # Extractor method applicable to Spark  DF for getting pretty outputs # TODO NOT IN BUILD
                  # sdf_col_name_substitutor : Optional[Callable[[],any]] # substitution method for renaming final cols to somthing redable # TODO NOT IN BUILD
                  output_level: NlpLevel,
-                 # Output level of the component for data transformation logic or call it putput mapping??
+                 # Output level of the component_to_resolve for data transformation logic or call it putput mapping??
                  node: NlpFeatureNode,  # Graph node
-                 description: str,  # general annotator/model/component/pipeline info
+                 description: str,  # general annotator/model/component_to_resolve/pipeline info
                  provider: ComponentBackends,
                  # Who provides the implementation of this annotator, Spark-NLP for base. Would be
                  license: LicenseType,  # open source or private
                  computation_context: str,
-                 # Will this component do its computation in Spark land (like all of Spark NLP annotators do) or does it require some other computation engine or library like Tensorflow, Numpy, HuggingFace, etc..
+                 # Will this component_to_resolve do its computation in Spark land (like all of Spark NLP annotators do) or does it require some other computation engine or library like Tensorflow, Numpy, HuggingFace, etc..
                  output_context: str,  # Will this components final result
                  jsl_anno_class_id: JslAnnoId,  # JSL Annotator Class this belongs to
                  jsl_anno_py_class: JslAnnoPyClass,  # JSL Annotator Class this belongs to
@@ -48,7 +48,7 @@ class NluComponent:
                  get_trainable_model: Optional[Callable[[], AnnotatorTransformer]] = None,
                  trainable: bool = False,
                  language: [LanguageIso] = None,
-                 # constructor_args: ComponentConstructorArgs = None  # Args used to originally create this component
+                 # constructor_args: ComponentConstructorArgs = None  # Args used to originally create this component_to_resolve
                  nlu_ref: str = None,
                  nlp_ref: str = None,
                  in_types: List[JslFeature] = None,
@@ -65,7 +65,7 @@ class NluComponent:
                  storage_ref: Optional[str] = None,
                  storage_ref_nlu_ref_resolution: Optional[str] = None,  # nlu_ref corresponding to storage_ref
                  loaded_from_pretrained_pipe: bool = False,
-                 # If this component was derived from a pre-build SparkNLP pipeline or from NLU
+                 # If this component_to_resolve was derived from a pre-build SparkNLP pipeline or from NLU
                  has_storage_ref: bool = False,
                  is_storage_ref_consumer: bool = False,
                  # # Whether this anno takes in some features that are storage ref based
@@ -126,7 +126,7 @@ class NluComponent:
                          loaded_from_pretrained_pipe: bool,
                          license_type: LicenseType,
                          storage_ref: Optional[str] = None):
-            """Write metadata to nlu component after constructing it """
+            """Write metadata to nlu component_to_resolve after constructing it """
             self.model = jsl_anno_object
             self.nlu_ref = nlu_ref
             self.nlp_ref = nlp_ref

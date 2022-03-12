@@ -1,4 +1,4 @@
-from typing import Dict, Any, Tuple
+from typing import Dict, Any, List
 import logging
 from nlu.universe.atoms import NlpLevel
 from nlu.universe.logic_universes import NLP_LEVELS
@@ -70,40 +70,26 @@ class OutputLevelUtils:
             return component.output_level
 
     @staticmethod
-    def get_output_level_mappings(pipe, df, anno_2_ex_config, get_embeddings) \
-            -> Tuple[Dict[str, NlpLevel], Dict[str, NlpLevel]]:
-        """Get three dicts where key=spark_colname and val=pipe_prediction_output_level,
-        inferred from processed dataframe and pipeline.
-        It uses the currently configured pipe.prediction_output_level attribute,
-        to deduct which columns are at same/different levels
+    def get_columns_at_same_level_of_pipe(pipe, df, anno_2_ex_config, get_embeddings) -> List[str]:
+        """Get List of columns in df that are generated from components in the pipeline
+            which are at the same output level as the pipe .
         :param pipe: NLU Pipeline
-        :param df: Spark DataFrame resulting from applying the pipe
+        :param df: Pandas DataFrame resulting from applying the pipe
         :param anno_2_ex_config: mapping between anno to extractor, from get_annotator_extraction_configs()
         :param get_embeddings: Should embeddings be included
-        :return:  same_output_level_map, not_same_output_level_map
-                 which are two maps that map column name to output level containing all columns, the one at same level
-                 and the ones at not same level respectively
+        :return: List of columns which are generated from components
+                at same output level as the pipe.prediction_output_level
         """
-        # output_level_map = {}
-        same_output_level_map = {}
-        not_same_output_level_map = {}
+        same_output_level_cols = []
         for c in pipe.components:
             if 'embedding' in c.type and get_embeddings is False:
                 continue
-            generated_cols = ColSubstitutionUtils.get_final_output_cols_of_component(c, df, anno_2_ex_config)
             output_level = OutputLevelUtils.resolve_component_to_output_level(pipe, c)
             if output_level == pipe.prediction_output_level:
-                for g_c in generated_cols:
-                    # add to same level cols
-                    same_output_level_map[g_c] = output_level
-            else:
-                for g_c in generated_cols:
-                    # add to not same level cols
-                    not_same_output_level_map[g_c] = output_level
-            # for g_c in generated_cols:
-            #     # add to all cols
-            #     output_level_map[g_c] = pipe_prediction_output_level
-        return same_output_level_map, not_same_output_level_map
+                generated_cols = ColSubstitutionUtils.get_final_output_cols_of_component(c, df, anno_2_ex_config)
+                for generated_col in generated_cols:
+                    same_output_level_cols.append(generated_col)
+        return list(set(same_output_level_cols))
 
     @staticmethod
     def get_output_level_mapping_by_component(pipe) -> Dict[Any, str]:
