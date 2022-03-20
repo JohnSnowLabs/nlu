@@ -203,7 +203,6 @@ class PipeUtils:
 
         includes TOKEN-CLASSIFIER-TRANSFORMER models which usually output NER format
         """
-        from nlu.components.util import Util
         new_converters = []
         for c in pipe.components:
             if c.loaded_from_pretrained_pipe:
