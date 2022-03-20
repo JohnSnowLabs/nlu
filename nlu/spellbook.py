@@ -2188,6 +2188,12 @@ class Spellbook:
             'en.classify.emotion.bert': 'bert_sequence_classifier_emotion',
             'en.classify.typos.distilbert': 'distilbert_token_classifier_typo_detector',
 
+            # NLP 3.4.2
+            'en.embed.deberta_v3_xsmall':'deberta_v3_xsmall',
+            'en.embed.deberta_v3_small':'deberta_v3_small',
+            'en.embed.deberta_v3_base':'deberta_v3_base',
+            'en.embed.deberta_v3_large':'deberta_v3_large',
+
         },
 
         'yi': {
@@ -2769,6 +2775,7 @@ class Spellbook:
         },
 
         'xx': {
+            'xx.embed.mdeberta_v3_base':'mdeberta_v3_base',
             'xx.embed.albert.indic': 'albert_indic',
             'xx.ner.masakhaner.distilbert': 'distilbert_base_token_classifier_masakhaner',
             # 3.4.0
@@ -4197,6 +4204,10 @@ class Spellbook:
 
         'en':
             {
+
+                # 3.4.2
+                'en.med_ner.clinical_trials' : 'bert_sequence_classifier_rct_biobert',
+
                 # 3.4.1
                 'en.med_ner.supplement_clinical': 'ner_supplement_clinical',
                 'en.resolve.rxnorm.augmented_re': 'sbiobertresolve_rxnorm_augmented_re',
@@ -4551,6 +4562,10 @@ class Spellbook:
             },
 
         'es': {
+            # 3.4.2
+            'es.med_ner.deid.generic.roberta' : 'ner_deid_generic_roberta_augmented',
+            'es.med_ner.deid.subentity.roberta' : 'ner_deid_subentity_roberta_augmented',
+
             # 3.4.1
             'es.embed.sciwiki_300d': 'embeddings_sciwiki_300d',
             'es.med_ner.deid.generic': 'ner_deid_generic',
@@ -4819,7 +4834,20 @@ class Spellbook:
 
         'default_chunker': 'Chunker',
 
-        # NLP HC
+        # HC 3.4.2
+        'bert_sequence_classifier_rct_biobert' : 'MedicalBertForSequenceClassification',
+        'ner_deid_generic_augmented' : 'MedicalNerModel',
+        'ner_deid_subentity_augmented' : 'MedicalNerModel',
+        'ner_deid_generic_roberta_augmented' : 'MedicalNerModel',
+        'ner_deid_subentity_roberta_augmented' : 'MedicalNerModel',
+
+        # NLP 3.4.2
+        'deberta_v3_xsmall':'DeBertaEmbeddings',
+        'deberta_v3_small':'DeBertaEmbeddings',
+        'deberta_v3_base':'DeBertaEmbeddings',
+        'deberta_v3_large':'DeBertaEmbeddings',
+        'mdeberta_v3_base':'DeBertaEmbeddings',
+        # NLP HC 3.4.1
         'embeddings_sciwiki_300d': 'WordEmbeddingsModel',
         'ner_deid_generic': 'MedicalNerModel',
         'ner_deid_subentity': 'MedicalNerModel',
