@@ -132,7 +132,9 @@ def test_check_if_string_in_file(file_name, string_to_search, regex=False):
 
 def NLP_ref_to_NLU_ref(nlp_ref, lang):
     """Resolve a Spark NLP reference to a NLU reference"""
-    nlu_namespaces_to_check = [nlu.Spellbook.pretrained_pipe_references, nlu.Spellbook.pretrained_models_references]
+    from nlu import Spellbook
+    nlu_namespaces_to_check = [Spellbook.pretrained_pipe_references, Spellbook.pretrained_models_references, Spellbook.pretrained_healthcare_model_references, Spellbook.pretrained_pipe_references,
+                               ]
     for dict_ in nlu_namespaces_to_check:
         if lang in dict_.keys():
             for reference in dict_[lang]:
