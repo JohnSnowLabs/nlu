@@ -203,7 +203,7 @@ def substitute_transformer_token_classifier_cols(c, cols, nlu_identifier=True):
                 col] = f'{new_base_name}_origin_sentence' 
             if 'Some' in col:
                 new_cols[
-                    col] = f"'{new_base_name}_{col.split('Some(')[-1].split(')')[0]}_confidence" 
+                    col] = f"'{new_base_name}_{col.split('Some(')[-1].split(')')[0]}_confidence"
             else:
                 logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
             # new_cols[col]= f"{new_base_name}_confidence"
@@ -269,7 +269,7 @@ def substitute_word_embed_cols(c, cols, nlu_identifier=True):
             elif 'pieceId' in col:
                 new_cols[col] = f'{new_base_name}_piece_id' 
             elif '_token' in col:
-                continue  # Can be omited, is the same as _result, just maps to origin_token
+                continue  # Can be omitted, is the same as _result, just maps to origin_token
             else:
                 logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
         elif '_embeddings' in col:

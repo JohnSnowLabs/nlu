@@ -7,6 +7,7 @@ from nlu.components.classifiers.seq_roberta.seq_roberta import SeqRobertaClassif
 from nlu.components.classifiers.seq_xlm_roberta.seq_xlm_roberta import SeqXlmRobertaClassifier
 from nlu.components.classifiers.seq_xlnet.seq_xlnet import SeqXlnetClassifier
 from nlu.components.classifiers.token_bert_healthcare.token_bert_healthcare import TokenBertHealthcare
+from nlu.components.embeddings.deberta.deberta import Deberta
 from nlu.components.embeddings.roberta.roberta import Roberta
 from nlu.components.embeddings.word2vec.word2vec import Word2Vec
 from nlu.components.embeddings_chunks.chunk_embedder.chunk_embedder import ChunkEmbedder
@@ -18,6 +19,8 @@ from nlu.components.seq2seqs.gpt2.gpt2 import GPT2
 from nlu.ocr_components.text_recognizers.doc2text.doc2text import Doc2Text
 from nlu.ocr_components.text_recognizers.img2text.img2text import Img2Text
 from nlu.ocr_components.text_recognizers.pdf2text.pdf2text import Pdf2Text
+
+from nlu.ocr_components.table_extractors.pdf_table_extractor.doc2text import Pdf2TextTable
 from nlu.ocr_components.utils.binary2image.binary2image import Binary2Image
 from nlu.pipe.col_substitution.col_substitution_OCR import substitute_recognized_text_cols
 from nlu.pipe.extractors.extractor_configs_OCR import default_text_recognizer_config, default_binary_to_image_config
@@ -108,6 +111,7 @@ from nlu.universe.feature_node_ids import NLP_NODE_IDS, NLP_HC_NODE_IDS
 from nlu.universe.feature_node_universes import NLP_FEATURE_NODES
 from nlu.universe.universes import ComponentBackends
 from copy import copy
+
 
 class ComponentMap:
     # Encapsulate all Open Source components Constructors by mappping each individual Annotator class to a specific Construction
@@ -406,7 +410,8 @@ class ComponentMap:
             has_storage_ref=True,
             is_storage_ref_consumer=True,
             trainable=True,
-            trained_mirror_anno=A.CLASSIFIER_DL, # Should be A.MULTI_CLASSIFIER_DL, but fitted class is actually classifier DL, special edge case
+            trained_mirror_anno=A.CLASSIFIER_DL,
+            # Should be A.MULTI_CLASSIFIER_DL, but fitted class is actually classifier DL, special edge case
         )),
 
         A.MULTI_DATE_MATCHER: 'TODO NOT INTEGRATED',
@@ -1453,8 +1458,7 @@ class ComponentMap:
             get_pretrained_model=Word2Vec.get_pretrained_model,
             get_trainable_model=Word2Vec.get_trainable_model,
             pdf_extractor_methods={'default': default_word_embedding_config, 'default_full': default_full_config, },
-            # TODO test
-            pdf_col_name_substitutor=substitute_word_embed_cols,  # TODO
+            pdf_col_name_substitutor=substitute_word_embed_cols,  # TODO?
             output_level=L.TOKEN,
             node=NLP_FEATURE_NODES.nodes[A.WORD_2_VEC],
             description='We use Word2Vec implemented in Spark ML. It uses skip-gram model in our implementation and a hierarchical softmax method to train the model. The variable names in the implementation match the original C implementation.',
@@ -1464,6 +1468,26 @@ class ComponentMap:
             output_context=ComputeContexts.spark,
             jsl_anno_class_id=A.WORD_2_VEC,
             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.WORD_2_VEC],
+            has_storage_ref=True,
+            is_storage_ref_producer=True,
+        )),
+
+        A.DEBERTA_WORD_EMBEDDINGS: copy(NluComponent(
+            name=A.DEBERTA_WORD_EMBEDDINGS,
+            type=T.TOKEN_EMBEDDING,
+            get_default_model=Deberta.get_default_model,
+            get_pretrained_model=Deberta.get_pretrained_model,
+            pdf_extractor_methods={'default': default_word_embedding_config, 'default_full': default_full_config, },
+            pdf_col_name_substitutor=substitute_word_embed_cols,
+            output_level=L.TOKEN,
+            node=NLP_FEATURE_NODES.nodes[A.DEBERTA_WORD_EMBEDDINGS],
+            description='Token-level embeddings using DeBERTa. The DeBERTa model was proposed in DeBERTa: Decoding-enhanced BERT with Disentangled Attention by Pengcheng He, Xiaodong Liu, Jianfeng Gao, Weizhu Chen. It is based on Google’s BERT model released in 2018 and Facebook’s RoBERTa model released in 2019.',
+            provider=ComponentBackends.open_source,
+            license=Licenses.open_source,
+            computation_context=ComputeContexts.spark,
+            output_context=ComputeContexts.spark,
+            jsl_anno_class_id=A.DEBERTA_WORD_EMBEDDINGS,
+            jsl_anno_py_class=ACR.JSL_anno2_py_class[A.DEBERTA_WORD_EMBEDDINGS],
             has_storage_ref=True,
             is_storage_ref_producer=True,
         )),
@@ -1876,7 +1900,7 @@ class ComponentMap:
             jsl_anno_py_class=ACR.JSL_anno_HC_ref_2_py_class[H_A.TRAINABLE_SENTENCE_ENTITY_RESOLVER],
             trained_mirror_anno=H_A.SENTENCE_ENTITY_RESOLVER,
             is_storage_ref_consumer=True,
-            trainable = True,
+            trainable=True,
             has_storage_ref=True
         )),
         H_A.MEDICAL_BERT_FOR_TOKEN_CLASSIFICATION: copy(NluComponent(
@@ -1933,7 +1957,6 @@ class ComponentMap:
             jsl_anno_class_id=H_A.MEDICAL_DISTILBERT_FOR_SEQUENCE_CLASSIFICATION,
             jsl_anno_py_class=ACR.JSL_anno_HC_ref_2_py_class[H_A.MEDICAL_DISTILBERT_FOR_SEQUENCE_CLASSIFICATION],
         ))
-
 
         # MEDICAL_BERT_FOR_TOKEN_CLASSIFICATION fTOK
     }
@@ -2010,6 +2033,25 @@ class ComponentMap:
             jsl_anno_class_id=O_A.BINARY2IMAGE,
             jsl_anno_py_class=ACR.JSL_anno_OCR_ref_2_py_class[O_A.BINARY2IMAGE],
             applicable_file_types=['JPEG', 'PNG', 'BMP', 'WBMP', 'GIF', 'JPG', 'TIFF']
+
+        )),
+
+        O_A.PDF2TEXT_TABLE: copy(NluComponent(
+            name=O_A.PDF2TEXT_TABLE,
+            type=T.HELPER_ANNO,
+            get_default_model=Pdf2TextTable.get_default_model,
+            pdf_extractor_methods={'default': default_binary_to_image_config}, # TODO EXtractor
+            pdf_col_name_substitutor=substitute_recognized_text_cols,  # TODO substitor
+            output_level=L.DOCUMENT,
+            node=OCR_FEATURE_NODES.nodes[O_A.PDF2TEXT_TABLE],
+            description='Extract Tables from PDFs with have highlightable text',
+            provider=ComponentBackends.ocr,
+            license=Licenses.ocr,
+            computation_context=ComputeContexts.spark,
+            output_context=ComputeContexts.spark,
+            jsl_anno_class_id=O_A.PDF2TEXT_TABLE,
+            jsl_anno_py_class=ACR.JSL_anno_OCR_ref_2_py_class[O_A.PDF2TEXT_TABLE],
+            applicable_file_types=['PDF']
 
         )),
 

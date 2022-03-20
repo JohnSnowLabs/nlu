@@ -12,7 +12,7 @@ class Licenses:
 
 
 class ComponentBackends:
-    """Definition of verious Component providers/backends"""
+    """Definition of various Component providers/backends"""
     ocr = ComponentBackend('spark ocr')
     hc = ComponentBackend('spark hc')
     open_source = ComponentBackend('spark nlp')

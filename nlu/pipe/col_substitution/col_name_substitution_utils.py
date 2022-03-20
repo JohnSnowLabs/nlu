@@ -144,6 +144,7 @@ class ColSubstitutionUtils:
         unique_default name schema should be used,
         since that annotator is unique in the component_list
         """
+        # Todo extract name deductable as NLU component attribute
         import nlu.pipe.col_substitution.name_deduction.name_deductable_annotators_OS as deductable_OS
         max_depth = 10
         result_names = {}
