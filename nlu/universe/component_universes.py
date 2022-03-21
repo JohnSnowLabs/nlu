@@ -20,7 +20,7 @@ from nlu.ocr_components.text_recognizers.doc2text.doc2text import Doc2Text
 from nlu.ocr_components.text_recognizers.img2text.img2text import Img2Text
 from nlu.ocr_components.text_recognizers.pdf2text.pdf2text import Pdf2Text
 
-from nlu.ocr_components.table_extractors.pdf_table_extractor.doc2text import Pdf2TextTable
+from nlu.ocr_components.table_extractors.pdf_table_extractor.pdf2table import PDF2TextTable
 from nlu.ocr_components.utils.binary2image.binary2image import Binary2Image
 from nlu.pipe.col_substitution.col_substitution_OCR import substitute_recognized_text_cols
 from nlu.pipe.extractors.extractor_configs_OCR import default_text_recognizer_config, default_binary_to_image_config
@@ -2039,7 +2039,7 @@ class ComponentMap:
         O_A.PDF2TEXT_TABLE: copy(NluComponent(
             name=O_A.PDF2TEXT_TABLE,
             type=T.HELPER_ANNO,
-            get_default_model=Pdf2TextTable.get_default_model,
+            get_default_model=PDF2TextTable.get_default_model,
             pdf_extractor_methods={'default': default_binary_to_image_config}, # TODO EXtractor
             pdf_col_name_substitutor=substitute_recognized_text_cols,  # TODO substitor
             output_level=L.DOCUMENT,
