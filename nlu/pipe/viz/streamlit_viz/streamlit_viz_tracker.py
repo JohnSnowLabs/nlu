@@ -111,7 +111,7 @@ word-wrap: break-word;
                   'Vector Name':name})
     @staticmethod
     def display_model_info(model2viz=' ',pipes=[],apply_style=True, display_component_wise_info=True,display_component_summary=True):
-        """Display Links to Modelhub for every NLU Ref loaded and also every component in component_list"""
+        """Display Links to Modelhub for every NLU Ref loaded and also every component_to_resolve in component_list"""
         default_modelhub_link = 'https://nlp.johnsnowlabs.com/models'
         nlu_refs = model2viz.split(' ')
         # for p in classifier_pipes + embed_pipes + token_pipes  :nlu_refs.append(p.nlu_ref)
@@ -261,7 +261,7 @@ word-wrap: break-word;
     # def visualize_classes(
     #         component_list, # nlu component_list
     #         text:Union[str,list,pd.DataFrame, pd.Series, List[str]]=('I love NLU and Streamlit and sunny days!', 'I hate rainy daiys','CALL NOW AND WIN 1000$M'),
-    #         output_level:Optional[str]='document',
+    #         pipe_prediction_output_level:Optional[str]='document',
     #         title: Optional[str] = "Text Classification",
     #         sub_title: Optional[str] = 'View predicted `classes` and `confidences` for `hundreds of text classifiers` in `over 200 languages`',
     #         metadata : bool = False,
@@ -308,7 +308,7 @@ word-wrap: break-word;
     #     dfs = []
     #     all_classifier_cols=[]
     #     for p in classifier_pipes :
-    #         df = p.predict(text, output_level=output_level, metadata=metadata, positions=positions)
+    #         df = p.predict(text, pipe_prediction_output_level=pipe_prediction_output_level, metadata=metadata, positions=positions)
     #         classifier_cols = StreamlitUtilsOS.get_classifier_cols(p)
     #         for os_components in classifier_cols :
     #             if os_components not in df.columns : classifier_cols.remove(os_components)
@@ -341,7 +341,7 @@ word-wrap: break-word;
     #         show_feature_select:bool =True,
     #         features:Optional[List[str]] = None,
     #         full_metadata: bool = True,
-    #         output_level:str = 'token',
+    #         pipe_prediction_output_level:str = 'token',
     #         positions:bool = False,
     #         set_wide_layout_CSS:bool=True,
     #         generate_code_sample:bool = False,
@@ -385,7 +385,7 @@ word-wrap: break-word;
     #     if generate_code_sample:st.code(get_code_for_viz('TOKEN',[StreamlitUtilsOS.extract_name(p) for p  in token_pipes],text))
     #     dfs = []
     #     for p in token_pipes:
-    #         df = p.predict(text, output_level=output_level, metadata=full_metadata,positions=positions)
+    #         df = p.predict(text, pipe_prediction_output_level=pipe_prediction_output_level, metadata=full_metadata,positions=positions)
     #         dfs.append(df)
     #
     #
@@ -484,7 +484,7 @@ word-wrap: break-word;
     #         color = cols[2].color_picker('Pick A Color for a specific entity label', '#00f900',key = key)
     #         tag2color = cols[1].selectbox('Pick a ner tag to color', ner_tags,key = key)
     #         colors[tag2color]=color
-    #     if show_table : st.write(component_list.predict(text, output_level='chunk'),key = key)
+    #     if show_table : st.write(component_list.predict(text, pipe_prediction_output_level='chunk'),key = key)
     #
     #     if show_infos :
     #         # VizUtilsStreamlitOS.display_infos()
@@ -591,8 +591,8 @@ word-wrap: break-word;
     #     cols_full = True
     #     col_index=0
     #     for p in embed_pipes :
-    #         data1 = p.predict(text1,output_level='token').dropna()
-    #         data2 = p.predict(text2,output_level='token').dropna()
+    #         data1 = p.predict(text1,pipe_prediction_output_level='token').dropna()
+    #         data2 = p.predict(text2,pipe_prediction_output_level='token').dropna()
     #         e_coms = StreamlitUtilsOS.find_all_embed_components(p)
     #         modelhub_links = [ModelHubUtils.get_url_by_nlu_refrence(os_components.info.nlu_ref) if hasattr(os_components.info,'nlu_ref') else ModelHubUtils.get_url_by_nlu_refrence('') for os_components in e_coms]
     #         e_cols = StreamlitUtilsOS.get_embed_cols(p)
@@ -799,11 +799,11 @@ word-wrap: break-word;
     #         classifier_cols = []
     #
     #         for class_p in StreamlitVizTracker.loaded_document_classifier_pipes:
-    #             data = class_p.predict(data, output_level='document').dropna()
+    #             data = class_p.predict(data, pipe_prediction_output_level='document').dropna()
     #             classifier_cols.append(StreamlitUtilsOS.get_classifier_cols(class_p))
     #
     #         p = StreamlitUtilsOS.merge_token_classifiers_with_embed_pipe(p, token_feature_pipe)
-    #         predictions =   p.predict(data,output_level='token').dropna()
+    #         predictions =   p.predict(data,pipe_prediction_output_level='token').dropna()
     #         e_col = StreamlitUtilsOS.find_embed_col(predictions)
     #         e_com = StreamlitUtilsOS.find_embed_component(p)
     #         embedder_name = StreamlitUtilsOS.extract_name(e_com)

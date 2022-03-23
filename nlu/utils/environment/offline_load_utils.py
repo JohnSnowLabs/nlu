@@ -89,7 +89,7 @@ def resolve_annotator_class_to_nlu_component_info(anno_class='LemmatizerModel'):
     SparkNLUComponent.__init__(self, annotator_class, component_type)
     RECURISIVELY SEARCH through NLU COMPONENTS source code for each class for a given <CLASSS>
     Find the file, which called <CLASS>.pretrained or just <CLASS> !!!
-    In the folder containing that found file there will be the component_json info we need!]\
+    In the jsl_folder containing that found file there will be the component_json info we need!]\
     """
     import nlu
     p = nlu.nlu_package_location + 'components/'
@@ -97,7 +97,7 @@ def resolve_annotator_class_to_nlu_component_info(anno_class='LemmatizerModel'):
 
     import os
     for dirpath, dirs, files in os.walk(p):
-        # search for folder that has the component info for that anno_class
+        # search for jsl_folder that has the component_to_resolve info for that anno_class
         for filename in files:
             if '.py' not in filename or '.pyc' in filename: continue
             fname = os.path.join(dirpath, filename)
@@ -132,7 +132,9 @@ def test_check_if_string_in_file(file_name, string_to_search, regex=False):
 
 def NLP_ref_to_NLU_ref(nlp_ref, lang):
     """Resolve a Spark NLP reference to a NLU reference"""
-    nlu_namespaces_to_check = [nlu.Spellbook.pretrained_pipe_references, nlu.Spellbook.pretrained_models_references]
+    from nlu import Spellbook
+    nlu_namespaces_to_check = [Spellbook.pretrained_pipe_references, Spellbook.pretrained_models_references, Spellbook.pretrained_healthcare_model_references, Spellbook.pretrained_pipe_references,
+                               ]
     for dict_ in nlu_namespaces_to_check:
         if lang in dict_.keys():
             for reference in dict_[lang]:
@@ -141,7 +143,7 @@ def NLP_ref_to_NLU_ref(nlp_ref, lang):
 
 
 class CustomModel(SparkNLUComponent):
-    """ Builds a NLU Components with component info"""
+    """ Builds a NLU Components with component_to_resolve info"""
 
     def __init__(self, annotator_class='sentiment_dl', component_type='classifier', model=None):
         self.model = model

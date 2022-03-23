@@ -13,7 +13,7 @@ logger = logging.getLogger('nlu')
 class OcrDataConversionUtils:
     @staticmethod
     def validate_OCR_compatible_inputs(data):
-        """Validate for input data that it contains a path pointing to file or folder"""
+        """Validate for input data that it contains a path pointing to file or jsl_folder"""
         if isinstance(data, List):
             return OcrDataConversionUtils.check_iterable_paths_are_valid(data)
         if isinstance(data, str):
@@ -29,13 +29,13 @@ class OcrDataConversionUtils:
 
     @staticmethod
     def check_iterable_paths_are_valid(iterable_paths):
-        """Validate for iterable data input if all elements point to file or folder"""
+        """Validate for iterable data input if all elements point to file or jsl_folder"""
         paths_validness = []
         for p in iterable_paths:
             if os.path.isdir(p) or os.path.isfile(p):
                 paths_validness.append(True)
             else:
-                print(f'Warning : Invalid path for folder or file in input. Could validate path.\n'
+                print(f'Warning : Invalid path for jsl_folder or file in input. Could validate path.\n'
                       f'NLU will try and ignore this issue but you might run into errors.\n'
                       f'Please make sure all paths are valid\n')
                 print(f'For path = {p}')
@@ -49,9 +49,9 @@ class OcrDataConversionUtils:
 
     @staticmethod
     def glob_files_of_accepted_type(paths, file_types):
-        """Get all paths which point to correct file types from iterable paths which can contain file and folder paths
+        """Get all paths which point to correct file types from iterable paths which can contain file and jsl_folder paths
         1. paths point to a file which is suffixed with one of the accepted file_types, i.e. path/to/file.type
-        2. path points to a folder, in this case folder is recurisvely searched for valid files and accepted paths will be in return result
+        2. path points to a jsl_folder, in this case jsl_folder is recurisvely searched for valid files and accepted paths will be in return result
         """
         accepted_file_paths = []
         for p in paths:
@@ -63,7 +63,7 @@ class OcrDataConversionUtils:
                 elif os.path.isdir(p):
                     accepted_file_paths += glob.glob(p + f'/**/*.{t}', recursive=True)
                 else:
-                    print(f"Invalid path = {p} pointing neither to file or folder on this machine")
+                    print(f"Invalid path = {p} pointing neither to file or jsl_folder on this machine")
         return accepted_file_paths
 
     @staticmethod

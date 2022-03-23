@@ -1,26 +1,11 @@
-"""
-Collection of universes shared across all libraries (NLP/HC/OCR), which are collections of atoms
-"""
 from dataclasses import dataclass
-
 from nlu.pipe.nlu_component import NluComponent
 from nlu.universe.component_universes import ComponentMap
 from nlu.universe.feature_node_ids import NLP_NODE_IDS, NLP_HC_NODE_IDS, OCR_NODE_IDS
-from nlu.universe.feature_node_universes import NLP_FEATURE_NODES
 from nlu.universe.feature_universes import NLP_FEATURES, OCR_FEATURES
 
 
-### ____ Annotator Feature Representations ____
-
-@dataclass
-class OcrFeatureResolutions:
-    resolutions = {NLP_FEATURES.DOCUMENT: NLP_FEATURE_NODES.nodes[NLP_NODE_IDS.DOCUMENT_ASSEMBLER]}
-
-
-@dataclass
-class NlpHcFeatureResolutions:
-    resolutions = {NLP_FEATURES.DOCUMENT: NLP_FEATURE_NODES.nodes[NLP_NODE_IDS.DOCUMENT_ASSEMBLER]}
-
+### ____ Annotator Feature Resolutions ____
 
 @dataclass
 class ResolvedFeature:
@@ -28,13 +13,12 @@ class ResolvedFeature:
     nlp_ref: str
     language: str
     get_pretrained: bool  # Call get_pretrained(nlp_ref, lang, bucket) or get_default() on the AnnotatorClass
-    nlu_component: NluComponent # Resolving component
+    nlu_component: NluComponent  # Resolving component_to_resolve
 
-class NlpFeatureResolutions:
+
+class FeatureResolutions:
     # Map each requested Feature to a pre-defined optimal resolution, given by FeatureNode
-    # TODO some features should be NLP-EXPERT config dependent!!! Especially for training
-    # TODO we need ideal resolution for each lang...!
-    # Also We need Alternative Default wether licensed or not!!
+    # Also We need Alternative Default whether licensed or not!!
     # Ideally we define nlu_ref for each of these
     # default_resolutions: Dict[JslFeature,JslAnnoId] = None
     # TODO use lang families, i.e. en.tokenize works for all Latin style languages but not Chinese, I.e. not actually multi lingual
@@ -58,37 +42,44 @@ class NlpFeatureResolutions:
         NLP_FEATURES.NAMED_ENTITY_IOB: ResolvedFeature('en.ner.onto.bert.cased_base', 'onto_bert_base_cased', 'en',
                                                        True,
                                                        ComponentMap.os_components[NLP_NODE_IDS.NER_DL]),
-        NLP_FEATURES.CHUNK_EMBEDDINGS: ResolvedFeature('en.embed_chunk', 'chunk_embeddings', 'xx', False,
-                                                       ComponentMap.os_components[
-                                                           NLP_NODE_IDS.CHUNK_EMBEDDINGS_CONVERTER]),
+
 
         NLP_FEATURES.NAMED_ENTITY_CONVERTED: ResolvedFeature('ner_converter', 'ner_converter', 'xx', False,
                                                              ComponentMap.os_components[NLP_NODE_IDS.NER_CONVERTER]),
-        NLP_FEATURES.LABELED_DEPENDENCY: ResolvedFeature('en.dep.untyped', 'dependency_conllu', 'en', True,
-                                                         ComponentMap.os_components[
-                                                             NLP_NODE_IDS.TYPED_DEPENDENCY_PARSER]),
         NLP_FEATURES.UNLABLED_DEPENDENCY: ResolvedFeature('en.dep.untyped', 'dependency_conllu', 'en', True,
                                                           ComponentMap.os_components[
-                                                             NLP_NODE_IDS.UNTYPED_DEPENDENCY_PARSER]),
+                                                              NLP_NODE_IDS.UNTYPED_DEPENDENCY_PARSER]),
+        NLP_FEATURES.LABELED_DEPENDENCY: ResolvedFeature('en.dep.typed', 'dependency_typed_conllu', 'en', True,
+                                                         ComponentMap.os_components[
+                                                             NLP_NODE_IDS.TYPED_DEPENDENCY_PARSER]),
+
         NLP_FEATURES.CHUNK: ResolvedFeature('en.chunk', 'default_chunker', 'xx', False,
                                             ComponentMap.os_components[NLP_NODE_IDS.CHUNKER]),
 
         NLP_FEATURES.DOCUMENT_FROM_CHUNK: ResolvedFeature(NLP_NODE_IDS.CHUNK2DOC, NLP_NODE_IDS.CHUNK2DOC, 'xx', False,
-                                            ComponentMap.os_components[NLP_NODE_IDS.CHUNK2DOC]),
-
-
+                                                          ComponentMap.os_components[NLP_NODE_IDS.CHUNK2DOC]),
+        NLP_FEATURES.CHUNK_EMBEDDINGS: ResolvedFeature('en.embed_chunk', 'chunk_embeddings', 'xx', False,
+                                                       ComponentMap.os_components[
+                                                           NLP_NODE_IDS.CHUNK_EMBEDDINGS_CONVERTER]),
     }
 
     default_HC_resolutions = {
-        NLP_FEATURES.NAMED_ENTITY_CONVERTED: ResolvedFeature(NLP_HC_NODE_IDS.NER_CONVERTER_INTERNAL, NLP_HC_NODE_IDS.NER_CONVERTER_INTERNAL, 'xx', False,
-                                                             ComponentMap.hc_components[NLP_HC_NODE_IDS.NER_CONVERTER_INTERNAL]),
+        # TODO we need ideal resolution for each lang and domain...!
         NLP_FEATURES.NAMED_ENTITY_IOB: ResolvedFeature('en.med_ner.jsl', 'ner_jsl', 'en',
                                                        True,
                                                        ComponentMap.hc_components[NLP_HC_NODE_IDS.MEDICAL_NER]),
+
+        NLP_FEATURES.NAMED_ENTITY_CONVERTED: ResolvedFeature(NLP_HC_NODE_IDS.NER_CONVERTER_INTERNAL,
+                                                             NLP_HC_NODE_IDS.NER_CONVERTER_INTERNAL, 'xx', False,
+                                                             ComponentMap.hc_components[
+                                                                 NLP_HC_NODE_IDS.NER_CONVERTER_INTERNAL]),
+
     }
 
     default_HC_train_resolutions = {
-        NLP_FEATURES.NAMED_ENTITY_CONVERTED: ResolvedFeature(NLP_NODE_IDS.DOC2CHUNK, NLP_NODE_IDS.DOC2CHUNK, 'xx', False,
+
+        NLP_FEATURES.NAMED_ENTITY_CONVERTED: ResolvedFeature(NLP_NODE_IDS.DOC2CHUNK, NLP_NODE_IDS.DOC2CHUNK, 'xx',
+                                                             False,
                                                              ComponentMap.os_components[NLP_NODE_IDS.DOC2CHUNK]),
     }
 

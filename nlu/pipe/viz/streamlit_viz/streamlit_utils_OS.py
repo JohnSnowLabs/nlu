@@ -40,7 +40,7 @@ class StreamlitUtilsOS():
 
     @staticmethod
     def find_embed_component(p):
-        """Find first embed  component in component_list"""
+        """Find first embed  component_to_resolve in component_list"""
         for c in p.components:
             if 'embed' in c.out_types[0]: return c
         st.warning("No Embed model in component_list")
@@ -48,7 +48,7 @@ class StreamlitUtilsOS():
 
     @staticmethod
     def find_all_classifier_components(pipe):
-        """Find ALL classifier component in component_list"""
+        """Find ALL classifier component_to_resolve in component_list"""
         classifier_comps = []
         for c in pipe.components:
             if type(c.model) in StreamlitUtilsOS.classifers_OS: classifier_comps.append(c)
@@ -56,7 +56,7 @@ class StreamlitUtilsOS():
 
     @staticmethod
     def find_all_embed_components(p):
-        """Find ALL  embed component in component_list"""
+        """Find ALL  embed component_to_resolve in component_list"""
         cs = []
         for c in p.components:
             if 'embed' in c.out_types[0] and 'chunk' not in c.out_types[0]: cs.append(c)
@@ -79,7 +79,7 @@ class StreamlitUtilsOS():
 
     @staticmethod
     def find_ner_model(p):
-        """Find NER component in component_list"""
+        """Find NER component_to_resolve in component_list"""
         from sparknlp.annotator import NerDLModel, NerCrfModel
         for c in p.components:
             if isinstance(c.model, (NerDLModel, NerCrfModel)): return c.model

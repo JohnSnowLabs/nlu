@@ -1,5 +1,4 @@
-__version__ = '3.4.1'
-
+__version__ = '3.4.2'
 from nlu.universe.universes import Licenses
 import nlu.utils.environment.offline_load_utils as offline_utils
 
@@ -89,7 +88,7 @@ def load(request: str = 'from_disk', path: Optional[str] = None, verbose: bool =
     :param gpu: Wether to leverage GPU
     :param streamlit_caching: Wether streamlit caching should be used in Streamlit visualizations. Trade Speed-Up for repeated requests for larger memory usage
     :param path: If path is not None, the model/component_list for the NLU reference will be loaded from the path. Useful for offline mode. Currently only loading entire NLU pipelines is supported, but not loading singular pipes
-    :param request: A NLU model/pipeline/component reference. You can requeste multiple components by separating them with whitespace. I.e. nlu.load('elmo bert albert')
+    :param request: A NLU model/pipeline/component_to_resolve reference. You can requeste multiple components by separating them with whitespace. I.e. nlu.load('elmo bert albert')
     :return: returns a non fitted nlu pipeline object
     '''
     if streamlit_caching and not nlu.st_cache_enabled:
@@ -141,7 +140,7 @@ def load(request: str = 'from_disk', path: Optional[str] = None, verbose: bool =
                 # lists are parsed down to multiple components, result of pipeline request (stack of components)
                 for c in nlu_component: pipe.add(c, nlu_ref, pretrained_pipe_component=True)
             else:
-                # just a single component requested
+                # just a single component_to_resolve requested
                 pipe.add(nlu_component, nlu_ref)
     except Exception as err:
         if verbose:
@@ -168,7 +167,7 @@ def load(request: str = 'from_disk', path: Optional[str] = None, verbose: bool =
 
 def auth(HEALTHCARE_LICENSE_OR_JSON_PATH='/content/spark_nlp_for_healthcare.json', AWS_ACCESS_KEY_ID='',
          AWS_SECRET_ACCESS_KEY='', HEALTHCARE_SECRET='', OCR_LICENSE='', OCR_SECRET='', gpu=False):
-    """ Authenticate enviroment for JSL Liscensed models.
+    """ Authenticate enviroment for JSL Liscensed models.mm
     Installs NLP-Healthcare if not in environment detected
     Either provide path to spark_nlp_for_healthcare.json file as first param or manually enter them,
     HEALTHCARE_LICENSE_OR_JSON_PATH,AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY,HEALTHCARE_SECRET .
@@ -235,20 +234,9 @@ def auth(HEALTHCARE_LICENSE_OR_JSON_PATH='/content/spark_nlp_for_healthcare.json
 def load_nlu_pipe_from_hdd(pipe_path, request) -> NLUPipeline:
     """Either there is a pipeline of models in the path or just one singular model.
     If it is a component_list,  load the component_list and return it.
-    If it is a singular model, load it to the correct AnnotatorClass and NLU component and then generate pipeline for it
+    If it is a singular model, load it to the correct AnnotatorClass and NLU component_to_resolve and then generate pipeline for it
     """
     pipe = NLUPipeline()
-    # if env_utils.is_running_in_databricks() :
-    #     if pipe_path.startswith('/dbfs/') or pipe_path.startswith('dbfs/'):
-    #         nlu_path = pipe_path
-    #         if pipe_path.startswith('/dbfs/'):
-    #             nlp_path =  pipe_path.replace('/dbfs','')
-    #         else :
-    #             nlp_path =  pipe_path.replace('dbfs','')
-    #     else :
-    #         nlu_path = 'dbfs/' + pipe_path
-    #         if pipe_path.startswith('/') : nlp_path = pipe_path
-    #         else : nlp_path = '/' + pipe_path
     nlu_ref = request  # pipe_path
     if os.path.exists(pipe_path):
 
@@ -263,17 +251,16 @@ def load_nlu_pipe_from_hdd(pipe_path, request) -> NLUPipeline:
             c.nlu_ref = nlu_ref
             pipe.add(c, nlu_ref, pretrained_pipe_component=True)
             return PipelineQueryVerifier.check_and_fix_nlu_pipeline(pipe)
-
         else:
             print(
-                f"Could not load model in path {pipe_path}. Make sure the folder contains either a stages subfolder or a metadata subfolder.")
+                f"Could not load model in path {pipe_path}. Make sure the jsl_folder contains either a stages subfolder or a metadata subfolder.")
             raise ValueError
         for c in pipe_components: pipe.add(c, nlu_ref, pretrained_pipe_component=True)
         return pipe
 
     else:
         print(
-            f"Could not load model in path {pipe_path}. Make sure the folder contains either a stages subfolder or a metadata subfolder.")
+            f"Could not load model in path {pipe_path}. Make sure the jsl_folder contains either a stages subfolder or a metadata subfolder.")
         raise ValueError
 
 
@@ -369,7 +356,7 @@ def print_components(lang='', action=''):
 
 
 def print_component_types():
-    ''' Prints all unique component types in NLU'''
+    ''' Prints all unique component_to_resolve types in NLU'''
     discoverer.print_component_types()
 
 

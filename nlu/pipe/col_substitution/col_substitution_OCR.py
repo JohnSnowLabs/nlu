@@ -1,4 +1,4 @@
-"""Collection of methods to substitute cols of licensed component results"""
+"""Collection of methods to substitute cols of licensed component_to_resolve results"""
 import logging
 
 logger = logging.getLogger('nlu')

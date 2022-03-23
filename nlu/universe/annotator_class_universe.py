@@ -6,7 +6,6 @@ from nlu.universe.feature_node_ids import OCR_NODE_IDS, NLP_NODE_IDS, NLP_HC_NOD
 class AnnoClassRef:
     # Reference of every Annotator class name in OS/HC/OCR
     # Maps JslAnnoID to ClassNames in Python/Java from Spark NLP/Healthcare/ OCR
-    # todo PY and JVM  should have same name AWLAYS?? So we can omit it here?
     A_O = OCR_NODE_IDS
     A_H = None  # NLP_HC_ANNO
     A_N = NLP_NODE_IDS
@@ -93,9 +92,9 @@ class AnnoClassRef:
         A_N.ROBERTA_FOR_SEQUENCE_CLASSIFICATION: 'RoBertaForSequenceClassification',
         A_N.LONGFORMER_FOR_SEQUENCE_CLASSIFICATION: 'LongformerForSequenceClassification',
         A_N.ALBERT_FOR_SEQUENCE_CLASSIFICATION: 'AlbertForSequenceClassification',
-        A_N.XLNET_FOR_SEQUENCE_CLASSIFICATION : 'XlnetForSequenceClassification',
-        A_N.GPT2 : 'GPT2Transformer',
-
+        A_N.XLNET_FOR_SEQUENCE_CLASSIFICATION: 'XlnetForSequenceClassification',
+        A_N.GPT2: 'GPT2Transformer',
+        A_N.DEBERTA_WORD_EMBEDDINGS: 'DeBertaEmbeddings',
 
         A_N.TRAINABLE_VIVEKN_SENTIMENT: 'ViveknSentimentApproach',
         A_N.TRAINABLE_SENTIMENT: 'SentimentDetector',
@@ -123,7 +122,6 @@ class AnnoClassRef:
         A_N.TRAINABLE_WORD_SEGMENTER: 'WordSegmenterApproach',
         A_N.DISTIL_BERT_FOR_TOKEN_CLASSIFICATION: 'DistilBertForTokenClassification',
         A_N.WORD_2_VEC: 'Word2VecModel',
-
 
     }
     JSL_anno_HC_ref_2_py_class: Dict[JslAnnoId, JslAnnoPyClass] = {
@@ -168,9 +166,9 @@ class AnnoClassRef:
         HC_A_N.MEDICAL_BERT_FOR_TOKEN_CLASSIFICATION: 'MedicalBertForTokenClassifier',
 
         # 3.4.1
-        HC_A_N.MEDICAL_BERT_FOR_SEQUENCE_CLASSIFICATION : 'MedicalBertForSequenceClassification',
-        HC_A_N.MEDICAL_DISTILBERT_FOR_SEQUENCE_CLASSIFICATION : 'MedicalDistilBertForSequenceClassification',
-        HC_A_N.ENTITY_CHUNK_EMBEDDING : 'EntityChunkEmbeddings',
+        HC_A_N.MEDICAL_BERT_FOR_SEQUENCE_CLASSIFICATION: 'MedicalBertForSequenceClassification',
+        HC_A_N.MEDICAL_DISTILBERT_FOR_SEQUENCE_CLASSIFICATION: 'MedicalDistilBertForSequenceClassification',
+        HC_A_N.ENTITY_CHUNK_EMBEDDING: 'EntityChunkEmbeddings',
 
     }
 
@@ -179,6 +177,7 @@ class AnnoClassRef:
         OCR_NODE_IDS.PDF2TEXT: 'PdfToText',
         OCR_NODE_IDS.DOC2TEXT: 'DocToText',
         OCR_NODE_IDS.BINARY2IMAGE: 'BinaryToImage',
+        OCR_NODE_IDS.PDF2TEXT_TABLE: 'PdfToTextTable',
 
     }
 

@@ -90,6 +90,7 @@ class NLP_NODE_IDS:
     XLNET_FOR_SEQUENCE_CLASSIFICATION = JslAnnoId('xlnet_for_sequence_classification')
     GPT2 = JslAnnoId('gpt2')
     WORD_2_VEC = JslAnnoId('word_2_vec')
+    DEBERTA_WORD_EMBEDDINGS = JslAnnoId('deberta')
 
 
     TRAINABLE_CONTEXT_SPELL_CHECKER = JslAnnoId('trainable_context_spell_checker')

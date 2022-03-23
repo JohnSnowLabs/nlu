@@ -110,7 +110,7 @@ class EntityManifoldUtils():
 
     @staticmethod
     def find_embed_component(p):
-        """Find first embed  component in component_list"""
+        """Find first embed  component_to_resolve in component_list"""
         for c in p.components:
             if 'embed' in c.out_types[0]: return c
         st.warning("No Embed model in component_list")

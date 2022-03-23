@@ -1,35 +1,43 @@
-import logging
-
-from nlu.pipe.extractors.extractor_configs_HC import default_full_config
-
-logger = logging.getLogger('nlu')
-from nlu.pipe.extractors.extraction_resolver_OS import OS_anno2config
-from nlu.universe.universes import Licenses
-from nlu.pipe.nlu_component import NluComponent
-from nlu.pipe.extractors.extractor_methods.base_extractor_methods import *
-from nlu.pipe.pipe_logic import PipeUtils
-import nlu.pipe.pipe_component
-import sparknlp
-from typing import List, Union
-from sparknlp.base import *
-from sparknlp.base import LightPipeline
-from sparknlp.annotator import *
-import pyspark
-import pandas as pd
-import numpy as np
 from pyspark.sql.types import StructType, StructField, StringType
-from nlu.pipe.utils.resolution.nlu_ref_utils import extract_classifier_metadata_from_nlu_ref
 from nlu.pipe.utils.resolution.storage_ref_utils import StorageRefUtils
 from nlu.pipe.utils.component_utils import ComponentUtils
 from nlu.pipe.utils.output_level_resolution_utils import OutputLevelUtils
 from nlu.pipe.utils.data_conversion_utils import DataConversionUtils
 from nlu.utils.environment.env_utils import is_running_in_databricks
 from nlu.pipe.col_substitution.col_name_substitution_utils import ColSubstitutionUtils
+from nlu.universe.universes import Licenses
+from nlu.pipe.nlu_component import NluComponent
+from nlu.pipe.extractors.extractor_methods.base_extractor_methods import *
+from typing import List, Union
+from sparknlp.base import *
+from sparknlp.base import LightPipeline
+from nlu.pipe.extractors.extractor_configs_HC import default_full_config
+from nlu.pipe.pipe_logic import PipeUtils
+from nlu.universe.component_universes import NLP_NODE_IDS
+import nlu.pipe.pipe_component
+import sparknlp
+import pyspark
+import pandas as pd
+import numpy as np
+import logging
+
+logger = logging.getLogger('nlu')
 
 
-class BasePipe(dict):
+class NLUPipeline(dict):
     # we inherhit from dict so the component_list is indexable and we have a nice shortcut for accessing the spark nlp model
     def __init__(self):
+        """ Initializes a pretrained pipeline, should only be created after a
+        Spark Context has been created
+          """
+        self.spark = sparknlp.start()
+        self.provider = 'sparknlp'
+        self.pipe_ready = False  # ready when we have created a spark df
+        self.failed_pyarrow_conversion = False
+        self.anno2final_cols = []  # Maps Anno to output pandas col
+        self.light_spark_transformer_pipe = None
+        self.contains_ocr_components = False
+        self.has_nlp_components = False
         self.nlu_ref = ''
         self.raw_text_column = 'text'
         self.raw_text_matrix_slice = 1  # place holder for getting text from matrix
@@ -38,7 +46,8 @@ class BasePipe(dict):
         self.needs_fitting = True
         self.is_fitted = False
         self.output_positions = False  # Wether to putput positions of Features in the final output. E.x. positions of tokens, entities, dependencies etc.. inside of the input document.
-        self.output_level = ''  # either document, chunk, sentence, token
+        self.prediction_output_level = ''  # either document, chunk, sentence, token
+        self.component_output_level = ''  # document or sentence, depending on how input dependent Sentence/Doc classifier are fed
         self.output_different_levels = True
         self.light_pipe_configured = False
         self.spark_non_light_transformer_pipe = None
@@ -49,48 +58,8 @@ class BasePipe(dict):
         self.spark_estimator_pipe_pipe = None
         self.has_licensed_components = False
 
-    def isInstanceOfNlpClassifer(self, model):
-        '''
-        Check for a given Spark NLP model if it is an instance of a classifier , either approach or already fitted transformer will return true
-        This is used to configured the input/output columns based on the inputs
-        :param model: the model to check
-        :return: True if it is one of the following classes : (ClassifierDLModel,ClassifierDLModel,MultiClassifierDLModel,MultiClassifierDLApproach,SentimentDLModel,SentimentDLApproach) )
-        '''
-        return isinstance(model, (
-            ClassifierDLModel, ClassifierDLModel, MultiClassifierDLModel, MultiClassifierDLApproach, SentimentDLModel,
-            SentimentDLApproach))
-
-    def configure_outputs(self, component, nlu_reference, name_to_add=''):
-        '''
-        Configure output column names of classifiers from category to something more meaningful
-        Name should be Name of classifier, based on NLU reference.
-        Duplicate names will be resolved by appending suffix "_i" to column name, based on how often we encounterd duplicate errors
-        This updates component infos accordingly
-        :param component: classifier component for which the output columns to  configured
-        :param nlu_reference: nlu reference from which is component stemmed
-        :return: None
-        '''
-        if nlu_reference == 'default_name': return
-        nlu_reference = nlu_reference.replace('train.', '')
-        model_meta = extract_classifier_metadata_from_nlu_ref(nlu_reference)
-        can_use_name = False
-        new_output_name = model_meta[0]
-        i = 0
-        while can_use_name == False:
-            can_use_name = True
-            for c in self.components:
-                if new_output_name in c.info.spark_input_column_names + c.info.spark_output_column_names and c.info.name != component.info.name:
-                    can_use_name = False
-        if can_use_name == False:
-            new_output_name = new_output_name + '_' + str(i)
-            i += 1
-        # classifiers always have just 1 output col
-        logger.info(f"Configured output columns name to {new_output_name} for classifier in {nlu_reference}")
-        component.model.setOutputCol(new_output_name)
-        component.info.spark_output_column_names = [new_output_name]
-
     def add(self, component: NluComponent, nlu_reference="default_name", pretrained_pipe_component=False,
-            name_to_add=''):
+            name_to_add='', idx = None):
         '''
 
         :param component:
@@ -98,7 +67,10 @@ class BasePipe(dict):
         :return:
         '''
         nlu_reference = component.nlu_ref
-        self.components.append(component)
+        if idx :
+            self.components.insert(idx,component)
+        else :
+            self.components.append(component)
         # ensure that input/output cols are properly set
         # Spark NLP model reference shortcut
         name = component.name  # .replace(' ', '').replace('train.', '')
@@ -111,7 +83,7 @@ class BasePipe(dict):
         logger.info(f"Adding {name} to internal component_list")
 
         # Configure output column names of classifiers from category to something more meaningful
-        # if self.isInstanceOfNlpClassifer(component.model): self.configure_outputs(component, nlu_reference)
+        # if self.isInstanceOfNlpClassifer(component_to_resolve.model): self.configure_outputs(component_to_resolve, nlu_ref)
 
         if name_to_add == '':
             # Add Component as self.index and in attributes
@@ -124,20 +96,6 @@ class BasePipe(dict):
                 self[name + "@" + nlu_identifier] = component.model
         else:
             self[name_to_add] = component.model
-
-
-class NLUPipeline(BasePipe):
-    def __init__(self):
-        super().__init__()
-        """ Initializes a pretrained pipeline  """
-        self.spark = sparknlp.start()
-        self.provider = 'sparknlp'
-        self.pipe_ready = False  # ready when we have created a spark df
-        self.failed_pyarrow_conversion = False
-        self.anno2final_cols = []  # Maps Anno to output pandas col
-        self.light_spark_transformer_pipe = None
-        self.contains_ocr_components = False
-        # The NLU pipeline uses  types of Spark NLP annotators to identify how to handle different columns
 
     def get_sample_spark_dataframe(self):
         data = {"text": ['This day sucks', 'I love this day', 'I dont like Sami']}
@@ -165,7 +123,6 @@ class NLUPipeline(BasePipe):
             s_df = CoNLL().readDataset(self.spark, path=dataset_path, )
             self.spark_transformer_pipe = self.spark_estimator_pipe.fit(s_df.withColumnRenamed('label', 'y'))
             self.light_spark_transformer_pipe = LightPipeline(self.spark_transformer_pipe)
-
         elif dataset_path != None and 'pos' in self.nlu_ref:
             from sparknlp.training import POS
             s_df = POS().readDataset(self.spark, path=dataset_path, delimiter=label_seperator, outputPosCol="y",
@@ -223,7 +180,7 @@ class NLUPipeline(BasePipe):
 
             stages = []
             for component in self.components: stages.append(component.model)
-            ## TODO SET STORAGE REF ON FITTED ANNOTATORS, especially resoluton...
+            ## TODO set storage ref on fitted model
             self.spark_estimator_pipe = Pipeline(stages=stages)
             self.spark_transformer_pipe = self.spark_estimator_pipe.fit(
                 DataConversionUtils.pdf_to_sdf(dataset, self.spark)[0])
@@ -244,15 +201,20 @@ class NLUPipeline(BasePipe):
                 self.spark_transformer_pipe = self.spark_estimator_pipe.fit(self.get_sample_spark_dataframe())
                 self.light_spark_transformer_pipe = LightPipeline(self.spark_transformer_pipe)
 
+        self.has_trainable_components = False
         self.is_fitted = True
         self.light_pipe_configured = True
+        self.components = PipeUtils.replace_untrained_component_with_trained(self, self.spark_transformer_pipe)
+
         return self
 
-    def get_annotator_extraction_configs(self, full_meta, c_level_mapping, positions, get_embeddings):
+
+    def get_extraction_configs(self, full_meta, positions, get_embeddings):
         """Search first OC namespace and if not found the HC Namespace for each Annotator Class in pipeline and get
         corresponding config Returns a dictionary of methods, where keys are column names values are methods  that
         are applied to extract and represent the data in these columns in a more pythonic and panda-esque way
         """
+        c_level_mapping = OutputLevelUtils.get_output_level_mapping_by_component(self)
         # todo doc level annos and same level annos can be popped always.
         anno_2_ex_config = {}
         for c in self.components:
@@ -271,7 +233,8 @@ class NLUPipeline(BasePipe):
                     output_col_prefix=c.spark_output_column_names[0])
             else:
                 # Fallback if no output defined
-                anno_2_ex_config[c.spark_output_column_names[0]] = default_full_config(output_col_prefix=c.spark_output_column_names[0])
+                anno_2_ex_config[c.spark_output_column_names[0]] = default_full_config(
+                    output_col_prefix=c.spark_output_column_names[0])
 
             # Tune the Extractor configs based on prediction parameters
             if c_level_mapping[c] == 'document' and not anno_2_ex_config[c.spark_output_column_names[0]].pop_never:
@@ -334,7 +297,7 @@ class NLUPipeline(BasePipe):
                                   output_metadata=False,
                                   positions=False,
                                   output_level='',
-                                  get_embeddings=True, ):
+                                  get_embeddings=True):
         '''
         This functions takes in a spark dataframe with Spark NLP annotations in it and transforms it into a Pandas
         Dataframe with common feature types for further NLP/NLU downstream tasks. It will recycle Indexes from Pandas
@@ -348,31 +311,30 @@ class NLUPipeline(BasePipe):
         :param stranger_features: A list of features which are not known to NLU and inside the input DF.
                                     Basically all columns, which are not named 'text' in the input.
                                     If keep_stranger_features== True, then these features will be exploded,
-                                    if output_level == document, otherwise they will not be exploded
+                                    if pipe_prediction_output_level == document, otherwise they will not be exploded
         :param output_metadata: Whether to keep or drop additional metadata or predictions, like prediction confidence
         :return: Pandas dataframe which easy accessible features
         '''
         stranger_features += ['origin_index']
         if output_level == '':
-            # Distinguish between prediction and pipeline composition output level
-            self.output_level = ''
-            OutputLevelUtils.infer_output_level(self)
+            # Infer output level if none defined
+            self.prediction_output_level = OutputLevelUtils.infer_prediction_output_level(self)
+            logger.info(f'Inferred and set output level of pipeline to {self.prediction_output_level}')
+        else:
+            self.prediction_output_level = output_level
 
-        c_level_mapping = OutputLevelUtils.get_output_level_mapping_by_component(self)
-        anno_2_ex_config = self.get_annotator_extraction_configs(output_metadata, c_level_mapping, positions,
-                                                                 get_embeddings)
+        # Get mapping from component to feature extractor method configs
+        anno_2_ex_config = self.get_extraction_configs(output_metadata, positions, get_embeddings)
 
-        # Processed becomes pandas
+        # Processed becomes pandas after applying extractors
         processed = self.unpack_and_apply_extractors(processed, keep_stranger_features, stranger_features,
                                                      anno_2_ex_config, self.light_pipe_configured, get_embeddings)
-        col2output_level, same_output_level, not_same_output_level = OutputLevelUtils.get_output_level_mappings(self,
-                                                                                                                processed,
-                                                                                                                anno_2_ex_config,
-                                                                                                                get_embeddings)
-        logger.info(
-            f"Extracting for same_level_cols = {same_output_level}\nand different_output_level_cols = {not_same_output_level}")
 
-        processed = zip_and_explode(processed, same_output_level, not_same_output_level, self.output_level)
+        # Get mapping between column_name and pipe_prediction_output_level
+        same_level = OutputLevelUtils.get_columns_at_same_level_of_pipe(self, processed, anno_2_ex_config,
+                                                                        get_embeddings)
+        logger.info(f"Extracting for same_level_cols = {same_level}\n")
+        processed = zip_and_explode(processed, same_level)
         processed = self.convert_embeddings_to_np(processed)
         processed = ColSubstitutionUtils.substitute_col_names(processed, anno_2_ex_config, self, stranger_features,
                                                               get_embeddings)
@@ -430,23 +392,23 @@ class NLUPipeline(BasePipe):
         '''
         if 'doc2chunk' in cols: cols.remove('doc2chunk')
 
-        if self.output_level == 'token':
+        if self.prediction_output_level == 'token':
             if 'document' in cols: cols.remove('document')
             if 'chunk' in cols: cols.remove('chunk')
             if 'sentence' in cols: cols.remove('sentence')
-        if self.output_level == 'sentence':
+        if self.prediction_output_level == 'sentence':
             if 'token' in cols: cols.remove('token')
             if 'chunk' in cols: cols.remove('chunk')
             if 'document' in cols: cols.remove('document')
-        if self.output_level == 'chunk':
+        if self.prediction_output_level == 'chunk':
             # if 'document' in cols: cols.remove('document')
             if 'token' in cols: cols.remove('token')
             if 'sentence' in cols: cols.remove('sentence')
-        if self.output_level == 'document':
+        if self.prediction_output_level == 'document':
             if 'token' in cols: cols.remove('token')
             if 'chunk' in cols: cols.remove('chunk')
             if 'sentence' in cols: cols.remove('sentence')
-        if self.output_level == 'relation':
+        if self.prediction_output_level == 'relation':
             if 'token' in cols: cols.remove('token')
             if 'chunk' in cols: cols.remove('chunk')
             if 'sentence' in cols: cols.remove('sentence')
@@ -466,46 +428,6 @@ class NLUPipeline(BasePipe):
                 self.light_pipe_configured = True
                 logger.info("Enabling light pipeline")
                 self.light_spark_transformer_pipe = LightPipeline(self.spark_transformer_pipe, parse_embeddings=True)
-
-    def check_if_sentence_level_requirements_met(self):
-        '''
-        Check if the pipeline currently has an annotator that generate sentence col as output. If not, return False
-        :return:
-        '''
-
-        for c in self.components:
-            if 'sentence' in c.info.spark_output_column_names: return True
-        return False
-
-    def add_missing_sentence_component(self):
-        '''
-        Add Sentence Detector to pipeline and Run it thorugh the Query Verifiyer again.
-        :return: None
-        '''
-
-    def write_nlu_pipe_info(self, path):
-        '''
-        Writes all information required to load a NLU pipeline from disk to path
-        :param path: path where to store the nlu_info.json
-        :return: True if success, False if failure
-        '''
-        import os
-        f = open(os.path.join(path, 'nlu_info.txt'), "w")
-        f.write(self.nlu_ref)
-        f.close()
-        return True
-
-    def add_missing_component_if_missing_for_output_level(self):
-        '''
-        Check that for currently configured self.output_level one annotator for that level exists, i.e a Sentence Detetor for outpul tevel sentence, Tokenizer for level token etc..
-        :return: None
-        '''
-        if self.output_level == 'sentence':
-            if self.check_if_sentence_level_requirements_met():
-                return
-            else:
-                logger.info('Adding missing sentence Dependency because it is missing for outputlevel=Sentence')
-                self.add_missing_sentence_component()
 
     def save(self, path, component='entire_pipeline', overwrite=False):
         if nlu.is_running_in_databricks():
@@ -527,7 +449,6 @@ class NLUPipeline(BasePipe):
                 self.is_fitted = True
             if component == 'entire_pipeline':
                 self.spark_transformer_pipe.save(nlp_path)
-                self.write_nlu_pipe_info(nlu_path)
         if overwrite and not nlu.is_running_in_databricks():
             import shutil
             shutil.rmtree(path, ignore_errors=True)
@@ -578,14 +499,13 @@ class NLUPipeline(BasePipe):
 
     def print_info(self, minimal=True):
         '''
-        Print out information about every component currently loaded in the component_list and their configurable parameters.
+        Print out information about every component_to_resolve currently loaded in the component_list and their configurable parameters.
         If minimal is false, all Spark NLP Model parameters will be printed, including output/label/input cols and other attributes a NLU user should not touch. Useful for debugging.
         :return: None
         '''
         print('The following parameters are configurable for this NLU pipeline (You can copy paste the examples) :')
-        # list of tuples, where first element is component name and second element is list of param tuples, all ready formatted for printing
+        # list of tuples, where first element is component_to_resolve name and second element is list of param tuples, all ready formatted for printing
         all_outputs = []
-        ## TODO CONDINOTAL LOOP either on approaches or transformers
         iterable = None
         for i, component_key in enumerate(self.keys()):
             s = ">>> component_list['" + component_key + "'] has settable params:"
@@ -618,7 +538,7 @@ class NLUPipeline(BasePipe):
         # make strings aligned
         form = "{:<" + str(max_len) + "}"
         for o in all_outputs:
-            print(o[0])  # component name
+            print(o[0])  # component_to_resolve name
             for o_parm in o[1]:
                 if len(o_parm[0]) < max_len:
                     print(form.format(o_parm[0]) + o_parm[1])

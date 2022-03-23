@@ -61,6 +61,7 @@ name_deductable_OS = [
     PerceptronApproach         ,
     Doc2Chunk,
     Chunk2Doc,
+    DeBertaEmbeddings
 
 
 ]
@@ -92,6 +93,7 @@ always_name_deductable_OS = [
     XlmRoBertaEmbeddings,
 
     Chunk2Doc,
+    DeBertaEmbeddings
 
 
 ]

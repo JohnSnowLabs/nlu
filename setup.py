@@ -18,10 +18,10 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 REQUIRED_PKGS = [
-    'spark-nlp>=3.4.0,<3.5.0',
+    'spark-nlp>=3.4.2,<3.5.0',
     'numpy',
     'pyarrow>=0.16.0',
-    'pandas',
+    'pandas>=1.3.5',
     'dataclasses'
 ]
 # Arguments marked as "Required" below must be included for upload to PyPI.
@@ -46,7 +46,7 @@ setup(
     # For a discussion on single-sourcing the version across setup.py and the
     # project code, see
     # https://packaging.python.org/en/latest/single_source_version.html
-    version='3.4.1',  # Required
+    version='3.4.2',  # Required
 
     # This is a one-line description or tagline of what your project does. This
     # corresponds to the "Summary" metadata field:
@@ -252,6 +252,7 @@ setup(
         ('', ['nlu/components/classifiers/token_bert_healthcare/component_infos.json']),
         ('', ['nlu/components/embeddings/doc2vec/component_infos.json']),
         ('', ['nlu/components/embeddings/word2vec/component_infos.json']),
+        ('', ['nlu/components/embeddings/deberta/component_infos.json']),
 
         ('', ['nlu/components/classifiers/seq_bert_medical/component_infos.json']),
         ('', ['nlu/components/classifiers/seq_distilbert_medical/component_infos.json']),

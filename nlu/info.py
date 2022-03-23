@@ -13,7 +13,7 @@ logger = logging.getLogger('nlu')
 
 class AllComponentsInfo:
     def __init__(self):
-        ''' Initialize every NLU component info object and provide access to them'''
+        ''' Initialize every NLU component_to_resolve info object and provide access to them'''
 
         self.all_components = {}
         self.classifiers = {}
@@ -108,23 +108,23 @@ class AllComponentsInfo:
 @dataclass
 class ComponentInfo:
     name: str
-    description: str  # general annotator/model/component/pipeline info
-    outputs: list  # this is which columns/output types this component is providing
-    inputs: list  # this tells us which columns/input types the component is depending on
-    type: str  # this tells us which kind of component this is
+    description: str  # general annotator/model/component_to_resolve/pipeline info
+    outputs: list  # this is which columns/output types this component_to_resolve is providing
+    inputs: list  # this tells us which columns/input types the component_to_resolve is depending on
+    type: str  # this tells us which kind of component_to_resolve this is
     output_level: str  # document, sentence, token, chunk, input_dependent or model_dependent
     spark_input_column_names: list  # default expected name for input columns when forking with spark nlp annotators on spark DFs
     spark_output_column_names: list  # default expected name for output columns when forking with spark nlp annotators on spark DFs
 
     provider: str  # Who provides the implementation of this annotator, Spark-NLP for base. Would be
     license: str  # open source or private
-    computation_context: str  # Will this component do its computation in Spark land (like all of Spark NLP annotators do) or does it require some other computation engine or library like Tensorflow, Numpy, HuggingFace, etc..
+    computation_context: str  # Will this component_to_resolve do its computation in Spark land (like all of Spark NLP annotators do) or does it require some other computation engine or library like Tensorflow, Numpy, HuggingFace, etc..
     output_context: str  # Will this components final result
     trainable: bool
 
     @classmethod
     def from_directory(cls, component_info_dir):
-        """Create ComponentInfo  class from the component_infos.json which is provided for every component
+        """Create ComponentInfo  class from the component_infos.json which is provided for every component_to_resolve
         @param component_info_dir:
             dataset_info_dir: `str` The directory containing the metadata file. This
             should be the root directory of a specific dataset version.

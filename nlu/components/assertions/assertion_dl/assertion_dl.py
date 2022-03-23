@@ -16,7 +16,8 @@ class AssertionDL:
             .setInputCols(["sentence", "entities", "word_embeddings"]) \
             .setOutputCol("assertion")
 
-    def get_default_trainable_model(self):
+    @staticmethod
+    def get_default_trainable_model():
         from sparknlp_jsl.annotator import AssertionDLApproach
         return AssertionDLApproach()\
             .setInputCols(["sentence", "entities", "word_embeddings"]) \
