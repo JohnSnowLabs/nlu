@@ -1,4 +1,4 @@
-__version__ = '3.4.1rc1'
+__version__ = '3.4.2'
 from nlu.universe.universes import Licenses
 import nlu.utils.environment.offline_load_utils as offline_utils
 

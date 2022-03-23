@@ -12,6 +12,8 @@ from sparknlp.annotator import *
 from nlu.pipe.col_substitution import substitution_map_OS
 from nlu.pipe.col_substitution import col_substitution_OS
 import logging
+
+from nlu.pipe.extractors.extractor_base_data_classes import SparkOCRExtractorConfig
 from nlu.universe.universes import Licenses
 
 logger = logging.getLogger('nlu')
@@ -111,8 +113,12 @@ class ColSubstitutionUtils:
         """Get's a list of all columns that have been derived in the pythonify procedure from the component_to_resolve
         os_components in dataframe df for anno_2_ex configs """
         og_output_col = c.spark_output_column_names[0]
+
         configs = anno_2_ex[og_output_col]
         result_cols = []
+        if isinstance(configs,SparkOCRExtractorConfig) :
+            # TODO better OCR-EX handling
+            return ['text']
         if configs.get_annotator_type: result_cols.append(configs.output_col_prefix + '_types')
         if configs.get_result: result_cols.append(configs.output_col_prefix + '_results')
         if configs.get_begin or configs.get_positions: result_cols.append(configs.output_col_prefix + '_beginnings')

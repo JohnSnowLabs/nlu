@@ -29,7 +29,7 @@ def import_or_install_licensed_lib(JSL_SECRET, lib='healthcare'):
             lib_version = lib_version + '+spark24'
         if is_env_pyspark_3_0() or is_env_pyspark_3_1():
             lib_version = lib_version + '+spark30'
-        get_deps = False
+        # get_deps = False
 
     else:
         raise ValueError(f'Invalid install licensed install target ={lib}')

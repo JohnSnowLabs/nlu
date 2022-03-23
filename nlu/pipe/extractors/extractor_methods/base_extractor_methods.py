@@ -247,7 +247,6 @@ def extract_master(row: pd.Series, configs: SparkNLPExtractorConfig) -> pd.Serie
     row = a list or Spark-NLP annotations as dictionary
     """
     if len(row) == 0: return pd.Series({})
-    # Get base annotations # TODO type check configs and make custum OCR extractor
     if isinstance(configs, SparkOCRExtractorConfig):
         base_annos = extract_base_sparkocr_features(row, configs)
     else:
@@ -319,11 +318,18 @@ def zip_and_explode(df: pd.DataFrame, cols_to_explode: List[str]) -> pd.DataFram
             Elements of columns which are not in cols_to_explode, will be in lists
     """
     # Check cols we want to explode actually exist, if no data extracted cols can be missing
+    missing  = []
     for col in cols_to_explode:
         if col not in df.columns:
-            cols_to_explode.remove(col)
+            missing.append(col)
+    for miss in missing:
+        cols_to_explode.remove(miss)
     # Drop duplicate cols
     df = df.loc[:, ~df.columns.duplicated()]
-    # We must pad all cols we want to explode to the same length
-    df[cols_to_explode] = df[cols_to_explode].apply(pad_same_level_cols, axis=1)
-    return pd.concat([df.drop(cols_to_explode, axis=1)] + [df.explode(cols_to_explode)], axis=1)
+    if len(cols_to_explode) > 0 :
+        # We must pad all cols we want to explode to the same length
+        df[cols_to_explode] = df[cols_to_explode].apply(pad_same_level_cols, axis=1)
+        return pd.concat([df.drop(cols_to_explode, axis=1)] + [df.explode(cols_to_explode)], axis=1)
+    else :
+        # We must pad all cols we want to explode to the same length
+        return pd.concat([df.drop(cols_to_explode, axis=1)],axis=1)

@@ -4597,6 +4597,9 @@ class Spellbook:
         'pdf2text': OCR_NODE_IDS.PDF2TEXT,
         'doc2text': OCR_NODE_IDS.DOC2TEXT,
 
+
+        'pdf2table': OCR_NODE_IDS.PDF2TEXT_TABLE,
+
     }
     # map storage ref to nlu refner_jsl
     storage_ref_2_nlu_ref = {
@@ -4622,7 +4625,7 @@ class Spellbook:
             'small_bert_L2_128': 'en.embed.bert.small_L2_128',
             'elmo': 'en.embed.elmo',
             'distilbert_base_cased': 'en.embed.distilbert.base',
-            'electra_base_uncased': 'en.embed_sentence.electra_base_uncased',
+            'electra_base_uncased': 'en.embed.electra.base_uncased',
 
             'roberta_large': 'en.embed.roberta.large',
             'roberta_base': 'en.embed.roberta.base',
@@ -4837,7 +4840,6 @@ class Spellbook:
         # HC 3.4.2
         'bert_sequence_classifier_rct_biobert' : 'MedicalBertForSequenceClassification',
         'ner_deid_generic_augmented' : 'MedicalNerModel',
-        'ner_deid_subentity_augmented' : 'MedicalNerModel',
         'ner_deid_generic_roberta_augmented' : 'MedicalNerModel',
         'ner_deid_subentity_roberta_augmented' : 'MedicalNerModel',
 
