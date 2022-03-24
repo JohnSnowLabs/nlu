@@ -273,22 +273,9 @@ class NLUPipeline(dict):
             return apply_extractors_and_merge(extract_light_pipe_rows(pdf),
                                               anno_2_ex_config, keep_stranger_features, stranger_features)
 
-        if not self.failed_pyarrow_conversion and self.check_pyspark_pyarrow_optimization_compatibility():
-            from nlu.pipe.utils.pyarrow_conversion.pa_conversion import PaConversionUtils
-            try:
-                # Custom Pyarrow Conversion
-                return apply_extractors_and_merge(
-                    PaConversionUtils.convert_via_pyarrow(pdf).applymap(extract_pyarrow_rows),
-                    anno_2_ex_config, keep_stranger_features, stranger_features)
-            except:
-                #     Default Conversion, No PyArrow (auto-Schema-Inferrence from PyArrow failed)
-                self.failed_pyarrow_conversion = True
-                return apply_extractors_and_merge(pdf.toPandas().applymap(extract_pyspark_rows), anno_2_ex_config,
-                                                  keep_stranger_features, stranger_features)
-        else:
-            # Vanilla Spark Pipe
-            return apply_extractors_and_merge(pdf.toPandas().applymap(extract_pyspark_rows), anno_2_ex_config,
-                                              keep_stranger_features, stranger_features)
+        # Vanilla Spark Pipe
+        return apply_extractors_and_merge(pdf.toPandas().applymap(extract_pyspark_rows), anno_2_ex_config,
+                                          keep_stranger_features, stranger_features)
 
     def pythonify_spark_dataframe(self, processed,
                                   keep_stranger_features=True,
