@@ -58,10 +58,15 @@ def verify_and_create_model(model_path: str, nlu_referenced_requirements=[], nlp
                                           False, Licenses.open_source)
 
     elif class_name in hc_annos.keys():
-        pass
+        jsl_anno_id = hc_annos[class_name]
+        nlu_component = ComponentMap.hc_components[jsl_anno_id]
+        return nlu_component.set_metadata(m,
+                                          jsl_anno_id, jsl_anno_id,
+                                          'xx',
+                                          False, Licenses.hc)
     elif class_name in ocr_annos.keys():
         pass
-
+    raise ValueError(f'Could not detect correct Class for nlp class ={class_name}')
     # Wrap model with NLU Custom Model class so the NLU pipeline Logic knows what to do with it
 
     # c = CustomModel(annotator_class=nlu_anno_class, component_type=component_type, model=m)
@@ -81,7 +86,6 @@ def verify_and_create_model(model_path: str, nlu_referenced_requirements=[], nlp
     #             "You can set a storage reference via calling model.setStorageRef(storage_reference)"
     #             "To disable this check, run nlu.disable_hard_offline_checks()")
 
-    return c
 
 
 def resolve_annotator_class_to_nlu_component_info(anno_class='LemmatizerModel'):
