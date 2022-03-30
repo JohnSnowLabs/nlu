@@ -1,77 +1,39 @@
-__version__ = '3.4.2'
-from nlu.universe.universes import Licenses
-import nlu.utils.environment.offline_load_utils as offline_utils
+__version__ = '3.4.3rc1'
 
-hard_offline_checks = False
+import nlu.utils.environment.env_utils as env_utils
+
+if not env_utils.try_import_pyspark_in_streamlit():
+    raise ImportError("You ned to install Pyspark to run nlu. Run pip install pyspark==3.0.1")
+if not env_utils.try_import_spark_nlp():
+    raise ImportError("You need Spark NLP to run NLU. run pip install spark-nlp")
+
+import json
+import sparknlp
+import warnings
+import nlu.utils.environment.authentication as auth_utils
+import nlu.utils.environment.offline_load_utils as offline_utils
+from nlu.universe.universes import Licenses
+from typing import Optional
+from nlu.utils.environment.authentication import *
+from nlu.pipe.pipeline import NLUPipeline
+from nlu.pipe.pipe_logic import PipelineQueryVerifier
+from nlu.discovery import Discoverer
+from nlu.pipe.component_resolution import *
 
 
 def version(): return __version__
 
 
-# if not check_pyspark_install(): raise Exception()
-def try_import_pyspark_in_streamlit():
-    """Try importing Pyspark or display warn message in streamlit"""
-    try:
-        import pyspark
-        from pyspark.sql import SparkSession
-    except:
-        print("You need Pyspark installed to run NLU. Run <pip install pyspark==3.0.2>")
-
-        try:
-            import streamlit as st
-            st.error(
-                "You need Pyspark, Sklearn, Pyplot, Pandas, Numpy installed to run this app. Run <pip install pyspark==3.0.2 sklearn pyplot numpy pandas>")
-        except:
-            return False
-        return False
-    return True
-
-
-if not try_import_pyspark_in_streamlit():
-    raise ImportError("You ned to install Pyspark")
-st_cache_enabled = False
-from typing import Optional
-
-import nlu.utils.environment.env_utils as env_utils
-import nlu.utils.environment.authentication as auth_utils
-
-if not env_utils.check_python_version(): raise Exception()
-import nlu
-from nlu import info
-from nlu.spellbook import Spellbook
-import warnings
-from nlu.utils.environment.authentication import *
-
 warnings.filterwarnings("ignore")
-
 logger = logging.getLogger('nlu')
-# logger.setLevel(logging.INFO)
 logger.setLevel(logging.CRITICAL)
 ch = logging.StreamHandler()
 ch.setLevel(logging.CRITICAL)
-
 logger.addHandler(ch)
-from nlu.pipe.pipeline import NLUPipeline
-from nlu.pipe.utils.pipe_utils import PipeUtils
-from nlu.pipe.pipe_logic import PipelineQueryVerifier
-from nlu.pipe.component_resolution import *
-
-global spark, all_components_info, nlu_package_location, authorized
-is_authenticated = False
+st_cache_enabled = False
 nlu_package_location = nlu.__file__[:-11]
 
-spark_started = False
-spark = None
-authenticated = False
-from nlu.info import AllComponentsInfo
-from nlu.discovery import Discoverer
-
-all_components_info = nlu.AllComponentsInfo()
-discoverer = nlu.Discoverer()
-
-import json
-import sparknlp
-import os
+discoverer = Discoverer()
 
 slack_link = 'https://join.slack.com/t/spark-nlp/shared_invite/zt-lutct9gm-kuUazcyFKhuGY3_0AMkxqA'
 github_issues_link = 'https://github.com/JohnSnowLabs/nlu/issues'
@@ -84,43 +46,40 @@ def load(request: str = 'from_disk', path: Optional[str] = None, verbose: bool =
     You must call nlu.auth() BEFORE calling nlu.load() to access licensed models.
     If you did not call nlu.auth() but did call nlu.load() you must RESTART your Python Process and call nlu.auth().
     You cannot authorize once nlu.load() is called because of Spark Context.
-    :param verbose: Wether to output debug prints
-    :param gpu: Wether to leverage GPU
-    :param streamlit_caching: Wether streamlit caching should be used in Streamlit visualizations. Trade Speed-Up for repeated requests for larger memory usage
+    :param verbose: Whether to output debug prints
+    :param gpu: Whether to leverage GPU
+    :param streamlit_caching: Whether streamlit caching should be used in Streamlit visualizations. Trade Speed-Up for repeated requests for larger memory usage
     :param path: If path is not None, the model/component_list for the NLU reference will be loaded from the path. Useful for offline mode. Currently only loading entire NLU pipelines is supported, but not loading singular pipes
-    :param request: A NLU model/pipeline/component_to_resolve reference. You can requeste multiple components by separating them with whitespace. I.e. nlu.load('elmo bert albert')
+    :param request: A NLU model/pipeline/component_to_resolve reference. You can request multiple components by separating them with whitespace. I.e. nlu.load('elmo bert albert')
     :return: returns a non fitted nlu pipeline object
     '''
     if streamlit_caching and not nlu.st_cache_enabled:
         enable_streamlit_caching()
         return nlu.load(request, path, verbose, gpu, streamlit_caching)
-    global is_authenticated
-    is_authenticated = True
-    auth(gpu=gpu)  # check if secrets are in default loc, if yes load them and create licensed context automatically
+    # check if secrets are in default loc, if yes load them and create licensed context automatically
+    auth(gpu=gpu)
     spark = get_open_source_spark_context(gpu)
     spark.catalog.clearCache()
-    # Enable PyArrow
-    # spark.conf.set("spark.sql.execution.arrow.pyspark.enabled", "true")
-    # spark.conf.set("spark.sql.execution.arrow.pyspark.fallback.enabled.", "true")
 
     if verbose:
         enable_verbose()
     else:
+
         disable_verbose()
-    # Load Pipeline from Disk and return it
     try:
-        if path != None:
+        if path is not None:
             logger.info(f'Trying to load nlu pipeline from local hard drive, located at {path}')
             pipe = PipelineQueryVerifier.check_and_fix_nlu_pipeline(load_nlu_pipe_from_hdd(path, request))
             pipe.nlu_ref = request
             return pipe
-    except:
+    except Exception as err:
         if verbose:
             e = sys.exc_info()
             print(e[0])
             print(e[1])
+            print(err)
         raise Exception(
-            f"Something went wrong during loading the NLU pipeline located at  =  {path}. Is the path correct?")
+            f"Something while loading the pipe in {path}. Is the path correct? use nlu.load(verbose=True) for more info.")
 
     # Try to manifest SparkNLP Annotator from nlu_ref
     components_requested = request.split(' ')
@@ -134,7 +93,7 @@ def load(request: str = 'from_disk', path: Optional[str] = None, verbose: bool =
             nlu_ref.replace(' ', '')
             if nlu_ref == '':
                 continue
-            nlu_component = nlu_ref_to_component(nlu_ref, authenticated=is_authenticated)
+            nlu_component = nlu_ref_to_component(nlu_ref)
             # if we get a list of components, then the NLU reference is a pipeline, we do not need to check order
             if type(nlu_component) == type([]):
                 # lists are parsed down to multiple components, result of pipeline request (stack of components)
@@ -240,7 +199,7 @@ def load_nlu_pipe_from_hdd(pipe_path, request) -> NLUPipeline:
     nlu_ref = request  # pipe_path
     if os.path.exists(pipe_path):
 
-        # Ressource in path is a pipeline 
+        # Ressource in path is a pipeline
         if offline_utils.is_pipe(pipe_path):
             # language, nlp_ref, nlu_ref,path=None, is_licensed=False
             # todo deduct lang and if Licensed or not
@@ -315,12 +274,6 @@ def wrap_with_st_cache_if_available_and_set_layout_to_wide(f):
         logger.exception("Could not import streamlit and apply caching")
         print("You need streamlit to run use this method")
         return f
-
-
-def enable_hard_offline_checks(): nlu.hard_offline_checks = True
-
-
-def disable_hard_offline_checks(): nlu.hard_offline_checks = False
 
 
 class NluError:
