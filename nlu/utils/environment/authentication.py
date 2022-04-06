@@ -5,36 +5,79 @@ from importlib import reload
 from nlu.utils.environment.env_utils import *
 
 
-def check_if_secret_missmatch_and_fix(secret_version):
-    """If Spark-NLP-Internal is installed, but version does not match with
-    the version in the provided secrets, errors will be encountered,
-    i,e, when upgrading nlp-internal
-    This method will uninstall spark-nlp-internal if version missmatch exist
-    :param secret_version: healthcare secret version
-    """
-
-    hc_module_name = 'sparknlp_jsl'
-    hc_pip_package_name = 'spark-nlp-jsl'
-
+def ocr_version_is_missmatch(secret_version):
+    """Check if installed OCR version is the same as the OCR secret
+    :param secret_version: ocr secret version
+    :return: True if missmatch, False if versions are fien """
     try:
-        importlib.import_module(hc_module_name)
+        import sparkocr
     except ImportError:
         # Import failed, there can be no version missmatch
         return False
     # check versions
-    import sparknlp_jsl
+    installed_version = sparkocr.version()
+    if installed_version == secret_version:
+        return False
+    return True
+
+
+def healthcare_version_is_missmatch(secret_version):
+    """Check if installed Spark NLP healthcare version is the same as the Healthcare secret
+    :param secret_version: healthcare secret version
+    :return: True if missmatch, False if versions are fine"""
+    try:
+        import sparknlp_jsl
+    except ImportError:
+        # Import failed, there can be no version missmatch
+        return False
+    # check versions
     installed_version = sparknlp_jsl.version()
     if installed_version == secret_version:
         return False
+    return True
 
-    # version missmatch, uninstall via pip  or shell
 
-    print(
-        f"Installed {hc_module_name}=={installed_version} version does not match your secret version=={secret_version}. "
-        f"Uninstalling it..")
-    cmd = f'{sys.executable} -m pip uninstall {hc_pip_package_name} -y '
+def uninstall_lib(pip_package_name):
+    cmd = f'{sys.executable} -m pip uninstall {pip_package_name} -y '
     os.system(cmd)
     reload(site)
+
+
+def check_if_secret_missmatch_and_uninstall_if_bad(secret_version, module_name, package_name):
+    """Check if OCR/Healthcare lib installed version match up with the secrets provided.
+    If not, this will uninstall the missmaching library
+    :param module_name: module import name
+    :param package_name: pipe package name
+    :param secret_version: healthcare/ocr secret version provided
+    :return: True if missmatch was uninstalled, False if no missmatch found and nothing was done
+    """
+
+
+    try:
+        importlib.import_module(module_name)
+    except ImportError:
+        # Import failed, there can be no version missmatch
+        return False
+    if module_name == 'sparknlp_jsl':
+        # get versions
+        import sparknlp_jsl
+        installed_version = sparknlp_jsl.version()
+        if installed_version == secret_version:
+            return False
+    elif module_name == 'sparkocr':
+        # get versions
+        import sparkocr
+        installed_version = sparkocr.version()
+        if installed_version == secret_version:
+            return False
+    else:
+        raise ValueError(f'Invalid module_name=={module_name}')
+
+    print(
+        f"Installed {module_name}=={installed_version} version not matching provided secret version=={secret_version}. "
+        f"Uninstalling it..")
+    # version missmatch, uninstall shell
+    uninstall_lib(package_name)
     return True
 
 
@@ -55,7 +98,7 @@ def import_or_install_licensed_lib(JSL_SECRET, lib='healthcare'):
         target_import = hc_module_name
         target_install = hc_pip_package_name
         display_name = hc_display_name
-        missmatch = check_if_secret_missmatch_and_fix(lib_version)
+        missmatch = check_if_secret_missmatch_and_uninstall_if_bad(lib_version, hc_module_name, hc_pip_package_name)
     elif lib == 'ocr':
         target_import = ocr_module_name
         target_install = ocr_pip_package_name
