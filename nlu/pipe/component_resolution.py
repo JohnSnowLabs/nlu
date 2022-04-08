@@ -16,7 +16,7 @@ from sparknlp.pretrained import PretrainedPipeline, LightPipeline
 
 from nlu.universe.feature_node_ids import NLP_NODE_IDS, NLP_HC_NODE_IDS
 from nlu.universe.universes import Licenses
-from nlu.universe.component_universes import ComponentMap
+from nlu.universe.component_universes import ComponentUniverse
 from nlu.universe.feature_resolutions import FeatureResolutions
 import nlu
 
@@ -101,7 +101,7 @@ def resolve_feature(missing_feature_type, language='en', is_licensed=False,
         model_bucket = 'clinical/models' if is_licensed else None
         jsl_anno_id = os_annos[anno_class_name]
         import copy
-        nlu_component = copy.copy(ComponentMap.os_components[jsl_anno_id])
+        nlu_component = copy.copy(ComponentUniverse.os_components[jsl_anno_id])
         # We write storage ref to nlu_component, for the case of accumulated chunk and sentence embeddings.
         # Anno Class has no storage ref in these cases, but it is still an embedding provider
         return nlu_component.set_metadata(nlu_component.get_pretrained_model(nlp_ref, language, model_bucket),
@@ -388,12 +388,12 @@ def construct_trainable_component_from_identifier(nlu_ref, nlp_ref) -> NluCompon
         raise ValueError(f'Could not find trainable Model for nlu_spell ={nlu_ref}')
 
     try:
-        if anno_id in ComponentMap.os_components.keys():
-            nlu_component = ComponentMap.os_components[anno_id]
+        if anno_id in ComponentUniverse.os_components.keys():
+            nlu_component = ComponentUniverse.os_components[anno_id]
             return nlu_component.set_metadata(nlu_component.get_trainable_model(), nlu_ref, nlp_ref, 'xx', False,
                                               Licenses.open_source)
-        elif anno_id in ComponentMap.hc_components.keys():
-            nlu_component = ComponentMap.hc_components[anno_id]
+        elif anno_id in ComponentUniverse.hc_components.keys():
+            nlu_component = ComponentUniverse.hc_components[anno_id]
             return nlu_component.set_metadata(nlu_component.get_trainable_model(), nlu_ref, nlp_ref, 'xx', False,
                                               Licenses.hc)
 
@@ -441,19 +441,19 @@ def construct_component_from_pipe_identifier(language, nlp_ref, nlu_ref, path=No
             f"Extracting model from Spark NLP pipeline: obj= {jsl_anno_object} class_name = {anno_class_name} and creating Component")
         if anno_class_name in os_annos.keys():
             jsl_anno_id = os_annos[anno_class_name]
-            nlu_component = ComponentMap.os_components[jsl_anno_id]
+            nlu_component = ComponentUniverse.os_components[jsl_anno_id]
             nlu_component.set_metadata(jsl_anno_object, nlu_ref, nlp_ref, language, True, Licenses.open_source)
             constructed_components.append(nlu_component)
         elif anno_class_name in hc_annos.keys():
             # Licensed HC
             jsl_anno_id = hc_annos[anno_class_name]
-            nlu_component = ComponentMap.hc_components[jsl_anno_id]
+            nlu_component = ComponentUniverse.hc_components[jsl_anno_id]
             nlu_component.set_metadata(jsl_anno_object, nlu_ref, nlp_ref, language, True, Licenses.hc)
             constructed_components.append(nlu_component)
         elif anno_class_name in ocr_annos:
             # Licensed OCR
             jsl_anno_id = ocr_annos[anno_class_name]
-            nlu_component = ComponentMap.ocr_components[jsl_anno_id]
+            nlu_component = ComponentUniverse.ocr_components[jsl_anno_id]
             nlu_component.set_metadata(jsl_anno_object, nlu_ref, nlp_ref, language, True, Licenses.ocr)
             constructed_components.append(nlu_component)
         else:
@@ -490,7 +490,7 @@ def construct_component_from_identifier(language, component_type='', dataset='',
         if anno_class_name in os_annos.keys():
             # Open Source
             jsl_anno_id = os_annos[anno_class_name]
-            nlu_component = ComponentMap.os_components[jsl_anno_id]
+            nlu_component = ComponentUniverse.os_components[jsl_anno_id]
             if nlu_component.get_pretrained_model:
                 return nlu_component.set_metadata(nlu_component.get_pretrained_model(nlp_ref, language, model_bucket),
                                                   nlu_ref, nlp_ref,
@@ -505,7 +505,7 @@ def construct_component_from_identifier(language, component_type='', dataset='',
         elif anno_class_name in hc_annos.keys():
             # Licensed HC
             jsl_anno_id = hc_annos[anno_class_name]
-            nlu_component = ComponentMap.hc_components[jsl_anno_id]
+            nlu_component = ComponentUniverse.hc_components[jsl_anno_id]
             if nlu_component.get_pretrained_model:
                 return nlu_component.set_metadata(
                     nlu_component.get_pretrained_model(nlp_ref, language, 'clinical/models'),
@@ -521,7 +521,7 @@ def construct_component_from_identifier(language, component_type='', dataset='',
         elif anno_class_name in ocr_annos.keys():
             # Licensed OCR (WIP)
             jsl_anno_id = ocr_annos[anno_class_name]
-            nlu_component = ComponentMap.ocr_components[jsl_anno_id]
+            nlu_component = ComponentUniverse.ocr_components[jsl_anno_id]
             if nlu_component.get_pretrained_model:
 
                 return nlu_component.set_metadata(nlu_component.get_pretrained_model(nlp_ref, language, ), nlu_ref,

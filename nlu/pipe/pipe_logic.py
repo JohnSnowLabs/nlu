@@ -6,7 +6,7 @@ from nlu.universe.feature_node_ids import NLP_NODE_IDS, NLP_HC_NODE_IDS
 from nlu.universe.logic_universes import AnnoTypes
 from nlu import Licenses
 from nlu.universe.feature_universes import NLP_FEATURES
-from nlu.universe.component_universes import ComponentMap
+from nlu.universe.component_universes import ComponentUniverse
 
 logger = logging.getLogger('nlu')
 from nlu.pipe.pipe_component import SparkNLUComponent
@@ -207,7 +207,7 @@ class PipelineQueryVerifier:
         """
         logger.info(f'Adding Sentence embedding conversion for Embedding Provider={resolution_data}')
         word_embedding_provider = resolution_data.component_candidate
-        c = ComponentMap.os_components[NLP_NODE_IDS.SENTENCE_EMBEDDINGS_CONVERTER]
+        c = ComponentUniverse.os_components[NLP_NODE_IDS.SENTENCE_EMBEDDINGS_CONVERTER]
         storage_ref = StorageRefUtils.extract_storage_ref(word_embedding_provider)
         c.set_metadata(c.get_default_model(), 'sentence_embedding_converter',
                        NLP_NODE_IDS.SENTENCE_EMBEDDINGS_CONVERTER, 'xx', False, Licenses.open_source, storage_ref)
@@ -233,7 +233,7 @@ class PipelineQueryVerifier:
         entities_col = 'entities'
         embed_provider_col = word_embedding_provider.info.spark_output_column_names[0]
 
-        c = ComponentMap.os_components[NLP_NODE_IDS.CHUNK_EMBEDDINGS_CONVERTER]
+        c = ComponentUniverse.os_components[NLP_NODE_IDS.CHUNK_EMBEDDINGS_CONVERTER]
         c.set_metadata(c.get_default_model(),
                        NLP_NODE_IDS.CHUNK_EMBEDDINGS_CONVERTER, NLP_NODE_IDS.CHUNK_EMBEDDINGS_CONVERTER,
                        'xx',
