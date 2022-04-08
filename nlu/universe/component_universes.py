@@ -16,6 +16,8 @@ from nlu.components.chunkers.ngram.ngram import NGram
 from nlu.components.classifiers.classifier_dl.classifier_dl import ClassifierDl
 from nlu.components.relation_extractors.relation_extractor_dl.relation_extractor_dl import RelationExtractionDL
 from nlu.components.seq2seqs.gpt2.gpt2 import GPT2
+from nlu.ocr_components.table_extractors.doc_table_extractor.doc2table import Doc2TextTable
+from nlu.ocr_components.table_extractors.ppt_table_extractor.ppt2table import PPT2TextTable
 from nlu.ocr_components.text_recognizers.doc2text.doc2text import Doc2Text
 from nlu.ocr_components.text_recognizers.img2text.img2text import Img2Text
 from nlu.ocr_components.text_recognizers.pdf2text.pdf2text import Pdf2Text
@@ -113,7 +115,7 @@ from nlu.universe.universes import ComponentBackends
 from copy import copy
 
 
-class ComponentMap:
+class ComponentUniverse:
     # Encapsulate all Open Source components Constructors by mappping each individual Annotator class to a specific Construction
     A = NLP_NODE_IDS
     H_A = NLP_HC_NODE_IDS
@@ -948,7 +950,7 @@ class ComponentMap:
             get_pretrained_model=TokenAlbert.get_pretrained_model,
             pdf_extractor_methods={'default': default_token_classifier_config, 'default_full': default_full_config, },
             pdf_col_name_substitutor=substitute_transformer_token_classifier_cols,
-            output_level=L.CHUNK,  # Handled like NER model
+            output_level=L.TOKEN,  # Handled like NER model
             node=NLP_FEATURE_NODES.nodes[A.ALBERT_FOR_TOKEN_CLASSIFICATION],
             description='AlbertForTokenClassification can load ALBERT Models with a token classification head on top (a linear layer on top of the hidden-states output) e.g. for Named-Entity-Recognition (NER) tasks.',
             provider=ComponentBackends.open_source,
@@ -1003,7 +1005,7 @@ class ComponentMap:
             get_pretrained_model=TokenBert.get_pretrained_model,
             pdf_extractor_methods={'default': default_token_classifier_config, 'default_full': default_full_config, },
             pdf_col_name_substitutor=substitute_transformer_token_classifier_cols,
-            output_level=L.CHUNK,  # Handled like NER model
+            output_level=L.TOKEN,  # Handled like NER model
             node=NLP_FEATURE_NODES.nodes[A.BERT_FOR_TOKEN_CLASSIFICATION],
             description='BertForTokenClassification can load Bert Models with a token classification head on top (a linear layer on top of the hidden-states output) e.g. for Named-Entity-Recognition (NER) tasks.',
             provider=ComponentBackends.open_source,
@@ -1074,7 +1076,7 @@ class ComponentMap:
             get_pretrained_model=TokenDistilBert.get_pretrained_model,
             pdf_extractor_methods={'default': default_token_classifier_config, 'default_full': default_full_config, },
             pdf_col_name_substitutor=substitute_transformer_token_classifier_cols,
-            output_level=L.CHUNK,
+            output_level=L.TOKEN,
             node=NLP_FEATURE_NODES.nodes[A.DISTIL_BERT_FOR_TOKEN_CLASSIFICATION],
             description='DistilBertForTokenClassification can load Bert Models with a token classification head on top (a linear layer on top of the hidden-states output) e.g. for Named-Entity-Recognition (NER) tasks.',
             provider=ComponentBackends.open_source,
@@ -1130,7 +1132,7 @@ class ComponentMap:
             get_pretrained_model=TokenLongFormer.get_pretrained_model,
             pdf_extractor_methods={'default': default_token_classifier_config, 'default_full': default_full_config, },
             pdf_col_name_substitutor=substitute_transformer_token_classifier_cols,
-            output_level=L.CHUNK,
+            output_level=L.TOKEN,
             node=NLP_FEATURE_NODES.nodes[A.LONGFORMER_FOR_TOKEN_CLASSIFICATION],
             description='LongformerForTokenClassification can load Longformer Models with a token classification head on top (a linear layer on top of the hidden-states output) e.g. for Named-Entity-Recognition (NER) tasks.',
             provider=ComponentBackends.open_source,
@@ -1184,7 +1186,7 @@ class ComponentMap:
             get_pretrained_model=TokenRoBerta.get_pretrained_model,
             pdf_extractor_methods={'default': default_token_classifier_config, 'default_full': default_full_config, },
             pdf_col_name_substitutor=substitute_transformer_token_classifier_cols,
-            output_level=L.CHUNK,  # Handled like NER model
+            output_level=L.TOKEN,  # Handled like NER model
             node=NLP_FEATURE_NODES.nodes[A.ROBERTA_FOR_TOKEN_CLASSIFICATION],
             description='RoBertaForTokenClassification can load RoBERTa Models with a token classification head on top (a linear layer on top of the hidden-states output) e.g. for Named-Entity-Recognition (NER) tasks.',
             provider=ComponentBackends.open_source,
@@ -1279,7 +1281,7 @@ class ComponentMap:
             get_pretrained_model=TokenXlmRoBerta.get_pretrained_model,
             pdf_extractor_methods={'default': default_token_classifier_config, 'default_full': default_full_config, },
             pdf_col_name_substitutor=substitute_transformer_token_classifier_cols,
-            output_level=L.CHUNK,
+            output_level=L.TOKEN,
             node=NLP_FEATURE_NODES.nodes[A.XLM_ROBERTA_FOR_TOKEN_CLASSIFICATION],
             description='XlmRoBertaForTokenClassification can load XLM-RoBERTa Models with a token classification head on top (a linear layer on top of the hidden-states output) e.g. for Named-Entity-Recognition (NER) tasks.',
             provider=ComponentBackends.open_source,
@@ -1334,7 +1336,7 @@ class ComponentMap:
             get_pretrained_model=TokenXlnet.get_pretrained_model,
             pdf_extractor_methods={'default': default_token_classifier_config, 'default_full': default_full_config, },
             pdf_col_name_substitutor=substitute_transformer_token_classifier_cols,
-            output_level=L.CHUNK,
+            output_level=L.TOKEN,
             node=NLP_FEATURE_NODES.nodes[A.XLNET_FOR_TOKEN_CLASSIFICATION],
             description='XlnetForTokenClassification can load XLNet Models with a token classification head on top (a linear layer on top of the hidden-states output) e.g. for Named-Entity-Recognition (NER) tasks.',
             provider=ComponentBackends.open_source,
@@ -1910,7 +1912,7 @@ class ComponentMap:
             get_pretrained_model=TokenBertHealthcare.get_pretrained_model,
             pdf_extractor_methods={'default': default_token_classifier_config, 'default_full': default_full_config, },
             pdf_col_name_substitutor=substitute_transformer_token_classifier_cols,
-            output_level=L.CHUNK,  # Handled like NER model
+            output_level=L.TOKEN,  # Handled like NER model
             node=NLP_HC_FEATURE_NODES.nodes[H_A.MEDICAL_BERT_FOR_TOKEN_CLASSIFICATION],
             description='MedicalBertForTokenClassification can load Bert Models with a token classification head on top (a linear layer on top of the hidden-states output) e.g. for Named-Entity-Recognition (NER) tasks.',
             provider=ComponentBackends.open_source,
@@ -2038,7 +2040,7 @@ class ComponentMap:
 
         O_A.PDF2TEXT_TABLE: copy(NluComponent(
             name=O_A.PDF2TEXT_TABLE,
-            type=T.HELPER_ANNO,
+            type=T.TABLE_RECOGNIZER,
             get_default_model=PDF2TextTable.get_default_model,
             pdf_extractor_methods={'default': default_binary_to_image_config}, # TODO EXtractor
             pdf_col_name_substitutor=substitute_recognized_text_cols,  # TODO substitor
@@ -2054,5 +2056,50 @@ class ComponentMap:
             applicable_file_types=['PDF']
 
         )),
+
+
+        O_A.PPT2TEXT_TABLE: copy(NluComponent(
+            name=O_A.PPT2TEXT_TABLE,
+            type=T.TABLE_RECOGNIZER,
+            get_default_model=PPT2TextTable.get_default_model,
+            pdf_extractor_methods={'default': default_binary_to_image_config}, # TODO EXtractor
+            pdf_col_name_substitutor=substitute_recognized_text_cols,  # TODO substitor
+            output_level=L.DOCUMENT,
+            node=OCR_FEATURE_NODES.nodes[O_A.PPT2TEXT_TABLE],
+            description='Extract Tables from PPT and PPTX files',
+            provider=ComponentBackends.ocr,
+            license=Licenses.ocr,
+            computation_context=ComputeContexts.spark,
+            output_context=ComputeContexts.spark,
+            jsl_anno_class_id=O_A.PPT2TEXT_TABLE,
+            jsl_anno_py_class=ACR.JSL_anno_OCR_ref_2_py_class[O_A.PPT2TEXT_TABLE],
+            applicable_file_types=['PPT','PPTX']
+        )),
+
+
+
+        O_A.DOC2TEXT_TABLE: copy(NluComponent(
+            name=O_A.DOC2TEXT_TABLE,
+            type=T.TABLE_RECOGNIZER,
+            get_default_model=Doc2TextTable.get_default_model,
+            pdf_extractor_methods={'default': default_binary_to_image_config}, # TODO EXtractor
+            pdf_col_name_substitutor=substitute_recognized_text_cols,  # TODO substitor
+            output_level=L.DOCUMENT,
+            node=OCR_FEATURE_NODES.nodes[O_A.DOC2TEXT_TABLE],
+            description='Extract Tables from PPT and PPTX files',
+            provider=ComponentBackends.ocr,
+            license=Licenses.ocr,
+            computation_context=ComputeContexts.spark,
+            output_context=ComputeContexts.spark,
+            jsl_anno_class_id=O_A.DOC2TEXT_TABLE,
+            jsl_anno_py_class=ACR.JSL_anno_OCR_ref_2_py_class[O_A.DOC2TEXT_TABLE],
+            applicable_file_types=['DOCX','DOC']
+        )),
+
+
+
+
+
+
 
     }

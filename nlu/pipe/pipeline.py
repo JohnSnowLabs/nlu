@@ -1,4 +1,6 @@
 from pyspark.sql.types import StructType, StructField, StringType
+
+from nlu.pipe.extractors.extractor_methods.ocr_extractors import extract_tables
 from nlu.pipe.utils.resolution.storage_ref_utils import StorageRefUtils
 from nlu.pipe.utils.component_utils import ComponentUtils
 from nlu.pipe.utils.output_level_resolution_utils import OutputLevelUtils
@@ -14,7 +16,6 @@ from sparknlp.base import LightPipeline
 from nlu.pipe.extractors.extractor_configs_HC import default_full_config
 from nlu.pipe.pipe_logic import PipeUtils
 from nlu.universe.component_universes import NLP_NODE_IDS
-import nlu.pipe.pipe_component
 import sparknlp
 import pyspark
 import pandas as pd
@@ -302,6 +303,15 @@ class NLUPipeline(dict):
         :param output_metadata: Whether to keep or drop additional metadata or predictions, like prediction confidence
         :return: Pandas dataframe which easy accessible features
         '''
+
+        if PipeUtils.has_table_extractor(self):
+            # If pipe has table extractors, we return list of tables or table itself if only one detected
+            processed = extract_tables(processed)
+            if len(processed) == 1 :
+                return processed[0]
+            return processed
+
+
         stranger_features += ['origin_index']
         if output_level == '':
             # Infer output level if none defined

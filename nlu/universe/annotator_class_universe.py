@@ -178,6 +178,8 @@ class AnnoClassRef:
         OCR_NODE_IDS.DOC2TEXT: 'DocToText',
         OCR_NODE_IDS.BINARY2IMAGE: 'BinaryToImage',
         OCR_NODE_IDS.PDF2TEXT_TABLE: 'PdfToTextTable',
+        OCR_NODE_IDS.PPT2TEXT_TABLE: 'PptToTextTable',
+        OCR_NODE_IDS.DOC2TEXT_TABLE: 'DocToTextTable',
 
     }
 

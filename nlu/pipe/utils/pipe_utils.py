@@ -1,16 +1,15 @@
-from sparknlp.annotator import *
-import inspect
 import logging
 
+from sparknlp.annotator import *
+
 import nlu
+from nlu import Licenses
 from nlu.pipe.nlu_component import NluComponent
 from nlu.pipe.utils.resolution.storage_ref_utils import StorageRefUtils
-from nlu.universe.atoms import JslAnnoId
-from nlu.universe.logic_universes import NLP_LEVELS, AnnoTypes
-from nlu import Licenses
-from nlu.universe.feature_node_ids import NLP_NODE_IDS, NLP_HC_NODE_IDS
+from nlu.universe.component_universes import ComponentUniverse
+from nlu.universe.feature_node_ids import NLP_NODE_IDS, NLP_HC_NODE_IDS, OCR_NODE_IDS
 from nlu.universe.feature_universes import NLP_FEATURES
-from nlu.universe.component_universes import ComponentMap
+from nlu.universe.logic_universes import NLP_LEVELS, AnnoTypes
 
 logger = logging.getLogger('nlu')
 from nlu.pipe.utils.component_utils import ComponentUtils
@@ -224,14 +223,14 @@ class PipeUtils:
                 if converter_to_update is None:
                     if c.license == Licenses.hc:
                         # TODO SET METADATA FIELDS HERE ON ANNO!!
-                        converter_to_update = ComponentMap.hc_components[NLP_HC_NODE_IDS.NER_CONVERTER_INTERNAL]
+                        converter_to_update = ComponentUniverse.hc_components[NLP_HC_NODE_IDS.NER_CONVERTER_INTERNAL]
                         converter_to_update.set_metadata(converter_to_update.get_default_model(),
                                                          NLP_HC_NODE_IDS.NER_CONVERTER_INTERNAL,
                                                          NLP_HC_NODE_IDS.NER_CONVERTER_INTERNAL,
                                                          'xx', False, Licenses.hc)
                     else:
                         # TODO SET METADATA FIELDS HERE ON ANNO!!
-                        converter_to_update = ComponentMap.os_components[NLP_NODE_IDS.NER_CONVERTER]
+                        converter_to_update = ComponentUniverse.os_components[NLP_NODE_IDS.NER_CONVERTER]
                         converter_to_update.set_metadata(converter_to_update.get_default_model(),
                                                          NLP_NODE_IDS.NER_CONVERTER, NLP_NODE_IDS.NER_CONVERTER,
                                                          'xx', False, Licenses.open_source)
@@ -394,6 +393,18 @@ class PipeUtils:
         return False
 
     @staticmethod
+    def has_table_extractor(pipe):
+        """Check for NLUPipieline if it contains any table extracting OCR component"""
+        for c in pipe.components:
+            if c.name in [OCR_NODE_IDS.PDF2TEXT_TABLE,
+                          OCR_NODE_IDS.PPT2TEXT_TABLE,
+                          OCR_NODE_IDS.DOC2TEXT_TABLE,
+                          OCR_NODE_IDS.IMAGE_TABLE_DETECTOR,
+                          ]:
+                return True
+        return False
+
+    @staticmethod
     def find_doc_assembler_idx_in_pipe(pipe):
         """Find idx of document assembler in list of nlu components
         :param pipe:  pipe
@@ -451,7 +462,7 @@ class PipeUtils:
         if not PipeUtils.has_document_assembler(pipe):
             # When loaded from OCR, we might not have a documentAssembler in pipe
             pipe.is_fitted = False
-            document_assembler = ComponentMap.os_components[NLP_NODE_IDS.DOCUMENT_ASSEMBLER]
+            document_assembler = ComponentUniverse.os_components[NLP_NODE_IDS.DOCUMENT_ASSEMBLER]
             document_assembler.set_metadata(document_assembler.get_default_model(), 'document_assembler',
                                             'document_assembler', 'xx', False, Licenses.open_source)
             pipe.components.insert(0, document_assembler)
@@ -460,7 +471,7 @@ class PipeUtils:
             if not PipeUtils.has_sentence_detector(pipe):
                 logger.info("Adding missing Sentence Detector")
                 pipe.is_fitted = False
-                sentence_detector = ComponentMap.os_components[NLP_NODE_IDS.SENTENCE_DETECTOR_DL]
+                sentence_detector = ComponentUniverse.os_components[NLP_NODE_IDS.SENTENCE_DETECTOR_DL]
                 sentence_detector.set_metadata(sentence_detector.get_default_model(), 'detect_sentence',
                                                'sentence_detector_dl', 'en', False, Licenses.open_source)
                 insert_idx = PipeUtils.find_doc_assembler_idx_in_pipe(pipe)
@@ -646,7 +657,7 @@ class PipeUtils:
                     untrained_class_name = AnnoClassRef.JSL_anno2_py_class[trainable_c.jsl_anno_class_id]
                     trained_model = PipeUtils.get_model_of_class_from_spark_pipe(spark_transformer_pipe,
                                                                                  trained_class_name)
-                    trained_component = ComponentMap.os_components[trainable_c.trained_mirror_anno].set_metadata(
+                    trained_component = ComponentUniverse.os_components[trainable_c.trained_mirror_anno].set_metadata(
                         trained_model, trainable_c.trained_mirror_anno, trainable_c.trained_mirror_anno, nlu_pipe.lang,
                         False,
                         Licenses.open_source)
@@ -655,7 +666,7 @@ class PipeUtils:
                     untrained_class_name = AnnoClassRef.JSL_anno_HC_ref_2_py_class[trainable_c.jsl_anno_class_id]
                     trained_model = PipeUtils.get_model_of_class_from_spark_pipe(spark_transformer_pipe,
                                                                                  trained_class_name)
-                    trained_component = ComponentMap.hc_components[trainable_c.trained_mirror_anno].set_metadata(
+                    trained_component = ComponentUniverse.hc_components[trainable_c.trained_mirror_anno].set_metadata(
                         trained_model, trainable_c.trained_mirror_anno, trainable_c.trained_mirror_anno, nlu_pipe.lang,
                         False, Licenses.hc)
 

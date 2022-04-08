@@ -10,26 +10,26 @@ from nlu.universe.atoms import JslAnnoId
 class Spellbook:
     # NLU model_base_names =
     # These reference tell NLU to which component_to_resolve resolved to route a request, they help NLU map a NLP reference to the correct class
-    word_embeddings = ['embed', 'bert', 'electra', 'albert', 'elmo', 'glove', 'xlnet', 'biobert', 'covidbert',
-                       'tfhub_use', 'distil', 'sentence_xlm.py', 'roberta', 'longformer', 'token_bert',
-                       'token_distilbert'
-                       ]
-    sentence_embeddings = ['embed_sentence', 'use', 'bert', 'electra', 'tfhub_use', 'doc2vec']
-    classifiers = ['classify', 'e2e', 'emotion', 'sentiment', 'ner',
-                   'pos', 'trec6', 'trec50', 'questions',
-                   'sarcasm', 'emotion', 'spam', 'fakenews', 'cyberbullying',
-                   'wiki', 'wiki_7', 'wiki_20', 'yake', 'toxic',
-                   'assert', 'med_ner', 'bert_sequence', 'distilbert_sequence'
-                   ]
-
-    token_classifiers = ['classify_token', ]
-    seq2seq = ['t5', 'marian', 'translate_to']
-    actions = ['tokenize', 'sentence', 'embed', 'embed_sentence', 'embed_chunk', 'classify', 'chunk', 'pos', 'ner',
-               'dep', 'dep.untyped', 'lemma', 'match', 'norm', 'spell', 'stem', 'stopwords', 'clean', 'ngram',
-               'translate_to',
-
-               ]
-    trainable_model_references = ['classifier_dl']
+    # word_embeddings = ['embed', 'bert', 'electra', 'albert', 'elmo', 'glove', 'xlnet', 'biobert', 'covidbert',
+    #                    'tfhub_use', 'distil', 'sentence_xlm.py', 'roberta', 'longformer', 'token_bert',
+    #                    'token_distilbert'
+    #                    ]
+    # sentence_embeddings = ['embed_sentence', 'use', 'bert', 'electra', 'tfhub_use', 'doc2vec']
+    # classifiers = ['classify', 'e2e', 'emotion', 'sentiment', 'ner',
+    #                'pos', 'trec6', 'trec50', 'questions',
+    #                'sarcasm', 'emotion', 'spam', 'fakenews', 'cyberbullying',
+    #                'wiki', 'wiki_7', 'wiki_20', 'yake', 'toxic',
+    #                'assert', 'med_ner', 'bert_sequence', 'distilbert_sequence'
+    #                ]
+    #
+    # token_classifiers = ['classify_token', ]
+    # seq2seq = ['t5', 'marian', 'translate_to']
+    # actions = ['tokenize', 'sentence', 'embed', 'embed_sentence', 'embed_chunk', 'classify', 'chunk', 'pos', 'ner',
+    #            'dep', 'dep.untyped', 'lemma', 'match', 'norm', 'spell', 'stem', 'stopwords', 'clean', 'ngram',
+    #            'translate_to',
+    #
+    #            ]
+    # trainable_model_references = ['classifier_dl']
 
     '''
     NLU REFERENCE FORMATS : 
@@ -41,18 +41,10 @@ class Spellbook:
         #
         # map NLU references to NLP approaches
         'train.deep_sentence_detector': NLP_NODE_IDS.TRAINABLE_SENTENCE_DETECTOR_DL,
-        'train.sentence_detector': '',  # deep sentence detector alias
-        'train.symmetric_spell': '',
-        'train.context_spell': '',
-        'train.spell': '',  ## context spell alias
-        'train.norvig_spell': '',
-        'train.unlabeled_dependency_parser': '',
-        'train.labeled_dependency_parser': '',
         'train.classifier_dl': NLP_NODE_IDS.TRAINABLE_CLASSIFIER_DL,
         'train.classifier': NLP_NODE_IDS.TRAINABLE_CLASSIFIER_DL,  # classifier DL alias
         'train.named_entity_recognizer_dl': NLP_NODE_IDS.TRAINABLE_NER_DL,
         'train.ner': NLP_NODE_IDS.TRAINABLE_NER_DL,  # ner DL alias
-        'train.vivekn_sentiment': '',
         'train.sentiment_dl': NLP_NODE_IDS.TRAINABLE_SENTIMENT_DL,
         'train.sentiment': NLP_NODE_IDS.TRAINABLE_SENTIMENT_DL,  # sent DL alias
         'train.pos': NLP_NODE_IDS.TRAINABLE_POS,
@@ -63,6 +55,16 @@ class Spellbook:
         'train.assertion': NLP_HC_NODE_IDS.TRAINABLE_ASSERTION_DL,
         'train.assert': NLP_HC_NODE_IDS.TRAINABLE_ASSERTION_DL,
         'train.assertion_dl': NLP_HC_NODE_IDS.TRAINABLE_ASSERTION_DL,
+
+        # 'train.sentence_detector': '',  # deep sentence detector alias
+        # 'train.symmetric_spell': '',
+        # 'train.context_spell': '',
+        # 'train.spell': '',  ## context spell alias
+        # 'train.norvig_spell': '',
+        # 'train.unlabeled_dependency_parser': '',
+        # 'train.labeled_dependency_parser': '',
+        # 'train.vivekn_sentiment': '',
+
 
     }
 
@@ -227,16 +229,16 @@ class Spellbook:
         'yake': ('yake', 'model'),
 
         # 2.7.0 new aliases
-        't5.summarize': ('t5_base', 'model'),
-        't5.classify.grammar_correctness': ('t5_base', 'model'),
-        't5.classify.sentiment': ('t5_base', 'model'),
-        't5.answer_question': ('t5_base', 'model'),
-
-        # 2.7.0 new aliases
-        't5': ('t5_base', 'model'),
-        'summarize': ('t5_base', 'model', 'summarize', 't5'),
-        'grammar_correctness': ('t5_base', 'model', 'grammar_correctness', 't5'),
-        'answer_question': ('t5_base', 'model', 'answer_question', 't5'),
+        # 't5.summarize': ('t5_base', 'model'),
+        # 't5.classify.grammar_correctness': ('t5_base', 'model'),
+        # 't5.classify.sentiment': ('t5_base', 'model'),
+        # 't5.answer_question': ('t5_base', 'model'),
+        # TODO refactor these
+        # # 2.7.0 new aliases
+        # 't5': ('t5_base', 'model'),
+        # 'summarize': ('t5_base', 'model', 'summarize', 't5'),
+        # 'grammar_correctness': ('t5_base', 'model', 'grammar_correctness', 't5'),
+        # 'answer_question': ('t5_base', 'model', 'answer_question', 't5'),
         # 'classify.sentiment': ('t5_base','model'),
 
     }
@@ -4599,6 +4601,8 @@ class Spellbook:
 
 
         'pdf2table': OCR_NODE_IDS.PDF2TEXT_TABLE,
+        'doc2table': OCR_NODE_IDS.DOC2TEXT_TABLE,
+        'ppt2table': OCR_NODE_IDS.PPT2TEXT_TABLE,
 
     }
     # map storage ref to nlu refner_jsl
@@ -4834,6 +4838,9 @@ class Spellbook:
         OCR_NODE_IDS.PDF2TEXT: 'PdfToText',
         OCR_NODE_IDS.DOC2TEXT: 'DocToText',
         OCR_NODE_IDS.BINARY2IMAGE: 'BinaryToImage',
+        OCR_NODE_IDS.PDF2TEXT_TABLE: 'PdfToTextTable',
+        OCR_NODE_IDS.PPT2TEXT_TABLE: 'PptToTextTable',
+        OCR_NODE_IDS.DOC2TEXT_TABLE: 'DocToTextTable',
 
         'default_chunker': 'Chunker',
 
