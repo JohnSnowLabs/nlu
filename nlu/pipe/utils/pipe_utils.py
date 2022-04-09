@@ -686,7 +686,8 @@ class PipeUtils:
                     if nlu_pipe[k].__class__.__name__ == untrained_class_name:
                         pipe_key_to_delete = k
                 del nlu_pipe[pipe_key_to_delete]
-                nlu_pipe.add(trained_component)
+                # TODOf NER or other trainable, make sure we ad at the right place!
+                nlu_pipe.add(trained_component, idx=i)
         return nlu_pipe.components
 
     @staticmethod

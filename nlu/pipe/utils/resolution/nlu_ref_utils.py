@@ -54,6 +54,7 @@ def nlu_ref_to_nlp_metadata(nlu_ref, is_recursive_call=False):
 
     :return: lang, nlu_ref, nlp_ref, license_type, is_pipe
     """
+    model_params = None
     lang = parse_language_from_nlu_ref(nlu_ref)
     nlp_ref = None
     license_type = Licenses.open_source
@@ -69,12 +70,13 @@ def nlu_ref_to_nlp_metadata(nlu_ref, is_recursive_call=False):
             nlp_ref = Spellbook.pretrained_models_references[lang][nlu_ref]
             logger.info(f'Found Spark NLP reference in pretrained models namespace = {nlp_ref}')
 
-    # 3. check if open source alias # TODO MORE RFCUK
+    # 3. check if open source alias
     if nlu_ref in Spellbook.component_alias_references.keys():
         sparknlp_data = Spellbook.component_alias_references[nlu_ref]
         nlp_ref = sparknlp_data[0]
         is_pipe = 'component_list' in sparknlp_data[1]
-
+        if len(sparknlp_data) == 3 :
+            model_params = sparknlp_data[2]
     # 4. check if healthcare pipe
     if lang in Spellbook.pretrained_healthcare_pipe_references.keys():
         if nlu_ref in Spellbook.pretrained_healthcare_pipe_references[lang].keys():
@@ -125,4 +127,4 @@ def nlu_ref_to_nlp_metadata(nlu_ref, is_recursive_call=False):
     #               f"Or contact us at contact@jonsnowlabs.com\n"
     #               f"NLU will ignore this error and continue running, but you will encounter errors most likely. ")
 
-    return lang, nlu_ref, nlp_ref, license_type, is_pipe
+    return lang, nlu_ref, nlp_ref, license_type, is_pipe, model_params

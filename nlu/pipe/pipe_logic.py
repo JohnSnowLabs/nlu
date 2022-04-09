@@ -678,3 +678,17 @@ class PipelineQueryVerifier:
         logger.info(f"Resolution Status missing_features_no_ref  = {set(missing_features_no_ref)}")
         logger.info(f"Resolution Status conversion_candidates    = {set(missing_features_ref)}")
         logger.info(f"========================================================================")
+
+
+
+
+
+
+
+
+
+
+
+
+
+

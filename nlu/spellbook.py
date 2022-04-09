@@ -228,18 +228,12 @@ class Spellbook:
         'embed.glove.840B_300': ('glove_840B_300', 'model'),
         'yake': ('yake', 'model'),
 
-        # 2.7.0 new aliases
-        # 't5.summarize': ('t5_base', 'model'),
-        # 't5.classify.grammar_correctness': ('t5_base', 'model'),
-        # 't5.classify.sentiment': ('t5_base', 'model'),
-        # 't5.answer_question': ('t5_base', 'model'),
-        # TODO refactor these
         # # 2.7.0 new aliases
-        # 't5': ('t5_base', 'model'),
-        # 'summarize': ('t5_base', 'model', 'summarize', 't5'),
-        # 'grammar_correctness': ('t5_base', 'model', 'grammar_correctness', 't5'),
-        # 'answer_question': ('t5_base', 'model', 'answer_question', 't5'),
-        # 'classify.sentiment': ('t5_base','model'),
+        't5': ('t5_base', 'model'),
+        'summarize': ('t5_base', 'model', {'setTask':'"summarize: "'}),
+        'grammar_correctness': ('t5_base', 'model',{'setTask':'"cola sentence: "' }),
+        'answer_question': ('t5_base', 'model', {'setTask':'"question: "'}),
+        'classify.sentiment_t5': ('t5_base','model',{'setTask':'"sst2 sentence: "'}),
 
     }
     # multi lang models
@@ -2033,11 +2027,7 @@ class Spellbook:
             'en.t5': 'google_t5_small_ssm_nq',
             'en.t5.small': 't5_small',
             'en.t5.base': 't5_base',
-            # 2.7.0 new aliases
-            'en.t5.summarize': 't5_base',
-            'en.t5.classify.grammar_correctness': 't5_base',
-            'en.t5.classify.sentiment': 't5_base',
-            'en.t5.answer_question': 't5_base',
+
 
             # 2.7,1 and 2.7.2 ATIS classifier and ALIASES
             "en.classify.questions.atis": "classifierdl_use_atis",

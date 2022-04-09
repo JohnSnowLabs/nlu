@@ -427,7 +427,7 @@ class NLUPipeline(dict):
                 self.light_spark_transformer_pipe = LightPipeline(self.spark_transformer_pipe, parse_embeddings=True)
 
     def save(self, path, component='entire_pipeline', overwrite=False):
-        if nlu.is_running_in_databricks():
+        if is_running_in_databricks():
             if path.startswith('/dbfs/') or path.startswith('dbfs/'):
                 nlu_path = path
                 if path.startswith('/dbfs/'):
