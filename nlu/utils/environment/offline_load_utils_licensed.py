@@ -3,7 +3,6 @@ def verify_model_licensed(class_name: str, model_path: str):
     Load a licensed model from HDD
     """
     try:
-        from sparknlp_jsl.annotator import *
         m = eval(class_name).load(model_path)
         return m
     except:

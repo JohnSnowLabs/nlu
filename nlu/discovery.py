@@ -1,6 +1,7 @@
 from nlu.spellbook import Spellbook
 import nlu
-all_components_info = nlu.AllComponentsInfo()
+from nlu.info import AllComponentsInfo
+all_components_info = AllComponentsInfo()
 
 class Discoverer:
     """Various methods that help discover nlu_refs and functionality"""

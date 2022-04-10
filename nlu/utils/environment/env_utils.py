@@ -68,12 +68,6 @@ def check_pyspark_install():
     return True
 
 
-def check_python_version():
-    if float(sys.version[:3]) >= 3.9:
-        print("Please use a Python version with version number SMALLER than 3.9")
-        print("Python versions equal or higher 3.9 are currently NOT SUPPORTED by NLU")
-        return False
-    return True
 
 
 def is_running_in_databricks():

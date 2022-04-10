@@ -1,14 +1,11 @@
-from typing import List
 import logging
+from typing import List
 
 from nlu.pipe.nlu_component import NluComponent
-from nlu.universe.logic_universes import AnnoTypes
 from nlu.universe.feature_node_ids import NLP_NODE_IDS, NLP_HC_NODE_IDS
-from nlu.universe.atoms import JslAnnoId
+from nlu.universe.logic_universes import AnnoTypes
 
 logger = logging.getLogger('nlu')
-import inspect
-from nlu.pipe.pipe_component import SparkNLUComponent
 from nlu.pipe.utils.resolution.storage_ref_utils import StorageRefUtils
 from nlu.universe.feature_universes import NLP_FEATURES, OCR_FEATURES
 
@@ -17,7 +14,7 @@ class ComponentUtils:
     """Component and Column Level logic operations and utils"""
 
     @staticmethod
-    def config_chunk_embed_converter(converter: SparkNLUComponent) -> SparkNLUComponent:
+    def config_chunk_embed_converter(converter: NluComponent) -> NluComponent:
         '''For a Chunk to be added to a pipeline, configure its input/output and set storage ref to amtch the storage ref and
         enfore storage ref notation. This will be used to infer backward later which component_to_resolve should feed this consumer'''
         storage_ref = StorageRefUtils.extract_storage_ref(converter)
@@ -32,7 +29,7 @@ class ComponentUtils:
         return converter
 
     @staticmethod
-    def clean_irrelevant_features(feature_list, remove_AT_notation=False, remove_text = True):
+    def clean_irrelevant_features(feature_list, remove_AT_notation=False, remove_text=True):
         '''
         Remove irrelevant features from a list of component_to_resolve features
         Also remove the @notation from names, since they are irrelevant for ordering
@@ -77,24 +74,6 @@ class ComponentUtils:
         :return: True if the component_to_resolve needs some specifc embedding (i.e.glove, bert, elmo etc..). Otherwise returns False
         '''
         return component.is_storage_ref_consumer
-
-    @staticmethod
-    def component_has_embeddings_provisions(component: SparkNLUComponent):
-        '''
-        Check for the input component_to_resolve, wether it depends on some embedding. Returns True if yes, otherwise False.
-        :param component:  The component_to_resolve to check
-        :return: True if the component_to_resolve needs some specifc embedding (i.e.glove, bert, elmo etc..). Otherwise returns False
-        '''
-        if type(component) == type(list) or type(component) == type(set):
-            for feature in component:
-                if 'embed' in feature:
-                    return True
-            return False
-        else:
-            for feature in component.out_types:
-                if 'embed' in feature:
-                    return True
-        return False
 
     @staticmethod
     def extract_storage_ref_AT_notation_for_embeds(component: NluComponent, col='input'):
@@ -179,17 +158,6 @@ class ComponentUtils:
         raise ValueError(f"Could not find Embed col for component_to_resolve ={component}")
 
     @staticmethod
-    def is_untrained_model(component: SparkNLUComponent) -> bool:
-        '''
-        Check for a given component_to_resolve if it is an embelishment of an traianble model.
-        In this case we will ignore embeddings requirements further down the logic pipeline
-        :param component: Component to check
-        :return: True if it is trainable, False if not
-        '''
-        if 'is_untrained' in dict(inspect.getmembers(component.info)).keys(): return True
-        return False
-
-    @staticmethod
     def set_storage_ref_attribute_of_embedding_converters(pipe_list: List[NluComponent]):
         """For every embedding converter, we set storage ref attr on it, based on what the storage ref from it's provider is """
         for converter in pipe_list:
@@ -218,7 +186,7 @@ class ComponentUtils:
             if any(filter(lambda s: 'token_embed' in s, component.out_types)): return 'token_embeddings'
 
     @staticmethod
-    def are_producer_consumer_matches(e_consumer: SparkNLUComponent, e_provider: SparkNLUComponent) -> bool:
+    def are_producer_consumer_matches(e_consumer: NluComponent, e_provider: NluComponent) -> bool:
         """Check for embedding_consumer and embedding_producer if they match storage_ref and output level wise wise """
         if StorageRefUtils.extract_storage_ref(e_consumer) == StorageRefUtils.extract_storage_ref(e_provider):
             if ComponentUtils.extract_embed_level_identity(e_consumer,
@@ -233,8 +201,6 @@ class ComponentUtils:
         """The tail of a NLU ref after splitting on '.' gives a unique identifier for NON-Aliased components
          If result is '' , model UID will be used as identifier
          """
-        tail = ''
-
         tail = component.nlu_ref.split('.')[-1].split('@')[-1]
         if tail == '':
             logger.warning(

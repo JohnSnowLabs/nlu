@@ -1,16 +1,15 @@
-from sparknlp.annotator import *
-import inspect
 import logging
 
+from sparknlp.annotator import *
+
 import nlu
+from nlu import Licenses
 from nlu.pipe.nlu_component import NluComponent
 from nlu.pipe.utils.resolution.storage_ref_utils import StorageRefUtils
-from nlu.universe.atoms import JslAnnoId
-from nlu.universe.logic_universes import NLP_LEVELS, AnnoTypes
-from nlu import Licenses
-from nlu.universe.feature_node_ids import NLP_NODE_IDS, NLP_HC_NODE_IDS
-from nlu.universe.feature_universes import NLP_FEATURES
 from nlu.universe.component_universes import ComponentUniverse
+from nlu.universe.feature_node_ids import NLP_NODE_IDS, NLP_HC_NODE_IDS, OCR_NODE_IDS
+from nlu.universe.feature_universes import NLP_FEATURES
+from nlu.universe.logic_universes import NLP_LEVELS, AnnoTypes
 
 logger = logging.getLogger('nlu')
 from nlu.pipe.utils.component_utils import ComponentUtils
@@ -394,6 +393,18 @@ class PipeUtils:
         return False
 
     @staticmethod
+    def has_table_extractor(pipe):
+        """Check for NLUPipieline if it contains any table extracting OCR component"""
+        for c in pipe.components:
+            if c.name in [OCR_NODE_IDS.PDF2TEXT_TABLE,
+                          OCR_NODE_IDS.PPT2TEXT_TABLE,
+                          OCR_NODE_IDS.DOC2TEXT_TABLE,
+                          OCR_NODE_IDS.IMAGE_TABLE_DETECTOR,
+                          ]:
+                return True
+        return False
+
+    @staticmethod
     def find_doc_assembler_idx_in_pipe(pipe):
         """Find idx of document assembler in list of nlu components
         :param pipe:  pipe
@@ -675,7 +686,8 @@ class PipeUtils:
                     if nlu_pipe[k].__class__.__name__ == untrained_class_name:
                         pipe_key_to_delete = k
                 del nlu_pipe[pipe_key_to_delete]
-                nlu_pipe.add(trained_component)
+                # TODOf NER or other trainable, make sure we ad at the right place!
+                nlu_pipe.add(trained_component, idx=i)
         return nlu_pipe.components
 
     @staticmethod
@@ -684,3 +696,9 @@ class PipeUtils:
             if model.__class__.name == class_name:
                 return model
         raise ValueError(f"Could not find model of requested class = {class_name}")
+
+    @staticmethod
+    def contains_T5_or_GPT_transformer(pipe):
+        for c in pipe.components:
+            if c.name in [NLP_NODE_IDS.GPT2, NLP_NODE_IDS.T5_TRANSFORMER]:
+                return True

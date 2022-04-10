@@ -9,7 +9,6 @@ from nlu.universe.feature_universes import NLP_FEATURES
 from nlu.universe.component_universes import ComponentUniverse
 
 logger = logging.getLogger('nlu')
-from nlu.pipe.pipe_component import SparkNLUComponent
 from nlu.pipe.utils.pipe_utils import PipeUtils
 from nlu.pipe.utils.component_utils import ComponentUtils
 from nlu.pipe.utils.resolution.storage_ref_utils import StorageRefUtils
@@ -679,3 +678,17 @@ class PipelineQueryVerifier:
         logger.info(f"Resolution Status missing_features_no_ref  = {set(missing_features_no_ref)}")
         logger.info(f"Resolution Status conversion_candidates    = {set(missing_features_ref)}")
         logger.info(f"========================================================================")
+
+
+
+
+
+
+
+
+
+
+
+
+
+

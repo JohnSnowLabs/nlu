@@ -228,18 +228,12 @@ class Spellbook:
         'embed.glove.840B_300': ('glove_840B_300', 'model'),
         'yake': ('yake', 'model'),
 
-        # 2.7.0 new aliases
-        't5.summarize': ('t5_base', 'model'),
-        't5.classify.grammar_correctness': ('t5_base', 'model'),
-        't5.classify.sentiment': ('t5_base', 'model'),
-        't5.answer_question': ('t5_base', 'model'),
-        # TODO refactor these
         # # 2.7.0 new aliases
         't5': ('t5_base', 'model'),
-        # 'summarize': ('t5_base', 'model', 'summarize', 't5'),
-        # 'grammar_correctness': ('t5_base', 'model', 'grammar_correctness', 't5'),
-        # 'answer_question': ('t5_base', 'model', 'answer_question', 't5'),
-        # 'classify.sentiment': ('t5_base','model'),
+        'summarize': ('t5_base', 'model', {'setTask':'"summarize: "'}),
+        'grammar_correctness': ('t5_base', 'model',{'setTask':'"cola sentence: "' }),
+        'answer_question': ('t5_base', 'model', {'setTask':'"question: "'}),
+        'classify.sentiment_t5': ('t5_base','model',{'setTask':'"sst2 sentence: "'}),
 
     }
     # multi lang models
@@ -1928,8 +1922,8 @@ class Spellbook:
             'en.classify.emotion.use': 'classifierdl_use_emotion',
             'en.classify.cyberbullying.use': 'classifierdl_use_cyberbullying',
             'en.classify.sarcasm.use': 'classifierdl_use_sarcasm',
-            'en.sentiment.imdb.use': 'sentimentdl_use_imdb',
-            'en.sentiment.twitter.use': 'sentimentdl_use_twitter',
+            'en.sentiment.imdb.use.dl': 'sentimentdl_use_imdb',
+            'en.sentiment.twitter.use.dl': 'sentimentdl_use_twitter',
             'en.sentiment.imdb.glove': 'sentimentdl_glove_imdb',
             'en.classify.trec6': 'classifierdl_use_trec6',  # Alias withouth embedding
             'en.classify.trec50': 'classifierdl_use_trec50',  # Alias withouth embedding
@@ -1938,7 +1932,7 @@ class Spellbook:
             'en.classify.emotion': 'classifierdl_use_emotion',  # Alias withouth embedding
             'en.classify.cyberbullying': 'classifierdl_use_cyberbullying',  # Alias withouth embedding
             'en.classify.sarcasm': 'classifierdl_use_sarcasm',  # Alias withouth embedding
-            'en.sentiment.twitter': 'sentimentdl_use_twitter',  # Alias withouth embedding
+            'en.sentiment.twitter.dl': 'sentimentdl_use_twitter',  # Alias withouth embedding
 
             # 2.6 Release models
             'en.yake': 'yake',
@@ -2033,11 +2027,7 @@ class Spellbook:
             'en.t5': 'google_t5_small_ssm_nq',
             'en.t5.small': 't5_small',
             'en.t5.base': 't5_base',
-            # 2.7.0 new aliases
-            'en.t5.summarize': 't5_base',
-            'en.t5.classify.grammar_correctness': 't5_base',
-            'en.t5.classify.sentiment': 't5_base',
-            'en.t5.answer_question': 't5_base',
+
 
             # 2.7,1 and 2.7.2 ATIS classifier and ALIASES
             "en.classify.questions.atis": "classifierdl_use_atis",
@@ -6024,7 +6014,7 @@ class Spellbook:
         'sbiobertresolve_rxnorm_disposition': 'SentenceEntityResolverModel',
         'ner_jsl_slim': 'MedicalNerModel', 'ner_jsl_greedy_biobert': 'MedicalNerModel',
         'bert_token_classifier_ner_clinical': 'MedicalBertForTokenClassifier',
-        'bert_token_classifier_ner_jsl': 'MedicalBertForTokenClassifier',
+        'bert_token_classifier_ner_jsl': 'BertForTokenClassification',
         'bert_token_classifier_ner_chemicals': 'MedicalBertForTokenClassifier',
         'ner_deid_subentity_augmented_i2b2': 'MedicalNerModel', 'ner_biomarker': 'MedicalNerModel',
         'ner_nihss': 'MedicalNerModel', 'redl_nihss_biobert': 'RelationExtractionDLModel',

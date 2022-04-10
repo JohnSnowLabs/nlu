@@ -99,9 +99,10 @@ def __predict__(pipe, data, output_level, positions, keep_stranger_features, met
     :param return_spark_df: Prediction results will be returned right after transforming with the Spark NLP pipeline
     :return:
     '''
+
     if output_level == '':
         # Default sentence level for all components
-        if pipe.has_nlp_components:
+        if pipe.has_nlp_components and not PipeUtils.contains_T5_or_GPT_transformer(pipe):
             pipe.component_output_level = 'sentence'
             pipe.components = PipeUtils.configure_component_output_levels(pipe, 'sentence')
     else:

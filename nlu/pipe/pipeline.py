@@ -1,25 +1,24 @@
+import logging
+from typing import Union
+
+import pyspark
+import sparknlp
 from pyspark.sql.types import StructType, StructField, StringType
-from nlu.pipe.utils.resolution.storage_ref_utils import StorageRefUtils
-from nlu.pipe.utils.component_utils import ComponentUtils
-from nlu.pipe.utils.output_level_resolution_utils import OutputLevelUtils
-from nlu.pipe.utils.data_conversion_utils import DataConversionUtils
-from nlu.utils.environment.env_utils import is_running_in_databricks
-from nlu.pipe.col_substitution.col_name_substitution_utils import ColSubstitutionUtils
-from nlu.universe.universes import Licenses
-from nlu.pipe.nlu_component import NluComponent
-from nlu.pipe.extractors.extractor_methods.base_extractor_methods import *
-from typing import List, Union
 from sparknlp.base import *
 from sparknlp.base import LightPipeline
+
+from nlu.pipe.col_substitution.col_name_substitution_utils import ColSubstitutionUtils
 from nlu.pipe.extractors.extractor_configs_HC import default_full_config
+from nlu.pipe.extractors.extractor_methods.base_extractor_methods import *
+from nlu.pipe.extractors.extractor_methods.ocr_extractors import extract_tables
+from nlu.pipe.nlu_component import NluComponent
 from nlu.pipe.pipe_logic import PipeUtils
-from nlu.universe.component_universes import NLP_NODE_IDS
-import nlu.pipe.pipe_component
-import sparknlp
-import pyspark
-import pandas as pd
-import numpy as np
-import logging
+from nlu.pipe.utils.component_utils import ComponentUtils
+from nlu.pipe.utils.data_conversion_utils import DataConversionUtils
+from nlu.pipe.utils.output_level_resolution_utils import OutputLevelUtils
+from nlu.pipe.utils.resolution.storage_ref_utils import StorageRefUtils
+from nlu.universe.universes import Licenses
+from nlu.utils.environment.env_utils import is_running_in_databricks
 
 logger = logging.getLogger('nlu')
 
@@ -59,7 +58,7 @@ class NLUPipeline(dict):
         self.has_licensed_components = False
 
     def add(self, component: NluComponent, nlu_reference="default_name", pretrained_pipe_component=False,
-            name_to_add='', idx = None):
+            name_to_add='', idx=None):
         '''
 
         :param component:
@@ -67,9 +66,9 @@ class NLUPipeline(dict):
         :return:
         '''
         nlu_reference = component.nlu_ref
-        if idx :
-            self.components.insert(idx,component)
-        else :
+        if idx:
+            self.components.insert(idx, component)
+        else:
             self.components.append(component)
         # ensure that input/output cols are properly set
         # Spark NLP model reference shortcut
@@ -208,7 +207,6 @@ class NLUPipeline(dict):
 
         return self
 
-
     def get_extraction_configs(self, full_meta, positions, get_embeddings):
         """Search first OC namespace and if not found the HC Namespace for each Annotator Class in pipeline and get
         corresponding config Returns a dictionary of methods, where keys are column names values are methods  that
@@ -302,6 +300,14 @@ class NLUPipeline(dict):
         :param output_metadata: Whether to keep or drop additional metadata or predictions, like prediction confidence
         :return: Pandas dataframe which easy accessible features
         '''
+
+        if PipeUtils.has_table_extractor(self):
+            # If pipe has table extractors, we return list of tables or table itself if only one detected
+            processed = extract_tables(processed)
+            if len(processed) == 1:
+                return processed[0]
+            return processed
+
         stranger_features += ['origin_index']
         if output_level == '':
             # Infer output level if none defined
@@ -417,7 +423,7 @@ class NLUPipeline(dict):
                 self.light_spark_transformer_pipe = LightPipeline(self.spark_transformer_pipe, parse_embeddings=True)
 
     def save(self, path, component='entire_pipeline', overwrite=False):
-        if nlu.is_running_in_databricks():
+        if is_running_in_databricks():
             if path.startswith('/dbfs/') or path.startswith('dbfs/'):
                 nlu_path = path
                 if path.startswith('/dbfs/'):

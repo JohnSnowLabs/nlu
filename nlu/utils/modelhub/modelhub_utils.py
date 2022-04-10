@@ -69,7 +69,7 @@ class ModelHubUtils():
         :param nlu_ref:  What nlp_refrence to resolve
         :return: Json entry of that nlu reference
         """
-        if nlu_ref.split(".")[0] not in nlu.AllComponentsInfo().all_languages:
+        if nlu_ref.split(".")[0] not in nlu.Spellbook.pretrained_models_references.keys():
             nlu_ref = "en." + nlu_ref
         nlp_refrence = ModelHubUtils.NLU_ref_to_NLP_ref(nlu_ref)
 

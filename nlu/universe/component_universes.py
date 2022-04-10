@@ -16,7 +16,8 @@ from nlu.components.chunkers.ngram.ngram import NGram
 from nlu.components.classifiers.classifier_dl.classifier_dl import ClassifierDl
 from nlu.components.relation_extractors.relation_extractor_dl.relation_extractor_dl import RelationExtractionDL
 from nlu.components.seq2seqs.gpt2.gpt2 import GPT2
-
+from nlu.ocr_components.table_extractors.doc_table_extractor.doc2table import Doc2TextTable
+from nlu.ocr_components.table_extractors.ppt_table_extractor.ppt2table import PPT2TextTable
 from nlu.ocr_components.text_recognizers.doc2text.doc2text import Doc2Text
 from nlu.ocr_components.text_recognizers.img2text.img2text import Img2Text
 from nlu.ocr_components.text_recognizers.pdf2text.pdf2text import Pdf2Text
@@ -2037,65 +2038,65 @@ class ComponentUniverse:
 
         )),
 
-        # O_A.PDF2TEXT_TABLE: copy(NluComponent(
-        #     name=O_A.PDF2TEXT_TABLE,
-        #     type=T.TABLE_RECOGNIZER,
-        #     get_default_model=PDF2TextTable.get_default_model,
-        #     pdf_extractor_methods={'default': default_binary_to_image_config}, # TODO EXtractor
-        #     pdf_col_name_substitutor=substitute_recognized_text_cols,  # TODO substitor
-        #     output_level=L.DOCUMENT,
-        #     node=OCR_FEATURE_NODES.nodes[O_A.PDF2TEXT_TABLE],
-        #     description='Extract Tables from PDFs with have highlightable text',
-        #     provider=ComponentBackends.ocr,
-        #     license=Licenses.ocr,
-        #     computation_context=ComputeContexts.spark,
-        #     output_context=ComputeContexts.spark,
-        #     jsl_anno_class_id=O_A.PDF2TEXT_TABLE,
-        #     jsl_anno_py_class=ACR.JSL_anno_OCR_ref_2_py_class[O_A.PDF2TEXT_TABLE],
-        #     applicable_file_types=['PDF']
-        #
-        # )),
+        O_A.PDF2TEXT_TABLE: copy(NluComponent(
+            name=O_A.PDF2TEXT_TABLE,
+            type=T.TABLE_RECOGNIZER,
+            get_default_model=PDF2TextTable.get_default_model,
+            pdf_extractor_methods={'default': default_binary_to_image_config}, # TODO EXtractor
+            pdf_col_name_substitutor=substitute_recognized_text_cols,  # TODO substitor
+            output_level=L.DOCUMENT,
+            node=OCR_FEATURE_NODES.nodes[O_A.PDF2TEXT_TABLE],
+            description='Extract Tables from PDFs with have highlightable text',
+            provider=ComponentBackends.ocr,
+            license=Licenses.ocr,
+            computation_context=ComputeContexts.spark,
+            output_context=ComputeContexts.spark,
+            jsl_anno_class_id=O_A.PDF2TEXT_TABLE,
+            jsl_anno_py_class=ACR.JSL_anno_OCR_ref_2_py_class[O_A.PDF2TEXT_TABLE],
+            applicable_file_types=['PDF']
 
-        #
-        # O_A.PPT2TEXT_TABLE: copy(NluComponent(
-        #     name=O_A.PPT2TEXT_TABLE,
-        #     type=T.TABLE_RECOGNIZER,
-        #     get_default_model=PPT2TextTable.get_default_model,
-        #     pdf_extractor_methods={'default': default_binary_to_image_config}, # TODO EXtractor
-        #     pdf_col_name_substitutor=substitute_recognized_text_cols,  # TODO substitor
-        #     output_level=L.DOCUMENT,
-        #     node=OCR_FEATURE_NODES.nodes[O_A.PPT2TEXT_TABLE],
-        #     description='Extract Tables from PPT and PPTX files',
-        #     provider=ComponentBackends.ocr,
-        #     license=Licenses.ocr,
-        #     computation_context=ComputeContexts.spark,
-        #     output_context=ComputeContexts.spark,
-        #     jsl_anno_class_id=O_A.PPT2TEXT_TABLE,
-        #     jsl_anno_py_class=ACR.JSL_anno_OCR_ref_2_py_class[O_A.PPT2TEXT_TABLE],
-        #     applicable_file_types=['PPT','PPTX']
-        # )),
-        #
-        #
-        #
-        # O_A.DOC2TEXT_TABLE: copy(NluComponent(
-        #     name=O_A.DOC2TEXT_TABLE,
-        #     type=T.TABLE_RECOGNIZER,
-        #     get_default_model=Doc2TextTable.get_default_model,
-        #     pdf_extractor_methods={'default': default_binary_to_image_config}, # TODO EXtractor
-        #     pdf_col_name_substitutor=substitute_recognized_text_cols,  # TODO substitor
-        #     output_level=L.DOCUMENT,
-        #     node=OCR_FEATURE_NODES.nodes[O_A.DOC2TEXT_TABLE],
-        #     description='Extract Tables from PPT and PPTX files',
-        #     provider=ComponentBackends.ocr,
-        #     license=Licenses.ocr,
-        #     computation_context=ComputeContexts.spark,
-        #     output_context=ComputeContexts.spark,
-        #     jsl_anno_class_id=O_A.DOC2TEXT_TABLE,
-        #     jsl_anno_py_class=ACR.JSL_anno_OCR_ref_2_py_class[O_A.DOC2TEXT_TABLE],
-        #     applicable_file_types=['DOCX','DOC']
-        # )),
-        #
-        #
+        )),
+
+
+        O_A.PPT2TEXT_TABLE: copy(NluComponent(
+            name=O_A.PPT2TEXT_TABLE,
+            type=T.TABLE_RECOGNIZER,
+            get_default_model=PPT2TextTable.get_default_model,
+            pdf_extractor_methods={'default': default_binary_to_image_config}, # TODO EXtractor
+            pdf_col_name_substitutor=substitute_recognized_text_cols,  # TODO substitor
+            output_level=L.DOCUMENT,
+            node=OCR_FEATURE_NODES.nodes[O_A.PPT2TEXT_TABLE],
+            description='Extract Tables from PPT and PPTX files',
+            provider=ComponentBackends.ocr,
+            license=Licenses.ocr,
+            computation_context=ComputeContexts.spark,
+            output_context=ComputeContexts.spark,
+            jsl_anno_class_id=O_A.PPT2TEXT_TABLE,
+            jsl_anno_py_class=ACR.JSL_anno_OCR_ref_2_py_class[O_A.PPT2TEXT_TABLE],
+            applicable_file_types=['PPT','PPTX']
+        )),
+
+
+
+        O_A.DOC2TEXT_TABLE: copy(NluComponent(
+            name=O_A.DOC2TEXT_TABLE,
+            type=T.TABLE_RECOGNIZER,
+            get_default_model=Doc2TextTable.get_default_model,
+            pdf_extractor_methods={'default': default_binary_to_image_config}, # TODO EXtractor
+            pdf_col_name_substitutor=substitute_recognized_text_cols,  # TODO substitor
+            output_level=L.DOCUMENT,
+            node=OCR_FEATURE_NODES.nodes[O_A.DOC2TEXT_TABLE],
+            description='Extract Tables from PPT and PPTX files',
+            provider=ComponentBackends.ocr,
+            license=Licenses.ocr,
+            computation_context=ComputeContexts.spark,
+            output_context=ComputeContexts.spark,
+            jsl_anno_class_id=O_A.DOC2TEXT_TABLE,
+            jsl_anno_py_class=ACR.JSL_anno_OCR_ref_2_py_class[O_A.DOC2TEXT_TABLE],
+            applicable_file_types=['DOCX','DOC']
+        )),
+
+
 
 
 

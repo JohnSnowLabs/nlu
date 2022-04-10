@@ -65,3 +65,4 @@ class AnnoTypes:
     CHUNK_FILTERER = 'chunk_filterer'
 
     TEXT_RECOGNIZER = 'text_recognizer'
+    TABLE_RECOGNIZER = 'table_recognizer'

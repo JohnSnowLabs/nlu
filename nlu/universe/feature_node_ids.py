@@ -193,7 +193,7 @@ class OCR_NODE_IDS:
     TEXT2PDF = JslAnnoId('text2pdf')
     PDF_ASSEMBLER = JslAnnoId('pdf_assembler')
     PDF_DRAW_REGIONS = JslAnnoId('pdf_draw_regions')
-    PDF2TEXT_TABLE = JslAnnoId('pdf2text_table')
+    PDF2TEXT_TABLE = JslAnnoId('pdf2table')
 
     # DOCX Processing
     DOC2TEXT = JslAnnoId('doc2text')
