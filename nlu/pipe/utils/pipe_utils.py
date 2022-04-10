@@ -696,3 +696,9 @@ class PipeUtils:
             if model.__class__.name == class_name:
                 return model
         raise ValueError(f"Could not find model of requested class = {class_name}")
+
+    @staticmethod
+    def contains_T5_or_GPT_transformer(pipe):
+        for c in pipe.components:
+            if c.name in [NLP_NODE_IDS.GPT2, NLP_NODE_IDS.T5_TRANSFORMER]:
+                return True
