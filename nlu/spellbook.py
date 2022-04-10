@@ -1922,8 +1922,8 @@ class Spellbook:
             'en.classify.emotion.use': 'classifierdl_use_emotion',
             'en.classify.cyberbullying.use': 'classifierdl_use_cyberbullying',
             'en.classify.sarcasm.use': 'classifierdl_use_sarcasm',
-            'en.sentiment.imdb.use': 'sentimentdl_use_imdb',
-            'en.sentiment.twitter.use': 'sentimentdl_use_twitter',
+            'en.sentiment.imdb.use.dl': 'sentimentdl_use_imdb',
+            'en.sentiment.twitter.use.dl': 'sentimentdl_use_twitter',
             'en.sentiment.imdb.glove': 'sentimentdl_glove_imdb',
             'en.classify.trec6': 'classifierdl_use_trec6',  # Alias withouth embedding
             'en.classify.trec50': 'classifierdl_use_trec50',  # Alias withouth embedding
@@ -1932,7 +1932,7 @@ class Spellbook:
             'en.classify.emotion': 'classifierdl_use_emotion',  # Alias withouth embedding
             'en.classify.cyberbullying': 'classifierdl_use_cyberbullying',  # Alias withouth embedding
             'en.classify.sarcasm': 'classifierdl_use_sarcasm',  # Alias withouth embedding
-            'en.sentiment.twitter': 'sentimentdl_use_twitter',  # Alias withouth embedding
+            'en.sentiment.twitter.dl': 'sentimentdl_use_twitter',  # Alias withouth embedding
 
             # 2.6 Release models
             'en.yake': 'yake',
