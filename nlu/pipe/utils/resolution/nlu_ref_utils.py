@@ -36,7 +36,7 @@ def parse_language_from_nlu_ref(nlu_ref):
             if nlu_ref[0:3] != 'xx.':
                 nlu_reference = 'xx.' + nlu_ref
             logger.info(f'Setting lang as xx for nlu_ref={nlu_reference}')
-    if not lang :
+    if not lang:
         lang = 'en'
     logger.info(f'Parsed Nlu_ref={nlu_ref} as lang={lang}')
 
@@ -59,6 +59,10 @@ def nlu_ref_to_nlp_metadata(nlu_ref, is_recursive_call=False):
     nlp_ref = None
     license_type = Licenses.open_source
     is_pipe = False
+    if 'translate_to' in nlu_ref:
+        # We append here xx and set lang as xx  so users don't have to specify it
+        nlu_ref = 'xx.' + nlu_ref
+        lang = 'xx'
     # 1. check if open source pipeline
     if lang in Spellbook.pretrained_pipe_references.keys():
         if nlu_ref in Spellbook.pretrained_pipe_references[lang].keys():
@@ -75,7 +79,7 @@ def nlu_ref_to_nlp_metadata(nlu_ref, is_recursive_call=False):
         sparknlp_data = Spellbook.component_alias_references[nlu_ref]
         nlp_ref = sparknlp_data[0]
         is_pipe = 'component_list' in sparknlp_data[1]
-        if len(sparknlp_data) == 3 :
+        if len(sparknlp_data) == 3:
             model_params = sparknlp_data[2]
     # 4. check if healthcare pipe
     if lang in Spellbook.pretrained_healthcare_pipe_references.keys():
