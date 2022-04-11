@@ -18,7 +18,7 @@ from nlu.pipe.utils.data_conversion_utils import DataConversionUtils
 from nlu.pipe.utils.output_level_resolution_utils import OutputLevelUtils
 from nlu.pipe.utils.resolution.storage_ref_utils import StorageRefUtils
 from nlu.universe.universes import Licenses
-from nlu.utils.environment.env_utils import is_running_in_databricks
+from nlu.utils.environment.env_utils import is_running_in_databricks, try_import_streamlit
 
 logger = logging.getLogger('nlu')
 
@@ -617,11 +617,8 @@ class NLUPipeline(dict):
 
                       ) -> None:
         """Display Viz in streamlit"""
-        # try: from nlu.component_list.viz.streamlit_viz.streamlit_dashboard_OS import StreamlitVizBlockHandler
-        try:
-            from nlu.pipe.viz.streamlit_viz.streamlit_dashboard_OS import StreamlitVizBlockHandler
-        except  ImportError:
-            print("You need to install Streamlit to run this functionality.")
+        try_import_streamlit()
+        from nlu.pipe.viz.streamlit_viz.streamlit_dashboard_OS import StreamlitVizBlockHandler
         StreamlitVizBlockHandler.viz_streamlit_dashboard(self,
                                                          text,
                                                          model_selection,
@@ -663,10 +660,8 @@ class NLUPipeline(dict):
             show_text_input: bool = True,
 
     ):
-        try:
-            from nlu.pipe.viz.streamlit_viz.streamlit_dashboard_OS import StreamlitVizBlockHandler
-        except  ImportError:
-            print("You need to install Streamlit to run this functionality.")
+        try_import_streamlit()
+        from nlu.pipe.viz.streamlit_viz.streamlit_dashboard_OS import StreamlitVizBlockHandler
         StreamlitVizBlockHandler.visualize_tokens_information(self, text, title, sub_title, show_feature_select,
                                                               features, metadata, output_level, positions,
                                                               set_wide_layout_CSS, generate_code_sample, key,
@@ -691,10 +686,8 @@ class NLUPipeline(dict):
             show_infos: bool = True,
             show_logo: bool = True,
     ) -> None:
-        try:
-            from nlu.pipe.viz.streamlit_viz.streamlit_dashboard_OS import StreamlitVizBlockHandler
-        except  ImportError:
-            print("You need to install Streamlit to run this functionality.")
+        try_import_streamlit()
+        from nlu.pipe.viz.streamlit_viz.streamlit_dashboard_OS import StreamlitVizBlockHandler
         StreamlitVizBlockHandler.visualize_classes(self, text, output_level, title, sub_title, metadata, positions,
                                                    set_wide_layout_CSS, generate_code_sample, key, show_model_selector,
                                                    model_select_position, show_infos, show_logo)
@@ -712,10 +705,8 @@ class NLUPipeline(dict):
             show_logo: bool = True,
             show_text_input: bool = True,
     ) -> None:
-        try:
-            from nlu.pipe.viz.streamlit_viz.streamlit_dashboard_OS import StreamlitVizBlockHandler
-        except  ImportError:
-            print("You need to install Streamlit to run this functionality.")
+        try_import_streamlit()
+        from nlu.pipe.viz.streamlit_viz.streamlit_dashboard_OS import StreamlitVizBlockHandler
         StreamlitVizBlockHandler.visualize_dep_tree(self, text, title, sub_title, set_wide_layout_CSS,
                                                     generate_code_sample, key, show_infos, show_logo, show_text_input, )
 
@@ -740,10 +731,8 @@ class NLUPipeline(dict):
             show_text_input: bool = True,
 
     ):
-        try:
-            from nlu.pipe.viz.streamlit_viz.streamlit_dashboard_OS import StreamlitVizBlockHandler
-        except ImportError:
-            print("You need to install Streamlit to run this functionality.")
+        try_import_streamlit()
+        from nlu.pipe.viz.streamlit_viz.streamlit_dashboard_OS import StreamlitVizBlockHandler
         StreamlitVizBlockHandler.visualize_ner(self, text, ner_tags, show_label_select, show_table, title, sub_title,
                                                colors, show_color_selector, set_wide_layout_CSS, generate_code_sample,
                                                key, model_select_position, show_model_select, show_infos, show_logo,
@@ -773,10 +762,8 @@ class NLUPipeline(dict):
             show_logo: bool = True,
 
     ):
-        try:
-            from nlu.pipe.viz.streamlit_viz.streamlit_dashboard_OS import StreamlitVizBlockHandler
-        except ImportError:
-            print("You need to install Streamlit to run this functionality.")
+        try_import_streamlit()
+        from nlu.pipe.viz.streamlit_viz.streamlit_dashboard_OS import StreamlitVizBlockHandler
         StreamlitVizBlockHandler.display_word_similarity(self, texts, threshold, title, sub_tile, write_raw_pandas,
                                                          display_embed_information, similarity_matrix, show_algo_select,
                                                          dist_metrics, set_wide_layout_CSS, generate_code_sample, key,
@@ -810,10 +797,8 @@ class NLUPipeline(dict):
                                           show_logo: bool = True,
                                           n_jobs: Optional[int] = 3,  # False
                                           ):
-        try:
-            from nlu.pipe.viz.streamlit_viz.streamlit_dashboard_OS import StreamlitVizBlockHandler
-        except ImportError:
-            print("You need to install Streamlit to run this functionality.")
+        try_import_streamlit()
+        from nlu.pipe.viz.streamlit_viz.streamlit_dashboard_OS import StreamlitVizBlockHandler
         StreamlitVizBlockHandler.viz_streamlit_word_embed_manifold(self,
                                                                    default_texts,
                                                                    title,
@@ -862,10 +847,8 @@ class NLUPipeline(dict):
                                               show_logo: bool = True,
                                               n_jobs: Optional[int] = 3,  # False
                                               ):
-        try:
-            from nlu.pipe.viz.streamlit_viz.streamlit_dashboard_OS import StreamlitVizBlockHandler
-        except ImportError:
-            print("You need to install Streamlit to run this functionality.")
+        try_import_streamlit()
+        from nlu.pipe.viz.streamlit_viz.streamlit_dashboard_OS import StreamlitVizBlockHandler
         StreamlitVizBlockHandler.viz_streamlit_sentence_embed_manifold(self,
                                                                        default_texts,
                                                                        title,
@@ -907,10 +890,8 @@ class NLUPipeline(dict):
                                             show_logo: bool = True,
                                             n_jobs: Optional[int] = 3,  # False
                                             ):
-        try:
-            from nlu.pipe.viz.streamlit_viz.streamlit_dashboard_OS import StreamlitVizBlockHandler
-        except ImportError:
-            print("You need to install Streamlit to run this functionality.")
+        try_import_streamlit()
+        from nlu.pipe.viz.streamlit_viz.streamlit_dashboard_OS import StreamlitVizBlockHandler
         StreamlitVizBlockHandler.viz_streamlit_entity_embed_manifold(self,
                                                                      default_texts,
                                                                      title,
@@ -925,8 +906,3 @@ class NLUPipeline(dict):
                                                                      show_infos,
                                                                      show_logo,
                                                                      n_jobs)
-
-    def check_pyspark_pyarrow_optimization_compatibility(self):
-        # Only works for pyspark        "3.1.2"
-        v = pyspark.version.__version__.split('.')
-        if int(v[0]) == 3 and int(v[1]) >= 1: return True
