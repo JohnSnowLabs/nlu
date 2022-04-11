@@ -124,7 +124,7 @@ class NluComponent:
                          nlp_ref: str,
                          language: LanguageIso,
                          loaded_from_pretrained_pipe: bool,
-                         license_type: LicenseType,
+                         license_type: Optional[LicenseType],
                          storage_ref: Optional[str] = None):
             """Write metadata to nlu component_to_resolve after constructing it """
             self.model = jsl_anno_object
@@ -132,7 +132,6 @@ class NluComponent:
             self.nlp_ref = nlp_ref
             self.language = language
             self.loaded_from_pretrained_pipe = loaded_from_pretrained_pipe
-            self.license = license_type
             self.in_types = self.node.ins.copy()
             self.out_types = self.node.outs.copy()
             self.in_types_default = self.node.ins.copy()
@@ -141,6 +140,8 @@ class NluComponent:
             self.spark_output_column_names = self.out_types.copy()
             if storage_ref:
                 self.storage_ref = storage_ref
+            if license_type:
+                self.license = license_type
             if nlp_ref == 'glove_840B_300' or nlp_ref == 'glove_6B_300':
                 self.lang = 'xx'
             if hasattr(self.model, 'setIncludeConfidence'):
@@ -154,7 +155,7 @@ class NluComponent:
                 self.is_trained = False
             from copy import copy
 
-            return copy(self)
+            return self
 
     def __str__(self):
         return f'Component(ID={self.name}, NLU_REF={self.nlu_ref} NLP_REF={self.nlp_ref})'

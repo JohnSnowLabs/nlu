@@ -2,7 +2,7 @@ import json
 import os
 
 from nlu.universe.annotator_class_universe import AnnoClassRef
-from nlu.universe.component_universes import ComponentUniverse
+from nlu.universe.component_universes import ComponentUniverse, jsl_id_to_empty_component
 from nlu.universe.universes import Licenses
 
 
@@ -48,7 +48,7 @@ def verify_and_create_model(model_path: str):
     # construct_component_from_identifier('xx', nlu_ref = class_name, nlp_ref = class_name, anno_class_name=class_name)
     if class_name in os_annos.keys():
         jsl_anno_id = os_annos[class_name]
-        nlu_component = ComponentUniverse.os_components[jsl_anno_id]
+        nlu_component = jsl_id_to_empty_component(jsl_anno_id)
         return nlu_component.set_metadata(m,
                                           jsl_anno_id, jsl_anno_id,
                                           'xx',
@@ -56,7 +56,7 @@ def verify_and_create_model(model_path: str):
 
     elif class_name in hc_annos.keys():
         jsl_anno_id = hc_annos[class_name]
-        nlu_component = ComponentUniverse.hc_components[jsl_anno_id]
+        nlu_component = jsl_id_to_empty_component(jsl_anno_id)
         return nlu_component.set_metadata(m,
                                           jsl_anno_id, jsl_anno_id,
                                           'xx',

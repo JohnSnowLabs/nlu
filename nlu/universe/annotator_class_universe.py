@@ -1,5 +1,6 @@
 from typing import Dict
-from nlu.universe.atoms import JslAnnoId, JslAnnoPyClass, JslAnnoJavaClass
+
+from nlu.universe.atoms import JslAnnoId, JslAnnoPyClass
 from nlu.universe.feature_node_ids import OCR_NODE_IDS, NLP_NODE_IDS, NLP_HC_NODE_IDS
 
 
@@ -10,7 +11,7 @@ class AnnoClassRef:
     A_H = None  # NLP_HC_ANNO
     A_N = NLP_NODE_IDS
     HC_A_N = NLP_HC_NODE_IDS
-
+    # Map AnnoID to PyCLass
     JSL_anno2_py_class: Dict[JslAnnoId, JslAnnoPyClass] = {
 
         A_N.BIG_TEXT_MATCHER: 'BigTextMatcher',
@@ -171,7 +172,6 @@ class AnnoClassRef:
         HC_A_N.ENTITY_CHUNK_EMBEDDING: 'EntityChunkEmbeddings',
 
     }
-
     JSL_anno_OCR_ref_2_py_class: Dict[JslAnnoId, JslAnnoPyClass] = {
         OCR_NODE_IDS.IMAGE2TEXT: 'ImageToText',
         OCR_NODE_IDS.PDF2TEXT: 'PdfToText',
@@ -182,6 +182,8 @@ class AnnoClassRef:
         OCR_NODE_IDS.DOC2TEXT_TABLE: 'DocToTextTable',
 
     }
+
+
 
     @staticmethod
     def get_os_pyclass_2_anno_id_dict():
@@ -204,3 +206,11 @@ class AnnoClassRef:
                                                                        for
                                                                        k in AnnoClassRef.JSL_anno_OCR_ref_2_py_class}
         return JSL_OCR_py_class_2_anno_id
+
+
+# Flipped, maps PyClass to AnnoID
+AnnoClassRef.JSL_OS_py_class_2_anno_id: Dict[JslAnnoPyClass, JslAnnoId] = {AnnoClassRef.JSL_anno2_py_class[k]: k for k in AnnoClassRef.JSL_anno2_py_class}
+AnnoClassRef.JSL_HC_py_class_2_anno_id: Dict[JslAnnoId, JslAnnoPyClass] = {AnnoClassRef.JSL_anno_HC_ref_2_py_class[k]: k for k in
+                                                                           AnnoClassRef.JSL_anno_HC_ref_2_py_class}
+AnnoClassRef.JSL_OCR_py_class_2_anno_id: Dict[JslAnnoId, JslAnnoPyClass] = {AnnoClassRef.JSL_anno_OCR_ref_2_py_class[k]: k for k in
+                                                                            AnnoClassRef.JSL_anno_OCR_ref_2_py_class}
