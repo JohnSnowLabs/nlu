@@ -203,7 +203,7 @@ def load_nlu_pipe_from_hdd(pipe_path, request) -> NLUPipeline:
         if offline_utils.is_pipe(pipe_path):
             # language, nlp_ref, nlu_ref,path=None, is_licensed=False
             # todo deduct lang and if Licensed or not
-            pipe_components = construct_component_from_pipe_identifier('en', nlu_ref, nlu_ref, pipe_path, False)
+            pipe_components = get_trained_component_list_for_nlp_pipe_ref('en', nlu_ref, nlu_ref, pipe_path, False)
         # Resource in path is a single model
         elif offline_utils.is_model(pipe_path):
             c = offline_utils.verify_and_create_model(pipe_path)

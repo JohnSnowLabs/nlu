@@ -1,10 +1,4 @@
-from typing import Dict
-
-import sparknlp
-
-from nlu.universe.annotator_class_universe import AnnoClassRef
 from nlu.universe.feature_node_ids import NLP_NODE_IDS, NLP_HC_NODE_IDS, OCR_NODE_IDS
-from nlu.universe.atoms import JslAnnoId
 
 
 class Spellbook:
@@ -64,7 +58,6 @@ class Spellbook:
         # 'train.unlabeled_dependency_parser': '',
         # 'train.labeled_dependency_parser': '',
         # 'train.vivekn_sentiment': '',
-
 
     }
 
@@ -230,10 +223,10 @@ class Spellbook:
 
         # # 2.7.0 new aliases
         't5': ('t5_base', 'model'),
-        'summarize': ('t5_base', 'model', {'setTask':'"summarize: "'}),
-        'grammar_correctness': ('t5_base', 'model',{'setTask':'"cola sentence: "' }),
-        'answer_question': ('t5_base', 'model', {'setTask':'"question: "'}),
-        'classify.sentiment_t5': ('t5_base','model',{'setTask':'"sst2 sentence: "'}),
+        'summarize': ('t5_base', 'model', {'setTask': '"summarize: "'}),
+        'grammar_correctness': ('t5_base', 'model', {'setTask': '"cola sentence: "'}),
+        'answer_question': ('t5_base', 'model', {'setTask': '"question: "'}),
+        'classify.sentiment_t5': ('t5_base', 'model', {'setTask': '"sst2 sentence: "'}),
 
     }
     # multi lang models
@@ -2028,7 +2021,6 @@ class Spellbook:
             'en.t5.small': 't5_small',
             'en.t5.base': 't5_base',
 
-
             # 2.7,1 and 2.7.2 ATIS classifier and ALIASES
             "en.classify.questions.atis": "classifierdl_use_atis",
             "en.classify.questions.airline": "classifierdl_use_atis",
@@ -2181,10 +2173,10 @@ class Spellbook:
             'en.classify.typos.distilbert': 'distilbert_token_classifier_typo_detector',
 
             # NLP 3.4.2
-            'en.embed.deberta_v3_xsmall':'deberta_v3_xsmall',
-            'en.embed.deberta_v3_small':'deberta_v3_small',
-            'en.embed.deberta_v3_base':'deberta_v3_base',
-            'en.embed.deberta_v3_large':'deberta_v3_large',
+            'en.embed.deberta_v3_xsmall': 'deberta_v3_xsmall',
+            'en.embed.deberta_v3_small': 'deberta_v3_small',
+            'en.embed.deberta_v3_base': 'deberta_v3_base',
+            'en.embed.deberta_v3_large': 'deberta_v3_large',
 
         },
 
@@ -2767,7 +2759,7 @@ class Spellbook:
         },
 
         'xx': {
-            'xx.embed.mdeberta_v3_base':'mdeberta_v3_base',
+            'xx.embed.mdeberta_v3_base': 'mdeberta_v3_base',
             'xx.embed.albert.indic': 'albert_indic',
             'xx.ner.masakhaner.distilbert': 'distilbert_base_token_classifier_masakhaner',
             # 3.4.0
@@ -2835,7 +2827,6 @@ class Spellbook:
             # 'xx.use.xling_en_es': 'tfhub_use_xling_en_es',
             # 'xx.use.xling_en_fr': 'tfhub_use_xling_en_fr',
             # 'xx.use.xling_many': 'tfhub_use_xling_many',
-            'xx.use.multi'
 
             # 2.7.0 marian translate model references
             "xx.swc.marian.translate_to.en": "opus_mt_swc_en",
@@ -4198,7 +4189,7 @@ class Spellbook:
             {
 
                 # 3.4.2
-                'en.med_ner.clinical_trials' : 'bert_sequence_classifier_rct_biobert',
+                'en.med_ner.clinical_trials': 'bert_sequence_classifier_rct_biobert',
 
                 # 3.4.1
                 'en.med_ner.supplement_clinical': 'ner_supplement_clinical',
@@ -4555,8 +4546,8 @@ class Spellbook:
 
         'es': {
             # 3.4.2
-            'es.med_ner.deid.generic.roberta' : 'ner_deid_generic_roberta_augmented',
-            'es.med_ner.deid.subentity.roberta' : 'ner_deid_subentity_roberta_augmented',
+            'es.med_ner.deid.generic.roberta': 'ner_deid_generic_roberta_augmented',
+            'es.med_ner.deid.subentity.roberta': 'ner_deid_subentity_roberta_augmented',
 
             # 3.4.1
             'es.embed.sciwiki_300d': 'embeddings_sciwiki_300d',
@@ -4588,7 +4579,6 @@ class Spellbook:
         'jpg2text': OCR_NODE_IDS.IMAGE2TEXT,  # Alias for img2text
         'pdf2text': OCR_NODE_IDS.PDF2TEXT,
         'doc2text': OCR_NODE_IDS.DOC2TEXT,
-
 
         'pdf2table': OCR_NODE_IDS.PDF2TEXT_TABLE,
         'doc2table': OCR_NODE_IDS.DOC2TEXT_TABLE,
@@ -4643,7 +4633,8 @@ class Spellbook:
             'glove_6B_300': 'xx.embed.glove.6B_300',
         },
         'th': {
-            'tfhub_use_multi_lg': 'xx.use.multi'
+            'tfhub_use_multi_lg': 'xx.use.multi',
+            'labse': 'xx.embed_sentence.labse',
 
         },
         'ur': {
@@ -4835,17 +4826,17 @@ class Spellbook:
         'default_chunker': 'Chunker',
 
         # HC 3.4.2
-        'bert_sequence_classifier_rct_biobert' : 'MedicalBertForSequenceClassification',
-        'ner_deid_generic_augmented' : 'MedicalNerModel',
-        'ner_deid_generic_roberta_augmented' : 'MedicalNerModel',
-        'ner_deid_subentity_roberta_augmented' : 'MedicalNerModel',
+        'bert_sequence_classifier_rct_biobert': 'MedicalBertForSequenceClassification',
+        'ner_deid_generic_augmented': 'MedicalNerModel',
+        'ner_deid_generic_roberta_augmented': 'MedicalNerModel',
+        'ner_deid_subentity_roberta_augmented': 'MedicalNerModel',
 
         # NLP 3.4.2
-        'deberta_v3_xsmall':'DeBertaEmbeddings',
-        'deberta_v3_small':'DeBertaEmbeddings',
-        'deberta_v3_base':'DeBertaEmbeddings',
-        'deberta_v3_large':'DeBertaEmbeddings',
-        'mdeberta_v3_base':'DeBertaEmbeddings',
+        'deberta_v3_xsmall': 'DeBertaEmbeddings',
+        'deberta_v3_small': 'DeBertaEmbeddings',
+        'deberta_v3_base': 'DeBertaEmbeddings',
+        'deberta_v3_large': 'DeBertaEmbeddings',
+        'mdeberta_v3_base': 'DeBertaEmbeddings',
         # NLP HC 3.4.1
         'embeddings_sciwiki_300d': 'WordEmbeddingsModel',
         'ner_deid_generic': 'MedicalNerModel',

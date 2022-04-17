@@ -3,7 +3,7 @@ from sparknlp.annotator import *
 from nlu.components import embeddings_chunker
 from nlu.universe.feature_node_ids import NLP_NODE_IDS, NLP_HC_NODE_IDS
 from nlu.universe.logic_universes import AnnoTypes
-from nlu.universe.component_universes import ComponentUniverse
+from nlu.universe.component_universes import ComponentUniverse, jsl_id_to_empty_component
 from nlu.universe.universes import Licenses
 
 
@@ -42,7 +42,7 @@ class EntityManifoldUtils():
             if c.name == NLP_HC_NODE_IDS.NER_CONVERTER_INTERNAL:
                 ner_conveter_c = c
 
-        chunker = ComponentUniverse.os_components[NLP_NODE_IDS.CHUNK_EMBEDDINGS_CONVERTER]
+        chunker = jsl_id_to_empty_component(NLP_NODE_IDS.CHUNK_EMBEDDINGS_CONVERTER)
         chunker.set_metadata(
             chunker.get_default_model(),
             'chunker', 'chunker', 'xx', False, Licenses.open_source)
