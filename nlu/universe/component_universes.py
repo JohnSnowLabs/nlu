@@ -1,3 +1,5 @@
+from sparknlp_jsl.annotator import BertSentenceChunkEmbeddings
+
 from nlu.components.assertions.assertion_dl.assertion_dl import AssertionDL
 from nlu.components.assertions.assertion_log_reg.assertion_log_reg import AssertionLogReg
 from nlu.components.chunkers.contextual_parser.contextual_parser import ContextualParser
@@ -16,6 +18,7 @@ from nlu.components.classifiers.sentiment_dl.sentiment_dl import SentimentDl
 from nlu.components.classifiers.seq_albert.seq_albert import SeqAlbertClassifier
 from nlu.components.classifiers.seq_bert.seq_bert_classifier import SeqBertClassifier
 from nlu.components.classifiers.seq_bert_medical.seq_bert_medical_classifier import SeqBertMedicalClassifier
+from nlu.components.classifiers.seq_deberta.seq_deberta_classifier import SeqDebertaClassifier
 from nlu.components.classifiers.seq_distilbert.seq_distilbert_classifier import SeqDilstilBertClassifier
 from nlu.components.classifiers.seq_distilbert_medical.seq_distilbert_medical_classifier import \
     SeqDilstilBertMedicalClassifier
@@ -92,7 +95,6 @@ from nlu.pipe.col_substitution.col_substitution_HC import *
 from nlu.pipe.col_substitution.col_substitution_OCR import substitute_recognized_text_cols
 from nlu.pipe.col_substitution.col_substitution_OS import *
 from nlu.pipe.extractors.extractor_configs_HC import *
-from nlu.pipe.extractors.extractor_configs_HC import default_full_config
 from nlu.pipe.extractors.extractor_configs_OCR import default_text_recognizer_config, default_binary_to_image_config
 from nlu.pipe.extractors.extractor_configs_OS import *
 from nlu.pipe.nlu_component import NluComponent
@@ -237,6 +239,47 @@ class ComponentUniverse:
                                               is_storage_ref_producer=True,
                                               has_storage_ref=True,
                                               ),
+
+        A.BERT_SENTENCE_CHUNK_EMBEDDINGS: partial(NluComponent,
+                                                  name=A.BERT_SENTENCE_CHUNK_EMBEDDINGS,
+                                                  type=T.CHUNK_EMBEDDING,
+                                                  get_default_model=BertSentenceChunkEmbeddings.get_default_model,
+                                                  get_pretrained_model=BertSentenceChunkEmbeddings.get_pretrained_model,
+                                                  pdf_extractor_methods={'default': default_chunk_embedding_config,
+                                                                         'default_full': default_full_config, },
+                                                  pdf_col_name_substitutor=substitute_chunk_embed_cols,
+                                                  output_level=L.TOKEN,
+                                                  node=NLP_FEATURE_NODES.nodes[A.BERT_SENTENCE_CHUNK_EMBEDDINGS],
+                                                  description='Converts NER chunks into Chunk Embeddings generated from sentence embedder',
+                                                  provider=ComponentBackends.open_source,
+                                                  license=Licenses.open_source,
+                                                  computation_context=ComputeContexts.spark,
+                                                  output_context=ComputeContexts.spark,
+                                                  jsl_anno_class_id=A.BERT_SENTENCE_CHUNK_EMBEDDINGS,
+                                                  jsl_anno_py_class=ACR.JSL_anno2_py_class[
+                                                      A.BERT_SENTENCE_CHUNK_EMBEDDINGS],
+                                                  is_storage_ref_producer=True,
+                                                  has_storage_ref=True,
+                                                  ),
+
+        # TODO just placeholder
+        A.TRAINABLE_TOKENIZER: partial(NluComponent,
+                                       name=A.POS,
+                                       type=T.TOKEN_CLASSIFIER,
+                                       get_default_model=RegexTokenizer.get_default_model,
+                                       pdf_extractor_methods={'default': default_tokenizer_config,
+                                                              'default_full': default_full_config, },
+                                       pdf_col_name_substitutor=substitute_tokenizer_cols,
+                                       output_level=L.TOKEN,
+                                       node=NLP_FEATURE_NODES.nodes[A.POS],
+                                       description='todo',
+                                       provider=ComponentBackends.open_source,
+                                       license=Licenses.open_source,
+                                       computation_context=ComputeContexts.spark,
+                                       output_context=ComputeContexts.spark,
+                                       jsl_anno_class_id=A.REGEX_TOKENIZER,
+                                       jsl_anno_py_class=ACR.JSL_anno2_py_class[A.REGEX_TOKENIZER],
+                                       ),
         A.CHUNK_TOKENIZER: 'TODO NOT INTEGRATED',
         A.CHUNKER: partial(NluComponent,
                            name=A.CHUNKER,
@@ -1663,6 +1706,30 @@ class ComponentUniverse:
                                            has_storage_ref=True,
                                            is_storage_ref_producer=True,
                                            ),
+
+        A.DEBERTA_FOR_SEQUENCE_CLASSIFICATION: partial(NluComponent,
+                                                       name=A.DEBERTA_FOR_SEQUENCE_CLASSIFICATION,
+                                                       type=T.TRANSFORMER_SEQUENCE_CLASSIFIER,
+                                                       get_default_model=SeqDebertaClassifier.get_default_model,
+                                                       get_pretrained_model=SeqDebertaClassifier.get_pretrained_model,
+                                                       pdf_extractor_methods={
+                                                           'default': default_classifier_dl_config,
+                                                           'default_full': default_full_config, },
+                                                       pdf_col_name_substitutor=substitute_seq_bert_classifier_cols,
+                                                       output_level=L.INPUT_DEPENDENT_DOCUMENT_CLASSIFIER,
+                                                       node=NLP_FEATURE_NODES.nodes[
+                                                           A.DEBERTA_FOR_SEQUENCE_CLASSIFICATION],
+                                                       description='The DeBERTa model was proposed in DeBERTa: Decoding-enhanced BERT with Disentangled Attention by Pengcheng He, Xiaodong Liu, Jianfeng Gao, Weizhu Chen. It is based on Google’s BERT model released in 2018 and Facebook’s RoBERTa model released in 2019. This classifier uses DeBERTa embeddingss with a linear classification head ontop.',
+                                                       provider=ComponentBackends.open_source,
+
+                                                       license=Licenses.open_source,
+                                                       computation_context=ComputeContexts.spark,
+                                                       output_context=ComputeContexts.spark,
+                                                       jsl_anno_class_id=A.DEBERTA_FOR_SEQUENCE_CLASSIFICATION,
+                                                       jsl_anno_py_class=ACR.JSL_anno2_py_class[
+                                                           A.DEBERTA_FOR_SEQUENCE_CLASSIFICATION],
+                                                       ),
+
         ######### HEALTHCARE ##############
 
         H_A.ASSERTION_DL: partial(NluComponent,
@@ -1898,7 +1965,7 @@ class ComponentUniverse:
                                  pdf_extractor_methods={'default': default_ner_config,
                                                         'default_full': default_full_config, },
                                  pdf_col_name_substitutor=substitute_ner_dl_cols,
-                                 output_level=L.CHUNK,
+                                 output_level=L.TOKEN,
                                  node=NLP_HC_FEATURE_NODES.nodes[H_A.MEDICAL_NER],
                                  description='Deep Learning based Medical Named Entity Recognizer (NER)',
                                  provider=ComponentBackends.hc,
@@ -1920,7 +1987,7 @@ class ComponentUniverse:
                                            pdf_extractor_methods={'default': default_ner_config,
                                                                   'default_full': default_full_config, },
                                            pdf_col_name_substitutor=substitute_ner_dl_cols,
-                                           output_level=L.CHUNK,
+                                           output_level=L.TOKEN,
                                            node=NLP_HC_FEATURE_NODES.nodes[H_A.TRAINABLE_MEDICAL_NER],
                                            description='Trainable Deep Learning based Medical Named Entity Recognizer (NER)',
                                            provider=ComponentBackends.hc,
@@ -2053,10 +2120,10 @@ class ComponentUniverse:
                                               type=T.CHUNK_CLASSIFIER,
                                               get_pretrained_model=SentenceResolver.get_pretrained_model,
                                               get_trainable_model=SentenceResolver.get_default_trainable_model,
-                                              pdf_extractor_methods={'default': default_chunk_resolution_config,
-                                                                     'default_full': default_full_config, },
+                                              pdf_extractor_methods={'default': resolver_conifg_with_metadata,
+                                                                     'default_full': full_resolver_config, },
                                               pdf_col_name_substitutor=substitute_sentence_resolution_cols,
-                                              output_level=L.RELATION,
+                                              output_level=L.CHUNK,
                                               node=NLP_HC_FEATURE_NODES.nodes[H_A.SENTENCE_ENTITY_RESOLVER],
                                               description='Deep Learning based entity resolver which extracts resolved entities directly from Sentence Embedding. No NER model required.',
                                               provider=ComponentBackends.hc,
