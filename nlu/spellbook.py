@@ -26,7 +26,7 @@ class Spellbook:
     # trainable_model_references = ['classifier_dl']
 
     '''
-    NLU REFERENCE FORMATS : 
+    NLU REFERENCE FORMATS :
     <lang>.<action>.<
     '''
     trainable_models = {
@@ -359,6 +359,7 @@ class Spellbook:
             'it.ner': 'entity_recognizer_md',  # it default ner
             'it.ner.md': 'entity_recognizer_md',
             'it.ner.lg': 'entity_recognizer_lg',
+
         },
         'no': {
             'no.explain': 'explain_document_sm',  # default no explain
@@ -1765,6 +1766,9 @@ class Spellbook:
         'vi': {
             'vi.embed.distilbert.cased': 'distilbert_base_cased',
             'vi.lemma': 'lemma',
+            'vi.embed.bert_cased': 'bert_embeddings_bert_base_vi_cased',
+            # 'vi.pos': 'pos_vtb',
+
         },
         'is': {
             'is.ner': 'roberta_token_classifier_icelandic_ner',
@@ -1777,11 +1781,14 @@ class Spellbook:
         'ta': {
             'ta.lemma': 'lemma',
             'ta.detect_sentence': 'sentence_detector_dl',
+            'ta.pos': 'pos_ttb',
 
         },
 
         'cy': {
             'cy.lemma': 'lemma',
+            'cy.embed.w2v_cc_300d': 'w2v_cc_300d',
+
         },
 
         'nl': {
@@ -1798,6 +1805,7 @@ class Spellbook:
             'nl.embed_sentence.bert.base_cased': 'sent_bert_base_cased',
             'nl.embed.bert.base_cased': 'bert_base_cased',
             'nl.ner.bert': 'bert_token_classifier_dutch_udlassy_ner',
+            'nl.lemma_alpino': 'lemma_alpino',
 
         },
         'en': {
@@ -2178,6 +2186,14 @@ class Spellbook:
             'en.embed.deberta_v3_base': 'deberta_v3_base',
             'en.embed.deberta_v3_large': 'deberta_v3_large',
 
+            # NLP 3.4.3
+            'en.classify.sentiment.imdb.deberta': 'deberta_v3_xsmall_sequence_classifier_imdb',
+            'en.classify.sentiment.imdb.deberta.small': 'deberta_v3_small_sequence_classifier_imdb',
+            'en.classify.sentiment.imdb.deberta.base': 'deberta_v3_base_sequence_classifier_imdb',
+            'en.classify.sentiment.imdb.deberta.large': 'deberta_v3_large_sequence_classifier_imdb',
+            'en.classify.news.deberta': 'deberta_v3_xsmall_sequence_classifier_ag_news',
+            'en.classify.news.deberta.small': 'deberta_v3_small_sequence_classifier_ag_news',
+
         },
 
         'yi': {
@@ -2201,6 +2217,8 @@ class Spellbook:
             'fr.classify.distilbert_sequence.allocine': 'distilbert_multilingual_sequence_classifier_allocine',
             'fr.classify.xlm_roberta.allocine': 'xlm_roberta_base_sequence_classifier_allocine',
 
+            'fr.classify.allocine': 'mdeberta_v3_base_sequence_classifier_allocine',
+            'fr.embed.bert_5lang_cased': 'bert_embeddings_bert_base_5lang_cased',
         },
         'de': {
             'de.classify.news_sentiment.bert': 'bert_sequence_classifier_news_sentiment',
@@ -2218,12 +2236,14 @@ class Spellbook:
             'de.classify.news': 'classifierdl_bert_news',
             'de.embed_sentence.bert.base_cased': 'sent_bert_base_cased',
             'de.classify.sentiment.bert': 'classifierdl_bert_sentiment',
-            'de.ner': 'xlm_roberta_large_token_classifier_conll03',
+            'de.ner.xlm': 'xlm_roberta_large_token_classifier_conll03',
+            'de.embed.medbert': 'bert_embeddings_German_MedBERT',
 
         },
         'it': {
             'it.lemma': 'lemma_dxc',  # default lemma it
             'it.lemma.dxc': 'lemma_dxc',
+            'it.embed.word2vec': 'w2v_cc_300d',
             # 'it.sentiment.dxc': 'sentiment_dxc', # Depracated
             # 'it.sentiment': 'sentiment_dxc',  # # Depracated
             'it.pos': 'pos_ud_isdt',  # default pos it
@@ -2234,6 +2254,7 @@ class Spellbook:
             'it.embed.bert': 'bert_base_italian_cased',
             'it.embed.bert.uncased': 'bert_base_italian_uncased',
             'it.classify.sentiment': 'bert_sequence_classifier_sentiment',
+            'it.embed.bert_it_cased': 'bert_embeddings_bert_base_it_cased',
 
         },
         'nb': {
@@ -2319,11 +2340,15 @@ class Spellbook:
             'es.embed.bert.base_cased': 'bert_base_cased',
             'es.embed_sentence.bert.base_uncased': 'sent_bert_base_uncased',
             'es.embed_sentence.bert.base_cased': 'sent_bert_base_cased',
+            'es.embed.w2v_cc_300d': 'w2v_cc_300d',
+            'es.lemma.ancora': 'lemma_ancora',
 
         },
         'af': {
             'af.stopwords': 'stopwords_af',
             'af.lemma': 'lemma',
+            'af.pos': 'pos_afribooms',
+            'af.lemma.afribooms': 'lemma_afribooms',
             'af.pos': 'pos_afribooms',
 
         },
@@ -2340,6 +2365,7 @@ class Spellbook:
 
             "ar.ner": "aner_cc_300d",
             "ar.ner.aner": "aner_cc_300d",
+            'ar.embed.arbert': 'bert_embeddings_ARBERT',
 
         },
         'hy': {
@@ -2363,6 +2389,7 @@ class Spellbook:
             'bn.ner.glove': 'ner_jifs_glove_840B_300d',
             'bn.embed.glove': 'bengali_cc_300d',
             'bn.embed': 'bengali_cc_300d',
+            'bn.embed.bangala_bert': 'bert_embeddings_bangla_bert_base',
 
         },
         'br': {
@@ -2376,12 +2403,14 @@ class Spellbook:
             'bg.pos': 'pos_ud_btb',  # default bg pos
             'bg.pos.ud_btb': 'pos_ud_btb',
             'bg.stopwords': 'stopwords_bg',
+            'bg.pos': 'pos_btb',
 
         },
         'ca': {
             'ca.stopwords': 'stopwords_ca',
             'ca.lemma': 'lemma',
             'ca.pos': 'pos_ud_ancora',
+            'ca.lemma.ancora': 'lemma_ancora',
 
         },
         'cs': {
@@ -2389,6 +2418,8 @@ class Spellbook:
             'cs.pos': 'pos_ud_pdt',  # default cs pos
             'cs.pos.ud_pdt': 'pos_ud_pdt',
             'cs.stopwords': 'stopwords_cs',
+            'cs.pos.cac': 'pos_cac',
+
         },
         'eo': {
             'eo.stopwords': 'stopwords_eo'
@@ -2429,6 +2460,7 @@ class Spellbook:
 
             'el.embed.bert.base_uncased': 'bert_base_uncased',
             'el.embed_sentence.bert.base_uncased': 'sent_bert_base_uncased',
+            # 'el.embed.w2v_cc_300d': 'w2v_cc_300d',
 
         },
         'ha': {
@@ -2455,7 +2487,13 @@ class Spellbook:
             'hi.pos': 'pos_ud_hdtb',
             'hi.embed': 'hindi_cc_300d',
             'hi.ner': 'bert_hi_en_ner',
-            'hi.ner': 'bert_token_classifier_hi_en_ner',
+            'hi.ner.bert': 'bert_token_classifier_hi_en_ner',
+            'hi.embed.bert_hi_cased': 'bert_embeddings_bert_base_hi_cased',
+            # 'hi.embed.w2v_cc_300d': 'w2v_cc_300d',
+
+        },
+        'hif': {
+            'hif.embed.w2v_cc_300d': 'w2v_cc_300d',
 
         },
         'hu': {
@@ -2624,6 +2662,7 @@ class Spellbook:
             'tr.classify.cyberbullying': 'classifierdl_berturk_cyberbullying',
             'tr.classify.token_bert.turkish_ner': 'bert_token_classifier_turkish_ner',
             'tr.ner.xlm_roberta': 'xlm_roberta_base_token_classifier_ner',
+            'tr.embed.bert_cased': 'bert_embeddings_bert_base_tr_cased',
 
         },
         'uk': {
@@ -2637,6 +2676,7 @@ class Spellbook:
         'te': {
             'te.detect_sentence': 'sentence_detector_dl',
             'te.embed.distilbert': 'distilbert_uncased',
+            'te.pos': 'pos_mtg',
 
         },
 
@@ -2709,7 +2749,8 @@ class Spellbook:
             'zh.embed.bert': 'bert_base_chinese',  # default zh embeds
             'zh.embed.bert.wwm': 'chinese_bert_wwm',  # default zh embeds
             'zh.embed.xlnet': 'chinese_xlnet_base',
-            'zh.ner': 'bert_token_classifier_chinese_ner',
+            'zh.ner.bert_token': 'bert_token_classifier_chinese_ner',
+            'zh.embed.bert_5lang_cased': 'bert_embeddings_bert_base_5lang_cased',
 
         },
 
@@ -2731,18 +2772,21 @@ class Spellbook:
             'ur.classify.distilbert_sequence.imdb': 'distilbert_base_sequence_classifier_imdb',
             'ur.classify.fakenews': 'classifierdl_urduvec_fakenews',
             'ur.classify.news': 'classifierdl_bert_news',
+            'ur.classify.sentiment.imdb': 'mdeberta_v3_base_sequence_classifier_imdb',
+            'ur.embed.bert_cased': 'bert_embeddings_bert_base_ur_cased',
 
         },
 
         'ko': {
 
             'ko.segment_words': 'wordseg_kaist_ud',
-            # 'ko.pos': 'pos_ud_kaist',  # default ko pos
+            'ko.pos': 'pos_ud_kaist',  # default ko pos
             'ko.ner': 'ner_kmou_glove_840B_300d',  # default ko ner
-            # 'ko.pos.ud_kaist': 'pos_ud_kaist',
+            'ko.pos.ud_kaist': 'pos_ud_kaist',
             'ko.ner.kmou': 'ner_kmou_glove_840B_300d',  # default ner kmou
             'ko.ner.kmou.glove_840B_300d': 'ner_kmou_glove_840B_300d',
             "ko.lemma": "lemma",
+            'ko.embed.bert': 'bert_embeddings_bert_base',
 
         },
 
@@ -2757,7 +2801,10 @@ class Spellbook:
             'am.embed_sentence.xlm_roberta': 'sent_xlm_roberta_base_finetuned_amharic',  # Default Sentence XLM
 
         },
+        'azb': {
+            'azb.embed.w2v_cc_300d': 'w2v_cc_300d',
 
+        },
         'xx': {
             'xx.embed.mdeberta_v3_base': 'mdeberta_v3_base',
             'xx.embed.albert.indic': 'albert_indic',
@@ -4155,6 +4202,26 @@ class Spellbook:
             'xx.cs.translate_to.sv': 'opus_mt_cs_sv',
 
         },
+        'bo': {
+            'bo.embed.w2v_cc_300d': 'w2v_cc_300d',
+
+        },
+
+        'diq': {
+            'diq.embed.w2v_cc_300d': 'w2v_cc_300d',
+
+        },
+        'ckb': {
+            # 'ckb.embed.w2v_cc_300d': 'w2v_cc_300d',
+
+        },
+
+        'lt': {
+            'lt.lemma': 'lemma_alksnis',
+        },
+        'gd': {
+            'gd.lemma': 'lemma_arcosg',
+        },
 
     }
 
@@ -4181,12 +4248,28 @@ class Spellbook:
             'en.recognize_entities.posology': 'recognize_entities_posology',  # PIPE
 
         },
+        'fr': {
+            # 'fr.deid_obfuscated' : 'clinical_deidentification' need finisher support first
 
+
+        }
     }
     pretrained_healthcare_model_references = {
+        'fr': {
+            'fr.med_ner.deid_generic': 'ner_deid_generic',
+            'fr.med_ner.deid_subentity': 'ner_deid_subentity',
 
+        },
+        'it':
+            {
+                'it.med_ner.deid_generic': 'ner_deid_generic',
+                'it.med_ner.deid_subentity': 'ner_deid_subentity',
+
+            },
         'en':
             {
+                # 3.4.3
+                'en.relation.zeroshot_biobert': 're_zeroshot_biobert',
 
                 # 3.4.2
                 'en.med_ner.clinical_trials': 'bert_sequence_classifier_rct_biobert',
@@ -4533,7 +4616,6 @@ class Spellbook:
                 'de.med_ner.deid_generic': 'ner_deid_generic',
                 'de.embed.w2v': 'w2v_cc_300d',
                 'de.embed': 'w2v_cc_300d',
-                'de.embed.w2v': 'w2v_cc_300d',
                 'de.med_ner.legal': 'ner_legal',
                 # 'de.med_ner' :'ner_healthcare', # BAD NER TRAINED ON STORAGE_REF embeddings_healthcare_100d which only exist in EN
                 #  'de.med_ner.healthcare' :'ner_healthcare', # BAD NER TRAINED ON STORAGE_REF embeddings_healthcare_100d which only exist in EN
@@ -4784,6 +4866,15 @@ class Spellbook:
         'de': {
             'clinical': 'de.embed_sentence.bert.base_cased',
 
+        },
+        'fr': {
+            'WordEmbeddings_b266d1e5126a': 'fr.embed.w2v_cc_300d',
+
+        },
+        'it': {
+            'w2v_cc_300d_it': 'it.embed.word2vec'
+    
+    
         }
     }
 
@@ -4822,8 +4913,56 @@ class Spellbook:
         OCR_NODE_IDS.PDF2TEXT_TABLE: 'PdfToTextTable',
         OCR_NODE_IDS.PPT2TEXT_TABLE: 'PptToTextTable',
         OCR_NODE_IDS.DOC2TEXT_TABLE: 'DocToTextTable',
+        # HC 3.5
 
+        're_zeroshot_biobert': 'ZeroShotRelationExtractionModel',
+        'w2v_cc_300d': 'WordEmbeddingsModel',
+        'ner_deid_generic': 'MedicalNerModel',
+        'ner_deid_subentity': 'MedicalNerModel',
+        'w2v_cc_300d': 'WordEmbeddingsModel',
+        'ner_deid_generic': 'MedicalNerModel',
+        'ner_deid_subentity': 'MedicalNerModel',
+        # NLP 3.4.3
         'default_chunker': 'Chunker',
+        'mdeberta_v3_base_sequence_classifier_imdb': 'DeBertaForSequenceClassification',
+        'mdeberta_v3_base_sequence_classifier_allocine': 'DeBertaForSequenceClassification',
+        'deberta_v3_xsmall_sequence_classifier_imdb': 'DeBertaForSequenceClassification',
+        'deberta_v3_small_sequence_classifier_imdb': 'DeBertaForSequenceClassification',
+        'deberta_v3_base_sequence_classifier_imdb': 'DeBertaForSequenceClassification',
+        'deberta_v3_large_sequence_classifier_imdb': 'DeBertaForSequenceClassification',
+        'deberta_v3_xsmall_sequence_classifier_ag_news': 'DeBertaForSequenceClassification',
+        'deberta_v3_small_sequence_classifier_ag_news': 'DeBertaForSequenceClassification',
+        'bert_embeddings_ARBERT': 'BertEmbeddings',
+        'bert_embeddings_German_MedBERT': 'BertEmbeddings',
+        'bert_embeddings_bangla_bert_base': 'BertEmbeddings',
+        'bert_embeddings_bert_base_5lang_cased': 'BertEmbeddings',
+        'bert_embeddings_bert_base_5lang_cased': 'BertEmbeddings',
+        'bert_embeddings_bert_base_hi_cased': 'BertEmbeddings',
+        'bert_embeddings_bert_base_it_cased': 'BertEmbeddings',
+        'bert_embeddings_bert_base': 'BertEmbeddings',
+        'bert_embeddings_bert_base_tr_cased': 'BertEmbeddings',
+        'bert_embeddings_bert_base_ur_cased': 'BertEmbeddings',
+        'bert_embeddings_bert_base_vi_cased': 'BertEmbeddings',
+        'w2v_cc_300d': 'WordEmbeddingsModel',
+        'w2v_cc_300d': 'WordEmbeddingsModel',
+        'w2v_cc_300d': 'WordEmbeddingsModel',
+        'w2v_cc_300d': 'WordEmbeddingsModel',
+        'w2v_cc_300d': 'WordEmbeddingsModel',
+        'w2v_cc_300d': 'WordEmbeddingsModel',
+        'w2v_cc_300d': 'WordEmbeddingsModel',
+        'w2v_cc_300d': 'WordEmbeddingsModel',
+        'lemma_afribooms': 'LemmatizerModel',
+        'lemma_alksnis': 'LemmatizerModel',
+        'lemma_alpino': 'LemmatizerModel',
+        'lemma_arcosg': 'LemmatizerModel',
+        'lemma_ancora': 'LemmatizerModel',
+        'lemma_ancora': 'LemmatizerModel',
+        'pos_mtg': 'PerceptronModel',
+        'pos_ttb': 'PerceptronModel',
+        'pos_vtb': 'PerceptronModel',
+        'pos_cac': 'PerceptronModel',
+        'pos_btb': 'PerceptronModel',
+        'pos_afribooms': 'PerceptronModel',
 
         # HC 3.4.2
         'bert_sequence_classifier_rct_biobert': 'MedicalBertForSequenceClassification',
@@ -4842,6 +4981,7 @@ class Spellbook:
         'ner_deid_generic': 'MedicalNerModel',
         'ner_deid_subentity': 'MedicalNerModel',
         'ner_supplement_clinical': 'MedicalNerModel',
+
         'sbiobertresolve_rxnorm_augmented_re': 'SentenceEntityResolverModel',
         'bert_sequence_classifier_ade': 'MedicalBertForSequenceClassification',
         'bert_sequence_classifier_gender_biobert': 'MedicalBertForSequenceClassification',
@@ -6041,4 +6181,5 @@ class Spellbook:
         'normalizer': 'NormalizerModel', 'pragmatic_sentence_detector': 'SentenceDetector',
         'spellcheck_sd': 'SymmetricDeleteModel',
         'dependency_conllu.untyped': 'DependencyParserModel', 'ld_wiki_7': 'LanguageDetectorDL',
-        'ld_wiki_20': 'LanguageDetectorDL'}
+        'ld_wiki_20': 'LanguageDetectorDL', 'pos_ud_kaist': 'PerceptronModel', }
+
