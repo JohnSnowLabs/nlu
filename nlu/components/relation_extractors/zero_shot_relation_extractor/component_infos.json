@@ -1,0 +1,25 @@
+{
+  "name": "relation_extractor_dl",
+  "description": "todo",
+  "output_level": "relation",
+  "trainable": true,
+  "outputs": [
+    "relation"
+  ],
+  "inputs": [
+    "entities",
+    "sentence"
+  ],
+  "type": "asserter",
+  "spark_input_column_names": [
+    "entities",
+    "sentence"
+  ],
+  "spark_output_column_names": [
+    "relation"
+  ],
+  "provider": "sparknlp healthcare",
+  "license": "licensed",
+  "computation_context": "spark",
+  "output_context": "spark"
+}
