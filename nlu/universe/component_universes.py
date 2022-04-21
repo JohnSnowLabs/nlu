@@ -1,5 +1,3 @@
-from sparknlp_jsl.annotator import BertSentenceChunkEmbeddings
-
 from nlu.components.assertions.assertion_dl.assertion_dl import AssertionDL
 from nlu.components.assertions.assertion_log_reg.assertion_log_reg import AssertionLogReg
 from nlu.components.chunkers.contextual_parser.contextual_parser import ContextualParser
@@ -43,6 +41,7 @@ from nlu.components.dependency_untypeds.unlabeled_dependency_parser.unlabeled_de
     UnlabeledDependencyParser
 from nlu.components.embeddings.albert.spark_nlp_albert import SparkNLPAlbert
 from nlu.components.embeddings.bert.spark_nlp_bert import SparkNLPBert
+from nlu.components.embeddings.bert_sentence_chunk.bert_sentence_chunk import BertSentenceChunkEmbeds
 from nlu.components.embeddings.deberta.deberta import Deberta
 from nlu.components.embeddings.distil_bert.distilbert import DistilBert
 from nlu.components.embeddings.doc2vec.doc2vec import Doc2Vec
@@ -58,11 +57,14 @@ from nlu.components.embeddings.xlm.xlm import XLM
 from nlu.components.embeddings.xlnet.spark_nlp_xlnet import SparkNLPXlnet
 from nlu.components.embeddings_chunks.chunk_embedder.chunk_embedder import ChunkEmbedder
 from nlu.components.lemmatizers.lemmatizer.spark_nlp_lemmatizer import SparkNLPLemmatizer
+from nlu.components.matchers.regex_matcher.regex_matcher import RegexMatcher
 from nlu.components.normalizers.document_normalizer.spark_nlp_document_normalizer import SparkNLPDocumentNormalizer
 from nlu.components.normalizers.drug_normalizer.drug_normalizer import DrugNorm
 from nlu.components.normalizers.normalizer.spark_nlp_normalizer import SparkNLPNormalizer
 from nlu.components.relation_extractors.relation_extractor.relation_extractor import RelationExtraction
 from nlu.components.relation_extractors.relation_extractor_dl.relation_extractor_dl import RelationExtractionDL
+from nlu.components.relation_extractors.zero_shot_relation_extractor.zero_shot_relation_extractor import \
+    ZeroShotRelationExtractor
 from nlu.components.resolutions.sentence_entity_resolver.sentence_resolver import SentenceResolver
 from nlu.components.sentence_detectors.deep_sentence_detector.deep_sentence_detector import SentenceDetectorDeep
 from nlu.components.sentence_detectors.pragmatic_sentence_detector.sentence_detector import PragmaticSentenceDetector
@@ -83,6 +85,7 @@ from nlu.components.utils.document_assembler.spark_nlp_document_assembler import
 from nlu.components.utils.ner_to_chunk_converter.ner_to_chunk_converter import NerToChunkConverter
 from nlu.components.utils.ner_to_chunk_converter_licensed.ner_to_chunk_converter_licensed import \
     NerToChunkConverterLicensed
+from nlu.components.utils.sdf_finisher.sdf_finisher import SdfFinisher
 from nlu.components.utils.sentence_embeddings.spark_nlp_sentence_embedding import SparkNLPSentenceEmbeddings
 from nlu.ocr_components.table_extractors.doc_table_extractor.doc2table import Doc2TextTable
 from nlu.ocr_components.table_extractors.pdf_table_extractor.pdf2table import PDF2TextTable
@@ -113,20 +116,23 @@ from nlu.universe.universes import Licenses, ComputeContexts
 def anno_class_to_empty_component(anno_class) -> NluComponent:
     """
     For a given anno-class returns NLU-Component which wraps the corrosponding annotator class
-    but has no model yet loaded
+    but has no model_anno_obj yet loaded onto it.
     :param anno_class: compatible nlu-component to find for
     :return: NluComponent which can load anno_class models
     """
     jsl_anno_id = anno_class_to_jsl_id(anno_class)
-    if jsl_anno_id not in ComponentUniverse.components:
-        raise ValueError(f'Invalid JSL-Anno-ID={jsl_anno_id}')
-    component = ComponentUniverse.components[jsl_anno_id]()
+    try:
+        if jsl_anno_id not in ComponentUniverse.components:
+            raise ValueError(f'Invalid JSL-Anno-ID={jsl_anno_id}')
+        component = ComponentUniverse.components[jsl_anno_id]()
+    except Exception as err:
+        raise ValueError(f'Failed to create annotator for JSL-Anno-ID={jsl_anno_id}, error={err}')
     return component
 
 
 def jsl_id_to_empty_component(jsl_id) -> NluComponent:
     """
-    Get NLU component with given JSL-ID with no model loaded onto it
+    Get NLU component with given JSL-ID with no model_anno_obj loaded onto it
     :param jsl_id: identifier of component/annotator type
     :return: NluComponent for jsl_id
     """
@@ -152,7 +158,7 @@ def jsl_id_to_anno_class(jsl_id) -> JslAnnoPyClass:
 def anno_class_to_jsl_id(anno_class) -> JslAnnoId:
     """Returns JSL-Anno-ID and default license type for given anno_class name.
     Note that an anno which maps to a component with default OS_license,
-    may load a HC model and nlu component must be updated to HC license then
+    may load a HC model_anno_obj and nlu component must be updated to HC license then
     :param anno_class: class name of the annotator
     :return:JslAnnoID of anno class
     """
@@ -170,7 +176,7 @@ def anno_class_to_jsl_id(anno_class) -> JslAnnoId:
 def get_anno_class_metadata(anno_class) -> Tuple[JslAnnoId, LicenseType]:
     """Returns JSL-Anno-ID and default license type for given anno_class name.
     Note that an anno which maps to a component with default OS_license,
-    may load a HC model and nlu component must be updated to HC license then
+    may load a HC model_anno_obj and nlu component must be updated to HC license then
     :param anno_class: class name of the annotator
     :return: Tuple, first entry JslAnnoID, second entry Default LicenseType
     """
@@ -243,8 +249,8 @@ class ComponentUniverse:
         A.BERT_SENTENCE_CHUNK_EMBEDDINGS: partial(NluComponent,
                                                   name=A.BERT_SENTENCE_CHUNK_EMBEDDINGS,
                                                   type=T.CHUNK_EMBEDDING,
-                                                  get_default_model=BertSentenceChunkEmbeddings.get_default_model,
-                                                  get_pretrained_model=BertSentenceChunkEmbeddings.get_pretrained_model,
+                                                  get_default_model=BertSentenceChunkEmbeds.get_default_model,
+                                                  get_pretrained_model=BertSentenceChunkEmbeds.get_pretrained_model,
                                                   pdf_extractor_methods={'default': default_chunk_embedding_config,
                                                                          'default_full': default_full_config, },
                                                   pdf_col_name_substitutor=substitute_chunk_embed_cols,
@@ -458,7 +464,26 @@ class ComponentUniverse:
                                        ),
         A.EMBEDDINGS_FINISHER: 'TODO NOT INTEGRATED',
         A.ENTITY_RULER: 'TODO NOT INTEGRATED',
-        A.FINISHER: 'TODO NOT INTEGRATED',
+        A.FINISHER: partial(NluComponent, # TODO WIP
+                            name=A.FINISHER,
+                            type=T.HELPER_ANNO,
+                            get_default_model=SdfFinisher.get_default_model,
+                             # TODO EXTRACTOR
+                            pdf_extractor_methods={'default': default_full_config,
+                                                   'default_full': default_full_config, },
+                            # TODO SUBSTITOR
+                            pdf_col_name_substitutor=None,  # TODO no sub defined
+                            output_level=L.DOCUMENT,
+                            # TODO sub-token actually(?)
+                            node=NLP_FEATURE_NODES.nodes[A.FINISHER],
+                            description='Get lemmatized base version of tokens',
+                            provider=ComponentBackends.open_source,
+                            license=Licenses.open_source,
+                            computation_context=ComputeContexts.spark,
+                            output_context=ComputeContexts.spark,
+                            jsl_anno_class_id=A.FINISHER,
+                            jsl_anno_py_class=ACR.JSL_anno2_py_class[A.FINISHER],
+                            ),
         A.GRAPH_EXTRACTION: 'TODO NOT INTEGRATED',
         A.GRAPH_FINISHER: 'TODO NOT INTEGRATED',
         A.LANGUAGE_DETECTOR_DL: partial(NluComponent,
@@ -593,7 +618,7 @@ class ComponentUniverse:
                            pdf_extractor_methods={'default': '', 'default_full': default_full_config, },
                            pdf_col_name_substitutor=None,  # TODO
                            node=NLP_FEATURE_NODES.nodes[A.NER_CRF],
-                           description='Classical NER model based on conditional random fields (CRF). Predicts IOB tags ',
+                           description='Classical NER model_anno_obj based on conditional random fields (CRF). Predicts IOB tags ',
                            provider=ComponentBackends.open_source,
                            license=Licenses.open_source,
                            computation_context=ComputeContexts.spark,
@@ -613,7 +638,7 @@ class ComponentUniverse:
                                                  'default_full': default_full_config, },
                           pdf_col_name_substitutor=substitute_ner_dl_cols,
                           node=NLP_FEATURE_NODES.nodes[A.NER_DL],
-                          description='Deep Learning based NER model that predicts IOB tags. ',
+                          description='Deep Learning based NER model_anno_obj that predicts IOB tags. ',
                           provider=ComponentBackends.open_source,
                           license=Licenses.open_source,
                           computation_context=ComputeContexts.spark,
@@ -635,7 +660,7 @@ class ComponentUniverse:
                                     pdf_col_name_substitutor=substitute_ner_dl_cols,
                                     output_level=L.TOKEN,
                                     node=NLP_FEATURE_NODES.nodes[A.TRAINABLE_NER_DL],
-                                    description='Deep Learning based NER model that predicts IOB tags. ',
+                                    description='Deep Learning based NER model_anno_obj that predicts IOB tags. ',
                                     provider=ComponentBackends.open_source,
                                     license=Licenses.open_source,
                                     computation_context=ComputeContexts.spark,
@@ -730,7 +755,25 @@ class ComponentUniverse:
                                  ),
 
         A.RECURISVE_TOKENIZER: 'TODO NOT INTEGRATED',
-        A.REGEX_MATCHER: 'TODO no Extractor Implemented',
+        A.REGEX_MATCHER: partial(NluComponent,  # TODO , type as ner_converted ok ?
+                                 name=A.REGEX_MATCHER,
+                                 type=T.HELPER_ANNO,
+                                 get_default_model=RegexMatcher.get_default_model,
+                                 # TODO extractor??
+                                 pdf_extractor_methods={'default': default_ner_converter_config,
+                                                        'default_full': default_full_config, },
+                                 # TODO substitor??
+                                 pdf_col_name_substitutor=substitute_ner_converter_cols,
+                                 output_level=L.CHUNK,
+                                 node=NLP_FEATURE_NODES.nodes[A.REGEX_MATCHER],
+                                 description='Matches chunks in text based on regex rules',
+                                 provider=ComponentBackends.open_source,
+                                 license=Licenses.open_source,
+                                 computation_context=ComputeContexts.spark,
+                                 output_context=ComputeContexts.spark,
+                                 jsl_anno_class_id=A.REGEX_MATCHER,
+                                 jsl_anno_py_class=ACR.JSL_anno2_py_class[A.REGEX_MATCHER],
+                                 ),
         A.TRAINABLE_REGEX_MATCHER: 'TODO no Extractor Implemented',
         A.REGEX_TOKENIZER: partial(NluComponent,
                                    name=A.POS,
@@ -1041,7 +1084,7 @@ class ComponentUniverse:
                            pdf_col_name_substitutor=substitute_sent_embed_cols,
                            output_level=L.TOKEN,
                            node=NLP_FEATURE_NODES.nodes[A.DOC2VEC],
-                           description='Trains a Word2Vec model that creates vector representations of words in a text corpus. The algorithm first constructs a vocabulary from the corpus and then learns vector representation of words in the vocabulary. The vector representation can be used as features in natural language processing and machine learning algorithms.',
+                           description='Trains a Word2Vec model_anno_obj that creates vector representations of words in a text corpus. The algorithm first constructs a vocabulary from the corpus and then learns vector representation of words in the vocabulary. The vector representation can be used as features in natural language processing and machine learning algorithms.',
                            provider=ComponentBackends.open_source,
                            license=Licenses.open_source,
                            computation_context=ComputeContexts.spark,
@@ -1064,7 +1107,7 @@ class ComponentUniverse:
                                      pdf_col_name_substitutor=substitute_sent_embed_cols,
                                      output_level=L.TOKEN,
                                      node=NLP_FEATURE_NODES.nodes[A.TRAINABLE_DOC2VEC],
-                                     description='Trains a Word2Vec model that creates vector representations of words in a text corpus. The algorithm first constructs a vocabulary from the corpus and then learns vector representation of words in the vocabulary. The vector representation can be used as features in natural language processing and machine learning algorithms.',
+                                     description='Trains a Word2Vec model_anno_obj that creates vector representations of words in a text corpus. The algorithm first constructs a vocabulary from the corpus and then learns vector representation of words in the vocabulary. The vector representation can be used as features in natural language processing and machine learning algorithms.',
                                      provider=ComponentBackends.open_source,
                                      license=Licenses.open_source,
                                      computation_context=ComputeContexts.spark,
@@ -1107,7 +1150,7 @@ class ComponentUniverse:
                                                    pdf_extractor_methods={'default': default_token_classifier_config,
                                                                           'default_full': default_full_config, },
                                                    pdf_col_name_substitutor=substitute_transformer_token_classifier_cols,
-                                                   output_level=L.TOKEN,  # Handled like NER model
+                                                   output_level=L.TOKEN,  # Handled like NER model_anno_obj
                                                    node=NLP_FEATURE_NODES.nodes[A.ALBERT_FOR_TOKEN_CLASSIFICATION],
                                                    description='AlbertForTokenClassification can load ALBERT Models with a token classification head on top (a linear layer on top of the hidden-states output) e.g. for Named-Entity-Recognition (NER) tasks.',
                                                    provider=ComponentBackends.open_source,
@@ -1166,7 +1209,7 @@ class ComponentUniverse:
                                                  pdf_extractor_methods={'default': default_token_classifier_config,
                                                                         'default_full': default_full_config, },
                                                  pdf_col_name_substitutor=substitute_transformer_token_classifier_cols,
-                                                 output_level=L.TOKEN,  # Handled like NER model
+                                                 output_level=L.TOKEN,  # Handled like NER model_anno_obj
                                                  node=NLP_FEATURE_NODES.nodes[A.BERT_FOR_TOKEN_CLASSIFICATION],
                                                  description='BertForTokenClassification can load Bert Models with a token classification head on top (a linear layer on top of the hidden-states output) e.g. for Named-Entity-Recognition (NER) tasks.',
                                                  provider=ComponentBackends.open_source,
@@ -1207,7 +1250,7 @@ class ComponentUniverse:
                                           pdf_col_name_substitutor=substitute_word_embed_cols,
                                           output_level=L.TOKEN,
                                           node=NLP_FEATURE_NODES.nodes[A.DISTIL_BERT_EMBEDDINGS],
-                                          description='DistilBERT is a small, fast, cheap and light Transformer model trained by distilling BERT base. It has 40% less parameters than bert-base-uncased, runs 60% faster while preserving over 95% of BERT’s performances as measured on the GLUE language understanding benchmark.',
+                                          description='DistilBERT is a small, fast, cheap and light Transformer model_anno_obj trained by distilling BERT base. It has 40% less parameters than bert-base-uncased, runs 60% faster while preserving over 95% of BERT’s performances as measured on the GLUE language understanding benchmark.',
                                           provider=ComponentBackends.open_source,
                                           license=Licenses.open_source,
                                           computation_context=ComputeContexts.spark,
@@ -1269,7 +1312,7 @@ class ComponentUniverse:
                                    pdf_col_name_substitutor=substitute_word_embed_cols,
                                    output_level=L.TOKEN,
                                    node=NLP_FEATURE_NODES.nodes[A.ELMO_EMBEDDINGS],
-                                   description='Word embeddings from ELMo (Embeddings from Language Models), a language model trained on the 1 Billion Word Benchmark.',
+                                   description='Word embeddings from ELMo (Embeddings from Language Models), a language model_anno_obj trained on the 1 Billion Word Benchmark.',
                                    provider=ComponentBackends.open_source,
                                    license=Licenses.open_source,
                                    computation_context=ComputeContexts.spark,
@@ -1289,7 +1332,7 @@ class ComponentUniverse:
                                          pdf_col_name_substitutor=substitute_word_embed_cols,
                                          output_level=L.TOKEN,
                                          node=NLP_FEATURE_NODES.nodes[A.LONGFORMER_EMBEDDINGS],
-                                         description='Longformer is a transformer model for long documents. The Longformer model was presented in Longformer: The Long-Document Transformer by Iz Beltagy, Matthew E. Peters, Arman Cohan. longformer-base-4096 is a BERT-like model started from the RoBERTa checkpoint and pretrained for MLM on long documents. It supports sequences of length up to 4,096.',
+                                         description='Longformer is a transformer model_anno_obj for long documents. The Longformer model_anno_obj was presented in Longformer: The Long-Document Transformer by Iz Beltagy, Matthew E. Peters, Arman Cohan. longformer-base-4096 is a BERT-like model_anno_obj started from the RoBERTa checkpoint and pretrained for MLM on long documents. It supports sequences of length up to 4,096.',
                                          provider=ComponentBackends.open_source,
                                          license=Licenses.open_source,
                                          computation_context=ComputeContexts.spark,
@@ -1349,7 +1392,7 @@ class ComponentUniverse:
                                       pdf_col_name_substitutor=substitute_word_embed_cols,
                                       output_level=L.TOKEN,
                                       node=NLP_FEATURE_NODES.nodes[A.ROBERTA_EMBEDDINGS],
-                                      description='The RoBERTa model was proposed in RoBERTa: A Robustly Optimized BERT Pretraining Approach by Yinhan Liu, Myle Ott, Naman Goyal, Jingfei Du, Mandar Joshi, Danqi Chen, Omer Levy, Mike Lewis, Luke Zettlemoyer, Veselin Stoyanov. It is based on Google’s BERT model released in 2018.',
+                                      description='The RoBERTa model_anno_obj was proposed in RoBERTa: A Robustly Optimized BERT Pretraining Approach by Yinhan Liu, Myle Ott, Naman Goyal, Jingfei Du, Mandar Joshi, Danqi Chen, Omer Levy, Mike Lewis, Luke Zettlemoyer, Veselin Stoyanov. It is based on Google’s BERT model_anno_obj released in 2018.',
                                       provider=ComponentBackends.open_source,
                                       license=Licenses.open_source,
                                       computation_context=ComputeContexts.spark,
@@ -1368,7 +1411,7 @@ class ComponentUniverse:
                                                     pdf_extractor_methods={'default': default_token_classifier_config,
                                                                            'default_full': default_full_config, },
                                                     pdf_col_name_substitutor=substitute_transformer_token_classifier_cols,
-                                                    output_level=L.TOKEN,  # Handled like NER model
+                                                    output_level=L.TOKEN,  # Handled like NER model_anno_obj
                                                     node=NLP_FEATURE_NODES.nodes[A.ROBERTA_FOR_TOKEN_CLASSIFICATION],
                                                     description='RoBertaForTokenClassification can load RoBERTa Models with a token classification head on top (a linear layer on top of the hidden-states output) e.g. for Named-Entity-Recognition (NER) tasks.',
                                                     provider=ComponentBackends.open_source,
@@ -1410,7 +1453,7 @@ class ComponentUniverse:
                                   pdf_col_name_substitutor=substitute_T5_cols,
                                   output_level=L.INPUT_DEPENDENT_DOCUMENT_CLASSIFIER,
                                   node=NLP_FEATURE_NODES.nodes[A.T5_TRANSFORMER],
-                                  description='T5 reconsiders all NLP tasks into a unified text-to-text-format where the input and output are always text strings, in contrast to BERT-style models that can only output either a class label or a span of the input. The text-to-text framework is able to use the same model, loss function, and hyper-parameters on any NLP task, including machine translation, document summarization, question answering, and classification tasks (e.g., sentiment analysis). T5 can even apply to regression tasks by training it to predict the string representation of a number instead of the number itself.',
+                                  description='T5 reconsiders all NLP tasks into a unified text-to-text-format where the input and output are always text strings, in contrast to BERT-style models that can only output either a class label or a span of the input. The text-to-text framework is able to use the same model_anno_obj, loss function, and hyper-parameters on any NLP task, including machine translation, document summarization, question answering, and classification tasks (e.g., sentiment analysis). T5 can even apply to regression tasks by training it to predict the string representation of a number instead of the number itself.',
                                   provider=ComponentBackends.open_source,
                                   license=Licenses.open_source,
                                   computation_context=ComputeContexts.spark,
@@ -1449,7 +1492,7 @@ class ComponentUniverse:
                                           pdf_col_name_substitutor=substitute_word_embed_cols,
                                           output_level=L.TOKEN,
                                           node=NLP_FEATURE_NODES.nodes[A.XLM_ROBERTA_EMBEDDINGS],
-                                          description='The XLM-RoBERTa model was proposed in Unsupervised Cross-lingual Representation Learning at Scale by Alexis Conneau, Kartikay Khandelwal, Naman Goyal, Vishrav Chaudhary, Guillaume Wenzek, Francisco GuzmÃ¡n, Edouard Grave, Myle Ott, Luke Zettlemoyer and Veselin Stoyanov. It is based on Facebook’s RoBERTa model released in 2019. It is a large multi-lingual language model, trained on 2.5TB of filtered CommonCrawl data.',
+                                          description='The XLM-RoBERTa model_anno_obj was proposed in Unsupervised Cross-lingual Representation Learning at Scale by Alexis Conneau, Kartikay Khandelwal, Naman Goyal, Vishrav Chaudhary, Guillaume Wenzek, Francisco GuzmÃ¡n, Edouard Grave, Myle Ott, Luke Zettlemoyer and Veselin Stoyanov. It is based on Facebook’s RoBERTa model_anno_obj released in 2019. It is a large multi-lingual language model_anno_obj, trained on 2.5TB of filtered CommonCrawl data.',
                                           provider=ComponentBackends.open_source,
                                           license=Licenses.open_source,
                                           computation_context=ComputeContexts.spark,
@@ -1491,7 +1534,7 @@ class ComponentUniverse:
                                                    pdf_col_name_substitutor=substitute_sent_embed_cols,
                                                    output_level=L.INPUT_DEPENDENT_DOCUMENT_EMBEDDING,
                                                    node=NLP_FEATURE_NODES.nodes[A.XLM_ROBERTA_SENTENCE_EMBEDDINGS],
-                                                   description='Sentence-level embeddings using XLM-RoBERTa. The XLM-RoBERTa model was proposed in Unsupervised Cross-lingual Representation Learning at Scale by Alexis Conneau, Kartikay Khandelwal, Naman Goyal, Vishrav Chaudhary, Guillaume Wenzek, Francisco GuzmÃ¡n, Edouard Grave, Myle Ott, Luke Zettlemoyer and Veselin Stoyanov. It is based on Facebook’s RoBERTa model released in 2019. It is a large multi-lingual language model, trained on 2.5TB of filtered CommonCrawl data.',
+                                                   description='Sentence-level embeddings using XLM-RoBERTa. The XLM-RoBERTa model_anno_obj was proposed in Unsupervised Cross-lingual Representation Learning at Scale by Alexis Conneau, Kartikay Khandelwal, Naman Goyal, Vishrav Chaudhary, Guillaume Wenzek, Francisco GuzmÃ¡n, Edouard Grave, Myle Ott, Luke Zettlemoyer and Veselin Stoyanov. It is based on Facebook’s RoBERTa model_anno_obj released in 2019. It is a large multi-lingual language model_anno_obj, trained on 2.5TB of filtered CommonCrawl data.',
                                                    provider=ComponentBackends.open_source,
                                                    license=Licenses.open_source,
                                                    computation_context=ComputeContexts.spark,
@@ -1512,7 +1555,7 @@ class ComponentUniverse:
                                     pdf_col_name_substitutor=substitute_word_embed_cols,
                                     output_level=L.TOKEN,
                                     node=NLP_FEATURE_NODES.nodes[A.XLNET_EMBEDDINGS],
-                                    description='XLNet is a new unsupervised language representation learning method based on a novel generalized permutation language modeling objective. Additionally, XLNet employs Transformer-XL as the backbone model, exhibiting excellent performance for language tasks involving long context. Overall, XLNet achieves state-of-the-art (SOTA) results on various downstream language tasks including question answering, natural language inference, sentiment analysis, and document ranking.',
+                                    description='XLNet is a new unsupervised language representation learning method based on a novel generalized permutation language modeling objective. Additionally, XLNet employs Transformer-XL as the backbone model_anno_obj, exhibiting excellent performance for language tasks involving long context. Overall, XLNet achieves state-of-the-art (SOTA) results on various downstream language tasks including question answering, natural language inference, sentiment analysis, and document ranking.',
                                     provider=ComponentBackends.open_source,
                                     license=Licenses.open_source,
                                     computation_context=ComputeContexts.spark,
@@ -1675,7 +1718,7 @@ class ComponentUniverse:
                               pdf_col_name_substitutor=substitute_word_embed_cols,  # TODO?
                               output_level=L.TOKEN,
                               node=NLP_FEATURE_NODES.nodes[A.WORD_2_VEC],
-                              description='We use Word2Vec implemented in Spark ML. It uses skip-gram model in our implementation and a hierarchical softmax method to train the model. The variable names in the implementation match the original C implementation.',
+                              description='We use Word2Vec implemented in Spark ML. It uses skip-gram model_anno_obj in our implementation and a hierarchical softmax method to train the model_anno_obj. The variable names in the implementation match the original C implementation.',
                               provider=ComponentBackends.open_source,
                               license=Licenses.open_source,
                               computation_context=ComputeContexts.spark,
@@ -1696,7 +1739,7 @@ class ComponentUniverse:
                                            pdf_col_name_substitutor=substitute_word_embed_cols,
                                            output_level=L.TOKEN,
                                            node=NLP_FEATURE_NODES.nodes[A.DEBERTA_WORD_EMBEDDINGS],
-                                           description='Token-level embeddings using DeBERTa. The DeBERTa model was proposed in DeBERTa: Decoding-enhanced BERT with Disentangled Attention by Pengcheng He, Xiaodong Liu, Jianfeng Gao, Weizhu Chen. It is based on Google’s BERT model released in 2018 and Facebook’s RoBERTa model released in 2019.',
+                                           description='Token-level embeddings using DeBERTa. The DeBERTa model_anno_obj was proposed in DeBERTa: Decoding-enhanced BERT with Disentangled Attention by Pengcheng He, Xiaodong Liu, Jianfeng Gao, Weizhu Chen. It is based on Google’s BERT model_anno_obj released in 2018 and Facebook’s RoBERTa model_anno_obj released in 2019.',
                                            provider=ComponentBackends.open_source,
                                            license=Licenses.open_source,
                                            computation_context=ComputeContexts.spark,
@@ -1719,7 +1762,7 @@ class ComponentUniverse:
                                                        output_level=L.INPUT_DEPENDENT_DOCUMENT_CLASSIFIER,
                                                        node=NLP_FEATURE_NODES.nodes[
                                                            A.DEBERTA_FOR_SEQUENCE_CLASSIFICATION],
-                                                       description='The DeBERTa model was proposed in DeBERTa: Decoding-enhanced BERT with Disentangled Attention by Pengcheng He, Xiaodong Liu, Jianfeng Gao, Weizhu Chen. It is based on Google’s BERT model released in 2018 and Facebook’s RoBERTa model released in 2019. This classifier uses DeBERTa embeddingss with a linear classification head ontop.',
+                                                       description='The DeBERTa model_anno_obj was proposed in DeBERTa: Decoding-enhanced BERT with Disentangled Attention by Pengcheng He, Xiaodong Liu, Jianfeng Gao, Weizhu Chen. It is based on Google’s BERT model_anno_obj released in 2018 and Facebook’s RoBERTa model_anno_obj released in 2019. This classifier uses DeBERTa embeddingss with a linear classification head ontop.',
                                                        provider=ComponentBackends.open_source,
 
                                                        license=Licenses.open_source,
@@ -1743,7 +1786,7 @@ class ComponentUniverse:
                                   pdf_col_name_substitutor=substitute_assertion_cols,
                                   output_level=L.CHUNK,
                                   node=NLP_HC_FEATURE_NODES.nodes[H_A.ASSERTION_DL],
-                                  description='Deep Learning based Assertion model that maps NER-Chunks into a pre-defined terminology.',
+                                  description='Deep Learning based Assertion model_anno_obj that maps NER-Chunks into a pre-defined terminology.',
                                   provider=ComponentBackends.hc,
                                   license=Licenses.hc,
                                   computation_context=ComputeContexts.spark,
@@ -1765,7 +1808,7 @@ class ComponentUniverse:
                                             pdf_col_name_substitutor=substitute_assertion_cols,
                                             output_level=L.CHUNK,
                                             node=NLP_HC_FEATURE_NODES.nodes[H_A.TRAINABLE_ASSERTION_DL],
-                                            description='Trainable Deep Learning based Assertion model that maps NER-Chunks into a pre-defined terminology.',
+                                            description='Trainable Deep Learning based Assertion model_anno_obj that maps NER-Chunks into a pre-defined terminology.',
                                             provider=ComponentBackends.hc,
                                             license=Licenses.hc,
                                             computation_context=ComputeContexts.spark,
@@ -1787,7 +1830,7 @@ class ComponentUniverse:
         #     pdf_col_name_substitutor=substitute_assertion_cols,
         #     pipe_prediction_output_level=L.CHUNK,
         #     node=NLP_HC_FEATURE_NODES.ASSERTION_DL,
-        #     description='Trainable Deep Learning based Assertion model that maps NER-Chunks into a pre-defined terminology.',
+        #     description='Trainable Deep Learning based Assertion model_anno_obj that maps NER-Chunks into a pre-defined terminology.',
         #     provider=ComponentBackends.hc,
         #     license=Licenses.hc,
         #     computation_context=ComputeContexts.spark,
@@ -1810,7 +1853,7 @@ class ComponentUniverse:
                                        pdf_col_name_substitutor=substitute_assertion_cols,
                                        output_level=L.CHUNK,
                                        node=NLP_HC_FEATURE_NODES.nodes[H_A.ASSERTION_LOG_REG],
-                                       description='Classical ML based Assertion model that maps NER-Chunks into a pre-defined terminology.',
+                                       description='Classical ML based Assertion model_anno_obj that maps NER-Chunks into a pre-defined terminology.',
                                        provider=ComponentBackends.hc,
                                        license=Licenses.hc,
                                        computation_context=ComputeContexts.spark,
@@ -1829,7 +1872,7 @@ class ComponentUniverse:
                                                  pdf_col_name_substitutor=substitute_assertion_cols,
                                                  output_level=L.CHUNK,
                                                  node=NLP_HC_FEATURE_NODES.nodes[H_A.TRAINABLE_ASSERTION_LOG_REG],
-                                                 description='Classical ML based Assertion model that maps NER-Chunks into a pre-defined terminology.',
+                                                 description='Classical ML based Assertion model_anno_obj that maps NER-Chunks into a pre-defined terminology.',
                                                  provider=ComponentBackends.hc,
                                                  license=Licenses.hc,
                                                  computation_context=ComputeContexts.spark,
@@ -1843,15 +1886,35 @@ class ComponentUniverse:
         H_A.TRAINABLE_CHUNK_ENTITY_RESOLVER: 'Deprecated',
         H_A.CHUNK_FILTERER: 'TODO not integrated',
         H_A.CHUNK_KEY_PHRASE_EXTRACTION: 'TODO not integrated',
-        H_A.CHUNK_MERGE: 'TODO not integrated',
+        H_A.CHUNK_MERGE: partial(NluComponent,
+                                 name=H_A.CONTEXTUAL_PARSER,
+                                 type=T.CHUNK_CLASSIFIER,
+
+                                 get_default_model=ContextualParser.get_default_model,
+                                 get_trainable_model=ContextualParser.get_trainable_model,
+                                 # TODO method extractr method
+                                 pdf_extractor_methods={'default': default_chunk_config,
+                                                        'default_full': default_full_config, },
+                                 # TODO  substitor
+                                 pdf_col_name_substitutor=substitute_chunk_cols,
+                                 output_level=L.CHUNK,
+                                 node=NLP_HC_FEATURE_NODES.nodes[H_A.CHUNK_MERGE],
+                                 description='Rule based entity extractor.',
+                                 provider=ComponentBackends.hc,
+                                 license=Licenses.hc,
+                                 computation_context=ComputeContexts.spark,
+                                 output_context=ComputeContexts.spark,
+                                 jsl_anno_class_id=H_A.CHUNK_MERGE,
+                                 jsl_anno_py_class=ACR.JSL_anno_HC_ref_2_py_class[H_A.CHUNK_MERGE], ),
         H_A.CONTEXTUAL_PARSER: partial(NluComponent,
                                        name=H_A.CONTEXTUAL_PARSER,
                                        type=T.CHUNK_CLASSIFIER,
                                        get_default_model=ContextualParser.get_default_model,
                                        get_trainable_model=ContextualParser.get_trainable_model,
+                                       # TODO extractr method
                                        pdf_extractor_methods={'default': default_full_config,
                                                               'default_full': default_full_config, },
-                                       # TODO extractr method
+                                       # TODO  substitor
                                        pdf_col_name_substitutor=substitute_context_parser_cols,
                                        output_level=L.CHUNK,
                                        node=NLP_HC_FEATURE_NODES.nodes[H_A.CONTEXTUAL_PARSER],
@@ -2035,7 +2098,7 @@ class ComponentUniverse:
                                          pdf_col_name_substitutor=substitute_relation_cols,
                                          output_level=L.RELATION,
                                          node=NLP_HC_FEATURE_NODES.nodes[H_A.RELATION_EXTRACTION],
-                                         description='Classical ML model for predicting relation ship between entity pairs',
+                                         description='Classical ML model_anno_obj for predicting relation ship between entity pairs',
                                          provider=ComponentBackends.hc,
                                          license=Licenses.hc,
                                          computation_context=ComputeContexts.spark,
@@ -2059,7 +2122,7 @@ class ComponentUniverse:
                                                    pdf_col_name_substitutor=substitute_relation_cols,
                                                    output_level=L.RELATION,
                                                    node=NLP_HC_FEATURE_NODES.nodes[H_A.TRAINABLE_RELATION_EXTRACTION],
-                                                   description='Trainable Classical ML model for predicting relation ship between entity pairs',
+                                                   description='Trainable Classical ML model_anno_obj for predicting relation ship between entity pairs',
                                                    provider=ComponentBackends.hc,
                                                    license=Licenses.hc,
                                                    computation_context=ComputeContexts.spark,
@@ -2072,6 +2135,29 @@ class ComponentUniverse:
                                                    has_storage_ref=True,
                                                    is_storage_ref_consumer=True
                                                    ),
+
+        H_A.ZERO_SHOT_RELATION_EXTRACTION: partial(NluComponent,
+                                                   name=H_A.ZERO_SHOT_RELATION_EXTRACTION,
+                                                   type=T.RELATION_CLASSIFIER,
+                                                   get_default_model=ZeroShotRelationExtractor.get_default_model,
+                                                   get_pretrained_model=ZeroShotRelationExtractor.get_pretrained_model,
+                                                   pdf_extractor_methods={'default': default_relation_extraction_config,
+                                                                          'positional': default_relation_extraction_positional_config,
+                                                                          'default_full': default_full_config, },
+                                                   pdf_col_name_substitutor=substitute_relation_cols,
+                                                   output_level=L.RELATION,
+                                                   node=NLP_HC_FEATURE_NODES.nodes[H_A.ZERO_SHOT_RELATION_EXTRACTION],
+                                                   description='Zero-shot relation extraction model_anno_obj that leverages BertForSequenceClassificaiton to return, based on a predefined set of relation',
+                                                   provider=ComponentBackends.hc,
+                                                   license=Licenses.hc,
+                                                   computation_context=ComputeContexts.spark,
+                                                   output_context=ComputeContexts.spark,
+                                                   jsl_anno_class_id=H_A.ZERO_SHOT_RELATION_EXTRACTION,
+                                                   jsl_anno_py_class=ACR.JSL_anno_HC_ref_2_py_class[
+                                                       H_A.ZERO_SHOT_RELATION_EXTRACTION],
+                                                   trained_mirror_anno=H_A.RELATION_EXTRACTION,
+                                                   ),
+
         H_A.RELATION_EXTRACTION_DL: partial(NluComponent,
                                             name=H_A.RELATION_EXTRACTION_DL,
                                             type=T.RELATION_CLASSIFIER,
@@ -2084,7 +2170,7 @@ class ComponentUniverse:
                                             pdf_col_name_substitutor=substitute_relation_cols,
                                             output_level=L.RELATION,
                                             node=NLP_HC_FEATURE_NODES.nodes[H_A.RELATION_EXTRACTION_DL],
-                                            description='Deep Learning based model for predicting relation ship between entity pairs',
+                                            description='Deep Learning based model_anno_obj for predicting relation ship between entity pairs',
                                             provider=ComponentBackends.hc,
                                             license=Licenses.hc,
                                             computation_context=ComputeContexts.spark,
@@ -2104,7 +2190,7 @@ class ComponentUniverse:
         #     pdf_col_name_substitutor=substitute_relation_cols,
         #     pipe_prediction_output_level=L.RELATION,
         #     node=NLP_HC_FEATURE_NODES.TRAINABLE_RELATION_EXTRACTION_DL,
-        #     description='Trainable Deep Learning based model for predicting relation ship between entity pairs',
+        #     description='Trainable Deep Learning based model_anno_obj for predicting relation ship between entity pairs',
         #     provider=ComponentBackends.hc,
         #     license=Licenses.hc,
         #     computation_context=ComputeContexts.spark,
@@ -2125,7 +2211,7 @@ class ComponentUniverse:
                                               pdf_col_name_substitutor=substitute_sentence_resolution_cols,
                                               output_level=L.CHUNK,
                                               node=NLP_HC_FEATURE_NODES.nodes[H_A.SENTENCE_ENTITY_RESOLVER],
-                                              description='Deep Learning based entity resolver which extracts resolved entities directly from Sentence Embedding. No NER model required.',
+                                              description='Deep Learning based entity resolver which extracts resolved entities directly from Sentence Embedding. No NER model_anno_obj required.',
                                               provider=ComponentBackends.hc,
                                               license=Licenses.hc,
                                               computation_context=ComputeContexts.spark,
@@ -2150,7 +2236,7 @@ class ComponentUniverse:
                                                         output_level=L.RELATION,
                                                         node=NLP_HC_FEATURE_NODES.nodes[
                                                             H_A.TRAINABLE_SENTENCE_ENTITY_RESOLVER],
-                                                        description='Trainable Deep Learning based entity resolver which extracts resolved entities directly from Sentence Embedding. No NER model required.',
+                                                        description='Trainable Deep Learning based entity resolver which extracts resolved entities directly from Sentence Embedding. No NER model_anno_obj required.',
                                                         provider=ComponentBackends.hc,
                                                         license=Licenses.hc,
                                                         computation_context=ComputeContexts.spark,
@@ -2172,7 +2258,7 @@ class ComponentUniverse:
                                                                'default': default_token_classifier_config,
                                                                'default_full': default_full_config, },
                                                            pdf_col_name_substitutor=substitute_transformer_token_classifier_cols,
-                                                           output_level=L.TOKEN,  # Handled like NER model
+                                                           output_level=L.TOKEN,  # Handled like NER model_anno_obj
                                                            node=NLP_HC_FEATURE_NODES.nodes[
                                                                H_A.MEDICAL_BERT_FOR_TOKEN_CLASSIFICATION],
                                                            description='MedicalBertForTokenClassification can load Bert Models with a token classification head on top (a linear layer on top of the hidden-states output) e.g. for Named-Entity-Recognition (NER) tasks.',
@@ -2196,7 +2282,7 @@ class ComponentUniverse:
                                                                   'default_full': default_full_config, },
                                                               pdf_col_name_substitutor=substitute_seq_bert_classifier_cols,
                                                               output_level=L.INPUT_DEPENDENT_DOCUMENT_CLASSIFIER,
-                                                              # Handled like NER model
+                                                              # Handled like NER model_anno_obj
                                                               node=NLP_HC_FEATURE_NODES.nodes[
                                                                   H_A.MEDICAL_BERT_FOR_SEQUENCE_CLASSIFICATION],
                                                               description='Custom Architecture John Snow labs developed, called MedicalBertForSequenceClassification. It can load BERT Models with sequence classification/regression head on top (a linear layer on top of the pooled output) e.g. for multi-class document classification tasks.',
@@ -2219,7 +2305,7 @@ class ComponentUniverse:
                                                                         'default_full': default_full_config, },
                                                                     pdf_col_name_substitutor=substitute_seq_bert_classifier_cols,
                                                                     output_level=L.INPUT_DEPENDENT_DOCUMENT_CLASSIFIER,
-                                                                    # Handled like NER model
+                                                                    # Handled like NER model_anno_obj
                                                                     node=NLP_HC_FEATURE_NODES.nodes[
                                                                         H_A.MEDICAL_DISTILBERT_FOR_SEQUENCE_CLASSIFICATION],
                                                                     description='Custom Architecture John Snow labs developed, called MedicalDistilBertForSequenceClassification. It can load DistilBERT Models with sequence classification/regression head on top (a linear layer on top of the pooled output) e.g. for multi-class document classification tasks.',

@@ -13,7 +13,6 @@ class AnnoClassRef:
     HC_A_N = NLP_HC_NODE_IDS
     # Map AnnoID to PyCLass
     JSL_anno2_py_class: Dict[JslAnnoId, JslAnnoPyClass] = {
-
         A_N.BIG_TEXT_MATCHER: 'BigTextMatcher',
         A_N.CHUNK2DOC: 'Chunk2Doc',
         A_N.CHUNK_EMBEDDINGS_CONVERTER: 'ChunkEmbeddings',
@@ -121,8 +120,14 @@ class AnnoClassRef:
         A_N.TRAINABLE_TEXT_MATCHER: 'TextMatcher',
         A_N.TRAINABLE_TOKENIZER: 'Tokenizer',
         A_N.TRAINABLE_WORD_SEGMENTER: 'WordSegmenterApproach',
+
         A_N.DISTIL_BERT_FOR_TOKEN_CLASSIFICATION: 'DistilBertForTokenClassification',
         A_N.WORD_2_VEC: 'Word2VecModel',
+        A_N.DEBERTA_FOR_SEQUENCE_CLASSIFICATION: 'DeBertaForSequenceClassification',
+
+        A_N.BERT_SENTENCE_CHUNK_EMBEDDINGS : 'BertSentenceChunkEmbeddings',
+
+
 
     }
     JSL_anno_HC_ref_2_py_class: Dict[JslAnnoId, JslAnnoPyClass] = {
@@ -166,10 +171,10 @@ class AnnoClassRef:
         HC_A_N.TRAINABLE_SENTENCE_ENTITY_RESOLVER: 'SentenceEntityResolverApproach',
         HC_A_N.MEDICAL_BERT_FOR_TOKEN_CLASSIFICATION: 'MedicalBertForTokenClassifier',
 
-        # 3.4.1
         HC_A_N.MEDICAL_BERT_FOR_SEQUENCE_CLASSIFICATION: 'MedicalBertForSequenceClassification',
         HC_A_N.MEDICAL_DISTILBERT_FOR_SEQUENCE_CLASSIFICATION: 'MedicalDistilBertForSequenceClassification',
         HC_A_N.ENTITY_CHUNK_EMBEDDING: 'EntityChunkEmbeddings',
+        HC_A_N.ZERO_SHOT_RELATION_EXTRACTION: 'ZeroShotRelationExtractionModel',
 
     }
     JSL_anno_OCR_ref_2_py_class: Dict[JslAnnoId, JslAnnoPyClass] = {
