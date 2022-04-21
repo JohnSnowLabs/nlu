@@ -9,6 +9,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      JSL_LICENSE: ${{ secrets.JSL_LICENSE }}
     strategy:
       matrix:
         python-version: [3.7]
@@ -139,6 +141,62 @@ jobs:
         if: always()
         run: |
           python -m unittest  discover   -s './tests/nlu_core_tests/training_tests/classifiers' -p '*pos*.py'
+      - name: NLU Healthcare Verification tests
+        if: always()
+        run: |
+          python -m unittest  discover  -s ./tests/nlu_hc_tests -p 'verification_tests.py'
+      - name: NLU OCR tests
+        if: always()
+        run: |
+          python -m unittest  discover  -s ./tests/nlu_ocr_tests -p '*tests.py'
+      - name: NLU Healthcare Assertion DL tests
+        if: always()
+        run: |
+          python -m unittest  discover  -s ./tests/nlu_hc_tests/component_tests/assertion_dl -p '*tests.py'
+#      - name: NLU Healthcare Contextual Parser tests
+#        if: always()
+#        run: |
+#          python -m unittest  discover  -s ./tests/nlu_hc_tests/component_tests/contextual_parser -p '*tests.py'
+      - name: NLU Healthcare De Identification tests
+        if: always()
+        run: |
+          python -m unittest  discover  -s ./tests/nlu_hc_tests/component_tests/de_identification -p '*tests.py'
+      - name: NLU Healthcare Drug Normalizer tests
+        if: always()
+        run: |
+          python -m unittest  'tests/nlu_hc_tests/component_tests/drug_normalizer/drug_normalizer_test.py'
+      - name: NLU Healthcare Generic Classifier tests
+        if: always()
+        run: |
+          python -m unittest  discover  -s ./tests/nlu_hc_tests/component_tests/generic_classifier -p '*tests.py'
+      - name: NLU Healthcare Licensed Classifier tests
+        if: always()
+        run: |
+          python -m unittest  discover  -s ./tests/nlu_hc_tests/component_tests/licensed_classifier -p '*tests.py'
+      - name: NLU Healthcare Relation Extraction tests
+        if: always()
+        run: |
+          python -m unittest  discover  -s ./tests/nlu_hc_tests/component_tests/relation_extraction -p '*tests.py'
+      - name: NLU Healthcare Sentence Entity Resolver tests
+        if: always()
+        run: |
+          python -m unittest  discover  -s ./tests/nlu_hc_tests/component_tests/sentence_entity_resolver -p '*tests.py'
+#      - name: NLU Healthcare Pipe tests
+#        if: always()
+#        run: |
+#          python -m unittest  discover  -s ./tests/nlu_hc_tests/pipe_tests -p '*tests.py'
+      - name: NLU Healthcare Training Assertion DL tests
+        if: always()
+        run: |
+          python -m unittest  discover  -s ./tests/nlu_hc_tests/training_tests/assertion_dl -p '*tests.py'
+#      - name: NLU Healthcare Training Chunk Resolution tests
+#        if: always()
+#        run: |
+#          python -m unittest  discover  -s ./tests/nlu_hc_tests/training_tests/chunk_resolution -p '*tests.py'
+      - name: NLU Healthcare Training Sentence Resolution tests
+        if: always()
+        run: |
+          python -m unittest  discover  -s ./tests/nlu_hc_tests/training_tests/sentence_resolution -p '*tests.py'
 #      - name: NLU Saving and Loading tests
 #        if: always()
 #        run: |

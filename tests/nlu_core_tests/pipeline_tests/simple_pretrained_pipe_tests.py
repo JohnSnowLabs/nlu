@@ -1,14 +1,14 @@
-
-
-
 import unittest
+
 from nlu import *
 
-class PretrainedPipeTests(unittest.TestCase):
 
+class PretrainedPipeTests(unittest.TestCase):
     def simple_pretrained_pipe_tests(self):
-        df = nlu.load('ner.onto',verbose=True).predict('I love peanutbutter and jelly')
-        for c in df.columns: print(df[c])
+        df = nlu.load("ner.onto", verbose=True).predict("I love peanutbutter and jelly")
+        for c in df.columns:
+            print(df[c])
+
     # def test_offline_load_pipe(self):
     #     pipe_path ='/home/ckl/cache_pretrained/analyze_sentimentdl_use_imdb_en_2.7.1_2.4_1610723836151'
     #     df = nlu.load(path = pipe_path,verbose=True).predict('I love peanutbutter and jelly')
@@ -20,6 +20,5 @@ class PretrainedPipeTests(unittest.TestCase):
     #     for c in df.columns: print(df[c])
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
-
