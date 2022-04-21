@@ -1,0 +1,25 @@
+{
+  "name": "bert",
+  "description": "todo",
+  "output_level": "token",
+  "trainable": false,
+  "outputs": [
+    "word_embeddings"
+  ],
+  "inputs": [
+    "sentence",
+    "token"
+  ],
+  "type": "word_embeddings",
+  "spark_input_column_names": [
+    "sentence",
+    "token"
+  ],
+  "spark_output_column_names": [
+    "bert"
+  ],
+  "provider": "sparknlp",
+  "license": "open source",
+  "computation_context": "spark",
+  "output_context": "spark"
+}
