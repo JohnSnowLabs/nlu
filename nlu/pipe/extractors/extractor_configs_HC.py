@@ -1,6 +1,5 @@
-from nlu.pipe.extractors.extractor_base_data_classes import SparkNLPExtractor, SparkNLPExtractorConfig
-from nlu.pipe.extractors.extractor_methods.helper_extractor_methods import *
 from nlu.pipe.extractors.extractor_methods.base_extractor_methods import *
+from nlu.pipe.extractors.extractor_methods.helper_extractor_methods import *
 
 """
 This file contains methods to get pre-defined configurations for every annotator.
@@ -68,7 +67,41 @@ def default_chunk_resolution_config(output_col_prefix='resolved_entities'):
         get_meta=True,
         meta_white_list=['confidence', 'resolved_text'],  # sentence, chunk
         name='default_ner',
-        description='Converts IOB-NER representation into entity representation and generates confidences for the entire entity chunk',
+
+    )
+
+
+def full_resolver_config(output_col_prefix='DEFAULT'):
+    return SparkNLPExtractorConfig(
+        output_col_prefix=output_col_prefix,
+        get_positions=True,
+        get_begin=True,
+        get_end=True,
+        get_embeds=True,
+        get_result=True,
+        get_meta=True,
+        get_full_meta=True,
+        get_annotator_type=True,
+        name='default_full',
+        description='Full resolver outputs, with any _k_ field in the metadata dict splitted :::',
+        meta_data_extractor=SparkNLPExtractor(extract_resolver_all_k_subfields_splitted,
+                                              'Splits all _k_ fields on :::d returns all other fields as corrosponding to pop config',
+                                              'split all _k_ fields')
+
+    )
+
+
+def resolver_conifg_with_metadata(output_col_prefix='DEFAULT'):
+    return SparkNLPExtractorConfig(
+        output_col_prefix=output_col_prefix,
+        get_meta=True,
+        get_full_meta=True,
+        name='with metadata',
+        description='Full resolver outputs, with any _k_ field in the metadata dict splitted :::',
+        meta_data_extractor=SparkNLPExtractor(extract_resolver_all_k_subfields_splitted,
+                                              'Splits all _k_ fields on :::d returns all other fields as corrosponding to pop config',
+                                              'split all _k_ fields')
+
     )
 
 

@@ -18,13 +18,13 @@ from nlu.pipe.utils.data_conversion_utils import DataConversionUtils
 from nlu.pipe.utils.output_level_resolution_utils import OutputLevelUtils
 from nlu.pipe.utils.resolution.storage_ref_utils import StorageRefUtils
 from nlu.universe.universes import Licenses
-from nlu.utils.environment.env_utils import is_running_in_databricks, try_import_streamlit
+from nlu.utils.environment.env_utils import is_running_in_databricks, try_import_pyspark_in_streamlit
 
 logger = logging.getLogger('nlu')
 
 
 class NLUPipeline(dict):
-    # we inherhit from dict so the component_list is indexable and we have a nice shortcut for accessing the spark nlp model
+    # we inherhit from dict so the component_list is indexable and we have a nice shortcut for accessing the spark nlp model_anno_obj
     def __init__(self):
         """ Initializes a pretrained pipeline, should only be created after a
         Spark Context has been created
@@ -34,7 +34,6 @@ class NLUPipeline(dict):
         self.pipe_ready = False  # ready when we have created a spark df
         self.failed_pyarrow_conversion = False
         self.anno2final_cols = []  # Maps Anno to output pandas col
-        self.light_spark_transformer_pipe = None
         self.contains_ocr_components = False
         self.has_nlp_components = False
         self.nlu_ref = ''
@@ -49,29 +48,27 @@ class NLUPipeline(dict):
         self.component_output_level = ''  # document or sentence, depending on how input dependent Sentence/Doc classifier are fed
         self.output_different_levels = True
         self.light_pipe_configured = False
-        self.spark_non_light_transformer_pipe = None
         self.components = []  # orderd list of nlu_component objects
         self.output_datatype = 'pandas'  # What data type should be returned after predict either spark, pandas, modin, numpy, string or array
         self.lang = 'en'
-        self.spark_transformer_pipe = None
-        self.spark_estimator_pipe_pipe = None
+        self.vanilla_transformer_pipe = None
+        self.estimator_pipe = None
+        self.light_transformer_pipe = None
         self.has_licensed_components = False
 
-    def add(self, component: NluComponent, nlu_reference="default_name", pretrained_pipe_component=False,
+    def add(self, component: NluComponent, nlu_reference=None, pretrained_pipe_component=False,
             name_to_add='', idx=None):
         '''
 
         :param component:
-        :param nlu_reference: NLU references, passed for components that are used specified and not automatically generate by NLU
         :return:
         '''
-        nlu_reference = component.nlu_ref
         if idx:
             self.components.insert(idx, component)
         else:
             self.components.append(component)
         # ensure that input/output cols are properly set
-        # Spark NLP model reference shortcut
+        # Spark NLP model_anno_obj reference shortcut
         name = component.name  # .replace(' ', '').replace('train.', '')
 
         if StorageRefUtils.has_storage_ref(component) and component.is_trained:
@@ -82,11 +79,11 @@ class NLUPipeline(dict):
         logger.info(f"Adding {name} to internal component_list")
 
         # Configure output column names of classifiers from category to something more meaningful
-        # if self.isInstanceOfNlpClassifer(component_to_resolve.model): self.configure_outputs(component_to_resolve, nlu_ref)
+        # if self.isInstanceOfNlpClassifer(component_to_resolve.model_anno_obj): self.configure_outputs(component_to_resolve, nlu_ref)
 
         if name_to_add == '':
             # Add Component as self.index and in attributes
-            if component.is_storage_ref_producer and nlu_reference not in self.keys() and not pretrained_pipe_component:
+            if component.is_storage_ref_producer and component.nlu_ref not in self.keys() and not pretrained_pipe_component:
                 self[name] = component.model
             elif name not in self.keys():
                 self[name] = component.model
@@ -107,7 +104,7 @@ class NLUPipeline(dict):
     def fit(self, dataset=None, dataset_path=None, label_seperator=','):
         '''
         if dataset is  string with '/' in it, its dataset path!
-        Converts the input Pandas Dataframe into a Spark Dataframe and trains a model on it.
+        Converts the input Pandas Dataframe into a Spark Dataframe and trains a model_anno_obj on it.
         :param dataset: The pandas dataset to train on, should have a y column for label and 'text' column for text features
         :param dataset_path: Path to a CONLL2013 format dataset. It will be read for NER and POS training.
         :param label_seperator: If multi_classifier is trained, this seperator is used to split the elements into an Array column for Pyspark
@@ -120,14 +117,14 @@ class NLUPipeline(dict):
         if dataset_path != None and 'ner' in self.nlu_ref:
             from sparknlp.training import CoNLL
             s_df = CoNLL().readDataset(self.spark, path=dataset_path, )
-            self.spark_transformer_pipe = self.spark_estimator_pipe.fit(s_df.withColumnRenamed('label', 'y'))
-            self.light_spark_transformer_pipe = LightPipeline(self.spark_transformer_pipe)
+            self.vanilla_transformer_pipe = self.spark_estimator_pipe.fit(s_df.withColumnRenamed('label', 'y'))
+            self.light_transformer_pipe = LightPipeline(self.vanilla_transformer_pipe)
         elif dataset_path != None and 'pos' in self.nlu_ref:
             from sparknlp.training import POS
             s_df = POS().readDataset(self.spark, path=dataset_path, delimiter=label_seperator, outputPosCol="y",
                                      outputDocumentCol="document", outputTextCol="text")
-            self.spark_transformer_pipe = self.spark_estimator_pipe.fit(s_df)
-            self.light_spark_transformer_pipe = LightPipeline(self.spark_transformer_pipe)
+            self.vanilla_transformer_pipe = self.spark_estimator_pipe.fit(s_df)
+            self.light_transformer_pipe = LightPipeline(self.vanilla_transformer_pipe)
 
         elif isinstance(dataset, pd.DataFrame) and 'multi' in self.nlu_ref:
             schema = StructType([
@@ -138,8 +135,8 @@ class NLUPipeline(dict):
             df = self.spark.createDataFrame(data=dataset).withColumn('y', F.split('y', label_seperator))
             # df = self.spark.createDataFrame(data=dataset, schema=schema).withColumn('y',F.split('y',label_seperator))
             # df = self.spark.createDataFrame(dataset)
-            self.spark_transformer_pipe = self.spark_estimator_pipe.fit(df)
-            self.light_spark_transformer_pipe = LightPipeline(self.spark_transformer_pipe)
+            self.vanilla_transformer_pipe = self.spark_estimator_pipe.fit(df)
+            self.light_transformer_pipe = LightPipeline(self.vanilla_transformer_pipe)
 
         elif isinstance(dataset, pd.DataFrame):
             if not self.verify_all_labels_exist(dataset): raise ValueError(
@@ -152,7 +149,7 @@ class NLUPipeline(dict):
                         vector_assembler_input_cols = [c for c in dataset.columns if
                                                        c != 'text' and c != 'y' and c != 'label' and c != 'labels']
                         c.model.setInputCols(vector_assembler_input_cols)
-                        # os_components.model.spark_input_column_names = vector_assembler_input_cols
+                        # os_components.model_anno_obj.spark_input_column_names = vector_assembler_input_cols
                 # Configure Chunk resolver Sentence to Document substitution in all cols. when training Chunk resolver, we must substitute all SENTENCE cols with DOC. We MAY NOT FEED SENTENCE to CHUNK RESOLVE or we get errors
                 self.components = PipeUtils.configure_component_output_levels_to_document(self)
 
@@ -179,31 +176,31 @@ class NLUPipeline(dict):
 
             stages = []
             for component in self.components: stages.append(component.model)
-            ## TODO set storage ref on fitted model
+            ## TODO set storage ref on fitted model_anno_obj
             self.spark_estimator_pipe = Pipeline(stages=stages)
-            self.spark_transformer_pipe = self.spark_estimator_pipe.fit(
+            self.vanilla_transformer_pipe = self.spark_estimator_pipe.fit(
                 DataConversionUtils.pdf_to_sdf(dataset, self.spark)[0])
-            self.light_spark_transformer_pipe = LightPipeline(self.spark_transformer_pipe)
+            self.light_transformer_pipe = LightPipeline(self.vanilla_transformer_pipe)
 
         elif isinstance(dataset, pyspark.sql.DataFrame):
             if not self.verify_all_labels_exist(dataset): raise ValueError(
                 f"Could not detect label in provided columns={dataset.columns}\nMake sure a column named label, labels or y exists in your dataset.")
-            self.spark_transformer_pipe = self.spark_estimator_pipe.fit(
+            self.vanilla_transformer_pipe = self.spark_estimator_pipe.fit(
                 DataConversionUtils.sdf_to_sdf(dataset, self.spark))
-            self.light_spark_transformer_pipe = LightPipeline(self.spark_transformer_pipe)
+            self.light_transformer_pipe = LightPipeline(self.vanilla_transformer_pipe)
 
         else:
             # fit on empty dataframe since no data provided
             if not self.is_fitted:
                 logger.info(
                     'Fitting on empty Dataframe, could not infer correct training method. This is intended for non-trainable pipelines.')
-                self.spark_transformer_pipe = self.spark_estimator_pipe.fit(self.get_sample_spark_dataframe())
-                self.light_spark_transformer_pipe = LightPipeline(self.spark_transformer_pipe)
+                self.vanilla_transformer_pipe = self.spark_estimator_pipe.fit(self.get_sample_spark_dataframe())
+                self.light_transformer_pipe = LightPipeline(self.vanilla_transformer_pipe)
 
         self.has_trainable_components = False
         self.is_fitted = True
         self.light_pipe_configured = True
-        self.components = PipeUtils.replace_untrained_component_with_trained(self, self.spark_transformer_pipe)
+        self.components = PipeUtils.replace_untrained_component_with_trained(self, self.vanilla_transformer_pipe)
 
         return self
 
@@ -266,7 +263,7 @@ class NLUPipeline(dict):
 
            Can process Spark DF output from Vanilla pipes and Pandas Converts outputs of Lightpipeline
            """
-
+        # Light pipe, does not fetch emebddings
         if light_pipe_enabled and not get_embeddings and not isinstance(pdf, pyspark.sql.dataframe.DataFrame):
             return apply_extractors_and_merge(extract_light_pipe_rows(pdf),
                                               anno_2_ex_config, keep_stranger_features, stranger_features)
@@ -415,12 +412,12 @@ class NLUPipeline(dict):
             if not self.is_fitted:
                 self.fit()
         else:
-            if not self.light_spark_transformer_pipe or force:
+            if not self.light_transformer_pipe or force:
                 if not self.is_fitted:
                     self.fit()
                 self.light_pipe_configured = True
                 logger.info("Enabling light pipeline")
-                self.light_spark_transformer_pipe = LightPipeline(self.spark_transformer_pipe, parse_embeddings=True)
+                self.light_transformer_pipe = LightPipeline(self.vanilla_transformer_pipe, parse_embeddings=True)
 
     def save(self, path, component='entire_pipeline', overwrite=False):
         if is_running_in_databricks():
@@ -441,7 +438,7 @@ class NLUPipeline(dict):
                 self.fit()
                 self.is_fitted = True
             if component == 'entire_pipeline':
-                self.spark_transformer_pipe.save(nlp_path)
+                self.vanilla_transformer_pipe.save(nlp_path)
         if overwrite and not nlu.is_running_in_databricks():
             import shutil
             shutil.rmtree(path, ignore_errors=True)
@@ -449,14 +446,14 @@ class NLUPipeline(dict):
             self.fit()
             self.is_fitted = True
         if component == 'entire_pipeline':
-            if isinstance(self.spark_transformer_pipe, LightPipeline):
-                self.spark_transformer_pipe.pipeline_model.save(path)
+            if isinstance(self.vanilla_transformer_pipe, LightPipeline):
+                self.vanilla_transformer_pipe.pipeline_model.save(path)
             else:
-                self.spark_transformer_pipe.save(path)
+                self.vanilla_transformer_pipe.save(path)
         else:
             if component in self.keys():
                 self[component].save(path)
-        print(f'Stored model in {path}')
+        print(f'Stored model_anno_obj in {path}')
 
     def predict(self,
                 data,
@@ -476,12 +473,13 @@ class NLUPipeline(dict):
         :param output_level: output level, either document/sentence/chunk/token
         :param positions: whether to output indexes that map predictions back to position in origin string
         :param keep_stranger_features: whether to keep columns in the dataframe that are not generated by pandas. I.e.
-                when you s a dataframe with 10 columns and only one of them is named text, the returned dataframe will only contain the text column when set to false
+                when you s a dataframe with 10 columns and only one of them is named text, the returned dataframe will
+                only contain the text column when set to false
         :param metadata: whether to keep additional metadata in final df or not like
-                confidiences of every possible class for preidctions.
-        :param multithread: Whether to use multithreading based lightpipeline. In some cases, this may cause errors.
-        :param drop_irellevant_cols: Whether to drop cols of different output levels, i.e. when predicting token level and
-                dro_irrelevant_cols = True then chunk, sentence and Doc will be dropped
+                confidences of every possible class for predictions.
+        :param multithread: Whether to use multithreading based light pipeline. In some cases, this may cause errors.
+        :param drop_irrelevant_cols: Whether to drop cols of different output levels, i.e. when predicting token level
+                and drop_irrelevant_cols = True then chunk, sentence and Doc will be dropped
         :param return_spark_df: Prediction results will be returned right after transforming with the Spark NLP pipeline
         :param get_embeddings: Whether to return embeddings or not
         :return:
@@ -569,18 +567,18 @@ class NLUPipeline(dict):
         """
         from nlu.utils.environment.env_utils import install_and_import_package
         install_and_import_package('spark-nlp-display', import_name='sparknlp_display')
-        if self.spark_transformer_pipe is None: self.fit()
+        if self.vanilla_transformer_pipe is None: self.fit()
         is_databricks_env = is_running_in_databricks()
         if return_html: is_databricks_env = True
         # self.configure_light_pipe_usage(1, force=True)
         from nlu.pipe.viz.vis_utils import VizUtils
 
         if viz_type == '': viz_type = VizUtils.infer_viz_type(self)
-        # anno_res = self.spark_transformer_pipe.fullAnnotate(text_to_viz)[0]
+        # anno_res = self.vanilla_transformer_pipe.fullAnnotate(text_to_viz)[0]
         # anno_res = self.spark.createDataFrame(pd.DataFrame({'text':text_to_viz}))
         data, stranger_features, output_datatype = DataConversionUtils.to_spark_df(text_to_viz, self.spark,
                                                                                    self.raw_text_column)
-        anno_res = self.spark_transformer_pipe.transform(data)
+        anno_res = self.vanilla_transformer_pipe.transform(data)
         anno_res = anno_res.collect()[0]
         if self.has_licensed_components == False:
             HTML = VizUtils.viz_OS(anno_res, self, viz_type, viz_colors, labels_to_viz, is_databricks_env,

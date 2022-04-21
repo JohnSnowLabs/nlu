@@ -1,14 +1,12 @@
-from dataclasses import dataclass
 from typing import Dict, Callable, Optional, List, Any, Union
 
 from sparknlp.common import AnnotatorApproach, AnnotatorModel
 from sparknlp.internal import AnnotatorTransformer
 
-from nlu.universe.logic_universes import AnnoTypes
-from nlu.universe.universes import ComponentBackends
-from nlu.universe.atoms import NlpLevel, LicenseType, JslAnnoId, JslAnnoPyClass, JslAnnoJavaClass, LanguageIso, \
+from nlu.universe.atoms import NlpLevel, LicenseType, JslAnnoId, JslAnnoPyClass, LanguageIso, \
     JslFeature
 from nlu.universe.feature_node_universes import NlpFeatureNode
+from nlu.universe.universes import ComponentBackends
 
 
 def debug_print_pipe_cols(pipe):
@@ -31,7 +29,7 @@ class NluComponent:
                  output_level: NlpLevel,
                  # Output level of the component_to_resolve for data transformation logic or call it putput mapping??
                  node: NlpFeatureNode,  # Graph node
-                 description: str,  # general annotator/model/component_to_resolve/pipeline info
+                 description: str,  # general annotator/model_anno_obj/component_to_resolve/pipeline info
                  provider: ComponentBackends,
                  # Who provides the implementation of this annotator, Spark-NLP for base. Would be
                  license: LicenseType,  # open source or private
@@ -120,42 +118,42 @@ class NluComponent:
         self.is_trained = is_trained
 
     def set_metadata(self, jsl_anno_object: Union[AnnotatorApproach, AnnotatorModel],
-                         nlu_ref: str,
-                         nlp_ref: str,
-                         language: LanguageIso,
-                         loaded_from_pretrained_pipe: bool,
-                         license_type: Optional[LicenseType],
-                         storage_ref: Optional[str] = None):
-            """Write metadata to nlu component_to_resolve after constructing it """
-            self.model = jsl_anno_object
-            self.nlu_ref = nlu_ref
-            self.nlp_ref = nlp_ref
-            self.language = language
-            self.loaded_from_pretrained_pipe = loaded_from_pretrained_pipe
-            self.in_types = self.node.ins.copy()
-            self.out_types = self.node.outs.copy()
-            self.in_types_default = self.node.ins.copy()
-            self.out_types_default = self.node.outs.copy()
-            self.spark_input_column_names = self.in_types.copy()
-            self.spark_output_column_names = self.out_types.copy()
-            if storage_ref:
-                self.storage_ref = storage_ref
-            if license_type:
-                self.license = license_type
-            if nlp_ref == 'glove_840B_300' or nlp_ref == 'glove_6B_300':
-                self.lang = 'xx'
-            if hasattr(self.model, 'setIncludeConfidence'):
-                self.model.setIncludeConfidence(True)
-            # if self.has_storage_ref and 'converter' in self.name:
-            from nlu.universe.feature_node_ids import NLP_NODE_IDS
-            if self.name in [NLP_NODE_IDS.SENTENCE_EMBEDDINGS_CONVERTER, NLP_NODE_IDS.CHUNK_EMBEDDINGS_CONVERTER]:
-                # Embedding converters initially have
-                self.storage_ref = ''
-            if self.trainable:
-                self.is_trained = False
-            from copy import copy
+                     nlu_ref: str,
+                     nlp_ref: str,
+                     language: LanguageIso,
+                     loaded_from_pretrained_pipe: bool,
+                     license_type: Optional[LicenseType] = None,
+                     storage_ref: Optional[str] = None):
+        """Write metadata to nlu component_to_resolve after constructing it """
+        self.model = jsl_anno_object
+        # converted pipes from users may have no refs attached, so we use uuid for now (todo generate nicer names based on jsl_anno_id and if its unique in pipe or not and using storage_ref)
+        self.nlu_ref = nlu_ref if nlu_ref else str(jsl_anno_object)
+        self.nlp_ref = nlp_ref if nlp_ref else str(jsl_anno_object)
+        self.language = language if language else 'en'
+        self.loaded_from_pretrained_pipe = loaded_from_pretrained_pipe
+        self.in_types = self.node.ins.copy()
+        self.out_types = self.node.outs.copy()
+        self.in_types_default = self.node.ins.copy()
+        self.out_types_default = self.node.outs.copy()
+        self.spark_input_column_names = self.in_types.copy()
+        self.spark_output_column_names = self.out_types.copy()
+        if storage_ref:
+            self.storage_ref = storage_ref
+        if license_type:
+            self.license = license_type
+        if nlp_ref == 'glove_840B_300' or nlp_ref == 'glove_6B_300':
+            self.lang = 'xx'
+        if hasattr(self.model, 'setIncludeConfidence'):
+            self.model.setIncludeConfidence(True)
+        # if self.has_storage_ref and 'converter' in self.name:
+        from nlu.universe.feature_node_ids import NLP_NODE_IDS
+        if self.name in [NLP_NODE_IDS.SENTENCE_EMBEDDINGS_CONVERTER, NLP_NODE_IDS.CHUNK_EMBEDDINGS_CONVERTER]:
+            # Embedding converters initially have
+            self.storage_ref = ''
+        if self.trainable:
+            self.is_trained = False
 
-            return self
+        return self
 
     def __str__(self):
         return f'Component(ID={self.name}, NLU_REF={self.nlu_ref} NLP_REF={self.nlp_ref})'

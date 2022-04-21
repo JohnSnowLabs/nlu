@@ -4,7 +4,7 @@ Handler for getting default components, etc.
 '''
 from typing import Dict, List, Union, Optional
 
-from pyspark.ml import PipelineModel
+from pyspark.ml import PipelineModel, Pipeline
 from sparknlp.pretrained import PretrainedPipeline, LightPipeline
 
 from nlu.pipe.nlu_component import NluComponent
@@ -12,7 +12,6 @@ from nlu.pipe.utils.component_utils import ComponentUtils
 from nlu.pipe.utils.pipe_utils import PipeUtils
 from nlu.pipe.utils.resolution.storage_ref_resolution_utils import *
 from nlu.spellbook import Spellbook
-from nlu.universe.annotator_class_universe import AnnoClassRef
 from nlu.universe.atoms import LicenseType
 from nlu.universe.component_universes import ComponentUniverse, anno_class_to_empty_component
 from nlu.universe.feature_resolutions import FeatureResolutions
@@ -31,7 +30,7 @@ def resolve_feature(missing_feature_type: Union[NLP_HC_FEATURES, OCR_FEATURES, N
     It is used to auto complete pipelines, which are missing required components.
     :param missing_feature_type: String which is either just the component_to_resolve
     type or componenttype@spark_nlp_reference which stems from a models storageref and refers to some pretrained
-    embeddings or model
+    embeddings or model_anno_obj
     :return: a NLU component_to_resolve which is a either the default if there is no '@' in the @param
     missing_component_type or a default component_to_resolve for that particular type
     '''
@@ -71,7 +70,7 @@ def resolve_feature(missing_feature_type: Union[NLP_HC_FEATURES, OCR_FEATURES, N
                                               license_type)
 
     else:
-        # if there is an @ in the name, we must get some specific pretrained model from the sparknlp reference that should follow after the @
+        # if there is an @ in the name, we must get some specific pretrained model_anno_obj from the sparknlp reference that should follow after the @
         missing_feature_type, storage_ref = missing_feature_type.split('@')
 
         if storage_ref == '':
@@ -99,20 +98,6 @@ def resolve_feature(missing_feature_type: Union[NLP_HC_FEATURES, OCR_FEATURES, N
         license_type = Licenses.hc if is_licensed else Licenses.open_source
         nlu_component = get_trained_component_for_nlp_model_ref(language, nlu_ref, nlp_ref, license_type)
         return nlu_component
-        # anno_class_name = Spellbook.nlp_ref_to_anno_class[nlp_ref]
-        # # All storage ref providers are defined in open source
-        # os_annos = AnnoClassRef.get_os_pyclass_2_anno_id_dict()
-        # license_type = Licenses.hc if is_licensed else Licenses.open_source
-        # model_bucket = 'clinical/models' if is_licensed else None
-        # jsl_anno_id = os_annos[anno_class_name]
-        # import copy
-        # nlu_component = copy.copy(ComponentUniverse.os_components[jsl_anno_id])
-        # # We write storage ref to nlu_component, for the case of accumulated chunk and sentence embeddings.
-        # # Anno Class has no storage ref in these cases, but it is still an embedding provider
-        # return nlu_component.set_metadata(nlu_component.get_pretrained_model(nlp_ref, language, model_bucket),
-        #                                   nlu_ref,
-        #                                   nlp_ref, language,
-        #                                   False, license_type, storage_ref)
 
 
 def nlu_ref_to_component(nlu_ref, detect_lang=False, authenticated=False) -> NluComponent:
@@ -143,7 +128,7 @@ def nlu_ref_to_component(nlu_ref, detect_lang=False, authenticated=False) -> Nlu
         if nlu_ref in Spellbook.trainable_models.keys():
             if nlu_ref not in Spellbook.trainable_models:
                 s = "\n"
-                raise ValueError(f'Could not find trainable model for nlu_ref={nlu_ref}.'
+                raise ValueError(f'Could not find trainable model_anno_obj for nlu_ref={nlu_ref}.'
                                  f'Supported values = {s.join(nlu.Spellbook.trainable_models.keys())}')
             # TODO ,nlp ref for traianble?
             return get_trainable_component_for_nlu_ref(nlu_ref)
@@ -161,19 +146,21 @@ def nlu_ref_to_component(nlu_ref, detect_lang=False, authenticated=False) -> Nlu
 
 
 def get_trainable_component_for_nlu_ref(nlu_ref) -> NluComponent:
+    # TODO deduct license type
     if nlu_ref in Spellbook.traianble_nlu_ref_to_jsl_anno_id:
         anno_id = Spellbook.traianble_nlu_ref_to_jsl_anno_id[nlu_ref]
     else:
         raise ValueError(f'Could not find trainable Model for nlu_spell ={nlu_ref}')
     if anno_id in ComponentUniverse.components:
         component = ComponentUniverse.components[anno_id]()
-        return component.set_metadata(component.get_trainable_model(), nlu_ref, '', 'xx', False, )
+        return component.set_metadata(component.get_trainable_model(), nlu_ref, '', 'xx', False, Licenses.open_source)
     else:
         raise ValueError(f'Could not find trainable Model for anno_id ={anno_id}')
 
 
 def get_trained_component_list_for_nlp_pipe_ref(language, nlp_ref, nlu_ref, path=None,
-                                                license_type: LicenseType = Licenses.open_source) -> List[NluComponent]:
+                                                license_type: LicenseType = Licenses.open_source,
+                                                ) -> List[NluComponent]:
     """
     creates a list of components from a Spark NLP Pipeline reference
     1. download pipeline
@@ -199,17 +186,56 @@ def get_trained_component_list_for_nlp_pipe_ref(language, nlp_ref, nlu_ref, path
     else:
         pipe = LightPipeline(PipelineModel.load(path=path))
         iterable_stages = pipe.pipeline_model.stages
+    constructed_components = get_component_list_for_iterable_stages(iterable_stages, language, nlp_ref, nlu_ref,
+                                                                    license_type)
+    return ComponentUtils.set_storage_ref_attribute_of_embedding_converters(
+        PipeUtils.set_column_values_on_components_from_pretrained_pipe(constructed_components, nlp_ref, language, path))
+
+
+def get_nlu_pipe_for_nlp_pipe(pipe: Union[Pipeline, LightPipeline, PipelineModel, List], is_pre_configured=True):
+    """Get a list of NLU components wrapping each Annotator in pipe.
+    Pipe should be of class Pipeline, LightPipeline, or PipelineModel
+    :param pipe: for which to extract list of nlu components which embellish each annotator
+    :return: list of nlu components, one per annotator in pipe
+    """
+
+    if isinstance(pipe, List):
+        pipe = get_component_list_for_iterable_stages(pipe, is_pre_configured=is_pre_configured)
+    elif isinstance(pipe, Pipeline):
+        pipe = get_component_list_for_iterable_stages(pipe.getStages(), is_pre_configured=is_pre_configured)
+    elif isinstance(pipe, (LightPipeline, PipelineModel)):
+        pipe = get_component_list_for_iterable_stages(pipe.pipeline_model.stages, is_pre_configured=is_pre_configured)
+    else:
+        raise ValueError(
+            f'Invalid Pipe-Like class {type(pipe)} supported types: Pipeline,LightPipeline,PipelineModel,List')
+    if is_pre_configured:
+        return set_cols_on_nlu_components(pipe)
+    else:
+        return pipe
+
+
+def set_cols_on_nlu_components(iterable_components):
+    for c in iterable_components:
+        c.spark_input_column_names = c.model.getInputCols() if hasattr(c.model, 'getInputCols') else [
+            c.model.getInputCol()]
+        c.spark_output_column_names = [c.model.getOutputCol()]
+    return iterable_components
+
+
+def get_component_list_for_iterable_stages(iterable_stages, language=None, nlp_ref=None, nlu_ref=None,
+                                           license_type: LicenseType = Licenses.open_source,
+                                           is_pre_configured=True
+                                           ):
     constructed_components = []
     for jsl_anno_object in iterable_stages:
         anno_class_name = type(jsl_anno_object).__name__
         logger.info(f"Building NLU component for class_name = {anno_class_name} ")
         component = anno_class_to_empty_component(anno_class_name)
-        component.set_metadata(jsl_anno_object, nlu_ref, nlp_ref, language, True, license_type)
+        component.set_metadata(jsl_anno_object, nlu_ref, nlp_ref, language, is_pre_configured, license_type)
         constructed_components.append(component)
         if None in constructed_components or len(constructed_components) == 0:
             raise Exception(f"Failure inferring type anno_class={anno_class_name} ")
-    return ComponentUtils.set_storage_ref_attribute_of_embedding_converters(
-        PipeUtils.set_column_values_on_components_from_pretrained_pipe(constructed_components, nlp_ref, language, path))
+    return constructed_components
 
 
 def get_trained_component_for_nlp_model_ref(lang: str, nlu_ref: Optional[str] = '', nlp_ref: str = '',
@@ -229,177 +255,9 @@ def get_trained_component_for_nlp_model_ref(lang: str, nlu_ref: Optional[str] = 
         if model_configs:
             for method_name, parameter in model_configs.items():
                 # Dynamically call method from provided name and value, to set parameters like T5 task
-                code = f'component.model.{method_name}({parameter})'
+                code = f'component.model_anno_obj.{method_name}({parameter})'
                 eval(code)
     except Exception as e:
         raise ValueError(f'Failure making component, nlp_ref={nlp_ref}, nlu_ref={nlu_ref}, lang={lang}, \n err={e}')
 
     return component
-
-
-########## OLD
-def construct_component_from_pipe_identifier_OLD(language, nlp_ref, nlu_ref, path=None,
-                                                 license_type: LicenseType = Licenses.open_source):  # -> NLUPipeline
-    """
-    creates a list of components from a Spark NLP Pipeline reference
-    1. download pipeline
-    2. unpack pipeline to annotators and create list of nlu components
-    3. return list of nlu components
-    :param license_type: Type of license for the component
-    :param nlu_ref: Nlu ref that points to this pipe
-    :param language: language of the pipeline
-    :param nlp_ref: Reference to a spark nlp pretrained pipeline
-    :param path: Load component_list from HDD
-    :return: Each element of the Spark NLP pipeline wrapped as a NLU component_to_resolve inside a list
-    """
-    logger.info(f'Building pretrained pipe nlu_ref={nlu_ref} nlp_ref={nlp_ref}')
-    if 'language' in nlp_ref:
-        # special edge case for lang detectors
-        language = 'xx'
-    if path is None:
-        if license_type != Licenses.open_source:
-            pipe = PretrainedPipeline(nlp_ref, lang=language, remote_loc='clinical/models')
-        else:
-            pipe = PretrainedPipeline(nlp_ref, lang=language)
-        iterable_stages = pipe.light_model.pipeline_model.stages
-    else:
-        pipe = LightPipeline(PipelineModel.load(path=path))
-        iterable_stages = pipe.pipeline_model.stages
-    constructed_components = []
-    os_annos = AnnoClassRef.get_os_pyclass_2_anno_id_dict()
-    hc_annos = AnnoClassRef.get_hc_pyclass_2_anno_id_dict()
-    ocr_annos = AnnoClassRef.get_ocr_pyclass_2_anno_id_dict()
-    for jsl_anno_object in iterable_stages:
-        anno_class_name = type(jsl_anno_object).__name__
-        logger.info(
-            f"Extracting model from Spark NLP pipeline: obj= {jsl_anno_object} class_name = {anno_class_name} and creating Component")
-        if anno_class_name in os_annos.keys():
-            jsl_anno_id = os_annos[anno_class_name]
-            nlu_component = ComponentUniverse.os_components[jsl_anno_id]
-            nlu_component.set_metadata(jsl_anno_object, nlu_ref, nlp_ref, language, True, Licenses.open_source)
-            constructed_components.append(nlu_component)
-        elif anno_class_name in hc_annos.keys():
-            # Licensed HC
-            jsl_anno_id = hc_annos[anno_class_name]
-            nlu_component = ComponentUniverse.hc_components[jsl_anno_id]
-            nlu_component.set_metadata(jsl_anno_object, nlu_ref, nlp_ref, language, True, Licenses.hc)
-            constructed_components.append(nlu_component)
-        elif anno_class_name in ocr_annos:
-            # Licensed OCR
-            jsl_anno_id = ocr_annos[anno_class_name]
-            nlu_component = ComponentUniverse.ocr_components[jsl_anno_id]
-            nlu_component.set_metadata(jsl_anno_object, nlu_ref, nlp_ref, language, True, Licenses.ocr)
-            constructed_components.append(nlu_component)
-        else:
-            raise ValueError(
-                f'Could not find matching nlu component_to_resolve for annotator class = {anno_class_name}')
-        if None in constructed_components or len(constructed_components) == 0:
-            raise Exception(f"Failure inferring type anno_class={anno_class_name} ")
-    return ComponentUtils.set_storage_ref_attribute_of_embedding_converters(
-        PipeUtils.set_column_values_on_components_from_pretrained_pipe(constructed_components, nlp_ref, language, path))
-
-
-def get_trainable_component_for_nlu_ref_OLD(nlu_ref) -> NluComponent:
-    '''
-    This method returns a Spark NLP annotator Approach class embellished by a NLU component_to_resolve
-    :param nlu_ref: nlu ref to the trainable model
-    :return: trainable model as a NLU component_to_resolve
-    '''
-    logger.info(f'Creating trainable NLU component_to_resolve for nlu_ref = {nlu_ref} ')
-
-    if nlu_ref in Spellbook.traianble_nlu_ref_to_jsl_anno_id.keys():
-        anno_id = Spellbook.traianble_nlu_ref_to_jsl_anno_id[nlu_ref]
-    else:
-        raise ValueError(f'Could not find trainable Model for nlu_spell ={nlu_ref}')
-
-    try:
-        if anno_id in ComponentUniverse.os_components.keys():
-            nlu_component = ComponentUniverse.os_components[anno_id]
-            return nlu_component.set_metadata(nlu_component.get_trainable_model(), nlu_ref, '', 'xx', False,
-                                              Licenses.open_source)
-        elif anno_id in ComponentUniverse.hc_components.keys():
-            nlu_component = ComponentUniverse.hc_components[anno_id]
-            return nlu_component.set_metadata(nlu_component.get_trainable_model(), nlu_ref, '', 'xx', False,
-                                              Licenses.hc)
-
-        else:
-            raise ValueError(f'Could not find trainable Model for nlu_spell ={nlu_ref}')
-
-    except Exception:  # if reference is not in namespace and not a component_to_resolve it will cause a unrecoverable crash
-        ValueError(
-            f'EXCEPTION: Could not create trainable NLU component_to_resolve for nlu_ref = {nlu_ref} ')
-
-
-def get_trained_component_for_nlp_ref_OLD(language: str, nlu_ref: str = '', nlp_ref: str = '',
-                                          license_type: LicenseType = Licenses.open_source,
-                                          model_configs: Dict[str, any] = {}) -> NluComponent:
-    '''
-    Creates a NLU component_to_resolve from a pretrained SparkNLP model reference or Class reference. First step to get the Root of the NLP DAG
-    Class references will return default pretrained models
-    :param language: Language of the sparknlp model reference
-    :param nlu_ref: Full user request
-    :param nlp_ref: Full Spark NLP reference
-    :param license_type: Type of license for the component
-    :return: Returns a new NLU component
-    '''
-    logger.info(f'Building sparknlp_ref={nlp_ref}, nlu_ref={nlu_ref},language={language} ')
-    if nlp_ref not in Spellbook.nlp_ref_to_anno_class:
-        raise ValueError('Invalid NLP ref for sparknlp_ref={nlp_ref}, nlu_ref={nlu_ref},language={language}')
-    anno_class_name = Spellbook.nlp_ref_to_anno_class[nlp_ref]
-    model_bucket = 'clinical/models' if license_type != Licenses.open_source else None
-    try:
-        if anno_class_name in AnnoClassRef.JSL_OS_py_class_2_anno_id:
-            # Open Source
-            jsl_anno_id = AnnoClassRef.JSL_OS_py_class_2_anno_id[anno_class_name]
-            nlu_component = ComponentUniverse.os_components[jsl_anno_id]
-            if nlu_component.get_pretrained_model:
-                component = nlu_component.set_metadata(
-                    nlu_component.get_pretrained_model(nlp_ref, language, model_bucket),
-                    nlu_ref, nlp_ref,
-                    language,
-                    False, Licenses.open_source)
-            else:
-                component = nlu_component.set_metadata(nlu_component.get_default_model(),
-                                                       nlu_ref, nlp_ref,
-                                                       language,
-                                                       False, Licenses.open_source)
-
-        elif anno_class_name in AnnoClassRef.JSL_HC_py_class_2_anno_id:
-            # Licensed HC
-            jsl_anno_id = AnnoClassRef.JSL_HC_py_class_2_anno_id[anno_class_name]
-            nlu_component = ComponentUniverse.hc_components[jsl_anno_id]
-            if nlu_component.get_pretrained_model:
-                component = nlu_component.set_metadata(
-                    nlu_component.get_pretrained_model(nlp_ref, language, 'clinical/models'),
-                    nlu_ref,
-                    nlp_ref, language,
-                    False, Licenses.hc)
-            else:
-                component = nlu_component.set_metadata(nlu_component.get_default_model(),
-                                                       nlu_ref,
-                                                       nlp_ref, language,
-                                                       False, Licenses.hc)
-
-        elif anno_class_name in AnnoClassRef.JSL_OCR_py_class_2_anno_id:
-            jsl_anno_id = AnnoClassRef.JSL_OCR_py_class_2_anno_id[anno_class_name]
-            nlu_component = ComponentUniverse.ocr_components[jsl_anno_id]
-            if nlu_component.get_pretrained_model:
-                component = nlu_component.set_metadata(nlu_component.get_pretrained_model(nlp_ref, language, ), nlu_ref,
-                                                       nlp_ref, language,
-                                                       False, Licenses.ocr)
-            else:
-                # Model with no pretrained weights
-                component = nlu_component.set_metadata(nlu_component.get_default_model(), nlu_ref,
-                                                       nlp_ref, language,
-                                                       False, Licenses.ocr)
-
-        else:
-            raise ValueError(f'Failure making component for annotator class = {anno_class_name}')
-        if model_configs:
-            for method_name, parameter in model_configs.items():
-                # Dynamically call method from provided name and value, to set parameters like T5 task
-                code = f'component.model.{method_name}({parameter})'
-                eval(code)
-        return component
-    except Exception as e:
-        raise ValueError(f'Failure making component, nlp_ref={nlp_ref}, nlu_ref={nlu_ref}, lang={language}, \n err={e}')

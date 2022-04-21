@@ -7,7 +7,7 @@ logger = logging.getLogger('nlu')
 
 
 def resolve_storage_ref(lang, storage_ref, missing_component_type):
-    """Returns a nlp_ref, nlu_ref and whether it is a licensed model or not and an updated languiage, if multi lingual"""
+    """Returns a nlp_ref, nlu_ref and whether it is a licensed model_anno_obj or not and an updated languiage, if multi lingual"""
     logger.info(
         f"Resolving storage_ref={storage_ref} for lang={lang} and missing_component_type={missing_component_type}")
     nlu_ref, nlp_ref, is_licensed = None, None, False
@@ -21,7 +21,7 @@ def resolve_storage_ref(lang, storage_ref, missing_component_type):
     elif lang in Spellbook.storage_ref_2_nlu_ref.keys() and storage_ref in Spellbook.storage_ref_2_nlu_ref[
         lang].keys():
         nlu_ref = Spellbook.storage_ref_2_nlu_ref[lang][
-            storage_ref]  # a HC model may use OS storage_ref_provider, so we dont know yet if it is licensed or not
+            storage_ref]  # a HC model_anno_obj may use OS storage_ref_provider, so we dont know yet if it is licensed or not
     if lang in Spellbook.pretrained_models_references.keys() and nlu_ref in \
             Spellbook.pretrained_models_references[lang].keys():
         nlp_ref = Spellbook.pretrained_models_references[lang][nlu_ref]

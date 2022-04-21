@@ -72,17 +72,17 @@ class StreamlitVizBlockHandler():
             model_selection.sort()
             if model_select_position == 'side':
                 if pipe.nlu_ref.split(' ')[0] in model_selection:
-                    ner_model_2_viz = st.sidebar.selectbox("Select a NER model.", model_selection,
+                    ner_model_2_viz = st.sidebar.selectbox("Select a NER model_anno_obj.", model_selection,
                                                            index=model_selection.index(pipe.nlu_ref.split(' ')[0]))
                 else:
-                    ner_model_2_viz = st.sidebar.selectbox("Select a NER model.", model_selection,
+                    ner_model_2_viz = st.sidebar.selectbox("Select a NER model_anno_obj.", model_selection,
                                                            index=model_selection.index('en.ner'))
             else:
                 if pipe.nlu_ref.split(' ')[0] in model_selection:
-                    ner_model_2_viz = st.selectbox("Select a NER model", model_selection,
+                    ner_model_2_viz = st.selectbox("Select a NER model_anno_obj", model_selection,
                                                    index=model_selection.index(pipe.nlu_ref.split(' ')[0]))
                 else:
-                    ner_model_2_viz = st.selectbox("Select a NER model.", index=model_selection.index('en.ner'))
+                    ner_model_2_viz = st.selectbox("Select a NER model_anno_obj.", index=model_selection.index('en.ner'))
 
         active_visualizers = visualizers
         if show_viz_selection: active_visualizers = st.sidebar.multiselect("Visualizers", options=visualizers,

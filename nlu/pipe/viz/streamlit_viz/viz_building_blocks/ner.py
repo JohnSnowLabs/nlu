@@ -33,8 +33,8 @@ class NERStreamlitBlock():
         if show_model_select :
             model_selection = Discoverer.get_components('ner',include_pipes=True)
             model_selection.sort()
-            if model_select_position == 'side':ner_model_2_viz = st.sidebar.selectbox("Select a NER model",model_selection,index=model_selection.index(pipe.nlu_ref.split(' ')[0]))
-            else : ner_model_2_viz = st.selectbox("Select a NER model",model_selection,index=model_selection.index(pipe.nlu_ref.split(' ')[0]))
+            if model_select_position == 'side':ner_model_2_viz = st.sidebar.selectbox("Select a NER model_anno_obj",model_selection,index=model_selection.index(pipe.nlu_ref.split(' ')[0]))
+            else : ner_model_2_viz = st.selectbox("Select a NER model_anno_obj",model_selection,index=model_selection.index(pipe.nlu_ref.split(' ')[0]))
             pipe = pipe if pipe.nlu_ref == ner_model_2_viz else StreamlitUtilsOS.get_pipe(ner_model_2_viz)
         if title: st.header(title)
         if show_text_input : text = st.text_area("Enter text you want to visualize NER classes for below", text, key=key)
@@ -46,7 +46,7 @@ class NERStreamlitBlock():
             if show_label_select:
                 exp = st.expander("Select entity labels to highlight")
                 label_select = exp.multiselect(
-                    "These labels are predicted by the NER model. Select which ones you want to display",
+                    "These labels are predicted by the NER model_anno_obj. Select which ones you want to display",
                     options=ner_tags,default=list(ner_tags))
             else : label_select = ner_tags
             pipe.viz(text,write_to_streamlit=True, viz_type='ner',labels_to_viz=label_select,viz_colors=colors, streamlit_key=key)
