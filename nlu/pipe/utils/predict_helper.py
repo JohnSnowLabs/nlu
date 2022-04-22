@@ -21,7 +21,7 @@ def __predict_standard_spark(pipe, data, output_level, positions, keep_stranger_
     data, stranger_features, output_datatype = DataConversionUtils.to_spark_df(data, pipe.spark, pipe.raw_text_column)
 
     # 3. Apply Spark Pipeline
-    data = pipe.spark_transformer_pipe.transform(data)
+    data = pipe.vanilla_transformer_pipe.transform(data)
 
     # 4. Convert resulting spark DF into nicer format and by default into pandas.
     if return_spark_df: return data  # Returns RAW  Spark Dataframe result of component_list prediction
@@ -36,15 +36,15 @@ def __predict_standard_spark(pipe, data, output_level, positions, keep_stranger_
                                           )
 
 
-def __predict_multi_threaded_light_pipe(pipe, data, output_level, positions, keep_stranger_features, metadata,
-                                        drop_irrelevant_cols, get_embeddings):
+def predict_multi_threaded_light_pipe(pipe, data, output_level, positions, keep_stranger_features, metadata,
+                                      drop_irrelevant_cols, get_embeddings):
     # 1. Try light component_list predcit
     # 2. if vanilla Fails use Vanilla
     # 3.  if vanilla fails raise error
     data, stranger_features, output_datatype = DataConversionUtils.to_pandas_df(data, pipe.raw_text_column)
 
     # Predict -> Cast to PDF -> Join with original inputs. It does NOT yield EMBEDDINGS.
-    data = data.join(pd.DataFrame(pipe.light_spark_transformer_pipe.fullAnnotate(data.text.values)))
+    data = data.join(pd.DataFrame(pipe.light_transformer_pipe.fullAnnotate(data.text.values)))
 
     return pipe.pythonify_spark_dataframe(data,
                                           keep_stranger_features=keep_stranger_features,
@@ -73,7 +73,7 @@ def __predict_ocr_spark(pipe, data, output_level, positions, keep_stranger_featu
     accepted_file_types = OcrDataConversionUtils.get_accepted_ocr_file_types(pipe)
     file_paths = OcrDataConversionUtils.glob_files_of_accepted_type(paths, accepted_file_types)
     spark = sparknlp.start()  # Fetches Spark Session that has already been licensed
-    data = pipe.spark_transformer_pipe.transform(spark.read.format("binaryFile").load(file_paths)).withColumn(
+    data = pipe.vanilla_transformer_pipe.transform(spark.read.format("binaryFile").load(file_paths)).withColumn(
         'origin_index', monotonically_increasing_id().alias('origin_index'))
     return pipe.pythonify_spark_dataframe(data,
                                           keep_stranger_features=keep_stranger_features,
@@ -99,9 +99,10 @@ def __predict__(pipe, data, output_level, positions, keep_stranger_features, met
     :param return_spark_df: Prediction results will be returned right after transforming with the Spark NLP pipeline
     :return:
     '''
+
     if output_level == '':
         # Default sentence level for all components
-        if pipe.has_nlp_components:
+        if pipe.has_nlp_components and not PipeUtils.contains_T5_or_GPT_transformer(pipe):
             pipe.component_output_level = 'sentence'
             pipe.components = PipeUtils.configure_component_output_levels(pipe, 'sentence')
     else:
@@ -149,8 +150,8 @@ def __predict__(pipe, data, output_level, positions, keep_stranger_features, met
     elif not get_embeddings and multithread:
         # Try Multithreaded with Fallback vanilla as option. No Embeddings in this mode
         try:
-            return __predict_multi_threaded_light_pipe(pipe, data, output_level, positions, keep_stranger_features,
-                                                       metadata, drop_irrelevant_cols, get_embeddings=get_embeddings)
+            return predict_multi_threaded_light_pipe(pipe, data, output_level, positions, keep_stranger_features,
+                                                     metadata, drop_irrelevant_cols, get_embeddings=get_embeddings)
 
 
         except Exception as err:
@@ -178,3 +179,4 @@ def __predict__(pipe, data, output_level, positions, keep_stranger_features, met
 def debug_print_pipe_cols(pipe):
     for c in pipe.components:
         print(f'{c.spark_input_column_names}->{c.name}->{c.spark_output_column_names}')
+

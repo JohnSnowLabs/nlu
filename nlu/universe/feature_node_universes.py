@@ -116,7 +116,7 @@ class NLP_FEATURE_NODES:  # or Mode Node?
         A.POS: NlpFeatureNode(A.POS, [F.TOKEN, F.DOCUMENT], [F.POS]),
         A.TRAINABLE_POS: NlpFeatureNode(A.POS, [F.TOKEN, F.DOCUMENT], [F.POS]),
         A.RECURISVE_TOKENIZER: NlpFeatureNode(A.RECURISVE_TOKENIZER, [F.DOCUMENT], [F.TOKEN]),
-        A.REGEX_MATCHER: NlpFeatureNode(A.REGEX_MATCHER, [F.DOCUMENT], [F.CHUNK]),
+        A.REGEX_MATCHER: NlpFeatureNode(A.REGEX_MATCHER, [F.DOCUMENT], [F.NAMED_ENTITY_CONVERTED]),
         A.REGEX_TOKENIZER: NlpFeatureNode(A.REGEX_TOKENIZER, [F.DOCUMENT], [F.TOKEN]),
         A.SENTENCE_DETECTOR: NlpFeatureNode(A.SENTENCE_DETECTOR, [F.DOCUMENT], [F.SENTENCE]),
         A.SENTENCE_DETECTOR_DL: NlpFeatureNode(A.SENTENCE_DETECTOR_DL, [F.DOCUMENT], [F.SENTENCE]),
@@ -178,6 +178,9 @@ class NLP_FEATURE_NODES:  # or Mode Node?
 
         A.BERT_FOR_SEQUENCE_CLASSIFICATION: NlpFeatureNode(A.BERT_FOR_SEQUENCE_CLASSIFICATION, [F.DOCUMENT, F.TOKEN],
                                                            [F.SEQUENCE_CLASSIFICATION]),
+        A.DEBERTA_FOR_SEQUENCE_CLASSIFICATION: NlpFeatureNode(A.BERT_FOR_SEQUENCE_CLASSIFICATION, [F.DOCUMENT, F.TOKEN],
+                                                              [F.SEQUENCE_CLASSIFICATION]),
+
         A.DISTIL_BERT_FOR_SEQUENCE_CLASSIFICATION: NlpFeatureNode(A.DISTIL_BERT_FOR_SEQUENCE_CLASSIFICATION,
                                                                   [F.DOCUMENT, F.TOKEN],
                                                                   [F.SEQUENCE_CLASSIFICATION]),
@@ -199,6 +202,9 @@ class NLP_FEATURE_NODES:  # or Mode Node?
                                                             [F.SEQUENCE_CLASSIFICATION]),
         A.GPT2: NlpFeatureNode(A.GPT2, [F.DOCUMENT], [F.DOCUMENT_GENERATED]),
         A.WORD_2_VEC: NlpFeatureNode(A.WORD_2_VEC, [F.TOKEN], [F.WORD_EMBEDDINGS]),
+        A.BERT_SENTENCE_CHUNK_EMBEDDINGS: NlpFeatureNode(A.BERT_SENTENCE_CHUNK_EMBEDDINGS, [F.DOCUMENT],
+                                                         [F.NAMED_ENTITY_CONVERTED]),
+
     }
 
 
@@ -238,13 +244,13 @@ class OCR_FEATURE_NODES:
         A.PDF_ASSEMBLER: OcrFeatureNode(A.PDF_ASSEMBLER, [F.BINARY_PDF_PAGE, F.FILE_PATH, F.PAGE_NUM], [F.BINARY_PDF]),
         A.PDF_DRAW_REGIONS: OcrFeatureNode(A.PDF_DRAW_REGIONS, [F.BINARY_PDF, F.FILE_PATH, F.OCR_POSITIONS],
                                            [F.BINARY_PDF]),
-        A.PDF2TEXT_TABLE: OcrFeatureNode(A.PDF2TEXT_TABLE, [F.BINARY_PDF, F.FILE_PATH, ], [F.OCR_TABLE]),
+        A.PDF2TEXT_TABLE: OcrFeatureNode(A.PDF2TEXT_TABLE, [F.BINARY_DOCX, F.FILE_PATH, ], [F.OCR_TABLE]),
 
         # DOCX Processing
         A.DOC2TEXT: OcrFeatureNode(A.DOC2TEXT, [F.BINARY_DOCX, F.FILE_PATH, ], [F.TEXT, F.PAGE_NUM]),
         A.DOC2TEXT_TABLE: OcrFeatureNode(A.DOC2TEXT_TABLE, [F.BINARY_DOCX, F.FILE_PATH], [F.OCR_TABLE]),
         A.DOC2PDF: OcrFeatureNode(A.DOC2PDF, [F.BINARY_DOCX, F.FILE_PATH], [F.BINARY_PDF]),
-        A.PPT2TEXT_TABLE: OcrFeatureNode(A.PPT2TEXT_TABLE, [F.BINARY_PPT, F.FILE_PATH], [F.OCR_TABLE]),
+        A.PPT2TEXT_TABLE: OcrFeatureNode(A.PPT2TEXT_TABLE, [F.BINARY_DOCX, F.FILE_PATH], [F.OCR_TABLE]),
         A.PPT2PDF: OcrFeatureNode(A.PPT2PDF, [F.BINARY_PPT, F.FILE_PATH], [F.BINARY_PDF]),
 
         # DICOM Processing
@@ -359,6 +365,13 @@ class NLP_HC_FEATURE_NODES():
                                                 [F.NAMED_ENTITY_CONVERTED, F.WORD_EMBEDDINGS, F.POS,
                                                  F.UNLABLED_DEPENDENCY],
                                                 [H_F.RELATION]),
+
+        A.ZERO_SHOT_RELATION_EXTRACTION: NlpHcFeatureNode(A.ZERO_SHOT_RELATION_EXTRACTION,
+                                                [F.NAMED_ENTITY_CONVERTED, F.DOCUMENT,],
+                                                [H_F.RELATION]),
+
+
+
         A.TRAINABLE_RELATION_EXTRACTION: NlpHcFeatureNode(A.TRAINABLE_RELATION_EXTRACTION,
                                                           [F.NAMED_ENTITY_CONVERTED, F.WORD_EMBEDDINGS, F.POS,
                                                            F.UNLABLED_DEPENDENCY],

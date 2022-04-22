@@ -1,16 +1,15 @@
-from sparknlp.annotator import *
-import inspect
 import logging
 
+from sparknlp.annotator import *
+
 import nlu
+from nlu import Licenses
 from nlu.pipe.nlu_component import NluComponent
 from nlu.pipe.utils.resolution.storage_ref_utils import StorageRefUtils
-from nlu.universe.atoms import JslAnnoId
-from nlu.universe.logic_universes import NLP_LEVELS, AnnoTypes
-from nlu import Licenses
-from nlu.universe.feature_node_ids import NLP_NODE_IDS, NLP_HC_NODE_IDS
+from nlu.universe.component_universes import ComponentUniverse, jsl_id_to_empty_component
+from nlu.universe.feature_node_ids import NLP_NODE_IDS, NLP_HC_NODE_IDS, OCR_NODE_IDS
 from nlu.universe.feature_universes import NLP_FEATURES
-from nlu.universe.component_universes import ComponentMap
+from nlu.universe.logic_universes import NLP_LEVELS, AnnoTypes
 
 logger = logging.getLogger('nlu')
 from nlu.pipe.utils.component_utils import ComponentUtils
@@ -30,7 +29,7 @@ class PipeUtils:
         """
         Some models have bad storage refs. The list of these bad models is defined by nlu.spellbook.Spellbook.bad_storage_refs.
         The correct storage ref is given by the resolving moels storage ref defined by nlu.Spellbook.licensed_storage_ref_2_nlu_ref[pipe.lang][storage_ref].
-        Once the resolving model is loaded in the pipe, this method will take its storage ref and write it to the bad_storage_ref model defined by nlu.spellbook.Spellbook.bad_storage_refs.
+        Once the resolving model_anno_obj is loaded in the pipe, this method will take its storage ref and write it to the bad_storage_ref model_anno_obj defined by nlu.spellbook.Spellbook.bad_storage_refs.
         If storage ref is already updated, this method will leave the pipe unchanged.
         We only check for healthcare storage refs
         :param pipe: Pipe to update bad storage refs on
@@ -49,7 +48,7 @@ class PipeUtils:
                                 storage_ref]
                             for storage_resolver in pipe.components:
                                 if storage_resolver.nlu_ref == storage_ref_resolver_nlu_ref:
-                                    # Update the storage ref of the bad_component to the storage ref of the resolving model according to licensed_storage_ref_2_nlu_ref
+                                    # Update the storage ref of the bad_component to the storage ref of the resolving model_anno_obj according to licensed_storage_ref_2_nlu_ref
                                     resolving_storage_ref = StorageRefUtils.extract_storage_ref(storage_resolver)
                                     bad_storage_ref_component.model.set(bad_storage_ref_component.model.storageRef,
                                                                         resolving_storage_ref)
@@ -58,7 +57,7 @@ class PipeUtils:
     @staticmethod
     def update_relation_extractor_models_storage_ref(pipe):
         # if provided, because the sometimes have unresolvable storage refs
-        # we can find the actual storage ref only after its mapped is sresolved to an model defined by an nlp ref
+        # we can find the actual storage ref only after its mapped is sresolved to an model_anno_obj defined by an nlp ref
         # If RelationExtractor is not loaded from a pretrained pipe we update its storage ref to the resolving models storage ref
 
         for relation_extractor_component in pipe.components:
@@ -73,7 +72,7 @@ class PipeUtils:
                             storage_ref]
                         for storage_resolver in pipe.components:
                             if storage_resolver.nlu_ref == storage_ref_resolver_nlu_ref:
-                                # Update the storage ref of the RL-Extractor to the storage ref of the resolving model according to licensed_storage_ref_2_nlu_ref
+                                # Update the storage ref of the RL-Extractor to the storage ref of the resolving model_anno_obj according to licensed_storage_ref_2_nlu_ref
                                 resolving_storage_ref = StorageRefUtils.extract_storage_ref(storage_resolver)
                                 relation_extractor_component.model.set(relation_extractor_component.model.storageRef,
                                                                        resolving_storage_ref)
@@ -81,7 +80,7 @@ class PipeUtils:
 
     @staticmethod
     def get_json_data_for_pipe_model_at_stage_number(pipe_path, stage_number_as_string):
-        """Gets the json metadata from a model for a given base path at a specific stage index"""
+        """Gets the json metadata from a model_anno_obj for a given base path at a specific stage index"""
         c_metadata_path = f'{pipe_path}/stages/{stage_number_as_string}_*/metadata/part-00000'
         c_metadata_path = glob.glob(f'{c_metadata_path}*')[0]
         with open(c_metadata_path, "r") as f:
@@ -90,7 +89,7 @@ class PipeUtils:
 
     @staticmethod
     def get_json_data_for_pipe_model_at_stage_number_on_databricks(nlp_ref, lang, digit_str):
-        """Gets the json metadata from a model for a given base path at a specific stage index on databricks"""
+        """Gets the json metadata from a model_anno_obj for a given base path at a specific stage index on databricks"""
         import sparknlp
         spark = sparknlp.start()
         pipe_df = spark.read.json(
@@ -131,6 +130,7 @@ class PipeUtils:
         digit_cur = 0
 
         for c in component_list:
+            model_name = c.model.uid.split('_')[0]
             if is_running_in_databricks():
                 data = PipeUtils.get_json_data_for_pipe_model_at_stage_number_on_databricks(nlp_ref, lang, digit_str)
             else:
@@ -147,15 +147,20 @@ class PipeUtils:
                 out = data['paramMap']['outputCol']
             else:
                 # Sometimes paramMap is missing outputCol, so we have to use this hack
-                model_name = c.model.uid.split('_')[0]
                 if model_name == 'DocumentAssembler':
                     out = 'document'
+                elif model_name == 'Finisher':
+                    out = 'finished'
+
                 else:
                     out = c.model.uid.split('_')[0] + '_out'
 
             c.spark_input_column_names = inp if isinstance(inp, List) else [inp]
             c.spark_output_column_names = [out]
-            c.model.setOutputCol(out)
+
+            if model_name != 'Finisher':
+                # finisher dynamically generates cols from input cols 4
+                c.model.setOutputCol(out) if hasattr(c.model, 'setOutputCol') else c.model.setOutputCols(out)
             digit_cur += 1
             digit_str = str(digit_cur)
             while len(digit_str) < digits_num:
@@ -192,9 +197,9 @@ class PipeUtils:
     def enforce_AT_schema_on_NER_processors_and_add_missing_NER_converters(pipe):
         """For every NER provider and consumer, enforce that their output col is named <pipe_prediction_output_level>@storage_ref for
         output_levels word,chunk,sentence aka document , i.e. word_embed@elmo or sentence_embed@elmo etc. We also
-        add NER converters for every NER model that no Converter converting its inputs In addition, returns the
-        pipeline with missing NER converters added, for every NER model. The converters transform the IOB schema in a
-        merged and more usable form for downstream tasks 1. Find a NER model in component_list 2. Find a NER
+        add NER converters for every NER model_anno_obj that no Converter converting its inputs In addition, returns the
+        pipeline with missing NER converters added, for every NER model_anno_obj. The converters transform the IOB schema in a
+        merged and more usable form for downstream tasks 1. Find a NER model_anno_obj in component_list 2. Find a NER
         converter feeding from it, if there is None, create one. 3. Generate name with Identifier
         <ner-iob>@<nlu_ref_identifier>  and <entities>@<nlu_ref_identifier> 3.1 Update NER Models    output to
         <ner-iob>@<nlu_ref_identifier> 3.2 Update NER Converter input  to <ner-iob>@<nlu_ref_identifier> 3.3 Update
@@ -224,14 +229,14 @@ class PipeUtils:
                 if converter_to_update is None:
                     if c.license == Licenses.hc:
                         # TODO SET METADATA FIELDS HERE ON ANNO!!
-                        converter_to_update = ComponentMap.hc_components[NLP_HC_NODE_IDS.NER_CONVERTER_INTERNAL]
+                        converter_to_update = jsl_id_to_empty_component(NLP_HC_NODE_IDS.NER_CONVERTER_INTERNAL)
                         converter_to_update.set_metadata(converter_to_update.get_default_model(),
                                                          NLP_HC_NODE_IDS.NER_CONVERTER_INTERNAL,
                                                          NLP_HC_NODE_IDS.NER_CONVERTER_INTERNAL,
                                                          'xx', False, Licenses.hc)
                     else:
                         # TODO SET METADATA FIELDS HERE ON ANNO!!
-                        converter_to_update = ComponentMap.os_components[NLP_NODE_IDS.NER_CONVERTER]
+                        converter_to_update = jsl_id_to_empty_component(NLP_NODE_IDS.NER_CONVERTER)
                         converter_to_update.set_metadata(converter_to_update.get_default_model(),
                                                          NLP_NODE_IDS.NER_CONVERTER, NLP_NODE_IDS.NER_CONVERTER,
                                                          'xx', False, Licenses.open_source)
@@ -244,7 +249,7 @@ class PipeUtils:
                 if '@' not in output_NER_col: new_NER_AT_ref = output_NER_col + '@' + ner_identifier
                 new_NER_converter_AT_ref = 'entities' + '@' + ner_identifier
 
-                # 3.1 upate NER model outputs
+                # 3.1 upate NER model_anno_obj outputs
                 c.spark_output_column_names = [new_NER_AT_ref]
                 c.model.setOutputCol(new_NER_AT_ref)
 
@@ -298,7 +303,7 @@ class PipeUtils:
             if ComponentUtils.is_embedding_consumer(c):
                 input_embed_col = ComponentUtils.extract_embed_col(c)
                 if '@' not in input_embed_col:
-                    # TODO set storage ref for traianble model?
+                    # TODO set storage ref for traianble model_anno_obj?
                     new_embed_AT_ref = ComponentUtils.extract_storage_ref_AT_notation_for_embeds(c, 'input')
                     c.spark_input_column_names.remove(input_embed_col)
                     c.spark_input_column_names.append(new_embed_AT_ref)
@@ -394,6 +399,18 @@ class PipeUtils:
         return False
 
     @staticmethod
+    def has_table_extractor(pipe):
+        """Check for NLUPipieline if it contains any table extracting OCR component"""
+        for c in pipe.components:
+            if c.name in [OCR_NODE_IDS.PDF2TEXT_TABLE,
+                          OCR_NODE_IDS.PPT2TEXT_TABLE,
+                          OCR_NODE_IDS.DOC2TEXT_TABLE,
+                          OCR_NODE_IDS.IMAGE_TABLE_DETECTOR,
+                          ]:
+                return True
+        return False
+
+    @staticmethod
     def find_doc_assembler_idx_in_pipe(pipe):
         """Find idx of document assembler in list of nlu components
         :param pipe:  pipe
@@ -451,7 +468,7 @@ class PipeUtils:
         if not PipeUtils.has_document_assembler(pipe):
             # When loaded from OCR, we might not have a documentAssembler in pipe
             pipe.is_fitted = False
-            document_assembler = ComponentMap.os_components[NLP_NODE_IDS.DOCUMENT_ASSEMBLER]
+            document_assembler = ComponentUniverse.components[NLP_NODE_IDS.DOCUMENT_ASSEMBLER]()
             document_assembler.set_metadata(document_assembler.get_default_model(), 'document_assembler',
                                             'document_assembler', 'xx', False, Licenses.open_source)
             pipe.components.insert(0, document_assembler)
@@ -460,7 +477,7 @@ class PipeUtils:
             if not PipeUtils.has_sentence_detector(pipe):
                 logger.info("Adding missing Sentence Detector")
                 pipe.is_fitted = False
-                sentence_detector = ComponentMap.os_components[NLP_NODE_IDS.SENTENCE_DETECTOR_DL]
+                sentence_detector = ComponentUniverse.components[NLP_NODE_IDS.SENTENCE_DETECTOR_DL]()
                 sentence_detector.set_metadata(sentence_detector.get_default_model(), 'detect_sentence',
                                                'sentence_detector_dl', 'en', False, Licenses.open_source)
                 insert_idx = PipeUtils.find_doc_assembler_idx_in_pipe(pipe)
@@ -646,7 +663,7 @@ class PipeUtils:
                     untrained_class_name = AnnoClassRef.JSL_anno2_py_class[trainable_c.jsl_anno_class_id]
                     trained_model = PipeUtils.get_model_of_class_from_spark_pipe(spark_transformer_pipe,
                                                                                  trained_class_name)
-                    trained_component = ComponentMap.os_components[trainable_c.trained_mirror_anno].set_metadata(
+                    trained_component = jsl_id_to_empty_component(trainable_c.trained_mirror_anno).set_metadata(
                         trained_model, trainable_c.trained_mirror_anno, trainable_c.trained_mirror_anno, nlu_pipe.lang,
                         False,
                         Licenses.open_source)
@@ -655,11 +672,11 @@ class PipeUtils:
                     untrained_class_name = AnnoClassRef.JSL_anno_HC_ref_2_py_class[trainable_c.jsl_anno_class_id]
                     trained_model = PipeUtils.get_model_of_class_from_spark_pipe(spark_transformer_pipe,
                                                                                  trained_class_name)
-                    trained_component = ComponentMap.hc_components[trainable_c.trained_mirror_anno].set_metadata(
+                    trained_component = jsl_id_to_empty_component(trainable_c.trained_mirror_anno).set_metadata(
                         trained_model, trainable_c.trained_mirror_anno, trainable_c.trained_mirror_anno, nlu_pipe.lang,
                         False, Licenses.hc)
 
-                # update col names on new model
+                # update col names on new model_anno_obj
                 trained_component.spark_input_column_names = trainable_c.spark_input_column_names
                 trained_component.spark_output_column_names = trainable_c.spark_output_column_names
                 trained_component.model.setInputCols(trained_component.spark_input_column_names)
@@ -675,7 +692,8 @@ class PipeUtils:
                     if nlu_pipe[k].__class__.__name__ == untrained_class_name:
                         pipe_key_to_delete = k
                 del nlu_pipe[pipe_key_to_delete]
-                nlu_pipe.add(trained_component)
+                # TODOf NER or other trainable, make sure we ad at the right place!
+                nlu_pipe.add(trained_component, idx=i)
         return nlu_pipe.components
 
     @staticmethod
@@ -683,4 +701,10 @@ class PipeUtils:
         for model in spark_transformer_pipe.stages:
             if model.__class__.name == class_name:
                 return model
-        raise ValueError(f"Could not find model of requested class = {class_name}")
+        raise ValueError(f"Could not find model_anno_obj of requested class = {class_name}")
+
+    @staticmethod
+    def contains_T5_or_GPT_transformer(pipe):
+        for c in pipe.components:
+            if c.name in [NLP_NODE_IDS.GPT2, NLP_NODE_IDS.T5_TRANSFORMER]:
+                return True

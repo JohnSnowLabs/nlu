@@ -71,8 +71,8 @@ word-wrap: break-word;
     @staticmethod
     def display_infos():
         FOOTER       = """<span style="font-size: 0.75em">{}</span>"""
-        field_info   = """**INFO:** You can type in the model selection fields to search and filter."""
-        iso_info     = """**INFO:** NLU model references have the structure.md: `<iso_language_code>.<model_name>.<dataset>` . [Based on the `ISO Language Codes`](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes). If no language defined, `en.` will be assumed as default ' ,"""
+        field_info   = """**INFO:** You can type in the model_anno_obj selection fields to search and filter."""
+        iso_info     = """**INFO:** NLU model_anno_obj references have the structure.md: `<iso_language_code>.<model_name>.<dataset>` . [Based on the `ISO Language Codes`](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes). If no language defined, `en.` will be assumed as default ' ,"""
         ISO_FOOTER   = FOOTER.format(field_info)
         FIELD_FOOTER = FOOTER.format(iso_info)
         st.sidebar.markdown(ISO_FOOTER, unsafe_allow_html=True)
@@ -161,15 +161,15 @@ word-wrap: break-word;
             exp.write(parameter_infos)
     @staticmethod
     def get_pipe_param_dict(pipe):
-        # loop over ever model in pipeline stages  and then loop over the models params
+        # loop over ever model_anno_obj in pipeline stages  and then loop over the models params
         all_params = {}
         from sparknlp.base import LightPipeline
-        stages = pipe.spark_transformer_pipe.pipeline_model.stages if isinstance(pipe.spark_transformer_pipe, (LightPipeline)) else pipe.spark_transformer_pipe.stages
+        stages = pipe.vanilla_transformer_pipe.pipeline_model.stages if isinstance(pipe.vanilla_transformer_pipe, (LightPipeline)) else pipe.vanilla_transformer_pipe.stages
         for stage in stages:
             all_params[str(stage)]={}
             params = stage.extractParamMap()
             for param_name, param_value in params.items():
-                # print(f'model={stage} param_name={param_name}, param_value={param_value}')
+                # print(f'model_anno_obj={stage} param_name={param_name}, param_value={param_value}')
                 all_params[str(stage)][param_name.name]=param_value
 
         return all_params
@@ -224,8 +224,8 @@ word-wrap: break-word;
     #         show_code_snippets = st.sidebar.checkbox('Generate code snippets', value=show_code_snippets)
     #         if model_selection == [] : model_selection = Discoverer.get_components('ner',include_pipes=True)
     #         model_selection.sort()
-    #         if model_select_position == 'side':ner_model_2_viz = st.sidebar.selectbox("Select a NER model.",model_selection,index=model_selection.index(component_list.nlu_ref.split(' ')[0]))
-    #         else : ner_model_2_viz = st.selectbox("Select a NER model",model_selection,index=model_selection.index(component_list.nlu_ref.split(' ')[0]))
+    #         if model_select_position == 'side':ner_model_2_viz = st.sidebar.selectbox("Select a NER model_anno_obj.",model_selection,index=model_selection.index(component_list.nlu_ref.split(' ')[0]))
+    #         else : ner_model_2_viz = st.selectbox("Select a NER model_anno_obj",model_selection,index=model_selection.index(component_list.nlu_ref.split(' ')[0]))
     #
     #     active_visualizers = visualizers
     #     if show_viz_selection: active_visualizers = st.sidebar.multiselect("Visualizers",options=visualizers,default=visualizers,key=key)
@@ -380,7 +380,7 @@ word-wrap: break-word;
     #         else:model_selection   = st.multiselect("Pick any additional models for token features",options=token_pipes_components_usable,default=loaded_nlu_refs,key = key)
     #         # else : ValueError("Please define model_select_position as main or side")
     #         models_to_load = list(set(model_selection) - set(loaded_nlu_refs))
-    #         for model in models_to_load:token_pipes.append(nlu.load(model))
+    #         for model_anno_obj in models_to_load:token_pipes.append(nlu.load(model_anno_obj))
     #         StreamlitVizTracker.loaded_token_pipes+= token_pipes
     #     if generate_code_sample:st.code(get_code_for_viz('TOKEN',[StreamlitUtilsOS.extract_name(p) for p  in token_pipes],text))
     #     dfs = []
@@ -460,8 +460,8 @@ word-wrap: break-word;
     #     if show_model_select :
     #         model_selection = Discoverer.get_components('ner',include_pipes=True)
     #         model_selection.sort()
-    #         if model_select_position == 'side':ner_model_2_viz = st.sidebar.selectbox("Select a NER model",model_selection,index=model_selection.index(component_list.nlu_ref.split(' ')[0]))
-    #         else : ner_model_2_viz = st.selectbox("Select a NER model",model_selection,index=model_selection.index(component_list.nlu_ref.split(' ')[0]))
+    #         if model_select_position == 'side':ner_model_2_viz = st.sidebar.selectbox("Select a NER model_anno_obj",model_selection,index=model_selection.index(component_list.nlu_ref.split(' ')[0]))
+    #         else : ner_model_2_viz = st.selectbox("Select a NER model_anno_obj",model_selection,index=model_selection.index(component_list.nlu_ref.split(' ')[0]))
     #         component_list = component_list if component_list.nlu_ref == ner_model_2_viz else StreamlitUtilsOS.get_pipe(ner_model_2_viz)
     #     if title: st.header(title)
     #     if show_text_input : text = st.text_area("Enter text you want to visualize NER classes for below", text, key=key)
@@ -473,7 +473,7 @@ word-wrap: break-word;
     #         if show_label_select:
     #             exp = st.expander("Select entity labels to highlight")
     #             label_select = exp.multiselect(
-    #                 "These labels are predicted by the NER model. Select which ones you want to display",
+    #                 "These labels are predicted by the NER model_anno_obj. Select which ones you want to display",
     #                 options=ner_tags,default=list(ner_tags))
     #         else : label_select = ner_tags
     #         component_list.viz(text,write_to_streamlit=True, viz_type='ner',labels_to_viz=label_select,viz_colors=colors, streamlit_key=key)
@@ -519,7 +519,7 @@ word-wrap: break-word;
     #     2. Simmilarity between 2 sentences -> let weTW stand word word_emb of token T and sentence S
     #         2.1. Raw token level with merged embeddings -> sim([we11,we21,weT1], [we12,we22,weT2])
     #         2.2  Autogenerate sentemb, basically does 2.1 in the Spark NLP backend
-    #         2.3 Already using sentence_embedder model -> sim(se1,se2)
+    #         2.3 Already using sentence_embedder model_anno_obj -> sim(se1,se2)
     #     3. Simmilarity between token and sentence -> sim([we11,w21,wT1], se2)
     #     4. Mirrored 3
     #      """

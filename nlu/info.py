@@ -1,12 +1,11 @@
-from nlu import *
-
-from dataclasses import dataclass
 import glob
-import os
 import json
-import sys
 import logging
+import os
+import sys
+from dataclasses import dataclass
 import nlu
+
 COMPONENT_INFO_FILE_NAME = 'component_infos.json'
 logger = logging.getLogger('nlu')
 
@@ -37,8 +36,9 @@ class AllComponentsInfo:
                                                'br', 'bg', 'ca', 'cs', 'eo', 'fi', 'gl', 'el', 'ha', 'he', 'hi', 'hu',
                                                'id', 'ga', 'ja', 'la', 'lv', 'mr', 'fa', 'ro', 'sk', 'sl', 'so', 'st',
                                                'sw', 'sv', 'th', 'tr', 'uk', 'yo', 'zu', 'zh', 'xx', 'ur', 'ko',
-                                               'yi','uk', 'te','ta','sd','pa','ne', 'ml','mr','kn','id','gu','bs',
-                                               'ig', 'lg', 'lou', 'pcm', 'wo','rw', 'is',
+                                               'yi', 'uk', 'te', 'ta', 'sd', 'pa', 'ne', 'ml', 'mr', 'kn', 'id', 'gu',
+                                               'bs',
+                                               'ig', 'lg', 'lou', 'pcm', 'wo', 'rw', 'is',
                                                ] + self.all_multi_lang_xtreme_ner_languages
         self.all_languages = set(self.all_pretrained_pipe_languages).union(set(self.all_pretrained_model_languages))
         self.all_classifier_classes = []
@@ -49,34 +49,27 @@ class AllComponentsInfo:
                                 'lemma', 'norm', 'select', 'pretrained_pipe', 'util', 'embed_sentence', 'embed_chunk',
                                 'ngram']
 
-        all_component_paths_regex = nlu.nlu_package_location + 'components/*/*/'
-        all_component_paths = glob.glob(all_component_paths_regex)
+        # all_component_paths_regex = nlu.nlu_package_location + 'components/*/*/'
+        # all_component_paths = glob.glob(all_component_paths_regex)
 
-        for path in all_component_paths:
-            if '__py' in path: continue
-            # logger.info('Loading info dict @ path'+ path)
-            component = ComponentInfo.from_directory(path)
-            self.all_components[component.name] = component
-            if component.type == 'classifier': self.classifiers[component.name] = component
-            if component.type == 'embedding': self.embeddings[component.name] = component
-            if component.type == 'normalizer': self.normalizers[component.name] = component
-            if component.type == 'pretrained_pipeline': self.pretrained_pipelines[component.name] = component
-            if component.type == 'selector': self.selectors[component.name] = component
-            if component.type == 'spell_checker': self.spell_checkers[component.name] = component
-            if component.type == 'stemmer': self.stemmers[component.name] = component
-            if component.type == 'tokenizer': self.tokenizers[component.name] = component
-            if component.type == 'util': self.utils[component.name] = component
+        # for path in all_component_paths:
+        #     if '__py' in path: continue
+        #     # logger.info('Loading info dict @ path'+ path)
+        #     component = ComponentInfo.from_directory(path)
+        #     self.all_components[component.name] = component
+        #     if component.type == 'classifier': self.classifiers[component.name] = component
+        #     if component.type == 'embedding': self.embeddings[component.name] = component
+        #     if component.type == 'normalizer': self.normalizers[component.name] = component
+        #     if component.type == 'pretrained_pipeline': self.pretrained_pipelines[component.name] = component
+        #     if component.type == 'selector': self.selectors[component.name] = component
+        #     if component.type == 'spell_checker': self.spell_checkers[component.name] = component
+        #     if component.type == 'stemmer': self.stemmers[component.name] = component
+        #     if component.type == 'tokenizer': self.tokenizers[component.name] = component
+        #     if component.type == 'util': self.utils[component.name] = component
 
     def list_all_components(self):
         print("--------------Avaiable Components in NLU :--------------")
         for name in self.all_components.keys(): print(name)
-
-    def DEBUG_list_all_components(self):
-        print("--------------Avaiable Components in NLU :--------------")
-        for name in self.all_components.keys():
-            print(name, " INPUT_F : ", self.all_components[name].inputs, " OUTPUT_F ", self.all_components[name].inputs,
-                  " INPUT_N ", self.all_components[name].spark_output_column_names, "OUTPUT_N ",
-                  self.all_components[name].spark_output_column_names)
 
     def get_component_info_by_name(self, name):
         return self.all_components[name]
@@ -108,7 +101,7 @@ class AllComponentsInfo:
 @dataclass
 class ComponentInfo:
     name: str
-    description: str  # general annotator/model/component_to_resolve/pipeline info
+    description: str  # general annotator/model_anno_obj/component_to_resolve/pipeline info
     outputs: list  # this is which columns/output types this component_to_resolve is providing
     inputs: list  # this tells us which columns/input types the component_to_resolve is depending on
     type: str  # this tells us which kind of component_to_resolve this is

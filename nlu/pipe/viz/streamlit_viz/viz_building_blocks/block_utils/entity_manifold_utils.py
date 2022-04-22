@@ -1,9 +1,8 @@
 import streamlit as st
 from sparknlp.annotator import *
-from nlu.components import embeddings_chunker
 from nlu.universe.feature_node_ids import NLP_NODE_IDS, NLP_HC_NODE_IDS
 from nlu.universe.logic_universes import AnnoTypes
-from nlu.universe.component_universes import ComponentMap
+from nlu.universe.component_universes import ComponentUniverse, jsl_id_to_empty_component
 from nlu.universe.universes import Licenses
 
 
@@ -16,7 +15,7 @@ class EntityManifoldUtils():
     @staticmethod
     def insert_chunk_embedder_to_pipe_if_missing(pipe):
 
-        """Scan component_list for chunk_embeddings. If missing, add new. Validate NER model is loaded"""
+        """Scan component_list for chunk_embeddings. If missing, add new. Validate NER model_anno_obj is loaded"""
         # component_list.predict('Donald Trump and Angela Merkel love Berlin')
 
         classifier_cols = []
@@ -30,7 +29,7 @@ class EntityManifoldUtils():
                 return pipe
         if not has_ner:
             raise ValueError(
-                "You Need to load a NER model or this visualization. Try nlu.load('ner').viz_streamlit_entity_embed_manifold(text)")
+                "You Need to load a NER model_anno_obj or this visualization. Try nlu.load('ner').viz_streamlit_entity_embed_manifold(text)")
 
         ner_conveter_c, word_embed_c = None, None
 
@@ -42,7 +41,7 @@ class EntityManifoldUtils():
             if c.name == NLP_HC_NODE_IDS.NER_CONVERTER_INTERNAL:
                 ner_conveter_c = c
 
-        chunker = ComponentMap.os_components[NLP_NODE_IDS.CHUNK_EMBEDDINGS_CONVERTER]
+        chunker = jsl_id_to_empty_component(NLP_NODE_IDS.CHUNK_EMBEDDINGS_CONVERTER)
         chunker.set_metadata(
             chunker.get_default_model(),
             'chunker', 'chunker', 'xx', False, Licenses.open_source)
@@ -113,5 +112,5 @@ class EntityManifoldUtils():
         """Find first embed  component_to_resolve in component_list"""
         for c in p.components:
             if 'embed' in c.out_types[0]: return c
-        st.warning("No Embed model in component_list")
+        st.warning("No Embed model_anno_obj in component_list")
         return None

@@ -1,5 +1,6 @@
 from typing import Dict
-from nlu.universe.atoms import JslAnnoId, JslAnnoPyClass, JslAnnoJavaClass
+
+from nlu.universe.atoms import JslAnnoId, JslAnnoPyClass
 from nlu.universe.feature_node_ids import OCR_NODE_IDS, NLP_NODE_IDS, NLP_HC_NODE_IDS
 
 
@@ -10,9 +11,8 @@ class AnnoClassRef:
     A_H = None  # NLP_HC_ANNO
     A_N = NLP_NODE_IDS
     HC_A_N = NLP_HC_NODE_IDS
-
+    # Map AnnoID to PyCLass
     JSL_anno2_py_class: Dict[JslAnnoId, JslAnnoPyClass] = {
-
         A_N.BIG_TEXT_MATCHER: 'BigTextMatcher',
         A_N.CHUNK2DOC: 'Chunk2Doc',
         A_N.CHUNK_EMBEDDINGS_CONVERTER: 'ChunkEmbeddings',
@@ -120,8 +120,14 @@ class AnnoClassRef:
         A_N.TRAINABLE_TEXT_MATCHER: 'TextMatcher',
         A_N.TRAINABLE_TOKENIZER: 'Tokenizer',
         A_N.TRAINABLE_WORD_SEGMENTER: 'WordSegmenterApproach',
+
         A_N.DISTIL_BERT_FOR_TOKEN_CLASSIFICATION: 'DistilBertForTokenClassification',
         A_N.WORD_2_VEC: 'Word2VecModel',
+        A_N.DEBERTA_FOR_SEQUENCE_CLASSIFICATION: 'DeBertaForSequenceClassification',
+
+        A_N.BERT_SENTENCE_CHUNK_EMBEDDINGS : 'BertSentenceChunkEmbeddings',
+
+
 
     }
     JSL_anno_HC_ref_2_py_class: Dict[JslAnnoId, JslAnnoPyClass] = {
@@ -165,21 +171,24 @@ class AnnoClassRef:
         HC_A_N.TRAINABLE_SENTENCE_ENTITY_RESOLVER: 'SentenceEntityResolverApproach',
         HC_A_N.MEDICAL_BERT_FOR_TOKEN_CLASSIFICATION: 'MedicalBertForTokenClassifier',
 
-        # 3.4.1
         HC_A_N.MEDICAL_BERT_FOR_SEQUENCE_CLASSIFICATION: 'MedicalBertForSequenceClassification',
         HC_A_N.MEDICAL_DISTILBERT_FOR_SEQUENCE_CLASSIFICATION: 'MedicalDistilBertForSequenceClassification',
         HC_A_N.ENTITY_CHUNK_EMBEDDING: 'EntityChunkEmbeddings',
+        HC_A_N.ZERO_SHOT_RELATION_EXTRACTION: 'ZeroShotRelationExtractionModel',
 
     }
-
     JSL_anno_OCR_ref_2_py_class: Dict[JslAnnoId, JslAnnoPyClass] = {
         OCR_NODE_IDS.IMAGE2TEXT: 'ImageToText',
         OCR_NODE_IDS.PDF2TEXT: 'PdfToText',
         OCR_NODE_IDS.DOC2TEXT: 'DocToText',
         OCR_NODE_IDS.BINARY2IMAGE: 'BinaryToImage',
         OCR_NODE_IDS.PDF2TEXT_TABLE: 'PdfToTextTable',
+        OCR_NODE_IDS.PPT2TEXT_TABLE: 'PptToTextTable',
+        OCR_NODE_IDS.DOC2TEXT_TABLE: 'DocToTextTable',
 
     }
+
+
 
     @staticmethod
     def get_os_pyclass_2_anno_id_dict():
@@ -202,3 +211,11 @@ class AnnoClassRef:
                                                                        for
                                                                        k in AnnoClassRef.JSL_anno_OCR_ref_2_py_class}
         return JSL_OCR_py_class_2_anno_id
+
+
+# Flipped, maps PyClass to AnnoID
+AnnoClassRef.JSL_OS_py_class_2_anno_id: Dict[JslAnnoPyClass, JslAnnoId] = {AnnoClassRef.JSL_anno2_py_class[k]: k for k in AnnoClassRef.JSL_anno2_py_class}
+AnnoClassRef.JSL_HC_py_class_2_anno_id: Dict[JslAnnoId, JslAnnoPyClass] = {AnnoClassRef.JSL_anno_HC_ref_2_py_class[k]: k for k in
+                                                                           AnnoClassRef.JSL_anno_HC_ref_2_py_class}
+AnnoClassRef.JSL_OCR_py_class_2_anno_id: Dict[JslAnnoId, JslAnnoPyClass] = {AnnoClassRef.JSL_anno_OCR_ref_2_py_class[k]: k for k in
+                                                                            AnnoClassRef.JSL_anno_OCR_ref_2_py_class}

@@ -15,3 +15,10 @@ class Deidentifier:
             .setInputCols(["entities", "sentence", "token"]) \
             .setOutputCol("deidentified")
 
+
+    @staticmethod
+    def get_trainable_model():
+        from sparknlp_jsl.annotator import DeIdentification
+        return DeIdentification\
+            .setInputCols(["entities", "sentence", "token"]) \
+            .setOutputCol("deidentified")

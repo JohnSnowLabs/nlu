@@ -67,13 +67,11 @@ def check_pyspark_install():
         return False
     return True
 
-
-def check_python_version():
-    if float(sys.version[:3]) >= 3.9:
-        print("Please use a Python version with version number SMALLER than 3.9")
-        print("Python versions equal or higher 3.9 are currently NOT SUPPORTED by NLU")
-        return False
-    return True
+def try_import_streamlit():
+    try:
+        import streamlit as st
+    except  ImportError:
+        print("You need to install Streamlit to run this functionality.")
 
 
 def is_running_in_databricks():
@@ -123,3 +121,30 @@ def install_and_import_package(pkg_name, version='', import_name=''):
             globals()[import_name] = importlib.import_module(import_name)
         else:
             globals()[pkg_name] = importlib.import_module(pkg_name)
+
+
+
+def try_import_pyspark_in_streamlit():
+    """Try importing Pyspark or display warn message in streamlit"""
+    try:
+        import pyspark
+        from pyspark.sql import SparkSession
+    except:
+        print("You need Pyspark installed to run NLU. Run <pip install pyspark==3.0.2>")
+        try:
+            import streamlit as st
+            st.error(
+                "You need Pyspark, Sklearn, Pyplot, Pandas, Numpy installed to run this app. Run <pip install pyspark==3.0.2 sklearn pyplot numpy pandas>")
+        except:
+            return False
+        return False
+    return True
+
+def try_import_spark_nlp():
+    """Try importing Spark NLP"""
+    try:
+        import sparknlp
+    except:
+        print("You need Spark NLP to run NLU. run pip install spark-nlp")
+        return False
+    return True

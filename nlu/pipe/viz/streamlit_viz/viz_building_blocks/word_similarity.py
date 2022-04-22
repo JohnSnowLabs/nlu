@@ -43,7 +43,7 @@ class WordSimilarityStreamlitBlock():
         2. Simmilarity between 2 sentences -> let weTW stand word word_emb of token T and sentence S
             2.1. Raw token level with merged embeddings -> sim([we11,we21,weT1], [we12,we22,weT2])
             2.2  Autogenerate sentemb, basically does 2.1 in the Spark NLP backend
-            2.3 Already using sentence_embedder model -> sim(se1,se2)
+            2.3 Already using sentence_embedder model_anno_obj -> sim(se1,se2)
         3. Simmilarity between token and sentence -> sim([we11,w21,wT1], se2)
         4. Mirrored 3
          """

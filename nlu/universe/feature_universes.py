@@ -6,7 +6,6 @@ from nlu.universe.atoms import JslFeature
 
 ### ____ Annotator Feature Representations ____
 
-
 class NLP_FEATURES(JslFeature):
     """
     NLP Features

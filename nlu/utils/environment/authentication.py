@@ -1,23 +1,104 @@
+import importlib
+import site
+from importlib import reload
+
 from nlu.utils.environment.env_utils import *
+
+
+def ocr_version_is_missmatch(secret_version):
+    """Check if installed OCR version is the same as the OCR secret
+    :param secret_version: ocr secret version
+    :return: True if missmatch, False if versions are fien """
+    try:
+        import sparkocr
+    except ImportError:
+        # Import failed, there can be no version missmatch
+        return False
+    # check versions
+    installed_version = sparkocr.version()
+    if installed_version == secret_version:
+        return False
+    return True
+
+
+def healthcare_version_is_missmatch(secret_version):
+    """Check if installed Spark NLP healthcare version is the same as the Healthcare secret
+    :param secret_version: healthcare secret version
+    :return: True if missmatch, False if versions are fine"""
+    try:
+        import sparknlp_jsl
+    except ImportError:
+        # Import failed, there can be no version missmatch
+        return False
+    # check versions
+    installed_version = sparknlp_jsl.version()
+    if installed_version == secret_version:
+        return False
+    return True
+
+
+def uninstall_lib(pip_package_name):
+    cmd = f'{sys.executable} -m pip uninstall {pip_package_name} -y '
+    os.system(cmd)
+    reload(site)
+
+
+def check_if_secret_missmatch_and_uninstall_if_bad(secret_version, module_name, package_name):
+    """Check if OCR/Healthcare lib installed version match up with the secrets provided.
+    If not, this will uninstall the missmaching library
+    :param module_name: module import name
+    :param package_name: pipe package name
+    :param secret_version: healthcare/ocr secret version provided
+    :return: True if missmatch was uninstalled, False if no missmatch found and nothing was done
+    """
+
+
+    try:
+        importlib.import_module(module_name)
+    except ImportError:
+        # Import failed, there can be no version missmatch
+        return False
+    if module_name == 'sparknlp_jsl':
+        # get versions
+        import sparknlp_jsl
+        installed_version = sparknlp_jsl.version()
+        if installed_version == secret_version:
+            return False
+    elif module_name == 'sparkocr':
+        # get versions
+        import sparkocr
+        installed_version = sparkocr.version()
+        if installed_version == secret_version:
+            return False
+    else:
+        raise ValueError(f'Invalid module_name=={module_name}')
+
+    print(
+        f"Installed {module_name}=={installed_version} version not matching provided secret version=={secret_version}. "
+        f"Uninstalling it..")
+    # version missmatch, uninstall shell
+    uninstall_lib(package_name)
+    return True
 
 
 def import_or_install_licensed_lib(JSL_SECRET, lib='healthcare'):
     """ Install Spark-NLP-Healthcare PyPI Package in current environment if it cannot be imported and license
     provided """
-    import importlib
     hc_module_name = 'sparknlp_jsl'
     hc_pip_package_name = 'spark-nlp-jsl'
     hc_display_name = ' Spark NLP for Healthcare'
     ocr_pip_package_name = 'spark-ocr'
     ocr_module_name = 'sparkocr'
     ocr_display_name = ' Spark OCR'
-
     get_deps = True
     lib_version = JSL_SECRET.split('-')[0]
+    missmatch = False
+
     if lib == 'healthcare':
         target_import = hc_module_name
         target_install = hc_pip_package_name
         display_name = hc_display_name
+        missmatch = check_if_secret_missmatch_and_uninstall_if_bad(lib_version, hc_module_name, hc_pip_package_name)
     elif lib == 'ocr':
         target_import = ocr_module_name
         target_install = ocr_pip_package_name
@@ -37,6 +118,8 @@ def import_or_install_licensed_lib(JSL_SECRET, lib='healthcare'):
     try:
         # Try importing, if it fails install the pacakge
         importlib.import_module(target_import)
+        if missmatch:
+            raise ImportError
     except ImportError:
         # Install package since its missing
         import pip
@@ -57,8 +140,7 @@ def import_or_install_licensed_lib(JSL_SECRET, lib='healthcare'):
             pip.main(params)
     finally:
         # Import module after installing package
-        import site
-        from importlib import reload
+
         reload(site)
         globals()[target_import] = importlib.import_module(target_import)
 

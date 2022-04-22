@@ -1,6 +1,7 @@
 from nlu.spellbook import Spellbook
 import nlu
-all_components_info = nlu.AllComponentsInfo()
+from nlu.info import AllComponentsInfo
+all_components_info = AllComponentsInfo()
 
 class Discoverer:
     """Various methods that help discover nlu_refs and functionality"""
@@ -101,18 +102,18 @@ class Discoverer:
 
         # Print entire Namespace below
         for nlu_reference in nlu.Spellbook.component_alias_references.keys():
-            component_type = nlu.Spellbook.component_alias_references[nlu_reference][1][0],  # component_list or model
+            component_type = nlu.Spellbook.component_alias_references[nlu_reference][1][0],  # component_list or model_anno_obj
             print("nlu.load('" + nlu_reference + "') '  returns Spark NLP " + str(component_type) + ': ' +
                   nlu.Spellbook.component_alias_references[nlu_reference][0])
 
         for lang in nlu.Spellbook.pretrained_pipe_references.keys():
             for nlu_reference in nlu.Spellbook.pretrained_pipe_references[lang]:
-                print("nlu.load('" + nlu_reference + "') for lang" + lang + " returns model Spark NLP model:" +
+                print("nlu.load('" + nlu_reference + "') for lang" + lang + " returns model_anno_obj Spark NLP model_anno_obj:" +
                       nlu.Spellbook.pretrained_pipe_references[lang][nlu_reference])
 
         for lang in nlu.Spellbook.pretrained_models_references.keys():
             for nlu_reference in nlu.Spellbook.pretrained_models_references[lang]:
-                print("nlu.load('" + nlu_reference + "')' for lang" + lang + " returns model Spark NLP model: " +
+                print("nlu.load('" + nlu_reference + "')' for lang" + lang + " returns model_anno_obj Spark NLP model_anno_obj: " +
                       nlu.Spellbook.pretrained_models_references[lang][nlu_reference])
 
 
@@ -141,7 +142,7 @@ class Discoverer:
                     if not lang_printed:
                         print('For language <' + lang + '> NLU provides the following Models : ')
                         lang_printed = True
-                    print("nlu.load('" + nlu_reference + "') returns Spark NLP model " + nlp_reference)
+                    print("nlu.load('" + nlu_reference + "') returns Spark NLP model_anno_obj " + nlp_reference)
 
 
     @staticmethod
@@ -152,7 +153,7 @@ class Discoverer:
             ref_action = nlu_reference.split('.')
             if len(ref_action) > 1: ref_action = ref_action[1]
             if ref_action == action:
-                print("nlu.load('" + nlu_reference + "') returns Spark NLP model " + nlp_reference)
+                print("nlu.load('" + nlu_reference + "') returns Spark NLP model_anno_obj " + nlp_reference)
 
     @staticmethod
     def print_trainable_components():

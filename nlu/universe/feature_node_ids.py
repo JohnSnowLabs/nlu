@@ -44,6 +44,7 @@ class NLP_NODE_IDS:
     RECURISVE_TOKENIZER = JslAnnoId('recursive_tokenizer')
     REGEX_MATCHER = JslAnnoId('regex_matcher')
     REGEX_TOKENIZER = JslAnnoId('regex_tokenizer')
+
     SENTENCE_DETECTOR = JslAnnoId('sentence_detector')
     SENTENCE_DETECTOR_DL = JslAnnoId('sentence_detector_dl')
     SENTENCE_EMBEDDINGS_CONVERTER = JslAnnoId('sentence_embeddings_converter')
@@ -91,6 +92,7 @@ class NLP_NODE_IDS:
     GPT2 = JslAnnoId('gpt2')
     WORD_2_VEC = JslAnnoId('word_2_vec')
     DEBERTA_WORD_EMBEDDINGS = JslAnnoId('deberta')
+    DEBERTA_FOR_SEQUENCE_CLASSIFICATION = JslAnnoId('xlm_roberta_for_sequence_classification')
 
 
     TRAINABLE_CONTEXT_SPELL_CHECKER = JslAnnoId('trainable_context_spell_checker')
@@ -117,6 +119,7 @@ class NLP_NODE_IDS:
     TRAINABLE_TEXT_MATCHER = JslAnnoId('trainable_text_matcher')
     TRAINABLE_TOKENIZER = JslAnnoId('trainable_tokenizer')
     TRAINABLE_WORD_SEGMENTER = JslAnnoId('trainable_word_segmenter')
+    BERT_SENTENCE_CHUNK_EMBEDDINGS = JslAnnoId('bert_sentence_chunk_embeddings')
 
 
 class NLP_HC_NODE_IDS:  # or Mode Node?
@@ -159,6 +162,7 @@ class NLP_HC_NODE_IDS:  # or Mode Node?
     RE_IDENTIFICATION = JslAnnoId('re_identification')
     RELATION_EXTRACTION = JslAnnoId('relation_extraction')
     TRAINABLE_RELATION_EXTRACTION = JslAnnoId('trainable_relation_extraction')
+    ZERO_SHOT_RELATION_EXTRACTION = JslAnnoId('zero_shot_relation_extraction')
     RELATION_EXTRACTION_DL = JslAnnoId('relation_extraction_dl')
     # TRAINABLE_RELATION_EXTRACTION_DL = JslAnnoId('trainable_relation_extraction_dl')
     SENTENCE_ENTITY_RESOLVER = JslAnnoId('sentence_entity_resolver')
@@ -193,7 +197,7 @@ class OCR_NODE_IDS:
     TEXT2PDF = JslAnnoId('text2pdf')
     PDF_ASSEMBLER = JslAnnoId('pdf_assembler')
     PDF_DRAW_REGIONS = JslAnnoId('pdf_draw_regions')
-    PDF2TEXT_TABLE = JslAnnoId('pdf2text_table')
+    PDF2TEXT_TABLE = JslAnnoId('pdf2table')
 
     # DOCX Processing
     DOC2TEXT = JslAnnoId('doc2text')

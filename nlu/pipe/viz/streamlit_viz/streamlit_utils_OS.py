@@ -43,7 +43,7 @@ class StreamlitUtilsOS():
         """Find first embed  component_to_resolve in component_list"""
         for c in p.components:
             if 'embed' in c.out_types[0]: return c
-        st.warning("No Embed model in component_list")
+        st.warning("No Embed model_anno_obj in component_list")
         return None
 
     @staticmethod
@@ -60,7 +60,7 @@ class StreamlitUtilsOS():
         cs = []
         for c in p.components:
             if 'embed' in c.out_types[0] and 'chunk' not in c.out_types[0]: cs.append(c)
-        if len(cs) == 0: st.warning("No Embed model in component_list")
+        if len(cs) == 0: st.warning("No Embed model_anno_obj in component_list")
         return cs
 
     @staticmethod
@@ -83,7 +83,7 @@ class StreamlitUtilsOS():
         from sparknlp.annotator import NerDLModel, NerCrfModel
         for c in p.components:
             if isinstance(c.model, (NerDLModel, NerCrfModel)): return c.model
-        st.warning("No NER model in component_list")
+        st.warning("No NER model_anno_obj in component_list")
         return None
 
     @staticmethod

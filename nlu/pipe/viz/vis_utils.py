@@ -35,7 +35,7 @@ class VizUtils():
         elif viz_type == 'assert' : return  VizUtilsHC.viz_assertion(anno_res, pipe,viz_colors,is_databricks_env,write_to_streamlit)
         else : raise ValueError("Could not find applicable viz_type. Please make sure you specify either ner, dep, resolution, relation, assert or dep and have loaded corrosponding components")
 
-"""Define whiche annotators model are definable by which vizualizer. There are 5 in total, 2 open source and 5 HC"""
+"""Define whiche annotators model_anno_obj are definable by which vizualizer. There are 5 in total, 2 open source and 5 HC"""
 # vizalbe_components_OC = {
 #     'ner' : [NerConverter],
 #     'dep' : [DependencyParserModel],

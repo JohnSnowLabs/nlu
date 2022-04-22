@@ -13,9 +13,9 @@ class ModelHubUtils():
     @staticmethod
     def NLU_ref_to_NLP_ref(nlu_ref: str, lang: str = None) -> str:
         """Resolve a Spark NLU reference to a NLP reference.
-        :param nlu_ref: which nlu model's nlp refrence to return.
-        :param lang: what language is the model in.
-        :return: Spark nlp model name
+        :param nlu_ref: which nlu model_anno_obj's nlp refrence to return.
+        :param lang: what language is the model_anno_obj in.
+        :return: Spark nlp model_anno_obj name
         """
         nlu_namespaces_to_check = [nlu.Spellbook.pretrained_pipe_references, nlu.Spellbook.pretrained_models_references,
                                    nlu.Spellbook.pretrained_healthcare_model_references,
@@ -69,7 +69,7 @@ class ModelHubUtils():
         :param nlu_ref:  What nlp_refrence to resolve
         :return: Json entry of that nlu reference
         """
-        if nlu_ref.split(".")[0] not in nlu.AllComponentsInfo().all_languages:
+        if nlu_ref.split(".")[0] not in nlu.Spellbook.pretrained_models_references.keys():
             nlu_ref = "en." + nlu_ref
         nlp_refrence = ModelHubUtils.NLU_ref_to_NLP_ref(nlu_ref)
 
