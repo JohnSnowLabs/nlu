@@ -9,8 +9,8 @@ logger = logging.getLogger('nlu')
 
 
 def check_if_nlu_ref_is_licensed(nlu_ref):
-    """check if a nlu_ref is pointing to a licensed or open source model.
-    This works by just checking if the NLU ref points to a healthcare model or not"""
+    """check if a nlu_ref is pointing to a licensed or open source model_anno_obj.
+    This works by just checking if the NLU ref points to a healthcare model_anno_obj or not"""
     for lang, universe in Spellbook.healthcare_component_alias_references.items():
         for hc_nlu_ref, hc_nlp_ref in universe.items():
             if hc_nlu_ref == nlu_ref: return True
@@ -21,7 +21,7 @@ def check_if_nlu_ref_is_licensed(nlu_ref):
 
 
 def parse_language_from_nlu_ref(nlu_ref):
-    """Parse a ISO language identifier from a NLU reference which can be used to load a Spark NLP model"""
+    """Parse a ISO language identifier from a NLU reference which can be used to load a Spark NLP model_anno_obj"""
     infos = nlu_ref.split('.')
     lang = None
     for split in infos:
@@ -68,7 +68,7 @@ def nlu_ref_to_nlp_metadata(nlu_ref, is_recursive_call=False):
         if nlu_ref in Spellbook.pretrained_pipe_references[lang].keys():
             nlp_ref = Spellbook.pretrained_pipe_references[lang][nlu_ref]
             is_pipe = True
-    # 2. check if open source model
+    # 2. check if open source model_anno_obj
     if lang in Spellbook.pretrained_models_references.keys():
         if nlu_ref in Spellbook.pretrained_models_references[lang].keys():
             nlp_ref = Spellbook.pretrained_models_references[lang][nlu_ref]
@@ -88,7 +88,7 @@ def nlu_ref_to_nlp_metadata(nlu_ref, is_recursive_call=False):
             license_type = Licenses.hc
             is_pipe = True
 
-    # 5. check if healthcare model
+    # 5. check if healthcare model_anno_obj
     if lang in Spellbook.pretrained_healthcare_model_references.keys():
         if nlu_ref in Spellbook.pretrained_healthcare_model_references[lang].keys():
             nlp_ref = Spellbook.pretrained_healthcare_model_references[lang][nlu_ref]
@@ -101,7 +101,7 @@ def nlu_ref_to_nlp_metadata(nlu_ref, is_recursive_call=False):
         is_pipe = 'component_list' in sparknlp_data[1]
         license_type = Licenses.hc
 
-    # 7. check if ocr model
+    # 7. check if ocr model_anno_obj
     if nlu_ref in Spellbook.ocr_model_references.keys():
         nlp_ref = Spellbook.ocr_model_references[nlu_ref]
         license_type = Licenses.ocr

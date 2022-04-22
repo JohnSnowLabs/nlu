@@ -67,7 +67,11 @@ def check_pyspark_install():
         return False
     return True
 
-
+def try_import_streamlit():
+    try:
+        import streamlit as st
+    except  ImportError:
+        print("You need to install Streamlit to run this functionality.")
 
 
 def is_running_in_databricks():

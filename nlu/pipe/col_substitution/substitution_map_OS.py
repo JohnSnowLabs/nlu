@@ -2,7 +2,7 @@
 Resolve Annotator Classes in the Pipeline to Extractor Configs and Methods.
 Each Spark NLP Annotator Class is mapped to at least one
 
-Every Annotator should have 2 configs. Some might offor multuple configs/method pairs, based on model/NLP reference.
+Every Annotator should have 2 configs. Some might offor multuple configs/method pairs, based on model_anno_obj/NLP reference.
 - default/minimalistic -> Just the results of the annotations, no confidences or extra metadata
 - with meta            -> A config that leverages white/black list and gets the most relevant metadata
 - with positions       -> With Begins/Ends

@@ -11,7 +11,7 @@ logger = logging.getLogger('nlu')
 class StorageRefUtils:
     @staticmethod
     def has_storage_ref(component: NluComponent):
-        """Storage ref is either on the model or nlu component_to_resolve defined """
+        """Storage ref is either on the model_anno_obj or nlu component_to_resolve defined """
         return component.has_storage_ref
 
     @staticmethod
@@ -37,12 +37,12 @@ class StorageRefUtils:
 
     @staticmethod
     def has_component_storage_ref_or_anno_storage_ref(component: NluComponent):
-        """Storage ref is either on the model or nlu component_to_resolve defined """
+        """Storage ref is either on the model_anno_obj or nlu component_to_resolve defined """
         return component.has_storage_ref
 
     @staticmethod
     def nlp_component_has_storage_ref(model):
-        """Check if a storage ref is defined on the Spark NLP Annotator model"""
+        """Check if a storage ref is defined on the Spark NLP Annotator model_anno_obj"""
         for k, _ in model.extractParamMap().items():
             if k.name == 'storageRef':
                 return True

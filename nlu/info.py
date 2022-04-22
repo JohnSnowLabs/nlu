@@ -71,13 +71,6 @@ class AllComponentsInfo:
         print("--------------Avaiable Components in NLU :--------------")
         for name in self.all_components.keys(): print(name)
 
-    def DEBUG_list_all_components(self):
-        print("--------------Avaiable Components in NLU :--------------")
-        for name in self.all_components.keys():
-            print(name, " INPUT_F : ", self.all_components[name].inputs, " OUTPUT_F ", self.all_components[name].inputs,
-                  " INPUT_N ", self.all_components[name].spark_output_column_names, "OUTPUT_N ",
-                  self.all_components[name].spark_output_column_names)
-
     def get_component_info_by_name(self, name):
         return self.all_components[name]
 
@@ -108,7 +101,7 @@ class AllComponentsInfo:
 @dataclass
 class ComponentInfo:
     name: str
-    description: str  # general annotator/model/component_to_resolve/pipeline info
+    description: str  # general annotator/model_anno_obj/component_to_resolve/pipeline info
     outputs: list  # this is which columns/output types this component_to_resolve is providing
     inputs: list  # this tells us which columns/input types the component_to_resolve is depending on
     type: str  # this tells us which kind of component_to_resolve this is

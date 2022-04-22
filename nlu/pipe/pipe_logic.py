@@ -1,12 +1,11 @@
-import nlu
 import logging
 
-from nlu.pipe.nlu_component import NluComponent
-from nlu.universe.feature_node_ids import NLP_NODE_IDS, NLP_HC_NODE_IDS
-from nlu.universe.logic_universes import AnnoTypes
 from nlu import Licenses
+from nlu.pipe.nlu_component import NluComponent
+from nlu.universe.component_universes import jsl_id_to_empty_component
+from nlu.universe.feature_node_ids import NLP_NODE_IDS, NLP_HC_NODE_IDS
 from nlu.universe.feature_universes import NLP_FEATURES
-from nlu.universe.component_universes import ComponentUniverse, jsl_id_to_empty_component
+from nlu.universe.logic_universes import AnnoTypes
 
 logger = logging.getLogger('nlu')
 from nlu.pipe.utils.pipe_utils import PipeUtils
@@ -188,7 +187,6 @@ class PipelineQueryVerifier:
                 # TODO Appraoches / Trainable models have no setStorageRef, we must set it after fitting
                 pipe.components[trainable_index].storage_ref = provided_features_ref[0].split('@')[-1]
 
-
         missing_features_no_ref = set(required_features_no_ref) - set(
             provided_features_no_ref)  # - set(['text','label'])
         missing_features_ref = set(required_features_ref) - set(provided_features_ref)
@@ -276,6 +274,15 @@ class PipelineQueryVerifier:
         return False
 
     @staticmethod
+    def check_same_as_last_iteration(last_missing_components, last_missing_storage_refs,
+                                     last_components_for_embedding_conversion, missing_components, missing_storage_refs,
+                                     components_for_embedding_conversion):
+        return last_missing_components == missing_components and last_missing_storage_refs == missing_storage_refs and last_components_for_embedding_conversion == components_for_embedding_conversion
+    @staticmethod
+    def except_infinity_loop(reason):
+        raise Exception(f"Sorry, nlu has problems building this spell, please report this issue. Problem={reason}")
+
+    @staticmethod
     def satisfy_dependencies(pipe):
         """Feature Dependency Resolution Algorithm.
          For a given pipeline with N components, builds a DAG in reverse and satisfy each of their dependencies and child dependencies
@@ -287,6 +294,9 @@ class PipelineQueryVerifier:
         is_licensed = PipelineQueryVerifier.has_licensed_components(pipe)
         pipe.has_licensed_components = is_licensed
         is_trainable = PipeUtils.is_trainable_pipe(pipe)
+
+        loop_count = 0
+        max_loop_count = 5
         while all_features_provided == False:
             # After new components have been added, check again for the new components if requriements are met
             components_to_add = []
@@ -297,6 +307,9 @@ class PipelineQueryVerifier:
                 # Now all features are provided
                 break
 
+            last_missing_components, last_missing_storage_refs, last_components_for_embedding_conversion = [], [], []
+            # Update last iteration variables
+            last_missing_components, last_missing_storage_refs, last_components_for_embedding_conversion = missing_components, missing_storage_refs, components_for_embedding_conversion
             # Create missing base storage ref producers, i.e. embeddings
             for missing_component in missing_storage_refs:
                 component = resolve_feature(missing_component, language=pipe.lang,
@@ -334,6 +347,17 @@ class PipelineQueryVerifier:
             # For some models we update storage ref to the resovling models storageref.
             # We need to update them so dependencies can properly be deducted as satisfied
             pipe = PipeUtils.update_bad_storage_refs(pipe)
+
+            # Check if we are in an infinity loop
+            if PipelineQueryVerifier.check_same_as_last_iteration(last_missing_components, last_missing_storage_refs,
+                                                                  last_components_for_embedding_conversion,
+                                                                  missing_components, missing_storage_refs,
+                                                                  components_for_embedding_conversion):
+                loop_count += 1
+            else:
+                loop_count = 0
+            if loop_count > max_loop_count:
+                PipelineQueryVerifier.except_infinity_loop('Failure resolving feature dependencies')
 
         logger.info(f"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
         logger.info(f"ALL DEPENDENCIES SATISFIED")
@@ -423,7 +447,7 @@ class PipelineQueryVerifier:
         Checks and resolves in the following order :
         1. Get a reference list of input features missing for the current component_list
         2. Resolve the list of missing features by adding new  Annotators to component_list
-        3. Add NER Converter if required (When there is a NER model)
+        3. Add NER Converter if required (When there is a NER model_anno_obj)
         4. Fix order and output column names
         5.
 
@@ -445,7 +469,7 @@ class PipelineQueryVerifier:
         pipe = PipelineQueryVerifier.satisfy_dependencies(pipe)
 
         # 2. Enforce naming schema <col_name>@<storage_ref> for storage_ref consumers and producers and <entity@nlu_ref> and <ner@nlu_ref> for NER and NER-Converters
-        # and add NER-IOB to NER-Pretty converters for every NER model that is not already feeding a NER converter
+        # and add NER-IOB to NER-Pretty converters for every NER model_anno_obj that is not already feeding a NER converter
         pipe = PipeUtils.enforce_AT_schema_on_pipeline_and_add_NER_converter(pipe)
 
         # 2.1 If Sentence Resolvers are in pipeline, all Sentence-Embeddings must feed from Chunk2Doc which stems from the entities column to resolve
@@ -485,15 +509,22 @@ class PipelineQueryVerifier:
         logger.info("Starting to optimize component_to_resolve order ")
 
         correct_order_component_pipeline = []
+        provided_features = []
         all_components_ordered = False
         unsorted_components = pipe.components
-        provided_features = []
         update_last_type = False
         last_type_sorted = None
         trainable_updated = False
+        pipe.components = sorted(pipe.components, key=lambda x: x.type)
         if not pipe.contains_ocr_components:
             # if OCR we must take text sorting into account. Non-OCR pipes get text provided externalyl
             provided_features.append('text')
+
+        loop_count = 0
+        max_loop_count = 10*len(pipe.components)
+        last_correct_order_component_pipeline = []
+        last_provided_features = []
+
         while not all_components_ordered:
             if update_last_type:
                 last_type_sorted = None
@@ -503,7 +534,6 @@ class PipelineQueryVerifier:
                 logger.info(f"Optimizing order for component_to_resolve {component.name}")
                 input_columns = ComponentUtils.remove_storage_ref_from_features(
                     ComponentUtils.clean_irrelevant_features(component.spark_input_column_names.copy(), False, False))
-
                 if last_type_sorted is None or component.type == last_type_sorted:
                     if set(input_columns).issubset(provided_features):
                         correct_order_component_pipeline.append(component)
@@ -562,7 +592,17 @@ class PipelineQueryVerifier:
                             0].spark_input_column_names.append(f)
                         trainable_updated = True
 
+            # detect endless loop
+            if last_correct_order_component_pipeline == correct_order_component_pipeline and last_provided_features == provided_features :
+                loop_count +=1
+            else:
+                loop_count = 0
+            if loop_count > max_loop_count:
+                PipelineQueryVerifier.except_infinity_loop('Failure sorting dependencies')
+            last_provided_features = provided_features.copy()
+            correct_order_component_pipeline = last_correct_order_component_pipeline.copy()
         pipe.components = correct_order_component_pipeline
+
 
         return pipe
 
@@ -621,8 +661,8 @@ class PipelineQueryVerifier:
         # Find Resolver
         for i, c in enumerate(pipe.components):
             if c.loaded_from_pretrained_pipe: continue
-            # if isinstance(c.model, SentenceEntityResolverModel): resolvers.append(c)
-            # if isinstance(c.model, (NerConverter, NerConverterInternal)): ner_converters.append(c)
+            # if isinstance(c.model_anno_obj, SentenceEntityResolverModel): resolvers.append(c)
+            # if isinstance(c.model_anno_obj, (NerConverter, NerConverterInternal)): ner_converters.append(c)
             # if 'sentence_embeddings' == c.info.type: sentence_embeddings.append(c)
             if c.name == NLP_HC_NODE_IDS.SENTENCE_ENTITY_RESOLVER:
                 resolvers.append(c)
@@ -650,8 +690,8 @@ class PipelineQueryVerifier:
 
         # sentence_embeddings[0].info.inputs = ['chunk2doc']
         # sentence_embeddings[0].info.spark_input_column_names = ['chunk2doc']
-        # sentence_embeddings[0].model.setInputCols('chunk2doc') # shouldb e handled by enforcing
-        # chunk2doc.model.setOutputCol("chunk2doc")
+        # sentence_embeddings[0].model_anno_obj.setInputCols('chunk2doc') # shouldb e handled by enforcing
+        # chunk2doc.model_anno_obj.setOutputCol("chunk2doc")
         # chunk2doc.info.inputs = ner_converters[0].spark_output_column_names
 
         # TODO this will not be resolved by the resolution Algo!!
@@ -659,7 +699,7 @@ class PipelineQueryVerifier:
         chunk2doc.model.setInputCols(ner_converters[0].spark_output_column_names)
         chunk2doc.spark_input_column_names = ner_converters[0].spark_output_column_names
         pipe.components.append(chunk2doc)
-        # this will add a entity converter and a NER model if none provided
+        # this will add a entity converter and a NER model_anno_obj if none provided
         pipe = PipelineQueryVerifier.satisfy_dependencies(pipe)
 
         return pipe
@@ -678,17 +718,3 @@ class PipelineQueryVerifier:
         logger.info(f"Resolution Status missing_features_no_ref  = {set(missing_features_no_ref)}")
         logger.info(f"Resolution Status conversion_candidates    = {set(missing_features_ref)}")
         logger.info(f"========================================================================")
-
-
-
-
-
-
-
-
-
-
-
-
-
-

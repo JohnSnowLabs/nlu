@@ -1,6 +1,6 @@
 def verify_model_licensed(class_name: str, model_path: str):
     """
-    Load a licensed model from HDD
+    Load a licensed model_anno_obj from HDD
     """
     try:
         m = eval(class_name).load(model_path)

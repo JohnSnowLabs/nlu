@@ -116,7 +116,7 @@ class NLP_FEATURE_NODES:  # or Mode Node?
         A.POS: NlpFeatureNode(A.POS, [F.TOKEN, F.DOCUMENT], [F.POS]),
         A.TRAINABLE_POS: NlpFeatureNode(A.POS, [F.TOKEN, F.DOCUMENT], [F.POS]),
         A.RECURISVE_TOKENIZER: NlpFeatureNode(A.RECURISVE_TOKENIZER, [F.DOCUMENT], [F.TOKEN]),
-        A.REGEX_MATCHER: NlpFeatureNode(A.REGEX_MATCHER, [F.DOCUMENT], [F.CHUNK]),
+        A.REGEX_MATCHER: NlpFeatureNode(A.REGEX_MATCHER, [F.DOCUMENT], [F.NAMED_ENTITY_CONVERTED]),
         A.REGEX_TOKENIZER: NlpFeatureNode(A.REGEX_TOKENIZER, [F.DOCUMENT], [F.TOKEN]),
         A.SENTENCE_DETECTOR: NlpFeatureNode(A.SENTENCE_DETECTOR, [F.DOCUMENT], [F.SENTENCE]),
         A.SENTENCE_DETECTOR_DL: NlpFeatureNode(A.SENTENCE_DETECTOR_DL, [F.DOCUMENT], [F.SENTENCE]),
@@ -178,6 +178,9 @@ class NLP_FEATURE_NODES:  # or Mode Node?
 
         A.BERT_FOR_SEQUENCE_CLASSIFICATION: NlpFeatureNode(A.BERT_FOR_SEQUENCE_CLASSIFICATION, [F.DOCUMENT, F.TOKEN],
                                                            [F.SEQUENCE_CLASSIFICATION]),
+        A.DEBERTA_FOR_SEQUENCE_CLASSIFICATION: NlpFeatureNode(A.BERT_FOR_SEQUENCE_CLASSIFICATION, [F.DOCUMENT, F.TOKEN],
+                                                              [F.SEQUENCE_CLASSIFICATION]),
+
         A.DISTIL_BERT_FOR_SEQUENCE_CLASSIFICATION: NlpFeatureNode(A.DISTIL_BERT_FOR_SEQUENCE_CLASSIFICATION,
                                                                   [F.DOCUMENT, F.TOKEN],
                                                                   [F.SEQUENCE_CLASSIFICATION]),
@@ -199,6 +202,9 @@ class NLP_FEATURE_NODES:  # or Mode Node?
                                                             [F.SEQUENCE_CLASSIFICATION]),
         A.GPT2: NlpFeatureNode(A.GPT2, [F.DOCUMENT], [F.DOCUMENT_GENERATED]),
         A.WORD_2_VEC: NlpFeatureNode(A.WORD_2_VEC, [F.TOKEN], [F.WORD_EMBEDDINGS]),
+        A.BERT_SENTENCE_CHUNK_EMBEDDINGS: NlpFeatureNode(A.BERT_SENTENCE_CHUNK_EMBEDDINGS, [F.DOCUMENT],
+                                                         [F.NAMED_ENTITY_CONVERTED]),
+
     }
 
 
@@ -359,6 +365,13 @@ class NLP_HC_FEATURE_NODES():
                                                 [F.NAMED_ENTITY_CONVERTED, F.WORD_EMBEDDINGS, F.POS,
                                                  F.UNLABLED_DEPENDENCY],
                                                 [H_F.RELATION]),
+
+        A.ZERO_SHOT_RELATION_EXTRACTION: NlpHcFeatureNode(A.ZERO_SHOT_RELATION_EXTRACTION,
+                                                [F.NAMED_ENTITY_CONVERTED, F.DOCUMENT,],
+                                                [H_F.RELATION]),
+
+
+
         A.TRAINABLE_RELATION_EXTRACTION: NlpHcFeatureNode(A.TRAINABLE_RELATION_EXTRACTION,
                                                           [F.NAMED_ENTITY_CONVERTED, F.WORD_EMBEDDINGS, F.POS,
                                                            F.UNLABLED_DEPENDENCY],

@@ -51,6 +51,8 @@ class ComponentUtils:
             feature_list.remove('sentiment_label')
         if '%%%feature_elements%%%' in feature_list:
             feature_list.remove('%%%feature_elements%%%')
+        if NLP_FEATURES.ANY in feature_list:
+            feature_list.remove(NLP_FEATURES.ANY)
         if OCR_FEATURES.BINARY_IMG in feature_list:
             feature_list.remove(OCR_FEATURES.BINARY_IMG)
         if OCR_FEATURES.FILE_PATH in feature_list:
@@ -59,6 +61,7 @@ class ComponentUtils:
             feature_list.remove(OCR_FEATURES.BINARY_DOCX)
         if OCR_FEATURES.BINARY_PDF in feature_list:
             feature_list.remove(OCR_FEATURES.BINARY_PDF)
+
         if remove_AT_notation:
             new_cs = []
             for c in feature_list:
@@ -108,7 +111,7 @@ class ComponentUtils:
 
     @staticmethod
     def is_NER_provider(component: NluComponent) -> bool:
-        """Check if a NLU Component wraps a NER/NER-Medical model """
+        """Check if a NLU Component wraps a NER/NER-Medical model_anno_obj """
 
         if component.name in [NLP_HC_NODE_IDS.MEDICAL_NER, NLP_HC_NODE_IDS.TRAINABLE_MEDICAL_NER, NLP_NODE_IDS.NER_DL,
                               NLP_NODE_IDS.TRAINABLE_NER_DL, NLP_NODE_IDS.TRAINABLE_NER_CRF,
@@ -199,7 +202,7 @@ class ComponentUtils:
     @staticmethod
     def get_nlu_ref_identifier(component: NluComponent) -> str:
         """The tail of a NLU ref after splitting on '.' gives a unique identifier for NON-Aliased components
-         If result is '' , model UID will be used as identifier
+         If result is '' , model_anno_obj UID will be used as identifier
          """
         tail = component.nlu_ref.split('.')[-1].split('@')[-1]
         if tail == '':
