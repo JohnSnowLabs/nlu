@@ -13,7 +13,6 @@ import warnings
 import nlu.utils.environment.authentication as auth_utils
 import nlu.utils.environment.offline_load_utils as offline_utils
 from nlu.universe.universes import Licenses
-from typing import Optional
 from nlu.utils.environment.authentication import *
 from nlu.pipe.pipeline import NLUPipeline
 from nlu.pipe.pipe_logic import PipelineQueryVerifier
@@ -39,6 +38,7 @@ slack_link = 'https://join.slack.com/t/spark-nlp/shared_invite/zt-lutct9gm-kuUaz
 github_issues_link = 'https://github.com/JohnSnowLabs/nlu/issues'
 
 
+
 def load(request: str = 'from_disk', path: Optional[str] = None, verbose: bool = False, gpu: bool = False,
          streamlit_caching: bool = False) -> NLUPipeline:
     '''
@@ -49,8 +49,8 @@ def load(request: str = 'from_disk', path: Optional[str] = None, verbose: bool =
     :param verbose: Whether to output debug prints
     :param gpu: Whether to leverage GPU
     :param streamlit_caching: Whether streamlit caching should be used in Streamlit visualizations. Trade Speed-Up for repeated requests for larger memory usage
-    :param path: If path is not None, the model/component_list for the NLU reference will be loaded from the path. Useful for offline mode. Currently only loading entire NLU pipelines is supported, but not loading singular pipes
-    :param request: A NLU model/pipeline/component_to_resolve reference. You can request multiple components by separating them with whitespace. I.e. nlu.load('elmo bert albert')
+    :param path: If path is not None, the model_anno_obj/component_list for the NLU reference will be loaded from the path. Useful for offline mode. Currently only loading entire NLU pipelines is supported, but not loading singular pipes
+    :param request: A NLU model_anno_obj/pipeline/component_to_resolve reference. You can request multiple components by separating them with whitespace. I.e. nlu.load('elmo bert albert')
     :return: returns a non fitted nlu pipeline object
     '''
     if streamlit_caching and not nlu.st_cache_enabled:
@@ -97,7 +97,8 @@ def load(request: str = 'from_disk', path: Optional[str] = None, verbose: bool =
             # if we get a list of components, then the NLU reference is a pipeline, we do not need to check order
             if type(nlu_component) == type([]):
                 # lists are parsed down to multiple components, result of pipeline request (stack of components)
-                for c in nlu_component: pipe.add(c, nlu_ref, pretrained_pipe_component=True)
+                for c in nlu_component:
+                    pipe.add(c, nlu_ref, pretrained_pipe_component=True)
             else:
                 # just a single component_to_resolve requested
                 pipe.add(nlu_component, nlu_ref)
@@ -108,7 +109,7 @@ def load(request: str = 'from_disk', path: Optional[str] = None, verbose: bool =
             print(e[1])
             print(err)
         raise Exception(
-            f"Something went wrong during creating the Spark NLP model for your request =  {request} Did you use a NLU Spell?")
+            f"Something went wrong during creating the Spark NLP model_anno_obj for your request =  {request} Did you use a NLU Spell?")
     # Complete Spark NLP Pipeline, which is defined as a DAG given by the starting Annotators
     try:
         pipe = PipelineQueryVerifier.check_and_fix_nlu_pipeline(pipe)
@@ -191,9 +192,9 @@ def auth(HEALTHCARE_LICENSE_OR_JSON_PATH='/content/spark_nlp_for_healthcare.json
 
 
 def load_nlu_pipe_from_hdd(pipe_path, request) -> NLUPipeline:
-    """Either there is a pipeline of models in the path or just one singular model.
+    """Either there is a pipeline of models in the path or just one singular model_anno_obj.
     If it is a component_list,  load the component_list and return it.
-    If it is a singular model, load it to the correct AnnotatorClass and NLU component_to_resolve and then generate pipeline for it
+    If it is a singular model_anno_obj, load it to the correct AnnotatorClass and NLU component_to_resolve and then generate pipeline for it
     """
     pipe = NLUPipeline()
     nlu_ref = request  # pipe_path
@@ -204,7 +205,7 @@ def load_nlu_pipe_from_hdd(pipe_path, request) -> NLUPipeline:
             # language, nlp_ref, nlu_ref,path=None, is_licensed=False
             # todo deduct lang and if Licensed or not
             pipe_components = get_trained_component_list_for_nlp_pipe_ref('en', nlu_ref, nlu_ref, pipe_path, False)
-        # Resource in path is a single model
+        # Resource in path is a single model_anno_obj
         elif offline_utils.is_model(pipe_path):
             c = offline_utils.verify_and_create_model(pipe_path)
             c.nlu_ref = nlu_ref
@@ -212,29 +213,15 @@ def load_nlu_pipe_from_hdd(pipe_path, request) -> NLUPipeline:
             return PipelineQueryVerifier.check_and_fix_nlu_pipeline(pipe)
         else:
             print(
-                f"Could not load model in path {pipe_path}. Make sure the jsl_folder contains either a stages subfolder or a metadata subfolder.")
+                f"Could not load model_anno_obj in path {pipe_path}. Make sure the jsl_folder contains either a stages subfolder or a metadata subfolder.")
             raise ValueError
         for c in pipe_components: pipe.add(c, nlu_ref, pretrained_pipe_component=True)
         return pipe
 
     else:
         print(
-            f"Could not load model in path {pipe_path}. Make sure the jsl_folder contains either a stages subfolder or a metadata subfolder.")
+            f"Could not load model_anno_obj in path {pipe_path}. Make sure the jsl_folder contains either a stages subfolder or a metadata subfolder.")
         raise ValueError
-
-
-def enable_verbose() -> None:
-    logger.setLevel(logging.INFO)
-    ch = logging.StreamHandler()
-    ch.setLevel(logging.INFO)
-    logger.addHandler(ch)
-
-
-def disable_verbose() -> None:
-    logger.setLevel(logging.ERROR)
-    ch = logging.StreamHandler()
-    ch.setLevel(logging.ERROR)
-    logger.addHandler(ch)
 
 
 def get_open_source_spark_context(gpu):
@@ -249,6 +236,20 @@ def get_open_source_spark_context(gpu):
     print(f"Current Spark version {get_pyspark_version()} not supported!\n"
           f"Please install any of the Pyspark versions 3.1.x, 3.2.x, 3.0.x, 2.4.x, 2.3.x")
     raise ValueError(f"Failure starting Spark Context! Current Spark version {get_pyspark_version()} not supported! ")
+
+
+def enable_verbose() -> None:
+    logger.setLevel(logging.INFO)
+    ch = logging.StreamHandler()
+    ch.setLevel(logging.INFO)
+    logger.addHandler(ch)
+
+
+def disable_verbose() -> None:
+    logger.setLevel(logging.ERROR)
+    ch = logging.StreamHandler()
+    ch.setLevel(logging.ERROR)
+    logger.addHandler(ch)
 
 
 def enable_streamlit_caching():
@@ -274,20 +275,6 @@ def wrap_with_st_cache_if_available_and_set_layout_to_wide(f):
         logger.exception("Could not import streamlit and apply caching")
         print("You need streamlit to run use this method")
         return f
-
-
-class NluError:
-    def __init__(self):
-        self.has_trainable_components = False
-
-    @staticmethod
-    def predict(text, output_level='error', positions='error', metadata='error', drop_irrelevant_cols=False):
-        print(
-            'The NLU components could not be properly created. Please check previous print messages and Verbose mode for further info')
-
-    @staticmethod
-    def print_info(): print(
-        "Sorry something went wrong when building the pipeline. Please check verbose mode and your NLU reference.")
 
 
 # Discovery

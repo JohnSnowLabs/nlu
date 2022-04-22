@@ -464,11 +464,11 @@ class ComponentUniverse:
                                        ),
         A.EMBEDDINGS_FINISHER: 'TODO NOT INTEGRATED',
         A.ENTITY_RULER: 'TODO NOT INTEGRATED',
-        A.FINISHER: partial(NluComponent, # TODO WIP
+        A.FINISHER: partial(NluComponent,  # TODO WIP
                             name=A.FINISHER,
                             type=T.HELPER_ANNO,
                             get_default_model=SdfFinisher.get_default_model,
-                             # TODO EXTRACTOR
+                            # TODO EXTRACTOR
                             pdf_extractor_methods={'default': default_full_config,
                                                    'default_full': default_full_config, },
                             # TODO SUBSTITOR
@@ -1941,7 +1941,34 @@ class ComponentUniverse:
                                        computation_context=ComputeContexts.spark,
                                        output_context=ComputeContexts.spark,
                                        jsl_anno_class_id=H_A.DE_IDENTIFICATION,
-                                       jsl_anno_py_class=ACR.JSL_anno_HC_ref_2_py_class[H_A.DE_IDENTIFICATION], ),
+                                       jsl_anno_py_class=ACR.JSL_anno_HC_ref_2_py_class[H_A.DE_IDENTIFICATION],
+                                       trainable_mirror_anno=H_A.TRAINABLE_DE_IDENTIFICATION
+
+                                       ),
+        H_A.TRAINABLE_DE_IDENTIFICATION: partial(NluComponent, # TODO WIP 
+                                                 name=H_A.TRAINABLE_DE_IDENTIFICATION,
+                                                 type=T.CHUNK_CLASSIFIER,
+                                                 get_default_model=Deidentifier.get_default_model,
+                                                 get_pretrained_model=Deidentifier.get_pretrained_model,
+                                                 get_trainable_model=Deidentifier.get_trainable_model,
+                                                 pdf_extractor_methods={'default': default_de_identification_config,
+                                                                        'default_full': default_full_config, },
+                                                 pdf_col_name_substitutor=substitute_de_identification_cols,
+                                                 output_level=L.DOCUMENT,
+                                                 node=NLP_HC_FEATURE_NODES.nodes[H_A.TRAINABLE_DE_IDENTIFICATION],
+                                                 description='De-Identify named entity according to various Healthcare Data Protection standards',
+                                                 provider=ComponentBackends.hc,
+                                                 license=Licenses.hc,
+                                                 computation_context=ComputeContexts.spark,
+                                                 output_context=ComputeContexts.spark,
+                                                 jsl_anno_class_id=H_A.TRAINABLE_DE_IDENTIFICATION,
+                                                 jsl_anno_py_class=ACR.JSL_anno_HC_ref_2_py_class[
+                                                     H_A.TRAINABLE_DE_IDENTIFICATION],
+                                                 trainable=True,
+                                                 trained_mirror_anno=H_A.DE_IDENTIFICATION
+
+                                                 ),
+
         H_A.DOCUMENT_LOG_REG_CLASSIFIER: 'TODO not integrated',
         H_A.TRAINABLE_DOCUMENT_LOG_REG_CLASSIFIER: 'TODO not integrated',
         H_A.DRUG_NORMALIZER: partial(NluComponent,

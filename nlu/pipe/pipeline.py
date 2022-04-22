@@ -105,7 +105,7 @@ class NLUPipeline(dict):
         '''
         if dataset is  string with '/' in it, its dataset path!
         Converts the input Pandas Dataframe into a Spark Dataframe and trains a model_anno_obj on it.
-        :param dataset: The pandas dataset to train on, should have a y column for label and 'text' column for text features
+        :param dataset: Pandas dataset to train on, should have a y column for label and 'text' column for text features
         :param dataset_path: Path to a CONLL2013 format dataset. It will be read for NER and POS training.
         :param label_seperator: If multi_classifier is trained, this seperator is used to split the elements into an Array column for Pyspark
         :return: A nlu pipeline with models fitted.

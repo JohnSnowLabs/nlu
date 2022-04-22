@@ -12,12 +12,12 @@ def is_pipe(model_path):
 
 
 def is_model(model_path):
-    """Check whether there is a model stored in path"""
+    """Check whether there is a model_anno_obj stored in path"""
     return 'metadata' in os.listdir(model_path)
 
 
 def get_model_class(model_path):
-    """Extract class from a model saved in model_path"""
+    """Extract class from a model_anno_obj saved in model_path"""
     with open(model_path + '/stages/part-00000') as json_file:
         java_class = json.load(json_file)['class']
         pyth_class = java_class.split('.')[-1]
@@ -26,13 +26,13 @@ def get_model_class(model_path):
 
 def verify_and_create_model(model_path: str):
     """
-     Build model with requirements
+     Build model_anno_obj with requirements
      Figures out class name by checking metadata json file
      assumes metadata is always called part-00000
     """
     with open(model_path + '/metadata/' + 'part-00000') as json_f:
         class_name = json.load(json_f)['class'].split('.')[-1]
-        # The last element in the Class name can be used to just load the model from disk!
+        # The last element in the Class name can be used to just load the model_anno_obj from disk!
         # Just call eval on it, which will give you the actual Python class reference which should have a .load() method
         try:
             m = eval(class_name).load(model_path)

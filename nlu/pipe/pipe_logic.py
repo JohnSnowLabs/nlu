@@ -599,8 +599,8 @@ class PipelineQueryVerifier:
                 loop_count = 0
             if loop_count > max_loop_count:
                 PipelineQueryVerifier.except_infinity_loop('Failure sorting dependencies')
-            last_provided_features = provided_features
-            correct_order_component_pipeline = last_correct_order_component_pipeline
+            last_provided_features = provided_features.copy()
+            correct_order_component_pipeline = last_correct_order_component_pipeline.copy()
         pipe.components = correct_order_component_pipeline
 
 
