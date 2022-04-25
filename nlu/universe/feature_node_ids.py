@@ -92,7 +92,7 @@ class NLP_NODE_IDS:
     GPT2 = JslAnnoId('gpt2')
     WORD_2_VEC = JslAnnoId('word_2_vec')
     DEBERTA_WORD_EMBEDDINGS = JslAnnoId('deberta')
-    DEBERTA_FOR_SEQUENCE_CLASSIFICATION = JslAnnoId('xlm_roberta_for_sequence_classification')
+    DEBERTA_FOR_SEQUENCE_CLASSIFICATION = JslAnnoId('deberta_for_sequence_classification')
 
 
     TRAINABLE_CONTEXT_SPELL_CHECKER = JslAnnoId('trainable_context_spell_checker')
