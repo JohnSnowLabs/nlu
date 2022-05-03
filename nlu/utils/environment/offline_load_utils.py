@@ -2,8 +2,14 @@ import json
 import os
 
 from nlu.universe.annotator_class_universe import AnnoClassRef
-from nlu.universe.component_universes import ComponentUniverse, jsl_id_to_empty_component
+from nlu.universe.component_universes import  jsl_id_to_empty_component
 from nlu.universe.universes import Licenses
+
+# These Spark NLP imports are not unused and will be dynamically loaded, do not remove!
+from sparknlp.annotator import *
+from sparknlp.base import *
+# we just use some classes here, so that intelij cleanup will not remove the imports
+DocumentAssembler.name,BertEmbeddings.__name__
 
 
 def is_pipe(model_path):
@@ -35,6 +41,7 @@ def verify_and_create_model(model_path: str):
         # The last element in the Class name can be used to just load the model_anno_obj from disk!
         # Just call eval on it, which will give you the actual Python class reference which should have a .load() method
         try:
+
             m = eval(class_name).load(model_path)
         except:
             from nlu.utils.environment.offline_load_utils_licensed import verify_model_licensed
