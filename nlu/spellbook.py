@@ -2171,7 +2171,10 @@ class Spellbook:
                                            'pt.bert.cased.large': 'bert_portuguese_large_cased',
                                            'pt.lemma.gsd': 'lemma_gsd',
                                            'pt.pos.bosque': 'pos_bosque',
-                                           'pt.pos.gsd': 'pos_gsd'},
+                                           'pt.pos.gsd': 'pos_gsd',
+                                           'pt.embed.w2v_cc_300d' : 'w2v_cc_300d'
+
+                                           },
                                     'ru': {'ru.lemma': 'lemma',
                                            'ru.pos.ud_gsd': 'pos_ud_gsd',
                                            'ru.pos': 'pos_ud_gsd',
@@ -4016,7 +4019,7 @@ class Spellbook:
                 'en.resolve.snomed_drug': 'sbiobertresolve_snomed_drug',
 
                 # clinical spellchecker
-                # 'en.spell.clinical':   'spellcheck_clinical',  #todo crashing
+                'en.spell.clinical':   'spellcheck_clinical',  #todo crashing
                 # 'en.spell.med':        'context_spell_med', #todo crashing
                 # 'en.spell.context.med':'context_spell_med', #todo crashing Byteerror
 
@@ -4629,6 +4632,8 @@ class Spellbook:
         OCR_NODE_IDS.PDF2TEXT_TABLE: 'PdfToTextTable',
         OCR_NODE_IDS.PPT2TEXT_TABLE: 'PptToTextTable',
         OCR_NODE_IDS.DOC2TEXT_TABLE: 'DocToTextTable',
+
+        'w2v_cc_300d' : 'WordEmbeddingsModel',
         'albert_base_sequence_classifier_ag_news': 'AlbertForSequenceClassification',
         'albert_base_sequence_classifier_imdb': 'AlbertForSequenceClassification',
         'albert_base_token_classifier_conll03': 'AlbertForTokenClassification',
@@ -4722,7 +4727,7 @@ class Spellbook:
         'bert_token_classifier_ner_clinical': 'MedicalBertForTokenClassifier',
         'bert_token_classifier_ner_deid': 'MedicalBertForTokenClassifier',
         'bert_token_classifier_ner_drugs': 'MedicalBertForTokenClassifier',
-        'bert_token_classifier_ner_jsl': 'BertForTokenClassification',
+        'bert_token_classifier_ner_jsl': 'MedicalBertForTokenClassifier',
         'bert_token_classifier_ner_jsl_slim': 'MedicalBertForTokenClassifier',
         'bert_token_classifier_ner_ud_gsd': 'BertForTokenClassification',
         'bert_token_classifier_parsbert_armanner': 'BertForTokenClassification',
