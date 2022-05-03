@@ -111,7 +111,8 @@ class NLUPipeline(dict):
         :return: A nlu pipeline with models fitted.
         '''
         stages = []
-        for component in self.components: stages.append(component.model)
+        for component in self.components:
+            stages.append(component.model)
         self.spark_estimator_pipe = Pipeline(stages=stages)
 
         if dataset_path != None and 'ner' in self.nlu_ref:

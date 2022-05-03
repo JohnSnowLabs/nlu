@@ -209,6 +209,7 @@ class PipeUtils:
         includes TOKEN-CLASSIFIER-TRANSFORMER models which usually output NER format
         """
         new_converters = []
+
         for c in pipe.components:
             if c.loaded_from_pretrained_pipe:
                 # Leave pretrained component_list models untouched
@@ -228,14 +229,12 @@ class PipeUtils:
                 ner_identifier = ComponentUtils.get_nlu_ref_identifier(c)
                 if converter_to_update is None:
                     if c.license == Licenses.hc:
-                        # TODO SET METADATA FIELDS HERE ON ANNO!!
                         converter_to_update = jsl_id_to_empty_component(NLP_HC_NODE_IDS.NER_CONVERTER_INTERNAL)
                         converter_to_update.set_metadata(converter_to_update.get_default_model(),
                                                          NLP_HC_NODE_IDS.NER_CONVERTER_INTERNAL,
                                                          NLP_HC_NODE_IDS.NER_CONVERTER_INTERNAL,
                                                          'xx', False, Licenses.hc)
                     else:
-                        # TODO SET METADATA FIELDS HERE ON ANNO!!
                         converter_to_update = jsl_id_to_empty_component(NLP_NODE_IDS.NER_CONVERTER)
                         converter_to_update.set_metadata(converter_to_update.get_default_model(),
                                                          NLP_NODE_IDS.NER_CONVERTER, NLP_NODE_IDS.NER_CONVERTER,
