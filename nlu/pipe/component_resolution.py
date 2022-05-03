@@ -2,7 +2,7 @@
 Contains methods used to resolve a NLU reference to a NLU component_to_resolve.
 Handler for getting default components, etc.
 '''
-from typing import Dict, List, Union, Optional
+from typing import Dict, List, Union, Optional, Callable
 
 from pyspark.ml import PipelineModel, Pipeline
 from sparknlp.pretrained import PretrainedPipeline, LightPipeline
@@ -19,6 +19,12 @@ from nlu.universe.feature_universes import NLP_HC_FEATURES, OCR_FEATURES
 from nlu.universe.universes import Licenses
 
 logger = logging.getLogger('nlu')
+
+def init_component(component):
+    # Init partial constructor
+    if isinstance(component, Callable):
+        component = component()
+    return component
 
 
 def resolve_feature(missing_feature_type: Union[NLP_HC_FEATURES, OCR_FEATURES, NLP_HC_FEATURES], language='en',
@@ -56,7 +62,7 @@ def resolve_feature(missing_feature_type: Union[NLP_HC_FEATURES, OCR_FEATURES, N
             model_bucket = None
         else:
             raise ValueError(f"Could not resolve feature={missing_feature_type}")
-        nlu_component = feature_resolution.nlu_component()  # Call the partial and init the nlu component
+        nlu_component = init_component(feature_resolution.nlu_component)  # Call the partial and init the nlu component
 
         # Either call get_pretrained(nlp_ref, lang,bucket) or get_default_model() to instantiate Annotator object
         if feature_resolution.get_pretrained:
@@ -87,7 +93,7 @@ def resolve_feature(missing_feature_type: Union[NLP_HC_FEATURES, OCR_FEATURES, N
             else:
                 raise ValueError(
                     f"Could not resolve empty storage ref with default feature for missing feature = {missing_feature_type}")
-            nlu_component = feature_resolution.nlu_component()  # Call the partial and init the nlu component
+            nlu_component = init_component(feature_resolution.nlu_component)  # Call the partial and init the nlu component
             return nlu_component.set_metadata(
                 nlu_component.get_pretrained_model(feature_resolution.nlp_ref, feature_resolution.language,
                                                    model_bucket),
