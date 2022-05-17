@@ -18,7 +18,7 @@ from nlu.pipe.utils.data_conversion_utils import DataConversionUtils
 from nlu.pipe.utils.output_level_resolution_utils import OutputLevelUtils
 from nlu.pipe.utils.resolution.storage_ref_utils import StorageRefUtils
 from nlu.universe.universes import Licenses
-from nlu.utils.environment.env_utils import is_running_in_databricks, try_import_pyspark_in_streamlit
+from nlu.utils.environment.env_utils import is_running_in_databricks, try_import_pyspark_in_streamlit,try_import_streamlit
 
 logger = logging.getLogger('nlu')
 
