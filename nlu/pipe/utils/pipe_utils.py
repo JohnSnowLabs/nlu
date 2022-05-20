@@ -313,10 +313,16 @@ class PipeUtils:
     @staticmethod
     def enforce_NLU_columns_to_NLP_columns(pipe):
         """for every component_to_resolve, set its inputs and outputs to the ones configured on the NLU component_to_resolve."""
+        # These anno have no standardized setInputCol or it should not be configured
+        blacklisted = [NLP_NODE_IDS.DOCUMENT_ASSEMBLER]
         for c in pipe.components:
+            if c.name == OCR_NODE_IDS.VISUAL_DOCUMENT_CLASSIFIER:
+                c.model.setLabelCol(c.spark_output_column_names[0])
+                c.model.setConfidenceCol(c.spark_output_column_names[1])
+                continue
             if c.loaded_from_pretrained_pipe:
                 continue
-            if c.name == NLP_NODE_IDS.DOCUMENT_ASSEMBLER:
+            if c.name in blacklisted:
                 continue
             c.model.setOutputCol(c.spark_output_column_names[0])
             if hasattr(c.model, 'setInputCols'):
@@ -324,6 +330,7 @@ class PipeUtils:
             else:
                 # Some OCR Annotators only have one input and thus only setInputCol method but not setInputCols
                 c.model.setInputCol(c.spark_input_column_names[0])
+
         return pipe
 
     @staticmethod

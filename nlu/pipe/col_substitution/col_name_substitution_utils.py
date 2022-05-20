@@ -117,7 +117,7 @@ class ColSubstitutionUtils:
         configs = anno_2_ex[og_output_col]
         result_cols = []
         if isinstance(configs,SparkOCRExtractorConfig) :
-            # TODO better OCR-EX handling
+            # TODO better OCR-EX handling --> Col Name generator function which we use everywhere for unified col naming !!!!!
             return ['text']
         if configs.get_annotator_type: result_cols.append(configs.output_col_prefix + '_types')
         if configs.get_result: result_cols.append(configs.output_col_prefix + '_results')
