@@ -1,15 +1,12 @@
-
-
-from sklearn.metrics import classification_report
-
 import unittest
-from nlu import *
-import tests.test_utils as t
+
 import pandas as pd
+
+import tests.test_utils as t
+from nlu import *
 
 
 class MultiClassifierDlTests(unittest.TestCase):
-
     def test_multi_classifier_dl_training(self):
         # Too much RAM usage in CI
         # return
@@ -29,26 +26,32 @@ class MultiClassifierDlTests(unittest.TestCase):
         # test_df.drop('y_str',inplace=True,axis=1)
         train_df = test_df
         # embed_sentence.bert
-        pipe = nlu.load('train.multi_classifier',verbose=True,)
-#: java.lang.IllegalArgumentException: requirement failed: The label column MultiClassifierDLApproach_cbfe97978b3c__labelColumn type is StringType and it's not compatible. Compatible types are ArrayType(StringType).
+        pipe = nlu.load(
+            "train.multi_classifier",
+            verbose=True,
+        )
+        #: java.lang.IllegalArgumentException: requirement failed: The label column MultiClassifierDLApproach_cbfe97978b3c__labelColumn type is StringType and it's not compatible. Compatible types are ArrayType(StringType).
 
         # component_list['multi_classifier_dl'].setMaxEpochs(2)
         # component_list.print_info()
         pipe = pipe.fit(train_df)
         df = pipe.predict(train_df)
         print(df.columns)
-        for c in df.columns : print (df[c])
+        for c in df.columns:
+            print(df[c])
         #
         # print(df[['multi_classifier_classes','y']])
         # print(df[['multi_classifier_confidences','y']])
 
         df = pipe.predict(test_df)
         print(df.columns)
-        for c in df.columns : print (df[c])
+        for c in df.columns:
+            print(df[c])
         # print(df[['multi_classifier_classes','y']])
         # print(df[['multi_classifier_confidence','y']])
         df.dropna(inplace=True)
         # print (classification_report(df['y'], df['multi_classifier_classes']))
+
     # Too heavy running on github actions
 
     #
@@ -122,25 +125,27 @@ class MultiClassifierDlTests(unittest.TestCase):
     #     from sklearn.metrics import classification_report
     #     print (classification_report(df['y'], df['category']))
 
-
     # def load_multi_classifier_dl_dataset(self):
     #     #relative from tests/nlu_core_tests/training_tests/classifiers
     #     p = '/home/loan/Documents/freelancework/jsl/nlu/4realnlugit/tests/datasets/multi_classifier_dl/e2e-dataset/testset_w_refs.csv'
     #     return pd.read_csv(p)
 
     def load_multi_classifier_dl_dataset(self):
-        output_file_name = 'e2e_test.csv'
-        output_folder = 'multi_classifier_dl/'
+        output_file_name = "e2e_test.csv"
+        output_folder = "multi_classifier_dl/"
         # data_url = "http://ckl-it.de/wp-content/uploads/2020/12/testset_w_refs.csv"
         data_url = "http://ckl-it.de/wp-content/uploads/2020/12/e2e.csv"
 
-        return pd.read_csv(t.download_dataset(data_url,output_file_name,output_folder)).iloc[0:100]
+        return pd.read_csv(
+            t.download_dataset(data_url, output_file_name, output_folder)
+        ).iloc[0:100]
 
         # output_file_name = 'news_category_test.csv'
         # output_folder = 'multi_classifier_dl/'
         # data_dir = '../../../datasets/'
         # data_url = "https://s3.amazonaws.com/auxdata.johnsnowlabs.com/public/resources/en/classifier-dl/news_Category/news_category_test.csv"
         # return t.download_dataset(data_url,output_file_name,output_folder,data_dir)
+
     #
     # def load_classifier_dl_dataset(self):
     #     #relative from tests/nlu_core_tests/training_tests/classifiers
@@ -152,7 +157,5 @@ class MultiClassifierDlTests(unittest.TestCase):
     #     return t.download_dataset(data_url,output_file_name,output_folder,data_dir)
 
 
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
-

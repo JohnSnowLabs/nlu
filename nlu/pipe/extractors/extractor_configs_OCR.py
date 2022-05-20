@@ -21,6 +21,14 @@ def default_text_recognizer_config(output_col_prefix='ocr_text'):
     )
 
 
+def default_visual_classifier_config(output_col_prefix='visual_classifier'):
+    return SparkOCRExtractorConfig(
+        output_col_prefix=output_col_prefix,
+        name='visual_classifier label and confidence ',
+        description='Gets label and confidence of visual classifier',
+    )
+
+
 def default_binary_to_image_config(output_col_prefix='binary_image'):
     return SparkOCRExtractorConfig(
         output_col_prefix=output_col_prefix,

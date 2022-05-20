@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+
 from nlu.pipe.nlu_component import NluComponent
 from nlu.universe.component_universes import ComponentUniverse
 from nlu.universe.feature_node_ids import NLP_NODE_IDS, NLP_HC_NODE_IDS, OCR_NODE_IDS
@@ -43,7 +44,6 @@ class FeatureResolutions:
                                                        True,
                                                        ComponentUniverse.components[NLP_NODE_IDS.NER_DL]),
 
-
         NLP_FEATURES.NAMED_ENTITY_CONVERTED: ResolvedFeature('ner_converter', 'ner_converter', 'xx', False,
                                                              ComponentUniverse.components[NLP_NODE_IDS.NER_CONVERTER]),
         NLP_FEATURES.UNLABLED_DEPENDENCY: ResolvedFeature('en.dep.untyped', 'dependency_conllu', 'en', True,
@@ -86,4 +86,7 @@ class FeatureResolutions:
     default_OCR_resolutions = {
         OCR_FEATURES.OCR_IMAGE: ResolvedFeature(OCR_NODE_IDS.BINARY2IMAGE, OCR_NODE_IDS.BINARY2IMAGE, 'xx', False,
                                                 ComponentUniverse.components[OCR_NODE_IDS.BINARY2IMAGE]),
+        OCR_FEATURES.HOCR: ResolvedFeature(OCR_NODE_IDS.IMAGE2HOCR, OCR_NODE_IDS.IMAGE2HOCR, 'xx', False,
+                                           ComponentUniverse.components[OCR_NODE_IDS.IMAGE2HOCR]),
+
     }

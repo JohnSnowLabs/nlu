@@ -95,6 +95,8 @@ class AnnoClassRef:
         A_N.XLNET_FOR_SEQUENCE_CLASSIFICATION: 'XlnetForSequenceClassification',
         A_N.GPT2: 'GPT2Transformer',
         A_N.DEBERTA_WORD_EMBEDDINGS: 'DeBertaEmbeddings',
+        A_N.DEBERTA_FOR_TOKEN_CLASSIFICATION : 'DeBertaForTokenClassification',
+        A_N.CAMENBERT_EMBEDDINGS : 'CamemBertEmbeddings',
 
         A_N.TRAINABLE_VIVEKN_SENTIMENT: 'ViveknSentimentApproach',
         A_N.TRAINABLE_SENTIMENT: 'SentimentDetector',
@@ -185,6 +187,9 @@ class AnnoClassRef:
         OCR_NODE_IDS.PDF2TEXT_TABLE: 'PdfToTextTable',
         OCR_NODE_IDS.PPT2TEXT_TABLE: 'PptToTextTable',
         OCR_NODE_IDS.DOC2TEXT_TABLE: 'DocToTextTable',
+        OCR_NODE_IDS.TEXT2PDF: 'TextToPdf',
+        OCR_NODE_IDS.VISUAL_DOCUMENT_CLASSIFIER: 'VisualDocumentClassifier',
+        OCR_NODE_IDS.IMAGE2HOCR: 'ImageToHocr',
 
     }
 

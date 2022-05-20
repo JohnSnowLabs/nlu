@@ -100,10 +100,9 @@ def get_datset(model_name):
         }
 
 
-import pandas as pd
-import os
-from pathlib import Path
 import urllib.request
+from pathlib import Path
+
 file_url = 'https://s3.amazonaws.com/auxdata.johnsnowlabs.com/public/resources/en/sarcasm/train-balanced-sarcasm.csv'
 download_path = "./sarcasm.csv"
 

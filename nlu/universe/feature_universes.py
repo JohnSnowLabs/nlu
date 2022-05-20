@@ -71,7 +71,7 @@ class OCR_FEATURES(JslFeature):
     BINARY_PDF_PAGE = JslFeature("bin_pdf_page")  # just a page
     BINARY_DOCX = JslFeature("content")  # pdf2text - bin_docx
     BINARY_DOCX_PAGE = JslFeature("bin_docx_page")  # just a page
-    BINARY_TOKEN = JslFeature("bin_hocr")  # img -
+    BINARY_TOKEN = JslFeature("bin_token")  # img -
     BINARY_DICOM = JslFeature("bin_dicom")  # DICOM image
     DICOM_METADATA = JslFeature("dicom_metadata")  # DICOM metadata (json formatted)
 
@@ -81,7 +81,7 @@ class OCR_FEATURES(JslFeature):
     TEXT_ENTITY = JslFeature('text_entity')  # chunk/entity
     TEXT_DOCUMENT = JslFeature("text_document")  # TODO should be same class as the spark NLP ones
     TEXT_DOCUMENT_TOKENIZED = JslFeature("text_tokenized")  # TODO should be same class as the spark NLP ones
-    HOCR = JslFeature("bin_hocr")  # img -
+    HOCR = JslFeature("hocr")  # img -
 
     # All OCR_* features are structs generated from OCR lib
     FALL_BACK = JslFeature("fall_back")  #
@@ -100,6 +100,8 @@ class OCR_FEATURES(JslFeature):
 
     PREDICTION_TEXT_TABLE = JslFeature("prediction_text_lable")  # TODO is this just int or some struct?
     PREDICTION_CONFIDENCE = JslFeature("prediction_confidence")  # TODO is this just int or some struct?
+    VISUAL_CLASSIFIER_CONFIDENCE = JslFeature("visual_classifier_confidence")
+    VISUAL_CLASSIFIER_PREDICTION = JslFeature("visual_classifier_prediction")
 
 
 class NLP_HC_FEATURES(JslFeature):

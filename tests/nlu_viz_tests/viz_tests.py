@@ -1,9 +1,8 @@
-
+import unittest
 
 import tests.secrets as sct
-import unittest
 from nlu import *
-import sparknlp_jsl.annotator
+
 
 class TestViz(unittest.TestCase):
     def test_quick(self):
@@ -11,33 +10,33 @@ class TestViz(unittest.TestCase):
         # Resolvers require DOC TYPE input!! But this Doc Type Input should come from a NER_CHUNK!! So we must convert NER_CHUNK with Chunk2Doc.
         # But then we must also make sure that the Sentence Embeddings for the Resolve are generated from the Doc2Chunk Col!!! Argh
         # But lol JK this annotator realy just takes sentence Embeds.... Each SentenceEmbed should originate from a NER that was converter with Chunk2Doc
-        nlu_ref = 'med_ner.jsl.wip.clinical en.resolve.icd10cm.augmented'
-        data = "This is an 82 - year-old male with a history of prior tobacco use , hypertension , chronic renal insufficiency , COPD , gastritis , and TIA who initially presented to Braintree with a non-ST elevation MI and Guaiac positive stools , transferred to St . Margaret\'s Center for Women & Infants for cardiac catheterization with PTCA to mid LAD lesion complicated by hypotension and bradycardia requiring Atropine , IV fluids and transient dopamine possibly secondary to vagal reaction , subsequently transferred to CCU for close monitoring , hemodynamically stable at the time of admission to the CCU ."
-        secrets_json_path = '/home/ckl/old_home/Documents/freelance/jsl/tigerGraph/Presentation_2_graph_Summit/secrets.json'
-        SPARK_NLP_LICENSE     = sct.SPARK_NLP_LICENSE
-        AWS_ACCESS_KEY_ID     = sct.AWS_ACCESS_KEY_ID
+        nlu_ref = "med_ner.jsl.wip.clinical en.resolve.icd10cm.augmented"
+        data = "This is an 82 - year-old male with a history of prior tobacco use , hypertension , chronic renal insufficiency , COPD , gastritis , and TIA who initially presented to Braintree with a non-ST elevation MI and Guaiac positive stools , transferred to St . Margaret's Center for Women & Infants for cardiac catheterization with PTCA to mid LAD lesion complicated by hypotension and bradycardia requiring Atropine , IV fluids and transient dopamine possibly secondary to vagal reaction , subsequently transferred to CCU for close monitoring , hemodynamically stable at the time of admission to the CCU ."
+        SPARK_NLP_LICENSE = sct.SPARK_NLP_LICENSE
+        AWS_ACCESS_KEY_ID = sct.AWS_ACCESS_KEY_ID
         AWS_SECRET_ACCESS_KEY = sct.AWS_SECRET_ACCESS_KEY
-        JSL_SECRET            = sct.JSL_SECRET
-        nlu.auth(SPARK_NLP_LICENSE,AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY,JSL_SECRET)
+        JSL_SECRET = sct.JSL_SECRET
+        nlu.auth(
+            SPARK_NLP_LICENSE, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, JSL_SECRET
+        )
         pipe = nlu.load(nlu_ref, verbose=True)
         df = pipe.predict(data)
         for c in df.columns:
             print(df[c])
 
     def test_viz_ner(self):
-        pipe = nlu.load('ner.conll',verbose=True)
+        pipe = nlu.load("ner.conll", verbose=True)
         data = "Donald Trump and Angela Merkel from Germany don't share many oppinions!"
         """If there are multiple components we chould VIZ from, we need to define what takes prescedence"""
-        viz = pipe.viz(data,viz_type='ner')
+        viz = pipe.viz(data, viz_type="ner")
         print(viz)
         print(viz)
         print(viz)
-
 
     def test_viz_dep(self):
-        pipe = nlu.load('dep.typed',verbose=True)
+        pipe = nlu.load("dep.typed", verbose=True)
         data = "Donald Trump and Angela Merkel from Germany don't share many oppinions!"
-        viz = pipe.viz(data,viz_type='dep')
+        viz = pipe.viz(data, viz_type="dep")
         print(viz)
         print(viz)
         print(viz)
@@ -59,58 +58,60 @@ class TestViz(unittest.TestCase):
     #
 
     def test_viz_resolution_sentence(self):
-        nlu_ref = 'med_ner.jsl.wip.clinical en.resolve.icd10cm.augmented'
-        data = "This is an 82 - year-old male with a history of prior tobacco use , hypertension , chronic renal insufficiency , COPD , gastritis , and TIA who initially presented to Braintree with a non-ST elevation MI and Guaiac positive stools , transferred to St . Margaret\'s Center for Women & Infants for cardiac catheterization with PTCA to mid LAD lesion complicated by hypotension and bradycardia requiring Atropine , IV fluids and transient dopamine possibly secondary to vagal reaction , subsequently transferred to CCU for close monitoring , hemodynamically stable at the time of admission to the CCU ."
-        secrets_json_path = '/home/ckl/old_home/Documents/freelance/jsl/tigerGraph/Presentation_2_graph_Summit/secrets.json'
-        SPARK_NLP_LICENSE     = sct.SPARK_NLP_LICENSE
-        AWS_ACCESS_KEY_ID     = sct.AWS_ACCESS_KEY_ID
+        nlu_ref = "med_ner.jsl.wip.clinical en.resolve.icd10cm.augmented"
+        data = "This is an 82 - year-old male with a history of prior tobacco use , hypertension , chronic renal insufficiency , COPD , gastritis , and TIA who initially presented to Braintree with a non-ST elevation MI and Guaiac positive stools , transferred to St . Margaret's Center for Women & Infants for cardiac catheterization with PTCA to mid LAD lesion complicated by hypotension and bradycardia requiring Atropine , IV fluids and transient dopamine possibly secondary to vagal reaction , subsequently transferred to CCU for close monitoring , hemodynamically stable at the time of admission to the CCU ."
+        SPARK_NLP_LICENSE = sct.SPARK_NLP_LICENSE
+        AWS_ACCESS_KEY_ID = sct.AWS_ACCESS_KEY_ID
         AWS_SECRET_ACCESS_KEY = sct.AWS_SECRET_ACCESS_KEY
-        JSL_SECRET            = sct.JSL_SECRET
-        nlu.auth(SPARK_NLP_LICENSE,AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY,JSL_SECRET)
-        pipe = nlu.load(nlu_ref,verbose=True)
-        viz = pipe.viz(data,viz_type='resolution')
+        JSL_SECRET = sct.JSL_SECRET
+        nlu.auth(
+            SPARK_NLP_LICENSE, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, JSL_SECRET
+        )
+        pipe = nlu.load(nlu_ref, verbose=True)
+        viz = pipe.viz(data, viz_type="resolution")
         print(viz)
+
     def test_viz_relation(self):
-        nlu_ref = 'med_ner.jsl.wip.clinical relation.temporal_events'
+        nlu_ref = "med_ner.jsl.wip.clinical relation.temporal_events"
         data = "He was advised chest X-ray or CT scan after checking his SpO2 which was <= 93%"
-        secrets_json_path = '/home/ckl/old_home/Documents/freelance/jsl/tigerGraph/Presentation_2_graph_Summit/secrets.json'
-        SPARK_NLP_LICENSE     = sct.SPARK_NLP_LICENSE
-        AWS_ACCESS_KEY_ID     = sct.AWS_ACCESS_KEY_ID
+        SPARK_NLP_LICENSE = sct.SPARK_NLP_LICENSE
+        AWS_ACCESS_KEY_ID = sct.AWS_ACCESS_KEY_ID
         AWS_SECRET_ACCESS_KEY = sct.AWS_SECRET_ACCESS_KEY
-        JSL_SECRET            = sct.JSL_SECRET
-        nlu.auth(SPARK_NLP_LICENSE,AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY,JSL_SECRET)
-        pipe = nlu.load(nlu_ref,verbose=True)
-        viz = pipe.viz(data,viz_type='relation')
+        JSL_SECRET = sct.JSL_SECRET
+        nlu.auth(
+            SPARK_NLP_LICENSE, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, JSL_SECRET
+        )
+        pipe = nlu.load(nlu_ref, verbose=True)
+        viz = pipe.viz(data, viz_type="relation")
         print(viz)
-
-
-
 
     def test_viz_assertion(self):
-        nlu_ref = 'med_ner.jsl.wip.clinical assert'
+        nlu_ref = "med_ner.jsl.wip.clinical assert"
         data = "The patient was tested for cancer, but none was detected, he is free of cancer."
-        secrets_json_path = '/home/ckl/old_home/Documents/freelance/jsl/tigerGraph/Presentation_2_graph_Summit/secrets.json'
-        SPARK_NLP_LICENSE     = sct.SPARK_NLP_LICENSE
-        AWS_ACCESS_KEY_ID     = sct.AWS_ACCESS_KEY_ID
+        SPARK_NLP_LICENSE = sct.SPARK_NLP_LICENSE
+        AWS_ACCESS_KEY_ID = sct.AWS_ACCESS_KEY_ID
         AWS_SECRET_ACCESS_KEY = sct.AWS_SECRET_ACCESS_KEY
-        JSL_SECRET            = sct.JSL_SECRET
-        nlu.auth(SPARK_NLP_LICENSE,AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY,JSL_SECRET)
-        pipe = nlu.load(nlu_ref,verbose=True)
-        viz = pipe.viz(data,viz_type='assert')
+        JSL_SECRET = sct.JSL_SECRET
+        nlu.auth(
+            SPARK_NLP_LICENSE, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, JSL_SECRET
+        )
+        pipe = nlu.load(nlu_ref, verbose=True)
+        viz = pipe.viz(data, viz_type="assert")
         print(viz)
 
-
     def test_infer_viz_type(self):
-        secrets_json_path = '/home/ckl/old_home/Documents/freelance/jsl/tigerGraph/Presentation_2_graph_Summit/secrets.json'
-        SPARK_NLP_LICENSE     = sct.SPARK_NLP_LICENSE
-        AWS_ACCESS_KEY_ID     = sct.AWS_ACCESS_KEY_ID
+        SPARK_NLP_LICENSE = sct.SPARK_NLP_LICENSE
+        AWS_ACCESS_KEY_ID = sct.AWS_ACCESS_KEY_ID
         AWS_SECRET_ACCESS_KEY = sct.AWS_SECRET_ACCESS_KEY
-        JSL_SECRET            = sct.JSL_SECRET
-        nlu.auth(SPARK_NLP_LICENSE,AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY,JSL_SECRET)
-        nlu_ref = 'med_ner.jsl.wip.clinical assert'
+        JSL_SECRET = sct.JSL_SECRET
+        nlu.auth(
+            SPARK_NLP_LICENSE, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, JSL_SECRET
+        )
+        nlu_ref = "med_ner.jsl.wip.clinical assert"
         data = "The patient was tested for cancer, but none was detected, he is free of cancer."
         pipe = nlu.load(nlu_ref)
         pipe.viz(data)
-if __name__ == '__main__':
-    unittest.main()
 
+
+if __name__ == "__main__":
+    unittest.main()

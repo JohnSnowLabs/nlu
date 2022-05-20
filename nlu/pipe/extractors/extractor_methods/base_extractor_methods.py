@@ -8,6 +8,7 @@ They expect dictionaries which represent the metadata field extracted from Spark
 
 """
 import numpy as np
+import pyspark
 from pyspark.sql import Row as PysparkRow
 from nlu.pipe.extractors.extractor_base_data_classes import *
 from functools import reduce, partial
@@ -69,8 +70,13 @@ def extract_base_sparkocr_features(row: pd.Series, configs: SparkOCRExtractorCon
     if configs.name == 'default text recognizer config':
         if configs.get_text:
             return {'text': row}
-
-
+    # Check for primitive type here and return
+    if 'visual_classifier' in configs.name:
+        # Either Label or Confidence
+        if isinstance(row,str):
+            return {'visual_classifier_label': row}
+        else :
+            return {'visual_classifier_confidence': row}
 
     else:
         # # OCR unpackers (TODO WIP)
@@ -246,7 +252,9 @@ def extract_master(row: pd.Series, configs: SparkNLPExtractorConfig) -> pd.Serie
     extract_universal/?/Better name?
     row = a list or Spark-NLP annotations as dictionary
     """
-    if len(row) == 0: return pd.Series({})
+    # TODO Primitive types can come from OCR HERE!!
+    if isinstance(row, pyspark.sql.Row) and len(row) == 0:
+        return pd.Series({})
     if isinstance(configs, SparkOCRExtractorConfig):
         base_annos = extract_base_sparkocr_features(row, configs)
     else:
@@ -278,12 +286,15 @@ def apply_extractors_and_merge(df, anno_2_ex_config, keep_stranger_features, str
 
     # merged_extraction_df
     # apply the extract_master together with it's configs to every column and geenrate a list of output DF's, one per Spark NLP COL
+    # TODO handle MULTI-COL-OUTPUT. If Anno has multi cols, then we either needs multiple keys in anno_2_ex or use something besides
+    # anno_2_ex_config.keys() here because it will only apply to one of the extracted rows..(?)
+
+    # Apply each Anno Extractor to the corrosponding generated col.
+    # If no Extractor defined for a col and it is not a stranger feature, it will be dropped here
     return pd.concat(
         list(map(extractor, anno_2_ex_config.keys())) +
         list(map(keep_strangers, stranger_features)) if keep_stranger_features else [],
         axis=1)
-
-
 
 
 def pad_same_level_cols(row):
@@ -318,7 +329,7 @@ def zip_and_explode(df: pd.DataFrame, cols_to_explode: List[str]) -> pd.DataFram
             Elements of columns which are not in cols_to_explode, will be in lists
     """
     # Check cols we want to explode actually exist, if no data extracted cols can be missing
-    missing  = []
+    missing = []
     for col in cols_to_explode:
         if col not in df.columns:
             missing.append(col)
@@ -326,10 +337,11 @@ def zip_and_explode(df: pd.DataFrame, cols_to_explode: List[str]) -> pd.DataFram
         cols_to_explode.remove(miss)
     # Drop duplicate cols
     df = df.loc[:, ~df.columns.duplicated()]
-    if len(cols_to_explode) > 0 :
-        # We must pad all cols we want to explode to the same length
+    if len(cols_to_explode) > 0:
+        # We must pad all cols we want to explode to the same length because pandas limitation.
+        # Spark API does not require this since it handles cols with not same length by creating nan. We do it ourselves here manually
         df[cols_to_explode] = df[cols_to_explode].apply(pad_same_level_cols, axis=1)
-        return pd.concat([df.drop(cols_to_explode, axis=1)] + [df.explode(cols_to_explode)], axis=1)
-    else :
-        # We must pad all cols we want to explode to the same length
-        return pd.concat([df.drop(cols_to_explode, axis=1)],axis=1)
+        return pd.concat([df.explode(c)[c] for c in cols_to_explode]+ [df.drop(cols_to_explode, axis=1)], axis=1)
+    else:
+        # No padding
+        return pd.concat([df.drop(cols_to_explode, axis=1)], axis=1)

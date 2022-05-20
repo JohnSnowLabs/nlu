@@ -209,6 +209,7 @@ class PipeUtils:
         includes TOKEN-CLASSIFIER-TRANSFORMER models which usually output NER format
         """
         new_converters = []
+
         for c in pipe.components:
             if c.loaded_from_pretrained_pipe:
                 # Leave pretrained component_list models untouched
@@ -228,14 +229,12 @@ class PipeUtils:
                 ner_identifier = ComponentUtils.get_nlu_ref_identifier(c)
                 if converter_to_update is None:
                     if c.license == Licenses.hc:
-                        # TODO SET METADATA FIELDS HERE ON ANNO!!
                         converter_to_update = jsl_id_to_empty_component(NLP_HC_NODE_IDS.NER_CONVERTER_INTERNAL)
                         converter_to_update.set_metadata(converter_to_update.get_default_model(),
                                                          NLP_HC_NODE_IDS.NER_CONVERTER_INTERNAL,
                                                          NLP_HC_NODE_IDS.NER_CONVERTER_INTERNAL,
                                                          'xx', False, Licenses.hc)
                     else:
-                        # TODO SET METADATA FIELDS HERE ON ANNO!!
                         converter_to_update = jsl_id_to_empty_component(NLP_NODE_IDS.NER_CONVERTER)
                         converter_to_update.set_metadata(converter_to_update.get_default_model(),
                                                          NLP_NODE_IDS.NER_CONVERTER, NLP_NODE_IDS.NER_CONVERTER,
@@ -314,10 +313,16 @@ class PipeUtils:
     @staticmethod
     def enforce_NLU_columns_to_NLP_columns(pipe):
         """for every component_to_resolve, set its inputs and outputs to the ones configured on the NLU component_to_resolve."""
+        # These anno have no standardized setInputCol or it should not be configured
+        blacklisted = [NLP_NODE_IDS.DOCUMENT_ASSEMBLER]
         for c in pipe.components:
+            if c.name == OCR_NODE_IDS.VISUAL_DOCUMENT_CLASSIFIER:
+                c.model.setLabelCol(c.spark_output_column_names[0])
+                c.model.setConfidenceCol(c.spark_output_column_names[1])
+                continue
             if c.loaded_from_pretrained_pipe:
                 continue
-            if c.name == NLP_NODE_IDS.DOCUMENT_ASSEMBLER:
+            if c.name in blacklisted:
                 continue
             c.model.setOutputCol(c.spark_output_column_names[0])
             if hasattr(c.model, 'setInputCols'):
@@ -325,6 +330,7 @@ class PipeUtils:
             else:
                 # Some OCR Annotators only have one input and thus only setInputCol method but not setInputCols
                 c.model.setInputCol(c.spark_input_column_names[0])
+
         return pipe
 
     @staticmethod

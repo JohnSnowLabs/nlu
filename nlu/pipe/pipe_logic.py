@@ -297,6 +297,7 @@ class PipelineQueryVerifier:
 
         loop_count = 0
         max_loop_count = 5
+
         while all_features_provided == False:
             # After new components have been added, check again for the new components if requriements are met
             components_to_add = []
@@ -307,7 +308,6 @@ class PipelineQueryVerifier:
                 # Now all features are provided
                 break
 
-            last_missing_components, last_missing_storage_refs, last_components_for_embedding_conversion = [], [], []
             # Update last iteration variables
             last_missing_components, last_missing_storage_refs, last_components_for_embedding_conversion = missing_components, missing_storage_refs, components_for_embedding_conversion
             # Create missing base storage ref producers, i.e. embeddings
@@ -600,7 +600,9 @@ class PipelineQueryVerifier:
             if loop_count > max_loop_count:
                 PipelineQueryVerifier.except_infinity_loop('Failure sorting dependencies')
             last_provided_features = provided_features.copy()
-            correct_order_component_pipeline = last_correct_order_component_pipeline.copy()
+            # correct_order_component_pipeline = last_correct_order_component_pipeline.copy()
+            last_correct_order_component_pipeline = correct_order_component_pipeline.copy()
+
         pipe.components = correct_order_component_pipeline
 
 

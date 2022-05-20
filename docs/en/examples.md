@@ -62,8 +62,8 @@ nlu.load('ner').predict('Angela Merkel from Germany and the American Donald Trum
 |embeddings | 	ner_tag | 	entities |
 |-----------|------------|------------|
 |[[-0.563759982585907, 0.26958999037742615, 0.3...	| PER| 	Angela Merkel |
-|[[-0.563759982585907, 0.26958999037742615, 0.3...	| LOC| 	Germany |
-|[[-0.563759982585907, 0.26958999037742615, 0.3...	| MISC| 	American |
+|[[-0.563759982585907, 0.26958999037742615, 0.3...	| GPE| 	Germany |
+|[[-0.563759982585907, 0.26958999037742615, 0.3...	| NORP| 	American |
 |[[-0.563759982585907, 0.26958999037742615, 0.3...	| PER| 	Donald Trump |
 
 </div></div></div><div class="h3-box" markdown="1">

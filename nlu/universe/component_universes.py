@@ -27,6 +27,7 @@ from nlu.components.classifiers.seq_xlnet.seq_xlnet import SeqXlnetClassifier
 from nlu.components.classifiers.token_albert.token_albert import TokenAlbert
 from nlu.components.classifiers.token_bert.token_bert import TokenBert
 from nlu.components.classifiers.token_bert_healthcare.token_bert_healthcare import TokenBertHealthcare
+from nlu.components.classifiers.token_deberta.token_deberta import TokenDeBerta
 from nlu.components.classifiers.token_distilbert.token_distilbert import TokenDistilBert
 from nlu.components.classifiers.token_longformer.token_longformer import TokenLongFormer
 from nlu.components.classifiers.token_roberta.token_roberta import TokenRoBerta
@@ -42,6 +43,7 @@ from nlu.components.dependency_untypeds.unlabeled_dependency_parser.unlabeled_de
 from nlu.components.embeddings.albert.spark_nlp_albert import SparkNLPAlbert
 from nlu.components.embeddings.bert.spark_nlp_bert import SparkNLPBert
 from nlu.components.embeddings.bert_sentence_chunk.bert_sentence_chunk import BertSentenceChunkEmbeds
+from nlu.components.embeddings.camenbert.camenbert import CamemBert
 from nlu.components.embeddings.deberta.deberta import Deberta
 from nlu.components.embeddings.distil_bert.distilbert import DistilBert
 from nlu.components.embeddings.doc2vec.doc2vec import Doc2Vec
@@ -94,11 +96,15 @@ from nlu.ocr_components.text_recognizers.doc2text.doc2text import Doc2Text
 from nlu.ocr_components.text_recognizers.img2text.img2text import Img2Text
 from nlu.ocr_components.text_recognizers.pdf2text.pdf2text import Pdf2Text
 from nlu.ocr_components.utils.binary2image.binary2image import Binary2Image
+from nlu.ocr_components.utils.image2hocr.image2hocr import Image2Hocr
+
+from nlu.ocr_components.visual_classifiers.visual_doc_classifier.visual_doc_classifier import VisualDocClassifier
 from nlu.pipe.col_substitution.col_substitution_HC import *
 from nlu.pipe.col_substitution.col_substitution_OCR import substitute_recognized_text_cols
 from nlu.pipe.col_substitution.col_substitution_OS import *
 from nlu.pipe.extractors.extractor_configs_HC import *
-from nlu.pipe.extractors.extractor_configs_OCR import default_text_recognizer_config, default_binary_to_image_config
+from nlu.pipe.extractors.extractor_configs_OCR import default_text_recognizer_config, default_binary_to_image_config, \
+    default_visual_classifier_config
 from nlu.pipe.extractors.extractor_configs_OS import *
 from nlu.pipe.nlu_component import NluComponent
 from nlu.universe.annotator_class_universe import AnnoClassRef
@@ -1142,6 +1148,26 @@ class ComponentUniverse:
                                      is_storage_ref_producer=True,
                                      ),
 
+        A.DEBERTA_FOR_TOKEN_CLASSIFICATION: partial(NluComponent,
+                                                    name=A.DEBERTA_FOR_TOKEN_CLASSIFICATION,
+                                                    type=T.TRANSFORMER_TOKEN_CLASSIFIER,
+                                                    get_default_model=TokenDeBerta.get_default_model,
+                                                    get_pretrained_model=TokenDeBerta.get_pretrained_model,
+                                                    pdf_extractor_methods={'default': default_token_classifier_config,
+                                                                           'default_full': default_full_config, },
+                                                    pdf_col_name_substitutor=substitute_transformer_token_classifier_cols,
+                                                    output_level=L.TOKEN,  # Handled like NER model_anno_obj
+                                                    node=NLP_FEATURE_NODES.nodes[A.DEBERTA_FOR_TOKEN_CLASSIFICATION],
+                                                    description='AlbertForTokenClassification can load ALBERT Models with a token classification head on top (a linear layer on top of the hidden-states output) e.g. for Named-Entity-Recognition (NER) tasks.',
+                                                    provider=ComponentBackends.open_source,
+                                                    license=Licenses.open_source,
+                                                    computation_context=ComputeContexts.spark,
+                                                    output_context=ComputeContexts.spark,
+                                                    jsl_anno_class_id=A.DEBERTA_FOR_TOKEN_CLASSIFICATION,
+                                                    jsl_anno_py_class=ACR.JSL_anno2_py_class[
+                                                        A.DEBERTA_FOR_TOKEN_CLASSIFICATION],
+                                                    ),
+
         A.ALBERT_FOR_TOKEN_CLASSIFICATION: partial(NluComponent,
                                                    name=A.ALBERT_FOR_TOKEN_CLASSIFICATION,
                                                    type=T.TRANSFORMER_TOKEN_CLASSIFIER,
@@ -1160,7 +1186,29 @@ class ComponentUniverse:
                                                    jsl_anno_class_id=A.ALBERT_FOR_TOKEN_CLASSIFICATION,
                                                    jsl_anno_py_class=ACR.JSL_anno2_py_class[
                                                        A.ALBERT_FOR_TOKEN_CLASSIFICATION],
-                                                   ),
+                                                   ),  #
+
+        A.CAMENBERT_EMBEDDINGS: partial(NluComponent,
+                                        name=A.CAMENBERT_EMBEDDINGS,
+                                        type=T.TOKEN_EMBEDDING,
+                                        get_default_model=CamemBert.get_default_model,
+                                        get_pretrained_model=CamemBert.get_pretrained_model,
+                                        pdf_extractor_methods={'default': default_word_embedding_config,
+                                                               'default_full': default_full_config, },
+                                        pdf_col_name_substitutor=substitute_word_embed_cols,
+                                        output_level=L.TOKEN,
+                                        node=NLP_FEATURE_NODES.nodes[A.CAMENBERT_EMBEDDINGS],
+                                        description='Token-level embeddings using CAMEN-BERT',
+                                        provider=ComponentBackends.open_source,
+                                        license=Licenses.open_source,
+                                        computation_context=ComputeContexts.spark,
+                                        output_context=ComputeContexts.spark,
+                                        jsl_anno_class_id=A.CAMENBERT_EMBEDDINGS,
+                                        jsl_anno_py_class=ACR.JSL_anno2_py_class[A.CAMENBERT_EMBEDDINGS],
+                                        has_storage_ref=True,
+                                        is_storage_ref_producer=True,
+                                        ),
+
         A.BERT_EMBEDDINGS: partial(NluComponent,
                                    name=A.BERT_EMBEDDINGS,
                                    type=T.TOKEN_EMBEDDING,
@@ -1945,7 +1993,7 @@ class ComponentUniverse:
                                        trainable_mirror_anno=H_A.TRAINABLE_DE_IDENTIFICATION
 
                                        ),
-        H_A.TRAINABLE_DE_IDENTIFICATION: partial(NluComponent, # TODO WIP 
+        H_A.TRAINABLE_DE_IDENTIFICATION: partial(NluComponent,  # TODO WIP
                                                  name=H_A.TRAINABLE_DE_IDENTIFICATION,
                                                  type=T.CHUNK_CLASSIFIER,
                                                  get_default_model=Deidentifier.get_default_model,
@@ -2475,5 +2523,49 @@ class ComponentUniverse:
                                     jsl_anno_py_class=ACR.JSL_anno_OCR_ref_2_py_class[O_A.DOC2TEXT_TABLE],
                                     applicable_file_types=['DOCX', 'DOC']
                                     ),
+
+        O_A.VISUAL_DOCUMENT_CLASSIFIER: partial(NluComponent,
+                                                name=O_A.VISUAL_DOCUMENT_CLASSIFIER,
+                                                type=T.PDF_BUILDER,
+                                                get_default_model=VisualDocClassifier.get_default_model,
+                                                get_pretrained_model=VisualDocClassifier.get_pretrained_model,
+
+                                                pdf_extractor_methods={'default': default_visual_classifier_config},
+                                                # TODO EXtractor
+                                                pdf_col_name_substitutor=substitute_recognized_text_cols,
+                                                # TODO substitor
+                                                output_level=L.DOCUMENT,
+                                                node=OCR_FEATURE_NODES.nodes[O_A.VISUAL_DOCUMENT_CLASSIFIER],
+                                                description='Convert text to PDF file',
+                                                provider=ComponentBackends.ocr,
+                                                license=Licenses.ocr,
+                                                computation_context=ComputeContexts.spark,
+                                                output_context=ComputeContexts.spark,
+                                                jsl_anno_class_id=O_A.VISUAL_DOCUMENT_CLASSIFIER,
+                                                jsl_anno_py_class=ACR.JSL_anno_OCR_ref_2_py_class[
+                                                    O_A.VISUAL_DOCUMENT_CLASSIFIER],
+                                                applicable_file_types=['JPG', 'JPEG']
+                                                ),
+
+        O_A.IMAGE2HOCR: partial(NluComponent,
+                                name=O_A.IMAGE2HOCR,
+                                type=T.OCR_UTIL,
+                                get_default_model=Image2Hocr.get_default_model,
+                                # TODO EXtractor0
+                                pdf_extractor_methods={'default': default_binary_to_image_config},
+                                # TODO substitor
+                                pdf_col_name_substitutor=substitute_recognized_text_cols,
+                                output_level=L.DOCUMENT,
+                                node=OCR_FEATURE_NODES.nodes[O_A.IMAGE2HOCR],
+                                description='Convert text to PDF file',
+                                provider=ComponentBackends.ocr,
+                                license=Licenses.ocr,
+                                computation_context=ComputeContexts.spark,
+                                output_context=ComputeContexts.spark,
+                                jsl_anno_class_id=O_A.IMAGE2HOCR,
+                                jsl_anno_py_class=ACR.JSL_anno_OCR_ref_2_py_class[
+                                    O_A.IMAGE2HOCR],
+                                applicable_file_types=['DOCX', 'DOC']
+                                ),
 
     }

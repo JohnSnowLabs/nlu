@@ -2,7 +2,7 @@
 Contains methods used to resolve a NLU reference to a NLU component_to_resolve.
 Handler for getting default components, etc.
 '''
-from typing import Dict, List, Union, Optional
+from typing import Dict, List, Union, Optional, Callable
 
 from pyspark.ml import PipelineModel, Pipeline
 from sparknlp.pretrained import PretrainedPipeline, LightPipeline
@@ -16,9 +16,16 @@ from nlu.universe.atoms import LicenseType
 from nlu.universe.component_universes import ComponentUniverse, anno_class_to_empty_component
 from nlu.universe.feature_resolutions import FeatureResolutions
 from nlu.universe.feature_universes import NLP_HC_FEATURES, OCR_FEATURES
-from nlu.universe.universes import Licenses
+from nlu.universe.universes import Licenses, license_to_bucket, ModelBuckets
 
 logger = logging.getLogger('nlu')
+
+
+def init_component(component):
+    # Init partial constructor
+    if isinstance(component, Callable):
+        component = component()
+    return component
 
 
 def resolve_feature(missing_feature_type: Union[NLP_HC_FEATURES, OCR_FEATURES, NLP_HC_FEATURES], language='en',
@@ -35,28 +42,28 @@ def resolve_feature(missing_feature_type: Union[NLP_HC_FEATURES, OCR_FEATURES, N
     missing_component_type or a default component_to_resolve for that particular type
     '''
     logger.info(f'Getting default for missing_feature_type={missing_feature_type}')
-    model_bucket = 'clinical/models' if is_licensed else None
     if '@' not in missing_feature_type:
         # Resolve feature which has no storage ref or if storage ref is irrelevant at this point
         if is_licensed and is_trainable_pipe and missing_feature_type in FeatureResolutions.default_HC_train_resolutions.keys():
             feature_resolution = FeatureResolutions.default_HC_resolutions[missing_feature_type]
             license_type = Licenses.hc
-            model_bucket = 'clinical/models'
+            model_bucket = ModelBuckets.hc
         elif is_licensed and missing_feature_type in FeatureResolutions.default_HC_resolutions.keys():
             feature_resolution = FeatureResolutions.default_HC_resolutions[missing_feature_type]
             license_type = Licenses.hc
-            model_bucket = 'clinical/models'
+            model_bucket = ModelBuckets.hc
         elif is_licensed and missing_feature_type in FeatureResolutions.default_OCR_resolutions.keys():
             feature_resolution = FeatureResolutions.default_OCR_resolutions[missing_feature_type]
             license_type = Licenses.ocr
             # model_bucket = 'clinical/models' # no bucket based models supported
+            model_bucket = ModelBuckets.ocr
         elif missing_feature_type in FeatureResolutions.default_OS_resolutions.keys():
             feature_resolution = FeatureResolutions.default_OS_resolutions[missing_feature_type]
             license_type = Licenses.open_source
-            model_bucket = None
+            model_bucket = ModelBuckets.open_source
         else:
             raise ValueError(f"Could not resolve feature={missing_feature_type}")
-        nlu_component = feature_resolution.nlu_component()  # Call the partial and init the nlu component
+        nlu_component = init_component(feature_resolution.nlu_component)  # Call the partial and init the nlu component
 
         # Either call get_pretrained(nlp_ref, lang,bucket) or get_default_model() to instantiate Annotator object
         if feature_resolution.get_pretrained:
@@ -70,7 +77,8 @@ def resolve_feature(missing_feature_type: Union[NLP_HC_FEATURES, OCR_FEATURES, N
                                               license_type)
 
     else:
-        # if there is an @ in the name, we must get some specific pretrained model_anno_obj from the sparknlp reference that should follow after the @
+        # if there is an @ in the name, we must get some specific
+        # pretrained model_anno_obj from the sparknlp reference that should follow after the @
         missing_feature_type, storage_ref = missing_feature_type.split('@')
 
         if storage_ref == '':
@@ -79,15 +87,16 @@ def resolve_feature(missing_feature_type: Union[NLP_HC_FEATURES, OCR_FEATURES, N
             if is_licensed and is_trainable_pipe and missing_feature_type in FeatureResolutions.default_HC_train_resolutions.keys():
                 feature_resolution = FeatureResolutions.default_HC_resolutions[missing_feature_type]
                 license_type = Licenses.hc
-                model_bucket = 'clinical/models'
+                model_bucket = ModelBuckets.hc
             elif missing_feature_type in FeatureResolutions.default_OS_resolutions.keys():
                 feature_resolution = FeatureResolutions.default_OS_resolutions[missing_feature_type]
                 license_type = Licenses.open_source
-                model_bucket = None
+                model_bucket = ModelBuckets.open_source
             else:
                 raise ValueError(
                     f"Could not resolve empty storage ref with default feature for missing feature = {missing_feature_type}")
-            nlu_component = feature_resolution.nlu_component()  # Call the partial and init the nlu component
+            nlu_component = init_component(
+                feature_resolution.nlu_component)  # Call the partial and init the nlu component
             return nlu_component.set_metadata(
                 nlu_component.get_pretrained_model(feature_resolution.nlp_ref, feature_resolution.language,
                                                    model_bucket),
@@ -102,8 +111,10 @@ def resolve_feature(missing_feature_type: Union[NLP_HC_FEATURES, OCR_FEATURES, N
 
 def nlu_ref_to_component(nlu_ref, detect_lang=False, authenticated=False) -> NluComponent:
     '''
-    This method implements the main namespace for all component_to_resolve names. It parses the input request and passes the data to a resolver method which searches the namespace for a Component for the input request
-    It returns a list of NLU.component_to_resolve objects or just one NLU.component_to_resolve object alone if just one component_to_resolve was specified.
+    This method implements the main namespace for all component_to_resolve names. It parses the input request and passes
+    the data to a resolver method which searches the namespace for a Component for the input request
+    It returns a list of NLU.component_to_resolve objects or just one NLU.component_to_resolve
+    object alone if just one component_to_resolve was specified.
     It maps a correctly namespaced name to a corresponding component_to_resolve for pipeline
     If no lang is provided, default language eng is assumed.
     General format  <lang>.<class>.<dataset>.<embeddings>
@@ -113,10 +124,10 @@ def nlu_ref_to_component(nlu_ref, detect_lang=False, authenticated=False) -> Nlu
 
     If train prefix is part of the nlu_ref ,the trainable namespace will e searched
 
-    if 'translate_to' or 'marian' is inside of the nlu_ref, 'xx' will be prefixed to the ref and set as lang if it is not already
+    if 'translate_to' or 'marian' is inside the nlu_ref, 'xx' will be prefixed to the ref and set as lang if it is not already
     Since all translate models are xx lang
     :param nlu_ref: User request (should be a NLU reference)
-    :param detect_lang: Wether to automatically  detect language
+    :param detect_lang: Whether to automatically  detect language
     :return: Pipeline or component_to_resolve for the NLU reference.
     '''
 
@@ -130,7 +141,7 @@ def nlu_ref_to_component(nlu_ref, detect_lang=False, authenticated=False) -> Nlu
                 s = "\n"
                 raise ValueError(f'Could not find trainable model_anno_obj for nlu_ref={nlu_ref}.'
                                  f'Supported values = {s.join(nlu.Spellbook.trainable_models.keys())}')
-            # TODO ,nlp ref for traianble?
+            # TODO ,nlp ref for trainable?
             return get_trainable_component_for_nlu_ref(nlu_ref)
     lang, nlu_ref, nlp_ref, license_type, is_pipe, model_params = nlu_ref_to_nlp_metadata(nlu_ref)
 
@@ -243,7 +254,7 @@ def get_trained_component_for_nlp_model_ref(lang: str, nlu_ref: Optional[str] = 
                                             model_configs: Optional[Dict[str, any]] = None) -> NluComponent:
     anno_class = Spellbook.nlp_ref_to_anno_class[nlp_ref]
     component = anno_class_to_empty_component(anno_class)
-    model_bucket = 'clinical/models' if license_type != Licenses.open_source else None
+    model_bucket = license_to_bucket(license_type)
     try:
         if component.get_pretrained_model:
             component = component.set_metadata(

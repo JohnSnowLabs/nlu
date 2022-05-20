@@ -9,7 +9,7 @@ def extract_table(df):
     return exploded_results.toPandas()
 
 
-def extract_tables(df,rename_cols=True):
+def extract_tables(df, rename_cols=True):
     df = df.withColumn("table_index", df.ocr_table.area.index)
     # pagennum
     pandas_tables = []
@@ -24,9 +24,10 @@ def extract_tables(df,rename_cols=True):
 
 
 def use_first_row_as_column_names(df):
-    # Use first row of df to define columns and drop the row afterwars
-    df.columns = df.iloc[0].values
-    df = df.iloc[1:]
+    # Use first row of df to define columns and drop the row afterwards
+    if len(df) > 1:
+        df.columns = df.iloc[0].values
+        df = df.iloc[1:]
     return df
 
 
@@ -35,5 +36,3 @@ def use_first_row_as_column_names_for_list_of_dfs(pd_tables):
     for t in pd_tables:
         new_tables.append(use_first_row_as_column_names(t))
     return new_tables
-
-

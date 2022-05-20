@@ -64,3 +64,7 @@ class JslAnnoJavaClass(str):
 # Reference to LicenseTypes
 class LicenseType(str):
     pass
+
+# Reference to Model Buckets
+class ModelBucketType(str):
+    pass

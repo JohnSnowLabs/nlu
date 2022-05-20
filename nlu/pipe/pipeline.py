@@ -18,7 +18,8 @@ from nlu.pipe.utils.data_conversion_utils import DataConversionUtils
 from nlu.pipe.utils.output_level_resolution_utils import OutputLevelUtils
 from nlu.pipe.utils.resolution.storage_ref_utils import StorageRefUtils
 from nlu.universe.universes import Licenses
-from nlu.utils.environment.env_utils import is_running_in_databricks, try_import_pyspark_in_streamlit
+from nlu.utils.environment.env_utils import is_running_in_databricks, try_import_pyspark_in_streamlit, \
+    try_import_streamlit
 
 logger = logging.getLogger('nlu')
 
@@ -111,7 +112,8 @@ class NLUPipeline(dict):
         :return: A nlu pipeline with models fitted.
         '''
         stages = []
-        for component in self.components: stages.append(component.model)
+        for component in self.components:
+            stages.append(component.model)
         self.spark_estimator_pipe = Pipeline(stages=stages)
 
         if dataset_path != None and 'ner' in self.nlu_ref:
@@ -214,8 +216,9 @@ class NLUPipeline(dict):
         anno_2_ex_config = {}
         for c in self.components:
             if c.license == Licenses.ocr:
-                anno_2_ex_config[c.spark_output_column_names[0]] = c.pdf_extractor_methods['default'](
-                    output_col_prefix=c.spark_output_column_names[0])
+                # OCR can output more than 1 col
+                extractors = {col :c.pdf_extractor_methods['default'](output_col_prefix=col) for col in c.spark_output_column_names}
+                anno_2_ex_config.update(extractors)
                 continue
             if 'embedding' in c.type and not get_embeddings:
                 continue

@@ -1,9 +1,6 @@
-import sparknlp.annotator
-from sparkocr.transformers import *
 import tests.secrets as sct
 import unittest
-from nlu import *
-import sparknlp_jsl.annotator
+import nlu
 
 SPARK_NLP_LICENSE     = sct.SPARK_NLP_LICENSE
 AWS_ACCESS_KEY_ID     = sct.AWS_ACCESS_KEY_ID
@@ -20,12 +17,11 @@ class OcrTest(unittest.TestCase):
         nlu.auth(SPARK_NLP_LICENSE,AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY,JSL_SECRET, OCR_LICENSE, OCR_SECRET)
 
 
-    def test_table_extraction(self):
+    def test_PDF_table_extraction(self):
         """:cvar
         1. PdfToTextAble
         2. DocToTextTable
         3. PptToTextTable
-
         4.1 ImageTableDetector --> Find Locations of Tables
         4.2 Image TableCell Detector ---> FInd Location of CELLS on the table
         4.3 ImageCellsToTextTable ----> Find TEXT inside of the Cells on the table
@@ -41,8 +37,44 @@ class OcrTest(unittest.TestCase):
         ---> for NON SELECTABLE TEXT ImageTableDetector + ImageTableCellDetector + ImageCellsToTextTable
         ---> For text whci his selectable DocToTextTable3.
         """
+        nlu.auth(SPARK_NLP_LICENSE,AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY,JSL_SECRET, OCR_LICENSE, OCR_SECRET)
+        # TODO TEST MULTI FILES!!
+        img_path = '/home/ckl/Documents/freelance/jsl/nlu/nlu4realgit2/tests/datasets/ocr/table_pdf_highlightable_text/data.pdf'
+        p = nlu.load('pdf2table',verbose=True)
+        dfs = p.predict(img_path)
+        for df in dfs :
+            print(df)
+        import os
+        def write_result(uuid: str, content: str):
+            filename = 'test.json'
+            dirname = os.path.dirname(filename)
+            if not os.path.isdir(dirname):
+                os.mkdir(dirname)
+            with open(filename, "w") as fp:
+                fp.write(content)
+                fp.flush()
+                os.fsync(fp.fileno())
+        write_result('lel',dfs.to_json())
 
-        nlu.load('table_from_pdf ')
+    def test_PPT_table_extraction(self):
+        nlu.auth(SPARK_NLP_LICENSE,AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY,JSL_SECRET, OCR_LICENSE, OCR_SECRET)
+        f1 = '/home/ckl/Documents/freelance/jsl/nlu/nlu4realgit2/tests/datasets/ocr/table_PPT/54111.ppt'
+        f2 ='/home/ckl/Documents/freelance/jsl/nlu/nlu4realgit2/tests/datasets/ocr/table_PPT/mytable.ppt'
+        p = nlu.load('ppt2table',verbose=True)
+        dfs = p.predict([f1,f2])
+        # |PdfToTextTable_06cb624a0f81:Error: Header doesn't contain versioninfo|
+        # |PdfToTextTable_06cb624a0f81:Error: Header doesn't contain versioninfo|
+        for df in dfs :
+            print(df)
+
+    def test_DOC_table_extraction(self):
+        nlu.auth(SPARK_NLP_LICENSE,AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY,JSL_SECRET, OCR_LICENSE, OCR_SECRET)
+        f1 = '/home/ckl/Documents/freelance/jsl/nlu/nlu4realgit2/tests/datasets/ocr/table_DOCX/doc2.docx'
+        p = nlu.load('doc2table',verbose=True)
+        dfs = p.predict([f1])
+        for df in dfs :
+            print(df)
+
 
 if __name__ == '__main__':
     unittest.main()
