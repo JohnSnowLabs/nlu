@@ -2798,7 +2798,8 @@ class Spellbook:
                                            'ne.embed.w2v_cc_300d': 'w2v_cc_300d',
                                            'ne.stopwords': 'stopwords_iso'},
                                     'new': {'new.embed.w2v_cc_300d': 'w2v_cc_300d'},
-                                    'nl': {'nl.embed.MedRoBERTa': 'roberta_embeddings_MedRoBERTa',
+                                    'nl': {
+                                        #'nl.embed.MedRoBERTa': 'roberta_embeddings_MedRoBERTa.nl',
                                            'nl.embed.bert': 'bert_base_dutch_cased',
                                            'nl.embed.bert.base_cased': 'bert_base_cased',
                                            'nl.embed.distilbert_base_cased': 'distilbert_embeddings_distilbert_base_nl_cased',
@@ -5296,6 +5297,9 @@ class Spellbook:
         OCR_NODE_IDS.PPT2TEXT_TABLE: 'PptToTextTable',
         OCR_NODE_IDS.DOC2TEXT_TABLE: 'DocToTextTable',
         OCR_NODE_IDS.VISUAL_DOCUMENT_CLASSIFIER: 'VisualDocumentClassifier',
+         'roberta_embeddings_MedRoBERTa.nl':'RoBertaEmbeddings',
+        
+         
 
         'w2v_cc_300d': 'WordEmbeddingsModel',
         'stopwords_iso': 'StopWordsCleaner',

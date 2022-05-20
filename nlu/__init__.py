@@ -1,4 +1,4 @@
-__version__ = '3.4.3rc1'
+__version__ = '3.4.4'
 
 import nlu.utils.environment.env_utils as env_utils
 
@@ -38,6 +38,29 @@ slack_link = 'https://join.slack.com/t/spark-nlp/shared_invite/zt-lutct9gm-kuUaz
 github_issues_link = 'https://github.com/JohnSnowLabs/nlu/issues'
 
 
+def autocomplete_annotator(annotator, lang='en'):
+    # If you dont set lang, you can get storage ref errors!
+    pipe = to_nlu_pipe([annotator], is_pre_configured=False)
+    pipe = PipelineQueryVerifier.check_and_fix_nlu_pipeline(pipe)
+    return pipe
+
+
+def to_nlu_pipe(nlp_pipe: Union[Pipeline, LightPipeline, PipelineModel, List], is_pre_configured=True) -> NLUPipeline:
+    """
+    Convert a pipeline or list which contains sparknlp/sparknlp_jsl annotators
+    into NLU pipeline, while maintaining original configuration.
+    The pipeline does not need to be pre-fitted.
+    :param nlp_pipe: the pipeline to convert, must have iterable attribute of annotator stages.
+    :param is_pre_configured: Is the pipeline already configured, i.e. input/output cols are properly matched between anotators? \
+            If True, NLU will treat this as a already configured pipeline and will not do any pipeline autocompletion or configs
+    :return: nlu pipe wrapping
+    """
+    pipe = NLUPipeline()
+    components = get_nlu_pipe_for_nlp_pipe(nlp_pipe, is_pre_configured)
+    for c in components:
+        pipe.add(c, is_pre_configured)
+    return pipe
+
 
 def load(request: str = 'from_disk', path: Optional[str] = None, verbose: bool = False, gpu: bool = False,
          streamlit_caching: bool = False) -> NLUPipeline:
@@ -69,7 +92,7 @@ def load(request: str = 'from_disk', path: Optional[str] = None, verbose: bool =
     try:
         if path is not None:
             logger.info(f'Trying to load nlu pipeline from local hard drive, located at {path}')
-            pipe = PipelineQueryVerifier.check_and_fix_nlu_pipeline(load_nlu_pipe_from_hdd(path, request))
+            pipe = load_nlu_pipe_from_hdd(path, request)
             pipe.nlu_ref = request
             return pipe
     except Exception as err:
@@ -315,3 +338,7 @@ def print_trainable_components():
 
 def get_components(m_type='', include_pipes=False, lang='', licensed=False, get_all=False):
     return discoverer.get_components(m_type, include_pipes, lang, licensed, get_all)
+
+
+
+# https://forms.gle/VZeJRLBDM6m9fhF68
