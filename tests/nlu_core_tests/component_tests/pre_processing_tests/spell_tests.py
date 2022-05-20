@@ -1,5 +1,4 @@
 import unittest
-import nlu
 
 
 class TestSpellCheckers(unittest.TestCase):
@@ -20,5 +19,6 @@ class TestSpellCheckers(unittest.TestCase):
     #     for os_components in df.columns: print(df[os_components])
     pass
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()
