@@ -74,6 +74,7 @@ class NLP_FEATURE_NODES:  # or Mode Node?
     A = NLP_NODE_IDS
     F = NLP_FEATURES
     nodes = {
+
         A.BIG_TEXT_MATCHER: NlpFeatureNode(A.BIG_TEXT_MATCHER, [F.DOCUMENT, F.TOKEN], [F.CHUNK]),
         A.CHUNK2DOC: NlpFeatureNode(A.CHUNK2DOC, [F.NAMED_ENTITY_CONVERTED], [F.DOCUMENT_FROM_CHUNK]),
         A.CHUNK_EMBEDDINGS_CONVERTER: NlpFeatureNode(A.CHUNK_EMBEDDINGS_CONVERTER, [F.CHUNK, F.WORD_EMBEDDINGS],
@@ -141,9 +142,12 @@ class NLP_FEATURE_NODES:  # or Mode Node?
         A.WORD_SEGMENTER: NlpFeatureNode(A.WORD_SEGMENTER, [F.DOCUMENT], [F.TOKEN]),
         A.YAKE_KEYWORD_EXTRACTION: NlpFeatureNode(A.YAKE_KEYWORD_EXTRACTION, [F.TOKEN], [F.CHUNK]),
         A.ALBERT_EMBEDDINGS: NlpFeatureNode(A.ALBERT_EMBEDDINGS, [F.DOCUMENT, F.TOKEN], [F.WORD_EMBEDDINGS]),
+        A.DEBERTA_FOR_TOKEN_CLASSIFICATION: NlpFeatureNode(A.DEBERTA_FOR_TOKEN_CLASSIFICATION, [F.DOCUMENT, F.TOKEN],
+                                                              [F.TOKEN_CLASSIFICATION]),
         A.ALBERT_FOR_TOKEN_CLASSIFICATION: NlpFeatureNode(A.ALBERT_FOR_TOKEN_CLASSIFICATION, [F.DOCUMENT, F.TOKEN],
                                                           [F.TOKEN_CLASSIFICATION]),
         A.BERT_EMBEDDINGS: NlpFeatureNode(A.BERT_EMBEDDINGS, [F.DOCUMENT, F.TOKEN], [F.WORD_EMBEDDINGS]),
+        A.CAMENBERT_EMBEDDINGS: NlpFeatureNode(A.CAMENBERT_EMBEDDINGS, [F.DOCUMENT, F.TOKEN], [F.WORD_EMBEDDINGS]),
         A.DEBERTA_WORD_EMBEDDINGS: NlpFeatureNode(A.BERT_EMBEDDINGS, [F.DOCUMENT, F.TOKEN], [F.WORD_EMBEDDINGS]),
         A.BERT_FOR_TOKEN_CLASSIFICATION: NlpFeatureNode(A.BERT_FOR_TOKEN_CLASSIFICATION, [F.DOCUMENT, F.TOKEN],
                                                         [F.TOKEN_CLASSIFICATION]),
@@ -218,8 +222,12 @@ class OCR_FEATURE_NODES:
     A = OCR_NODE_IDS
     F = OCR_FEATURES
     nodes = {
-        A.VISUAL_DOCUMENT_CLASSIFIER: OcrFeatureNode(A.VISUAL_DOCUMENT_CLASSIFIER, [F.HOCR, F.FILE_PATH],
-                                                     [F.PREDICTION_TEXT_TABLE, F.PREDICTION_CONFIDENCE]),
+        A.VISUAL_DOCUMENT_CLASSIFIER: OcrFeatureNode(A.VISUAL_DOCUMENT_CLASSIFIER, [F.HOCR],
+                                                     [F.VISUAL_CLASSIFIER_PREDICTION, F.VISUAL_CLASSIFIER_CONFIDENCE]),
+
+        A.IMAGE2HOCR: OcrFeatureNode(A.IMAGE2HOCR, [F.OCR_IMAGE],[F.HOCR]),
+
+
         # VISUAL_DOCUMENT_NER : OcrFeatureNode(A.VISUAL_DOCUMENT_NER, [OcrFeature.HOCR, OcrFeature.FILE_PATH], [NlpFeature.NER_Annotation]), # TODO NlpFeature Space!
 
         # Object Detection
@@ -283,8 +291,8 @@ class OCR_FEATURE_NODES:
         # Character Recognition .. TODO these should be correct but not 100% sure about the positions
         A.IMAGE2TEXT: OcrFeatureNode(A.IMAGE2TEXT, [F.OCR_IMAGE], [F.TEXT, F.OCR_POSITIONS]),
         A.IMAGE2TEXTPDF: OcrFeatureNode(A.IMAGE2TEXTPDF, [F.OCR_IMAGE, F.FILE_PATH, F.PAGE_NUM], [F.BINARY_PDF]),
-        # TODO is output just normal binary PDF? Not 100% sure
-        A.IMAGE2HOCR: OcrFeatureNode(A.IMAGE2HOCR, [F.OCR_IMAGE], [F.HOCR]),
+
+
         # TODO is ouput HOCR format as in HOCR_DOCUMENT_ASSAMBLER???
         A.IMAGE_BRANDS2TEXT: OcrFeatureNode(A.IMAGE_BRANDS2TEXT, [F.OCR_IMAGE], [F.OCR_POSITIONS, F.TEXT,
                                                                                  F.OCR_IMAGE]),

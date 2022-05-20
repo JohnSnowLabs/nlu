@@ -66,3 +66,5 @@ class AnnoTypes:
 
     TEXT_RECOGNIZER = 'text_recognizer'
     TABLE_RECOGNIZER = 'table_recognizer'
+    PDF_BUILDER = 'table_recognizer'
+    OCR_UTIL = 'ocr_util'

@@ -64,6 +64,7 @@ class NLP_NODE_IDS:
     ALBERT_EMBEDDINGS = JslAnnoId('albert_embeddings')
     ALBERT_FOR_TOKEN_CLASSIFICATION = JslAnnoId('albert_for_token_classification')
     BERT_EMBEDDINGS = JslAnnoId('bert_embeddings')
+    CAMENBERT_EMBEDDINGS = JslAnnoId('camenbert_embeddings')
     BERT_FOR_TOKEN_CLASSIFICATION = JslAnnoId('bert_for_token_classification')
     BERT_SENTENCE_EMBEDDINGS = JslAnnoId('bert_sentence_embeddings')
     DISTIL_BERT_EMBEDDINGS = JslAnnoId('distil_bert_embeddings')
@@ -93,6 +94,7 @@ class NLP_NODE_IDS:
     WORD_2_VEC = JslAnnoId('word_2_vec')
     DEBERTA_WORD_EMBEDDINGS = JslAnnoId('deberta')
     DEBERTA_FOR_SEQUENCE_CLASSIFICATION = JslAnnoId('deberta_for_sequence_classification')
+    DEBERTA_FOR_TOKEN_CLASSIFICATION = JslAnnoId('deberta_for_token_classification')
 
 
     TRAINABLE_CONTEXT_SPELL_CHECKER = JslAnnoId('trainable_context_spell_checker')
