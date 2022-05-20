@@ -10,7 +10,9 @@ modify_date: "2020-06-12"
 
 <div class="main-docs" markdown="1">
 
-# 600 new models with over 75 new languages including Ancient,Dead and Extinct languages, 155 languages total covered, 400% Tokenizer Speedup, 18x USE-Embeddings GPU speedup in John Snow Labs NLU 3.4.4
+## NLU Version 3.4.4
+
+#### 600 new models with over 75 new languages including Ancient,Dead and Extinct languages, 155 languages total covered, 400% Tokenizer Speedup, 18x USE-Embeddings GPU speedup in John Snow Labs NLU 3.4.4
 We are very excited to announce NLU 3.4.4 has been released with over 600 new model, over 75 new languages  and 155 languages covered in total,
 400% speedup for tokenizers and 18x speedup of UniversalSentenceEncoder on GPU.
 On the general NLP side we have transformer based Embeddings and Token Classifiers powered by state of the art [CamemBertEmbeddings](https://camembert-model.fr/) and [DeBertaForTokenClassification](https://arxiv.org/abs/2006.03654) based
@@ -20,7 +22,7 @@ architectures as well as various new models for
 On the healthcare side we have `Portuguese De-identification Models`,  have `NER` models for Gene detection and finally RxNorm Sentence resolution model for mapping and extracting pharmaceutical actions (e.g. analgesic, hypoglycemic)
 as well as treatments (e.g. backache, diabetes).
 
-## General NLP Models
+#### General NLP Models
 
 
 #### All general NLP models
@@ -783,7 +785,7 @@ Powered by the incredible [Spark NLP 3.4.4](https://github.com/JohnSnowLabs/spar
 |      640 | [qtd.pos](https://nlp.johnsnowlabs.com/2022/05/01/pos_sagt_qtd_3_0.html)                                                                                                                                     | [pos_sagt](https://nlp.johnsnowlabs.com/2022/05/01/pos_sagt_qtd_3_0.html)                                                                                                                                              | Part of Speech Tagging   | [Reserved for local use](https://iso639-3.sil.org/code/qtd)                                                           | PerceptronModel               | [nan](https://iso639-3.sil.org/code/qtd) | [qtd](https://iso639-3.sil.org/code/qtd)                      | [qtd](https://iso639-3.sil.org/code/qtd) | nan             | Local         |
 
 
-### All Healthcare
+#### All Healthcare
 Powered by the amazing
 [Spark NLP for Healthcare 3.5.2](https://nlp.johnsnowlabs.com/docs/en/licensed_release_notes#352) and
 [Spark NLP for Healthcare 3.5.1](https://nlp.johnsnowlabs.com/docs/en/licensed_release_notes#351) releases.
@@ -804,10 +806,1606 @@ Powered by the amazing
 
 
 
+## NLU Version 3.4.3
 
-## NLU 3.1 Release Notes
+#### Zero-Shot-Relation-Extraction, DeBERTa for Sequence Classification, 150+ new models, 60+ Languages in John Snow Labs NLU 3.4.3
 
-## 2600+ New Models for 200+ Languages and 10+ Dimension Reduction Algorithms for Streamlit Word-Embedding visualizations in 3-D
+We are very excited to announce NLU 3.4.3 has been released!
+
+This release features new models for `Zero-Shot-Relation-Extraction`,  [DeBERTa for Sequence Classification](https://arxiv.org/abs/2006.03654),
+`Deidentification` in `French` and `Italian` and
+Lemmatizers, Parts of Speech Taggers, and Word2Vec Embeddings for over `66 languages`, with 20 languages being covered
+for the first time by NLU, including ancient and exotic languages like `Ancient Greek`, `Old Russian`,
+`Old French` and much more. Once again we would like to thank our community to make this release possible.
+
+
+
+#### NLU for Healthcare
+
+
+On the healthcare NLP side, a new `ZeroShotRelationExtractionModel` is available, which can extract relations between
+clinical entities in an unsupervised fashion, no training required!
+Additionally, New French and Italian Deidentification models are available for clinical and healthcare domains.
+Powerd by the fantastic [ Spark NLP for helathcare 3.5.0 release](https://nlp.johnsnowlabs.com/docs/en/licensed_release_notes)
+
+#### Zero-Shot Relation Extraction
+
+Zero-shot Relation Extraction to extract relations between clinical entities with no training dataset
+
+```python
+import nlu
+
+pipe = nlu.load('med_ner.clinical relation.zeroshot_biobert')
+# Configure relations to extract
+pipe['zero_shot_relation_extraction'].setRelationalCategories({
+    "CURE": ["{{TREATMENT}} cures {{PROBLEM}}."],
+    "IMPROVE": ["{{TREATMENT}} improves {{PROBLEM}}.", "{{TREATMENT}} cures {{PROBLEM}}."],
+    "REVEAL": ["{{TEST}} reveals {{PROBLEM}}."]})
+.setMultiLabel(False)
+df = pipe.predict("Paracetamol can alleviate headache or sickness. An MRI test can be used to find cancer.")
+df[
+    'relation', 'relation_confidence', 'relation_entity1', 'relation_entity1_class', 'relation_entity2', 'relation_entity2_class',]
+# Results in following table :
+```
+
+| relation   |   relation_confidence | relation_entity1   | relation_entity1_class   | relation_entity2   | relation_entity2_class   |
+|:-----------|----------------------:|:-------------------|:-------------------------|:-------------------|:-------------------------|
+| REVEAL     |              0.976004 | An MRI test        | TEST                     | cancer             | PROBLEM                  |
+| IMPROVE    |              0.988195 | Paracetamol        | TREATMENT                | sickness           | PROBLEM                  |
+| IMPROVE    |              0.992962 | Paracetamol        | TREATMENT                | headache           | PROBLEM                  |
+
+#### New Healthcare Models overview
+
+| Language   | NLU Reference                                                                                           | Spark NLP  Reference                                                                           | Task                     | Annotator Class                 |
+|:-----------|:--------------------------------------------------------------------------------------------------------|:-----------------------------------------------------------------------------------------------|:-------------------------|:--------------------------------|
+| en         | [en.relation.zeroshot_biobert](https://nlp.johnsnowlabs.com/2022/04/05/re_zeroshot_biobert_en_3_0.html) | [re_zeroshot_biobert](https://nlp.johnsnowlabs.com/2022/04/05/re_zeroshot_biobert_en_3_0.html) | Relation Extraction      | ZeroShotRelationExtractionModel |
+| fr         | [fr.med_ner.deid_generic](https://nlp.johnsnowlabs.com/2022/02/11/ner_deid_generic_fr.html)             | [ner_deid_generic](https://nlp.johnsnowlabs.com/2022/02/11/ner_deid_generic_fr.html)           | De-identification        | MedicalNerModel                 |
+| fr         | [fr.med_ner.deid_subentity](https://nlp.johnsnowlabs.com/2022/02/14/ner_deid_subentity_fr.html)         | [ner_deid_subentity](https://nlp.johnsnowlabs.com/2022/02/14/ner_deid_subentity_fr.html)       | De-identification        | MedicalNerModel                 |
+| it         | [it.med_ner.deid_generic](https://nlp.johnsnowlabs.com/2022/03/25/ner_deid_generic_it_3_0.html)         | [ner_deid_generic](https://nlp.johnsnowlabs.com/2022/03/25/ner_deid_generic_it_3_0.html)       | Named Entity Recognition | MedicalNerModel                 |
+| it         | [it.med_ner.deid_subentity](https://nlp.johnsnowlabs.com/2022/03/22/ner_deid_subentity_it_3_0.html)     | [ner_deid_subentity](https://nlp.johnsnowlabs.com/2022/03/22/ner_deid_subentity_it_3_0.html)   | Named Entity Recognition | MedicalNerModel                 |
+
+#### NLU general
+
+On the general NLP side we have new transformer based `DeBERTa v3 sequence classifiers` models fine-tuned in Urdu, French and English for
+Sentiment and News classification. Additionally, 100+ Part Of Speech Taggers and Lemmatizers for 66 Languages and for 7
+languages new word2vec embeddings, including `hi`,`azb`,`bo`,`diq`,`cy`,`es`,`it`,     
+powered by the amazing [Spark NLP 3.4.3 release](https://github.com/JohnSnowLabs/spark-nlp/releases/tag/3.4.3)
+
+
+#### New Languages covered:
+First time languages covered by NLU are :
+`South Azerbaijani`, `Tibetan`, `Dimli`,    `Central Kurdish`, `Southern Altai`,
+`Scottish Gaelic`,`Faroese`,`Literary Chinese`,`Ancient Greek`,
+`Gothic`, `Old Russian`, `Church Slavic`,
+`Old French`,`Uighur`,`Coptic`,`Croatian`, `Belarusian`, `Serbian`
+
+and their respective ISO-639-3 and ISO 630-2 codes are :
+`azb`,`bo`,`diq`,`ckb`, `lt` `gd`, `fo`,`lzh`,`grc`,`got`,`orv`,`cu`,`fro`,`qtd`,`ug`,`cop`,`hr`,`be`,`qhe`,`sr`
+
+#### New NLP Models Overview
+
+
+| Language   | NLU Reference                                                                                                                             | Spark NLP  Reference                                                                                                                               | Task                   | Annotator Class                  |
+|:-----------|:------------------------------------------------------------------------------------------------------------------------------------------|:---------------------------------------------------------------------------------------------------------------------------------------------------|:-----------------------|:---------------------------------|
+| en         | [en.classify.sentiment.imdb.deberta](https://nlp.johnsnowlabs.com/2022/04/09/deberta_v3_xsmall_sequence_classifier_imdb_en_3_0.html)      | [deberta_v3_xsmall_sequence_classifier_imdb](https://nlp.johnsnowlabs.com/2022/04/09/deberta_v3_xsmall_sequence_classifier_imdb_en_3_0.html)       | Text Classification    | DeBertaForSequenceClassification |
+| en         | [en.classify.sentiment.imdb.deberta.small](https://nlp.johnsnowlabs.com/2022/04/09/deberta_v3_small_sequence_classifier_imdb_en_3_0.html) | [deberta_v3_small_sequence_classifier_imdb](https://nlp.johnsnowlabs.com/2022/04/09/deberta_v3_small_sequence_classifier_imdb_en_3_0.html)         | Text Classification    | DeBertaForSequenceClassification |
+| en         | [en.classify.sentiment.imdb.deberta.base](https://nlp.johnsnowlabs.com/2022/04/09/deberta_v3_base_sequence_classifier_imdb_en_3_0.html)   | [deberta_v3_base_sequence_classifier_imdb](https://nlp.johnsnowlabs.com/2022/04/09/deberta_v3_base_sequence_classifier_imdb_en_3_0.html)           | Text Classification    | DeBertaForSequenceClassification |
+| en         | [en.classify.sentiment.imdb.deberta.large](https://nlp.johnsnowlabs.com/2022/04/09/deberta_v3_large_sequence_classifier_imdb_en_3_0.html) | [deberta_v3_large_sequence_classifier_imdb](https://nlp.johnsnowlabs.com/2022/04/09/deberta_v3_large_sequence_classifier_imdb_en_3_0.html)         | Text Classification    | DeBertaForSequenceClassification |
+| en         | [en.classify.news.deberta](https://nlp.johnsnowlabs.com/2022/04/09/deberta_v3_xsmall_sequence_classifier_ag_news_en_3_0.html)             | [deberta_v3_xsmall_sequence_classifier_ag_news](https://nlp.johnsnowlabs.com/2022/04/09/deberta_v3_xsmall_sequence_classifier_ag_news_en_3_0.html) | Text Classification    | DeBertaForSequenceClassification |
+| en         | [en.classify.news.deberta.small](https://nlp.johnsnowlabs.com/2022/04/09/deberta_v3_small_sequence_classifier_ag_news_en_3_0.html)        | [deberta_v3_small_sequence_classifier_ag_news](https://nlp.johnsnowlabs.com/2022/04/09/deberta_v3_small_sequence_classifier_ag_news_en_3_0.html)   | Text Classification    | DeBertaForSequenceClassification |
+| ur         | [ur.classify.sentiment.imdb](https://nlp.johnsnowlabs.com/2022/04/09/mdeberta_v3_base_sequence_classifier_imdb_ur_3_0.html)               | [mdeberta_v3_base_sequence_classifier_imdb](https://nlp.johnsnowlabs.com/2022/04/09/mdeberta_v3_base_sequence_classifier_imdb_ur_3_0.html)         | Text Classification    | DeBertaForSequenceClassification |
+| fr         | [fr.classify.allocine](https://nlp.johnsnowlabs.com/2022/04/09/mdeberta_v3_base_sequence_classifier_allocine_fr_3_0.html)                 | [mdeberta_v3_base_sequence_classifier_allocine](https://nlp.johnsnowlabs.com/2022/04/09/mdeberta_v3_base_sequence_classifier_allocine_fr_3_0.html) | Text Classification    | DeBertaForSequenceClassification |
+| ur         | [ur.embed.bert_cased](https://nlp.johnsnowlabs.com/2022/04/11/bert_embeddings_bert_base_ur_cased_ur_3_0.html)                             | [bert_embeddings_bert_base_ur_cased](https://nlp.johnsnowlabs.com/2022/04/11/bert_embeddings_bert_base_ur_cased_ur_3_0.html)                       | Embeddings             | BertEmbeddings                   |
+| fr         | [fr.embed.bert_5lang_cased](https://nlp.johnsnowlabs.com/2022/04/11/bert_embeddings_bert_base_5lang_cased_fr_3_0.html)                    | [bert_embeddings_bert_base_5lang_cased](https://nlp.johnsnowlabs.com/2022/04/11/bert_embeddings_bert_base_5lang_cased_fr_3_0.html)                 | Embeddings             | BertEmbeddings                   |
+| de         | [de.embed.medbert](https://nlp.johnsnowlabs.com/2022/04/11/bert_embeddings_German_MedBERT_de_3_0.html)                                    | [bert_embeddings_German_MedBERT](https://nlp.johnsnowlabs.com/2022/04/11/bert_embeddings_German_MedBERT_de_3_0.html)                               | Embeddings             | BertEmbeddings                   |
+| ar         | [ar.embed.arbert](https://nlp.johnsnowlabs.com/2022/04/11/bert_embeddings_ARBERT_ar_3_0.html)                                             | [bert_embeddings_ARBERT](https://nlp.johnsnowlabs.com/2022/04/11/bert_embeddings_ARBERT_ar_3_0.html)                                               | Embeddings             | BertEmbeddings                   |
+| bn         | [bn.embed.bangala_bert](https://nlp.johnsnowlabs.com/2022/04/11/bert_embeddings_bangla_bert_base_bn_3_0.html)                             | [bert_embeddings_bangla_bert_base](https://nlp.johnsnowlabs.com/2022/04/11/bert_embeddings_bangla_bert_base_bn_3_0.html)                           | Embeddings             | BertEmbeddings                   |
+| zh         | [zh.embed.bert_5lang_cased](https://nlp.johnsnowlabs.com/2022/04/11/bert_embeddings_bert_base_5lang_cased_zh_3_0.html)                    | [bert_embeddings_bert_base_5lang_cased](https://nlp.johnsnowlabs.com/2022/04/11/bert_embeddings_bert_base_5lang_cased_zh_3_0.html)                 | Embeddings             | BertEmbeddings                   |
+| hi         | [hi.embed.bert_hi_cased](https://nlp.johnsnowlabs.com/2022/04/11/bert_embeddings_bert_base_hi_cased_hi_3_0.html)                          | [bert_embeddings_bert_base_hi_cased](https://nlp.johnsnowlabs.com/2022/04/11/bert_embeddings_bert_base_hi_cased_hi_3_0.html)                       | Embeddings             | BertEmbeddings                   |
+| it         | [it.embed.bert_it_cased](https://nlp.johnsnowlabs.com/2022/04/11/bert_embeddings_bert_base_it_cased_it_3_0.html)                          | [bert_embeddings_bert_base_it_cased](https://nlp.johnsnowlabs.com/2022/04/11/bert_embeddings_bert_base_it_cased_it_3_0.html)                       | Embeddings             | BertEmbeddings                   |
+| ko         | [ko.embed.bert](https://nlp.johnsnowlabs.com/2022/04/11/bert_embeddings_bert_base_ko_3_0.html)                                            | [bert_embeddings_bert_base](https://nlp.johnsnowlabs.com/2022/04/11/bert_embeddings_bert_base_ko_3_0.html)                                         | Embeddings             | BertEmbeddings                   |
+| tr         | [tr.embed.bert_cased](https://nlp.johnsnowlabs.com/2022/04/11/bert_embeddings_bert_base_tr_cased_tr_3_0.html)                             | [bert_embeddings_bert_base_tr_cased](https://nlp.johnsnowlabs.com/2022/04/11/bert_embeddings_bert_base_tr_cased_tr_3_0.html)                       | Embeddings             | BertEmbeddings                   |
+| vi         | [vi.embed.bert_cased](https://nlp.johnsnowlabs.com/2022/04/11/bert_embeddings_bert_base_vi_cased_vi_3_0.html)                             | [bert_embeddings_bert_base_vi_cased](https://nlp.johnsnowlabs.com/2022/04/11/bert_embeddings_bert_base_vi_cased_vi_3_0.html)                       | Embeddings             | BertEmbeddings                   |
+| hif        | [hif.embed.w2v_cc_300d](https://nlp.johnsnowlabs.com/2022/03/15/w2v_cc_300d_hif_3_0.html)                                                 | [w2v_cc_300d](https://nlp.johnsnowlabs.com/2022/03/15/w2v_cc_300d_hif_3_0.html)                                                                    | Embeddings             | WordEmbeddingsModel              |
+| azb        | [azb.embed.w2v_cc_300d](https://nlp.johnsnowlabs.com/2022/03/16/w2v_cc_300d_azb_3_0.html)                                                 | [w2v_cc_300d](https://nlp.johnsnowlabs.com/2022/03/16/w2v_cc_300d_azb_3_0.html)                                                                    | Embeddings             | WordEmbeddingsModel              |
+| bo         | [bo.embed.w2v_cc_300d](https://nlp.johnsnowlabs.com/2022/03/16/w2v_cc_300d_bo_3_0.html)                                                   | [w2v_cc_300d](https://nlp.johnsnowlabs.com/2022/03/16/w2v_cc_300d_bo_3_0.html)                                                                     | Embeddings             | WordEmbeddingsModel              |
+| diq        | [diq.embed.w2v_cc_300d](https://nlp.johnsnowlabs.com/2022/03/16/w2v_cc_300d_diq_3_0.html)                                                 | [w2v_cc_300d](https://nlp.johnsnowlabs.com/2022/03/16/w2v_cc_300d_diq_3_0.html)                                                                    | Embeddings             | WordEmbeddingsModel              |
+| cy         | [cy.embed.w2v_cc_300d](https://nlp.johnsnowlabs.com/2022/03/16/w2v_cc_300d_cy_3_0.html)                                                   | [w2v_cc_300d](https://nlp.johnsnowlabs.com/2022/03/16/w2v_cc_300d_cy_3_0.html)                                                                     | Embeddings             | WordEmbeddingsModel              |
+| es         | [es.embed.w2v_cc_300d](https://nlp.johnsnowlabs.com/2022/03/16/w2v_cc_300d_es_3_0.html)                                                   | [w2v_cc_300d](https://nlp.johnsnowlabs.com/2022/03/16/w2v_cc_300d_es_3_0.html)                                                                     | Embeddings             | WordEmbeddingsModel              |
+| it         | [it.embed.word2vec](https://nlp.johnsnowlabs.com/2022/03/07/w2v_cc_300d_it_3_0.html)                                                      | [w2v_cc_300d](https://nlp.johnsnowlabs.com/2022/03/07/w2v_cc_300d_it_3_0.html)                                                                     | Embeddings             | WordEmbeddingsModel              |
+| af         | [af.lemma](https://nlp.johnsnowlabs.com/2021/04/02/lemma_af.html)                                                                         | [lemma](https://nlp.johnsnowlabs.com/2021/04/02/lemma_af.html)                                                                                     | Lemmatization          | LemmatizerModel                  |
+| lt         | [lt.lemma](https://nlp.johnsnowlabs.com/2022/03/31/lemma_alksnis_lt_3_0.html)                                                             | [lemma_alksnis](https://nlp.johnsnowlabs.com/2022/03/31/lemma_alksnis_lt_3_0.html)                                                                 | Lemmatization          | LemmatizerModel                  |
+| nl         | [nl.lemma](https://nlp.johnsnowlabs.com/2020/05/03/lemma_nl.html)                                                                         | [lemma](https://nlp.johnsnowlabs.com/2020/05/03/lemma_nl.html)                                                                                     | Lemmatization          | LemmatizerModel                  |
+| gd         | [gd.lemma](https://nlp.johnsnowlabs.com/2022/03/31/lemma_arcosg_gd_3_0.html)                                                              | [lemma_arcosg](https://nlp.johnsnowlabs.com/2022/03/31/lemma_arcosg_gd_3_0.html)                                                                   | Lemmatization          | LemmatizerModel                  |
+| es         | [es.lemma](https://nlp.johnsnowlabs.com/2020/02/16/lemma_es.html)                                                                         | [lemma](https://nlp.johnsnowlabs.com/2020/02/16/lemma_es.html)                                                                                     | Lemmatization          | LemmatizerModel                  |
+| ca         | [ca.lemma](https://nlp.johnsnowlabs.com/2020/07/29/lemma_ca.html)                                                                         | [lemma](https://nlp.johnsnowlabs.com/2020/07/29/lemma_ca.html)                                                                                     | Lemmatization          | LemmatizerModel                  |
+| el         | [el.lemma.gdt](https://nlp.johnsnowlabs.com/2022/03/31/lemma_gdt_el_3_0.html)                                                             | [lemma_gdt](https://nlp.johnsnowlabs.com/2022/03/31/lemma_gdt_el_3_0.html)                                                                         | Lemmatization          | LemmatizerModel                  |
+| en         | [en.lemma.atis](https://nlp.johnsnowlabs.com/2022/03/31/lemma_atis_en_3_0.html)                                                           | [lemma_atis](https://nlp.johnsnowlabs.com/2022/03/31/lemma_atis_en_3_0.html)                                                                       | Lemmatization          | LemmatizerModel                  |
+| tr         | [tr.lemma.boun](https://nlp.johnsnowlabs.com/2022/03/31/lemma_boun_tr_3_0.html)                                                           | [lemma_boun](https://nlp.johnsnowlabs.com/2022/03/31/lemma_boun_tr_3_0.html)                                                                       | Lemmatization          | LemmatizerModel                  |
+| da         | [da.lemma.ddt](https://nlp.johnsnowlabs.com/2022/03/31/lemma_ddt_da_3_0.html)                                                             | [lemma_ddt](https://nlp.johnsnowlabs.com/2022/03/31/lemma_ddt_da_3_0.html)                                                                         | Lemmatization          | LemmatizerModel                  |
+| cs         | [cs.lemma.cac](https://nlp.johnsnowlabs.com/2022/03/31/lemma_cac_cs_3_0.html)                                                             | [lemma_cac](https://nlp.johnsnowlabs.com/2022/03/31/lemma_cac_cs_3_0.html)                                                                         | Lemmatization          | LemmatizerModel                  |
+| en         | [en.lemma.esl](https://nlp.johnsnowlabs.com/2022/03/31/lemma_esl_en_3_0.html)                                                             | [lemma_esl](https://nlp.johnsnowlabs.com/2022/03/31/lemma_esl_en_3_0.html)                                                                         | Lemmatization          | LemmatizerModel                  |
+| bg         | [bg.lemma.btb](https://nlp.johnsnowlabs.com/2022/03/31/lemma_btb_bg_3_0.html)                                                             | [lemma_btb](https://nlp.johnsnowlabs.com/2022/03/31/lemma_btb_bg_3_0.html)                                                                         | Lemmatization          | LemmatizerModel                  |
+| id         | [id.lemma.csui](https://nlp.johnsnowlabs.com/2022/03/31/lemma_csui_id_3_0.html)                                                           | [lemma_csui](https://nlp.johnsnowlabs.com/2022/03/31/lemma_csui_id_3_0.html)                                                                       | Lemmatization          | LemmatizerModel                  |
+| gl         | [gl.lemma.ctg](https://nlp.johnsnowlabs.com/2022/03/31/lemma_ctg_gl_3_0.html)                                                             | [lemma_ctg](https://nlp.johnsnowlabs.com/2022/03/31/lemma_ctg_gl_3_0.html)                                                                         | Lemmatization          | LemmatizerModel                  |
+| cy         | [cy.lemma.ccg](https://nlp.johnsnowlabs.com/2022/03/31/lemma_ccg_cy_3_0.html)                                                             | [lemma_ccg](https://nlp.johnsnowlabs.com/2022/03/31/lemma_ccg_cy_3_0.html)                                                                         | Lemmatization          | LemmatizerModel                  |
+| fo         | [fo.lemma.farpahc](https://nlp.johnsnowlabs.com/2022/03/31/lemma_farpahc_fo_3_0.html)                                                     | [lemma_farpahc](https://nlp.johnsnowlabs.com/2022/03/31/lemma_farpahc_fo_3_0.html)                                                                 | Lemmatization          | LemmatizerModel                  |
+| tr         | [tr.lemma.atis](https://nlp.johnsnowlabs.com/2022/03/31/lemma_atis_tr_3_0.html)                                                           | [lemma_atis](https://nlp.johnsnowlabs.com/2022/03/31/lemma_atis_tr_3_0.html)                                                                       | Lemmatization          | LemmatizerModel                  |
+| ga         | [ga.lemma.idt](https://nlp.johnsnowlabs.com/2022/03/31/lemma_idt_ga_3_0.html)                                                             | [lemma_idt](https://nlp.johnsnowlabs.com/2022/03/31/lemma_idt_ga_3_0.html)                                                                         | Lemmatization          | LemmatizerModel                  |
+| ja         | [ja.lemma.gsdluw](https://nlp.johnsnowlabs.com/2022/03/31/lemma_gsdluw_ja_3_0.html)                                                       | [lemma_gsdluw](https://nlp.johnsnowlabs.com/2022/03/31/lemma_gsdluw_ja_3_0.html)                                                                   | Lemmatization          | LemmatizerModel                  |
+| es         | [es.lemma.gsd](https://nlp.johnsnowlabs.com/2022/03/31/lemma_gsd_es_3_0.html)                                                             | [lemma_gsd](https://nlp.johnsnowlabs.com/2022/03/31/lemma_gsd_es_3_0.html)                                                                         | Lemmatization          | LemmatizerModel                  |
+| en         | [en.lemma.gum](https://nlp.johnsnowlabs.com/2022/03/31/lemma_gum_en_3_0.html)                                                             | [lemma_gum](https://nlp.johnsnowlabs.com/2022/03/31/lemma_gum_en_3_0.html)                                                                         | Lemmatization          | LemmatizerModel                  |
+| zh         | [zh.lemma.gsd](https://nlp.johnsnowlabs.com/2022/03/31/lemma_gsd_zh_3_0.html)                                                             | [lemma_gsd](https://nlp.johnsnowlabs.com/2022/03/31/lemma_gsd_zh_3_0.html)                                                                         | Lemmatization          | LemmatizerModel                  |
+| lv         | [lv.lemma.lvtb](https://nlp.johnsnowlabs.com/2022/03/31/lemma_lvtb_lv_3_0.html)                                                           | [lemma_lvtb](https://nlp.johnsnowlabs.com/2022/03/31/lemma_lvtb_lv_3_0.html)                                                                       | Lemmatization          | LemmatizerModel                  |
+| hi         | [hi.lemma.hdtb](https://nlp.johnsnowlabs.com/2022/03/31/lemma_hdtb_hi_3_0.html)                                                           | [lemma_hdtb](https://nlp.johnsnowlabs.com/2022/03/31/lemma_hdtb_hi_3_0.html)                                                                       | Lemmatization          | LemmatizerModel                  |
+| pt         | [pt.lemma.gsd](https://nlp.johnsnowlabs.com/2022/03/31/lemma_gsd_pt_3_0.html)                                                             | [lemma_gsd](https://nlp.johnsnowlabs.com/2022/03/31/lemma_gsd_pt_3_0.html)                                                                         | Lemmatization          | LemmatizerModel                  |
+| de         | [de.lemma.gsd](https://nlp.johnsnowlabs.com/2022/03/31/lemma_gsd_de_3_0.html)                                                             | [lemma_gsd](https://nlp.johnsnowlabs.com/2022/03/31/lemma_gsd_de_3_0.html)                                                                         | Lemmatization          | LemmatizerModel                  |
+| nl         | [nl.lemma.lassysmall](https://nlp.johnsnowlabs.com/2022/03/31/lemma_lassysmall_nl_3_0.html)                                               | [lemma_lassysmall](https://nlp.johnsnowlabs.com/2022/03/31/lemma_lassysmall_nl_3_0.html)                                                           | Lemmatization          | LemmatizerModel                  |
+| lzh        | [lzh.lemma.kyoto](https://nlp.johnsnowlabs.com/2022/03/31/lemma_kyoto_lzh_3_0.html)                                                       | [lemma_kyoto](https://nlp.johnsnowlabs.com/2022/03/31/lemma_kyoto_lzh_3_0.html)                                                                    | Lemmatization          | LemmatizerModel                  |
+| zh         | [zh.lemma.gsdsimp](https://nlp.johnsnowlabs.com/2022/03/31/lemma_gsdsimp_zh_3_0.html)                                                     | [lemma_gsdsimp](https://nlp.johnsnowlabs.com/2022/03/31/lemma_gsdsimp_zh_3_0.html)                                                                 | Lemmatization          | LemmatizerModel                  |
+| he         | [he.lemma.htb](https://nlp.johnsnowlabs.com/2022/03/31/lemma_htb_he_3_0.html)                                                             | [lemma_htb](https://nlp.johnsnowlabs.com/2022/03/31/lemma_htb_he_3_0.html)                                                                         | Lemmatization          | LemmatizerModel                  |
+| fr         | [fr.lemma.gsd](https://nlp.johnsnowlabs.com/2022/03/31/lemma_gsd_fr_3_0.html)                                                             | [lemma_gsd](https://nlp.johnsnowlabs.com/2022/03/31/lemma_gsd_fr_3_0.html)                                                                         | Lemmatization          | LemmatizerModel                  |
+| ro         | [ro.lemma.nonstandard](https://nlp.johnsnowlabs.com/2022/03/31/lemma_nonstandard_ro_3_0.html)                                             | [lemma_nonstandard](https://nlp.johnsnowlabs.com/2022/03/31/lemma_nonstandard_ro_3_0.html)                                                         | Lemmatization          | LemmatizerModel                  |
+| ja         | [ja.lemma.gsd](https://nlp.johnsnowlabs.com/2022/03/31/lemma_gsd_ja_3_0.html)                                                             | [lemma_gsd](https://nlp.johnsnowlabs.com/2022/03/31/lemma_gsd_ja_3_0.html)                                                                         | Lemmatization          | LemmatizerModel                  |
+| it         | [it.lemma.isdt](https://nlp.johnsnowlabs.com/2022/03/31/lemma_isdt_it_3_0.html)                                                           | [lemma_isdt](https://nlp.johnsnowlabs.com/2022/03/31/lemma_isdt_it_3_0.html)                                                                       | Lemmatization          | LemmatizerModel                  |
+| de         | [de.lemma.hdt](https://nlp.johnsnowlabs.com/2022/03/31/lemma_hdt_de_3_0.html)                                                             | [lemma_hdt](https://nlp.johnsnowlabs.com/2022/03/31/lemma_hdt_de_3_0.html)                                                                         | Lemmatization          | LemmatizerModel                  |
+| is         | [is.lemma.modern](https://nlp.johnsnowlabs.com/2022/03/31/lemma_modern_is_3_0.html)                                                       | [lemma_modern](https://nlp.johnsnowlabs.com/2022/03/31/lemma_modern_is_3_0.html)                                                                   | Lemmatization          | LemmatizerModel                  |
+| la         | [la.lemma.ittb](https://nlp.johnsnowlabs.com/2022/03/31/lemma_ittb_la_3_0.html)                                                           | [lemma_ittb](https://nlp.johnsnowlabs.com/2022/03/31/lemma_ittb_la_3_0.html)                                                                       | Lemmatization          | LemmatizerModel                  |
+| fr         | [fr.lemma.partut](https://nlp.johnsnowlabs.com/2022/03/31/lemma_partut_fr_3_0.html)                                                       | [lemma_partut](https://nlp.johnsnowlabs.com/2022/03/31/lemma_partut_fr_3_0.html)                                                                   | Lemmatization          | LemmatizerModel                  |
+| pcm        | [pcm.lemma.nsc](https://nlp.johnsnowlabs.com/2022/03/31/lemma_nsc_pcm_3_0.html)                                                           | [lemma_nsc](https://nlp.johnsnowlabs.com/2022/03/31/lemma_nsc_pcm_3_0.html)                                                                        | Lemmatization          | LemmatizerModel                  |
+| pl         | [pl.lemma.pdb](https://nlp.johnsnowlabs.com/2022/03/31/lemma_pdb_pl_3_0.html)                                                             | [lemma_pdb](https://nlp.johnsnowlabs.com/2022/03/31/lemma_pdb_pl_3_0.html)                                                                         | Lemmatization          | LemmatizerModel                  |
+| grc        | [grc.lemma.perseus](https://nlp.johnsnowlabs.com/2022/03/31/lemma_perseus_grc_3_0.html)                                                   | [lemma_perseus](https://nlp.johnsnowlabs.com/2022/03/31/lemma_perseus_grc_3_0.html)                                                                | Lemmatization          | LemmatizerModel                  |
+| cs         | [cs.lemma.pdt](https://nlp.johnsnowlabs.com/2022/03/31/lemma_pdt_cs_3_0.html)                                                             | [lemma_pdt](https://nlp.johnsnowlabs.com/2022/03/31/lemma_pdt_cs_3_0.html)                                                                         | Lemmatization          | LemmatizerModel                  |
+| fa         | [fa.lemma.perdt](https://nlp.johnsnowlabs.com/2022/03/31/lemma_perdt_fa_3_0.html)                                                         | [lemma_perdt](https://nlp.johnsnowlabs.com/2022/03/31/lemma_perdt_fa_3_0.html)                                                                     | Lemmatization          | LemmatizerModel                  |
+| got        | [got.lemma.proiel](https://nlp.johnsnowlabs.com/2022/03/31/lemma_proiel_got_3_0.html)                                                     | [lemma_proiel](https://nlp.johnsnowlabs.com/2022/03/31/lemma_proiel_got_3_0.html)                                                                  | Lemmatization          | LemmatizerModel                  |
+| fr         | [fr.lemma.rhapsodie](https://nlp.johnsnowlabs.com/2022/03/31/lemma_rhapsodie_fr_3_0.html)                                                 | [lemma_rhapsodie](https://nlp.johnsnowlabs.com/2022/03/31/lemma_rhapsodie_fr_3_0.html)                                                             | Lemmatization          | LemmatizerModel                  |
+| it         | [it.lemma.partut](https://nlp.johnsnowlabs.com/2022/03/31/lemma_partut_it_3_0.html)                                                       | [lemma_partut](https://nlp.johnsnowlabs.com/2022/03/31/lemma_partut_it_3_0.html)                                                                   | Lemmatization          | LemmatizerModel                  |
+| en         | [en.lemma.partut](https://nlp.johnsnowlabs.com/2022/03/31/lemma_partut_en_3_0.html)                                                       | [lemma_partut](https://nlp.johnsnowlabs.com/2022/03/31/lemma_partut_en_3_0.html)                                                                   | Lemmatization          | LemmatizerModel                  |
+| no         | [no.lemma.nynorsklia](https://nlp.johnsnowlabs.com/2022/03/31/lemma_nynorsklia_no_3_0.html)                                               | [lemma_nynorsklia](https://nlp.johnsnowlabs.com/2022/03/31/lemma_nynorsklia_no_3_0.html)                                                           | Lemmatization          | LemmatizerModel                  |
+| orv        | [orv.lemma.rnc](https://nlp.johnsnowlabs.com/2022/03/31/lemma_rnc_orv_3_0.html)                                                           | [lemma_rnc](https://nlp.johnsnowlabs.com/2022/03/31/lemma_rnc_orv_3_0.html)                                                                        | Lemmatization          | LemmatizerModel                  |
+| cu         | [cu.lemma.proiel](https://nlp.johnsnowlabs.com/2022/03/31/lemma_proiel_cu_3_0.html)                                                       | [lemma_proiel](https://nlp.johnsnowlabs.com/2022/03/31/lemma_proiel_cu_3_0.html)                                                                   | Lemmatization          | LemmatizerModel                  |
+| la         | [la.lemma.perseus](https://nlp.johnsnowlabs.com/2022/03/31/lemma_perseus_la_3_0.html)                                                     | [lemma_perseus](https://nlp.johnsnowlabs.com/2022/03/31/lemma_perseus_la_3_0.html)                                                                 | Lemmatization          | LemmatizerModel                  |
+| fr         | [fr.lemma.parisstories](https://nlp.johnsnowlabs.com/2022/03/31/lemma_parisstories_fr_3_0.html)                                           | [lemma_parisstories](https://nlp.johnsnowlabs.com/2022/03/31/lemma_parisstories_fr_3_0.html)                                                       | Lemmatization          | LemmatizerModel                  |
+| fro        | [fro.lemma.srcmf](https://nlp.johnsnowlabs.com/2022/03/31/lemma_srcmf_fro_3_0.html)                                                       | [lemma_srcmf](https://nlp.johnsnowlabs.com/2022/03/31/lemma_srcmf_fro_3_0.html)                                                                    | Lemmatization          | LemmatizerModel                  |
+| vi         | [vi.lemma.vtb](https://nlp.johnsnowlabs.com/2022/03/31/lemma_vtb_vi_3_0.html)                                                             | [lemma_vtb](https://nlp.johnsnowlabs.com/2022/03/31/lemma_vtb_vi_3_0.html)                                                                         | Lemmatization          | LemmatizerModel                  |
+| qtd        | [qtd.lemma.sagt](https://nlp.johnsnowlabs.com/2022/03/31/lemma_sagt_qtd_3_0.html)                                                         | [lemma_sagt](https://nlp.johnsnowlabs.com/2022/03/31/lemma_sagt_qtd_3_0.html)                                                                      | Lemmatization          | LemmatizerModel                  |
+| ro         | [ro.lemma.rrt](https://nlp.johnsnowlabs.com/2022/03/31/lemma_rrt_ro_3_0.html)                                                             | [lemma_rrt](https://nlp.johnsnowlabs.com/2022/03/31/lemma_rrt_ro_3_0.html)                                                                         | Lemmatization          | LemmatizerModel                  |
+| hu         | [hu.lemma.szeged](https://nlp.johnsnowlabs.com/2022/03/31/lemma_szeged_hu_3_0.html)                                                       | [lemma_szeged](https://nlp.johnsnowlabs.com/2022/03/31/lemma_szeged_hu_3_0.html)                                                                   | Lemmatization          | LemmatizerModel                  |
+| ug         | [ug.lemma.udt](https://nlp.johnsnowlabs.com/2022/03/31/lemma_udt_ug_3_0.html)                                                             | [lemma_udt](https://nlp.johnsnowlabs.com/2022/03/31/lemma_udt_ug_3_0.html)                                                                         | Lemmatization          | LemmatizerModel                  |
+| wo         | [wo.lemma.wtb](https://nlp.johnsnowlabs.com/2022/03/31/lemma_wtb_wo_3_0.html)                                                             | [lemma_wtb](https://nlp.johnsnowlabs.com/2022/03/31/lemma_wtb_wo_3_0.html)                                                                         | Lemmatization          | LemmatizerModel                  |
+| cop        | [cop.lemma.scriptorium](https://nlp.johnsnowlabs.com/2022/03/31/lemma_scriptorium_cop_3_0.html)                                           | [lemma_scriptorium](https://nlp.johnsnowlabs.com/2022/03/31/lemma_scriptorium_cop_3_0.html)                                                        | Lemmatization          | LemmatizerModel                  |
+| ru         | [ru.lemma.syntagrus](https://nlp.johnsnowlabs.com/2022/03/31/lemma_syntagrus_ru_3_0.html)                                                 | [lemma_syntagrus](https://nlp.johnsnowlabs.com/2022/03/31/lemma_syntagrus_ru_3_0.html)                                                             | Lemmatization          | LemmatizerModel                  |
+| ru         | [ru.lemma.taiga](https://nlp.johnsnowlabs.com/2022/03/31/lemma_taiga_ru_3_0.html)                                                         | [lemma_taiga](https://nlp.johnsnowlabs.com/2022/03/31/lemma_taiga_ru_3_0.html)                                                                     | Lemmatization          | LemmatizerModel                  |
+| fr         | [fr.lemma.sequoia](https://nlp.johnsnowlabs.com/2022/03/31/lemma_sequoia_fr_3_0.html)                                                     | [lemma_sequoia](https://nlp.johnsnowlabs.com/2022/03/31/lemma_sequoia_fr_3_0.html)                                                                 | Lemmatization          | LemmatizerModel                  |
+| la         | [la.lemma.udante](https://nlp.johnsnowlabs.com/2022/03/31/lemma_udante_la_3_0.html)                                                       | [lemma_udante](https://nlp.johnsnowlabs.com/2022/03/31/lemma_udante_la_3_0.html)                                                                   | Lemmatization          | LemmatizerModel                  |
+| ro         | [ro.lemma.simonero](https://nlp.johnsnowlabs.com/2022/03/31/lemma_simonero_ro_3_0.html)                                                   | [lemma_simonero](https://nlp.johnsnowlabs.com/2022/03/31/lemma_simonero_ro_3_0.html)                                                               | Lemmatization          | LemmatizerModel                  |
+| it         | [it.lemma.vit](https://nlp.johnsnowlabs.com/2022/03/31/lemma_vit_it_3_0.html)                                                             | [lemma_vit](https://nlp.johnsnowlabs.com/2022/03/31/lemma_vit_it_3_0.html)                                                                         | Lemmatization          | LemmatizerModel                  |
+| hr         | [hr.lemma.set](https://nlp.johnsnowlabs.com/2022/03/31/lemma_set_hr_3_0.html)                                                             | [lemma_set](https://nlp.johnsnowlabs.com/2022/03/31/lemma_set_hr_3_0.html)                                                                         | Lemmatization          | LemmatizerModel                  |
+| fa         | [fa.lemma.seraji](https://nlp.johnsnowlabs.com/2022/03/31/lemma_seraji_fa_3_0.html)                                                       | [lemma_seraji](https://nlp.johnsnowlabs.com/2022/03/31/lemma_seraji_fa_3_0.html)                                                                   | Lemmatization          | LemmatizerModel                  |
+| tr         | [tr.lemma.tourism](https://nlp.johnsnowlabs.com/2022/03/31/lemma_tourism_tr_3_0.html)                                                     | [lemma_tourism](https://nlp.johnsnowlabs.com/2022/03/31/lemma_tourism_tr_3_0.html)                                                                 | Lemmatization          | LemmatizerModel                  |
+| ta         | [ta.lemma.ttb](https://nlp.johnsnowlabs.com/2022/03/31/lemma_ttb_ta_3_0.html)                                                             | [lemma_ttb](https://nlp.johnsnowlabs.com/2022/03/31/lemma_ttb_ta_3_0.html)                                                                         | Lemmatization          | LemmatizerModel                  |
+| sl         | [sl.lemma.ssj](https://nlp.johnsnowlabs.com/2022/03/31/lemma_ssj_sl_3_0.html)                                                             | [lemma_ssj](https://nlp.johnsnowlabs.com/2022/03/31/lemma_ssj_sl_3_0.html)                                                                         | Lemmatization          | LemmatizerModel                  |
+| sv         | [sv.lemma.talbanken](https://nlp.johnsnowlabs.com/2022/03/31/lemma_talbanken_sv_3_0.html)                                                 | [lemma_talbanken](https://nlp.johnsnowlabs.com/2022/03/31/lemma_talbanken_sv_3_0.html)                                                             | Lemmatization          | LemmatizerModel                  |
+| uk         | [uk.lemma.iu](https://nlp.johnsnowlabs.com/2022/03/31/lemma_iu_uk_3_0.html)                                                               | [lemma_iu](https://nlp.johnsnowlabs.com/2022/03/31/lemma_iu_uk_3_0.html)                                                                           | Lemmatization          | LemmatizerModel                  |
+| te         | [te.pos](https://nlp.johnsnowlabs.com/2021/03/10/pos_mtg_te.html)                                                                         | [pos_mtg](https://nlp.johnsnowlabs.com/2021/03/10/pos_mtg_te.html)                                                                                 | Part of Speech Tagging | PerceptronModel                  |
+| te         | [te.pos](https://nlp.johnsnowlabs.com/2022/04/01/pos_mtg_te_3_0.html)                                                                     | [pos_mtg](https://nlp.johnsnowlabs.com/2022/04/01/pos_mtg_te_3_0.html)                                                                             | Part of Speech Tagging | PerceptronModel                  |
+| ta         | [ta.pos](https://nlp.johnsnowlabs.com/2021/03/10/pos_ttb_ta.html)                                                                         | [pos_ttb](https://nlp.johnsnowlabs.com/2021/03/10/pos_ttb_ta.html)                                                                                 | Part of Speech Tagging | PerceptronModel                  |
+| ta         | [ta.pos](https://nlp.johnsnowlabs.com/2022/04/01/pos_ttb_ta_3_0.html)                                                                     | [pos_ttb](https://nlp.johnsnowlabs.com/2022/04/01/pos_ttb_ta_3_0.html)                                                                             | Part of Speech Tagging | PerceptronModel                  |
+| cs         | [cs.pos](https://nlp.johnsnowlabs.com/2020/05/04/pos_ud_pdt_cs.html)                                                                      | [pos_ud_pdt](https://nlp.johnsnowlabs.com/2020/05/04/pos_ud_pdt_cs.html)                                                                           | Part of Speech Tagging | PerceptronModel                  |
+| cs         | [cs.pos](https://nlp.johnsnowlabs.com/2021/03/08/pos_ud_pdt_cs.html)                                                                      | [pos_ud_pdt](https://nlp.johnsnowlabs.com/2021/03/08/pos_ud_pdt_cs.html)                                                                           | Part of Speech Tagging | PerceptronModel                  |
+| bg         | [bg.pos](https://nlp.johnsnowlabs.com/2021/03/23/pos_btb_bg.html)                                                                         | [pos_btb](https://nlp.johnsnowlabs.com/2021/03/23/pos_btb_bg.html)                                                                                 | Part of Speech Tagging | PerceptronModel                  |
+| bg         | [bg.pos](https://nlp.johnsnowlabs.com/2022/04/01/pos_btb_bg_3_0.html)                                                                     | [pos_btb](https://nlp.johnsnowlabs.com/2022/04/01/pos_btb_bg_3_0.html)                                                                             | Part of Speech Tagging | PerceptronModel                  |
+| af         | [af.pos](https://nlp.johnsnowlabs.com/2021/03/16/pos_afribooms_af.html)                                                                   | [pos_afribooms](https://nlp.johnsnowlabs.com/2021/03/16/pos_afribooms_af.html)                                                                     | Part of Speech Tagging | PerceptronModel                  |
+| af         | [af.pos](https://nlp.johnsnowlabs.com/2021/04/06/pos_afribooms_af.html)                                                                   | [pos_afribooms](https://nlp.johnsnowlabs.com/2021/04/06/pos_afribooms_af.html)                                                                     | Part of Speech Tagging | PerceptronModel                  |
+| af         | [af.pos](https://nlp.johnsnowlabs.com/2022/04/01/pos_afribooms_af_3_0.html)                                                               | [pos_afribooms](https://nlp.johnsnowlabs.com/2022/04/01/pos_afribooms_af_3_0.html)                                                                 | Part of Speech Tagging | PerceptronModel                  |
+| es         | [es.pos.gsd](https://nlp.johnsnowlabs.com/2022/04/01/pos_gsd_es_3_0.html)                                                                 | [pos_gsd](https://nlp.johnsnowlabs.com/2022/04/01/pos_gsd_es_3_0.html)                                                                             | Part of Speech Tagging | PerceptronModel                  |
+| en         | [en.pos.ewt](https://nlp.johnsnowlabs.com/2022/04/01/pos_ewt_en_3_0.html)                                                                 | [pos_ewt](https://nlp.johnsnowlabs.com/2022/04/01/pos_ewt_en_3_0.html)                                                                             | Part of Speech Tagging | PerceptronModel                  |
+| gd         | [gd.pos.arcosg](https://nlp.johnsnowlabs.com/2022/04/01/pos_arcosg_gd_3_0.html)                                                           | [pos_arcosg](https://nlp.johnsnowlabs.com/2022/04/01/pos_arcosg_gd_3_0.html)                                                                       | Part of Speech Tagging | PerceptronModel                  |
+| el         | [el.pos.gdt](https://nlp.johnsnowlabs.com/2022/04/01/pos_gdt_el_3_0.html)                                                                 | [pos_gdt](https://nlp.johnsnowlabs.com/2022/04/01/pos_gdt_el_3_0.html)                                                                             | Part of Speech Tagging | PerceptronModel                  |
+| hy         | [hy.pos.armtdp](https://nlp.johnsnowlabs.com/2022/04/01/pos_armtdp_hy_3_0.html)                                                           | [pos_armtdp](https://nlp.johnsnowlabs.com/2022/04/01/pos_armtdp_hy_3_0.html)                                                                       | Part of Speech Tagging | PerceptronModel                  |
+| pt         | [pt.pos.bosque](https://nlp.johnsnowlabs.com/2022/04/01/pos_bosque_pt_3_0.html)                                                           | [pos_bosque](https://nlp.johnsnowlabs.com/2022/04/01/pos_bosque_pt_3_0.html)                                                                       | Part of Speech Tagging | PerceptronModel                  |
+| tr         | [tr.pos.framenet](https://nlp.johnsnowlabs.com/2022/04/01/pos_framenet_tr_3_0.html)                                                       | [pos_framenet](https://nlp.johnsnowlabs.com/2022/04/01/pos_framenet_tr_3_0.html)                                                                   | Part of Speech Tagging | PerceptronModel                  |
+| cs         | [cs.pos.cltt](https://nlp.johnsnowlabs.com/2022/04/01/pos_cltt_cs_3_0.html)                                                               | [pos_cltt](https://nlp.johnsnowlabs.com/2022/04/01/pos_cltt_cs_3_0.html)                                                                           | Part of Speech Tagging | PerceptronModel                  |
+| eu         | [eu.pos.bdt](https://nlp.johnsnowlabs.com/2022/04/01/pos_bdt_eu_3_0.html)                                                                 | [pos_bdt](https://nlp.johnsnowlabs.com/2022/04/01/pos_bdt_eu_3_0.html)                                                                             | Part of Speech Tagging | PerceptronModel                  |
+| et         | [et.pos.ewt](https://nlp.johnsnowlabs.com/2022/04/01/pos_ewt_et_3_0.html)                                                                 | [pos_ewt](https://nlp.johnsnowlabs.com/2022/04/01/pos_ewt_et_3_0.html)                                                                             | Part of Speech Tagging | PerceptronModel                  |
+| da         | [da.pos.ddt](https://nlp.johnsnowlabs.com/2022/04/01/pos_ddt_da_3_0.html)                                                                 | [pos_ddt](https://nlp.johnsnowlabs.com/2022/04/01/pos_ddt_da_3_0.html)                                                                             | Part of Speech Tagging | PerceptronModel                  |
+| cy         | [cy.pos.ccg](https://nlp.johnsnowlabs.com/2022/04/01/pos_ccg_cy_3_0.html)                                                                 | [pos_ccg](https://nlp.johnsnowlabs.com/2022/04/01/pos_ccg_cy_3_0.html)                                                                             | Part of Speech Tagging | PerceptronModel                  |
+| lt         | [lt.pos.alksnis](https://nlp.johnsnowlabs.com/2022/04/01/pos_alksnis_lt_3_0.html)                                                         | [pos_alksnis](https://nlp.johnsnowlabs.com/2022/04/01/pos_alksnis_lt_3_0.html)                                                                     | Part of Speech Tagging | PerceptronModel                  |
+| nl         | [nl.pos.alpino](https://nlp.johnsnowlabs.com/2022/04/01/pos_alpino_nl_3_0.html)                                                           | [pos_alpino](https://nlp.johnsnowlabs.com/2022/04/01/pos_alpino_nl_3_0.html)                                                                       | Part of Speech Tagging | PerceptronModel                  |
+| fi         | [fi.pos.ftb](https://nlp.johnsnowlabs.com/2022/04/01/pos_ftb_fi_3_0.html)                                                                 | [pos_ftb](https://nlp.johnsnowlabs.com/2022/04/01/pos_ftb_fi_3_0.html)                                                                             | Part of Speech Tagging | PerceptronModel                  |
+| tr         | [tr.pos.atis](https://nlp.johnsnowlabs.com/2022/04/01/pos_atis_tr_3_0.html)                                                               | [pos_atis](https://nlp.johnsnowlabs.com/2022/04/01/pos_atis_tr_3_0.html)                                                                           | Part of Speech Tagging | PerceptronModel                  |
+| ca         | [ca.pos.ancora](https://nlp.johnsnowlabs.com/2022/04/01/pos_ancora_ca_3_0.html)                                                           | [pos_ancora](https://nlp.johnsnowlabs.com/2022/04/01/pos_ancora_ca_3_0.html)                                                                       | Part of Speech Tagging | PerceptronModel                  |
+| gl         | [gl.pos.ctg](https://nlp.johnsnowlabs.com/2022/04/01/pos_ctg_gl_3_0.html)                                                                 | [pos_ctg](https://nlp.johnsnowlabs.com/2022/04/01/pos_ctg_gl_3_0.html)                                                                             | Part of Speech Tagging | PerceptronModel                  |
+| de         | [de.pos.gsd](https://nlp.johnsnowlabs.com/2022/04/01/pos_gsd_de_3_0.html)                                                                 | [pos_gsd](https://nlp.johnsnowlabs.com/2022/04/01/pos_gsd_de_3_0.html)                                                                             | Part of Speech Tagging | PerceptronModel                  |
+| fr         | [fr.pos.gsd](https://nlp.johnsnowlabs.com/2022/04/01/pos_gsd_fr_3_0.html)                                                                 | [pos_gsd](https://nlp.johnsnowlabs.com/2022/04/01/pos_gsd_fr_3_0.html)                                                                             | Part of Speech Tagging | PerceptronModel                  |
+| ja         | [ja.pos.gsdluw](https://nlp.johnsnowlabs.com/2022/04/01/pos_gsdluw_ja_3_0.html)                                                           | [pos_gsdluw](https://nlp.johnsnowlabs.com/2022/04/01/pos_gsdluw_ja_3_0.html)                                                                       | Part of Speech Tagging | PerceptronModel                  |
+| it         | [it.pos.isdt](https://nlp.johnsnowlabs.com/2022/04/01/pos_isdt_it_3_0.html)                                                               | [pos_isdt](https://nlp.johnsnowlabs.com/2022/04/01/pos_isdt_it_3_0.html)                                                                           | Part of Speech Tagging | PerceptronModel                  |
+| be         | [be.pos.hse](https://nlp.johnsnowlabs.com/2022/04/01/pos_hse_be_3_0.html)                                                                 | [pos_hse](https://nlp.johnsnowlabs.com/2022/04/01/pos_hse_be_3_0.html)                                                                             | Part of Speech Tagging | PerceptronModel                  |
+| nl         | [nl.pos.lassysmall](https://nlp.johnsnowlabs.com/2022/04/01/pos_lassysmall_nl_3_0.html)                                                   | [pos_lassysmall](https://nlp.johnsnowlabs.com/2022/04/01/pos_lassysmall_nl_3_0.html)                                                               | Part of Speech Tagging | PerceptronModel                  |
+| sv         | [sv.pos.lines](https://nlp.johnsnowlabs.com/2022/04/01/pos_lines_sv_3_0.html)                                                             | [pos_lines](https://nlp.johnsnowlabs.com/2022/04/01/pos_lines_sv_3_0.html)                                                                         | Part of Speech Tagging | PerceptronModel                  |
+| uk         | [uk.pos.iu](https://nlp.johnsnowlabs.com/2022/04/01/pos_iu_uk_3_0.html)                                                                   | [pos_iu](https://nlp.johnsnowlabs.com/2022/04/01/pos_iu_uk_3_0.html)                                                                               | Part of Speech Tagging | PerceptronModel                  |
+| fr         | [fr.pos.parisstories](https://nlp.johnsnowlabs.com/2022/04/01/pos_parisstories_fr_3_0.html)                                               | [pos_parisstories](https://nlp.johnsnowlabs.com/2022/04/01/pos_parisstories_fr_3_0.html)                                                           | Part of Speech Tagging | PerceptronModel                  |
+| en         | [en.pos.partut](https://nlp.johnsnowlabs.com/2022/04/01/pos_partut_en_3_0.html)                                                           | [pos_partut](https://nlp.johnsnowlabs.com/2022/04/01/pos_partut_en_3_0.html)                                                                       | Part of Speech Tagging | PerceptronModel                  |
+| la         | [la.pos.ittb](https://nlp.johnsnowlabs.com/2022/04/01/pos_ittb_la_3_0.html)                                                               | [pos_ittb](https://nlp.johnsnowlabs.com/2022/04/01/pos_ittb_la_3_0.html)                                                                           | Part of Speech Tagging | PerceptronModel                  |
+| lzh        | [lzh.pos.kyoto](https://nlp.johnsnowlabs.com/2022/04/01/pos_kyoto_lzh_3_0.html)                                                           | [pos_kyoto](https://nlp.johnsnowlabs.com/2022/04/01/pos_kyoto_lzh_3_0.html)                                                                        | Part of Speech Tagging | PerceptronModel                  |
+| id         | [id.pos.gsd](https://nlp.johnsnowlabs.com/2022/04/01/pos_gsd_id_3_0.html)                                                                 | [pos_gsd](https://nlp.johnsnowlabs.com/2022/04/01/pos_gsd_id_3_0.html)                                                                             | Part of Speech Tagging | PerceptronModel                  |
+| he         | [he.pos.htb](https://nlp.johnsnowlabs.com/2022/04/01/pos_htb_he_3_0.html)                                                                 | [pos_htb](https://nlp.johnsnowlabs.com/2022/04/01/pos_htb_he_3_0.html)                                                                             | Part of Speech Tagging | PerceptronModel                  |
+| tr         | [tr.pos.kenet](https://nlp.johnsnowlabs.com/2022/04/01/pos_kenet_tr_3_0.html)                                                             | [pos_kenet](https://nlp.johnsnowlabs.com/2022/04/01/pos_kenet_tr_3_0.html)                                                                         | Part of Speech Tagging | PerceptronModel                  |
+| de         | [de.pos.hdt](https://nlp.johnsnowlabs.com/2022/04/01/pos_hdt_de_3_0.html)                                                                 | [pos_hdt](https://nlp.johnsnowlabs.com/2022/04/01/pos_hdt_de_3_0.html)                                                                             | Part of Speech Tagging | PerceptronModel                  |
+| qhe        | [qhe.pos.hiencs](https://nlp.johnsnowlabs.com/2022/04/01/pos_hiencs_qhe_3_0.html)                                                         | [pos_hiencs](https://nlp.johnsnowlabs.com/2022/04/01/pos_hiencs_qhe_3_0.html)                                                                      | Part of Speech Tagging | PerceptronModel                  |
+| la         | [la.pos.llct](https://nlp.johnsnowlabs.com/2022/04/01/pos_llct_la_3_0.html)                                                               | [pos_llct](https://nlp.johnsnowlabs.com/2022/04/01/pos_llct_la_3_0.html)                                                                           | Part of Speech Tagging | PerceptronModel                  |
+| en         | [en.pos.lines](https://nlp.johnsnowlabs.com/2022/04/01/pos_lines_en_3_0.html)                                                             | [pos_lines](https://nlp.johnsnowlabs.com/2022/04/01/pos_lines_en_3_0.html)                                                                         | Part of Speech Tagging | PerceptronModel                  |
+| pcm        | [pcm.pos.nsc](https://nlp.johnsnowlabs.com/2022/04/01/pos_nsc_pcm_3_0.html)                                                               | [pos_nsc](https://nlp.johnsnowlabs.com/2022/04/01/pos_nsc_pcm_3_0.html)                                                                            | Part of Speech Tagging | PerceptronModel                  |
+| ko         | [ko.pos.kaist](https://nlp.johnsnowlabs.com/2022/04/01/pos_kaist_ko_3_0.html)                                                             | [pos_kaist](https://nlp.johnsnowlabs.com/2022/04/01/pos_kaist_ko_3_0.html)                                                                         | Part of Speech Tagging | PerceptronModel                  |
+| pt         | [pt.pos.gsd](https://nlp.johnsnowlabs.com/2022/04/01/pos_gsd_pt_3_0.html)                                                                 | [pos_gsd](https://nlp.johnsnowlabs.com/2022/04/01/pos_gsd_pt_3_0.html)                                                                             | Part of Speech Tagging | PerceptronModel                  |
+| hi         | [hi.pos.hdtb](https://nlp.johnsnowlabs.com/2022/04/01/pos_hdtb_hi_3_0.html)                                                               | [pos_hdtb](https://nlp.johnsnowlabs.com/2022/04/01/pos_hdtb_hi_3_0.html)                                                                           | Part of Speech Tagging | PerceptronModel                  |
+| is         | [is.pos.modern](https://nlp.johnsnowlabs.com/2022/04/01/pos_modern_is_3_0.html)                                                           | [pos_modern](https://nlp.johnsnowlabs.com/2022/04/01/pos_modern_is_3_0.html)                                                                       | Part of Speech Tagging | PerceptronModel                  |
+| en         | [en.pos.gum](https://nlp.johnsnowlabs.com/2022/04/01/pos_gum_en_3_0.html)                                                                 | [pos_gum](https://nlp.johnsnowlabs.com/2022/04/01/pos_gum_en_3_0.html)                                                                             | Part of Speech Tagging | PerceptronModel                  |
+| fro        | [fro.pos.srcmf](https://nlp.johnsnowlabs.com/2022/04/01/pos_srcmf_fro_3_0.html)                                                           | [pos_srcmf](https://nlp.johnsnowlabs.com/2022/04/01/pos_srcmf_fro_3_0.html)                                                                        | Part of Speech Tagging | PerceptronModel                  |
+| sl         | [sl.pos.ssj](https://nlp.johnsnowlabs.com/2022/04/01/pos_ssj_sl_3_0.html)                                                                 | [pos_ssj](https://nlp.johnsnowlabs.com/2022/04/01/pos_ssj_sl_3_0.html)                                                                             | Part of Speech Tagging | PerceptronModel                  |
+| ru         | [ru.pos.taiga](https://nlp.johnsnowlabs.com/2022/04/01/pos_taiga_ru_3_0.html)                                                             | [pos_taiga](https://nlp.johnsnowlabs.com/2022/04/01/pos_taiga_ru_3_0.html)                                                                         | Part of Speech Tagging | PerceptronModel                  |
+| grc        | [grc.pos.perseus](https://nlp.johnsnowlabs.com/2022/04/01/pos_perseus_grc_3_0.html)                                                       | [pos_perseus](https://nlp.johnsnowlabs.com/2022/04/01/pos_perseus_grc_3_0.html)                                                                    | Part of Speech Tagging | PerceptronModel                  |
+| sr         | [sr.pos.set](https://nlp.johnsnowlabs.com/2022/04/01/pos_set_sr_3_0.html)                                                                 | [pos_set](https://nlp.johnsnowlabs.com/2022/04/01/pos_set_sr_3_0.html)                                                                             | Part of Speech Tagging | PerceptronModel                  |
+| orv        | [orv.pos.rnc](https://nlp.johnsnowlabs.com/2022/04/01/pos_rnc_orv_3_0.html)                                                               | [pos_rnc](https://nlp.johnsnowlabs.com/2022/04/01/pos_rnc_orv_3_0.html)                                                                            | Part of Speech Tagging | PerceptronModel                  |
+| ug         | [ug.pos.udt](https://nlp.johnsnowlabs.com/2022/04/01/pos_udt_ug_3_0.html)                                                                 | [pos_udt](https://nlp.johnsnowlabs.com/2022/04/01/pos_udt_ug_3_0.html)                                                                             | Part of Speech Tagging | PerceptronModel                  |
+| got        | [got.pos.proiel](https://nlp.johnsnowlabs.com/2022/04/01/pos_proiel_got_3_0.html)                                                         | [pos_proiel](https://nlp.johnsnowlabs.com/2022/04/01/pos_proiel_got_3_0.html)                                                                      | Part of Speech Tagging | PerceptronModel                  |
+| sv         | [sv.pos.talbanken](https://nlp.johnsnowlabs.com/2021/03/23/pos_talbanken_sv.html)                                                         | [pos_talbanken](https://nlp.johnsnowlabs.com/2021/03/23/pos_talbanken_sv.html)                                                                     | Part of Speech Tagging | PerceptronModel                  |
+| sv         | [sv.pos.talbanken](https://nlp.johnsnowlabs.com/2022/04/01/pos_talbanken_sv_3_0.html)                                                     | [pos_talbanken](https://nlp.johnsnowlabs.com/2022/04/01/pos_talbanken_sv_3_0.html)                                                                 | Part of Speech Tagging | PerceptronModel                  |
+| pl         | [pl.pos.pdb](https://nlp.johnsnowlabs.com/2022/04/01/pos_pdb_pl_3_0.html)                                                                 | [pos_pdb](https://nlp.johnsnowlabs.com/2022/04/01/pos_pdb_pl_3_0.html)                                                                             | Part of Speech Tagging | PerceptronModel                  |
+| fa         | [fa.pos.seraji](https://nlp.johnsnowlabs.com/2022/04/01/pos_seraji_fa_3_0.html)                                                           | [pos_seraji](https://nlp.johnsnowlabs.com/2022/04/01/pos_seraji_fa_3_0.html)                                                                       | Part of Speech Tagging | PerceptronModel                  |
+| tr         | [tr.pos.penn](https://nlp.johnsnowlabs.com/2022/04/01/pos_penn_tr_3_0.html)                                                               | [pos_penn](https://nlp.johnsnowlabs.com/2022/04/01/pos_penn_tr_3_0.html)                                                                           | Part of Speech Tagging | PerceptronModel                  |
+| hu         | [hu.pos.szeged](https://nlp.johnsnowlabs.com/2022/04/01/pos_szeged_hu_3_0.html)                                                           | [pos_szeged](https://nlp.johnsnowlabs.com/2022/04/01/pos_szeged_hu_3_0.html)                                                                       | Part of Speech Tagging | PerceptronModel                  |
+| sk         | [sk.pos.snk](https://nlp.johnsnowlabs.com/2021/03/23/pos_snk_sk.html)                                                                     | [pos_snk](https://nlp.johnsnowlabs.com/2021/03/23/pos_snk_sk.html)                                                                                 | Part of Speech Tagging | PerceptronModel                  |
+| sk         | [sk.pos.snk](https://nlp.johnsnowlabs.com/2022/04/01/pos_snk_sk_3_0.html)                                                                 | [pos_snk](https://nlp.johnsnowlabs.com/2022/04/01/pos_snk_sk_3_0.html)                                                                             | Part of Speech Tagging | PerceptronModel                  |
+| ro         | [ro.pos.simonero](https://nlp.johnsnowlabs.com/2022/04/01/pos_simonero_ro_3_0.html)                                                       | [pos_simonero](https://nlp.johnsnowlabs.com/2022/04/01/pos_simonero_ro_3_0.html)                                                                   | Part of Speech Tagging | PerceptronModel                  |
+| it         | [it.pos.postwita](https://nlp.johnsnowlabs.com/2022/04/01/pos_postwita_it_3_0.html)                                                       | [pos_postwita](https://nlp.johnsnowlabs.com/2022/04/01/pos_postwita_it_3_0.html)                                                                   | Part of Speech Tagging | PerceptronModel                  |
+| gl         | [gl.pos.treegal](https://nlp.johnsnowlabs.com/2022/04/01/pos_treegal_gl_3_0.html)                                                         | [pos_treegal](https://nlp.johnsnowlabs.com/2022/04/01/pos_treegal_gl_3_0.html)                                                                     | Part of Speech Tagging | PerceptronModel                  |
+| cs         | [cs.pos.pdt](https://nlp.johnsnowlabs.com/2022/04/01/pos_pdt_cs_3_0.html)                                                                 | [pos_pdt](https://nlp.johnsnowlabs.com/2022/04/01/pos_pdt_cs_3_0.html)                                                                             | Part of Speech Tagging | PerceptronModel                  |
+| ro         | [ro.pos.rrt](https://nlp.johnsnowlabs.com/2022/04/01/pos_rrt_ro_3_0.html)                                                                 | [pos_rrt](https://nlp.johnsnowlabs.com/2022/04/01/pos_rrt_ro_3_0.html)                                                                             | Part of Speech Tagging | PerceptronModel                  |
+| orv        | [orv.pos.torot](https://nlp.johnsnowlabs.com/2022/04/01/pos_torot_orv_3_0.html)                                                           | [pos_torot](https://nlp.johnsnowlabs.com/2022/04/01/pos_torot_orv_3_0.html)                                                                        | Part of Speech Tagging | PerceptronModel                  |
+| hr         | [hr.pos.set](https://nlp.johnsnowlabs.com/2022/04/01/pos_set_hr_3_0.html)                                                                 | [pos_set](https://nlp.johnsnowlabs.com/2022/04/01/pos_set_hr_3_0.html)                                                                             | Part of Speech Tagging | PerceptronModel                  |
+| la         | [la.pos.proiel](https://nlp.johnsnowlabs.com/2022/04/01/pos_proiel_la_3_0.html)                                                           | [pos_proiel](https://nlp.johnsnowlabs.com/2022/04/01/pos_proiel_la_3_0.html)                                                                       | Part of Speech Tagging | PerceptronModel                  |
+| fr         | [fr.pos.partut](https://nlp.johnsnowlabs.com/2022/04/01/pos_partut_fr_3_0.html)                                                           | [pos_partut](https://nlp.johnsnowlabs.com/2022/04/01/pos_partut_fr_3_0.html)                                                                       | Part of Speech Tagging | PerceptronModel                  |
+| it         | [it.pos.vit](https://nlp.johnsnowlabs.com/2022/04/01/pos_vit_it_3_0.html)                                                                 | [pos_vit](https://nlp.johnsnowlabs.com/2022/04/01/pos_vit_it_3_0.html)                                                                             | Part of Speech Tagging | PerceptronModel                  |
+
+#### Bugfixes
+
+- Improved Error Messages and integrated detection and stopping of endless loops which could occur during construction
+  of nlu pipelines
+
+
+
+#### Additional NLU resources
+* [140+ NLU Tutorials](https://nlu.johnsnowlabs.com/docs/en/notebooks)
+* [NLU in Action](https://nlp.johnsnowlabs.com/demo)
+* [Streamlit visualizations docs](https://nlu.johnsnowlabs.com/docs/en/streamlit_viz_examples)
+* The complete list of all 4000+ models & pipelines in 200+ languages is available on [Models Hub](https://nlp.johnsnowlabs.com/models).
+* [Spark NLP publications](https://medium.com/spark-nlp)
+* [NLU documentation](https://nlu.johnsnowlabs.com/docs/en/install)
+* [Discussions](https://github.com/JohnSnowLabs/spark-nlp/discussions) Engage with other community members, share ideas, and show off how you use Spark NLP and NLU!
+
+
+
+#### Install NLU in 1 line!
+
+```
+* Install NLU on Google Colab : !wget https://setup.johnsnowlabs.com/nlu/colab.sh  -O - | bash
+* Install NLU on Kaggle       : !wget https://setup.johnsnowlabs.com/nlu/kaggle.sh  -O - | bash
+* Install NLU via Pip         : ! pip install nlu pyspark streamlit==0.80.0`
+```
+
+
+
+## NLU Version 3.4.2
+
+#### Multilingual DeBERTa Transformer Embeddings for 100+ Languages, Spanish Deidentification and NER for Randomized Clinical Trials - John Snow Labs NLU 3.4.2
+
+We are very excited NLU 3.4.2 has been released.
+On the open source side we have 5 new DeBERTa Transformer models for English and Multi-Lingual for 100+ languages.
+DeBERTa improves over BERT and RoBERTa by introducing two novel techniques.
+
+For the healthcare side we have new NER models for randomized clinical trials (RCT) which can detect entities of type
+`BACKGROUND`, `CONCLUSIONS`, `METHODS`, `OBJECTIVE`, `RESULTS` from clinical text.
+Additionally, new Spanish Deidentification NER models for entities like `STATE`, `PATIENT`, `DEVICE`, `COUNTRY`, `ZIP`, `PHONE`, `HOSPITAL` and many more.
+
+#### New Open Source Models
+
+Integrates models from [Spark NLP 3.4.2](https://github.com/JohnSnowLabs/spark-nlp/releases/tag/3.4.2) release
+
+| Language   | NLU Reference                                                                                       | Spark NLP  Reference                                                                       | Task       | Annotator Class   |
+|:-----------|:----------------------------------------------------------------------------------------------------|:-------------------------------------------------------------------------------------------|:-----------|:------------------|
+| en         | [en.embed.deberta_v3_xsmall](https://nlp.johnsnowlabs.com/2022/03/10/deberta_v3_xsmall_en_3_0.html) | [deberta_v3_xsmall](https://nlp.johnsnowlabs.com/2022/03/10/deberta_v3_xsmall_en_3_0.html) | Embeddings | DeBertaEmbeddings |
+| en         | [en.embed.deberta_v3_small](https://nlp.johnsnowlabs.com/2022/03/10/deberta_v3_small_en_3_0.html)   | [deberta_v3_small](https://nlp.johnsnowlabs.com/2022/03/10/deberta_v3_small_en_3_0.html)   | Embeddings | DeBertaEmbeddings |
+| en         | [en.embed.deberta_v3_base](https://nlp.johnsnowlabs.com/2022/03/10/deberta_v3_base_en_3_0.html)     | [deberta_v3_base](https://nlp.johnsnowlabs.com/2022/03/10/deberta_v3_base_en_3_0.html)     | Embeddings | DeBertaEmbeddings |
+| en         | [en.embed.deberta_v3_large](https://nlp.johnsnowlabs.com/2022/03/10/deberta_v3_large_en_3_0.html)   | [deberta_v3_large](https://nlp.johnsnowlabs.com/2022/03/10/deberta_v3_large_en_3_0.html)   | Embeddings | DeBertaEmbeddings |
+| xx         | [xx.embed.mdeberta_v3_base](https://nlp.johnsnowlabs.com/2022/03/10/mdeberta_v3_base_xx_3_0.html)   | [mdeberta_v3_base](https://nlp.johnsnowlabs.com/2022/03/10/mdeberta_v3_base_xx_3_0.html)   | Embeddings | DeBertaEmbeddings |
+
+
+#### New Healthcare Models
+
+Integrates models from [Spark NLP For Healthcare 3.4.2](https://nlp.johnsnowlabs.com/docs/en/licensed_release_notes#342) release
+
+| Language   | NLU Reference                                                                                                             | Spark NLP  Reference                                                                                                             | Task                                              | Annotator Class                      |
+|:-----------|:--------------------------------------------------------------------------------------------------------------------------|:---------------------------------------------------------------------------------------------------------------------------------|:--------------------------------------------------|:-------------------------------------|
+| en         | [en.med_ner.clinical_trials](https://nlp.johnsnowlabs.com/2022/03/01/bert_sequence_classifier_rct_biobert_en_2_4.html)    | [bert_sequence_classifier_rct_biobert](https://nlp.johnsnowlabs.com/2022/03/01/bert_sequence_classifier_rct_biobert_en_2_4.html) | Text Classification                               | MedicalBertForSequenceClassification |
+| es         | [es.med_ner.deid.generic.roberta](https://nlp.johnsnowlabs.com/2022/02/15/ner_deid_generic_roberta_augmented_es.html)     | [ner_deid_generic_roberta_augmented](https://nlp.johnsnowlabs.com/2022/02/15/ner_deid_generic_roberta_augmented_es.html)         | De-identification                                 | MedicalNerModel                      |
+| es         | [es.med_ner.deid.subentity.roberta](https://nlp.johnsnowlabs.com/2022/02/15/ner_deid_subentity_roberta_augmented_es.html) | [ner_deid_subentity_roberta_augmented](https://nlp.johnsnowlabs.com/2022/02/15/ner_deid_subentity_roberta_augmented_es.html)     | De-identification                                 | MedicalNerModel                      |
+| en         | [en.med_ner.deid.generic_augmented](https://nlp.johnsnowlabs.com/2021/06/30/ner_deid_generic_augmented_en.html)           | [ner_deid_generic_augmented](https://nlp.johnsnowlabs.com/2021/06/30/ner_deid_generic_augmented_en.html)                         | ['Named Entity Recognition', 'De-identification'] | MedicalNerModel                      |
+| en         | [en.med_ner.deid.subentity_augmented](https://nlp.johnsnowlabs.com/2021/06/01/ner_deid_subentity_augmented_en.html)       | [ner_deid_subentity_augmented](https://nlp.johnsnowlabs.com/2021/06/01/ner_deid_subentity_augmented_en.html)                     | ['Named Entity Recognition', 'De-identification'] | MedicalNerModel                      |
+
+
+#### Additional NLU resources
+* [140+ NLU Tutorials](https://nlu.johnsnowlabs.com/docs/en/notebooks)
+* [NLU in Action](https://nlp.johnsnowlabs.com/demo)
+* [Streamlit visualizations docs](https://nlu.johnsnowlabs.com/docs/en/streamlit_viz_examples)
+* The complete list of all 4000+ models & pipelines in 200+ languages is available on [Models Hub](https://nlp.johnsnowlabs.com/models).
+* [Spark NLP publications](https://medium.com/spark-nlp)
+* [NLU documentation](https://nlu.johnsnowlabs.com/docs/en/install)
+* [Discussions](https://github.com/JohnSnowLabs/spark-nlp/discussions) Engage with other community members, share ideas, and show off how you use Spark NLP and NLU!
+
+
+#### Install NLU in 1 line!
+
+```
+* Install NLU on Google Colab : !wget https://setup.johnsnowlabs.com/nlu/colab.sh  -O - | bash
+* Install NLU on Kaggle       : !wget https://setup.johnsnowlabs.com/nlu/kaggle.sh  -O - | bash
+* Install NLU via Pip         : ! pip install nlu pyspark streamlit==0.80.0`
+```
+
+
+
+
+
+## NLU Version 3.4.1
+
+#### 22 New models for 23 languages including various African and Indian languages, Medical Spanish models and more in NLU 3.4.1
+
+
+We are very excited to announce the release of NLU 3.4.1
+which features 22 new models for 23 languages where the
+The open-source side covers new Embeddings for Vietnamese and English Clinical domains and Multilingual Embeddings for  12  Indian and 9 African Languages.
+Additionally, there are new Sequence classifiers for Multilingual NER for 9 African languages,
+German Sentiment Classifiers and English Emotion and Typo Classifiers.
+The healthcare side covers Medical Spanish models, Classifiers for Drugs, Gender, the Pico Framework, and Relation Extractors for Adverse Drug events and Temporality.
+Finally, Spark 3.2.X is now supported and bugs related to Databricks environments have been fixed.
+
+
+
+#### General NLU Improvements
+- Support for Spark 3.2.x
+
+
+#### New Open Source Models
+Based on the amazing [3.4.1 Spark NLP  Release](https://github.com/JohnSnowLabs/spark-nlp/releases/tag/3.4.1)
+integrates new Multilingual embeddings for 12 Major Indian languages,
+embeddings for Vietnamese, French, and English Clinical domains.
+Additionally new Multilingual NER model for 9 African languages, English 6 Class Emotion classifier and Typo detectors.
+
+
+#### New Embeddings
+-  **Multilingual ALBERT - IndicBert** model pretrained exclusively on 12 major Indian languages with size smaller and performance on par or better than competing models. Languages covered are Assamese, Bengali, English, Gujarati, Hindi, Kannada, Malayalam, Marathi, Oriya, Punjabi, Tamil, Telugu.
+   Available with  [xx.embed.albert.indic](https://nlp.johnsnowlabs.com/2022/01/26/albert_indic_xx.html)
+- **Fine tuned Vietnamese DistilBERT** Base cased embeddings. Available with [vi.embed.distilbert.cased](https://nlp.johnsnowlabs.com/2022/01/13/distilbert_base_cased_vi.html)
+- **Clinical Longformer Embeddings** which consistently out-performs ClinicalBERT for various downstream
+  tasks and on datasets. Available with [en.embed.longformer.clinical](https://nlp.johnsnowlabs.com/2022/02/08/clinical_longformer_en.html)
+- **Fine tuned Static French Word2Vec Embeddings** in 3 sizes, 200d, 300d and 100d. Available with [fr.embed.word2vec_wiki_1000](https://nlp.johnsnowlabs.com/2022/01/26/word2vec_wiki_1000_fr.html), [fr.embed.word2vec_wac_200](https://nlp.johnsnowlabs.com/2022/02/01/word2vec_wac_200_fr.html) and [fr.embed.w2v_cc_300d](https://nlp.johnsnowlabs.com/2022/02/03/w2v_cc_300d_fr.html)
+
+#### New Transformer based Token and Sequence Classifiers
+- **Multilingual NER Distilbert** model which detects entities `DATE`, `LOC`, `ORG`, `PER` for the languages 9 African languages (Hausa, Igbo, Kinyarwanda, Luganda, Nigerian, Pidgin, Swahili, Wolof, and Yorùbá).
+  Available with [xx.ner.masakhaner.distilbert](https://nlp.johnsnowlabs.com/2021/12/06/xlm_roberta_large_token_classifier_masakhaner_xx.html)
+- **German News Sentiment Classifier** available with [de.classify.news_sentiment.bert](https://nlp.johnsnowlabs.com/2022/01/18/bert_sequence_classifier_news_sentiment_de.html)
+- **English Emotion Classifier for 6 Classes** available with  [en.classify.emotion.bert](https://nlp.johnsnowlabs.com/2022/01/14/bert_sequence_classifier_emotion_en.html)
+- **English Typo Detector **: available with [en.classify.typos.distilbert](https://nlp.johnsnowlabs.com/2022/01/19/distilbert_token_classifier_typo_detector_en.html)
+
+
+| Language   | NLU Reference                                                                                                              | Spark NLP  Reference                                                                                                                           | Task                     | Annotator Class                  |
+|:-----------|:---------------------------------------------------------------------------------------------------------------------------|:-----------------------------------------------------------------------------------------------------------------------------------------------|:-------------------------|:---------------------------------|
+| xx         | [xx.embed.albert.indic](https://nlp.johnsnowlabs.com/2022/01/26/albert_indic_xx.html)                                      | [albert_indic](https://nlp.johnsnowlabs.com/2022/01/26/albert_indic_xx.html)                                                                   | Embeddings               | AlbertEmbeddings                 |
+| xx         | [xx.ner.masakhaner.distilbert](https://nlp.johnsnowlabs.com/2021/12/06/xlm_roberta_large_token_classifier_masakhaner_xx.html)         | [xlm_roberta_large_token_classifier_masakhaner](https://nlp.johnsnowlabs.com/2022/01/18/distilbert_base_token_classifier_masakhaner_xx.html) | Named Entity Recognition | DistilBertForTokenClassification |
+| en         | [en.embed.longformer.clinical](https://nlp.johnsnowlabs.com/2022/02/08/clinical_longformer_en.html)                        | [clinical_longformer](https://nlp.johnsnowlabs.com/2022/02/08/clinical_longformer_en.html)                                                     | Embeddings               | LongformerEmbeddings             |
+| en         | [en.classify.emotion.bert](https://nlp.johnsnowlabs.com/2022/01/14/bert_sequence_classifier_emotion_en.html)               | [bert_sequence_classifier_emotion](https://nlp.johnsnowlabs.com/2022/01/14/bert_sequence_classifier_emotion_en.html)                           | Text Classification      | BertForSequenceClassification    |
+| de         | [de.classify.news_sentiment.bert](https://nlp.johnsnowlabs.com/2022/01/18/bert_sequence_classifier_news_sentiment_de.html) | [bert_sequence_classifier_news_sentiment](https://nlp.johnsnowlabs.com/2022/01/18/bert_sequence_classifier_news_sentiment_de.html)             | Sentiment Analysis       | BertForSequenceClassification    |
+| en         | [en.classify.typos.distilbert](https://nlp.johnsnowlabs.com/2022/01/19/distilbert_token_classifier_typo_detector_en.html)  | [distilbert_token_classifier_typo_detector](https://nlp.johnsnowlabs.com/2022/01/19/distilbert_token_classifier_typo_detector_en.html)         | Named Entity Recognition | DistilBertForTokenClassification |
+| fr         | [fr.embed.word2vec_wiki_1000](https://nlp.johnsnowlabs.com/2022/01/26/word2vec_wiki_1000_fr.html)                          | [word2vec_wiki_1000](https://nlp.johnsnowlabs.com/2022/01/26/word2vec_wiki_1000_fr.html)                                                       | Embeddings               | WordEmbeddingsModel              |
+| fr         | [fr.embed.word2vec_wac_200](https://nlp.johnsnowlabs.com/2022/02/01/word2vec_wac_200_fr.html)                              | [word2vec_wac_200](https://nlp.johnsnowlabs.com/2022/02/01/word2vec_wac_200_fr.html)                                                           | Embeddings               | WordEmbeddingsModel              |
+| fr         | [fr.embed.w2v_cc_300d](https://nlp.johnsnowlabs.com/2022/02/03/w2v_cc_300d_fr.html)                                        | [w2v_cc_300d](https://nlp.johnsnowlabs.com/2022/02/03/w2v_cc_300d_fr.html)                                                                     | Embeddings               | WordEmbeddingsModel              |
+| vi         | [vi.embed.distilbert.cased](https://nlp.johnsnowlabs.com/2022/01/13/distilbert_base_cased_vi.html)                         | [distilbert_base_cased](https://nlp.johnsnowlabs.com/2022/01/13/distilbert_base_cased_vi.html)                                                 | Embeddings               | DistilBertEmbeddings             |
+
+
+
+
+#### New Healthcare Models
+Integrated from the amazing [3.4.1 Spark NLP For Healthcare Release](https://nlp.johnsnowlabs.com/docs/en/licensed_release_notes#341).
+which makes 2 new Annotator Classes available,  `MedicalBertForSequenceClassification` and `MedicalDistilBertForSequenceClassification`,
+various medical Spanish models, RxNorm Resolvers,
+Transformer based sequence classifiers for Drugs, Gender and the PICO framework,
+and Relation extractors for Temporality and Causality of Drugs and Adverse Events.
+
+
+
+#### New Medical Spanish Models
+- **Spanish Word2Vec Embeddings** available with [es.embed.sciwiki_300d](https://nlp.johnsnowlabs.com/2020/05/27/embeddings_sciwiki_300d_es.html)
+- **Spanish PHI Deidentification NER models** with two different subsets of entities extracted, available with [ner_deid_generic](https://nlp.johnsnowlabs.com/2022/01/18/ner_deid_generic_es.html)        and [ner_deid_subentity](https://nlp.johnsnowlabs.com/2022/01/18/ner_deid_subentity_es.html)
+
+#### New Resolvers
+- **RxNorm resolvers** with augmented concept data available with [en.med_ner.supplement_clinical](https://nlp.johnsnowlabs.com/2022/02/01/ner_supplement_clinical_en.html)
+
+#### New Transformer based Sequence Classifiers
+- **Adverse Drug Event Classifier Biobert based**  available with [en.classify.ade.seq_biobert](https://nlp.johnsnowlabs.com/2022/02/08/bert_sequence_classifier_ade_en.html)
+- **Patient Gender Classifier Biobert and Distilbert based** available with [en.classify.gender.seq_biobert](https://nlp.johnsnowlabs.com/2022/02/08/bert_sequence_classifier_gender_biobert_en.html)
+  and  available with [en.classify.ade.seq_distilbert](https://nlp.johnsnowlabs.com/2022/02/08/distilbert_sequence_classifier_ade_en.html)
+- **PiCO Framework Classifier** available with [en.classify.pico.seq_biobert](https://nlp.johnsnowlabs.com/2022/02/07/bert_sequence_classifier_pico_biobert_en.html)
+
+#### New Relation Extractors
+- **Temporal Relation Extractor** available with [en.relation.temporal_events_clinical](https://nlp.johnsnowlabs.com/2020/09/28/re_temporal_events_clinical_en.html)
+- **Adverse Drug Event Relation Extractors** one version Biobert Embeddings and one non-DL version available with [en.relation.adverse_drug_events.clinical](https://nlp.johnsnowlabs.com/2021/07/12/re_ade_clinical_en.html) available with [en.relation.adverse_drug_events.clinical.biobert](https://nlp.johnsnowlabs.com/2021/07/12/redl_ade_biobert_en.html)
+
+| Language   | NLU Reference                                                                                                             | Spark NLP  Reference                                                                                                               | Task                     | Annotator Class                            |
+|:-----------|:--------------------------------------------------------------------------------------------------------------------------|:-----------------------------------------------------------------------------------------------------------------------------------|:-------------------------|:-------------------------------------------|
+| es         | [es.embed.sciwiki_300d](https://nlp.johnsnowlabs.com/2020/05/27/embeddings_sciwiki_300d_es.html)                          | [embeddings_sciwiki_300d](https://nlp.johnsnowlabs.com/2020/05/27/embeddings_sciwiki_300d_es.html)                                 | Embeddings               | WordEmbeddingsModel                        |
+| es         | [es.med_ner.deid.generic](https://nlp.johnsnowlabs.com/2022/01/18/ner_deid_generic_es.html)                               | [ner_deid_generic](https://nlp.johnsnowlabs.com/2022/01/18/ner_deid_generic_es.html)                                               | De-identification        | MedicalNerModel                            |
+| es         | [es.med_ner.deid.subentity](https://nlp.johnsnowlabs.com/2022/01/18/ner_deid_subentity_es.html)                           | [ner_deid_subentity](https://nlp.johnsnowlabs.com/2022/01/18/ner_deid_subentity_es.html)                                           | De-identification        | MedicalNerModel                            |
+| en         | [en.med_ner.supplement_clinical](https://nlp.johnsnowlabs.com/2022/02/01/ner_supplement_clinical_en.html)                 | [ner_supplement_clinical](https://nlp.johnsnowlabs.com/2022/02/01/ner_supplement_clinical_en.html)                                 | Named Entity Recognition | MedicalNerModel                            |
+| en         | [en.resolve.rxnorm.augmented_re](https://nlp.johnsnowlabs.com/2022/02/09/sbiobertresolve_rxnorm_augmented_re_en.html)     | [sbiobertresolve_rxnorm_augmented_re](https://nlp.johnsnowlabs.com/2022/02/09/sbiobertresolve_rxnorm_augmented_re_en.html)         | Entity Resolution        | SentenceEntityResolverModel                |
+| en         | [en.classify.ade.seq_biobert](https://nlp.johnsnowlabs.com/2022/02/08/bert_sequence_classifier_ade_en.html)               | [bert_sequence_classifier_ade](https://nlp.johnsnowlabs.com/2022/02/08/bert_sequence_classifier_ade_en.html)                       | Text Classification      | MedicalBertForSequenceClassification       |
+| en         | [en.classify.gender.seq_biobert](https://nlp.johnsnowlabs.com/2022/02/08/bert_sequence_classifier_gender_biobert_en.html) | [bert_sequence_classifier_gender_biobert](https://nlp.johnsnowlabs.com/2022/02/08/bert_sequence_classifier_gender_biobert_en.html) | Text Classification      | MedicalBertForSequenceClassification       |
+| en         | [en.classify.pico.seq_biobert](https://nlp.johnsnowlabs.com/2022/02/07/bert_sequence_classifier_pico_biobert_en.html)     | [bert_sequence_classifier_pico_biobert](https://nlp.johnsnowlabs.com/2022/02/07/bert_sequence_classifier_pico_biobert_en.html)     | Text Classification      | MedicalBertForSequenceClassification       |
+| en         | [en.classify.ade.seq_distilbert](https://nlp.johnsnowlabs.com/2022/02/08/distilbert_sequence_classifier_ade_en.html)      | [distilbert_sequence_classifier_ade](https://nlp.johnsnowlabs.com/2022/02/08/distilbert_sequence_classifier_ade_en.html)           | Text Classification      | MedicalDistilBertForSequenceClassification |
+| en         | [en.relation.temporal_events_clinical](https://nlp.johnsnowlabs.com/2020/09/28/re_temporal_events_clinical_en.html)       | [re_temporal_events_clinical](https://nlp.johnsnowlabs.com/2020/09/28/re_temporal_events_clinical_en.html)                         | Relation Extraction      | RelationExtractionModel                    |
+| en         | [en.relation.adverse_drug_events.clinical](https://nlp.johnsnowlabs.com/2021/07/12/re_ade_clinical_en.html)               | [re_ade_clinical](https://nlp.johnsnowlabs.com/2021/07/12/re_ade_clinical_en.html)                                                 | Relation Extraction      | RelationExtractionModel                    |
+| en         | [en.relation.adverse_drug_events.clinical.biobert](https://nlp.johnsnowlabs.com/2021/07/12/redl_ade_biobert_en.html)               | [redl_ade_biobert](https://nlp.johnsnowlabs.com/2021/07/12/redl_ade_biobert_en.html)                                               | Relation Extraction      | RelationExtractionDLModel                  |
+
+
+
+#### Bugfixes
+- Fixed bug that caused non-default output level of components to be sentence
+- Fixed a bug that caused nlu references pointing to pretrained pipelines in spark nlp to crash in Databricks environments
+
+
+#### Additional NLU resources
+* [140+ NLU Tutorials](https://nlu.johnsnowlabs.com/docs/en/notebooks)
+* [NLU in Action](https://nlp.johnsnowlabs.com/demo)
+* [Streamlit visualizations docs](https://nlu.johnsnowlabs.com/docs/en/streamlit_viz_examples)
+* The complete list of all 4000+ models & pipelines in 200+ languages is available on [Models Hub](https://nlp.johnsnowlabs.com/models).
+* [Spark NLP publications](https://medium.com/spark-nlp)
+* [NLU documentation](https://nlu.johnsnowlabs.com/docs/en/install)
+* [Discussions](https://github.com/JohnSnowLabs/spark-nlp/discussions) Engage with other community members, share ideas, and show off how you use Spark NLP and NLU!
+
+
+#### Install NLU in 1 line!
+
+```
+* Install NLU on Google Colab : !wget https://setup.johnsnowlabs.com/nlu/colab.sh  -O - | bash
+* Install NLU on Kaggle       : !wget https://setup.johnsnowlabs.com/nlu/kaggle.sh  -O - | bash
+* Install NLU via Pip         : ! pip install nlu pyspark streamlit==0.80.0`
+```
+
+
+
+
+
+
+
+
+
+
+## NLU Version 3.4.0
+
+#### 1 line to OCR for images, PDFS and DOCX, Text Generation with GPT2 and new T5 models, Sequence Classification with XlmRoBerta, RoBerta, Xlnet, Longformer and Albert, Transformer based medical NER with MedicalBertForTokenClassifier, 80 new models, 20+ new languages including various African and Scandinavian and much more in John Snow Labs NLU 3.4.0 !
+
+We are incredibly excited to announce John Snow Labs NLU 3.4.0 has been released!
+This release features `11 new annotator classes` and `80` new models, including 3 `OCR Transformers` which enable you to extract text
+from various file types, support for `GPT2` and new pretrained `T5` models for **Text Generation** and dozens more of new transformer based models
+for **Token and Sequence Classification**.
+This includes `8 new Sequence classifier models` which can be pretrained in Huggingface and imported into Spark NLP and NLU.
+Finally, the NLU tutorial page of the [140+ notebooks has been updated](https://nlu.johnsnowlabs.com/docs/en/notebooks)
+
+
+#### **New** NLU OCR Features
+3 new OCR based spells are supported, which enable extracting `text` from files of type
+`JPEG`, `PNG`, `BMP`, `WBMP`, `GIF`, `JPG`, `TIFF`, `DOCX`, `PDF` in just 1 line of code.
+You need a Spark OCR license for using these, which is available for [free here](https://www.johnsnowlabs.com/spark-nlp-try-free/) and refer to the new
+[OCR tutorial notebook](https://colab.research.google.com/github/JohnSnowLabs/nlu/blob/master/examples/colab/ocr/ocr_for_img_pdf_docx_files.ipynb)        
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/JohnSnowLabs/nlu/blob/master/examples/colab/ocr/ocr_for_img_pdf_docx_files.ipynb)
+Find more details on the [NLU OCR documentation page](https://nlu.johnsnowlabs.com/docs/en/nlu_for_ocr)
+
+
+#### **New** NLU Healthcare Features
+The healthcare side features a new `MedicalBertForTokenClassifier` annotator which is a Bert based model for token classification problems like `Named Entity Recognition`,           
+`Parts of Speech` and much more.  Overall there are `28` new models which include German De-Identification models,  English NER models for extracting `Drug Development Trials`,           
+`Clinical Abbreviations and Acronyms`, NER models for chemical compounds/drugs and genes/proteins, updated `MedicalBertForTokenClassifier` NER models for the medical domains `Adverse drug Events`,           
+`Anatomy`, `Chemicals`, `Genes`,`Proteins`, `Cellular/Molecular Biology`, `Drugs`, `Bacteria`, `De-Identification` and general Medical and Clinical Named Entities.           
+For  **Entity Relation Extraction** between entity pairs new models for interaction between `Drugs and Proteins`.           
+For **Entity Resolution** new models for resolving `Clinical Abbreviations and Acronyms` to their full length names and also a model for resolving `Drug Substance Entities` to the categories           
+`Clinical Drug`, `Pharmacologic Substance`, `Antibiotic`, `Hazardous` or `Poisonous Substance` and new resolvers for `LOINC` and `SNOMED` terminologies.
+
+
+
+#### **New** NLU Open source Features
+On the open source side we have new support for [Open Ai's `GPT2`](https://openai.com/blog/tags/gpt-2/) for various text sequence to sequence problems and
+additionally the following new Transformer models are supported :
+`RoBertaForSequenceClassification`, `XlmRoBertaForSequenceClassification`, `LongformerForSequenceClassification`,
+`AlbertForSequenceClassification`, `XlnetForSequenceClassification`, `Word2Vec` with various pre-trained weights for various problems!
+
+New **GPT2** models for generating text conditioned on some input,          
+New **T5 style transfer models** for `active to passive`, `formal to informal`, `informal to formal`, `passive to active` sequence to sequence generation.          
+Additionally, a new T5 model for generating SQL code from natural language input is provided.
+
+On top of this dozens new Transformer based Sequence Classifiers and Token Classifiers have been released, this is includes for `Token Classifier` the following models :                  
+Multi-Lingual general NER models for **10 African Languages** (`Amharic`, `Hausa`, `Igbo`, `Kinyarwanda`, `Luganda`, `Nigerian`, `Pidgin`, `Swahilu`, `Wolof`, and `Yorùbá`),                  
+**10 high resourced languages** (10 high resourced languages (`Arabic`, `German`, `English`, `Spanish`, `French`, `Italian`, `Latvian`, `Dutch`, `Portuguese` and `Chinese`),                  
+**6 Scandinavian languages** (`Danish`, `Norwegian-Bokmål`, `Norwegian-Nynorsk`, `Swedish`, `Icelandic`, `Faroese`) ,                  
+Uni-Lingual NER models for general entites in the language `Chinese`, `Hindi`, `Islandic`, `Indonesian`                  
+and finally English NER models for extracting entities related to `Stocks Ticker Symbols`, `Restaurants`, `Time`.
+
+For `Sequence Classification` new models for classifying `Toxicity in Russian text` and English models for
+`Movie Reviews`, `News Categorization`, `Sentimental Tone` and `General Sentiment`
+
+
+
+#### New NLU OCR Models
+The following Transformers have been integrated from [Spark OCR](https://nlp.johnsnowlabs.com/docs/en/ocr_pipeline_components)
+
+| NLU Spell            | Transformer Class                                                                       |
+|----------------------|-----------------------------------------------------------------------------------------|
+| nlu.load(`img2text`) | [ImageToText](https://nlp.johnsnowlabs.com/docs/en/ocr_pipeline_components#imagetotext) |
+| nlu.load(`pdf2text`) | [PdfToText](https://nlp.johnsnowlabs.com/docs/en/ocr_pipeline_components#pdftotext)     |
+| nlu.load(`doc2text`) | [DocToText](https://nlp.johnsnowlabs.com/docs/en/ocr_pipeline_components#doctotext)     |              
+
+
+
+
+
+#### New Open Source Models
+
+Integration for the 49 new models from the colossal [Spark NLP  3.4.0 release](https://nlp.johnsnowlabs.com/docs/en/release_notes#340)
+
+
+
+
+| Language   | NLU Reference                                                                                                                     | Spark NLP  Reference                                                                                                                           | Task                     | Annotator Class                     |
+|:-----------|:----------------------------------------------------------------------------------------------------------------------------------|:-----------------------------------------------------------------------------------------------------------------------------------------------|:-------------------------|:------------------------------------|
+| en         | [en.gpt2.distilled](https://nlp.johnsnowlabs.com/2021/12/03/gpt2_distilled_en.html)                                               | [gpt2_distilled](https://nlp.johnsnowlabs.com/2021/12/03/gpt2_distilled_en.html)                                                               | Text Generation          | GPT2Transformer                     |
+| en         | [en.gpt2](https://nlp.johnsnowlabs.com/2021/12/03/gpt2_en.html)                                                                   | [gpt2](https://nlp.johnsnowlabs.com/2021/12/03/gpt2_en.html)                                                                                   | Text Generation          | GPT2Transformer                     |
+| en         | [en.gpt2.medium](https://nlp.johnsnowlabs.com/2021/12/03/gpt2_medium_en.html)                                                     | [gpt2_medium](https://nlp.johnsnowlabs.com/2021/12/03/gpt2_medium_en.html)                                                                     | Text Generation          | GPT2Transformer                     |
+| en         | [en.gpt2.large](https://nlp.johnsnowlabs.com/2021/12/03/gpt_large_en.html)                                                        | [gpt_large](https://nlp.johnsnowlabs.com/2021/12/03/gpt_large_en.html)                                                                         | Text Generation          | GPT2Transformer                     |
+| en         | [en.t5.active_to_passive_styletransfer](https://nlp.johnsnowlabs.com/2022/01/12/t5_active_to_passive_styletransfer_en.html)       | [t5_active_to_passive_styletransfer](https://nlp.johnsnowlabs.com/2022/01/12/t5_active_to_passive_styletransfer_en.html)                       | Text Generation          | T5Transformer                       |
+| en         | [en.t5.formal_to_informal_styletransfer](https://nlp.johnsnowlabs.com/2022/01/12/t5_formal_to_informal_styletransfer_en.html)     | [t5_formal_to_informal_styletransfer](https://nlp.johnsnowlabs.com/2022/01/12/t5_formal_to_informal_styletransfer_en.html)                     | Text Generation          | T5Transformer                       |
+| en         | [en.t5.grammar_error_corrector](https://nlp.johnsnowlabs.com/2022/01/12/t5_grammar_error_corrector_en.html)                       | [t5_grammar_error_corrector](https://nlp.johnsnowlabs.com/2022/01/12/t5_grammar_error_corrector_en.html)                                       | Text Generation          | T5Transformer                       |
+| en         | [en.t5.informal_to_formal_styletransfer](https://nlp.johnsnowlabs.com/2022/01/12/t5_informal_to_formal_styletransfer_en.html)     | [t5_informal_to_formal_styletransfer](https://nlp.johnsnowlabs.com/2022/01/12/t5_informal_to_formal_styletransfer_en.html)                     | Text Generation          | T5Transformer                       |
+| en         | [en.t5.passive_to_active_styletransfer](https://nlp.johnsnowlabs.com/2022/01/12/t5_passive_to_active_styletransfer_en.html)       | [t5_passive_to_active_styletransfer](https://nlp.johnsnowlabs.com/2022/01/12/t5_passive_to_active_styletransfer_en.html)                       | Text Generation          | T5Transformer                       |
+| en         | [en.t5.wikiSQL](https://nlp.johnsnowlabs.com/2022/01/12/t5_small_wikiSQL_en.html)                                                 | [t5_small_wikiSQL](https://nlp.johnsnowlabs.com/2022/01/12/t5_small_wikiSQL_en.html)                                                           | Text Generation          | T5Transformer                       |
+| xx         | [xx.ner.masakhaner](https://nlp.johnsnowlabs.com/2021/12/06/xlm_roberta_large_token_classifier_masakhaner_xx.html)                | [xlm_roberta_large_token_classifier_masakhaner](https://nlp.johnsnowlabs.com/2021/12/06/xlm_roberta_large_token_classifier_masakhaner_xx.html) | Named Entity Recognition | XlmRoBertaForTokenClassification    |
+| xx         | [xx.ner.high_resourced_lang](https://nlp.johnsnowlabs.com/2021/12/26/xlm_roberta_large_token_classifier_hrl_xx.html)              | [xlm_roberta_large_token_classifier_hrl](https://nlp.johnsnowlabs.com/2021/12/26/xlm_roberta_large_token_classifier_hrl_xx.html)               | Named Entity Recognition | XlmRoBertaForTokenClassification    |
+| xx         | [xx.ner.scandinavian](https://nlp.johnsnowlabs.com/2021/12/09/bert_token_classifier_scandi_ner_xx.html)                           | [bert_token_classifier_scandi_ner](https://nlp.johnsnowlabs.com/2021/12/09/bert_token_classifier_scandi_ner_xx.html)                           | Named Entity Recognition | BertForTokenClassification          |
+| en         | [en.embed.electra.medical](https://nlp.johnsnowlabs.com/2022/01/04/electra_medal_acronym_en.html)                                 | [electra_medal_acronym](https://nlp.johnsnowlabs.com/2022/01/04/electra_medal_acronym_en.html)                                                 | Embeddings               | BertEmbeddings                      |
+| en         | [en.ner.restaurant](https://nlp.johnsnowlabs.com/2021/12/31/nerdl_restaurant_100d_en.html)                                        | [nerdl_restaurant_100d](https://nlp.johnsnowlabs.com/2021/12/31/nerdl_restaurant_100d_en.html)                                                 | Named Entity Recognition | NerDLModel                          |
+| en         | [en.embed.word2vec.gigaword_wiki](https://nlp.johnsnowlabs.com/2022/01/03/word2vec_gigaword_wiki_300_en.html)                     | [word2vec_gigaword_wiki_300](https://nlp.johnsnowlabs.com/2022/01/03/word2vec_gigaword_wiki_300_en.html)                                       | Embeddings               | Word2VecModel                       |
+| en         | [en.embed.word2vec.gigaword](https://nlp.johnsnowlabs.com/2022/01/03/word2vec_gigaword_300_en.html)                               | [word2vec_gigaword_300](https://nlp.johnsnowlabs.com/2022/01/03/word2vec_gigaword_300_en.html)                                                 | Embeddings               | Word2VecModel                       |
+| en         | [en.classify.xlm_roberta.imdb](https://nlp.johnsnowlabs.com/2021/12/23/xlm_roberta_base_sequence_classifier_imdb_en.html)         | [xlm_roberta_base_sequence_classifier_imdb](https://nlp.johnsnowlabs.com/2021/12/23/xlm_roberta_base_sequence_classifier_imdb_en.html)         | Text Classification      | XlmRoBertaForSequenceClassification |
+| en         | [en.classify.xlm_roberta.ag_news](https://nlp.johnsnowlabs.com/2021/12/23/xlm_roberta_base_sequence_classifier_ag_news_en.html)   | [xlm_roberta_base_sequence_classifier_ag_news](https://nlp.johnsnowlabs.com/2021/12/23/xlm_roberta_base_sequence_classifier_ag_news_en.html)   | Text Classification      | XlmRoBertaForSequenceClassification |
+| en         | [en.classify.roberta.imdb](https://nlp.johnsnowlabs.com/2021/12/16/roberta_base_sequence_classifier_imdb_en.html)                 | [roberta_base_sequence_classifier_imdb](https://nlp.johnsnowlabs.com/2021/12/16/roberta_base_sequence_classifier_imdb_en.html)                 | Text Classification      | RoBertaForSequenceClassification    |
+| en         | [en.classify.roberta.ag_news](https://nlp.johnsnowlabs.com/2021/12/16/roberta_base_sequence_classifier_ag_news_en.html)           | [roberta_base_sequence_classifier_ag_news](https://nlp.johnsnowlabs.com/2021/12/16/roberta_base_sequence_classifier_ag_news_en.html)           | Text Classification      | RoBertaForSequenceClassification    |
+| en         | [en.classify.albert.ag_news](https://nlp.johnsnowlabs.com/2021/12/16/albert_base_sequence_classifier_ag_news_en.html)             | [albert_base_sequence_classifier_ag_news](https://nlp.johnsnowlabs.com/2021/12/16/albert_base_sequence_classifier_ag_news_en.html)             | Text Classification      | AlbertForSequenceClassification     |
+| en         | [en.classify.albert.imdb](https://nlp.johnsnowlabs.com/2021/12/16/albert_base_sequence_classifier_imdb_en.html)                   | [albert_base_sequence_classifier_imdb](https://nlp.johnsnowlabs.com/2021/12/16/albert_base_sequence_classifier_imdb_en.html)                   | Text Classification      | AlbertForSequenceClassification     |
+| en         | [en.classify.ag_news.longformer](https://nlp.johnsnowlabs.com/2021/12/16/longformer_base_sequence_classifier_ag_news_en.html)     | [longformer_base_sequence_classifier_ag_news](https://nlp.johnsnowlabs.com/2021/12/16/longformer_base_sequence_classifier_ag_news_en.html)     | Text Classification      | LongformerForSequenceClassification |
+| en         | [en.classify.imdb.xlnet](https://nlp.johnsnowlabs.com/2021/12/23/xlnet_base_sequence_classifier_imdb_en.html)                     | [xlnet_base_sequence_classifier_imdb](https://nlp.johnsnowlabs.com/2021/12/23/xlnet_base_sequence_classifier_imdb_en.html)                     | Text Classification      | XlnetForSequenceClassification      |
+| en         | [en.classify.finance_sentiment](https://nlp.johnsnowlabs.com/2021/12/21/bert_sequence_classifier_finbert_tone_en.html)            | [bert_sequence_classifier_finbert_tone](https://nlp.johnsnowlabs.com/2021/12/21/bert_sequence_classifier_finbert_tone_en.html)                 | Sentiment Analysis       | BertForSequenceClassification       |
+| en         | [en.classify.imdb.longformer](https://nlp.johnsnowlabs.com/2021/12/16/longformer_base_sequence_classifier_imdb_en.html)           | [longformer_base_sequence_classifier_imdb](https://nlp.johnsnowlabs.com/2021/12/16/longformer_base_sequence_classifier_imdb_en.html)           | Text Classification      | LongformerForSequenceClassification |
+| en         | [en.classify.ag_news.longformer](https://nlp.johnsnowlabs.com/2021/12/16/longformer_base_sequence_classifier_ag_news_en.html)     | [longformer_base_sequence_classifier_ag_news](https://nlp.johnsnowlabs.com/2021/12/16/longformer_base_sequence_classifier_ag_news_en.html)     | Text Classification      | LongformerForSequenceClassification |
+| en         | [en.ner.time](https://nlp.johnsnowlabs.com/2021/12/28/roberta_token_classifier_timex_semeval_en.html)                             | [roberta_token_classifier_timex_semeval](https://nlp.johnsnowlabs.com/2021/12/28/roberta_token_classifier_timex_semeval_en.html)               | Named Entity Recognition | RoBertaForTokenClassification       |
+| en         | [en.ner.stocks_ticker](https://nlp.johnsnowlabs.com/2021/12/27/roberta_token_classifier_ticker_en.html)                           | [roberta_token_classifier_ticker](https://nlp.johnsnowlabs.com/2021/12/27/roberta_token_classifier_ticker_en.html)                             | Named Entity Recognition | RoBertaForTokenClassification       |
+| ru         | [ru.classify.toxic](https://nlp.johnsnowlabs.com/2021/12/22/bert_sequence_classifier_toxicity_ru.html)                            | [bert_sequence_classifier_toxicity](https://nlp.johnsnowlabs.com/2021/12/22/bert_sequence_classifier_toxicity_ru.html)                         | Text Classification      | BertForSequenceClassification       |
+| it         | [it.classify.sentiment](https://nlp.johnsnowlabs.com/2021/12/21/bert_sequence_classifier_sentiment_it.html)                       | [bert_sequence_classifier_sentiment](https://nlp.johnsnowlabs.com/2021/12/21/bert_sequence_classifier_sentiment_it.html)                       | Sentiment Analysis       | BertForSequenceClassification       |
+| es         | [es.ner](https://nlp.johnsnowlabs.com/2020/02/03/wikiner_6B_100_es.html)                                                          | [wikiner_6B_100](https://nlp.johnsnowlabs.com/2020/02/03/wikiner_6B_100_es.html)                                                               | Named Entity Recognition | NerDLModel                          |
+| is         | [is.ner](https://nlp.johnsnowlabs.com/2021/12/06/roberta_token_classifier_icelandic_ner_is.html)                                  | [roberta_token_classifier_icelandic_ner](https://nlp.johnsnowlabs.com/2021/12/06/roberta_token_classifier_icelandic_ner_is.html)               | Named Entity Recognition | RoBertaForTokenClassification       |
+| id         | [id.pos](https://nlp.johnsnowlabs.com/2021/12/27/roberta_token_classifier_pos_tagger_id.html)                                     | [roberta_token_classifier_pos_tagger](https://nlp.johnsnowlabs.com/2021/12/27/roberta_token_classifier_pos_tagger_id.html)                     | Part of Speech Tagging   | RoBertaForTokenClassification       |
+| tr         | [tr.ner](https://nlp.johnsnowlabs.com/2020/11/10/turkish_ner_840B_300_tr.html)                                                    | [turkish_ner_840B_300](https://nlp.johnsnowlabs.com/2020/11/10/turkish_ner_840B_300_tr.html)                                                   | Named Entity Recognition | NerDLModel                          |
+| id         | [id.ner](https://nlp.johnsnowlabs.com/2021/12/03/xlm_roberta_large_token_classification_ner_id.html)                              | [xlm_roberta_large_token_classification_ner](https://nlp.johnsnowlabs.com/2021/12/03/xlm_roberta_large_token_classification_ner_id.html)       | Named Entity Recognition | XlmRoBertaForTokenClassification    |
+| de         | [de.ner](https://nlp.johnsnowlabs.com/2021/12/25/xlm_roberta_large_token_classifier_conll03_de.html)                              | [xlm_roberta_large_token_classifier_conll03](https://nlp.johnsnowlabs.com/2021/12/25/xlm_roberta_large_token_classifier_conll03_de.html)       | Named Entity Recognition | XlmRoBertaForTokenClassification    |
+| hi         | [hi.ner](https://nlp.johnsnowlabs.com/2021/12/27/bert_token_classifier_hi_en_ner_hi.html)                                         | [bert_token_classifier_hi_en_ner](https://nlp.johnsnowlabs.com/2021/12/27/bert_token_classifier_hi_en_ner_hi.html)                             | Named Entity Recognition | BertForTokenClassification          |
+| nl         | [nl.ner](https://nlp.johnsnowlabs.com/2020/05/10/wikiner_6B_100_nl.html)                                                          | [wikiner_6B_100](https://nlp.johnsnowlabs.com/2020/05/10/wikiner_6B_100_nl.html)                                                               | Named Entity Recognition | NerDLModel                          |
+| zh         | [zh.ner](https://nlp.johnsnowlabs.com/2021/12/07/bert_token_classifier_chinese_ner_zh.html)                                       | [bert_token_classifier_chinese_ner](https://nlp.johnsnowlabs.com/2021/12/07/bert_token_classifier_chinese_ner_zh.html)                         | Named Entity Recognition | BertForTokenClassification          |
+| fr         | [fr.classify.xlm_roberta.allocine](https://nlp.johnsnowlabs.com/2021/12/23/xlm_roberta_base_sequence_classifier_allocine_fr.html) | [xlm_roberta_base_sequence_classifier_allocine](https://nlp.johnsnowlabs.com/2021/12/23/xlm_roberta_base_sequence_classifier_allocine_fr.html) | Text Classification      | XlmRoBertaForSequenceClassification |
+| ur         | [ur.classify.fakenews](https://nlp.johnsnowlabs.com/2021/12/29/classifierdl_urduvec_fakenews_ur.html)                             | [classifierdl_urduvec_fakenews](https://nlp.johnsnowlabs.com/2021/12/29/classifierdl_urduvec_fakenews_ur.html)                                 | Text Classification      | ClassifierDLModel                   |
+| ur         | [ur.classify.news](https://nlp.johnsnowlabs.com/2021/12/10/classifierdl_bert_news_ur.html)                                        | [classifierdl_bert_news](https://nlp.johnsnowlabs.com/2021/12/10/classifierdl_bert_news_ur.html)                                               | Text Classification      | ClassifierDLModel                   |
+| fi         | [fi.embed_sentence.bert.uncased](https://nlp.johnsnowlabs.com/2022/01/03/bert_base_finnish_uncased_fi.html)                       | [bert_base_finnish_uncased](https://nlp.johnsnowlabs.com/2022/01/03/bert_base_finnish_uncased_fi.html)                                         | Embeddings               | BertSentenceEmbeddings              |
+| fi         | [fi.embed_sentence.bert](https://nlp.johnsnowlabs.com/2022/01/03/bert_base_finnish_uncased_fi.html)                               | [bert_base_finnish_uncased](https://nlp.johnsnowlabs.com/2022/01/03/bert_base_finnish_uncased_fi.html)                                         | Embeddings               | BertSentenceEmbeddings              |
+| fi         | [fi.embed_sentence.bert.cased](https://nlp.johnsnowlabs.com/2022/01/03/bert_base_finnish_cased_fi.html)                           | [bert_base_finnish_cased](https://nlp.johnsnowlabs.com/2022/01/03/bert_base_finnish_cased_fi.html)                                             | Embeddings               | BertSentenceEmbeddings              |
+| te         | [te.embed.distilbert](https://nlp.johnsnowlabs.com/2021/12/14/distilbert_uncased_te.html)                                         | [distilbert_uncased](https://nlp.johnsnowlabs.com/2021/12/14/distilbert_uncased_te.html)                                                       | Embeddings               | DistilBertEmbeddings                |
+| sw         | [sw.embed.xlm_roberta](https://nlp.johnsnowlabs.com/2021/10/16/xlm_roberta_base_finetuned_swahili_sw.html)                        | [xlm_roberta_base_finetuned_swahili](https://nlp.johnsnowlabs.com/2021/10/16/xlm_roberta_base_finetuned_swahili_sw.html)                       | Embeddings               | XlmRoBertaEmbeddings                |
+
+
+
+
+
+#### New Healthcare Models
+Integration for the 28 new models from the amazing [Spark NLP for healthcare 3.4.0 release](https://nlp.johnsnowlabs.com/docs/en/licensed_release_notes#340)
+
+
+| Language   | NLU Reference                                                                                                                             | Spark NLP  Reference                                                                                                                           | Task                     | Annotator Class             |
+|:-----------|:------------------------------------------------------------------------------------------------------------------------------------------|:-----------------------------------------------------------------------------------------------------------------------------------------------|:-------------------------|:----------------------------|
+| en         | [en.med_ner.chemprot.bert](https://nlp.johnsnowlabs.com/2021/10/19/bert_token_classifier_ner_chemprot_en.html)             | [bert_token_classifier_ner_chemprot](https://nlp.johnsnowlabs.com/2021/10/19/bert_token_classifier_ner_chemprot_en.html)   | Named Entity Recognition | MedicalBertForTokenClassifier |
+| en         | [en.med_ner.chemprot.bert](https://nlp.johnsnowlabs.com/2022/01/06/bert_token_classifier_ner_chemprot_en.html)             | [bert_token_classifier_ner_chemprot](https://nlp.johnsnowlabs.com/2022/01/06/bert_token_classifier_ner_chemprot_en.html)   | Named Entity Recognition | MedicalBertForTokenClassifier |
+| en         | [en.classify.token_bert.ner_bacteria](https://nlp.johnsnowlabs.com/2021/09/30/bert_token_classifier_ner_bacteria_en.html)  | [bert_token_classifier_ner_bacteria](https://nlp.johnsnowlabs.com/2021/09/30/bert_token_classifier_ner_bacteria_en.html)   | Named Entity Recognition | MedicalBertForTokenClassifier |
+| en         | [en.classify.token_bert.ner_bacteria](https://nlp.johnsnowlabs.com/2022/01/07/bert_token_classifier_ner_bacteria_en.html)  | [bert_token_classifier_ner_bacteria](https://nlp.johnsnowlabs.com/2022/01/07/bert_token_classifier_ner_bacteria_en.html)   | Named Entity Recognition | MedicalBertForTokenClassifier |
+| en         | [en.classify.token_bert.ner_anatomy](https://nlp.johnsnowlabs.com/2021/09/30/bert_token_classifier_ner_anatomy_en.html)    | [bert_token_classifier_ner_anatomy](https://nlp.johnsnowlabs.com/2021/09/30/bert_token_classifier_ner_anatomy_en.html)     | Named Entity Recognition | MedicalBertForTokenClassifier |
+| en         | [en.classify.token_bert.ner_anatomy](https://nlp.johnsnowlabs.com/2022/01/06/bert_token_classifier_ner_anatomy_en.html)    | [bert_token_classifier_ner_anatomy](https://nlp.johnsnowlabs.com/2022/01/06/bert_token_classifier_ner_anatomy_en.html)     | Named Entity Recognition | MedicalBertForTokenClassifier |
+| en         | [en.classify.token_bert.ner_drugs](https://nlp.johnsnowlabs.com/2021/09/20/bert_token_classifier_ner_drugs_en.html)        | [bert_token_classifier_ner_drugs](https://nlp.johnsnowlabs.com/2021/09/20/bert_token_classifier_ner_drugs_en.html)         | Named Entity Recognition | MedicalBertForTokenClassifier |
+| en         | [en.classify.token_bert.ner_drugs](https://nlp.johnsnowlabs.com/2022/01/06/bert_token_classifier_ner_drugs_en.html)        | [bert_token_classifier_ner_drugs](https://nlp.johnsnowlabs.com/2022/01/06/bert_token_classifier_ner_drugs_en.html)         | Named Entity Recognition | MedicalBertForTokenClassifier |
+| en         | [en.classify.token_bert.ner_jsl_slim](https://nlp.johnsnowlabs.com/2021/09/24/bert_token_classifier_ner_jsl_slim_en.html)  | [bert_token_classifier_ner_jsl_slim](https://nlp.johnsnowlabs.com/2021/09/24/bert_token_classifier_ner_jsl_slim_en.html)   | Named Entity Recognition | MedicalBertForTokenClassifier |
+| en         | [en.classify.token_bert.ner_jsl_slim](https://nlp.johnsnowlabs.com/2022/01/06/bert_token_classifier_ner_jsl_slim_en.html)  | [bert_token_classifier_ner_jsl_slim](https://nlp.johnsnowlabs.com/2022/01/06/bert_token_classifier_ner_jsl_slim_en.html)   | Named Entity Recognition | MedicalBertForTokenClassifier |
+| en         | [en.classify.token_bert.ner_ade](https://nlp.johnsnowlabs.com/2021/09/30/bert_token_classifier_ner_ade_en.html)            | [bert_token_classifier_ner_ade](https://nlp.johnsnowlabs.com/2021/09/30/bert_token_classifier_ner_ade_en.html)             | Named Entity Recognition | MedicalBertForTokenClassifier |
+| en         | [en.classify.token_bert.ner_ade](https://nlp.johnsnowlabs.com/2022/01/04/bert_token_classifier_ner_ade_en.html)            | [bert_token_classifier_ner_ade](https://nlp.johnsnowlabs.com/2022/01/04/bert_token_classifier_ner_ade_en.html)             | Named Entity Recognition | MedicalBertForTokenClassifier |
+| en         | [en.classify.token_bert.ner_deid](https://nlp.johnsnowlabs.com/2021/09/13/bert_token_classifier_ner_deid_en.html)          | [bert_token_classifier_ner_deid](https://nlp.johnsnowlabs.com/2021/09/13/bert_token_classifier_ner_deid_en.html)           | Named Entity Recognition | MedicalBertForTokenClassifier |
+| en         | [en.classify.token_bert.ner_deid](https://nlp.johnsnowlabs.com/2022/01/06/bert_token_classifier_ner_deid_en.html)          | [bert_token_classifier_ner_deid](https://nlp.johnsnowlabs.com/2022/01/06/bert_token_classifier_ner_deid_en.html)           | Named Entity Recognition | MedicalBertForTokenClassifier |
+| en         | [en.classify.token_bert.ner_clinical](https://nlp.johnsnowlabs.com/2021/08/28/bert_token_classifier_ner_clinical_en.html)  | [bert_token_classifier_ner_clinical](https://nlp.johnsnowlabs.com/2021/08/28/bert_token_classifier_ner_clinical_en.html)   | Named Entity Recognition | MedicalBertForTokenClassifier |
+| en         | [en.classify.token_bert.ner_clinical](https://nlp.johnsnowlabs.com/2022/01/06/bert_token_classifier_ner_clinical_en.html)  | [bert_token_classifier_ner_clinical](https://nlp.johnsnowlabs.com/2022/01/06/bert_token_classifier_ner_clinical_en.html)   | Named Entity Recognition | MedicalBertForTokenClassifier |
+| en         | [en.classify.token_bert.ner_jsl](https://nlp.johnsnowlabs.com/2021/08/28/bert_token_classifier_ner_jsl_en.html)            | [bert_token_classifier_ner_jsl](https://nlp.johnsnowlabs.com/2021/08/28/bert_token_classifier_ner_jsl_en.html)             | Named Entity Recognition | MedicalBertForTokenClassifier |
+| en         | [en.classify.token_bert.ner_jsl](https://nlp.johnsnowlabs.com/2021/09/16/bert_token_classifier_ner_jsl_en.html)            | [bert_token_classifier_ner_jsl](https://nlp.johnsnowlabs.com/2021/09/16/bert_token_classifier_ner_jsl_en.html)             | Named Entity Recognition | MedicalBertForTokenClassifier |
+| en         | [en.classify.token_bert.ner_jsl](https://nlp.johnsnowlabs.com/2022/01/06/bert_token_classifier_ner_jsl_en.html)            | [bert_token_classifier_ner_jsl](https://nlp.johnsnowlabs.com/2022/01/06/bert_token_classifier_ner_jsl_en.html)             | Named Entity Recognition | MedicalBertForTokenClassifier |
+| en         | [en.classify.token_bert.ner_chemical](https://nlp.johnsnowlabs.com/2021/10/19/bert_token_classifier_ner_chemicals_en.html) | [bert_token_classifier_ner_chemicals](https://nlp.johnsnowlabs.com/2021/10/19/bert_token_classifier_ner_chemicals_en.html) | Named Entity Recognition | MedicalBertForTokenClassifier |
+| en         | [en.classify.token_bert.ner_chemical](https://nlp.johnsnowlabs.com/2022/01/06/bert_token_classifier_ner_chemicals_en.html) | [bert_token_classifier_ner_chemicals](https://nlp.johnsnowlabs.com/2022/01/06/bert_token_classifier_ner_chemicals_en.html) | Named Entity Recognition | MedicalBertForTokenClassifier |
+| en         | [en.classify.token_bert.bionlp](https://nlp.johnsnowlabs.com/2021/11/03/bert_token_classifier_ner_bionlp_en.html)          | [bert_token_classifier_ner_bionlp](https://nlp.johnsnowlabs.com/2021/11/03/bert_token_classifier_ner_bionlp_en.html)       | Named Entity Recognition | MedicalBertForTokenClassifier |
+| en         | [en.classify.token_bert.bionlp](https://nlp.johnsnowlabs.com/2022/01/03/bert_token_classifier_ner_bionlp_en.html)          | [bert_token_classifier_ner_bionlp](https://nlp.johnsnowlabs.com/2022/01/03/bert_token_classifier_ner_bionlp_en.html)       | Named Entity Recognition | MedicalBertForTokenClassifier |
+| en         | [en.classify.token_bert.cellular](https://nlp.johnsnowlabs.com/2021/11/03/bert_token_classifier_ner_cellular_en.html)      | [bert_token_classifier_ner_cellular](https://nlp.johnsnowlabs.com/2021/11/03/bert_token_classifier_ner_cellular_en.html)   | Named Entity Recognition | MedicalBertForTokenClassifier |
+| en         | [en.classify.token_bert.cellular](https://nlp.johnsnowlabs.com/2022/01/06/bert_token_classifier_ner_cellular_en.html)      | [bert_token_classifier_ner_cellular](https://nlp.johnsnowlabs.com/2022/01/06/bert_token_classifier_ner_cellular_en.html)   | Named Entity Recognition | MedicalBertForTokenClassifier |
+| en         | [en.med_ner.abbreviation_clinical](https://nlp.johnsnowlabs.com/2021/12/30/ner_abbreviation_clinical_en.html)                             | [ner_abbreviation_clinical](https://nlp.johnsnowlabs.com/2021/12/30/ner_abbreviation_clinical_en.html)                                         | Named Entity Recognition | MedicalNerModel             |
+| en         | [en.med_ner.drugprot_clinical](https://nlp.johnsnowlabs.com/2021/12/20/ner_drugprot_clinical_en.html)                                     | [ner_drugprot_clinical](https://nlp.johnsnowlabs.com/2021/12/20/ner_drugprot_clinical_en.html)                                                 | Named Entity Recognition | MedicalNerModel             |
+| en         | [en.ner.drug_development_trials](https://nlp.johnsnowlabs.com/2021/12/17/bert_token_classifier_drug_development_trials_en.html)           | [bert_token_classifier_drug_development_trials](https://nlp.johnsnowlabs.com/2021/12/17/bert_token_classifier_drug_development_trials_en.html) | Named Entity Recognition | BertForTokenClassification  |
+| en         | [en.med_ner.chemprot](https://nlp.johnsnowlabs.com/2021/04/01/ner_chemprot_biobert_en.html)                                               | [ner_chemprot_biobert](https://nlp.johnsnowlabs.com/2021/04/01/ner_chemprot_biobert_en.html)                                                   | Named Entity Recognition | MedicalNerModel             |
+| en         | [en.relation.drugprot](https://nlp.johnsnowlabs.com/2022/01/05/redl_drugprot_biobert_en.html)                                             | [redl_drugprot_biobert](https://nlp.johnsnowlabs.com/2022/01/05/redl_drugprot_biobert_en.html)                                                 | Relation Extraction      | RelationExtractionDLModel   |
+| en         | [en.relation.drugprot.clinical](https://nlp.johnsnowlabs.com/2022/01/05/re_drugprot_clinical_en.html)                                     | [re_drugprot_clinical](https://nlp.johnsnowlabs.com/2022/01/05/re_drugprot_clinical_en.html)                                                   | Relation Extraction      | RelationExtractionModel     |
+| en         | [en.resolve.clinical_abbreviation_acronym](https://nlp.johnsnowlabs.com/2021/12/11/sbiobertresolve_clinical_abbreviation_acronym_en.html) | [sbiobertresolve_clinical_abbreviation_acronym](https://nlp.johnsnowlabs.com/2021/12/11/sbiobertresolve_clinical_abbreviation_acronym_en.html) | Entity Resolution        | SentenceEntityResolverModel |
+| en         | [en.resolve.clinical_abbreviation_acronym](https://nlp.johnsnowlabs.com/2022/01/03/sbiobertresolve_clinical_abbreviation_acronym_en.html) | [sbiobertresolve_clinical_abbreviation_acronym](https://nlp.johnsnowlabs.com/2022/01/03/sbiobertresolve_clinical_abbreviation_acronym_en.html) | Entity Resolution        | SentenceEntityResolverModel |
+| en         | [en.resolve.umls_drug_substance](https://nlp.johnsnowlabs.com/2021/12/06/sbiobertresolve_umls_drug_substance_en.html)                     | [sbiobertresolve_umls_drug_substance](https://nlp.johnsnowlabs.com/2021/12/06/sbiobertresolve_umls_drug_substance_en.html)                     | Entity Resolution        | SentenceEntityResolverModel |
+| en         | [en.resolve.loinc_cased](https://nlp.johnsnowlabs.com/2021/12/24/sbiobertresolve_loinc_cased_en.html)                                     | [sbiobertresolve_loinc_cased](https://nlp.johnsnowlabs.com/2021/12/24/sbiobertresolve_loinc_cased_en.html)                                     | Entity Resolution        | SentenceEntityResolverModel |
+| en         | [en.resolve.loinc_uncased](https://nlp.johnsnowlabs.com/2021/12/31/sbluebertresolve_loinc_uncased_en.html)                                | [sbluebertresolve_loinc_uncased](https://nlp.johnsnowlabs.com/2021/12/31/sbluebertresolve_loinc_uncased_en.html)                               | Entity Resolution        | SentenceEntityResolverModel |
+| en         | [en.embed_sentence.biobert.rxnorm](https://nlp.johnsnowlabs.com/2021/12/23/sbiobert_jsl_rxnorm_cased_en.html)                             | [sbiobert_jsl_rxnorm_cased](https://nlp.johnsnowlabs.com/2021/12/23/sbiobert_jsl_rxnorm_cased_en.html)                                         | Entity Resolution        | BertSentenceEmbeddings      |
+| en         | [en.embed_sentence.bert_uncased.rxnorm](https://nlp.johnsnowlabs.com/2021/12/23/sbert_jsl_medium_rxnorm_uncased_en.html)                  | [sbert_jsl_medium_rxnorm_uncased](https://nlp.johnsnowlabs.com/2021/12/23/sbert_jsl_medium_rxnorm_uncased_en.html)                             | Embeddings               | BertSentenceEmbeddings      |
+| en         | [en.embed_sentence.bert_uncased.rxnorm](https://nlp.johnsnowlabs.com/2022/01/03/sbert_jsl_medium_rxnorm_uncased_en.html)                  | [sbert_jsl_medium_rxnorm_uncased](https://nlp.johnsnowlabs.com/2022/01/03/sbert_jsl_medium_rxnorm_uncased_en.html)                             | Embeddings               | BertSentenceEmbeddings      |
+| en         | [en.resolve.snomed_drug](https://nlp.johnsnowlabs.com/2022/01/01/sbiobertresolve_snomed_drug_en.html)                                     | [sbiobertresolve_snomed_drug](https://nlp.johnsnowlabs.com/2022/01/01/sbiobertresolve_snomed_drug_en.html)                                     | Entity Resolution        | SentenceEntityResolverModel |
+| de         | [de.med_ner.deid_subentity](https://nlp.johnsnowlabs.com/2022/01/06/ner_deid_subentity_de.html)                                           | [ner_deid_subentity](https://nlp.johnsnowlabs.com/2022/01/06/ner_deid_subentity_de.html)                                                       | Named Entity Recognition | MedicalNerModel             |
+| de         | [de.med_ner.deid_generic](https://nlp.johnsnowlabs.com/2022/01/06/ner_deid_generic_de.html)                                               | [ner_deid_generic](https://nlp.johnsnowlabs.com/2022/01/06/ner_deid_generic_de.html)                                                           | Named Entity Recognition | MedicalNerModel             |
+| de         | [de.embed.w2v](https://nlp.johnsnowlabs.com/2020/09/06/w2v_cc_300d_de.html)                                                               | [w2v_cc_300d](https://nlp.johnsnowlabs.com/2020/09/06/w2v_cc_300d_de.html)                                                                     | Embeddings               | WordEmbeddingsModel         |
+
+
+
+
+
+#### Additional NLU resources
+
+* [NLU OCR tutorial notebook](https://colab.research.google.com/github/JohnSnowLabs/nlu/blob/master/examples/colab/ocr/ocr_for_img_pdf_docx_files.ipynb)
+* [140+ NLU Tutorials](https://nlu.johnsnowlabs.com/docs/en/notebooks)
+* [NLU in Action](https://nlp.johnsnowlabs.com/demo)
+* [Streamlit visualizations docs](https://nlu.johnsnowlabs.com/docs/en/streamlit_viz_examples)
+* The complete list of all 4000+ models & pipelines in 200+ languages is available on [Models Hub](https://nlp.johnsnowlabs.com/models).
+* [Spark NLP publications](https://medium.com/spark-nlp)
+* [NLU documentation](https://nlu.johnsnowlabs.com/docs/en/install)
+* [Discussions](https://github.com/JohnSnowLabs/spark-nlp/discussions) Engage with other community members, share ideas, and show off how you use Spark NLP and NLU!
+
+
+
+#### Install NLU in 1 line!
+
+```
+* Install NLU on Google Colab : !wget https://setup.johnsnowlabs.com/nlu/colab.sh  -O - | bash
+* Install NLU on Kaggle       : !wget https://setup.johnsnowlabs.com/nlu/kaggle.sh  -O - | bash
+* Install NLU via Pip         : ! pip install nlu pyspark streamlit==0.80.0`
+```
+
+
+
+## NLU Version 3.3.1
+
+#### 48 new Transformer based models in 9 new languages, including NER for Finance, Industry, Politcal Policies, COVID and Chemical Trials, various clinical and medical domains in Spanish and English and much more in NLU 3.3.1
+
+
+We are incredibly excited to announce NLU 3.3.1 has been released with 48 new models in 9 languages!
+
+It comes with 2 new types of state-of-the-art  models,`distilBERT` and `BERT for sequence classification`  with various pre-trained weights,
+state-of-the-art bert based classifiers for problems in the domains of `Finance`, `Sentiment Classification`, `Industry`, `News`, and much more.
+
+On the **healthcare** side, NLU features 22 new models in for English and Spanish with
+with `entity Resolver Models` for LOINC, MeSH, NDC and SNOMED and  UMLS Diseases,
+`NER models` for `Biomarkers`, `NIHSS-Guidelines`, `COVID Trials` , `Chemical Trials`,
+`Bert based Token Classifier models` for `biological`, `genetical`,`cancer`, `cellular` terms,
+`Bert for Sequence Classification models` for `clinical question vs statement classification`
+and finally `Spanish Clinical NER ` and `Resolver Models`
+
+Once again, we would like to thank our community for making another amazing release possible!
+
+#### New Open Source Models and Features
+Integrates the amazing [Spark NLP](https://nlp.johnsnowlabs.com/docs/en/quickstart) [3.3.3](https://github.com/JohnSnowLabs/spark-nlp/releases/tag/3.3.3) and [3.3.2](https://github.com/JohnSnowLabs/spark-nlp/releases/tag/3.3.2) releases, featuring:
+
+- New state-of-the-art fine-tuned `BERT models for Sequence Classification` in `English`, `French`, `German`, `Spanish`, `Japanese`, `Turkish`, `Russian`, and multilingual languages.
+- `DistilBertForSequenceClassification` models in `English`, `French` and `Urdu`
+- `Word2Vec` models.
+- `classify.distilbert_sequence.banking77` :  `Banking NER model` trained on BANKING77 dataset, which provides a very fine-grained set of intents in a banking domain. It comprises 13,083 customer service queries labeled with 77 intents. It focuses on fine-grained single-domain intent detection. Can extract entities like activate_my_card, age_limit, apple_pay_or_google_pay, atm_support, automatic_top_up, balance_not_updated_after_bank_transfer, balance_not_updated_after_cheque_or_cash_deposit, beneficiary_not_allowed, cancel_transfer, card_about_to_expire, card_acceptance, card_arrival, card_delivery_estimate, card_linking, card_not_working, card_payment_fee_charged, card_payment_not_recognised, card_payment_wrong_exchange_rate, card_swallowed, cash_withdrawal_charge, cash_withdrawal_not_recognised, change_pin, compromised_card, contactless_not_working, country_support, declined_card_payment, declined_cash_withdrawal, declined_transfer, direct_debit_payment_not_recognised, disposable_card_limits, edit_personal_details, exchange_charge, exchange_rate, exchange_via_app, extra_charge_on_statement, failed_transfer, fiat_currency_support, get_disposable_virtual_card, get_physical_card, getting_spare_card, getting_virtual_card, lost_or_stolen_card, lost_or_stolen_phone, order_physical_card, passcode_forgotten, pending_card_payment, pending_cash_withdrawal, pending_top_up, pending_transfer, pin_blocked, receiving_money,
+- `classify.distilbert_sequence.industry` :  `Industry NER model` which can extract entities like Advertising, Aerospace & Defense, Apparel Retail, Apparel, Accessories & Luxury Goods, Application Software, Asset Management & Custody Banks, Auto Parts & Equipment, Biotechnology, Building Products, Casinos & Gaming, Commodity Chemicals, Communications Equipment, Construction & Engineering, Construction Machinery & Heavy Trucks, Consumer Finance, Data Processing & Outsourced Services, Diversified Metals & Mining, Diversified Support Services, Electric Utilities, Electrical Components & Equipment, Electronic Equipment & Instruments, Environmental & Facilities Services, Gold, Health Care Equipment, Health Care Facilities, Health Care Services.
+- `xx.classify.bert_sequence.sentiment` : `Multi-Lingual Sentiment Classifier` This a bert-base-multilingual-uncased model finetuned for sentiment analysis on product reviews in six languages: English, Dutch, German, French, Spanish and Italian. It predicts the sentiment of the review as a number of stars (between 1 and 5). This model is intended for direct use as a sentiment analysis model for product reviews in any of the six languages above, or for further finetuning on related sentiment analysis tasks.
+- `distilbert_sequence.policy` : `Policy Classifier` This model was trained on 129.669 manually annotated sentences to classify text into one of seven political categories: ‘Economy’, ‘External Relations’, ‘Fabric of Society’, ‘Freedom and Democracy’, ‘Political System’, ‘Welfare and Quality of Life’ or ‘Social Groups’.
+- `classify.bert_sequence.dehatebert_mono` : `Hate Speech Classifier` This model was trained on 129.669 manually annotated sentences to classify text into one of seven political categories: ‘Economy’, ‘External Relations’, ‘Fabric of Society’, ‘Freedom and Democracy’, ‘Political System’, ‘Welfare and Quality of Life’ or ‘Social Groups’.
+
+#### Complete List of Open Source Models :
+| Language   | NLU Reference                                                                                                                                          | Spark NLP  Reference                                                                                                                                         | Task                |
+|:-----------|:-------------------------------------------------------------------------------------------------------------------------------------------------------|:-------------------------------------------------------------------------------------------------------------------------------------------------------------|:--------------------|
+| en         | [en.classify.bert_sequence.imdb_large](https://nlp.johnsnowlabs.com/2021/11/01/bert_large_sequence_classifier_imdb_en.html)                            | [bert_large_sequence_classifier_imdb](https://nlp.johnsnowlabs.com/2021/11/01/bert_large_sequence_classifier_imdb_en.html)                                   | Text Classification |
+| en         | [en.classify.bert_sequence.imdb](https://nlp.johnsnowlabs.com/2021/11/01/bert_base_sequence_classifier_imdb_en.html)                                   | [bert_base_sequence_classifier_imdb](https://nlp.johnsnowlabs.com/2021/11/01/bert_base_sequence_classifier_imdb_en.html)                                     | Text Classification |
+| en         | [en.classify.bert_sequence.ag_news](https://nlp.johnsnowlabs.com/2021/11/02/bert_base_sequence_classifier_ag_news_en.html)                             | [bert_base_sequence_classifier_ag_news](https://nlp.johnsnowlabs.com/2021/11/02/bert_base_sequence_classifier_ag_news_en.html)                               | Text Classification |
+| en         | [en.classify.bert_sequence.dbpedia_14](https://nlp.johnsnowlabs.com/2021/11/01/bert_base_sequence_classifier_dbpedia_14_en.html)                       | [bert_base_sequence_classifier_dbpedia_14](https://nlp.johnsnowlabs.com/2021/11/01/bert_base_sequence_classifier_dbpedia_14_en.html)                         | Text Classification |
+| en         | [en.classify.bert_sequence.finbert](https://nlp.johnsnowlabs.com/2021/11/03/bert_sequence_classifier_finbert_en.html)                                  | [bert_sequence_classifier_finbert](https://nlp.johnsnowlabs.com/2021/11/03/bert_sequence_classifier_finbert_en.html)                                         | Text Classification |
+| en         | [en.classify.bert_sequence.dehatebert_mono](https://nlp.johnsnowlabs.com/2021/11/03/bert_sequence_classifier_dehatebert_mono_en.html)                  | [bert_sequence_classifier_dehatebert_mono](https://nlp.johnsnowlabs.com/2021/11/03/bert_sequence_classifier_dehatebert_mono_en.html)                         | Text Classification |
+| tr         | [tr.classify.bert_sequence.sentiment](https://nlp.johnsnowlabs.com/2021/11/03/bert_sequence_classifier_turkish_sentiment_tr.html)                      | [bert_sequence_classifier_turkish_sentiment](https://nlp.johnsnowlabs.com/2021/11/03/bert_sequence_classifier_turkish_sentiment_tr.html)                     | Text Classification |
+| de         | [de.classify.bert_sequence.sentiment](https://nlp.johnsnowlabs.com/2021/11/03/bert_sequence_classifier_sentiment_de.html)                              | [bert_sequence_classifier_sentiment](https://nlp.johnsnowlabs.com/2021/11/03/bert_sequence_classifier_sentiment_de.html)                                     | Text Classification |
+| ru         | [ru.classify.bert_sequence.sentiment](https://nlp.johnsnowlabs.com/2021/11/03/bert_sequence_classifier_rubert_sentiment_ru.html)                       | [bert_sequence_classifier_rubert_sentiment](https://nlp.johnsnowlabs.com/2021/11/03/bert_sequence_classifier_rubert_sentiment_ru.html)                       | Text Classification |
+| ja         | [ja.classify.bert_sequence.sentiment](https://nlp.johnsnowlabs.com/2021/11/03/bert_sequence_classifier_japanese_sentiment_ja.html)                     | [bert_sequence_classifier_japanese_sentiment](https://nlp.johnsnowlabs.com/2021/11/03/bert_sequence_classifier_japanese_sentiment_ja.html)                   | Text Classification |
+| es         | [es.classify.bert_sequence.sentiment](https://nlp.johnsnowlabs.com/2021/11/03/bert_sequence_classifier_beto_sentiment_analysis_es.html)                | [bert_sequence_classifier_beto_sentiment_analysis](https://nlp.johnsnowlabs.com/2021/11/03/bert_sequence_classifier_beto_sentiment_analysis_es.html)         | Text Classification |
+| es         | [es.classify.bert_sequence.emotion](https://nlp.johnsnowlabs.com/2021/11/03/bert_sequence_classifier_beto_emotion_analysis_es.html)                    | [bert_sequence_classifier_beto_emotion_analysis](https://nlp.johnsnowlabs.com/2021/11/03/bert_sequence_classifier_beto_emotion_analysis_es.html)             | Text Classification |
+| xx         | [xx.classify.bert_sequence.sentiment](https://nlp.johnsnowlabs.com/2021/11/03/bert_sequence_classifier_multilingual_sentiment_xx.html)                 | [bert_sequence_classifier_multilingual_sentiment](https://nlp.johnsnowlabs.com/2021/11/03/bert_sequence_classifier_multilingual_sentiment_xx.html)           | Text Classification |
+| en         | [en.classify.distilbert_sequence.sst2](https://nlp.johnsnowlabs.com/2021/11/21/distilbert_sequence_classifier_sst2_en.html)                            | [distilbert_sequence_classifier_sst2](https://nlp.johnsnowlabs.com/2021/11/21/distilbert_sequence_classifier_sst2_en.html)                                   | Text Classification |
+| en         | [en.classify.distilbert_sequence.policy](https://nlp.johnsnowlabs.com/2021/11/21/distilbert_sequence_classifier_policy_en.html)                        | [distilbert_sequence_classifier_policy](https://nlp.johnsnowlabs.com/2021/11/21/distilbert_sequence_classifier_policy_en.html)                               | Text Classification |
+| en         | [en.classify.distilbert_sequence.industry](https://nlp.johnsnowlabs.com/2021/11/21/distilbert_sequence_classifier_industry_en.html)                    | [distilbert_sequence_classifier_industry](https://nlp.johnsnowlabs.com/2021/11/21/distilbert_sequence_classifier_industry_en.html)                           | Text Classification |
+| en         | [en.classify.distilbert_sequence.emotion](https://nlp.johnsnowlabs.com/2021/11/21/distilbert_sequence_classifier_emotion_en.html)                      | [distilbert_sequence_classifier_emotion](https://nlp.johnsnowlabs.com/2021/11/21/distilbert_sequence_classifier_emotion_en.html)                             | Text Classification |
+| en         | [en.classify.distilbert_sequence.banking77](https://nlp.johnsnowlabs.com/2021/11/21/distilbert_sequence_classifier_banking77_en.html)                  | [distilbert_sequence_classifier_banking77](https://nlp.johnsnowlabs.com/2021/11/21/distilbert_sequence_classifier_banking77_en.html)                         | Text Classification |
+| en         | [en.classify.distilbert_sequence.imdb](https://nlp.johnsnowlabs.com/2021/11/21/distilbert_base_sequence_classifier_imdb_en.html)                       | [distilbert_base_sequence_classifier_imdb](https://nlp.johnsnowlabs.com/2021/11/21/distilbert_base_sequence_classifier_imdb_en.html)                         | Text Classification |
+| en         | [en.classify.distilbert_sequence.amazon_polarity](https://nlp.johnsnowlabs.com/2021/11/21/distilbert_base_sequence_classifier_amazon_polarity_en.html) | [distilbert_base_sequence_classifier_amazon_polarity](https://nlp.johnsnowlabs.com/2021/11/21/distilbert_base_sequence_classifier_amazon_polarity_en.html)   | Text Classification |
+| en         | [en.classify.distilbert_sequence.ag_news](https://nlp.johnsnowlabs.com/2021/11/21/distilbert_base_sequence_classifier_ag_news_en.html)                 | [distilbert_base_sequence_classifier_ag_news](https://nlp.johnsnowlabs.com/2021/11/21/distilbert_base_sequence_classifier_ag_news_en.html)                   | Text Classification |
+| fr         | [fr.classify.distilbert_sequence.allocine](https://nlp.johnsnowlabs.com/2021/11/21/distilbert_multilingual_sequence_classifier_allocine_fr.html)       | [distilbert_multilingual_sequence_classifier_allocine](https://nlp.johnsnowlabs.com/2021/11/21/distilbert_multilingual_sequence_classifier_allocine_fr.html) | Text Classification |
+| ur         | [ur.classify.distilbert_sequence.imdb](https://nlp.johnsnowlabs.com/2021/11/21/distilbert_base_sequence_classifier_imdb_ur.html)                       | [distilbert_base_sequence_classifier_imdb](https://nlp.johnsnowlabs.com/2021/11/21/distilbert_base_sequence_classifier_imdb_ur.html)                         | Text Classification |
+| en         | [en.embed_sentence.doc2vec](https://nlp.johnsnowlabs.com/2021/11/21/doc2vec_gigaword_300_en.html)                                                      | [doc2vec_gigaword_300](https://nlp.johnsnowlabs.com/2021/11/21/doc2vec_gigaword_300_en.html)                                                                 | Embeddings          |
+| en         | [en.embed_sentence.doc2vec.gigaword_300](https://nlp.johnsnowlabs.com/2021/11/21/doc2vec_gigaword_300_en.html)                                         | [doc2vec_gigaword_300](https://nlp.johnsnowlabs.com/2021/11/21/doc2vec_gigaword_300_en.html)                                                                 | Embeddings          |
+| en         | [en.embed_sentence.doc2vec.gigaword_wiki_300](https://nlp.johnsnowlabs.com/2021/11/21/doc2vec_gigaword_wiki_300_en.html)                               | [doc2vec_gigaword_wiki_300](https://nlp.johnsnowlabs.com/2021/11/21/doc2vec_gigaword_wiki_300_en.html)                                                       | Embeddings          |
+
+
+
+#### New Healthcare models and Features
+Integrates the incredible [Spark NLP for Healthcare](https://nlp.johnsnowlabs.com/docs/en/licensed_install) releases [3.3.4](https://nlp.johnsnowlabs.com/docs/en/licensed_release_notes#334), [3.3.2](https://nlp.johnsnowlabs.com/docs/en/licensed_release_notes#332) and [3.3.1](https://nlp.johnsnowlabs.com/docs/en/licensed_release_notes#331), featuring:
+- New Clinical NER Models for protected health information(PHI),
+    - `ner_biomarker` for extracting extract biomarkers, therapies, oncological, and other general concepts
+        - Oncogenes, Tumor_Finding, UnspecificTherapy, Ethnicity, Age, ResponseToTreatment, Biomarker, HormonalTherapy, Staging, Drug, CancerDx, Radiotherapy, CancerSurgery, TargetedTherapy, PerformanceStatus, CancerModifier, Radiological_Test_Result, Biomarker_Measurement, Metastasis, Radiological_Test, Chemotherapy, Test, Dosage, Test_Result, Immunotherapy, Date, Gender, Prognostic_Biomarkers, Duration, Predictive_Biomarkers
+- `ner_nihss` : NER model that can identify entities according to NIHSS guidelines for clinical stroke assessment to evaluate neurological status in acute stroke patients
+    - 11_ExtinctionInattention, 6b_RightLeg, 1c_LOCCommands, 10_Dysarthria, NIHSS, 5_Motor, 8_Sensory, 4_FacialPalsy, 6_Motor, 2_BestGaze, Measurement, 6a_LeftLeg, 5b_RightArm, 5a_LeftArm, 1b_LOCQuestions, 3_Visual, 9_BestLanguage, 7_LimbAtaxia, 1a_LOC .
+- `redl_nihss_biobert` : relation extraction model that can relate scale items and their measurements according to NIHSS guidelines.
+- `es.med_ner.roberta_ner_diag_proc` : New Spanish Clinical NER Models for extracting the entities DIAGNOSTICO, PROCEDIMIENTO
+-  `es.resolve.snomed`:  New Spanish SNOMED Entity Resolvers
+- `bert_sequence_classifier_question_statement_clinical`:New Clinical Question vs Statement for BertForSequenceClassification model
+- `med_ner.covid_trials` : This model is trained to extract covid-specific medical entities in clinical trials. It supports the following entities ranging from virus type to trial design: Stage, Severity, Virus, Trial_Design, Trial_Phase, N_Patients, Institution, Statistical_Indicator, Section_Header, Cell_Type, Cellular_component, Viral_components, Physiological_reaction, Biological_molecules, Admission_Discharge, Age, BMI, Cerebrovascular_Disease, Date, Death_Entity, Diabetes, Disease_Syndrome_Disorder, Dosage, Drug_Ingredient, Employment, Frequency, Gender, Heart_Disease, Hypertension, Obesity, Pulse, Race_Ethnicity, Respiration, Route, Smoking, Time, Total_Cholesterol, Treatment, VS_Finding, Vaccine .
+- `med_ner.chemd` : This model extract the names of chemical compounds and drugs in medical texts. The entities that can be detected are as follows : SYSTEMATIC, IDENTIFIERS, FORMULA, TRIVIAL, ABBREVIATION, FAMILY, MULTIPLE . For reference click here . https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4331685/
+- `bert_token_classifier_ner_bionlp` : This model is BERT-based version of ner_bionlp model and can detect biological and genetics terms in cancer-related texts. (Amino_acid, Anatomical_system, Cancer, Cell, Cellular_component, Developing_anatomical_Structure, Gene_or_gene_product, Immaterial_anatomical_entity, Multi-tissue_structure, Organ, Organism, Organism_subdivision, Simple_chemical, Tissue
+- `bert_token_classifier_ner_cellular` : This model is BERT-based version of ner_cellular model and can detect molecular biology-related terms (DNA, Cell_type, Cell_line, RNA, Protein) in medical texts.
+- We have updated `med_ner.jsl.enriched` model by enriching the training data using clinical trials data to make it more robust. This model is capable of predicting up to 87 different entities and is based on ner_jsl model. Here are the entities this model can detect; Social_History_Header, Oncology_Therapy, Blood_Pressure, Respiration, Performance_Status, Family_History_Header, Dosage, Clinical_Dept, Diet, Procedure, HDL, Weight, Admission_Discharge, LDL, Kidney_Disease, Oncological, Route, Imaging_Technique, Puerperium, Overweight, Temperature, Diabetes, Vaccine, Age, Test_Result, Employment, Time, Obesity, EKG_Findings, Pregnancy, Communicable_Disease, BMI, Strength, Tumor_Finding, Section_Header, RelativeDate, ImagingFindings, Death_Entity, Date, Cerebrovascular_Disease, Treatment, Labour_Delivery, Pregnancy_Delivery_Puerperium, Direction, Internal_organ_or_component, Psychological_Condition, Form, Medical_Device, Test, Symptom, Disease_Syndrome_Disorder, Staging, Birth_Entity, Hyperlipidemia, O2_Saturation, Frequency, External_body_part_or_region, Drug_Ingredient, Vital_Signs_Header, Substance_Quantity, Race_Ethnicity, VS_Finding, Injury_or_Poisoning, Medical_History_Header, Alcohol, Triglycerides, Total_Cholesterol, Sexually_Active_or_Sexual_Orientation, Female_Reproductive_Status, Relationship_Status, Drug_BrandName, RelativeTime, Duration, Hypertension, Metastasis, Gender, Oxygen_Therapy, Pulse, Heart_Disease, Modifier, Allergen, Smoking, Substance, Cancer_Modifier, Fetus_NewBorn, Height
+- `classify.bert_sequence.question_statement_clinical` : This model classifies sentences into one of these two classes: question (interrogative sentence) or statement (declarative sentence) and trained with BertForSequenceClassification. This model is at first trained on SQuAD and SPAADIA dataset and then fine tuned on the clinical visit documents and MIMIC-III dataset annotated in-house. Using this model, you can find the question statements and exclude & utilize in the downstream tasks such as NER and relation extraction models.
+- `classify.token_bert.ner_chemical` : This model is BERT-based version of ner_chemicals model and can detect chemical compounds (CHEM) in the medical texts.
+- `resolve.umls_disease_syndrome` : This model is trained on the Disease or Syndrome category using sbiobert_base_cased_mli embeddings.
+
+#### Complete List of Healthcare Models :
+
+| Language   | NLU Reference                                                                                                                                                 | Spark NLP  Reference                                                                                                                                               | Task                     |
+|:-----------|:--------------------------------------------------------------------------------------------------------------------------------------------------------------|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------|:-------------------------|
+| en         | [en.med_ner.deid_subentity_augmented_i2b2](https://nlp.johnsnowlabs.com/2021/11/29/ner_deid_subentity_augmented_i2b2_en.html)                                 | [ner_deid_subentity_augmented_i2b2](https://nlp.johnsnowlabs.com/2021/11/29/ner_deid_subentity_augmented_i2b2_en.html)                                             | Named Entity Recognition |
+| en         | [en.med_ner.biomarker](https://nlp.johnsnowlabs.com/2021/11/26/ner_biomarker_en.html)                                                                         | [ner_biomarker](https://nlp.johnsnowlabs.com/2021/11/26/ner_biomarker_en.html)                                                                                     | Named Entity Recognition |
+| en         | [en.med_ner.nihss](https://nlp.johnsnowlabs.com/2021/11/15/ner_nihss_en.html)                                                                                 | [ner_nihss](https://nlp.johnsnowlabs.com/2021/11/15/ner_nihss_en.html)                                                                                             | Named Entity Recognition |
+| en         | [en.extract_relation.nihss](https://nlp.johnsnowlabs.com/2021/11/16/redl_nihss_biobert_en.html)                                                               | [redl_nihss_biobert](https://nlp.johnsnowlabs.com/2021/11/16/redl_nihss_biobert_en.html)                                                                           | Relation Extraction      |
+| en         | [en.resolve.mesh](https://nlp.johnsnowlabs.com/2021/11/14/sbiobertresolve_mesh_en.html)                                                                       | [sbiobertresolve_mesh](https://nlp.johnsnowlabs.com/2021/11/14/sbiobertresolve_mesh_en.html)                                                                       | Entity Resolution        |
+| en         | [en.resolve.mli](https://nlp.johnsnowlabs.com/2020/11/27/sbiobert_base_cased_mli_en.html)                                                                     | [sbiobert_base_cased_mli](https://nlp.johnsnowlabs.com/2020/11/27/sbiobert_base_cased_mli_en.html)                                                                 | Embeddings               |
+| en         | [en.resolve.ndc](https://nlp.johnsnowlabs.com/2021/11/27/sbiobertresolve_ndc_en.html)                                                                         | [sbiobertresolve_ndc](https://nlp.johnsnowlabs.com/2021/11/27/sbiobertresolve_ndc_en.html)                                                                         | Entity Resolution        |
+| en         | [en.resolve.loinc.augmented](https://nlp.johnsnowlabs.com/2021/11/23/sbiobertresolve_loinc_augmented_en.html)                                                 | [sbiobertresolve_loinc_augmented](https://nlp.johnsnowlabs.com/2021/11/23/sbiobertresolve_loinc_augmented_en.html)                                                 | Entity Resolution        |
+| en         | [en.resolve.clinical_snomed_procedures_measurements](https://nlp.johnsnowlabs.com/2021/11/15/sbiobertresolve_clinical_snomed_procedures_measurements_en.html) | [sbiobertresolve_clinical_snomed_procedures_measurements](https://nlp.johnsnowlabs.com/2021/11/15/sbiobertresolve_clinical_snomed_procedures_measurements_en.html) | Entity Resolution        |
+| es         | [es.embed.roberta_base_biomedical](https://nlp.johnsnowlabs.com/2021/11/01/roberta_base_biomedical_es.html)                                                   | [roberta_base_biomedical](https://nlp.johnsnowlabs.com/2021/11/01/roberta_base_biomedical_es.html)                                                                 | Embeddings               |
+| es         | [es.med_ner.roberta_ner_diag_proc](https://nlp.johnsnowlabs.com/2021/11/04/roberta_ner_diag_proc_es.html)                                                     | [roberta_ner_diag_proc](https://nlp.johnsnowlabs.com/2021/11/04/roberta_ner_diag_proc_es.html)                                                                     | Named Entity Recognition |
+| es         | [es.resolve.snomed](https://nlp.johnsnowlabs.com/2021/11/03/robertaresolve_snomed_es.html)                                                                    | [robertaresolve_snomed](https://nlp.johnsnowlabs.com/2021/11/03/robertaresolve_snomed_es.html)                                                                     | Entity Resolution        |
+| en         | [en.med_ner.covid_trials](https://nlp.johnsnowlabs.com/2021/11/05/ner_covid_trials_en.html)                                                                   | [ner_covid_trials](https://nlp.johnsnowlabs.com/2021/11/05/ner_covid_trials_en.html)                                                                               | Named Entity Recognition |
+| en         | [en.classify.token_bert.bionlp](https://nlp.johnsnowlabs.com/2021/11/03/bert_token_classifier_ner_bionlp_en.html)                                             | [bert_token_classifier_ner_bionlp](https://nlp.johnsnowlabs.com/2021/11/03/bert_token_classifier_ner_bionlp_en.html)                                               | Named Entity Recognition |
+| en         | [en.classify.token_bert.cellular](https://nlp.johnsnowlabs.com/2021/11/03/bert_token_classifier_ner_cellular_en.html)                                         | [bert_token_classifier_ner_cellular](https://nlp.johnsnowlabs.com/2021/11/03/bert_token_classifier_ner_cellular_en.html)                                           | Named Entity Recognition |
+| en         | [en.classify.token_bert.chemicals](https://nlp.johnsnowlabs.com/2021/10/19/bert_token_classifier_ner_chemicals_en.html)                                       | [bert_token_classifier_ner_chemicals](https://nlp.johnsnowlabs.com/2021/10/19/bert_token_classifier_ner_chemicals_en.html)                                         | Named Entity Recognition |
+| en         | [en.resolve.rxnorm_augmented](https://nlp.johnsnowlabs.com/2021/10/29/sbiobertresolve_rxnorm_augmented_en.html)                                               | [sbiobertresolve_rxnorm_augmented](https://nlp.johnsnowlabs.com/2021/10/29/sbiobertresolve_rxnorm_augmented_en.html)                                               | Entity Resolution        |
+| en         | [en.resolve.rxnorm_augmented](https://nlp.johnsnowlabs.com/2021/11/04/sbiobertresolve_rxnorm_augmented_en.html)                                               | [sbiobertresolve_rxnorm_augmented](https://nlp.johnsnowlabs.com/2021/11/04/sbiobertresolve_rxnorm_augmented_en.html)                                               | Entity Resolution        |
+| en         | [en.resolve.rxnorm_augmented](https://nlp.johnsnowlabs.com/2021/11/09/sbiobertresolve_rxnorm_augmented_en.html)                                               | [sbiobertresolve_rxnorm_augmented](https://nlp.johnsnowlabs.com/2021/11/09/sbiobertresolve_rxnorm_augmented_en.html)                                               | Entity Resolution        |
+| en         | [en.resolve.umls_disease_syndrome](https://nlp.johnsnowlabs.com/2021/10/11/sbiobertresolve_umls_disease_syndrome_en.html)                                     | [sbiobertresolve_umls_disease_syndrome](https://nlp.johnsnowlabs.com/2021/10/11/sbiobertresolve_umls_disease_syndrome_en.html)                                     | Entity Resolution        |
+| en         | [en.resolve.umls_clinical_drugs](https://nlp.johnsnowlabs.com/2021/10/11/sbiobertresolve_umls_clinical_drugs_en.html)                                         | [sbiobertresolve_umls_clinical_drugs](https://nlp.johnsnowlabs.com/2021/10/11/sbiobertresolve_umls_clinical_drugs_en.html)                                         | Entity Resolution        |
+| en         | [en.classify.bert_sequence.question_statement_clinical](https://nlp.johnsnowlabs.com/2021/11/05/bert_sequence_classifier_question_statement_clinical_en.html) | [bert_sequence_classifier_question_statement_clinical](https://nlp.johnsnowlabs.com/2021/11/05/bert_sequence_classifier_question_statement_clinical_en.html)       | Text Classification      |
+
+
+
+
+
+
+## NLU Version 3.3.0
+
+#### 2000%+ Speedup on small data, 63 new models for 100+ Languages with 6 new supported Transformer classes including BERT, XLM-RoBERTa, alBERT, Longformer, XLnet based models, 48 NER profiling helathcare pipelines and much more in John Snow Labs NLU 3.3.0
+
+We are incredibly excited to announce NLU 3.3.0 has been released!
+It comes with a up to 2000%+ speedup on small datasets, 6 new Types of Deep Learning transformer models, including
+`RoBertaForTokenClassification`,`XlmRoBertaForTokenClassification`,`AlbertForTokenClassification`,`LongformerForTokenClassification`,`XlnetForTokenClassification`,`XlmRoBertaSentenceEmbeddings`.
+In total there are 63 NLP Models 6 **New Languages Supported**  which are `Igbo`, `Ganda`,  `Dholuo`, `Naija`, `Wolof`,`Kinyarwanda` with their corresponding ISO codes `ig`, `lg`, `lou`, `pcm`, `wo`,`rw`
+with New SOTA XLM-RoBERTa models in `Luganda`, `Kinyarwanda`, `Igbo`, `Hausa`, and `Amharic` languages  and 2 new Multilingual Embeddings with 100+ supported languages via `XLM-Roberta` are available.
+
+On the healthcare NLP side we are glad to announce 18  new NLP for Healthcare models including
+NER `Profiling` pretrained pipelines to run `48 different Clinical NER` and `21 Different Biobert` Models At Once Over the Input Text
+New `BERT-Based Deidentification` NER Model, Sentence Entity Resolver Models For `German` Language
+New `Spell Checker` Model For Drugs , 3 New Sentence Entity Resolver Models (3-char `ICD10CM`, `RxNorm_NDC`, `HCPCS`)
+5 New Clinical NER Models (Trained By `BertForTokenClassification` Approach)
+,`Radiology NER` Model Trained On `cheXpert Dataset`and New `UMLS Sentence Entity Resolver Models`
+
+Additionally 2 new tutorials are avaiable, [NLU & Streamlit Crashcourse](https://www.youtube.com/watch?v=2xjA4Gre1sg) and [NLU for Healthcare Crashcourse of every of the 50 + healthcare Domains and 200+ healthcare models](https://www.youtube.com/watch?v=gGDsZXt1SF8)
+
+#### New Features and Improvements
+
+#### 2000%+ Speedup prediction for small datasets
+NLU pipelines now predict up to 2000% faster by optimizing integration with Spark NLP's light pipelines.
+NLU  will configure usage of this automatically, but it can be turned off as well via `multithread=False`  
+![NLU 3.3.0 Benchmark](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/images/releases/3_3_0/nlu3.3.0_Benchmark.png)
+
+#### 50x faster saving of NLU Pipelines
+Up to 50x faster saving Spark NLP/ NLU models and pipelines! We have improved the way we package TensorFlow SavedModel while saving Spark NLP models & pipelines. For instance, it used to take up to 10 minutes to save the xlm_roberta_base model before Spark NLP 3.3.0, and now it only takes up to 15 seconds!
+
+#### New Annotator Classes Integrated
+The following new transformer classes are available with various pretrained weights in 1 line of code :
+- [RoBertaForTokenClassification](https://nlp.johnsnowlabs.com/docs/en/transformers#robertafortokenclassification)
+- [XlmRoBertaForTokenClassification](https://nlp.johnsnowlabs.com/docs/en/transformers#xlmrobertafortokenclassification)
+- [AlbertForTokenClassification](https://nlp.johnsnowlabs.com/docs/en/transformers#albertfortokenclassification)
+- [LongformerForTokenClassification](https://nlp.johnsnowlabs.com/docs/en/transformers#longformerfortokenclassification)
+- [XlnetForTokenClassification](https://nlp.johnsnowlabs.com/docs/en/transformers#xlnetfortokenclassification)
+- [XlmRoBertaSentenceEmbeddings](https://nlp.johnsnowlabs.com/docs/en/transformers#xlmrobertasentenceembeddings)
+
+
+#### New Transformer Models
+The following models are available from the amazing Spark NLP
+[3.3.0](https://github.com/JohnSnowLabs/spark-nlp/releases/tag/3.3.0) and
+[3.3.1](https://github.com/JohnSnowLabs/spark-nlp/releases/tag/3.3.1) releases
+which includes NLP models for
+Yiddish, Ukrainian, Telugu, Tamil, Somali, Sindhi, Russian, Punjabi, Nepali, Marathi, Malayalam, Kannada, Indonesian, Gujrati, Bosnian, Igbo, Ganda,  Dholuo, Naija, Wolof,Kinyarwanda
+
+| Language   | NLU Reference                                                                                                                                                    | Spark NLP  Reference                                                                                                                           | Task                     |
+|:-----------|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------|:-----------------------------------------------------------------------------------------------------------------------------------------------|:-------------------------|
+| ig         | [ig.embed.xlm_roberta](https://nlp.johnsnowlabs.com/2021/09/29/xlm_roberta_base_finetuned_igbo_ig.html)                                                          | [xlm_roberta_base_finetuned_igbo](https://nlp.johnsnowlabs.com/2021/09/29/xlm_roberta_base_finetuned_igbo_ig.html)                             | Embeddings               |
+| ig         | [ig.embed_sentence.xlm_roberta](https://nlp.johnsnowlabs.com/2021/10/15/sent_xlm_roberta_base_finetuned_igbo_ig.html)                                            | [sent_xlm_roberta_base_finetuned_igbo](https://nlp.johnsnowlabs.com/2021/10/15/sent_xlm_roberta_base_finetuned_igbo_ig.html)                   | Embeddings               |
+| lg         | [lg.embed.xlm_roberta](https://nlp.johnsnowlabs.com/2021/09/29/xlm_roberta_base_finetuned_luganda_lg.html)                                                       | [xlm_roberta_base_finetuned_luganda](https://nlp.johnsnowlabs.com/2021/09/29/xlm_roberta_base_finetuned_luganda_lg.html)                       | Embeddings               |
+| lg         | [lg.embed_sentence.xlm_roberta](https://nlp.johnsnowlabs.com/2021/10/15/sent_xlm_roberta_base_finetuned_luganda_lg.html)                                         | [sent_xlm_roberta_base_finetuned_luganda](https://nlp.johnsnowlabs.com/2021/10/15/sent_xlm_roberta_base_finetuned_luganda_lg.html)             | Embeddings               |
+| wo         | [wo.embed_sentence.xlm_roberta](https://nlp.johnsnowlabs.com/2021/10/15/sent_xlm_roberta_base_finetuned_wolof_wo.html)                                           | [sent_xlm_roberta_base_finetuned_wolof](https://nlp.johnsnowlabs.com/2021/10/15/sent_xlm_roberta_base_finetuned_wolof_wo.html)                 | Embeddings               |
+| wo         | [wo.embed.xlm_roberta](https://nlp.johnsnowlabs.com/2021/10/16/xlm_roberta_base_finetuned_wolof_wo.html)                                                         | [xlm_roberta_base_finetuned_wolof](https://nlp.johnsnowlabs.com/2021/10/16/xlm_roberta_base_finetuned_wolof_wo.html)                           | Embeddings               |
+| rw         | [rw.embed_sentence.xlm_roberta](https://nlp.johnsnowlabs.com/2021/10/15/sent_xlm_roberta_base_finetuned_kinyarwanda_rw.html)                                     | [sent_xlm_roberta_base_finetuned_kinyarwanda](https://nlp.johnsnowlabs.com/2021/10/15/sent_xlm_roberta_base_finetuned_kinyarwanda_rw.html)     | Embeddings               |
+| rw         | [rw.embed.xlm_roberta](https://nlp.johnsnowlabs.com/2021/09/29/xlm_roberta_base_finetuned_kinyarwanda_rw.html)                                                   | [xlm_roberta_base_finetuned_kinyarwanda](https://nlp.johnsnowlabs.com/2021/09/29/xlm_roberta_base_finetuned_kinyarwanda_rw.html)               | Embeddings               |
+| sw         | [sw.embed_sentence.xlm_roberta](https://nlp.johnsnowlabs.com/2021/10/15/sent_xlm_roberta_base_finetuned_swahili_sw.html)                                         | [sent_xlm_roberta_base_finetuned_swahili](https://nlp.johnsnowlabs.com/2021/10/15/sent_xlm_roberta_base_finetuned_swahili_sw.html)             | Embeddings               |
+| sw         | [sw.embed.xlm_roberta](https://nlp.johnsnowlabs.com/2021/10/16/xlm_roberta_base_finetuned_swahili_sw.html)                                                       | [xlm_roberta_base_finetuned_swahili](https://nlp.johnsnowlabs.com/2021/10/16/xlm_roberta_base_finetuned_swahili_sw.html)                       | Embeddings               |
+| ha         | [ha.embed.xlm_roberta](https://nlp.johnsnowlabs.com/2021/09/29/xlm_roberta_base_finetuned_hausa_ha.html)                                                         | [xlm_roberta_base_finetuned_hausa](https://nlp.johnsnowlabs.com/2021/09/29/xlm_roberta_base_finetuned_hausa_ha.html)                           | Embeddings               |
+| ha         | [ha.embed_sentence.xlm_roberta](https://nlp.johnsnowlabs.com/2021/10/15/sent_xlm_roberta_base_finetuned_hausa_ha.html)                                           | [sent_xlm_roberta_base_finetuned_hausa](https://nlp.johnsnowlabs.com/2021/10/15/sent_xlm_roberta_base_finetuned_hausa_ha.html)                 | Embeddings               |
+| am         | [am.embed.xlm_roberta](https://nlp.johnsnowlabs.com/2021/09/29/xlm_roberta_base_finetuned_amharic_am.html)                                                       | [xlm_roberta_base_finetuned_amharic](https://nlp.johnsnowlabs.com/2021/09/29/xlm_roberta_base_finetuned_amharic_am.html)                       | Embeddings               |
+| am         | [am.embed_sentence.xlm_roberta](https://nlp.johnsnowlabs.com/2021/10/15/sent_xlm_roberta_base_finetuned_amharic_am.html)                                         | [sent_xlm_roberta_base_finetuned_amharic](https://nlp.johnsnowlabs.com/2021/10/15/sent_xlm_roberta_base_finetuned_amharic_am.html)             | Embeddings               |
+| yo         | [yo.embed_sentence.xlm_roberta](https://nlp.johnsnowlabs.com/2021/10/15/sent_xlm_roberta_base_finetuned_yoruba_yo.html)                                          | [sent_xlm_roberta_base_finetuned_yoruba](https://nlp.johnsnowlabs.com/2021/10/15/sent_xlm_roberta_base_finetuned_yoruba_yo.html)               | Embeddings               |
+| yo         | [yo.embed.xlm_roberta](https://nlp.johnsnowlabs.com/2021/10/16/xlm_roberta_base_finetuned_yoruba_yo.html)                                                        | [xlm_roberta_base_finetuned_yoruba](https://nlp.johnsnowlabs.com/2021/10/16/xlm_roberta_base_finetuned_yoruba_yo.html)                         | Embeddings               |
+| fa         | [fa.classify.token_roberta_token_classifier_zwnj_base_ner](https://nlp.johnsnowlabs.com/2021/09/28/roberta_token_classifier_zwnj_base_ner_fa.html)               | [roberta_token_classifier_zwnj_base_ner](https://nlp.johnsnowlabs.com/2021/09/28/roberta_token_classifier_zwnj_base_ner_fa.html)               | Named Entity Recognition |
+| yi         | [detect_sentence](https://nlp.johnsnowlabs.com/2021/08/30/sentence_detector_dl_yi.html) | [sentence_detector_dl](https://nlp.johnsnowlabs.com/2021/08/30/sentence_detector_dl_yi.html) | Sentence Detection |
+| uk         | [detect_sentence](https://nlp.johnsnowlabs.com/2021/08/30/sentence_detector_dl_uk.html) | [sentence_detector_dl](https://nlp.johnsnowlabs.com/2021/08/30/sentence_detector_dl_uk.html) | Sentence Detection |
+| te         | [detect_sentence](https://nlp.johnsnowlabs.com/2021/08/30/sentence_detector_dl_te.html) | [sentence_detector_dl](https://nlp.johnsnowlabs.com/2021/08/30/sentence_detector_dl_te.html) | Sentence Detection |         |
+| ta         | [detect_sentence](https://nlp.johnsnowlabs.com/2021/08/30/sentence_detector_dl_ta.html) | [sentence_detector_dl](https://nlp.johnsnowlabs.com/2021/08/30/sentence_detector_dl_ta.html) | Sentence Detection |
+| so         | [detect_sentence](https://nlp.johnsnowlabs.com/2021/08/30/sentence_detector_dl_so.html) | [sentence_detector_dl](https://nlp.johnsnowlabs.com/2021/08/30/sentence_detector_dl_so.html) | Sentence Detection |
+| sd         | [detect_sentence](https://nlp.johnsnowlabs.com/2021/08/30/sentence_detector_dl_sd.html) | [sentence_detector_dl](https://nlp.johnsnowlabs.com/2021/08/30/sentence_detector_dl_sd.html) | Sentence Detection |
+| ru         | [detect_sentence](https://nlp.johnsnowlabs.com/2021/08/30/sentence_detector_dl_ru.html) | [sentence_detector_dl](https://nlp.johnsnowlabs.com/2021/08/30/sentence_detector_dl_ru.html) | Sentence Detection |
+| pa         | [detect_sentence](https://nlp.johnsnowlabs.com/2021/08/30/sentence_detector_dl_pa.html) | [sentence_detector_dl](https://nlp.johnsnowlabs.com/2021/08/30/sentence_detector_dl_pa.html) | Sentence Detection |
+| ne         | [detect_sentence](https://nlp.johnsnowlabs.com/2021/08/30/sentence_detector_dl_ne.html) | [sentence_detector_dl](https://nlp.johnsnowlabs.com/2021/08/30/sentence_detector_dl_ne.html) | Sentence Detection |
+| mr         | [detect_sentence](https://nlp.johnsnowlabs.com/2021/08/30/sentence_detector_dl_mr.html) | [sentence_detector_dl](https://nlp.johnsnowlabs.com/2021/08/30/sentence_detector_dl_mr.html) | Sentence Detection |
+| ml         | [detect_sentence](https://nlp.johnsnowlabs.com/2021/08/30/sentence_detector_dl_ml.html) | [sentence_detector_dl](https://nlp.johnsnowlabs.com/2021/08/30/sentence_detector_dl_ml.html) | Sentence Detection |
+| kn         | [detect_sentence](https://nlp.johnsnowlabs.com/2021/08/30/sentence_detector_dl_kn.html) | [sentence_detector_dl](https://nlp.johnsnowlabs.com/2021/08/30/sentence_detector_dl_kn.html) | Sentence Detection |
+| id         | [detect_sentence](https://nlp.johnsnowlabs.com/2021/08/30/sentence_detector_dl_id.html) | [sentence_detector_dl](https://nlp.johnsnowlabs.com/2021/08/30/sentence_detector_dl_id.html) | Sentence Detection |
+| gu         | [detect_sentence](https://nlp.johnsnowlabs.com/2021/08/30/sentence_detector_dl_gu.html) | [sentence_detector_dl](https://nlp.johnsnowlabs.com/2021/08/30/sentence_detector_dl_gu.html) | Sentence Detection |
+| bs         | [detect_sentence](https://nlp.johnsnowlabs.com/2021/08/30/sentence_detector_dl_bs.html) | [sentence_detector_dl](https://nlp.johnsnowlabs.com/2021/08/30/sentence_detector_dl_bs.html) | Sentence Detection |
+| en         | [en.classify.token_roberta_large_token_classifier_conll03](https://nlp.johnsnowlabs.com/2021/09/26/roberta_large_token_classifier_conll03_en.html)               | [roberta_large_token_classifier_conll03](https://nlp.johnsnowlabs.com/2021/09/26/roberta_large_token_classifier_conll03_en.html)               | Named Entity Recognition |
+| en         | [en.classify.token_roberta_base_token_classifier_ontonotes](https://nlp.johnsnowlabs.com/2021/09/26/roberta_base_token_classifier_ontonotes_en.html)             | [roberta_base_token_classifier_ontonotes](https://nlp.johnsnowlabs.com/2021/09/26/roberta_base_token_classifier_ontonotes_en.html)             | Named Entity Recognition |
+| en         | [en.classify.token_roberta_base_token_classifier_conll03](https://nlp.johnsnowlabs.com/2021/09/26/roberta_base_token_classifier_conll03_en.html)                 | [roberta_base_token_classifier_conll03](https://nlp.johnsnowlabs.com/2021/09/26/roberta_base_token_classifier_conll03_en.html)                 | Named Entity Recognition |
+| en         | [en.classify.token_distilroberta_base_token_classifier_ontonotes](https://nlp.johnsnowlabs.com/2021/09/26/distilroberta_base_token_classifier_ontonotes_en.html) | [distilroberta_base_token_classifier_ontonotes](https://nlp.johnsnowlabs.com/2021/09/26/distilroberta_base_token_classifier_ontonotes_en.html) | Named Entity Recognition |
+| en         | [en.classify.token_albert_large_token_classifier_conll03](https://nlp.johnsnowlabs.com/2021/09/26/albert_large_token_classifier_conll03_en.html)                 | [albert_large_token_classifier_conll03](https://nlp.johnsnowlabs.com/2021/09/26/albert_large_token_classifier_conll03_en.html)                 | Named Entity Recognition |
+| en         | [en.classify.token_albert_base_token_classifier_conll03](https://nlp.johnsnowlabs.com/2021/09/26/albert_base_token_classifier_conll03_en.html)                   | [albert_base_token_classifier_conll03](https://nlp.johnsnowlabs.com/2021/09/26/albert_base_token_classifier_conll03_en.html)                   | Named Entity Recognition |
+| en         | [en.classify.token_xlnet_base_token_classifier_conll03](https://nlp.johnsnowlabs.com/2021/09/28/xlnet_base_token_classifier_conll03_en.html)                     | [xlnet_base_token_classifier_conll03](https://nlp.johnsnowlabs.com/2021/09/28/xlnet_base_token_classifier_conll03_en.html)                     | Named Entity Recognition |
+| en         | [en.classify.token_roberta.large_token_classifier_ontonotes](https://nlp.johnsnowlabs.com/2021/09/26/roberta_large_token_classifier_ontonotes_en.html)           | [roberta_large_token_classifier_ontonotes](https://nlp.johnsnowlabs.com/2021/09/26/roberta_large_token_classifier_ontonotes_en.html)           | Named Entity Recognition |
+| en         | [en.classify.token_albert.xlarge_token_classifier_conll03](https://nlp.johnsnowlabs.com/2021/09/26/albert_xlarge_token_classifier_conll03_en.html)               | [albert_xlarge_token_classifier_conll03](https://nlp.johnsnowlabs.com/2021/09/26/albert_xlarge_token_classifier_conll03_en.html)               | Named Entity Recognition |
+| en         | [en.classify.token_xlnet.large_token_classifier_conll03](https://nlp.johnsnowlabs.com/2021/09/28/xlnet_large_token_classifier_conll03_en.html)                   | [xlnet_large_token_classifier_conll03](https://nlp.johnsnowlabs.com/2021/09/28/xlnet_large_token_classifier_conll03_en.html)                   | Named Entity Recognition |
+| en         | [en.classify.token_longformer.base_token_classifier_conll03](https://nlp.johnsnowlabs.com/2021/10/09/longformer_base_token_classifier_conll03_en.html)           | [longformer_base_token_classifier_conll03](https://nlp.johnsnowlabs.com/2021/10/09/longformer_base_token_classifier_conll03_en.html)           | Named Entity Recognition |
+| xx         | [xx.classify.token_xlm_roberta.token_classifier_ner_40_lang](https://nlp.johnsnowlabs.com/2021/09/28/xlm_roberta_token_classifier_ner_40_lang_xx.html)           | [xlm_roberta_token_classifier_ner_40_lang](https://nlp.johnsnowlabs.com/2021/09/28/xlm_roberta_token_classifier_ner_40_lang_xx.html)           | Named Entity Recognition |
+| xx         | [xx.embed.xlm_roberta_large](https://nlp.johnsnowlabs.com/2021/09/29/xlm_roberta_large_xx.html)                                                                  | [xlm_roberta_large](https://nlp.johnsnowlabs.com/2021/09/29/xlm_roberta_large_xx.html)                                                         | Embeddings               |
+
+
+#### New Healthcare models
+The following models are available from the amazing Spark NLP for Healthcare releases
+[3.3.0](https://nlp.johnsnowlabs.com/docs/en/licensed_release_notes#330),
+[3.2.3](https://nlp.johnsnowlabs.com/docs/en/licensed_release_notes#323),
+[3.3.1](https://nlp.johnsnowlabs.com/docs/en/licensed_release_notes#331),
+which includes 48 Multi-NER tuning pipelines, BERT-based DEidentification, German NER resolvers, Spell Checkers for Drugs,
+5 ner NER models trained via BErtForTokenClassification, NER models for Radiology CID10CM, RxNORM NDC and HCPCSS models and UMLS sentence resolver models
+
+
+| Language   | NLU Reference                                                                                                              | Spark NLP  Reference                                                                                                           | Task                     |
+|:-----------|:---------------------------------------------------------------------------------------------------------------------------|:-------------------------------------------------------------------------------------------------------------------------------|:-------------------------|
+| de         | [de.resolve.snomed](https://nlp.johnsnowlabs.com/2021/09/16/sbertresolve_snomed_de.html)                                   | [sbertresolve_snomed](https://nlp.johnsnowlabs.com/2021/09/16/sbertresolve_snomed_de.html)                                     | Entity Resolution        |
+| de         | [de.resolve.icd10gm](https://nlp.johnsnowlabs.com/2021/09/16/sbertresolve_icd10gm_de.html)                                 | [sbertresolve_icd10gm](https://nlp.johnsnowlabs.com/2021/09/16/sbertresolve_icd10gm_de.html)                                   | Entity Resolution        |
+| en         | [en.med_ner.profiling_clinical](https://nlp.johnsnowlabs.com/2021/09/24/ner_profiling_clinical_en.html)                    | [ner_profiling_clinical](https://nlp.johnsnowlabs.com/2021/09/24/ner_profiling_clinical_en.html)                               | Pipeline Healthcare      |
+| en         | [en.med_ner.profiling_biobert](https://nlp.johnsnowlabs.com/2021/09/23/ner_profiling_biobert_en.html)                      | [ner_profiling_biobert](https://nlp.johnsnowlabs.com/2021/09/23/ner_profiling_biobert_en.html)                                 | Pipeline Healthcare      |
+| en         | [en.med_ner.chexpert](https://nlp.johnsnowlabs.com/2021/09/30/ner_chexpert_en.html)                                        | [ner_chexpert](https://nlp.johnsnowlabs.com/2021/09/30/ner_chexpert_en.html)                                                   | Named Entity Recognition |
+| en         | [en.classify.token_bert.ner_bacteria](https://nlp.johnsnowlabs.com/2021/09/30/bert_token_classifier_ner_bacteria_en.html)  | [bert_token_classifier_ner_bacteria](https://nlp.johnsnowlabs.com/2021/09/30/bert_token_classifier_ner_bacteria_en.html)       | Named Entity Recognition |
+| en         | [en.classify.token_bert.ner_anatomy](https://nlp.johnsnowlabs.com/2021/09/30/bert_token_classifier_ner_anatomy_en.html)    | [bert_token_classifier_ner_anatomy](https://nlp.johnsnowlabs.com/2021/09/30/bert_token_classifier_ner_anatomy_en.html)         | Named Entity Recognition |
+| en         | [en.classify.token_bert.ner_drugs](https://nlp.johnsnowlabs.com/2021/09/20/bert_token_classifier_ner_drugs_en.html)        | [bert_token_classifier_ner_drugs](https://nlp.johnsnowlabs.com/2021/09/20/bert_token_classifier_ner_drugs_en.html)             | Named Entity Recognition |
+| en         | [en.classify.token_bert.ner_jsl_slim](https://nlp.johnsnowlabs.com/2021/09/24/bert_token_classifier_ner_jsl_slim_en.html)  | [bert_token_classifier_ner_jsl_slim](https://nlp.johnsnowlabs.com/2021/09/24/bert_token_classifier_ner_jsl_slim_en.html)       | Named Entity Recognition |
+| en         | [en.classify.token_bert.ner_ade](https://nlp.johnsnowlabs.com/2021/09/30/bert_token_classifier_ner_ade_en.html)            | [bert_token_classifier_ner_ade](https://nlp.johnsnowlabs.com/2021/09/30/bert_token_classifier_ner_ade_en.html)                 | Named Entity Recognition |
+| en         | [en.resolve.rxnorm_ndc](https://nlp.johnsnowlabs.com/2021/10/05/sbiobertresolve_rxnorm_ndc_en.html)                        | [sbiobertresolve_rxnorm_ndc](https://nlp.johnsnowlabs.com/2021/10/05/sbiobertresolve_rxnorm_ndc_en.html)                       | Entity Resolution        |
+| en         | [en.resolve.icd10cm_generalised](https://nlp.johnsnowlabs.com/2021/09/29/sbiobertresolve_icd10cm_generalised_en.html)      | [sbiobertresolve_icd10cm_generalised](https://nlp.johnsnowlabs.com/2021/09/29/sbiobertresolve_icd10cm_generalised_en.html)     | Entity Resolution        |
+| en         | [en.resolve.hcpcs](https://nlp.johnsnowlabs.com/2021/09/29/sbiobertresolve_hcpcs_en.html)                                  | [sbiobertresolve_hcpcs](https://nlp.johnsnowlabs.com/2021/09/29/sbiobertresolve_hcpcs_en.html)                                 | Entity Resolution        |
+| en         | [en.spell.drug_norvig](https://nlp.johnsnowlabs.com/2021/09/15/spellcheck_drug_norvig_en.html)                             | [spellcheck_drug_norvig](https://nlp.johnsnowlabs.com/2021/09/15/spellcheck_drug_norvig_en.html)                               | Spell Check              |
+| en         | [en.classify.token_bert.ner_deid](https://nlp.johnsnowlabs.com/2021/09/13/bert_token_classifier_ner_deid_en.html)          | [bert_token_classifier_ner_deid](https://nlp.johnsnowlabs.com/2021/09/13/bert_token_classifier_ner_deid_en.html)               | Named Entity Recognition |
+| en         | [en.classify.token_bert.ner_chemical](https://nlp.johnsnowlabs.com/2021/10/19/bert_token_classifier_ner_chemicals_en.html) | [bert_token_classifier_ner_chemicals](https://nlp.johnsnowlabs.com/2021/10/19/bert_token_classifier_ner_chemicals_en.html)     | Named Entity Recognition |
+| en         | [en.resolve.umls_disease_syndrome](https://nlp.johnsnowlabs.com/2021/10/11/sbiobertresolve_umls_disease_syndrome_en.html)  | [sbiobertresolve_umls_disease_syndrome](https://nlp.johnsnowlabs.com/2021/10/11/sbiobertresolve_umls_disease_syndrome_en.html) | Entity Resolution        |
+| en         | [en.resolve.umls_clinical_drugs](https://nlp.johnsnowlabs.com/2021/10/11/sbiobertresolve_umls_clinical_drugs_en.html)      | [sbiobertresolve_umls_clinical_drugs](https://nlp.johnsnowlabs.com/2021/10/11/sbiobertresolve_umls_clinical_drugs_en.html)     | Entity Resolution        |
+
+#### Updated Model Names
+The nlu model references have been updated to better reflect their use-cases.
+- en.classify.token_bert.conll03
+- en.classify.token_bert.large_conll03
+- en.classify.token_bert.ontonote
+- en.classify.token_bert.large_ontonote
+- en.classify.token_bert.few_nerd
+- en.classify.token_bert.classifier_ner_btc
+- es.classify.token_bert.spanish_ner
+- ja.classify.token_bert.classifier_ner_ud_gsd
+- fa.classify.token_bert.parsbert_armanner
+- fa.classify.token_bert.parsbert_ner
+- fa.classify.token_bert.parsbert_peymaner
+- sv.classify.token_bert.swedish_ner
+- tr.classify.token_bert.turkish_ner
+- en.classify.token_bert.ner_clinical
+- en.classify.token_bert.ner_jsl
+
+
+
+
+#### New Tutorial Videos
+- [NLU & Streamlit Crashcourse](https://www.youtube.com/watch?v=2xjA4Gre1sg)
+- [NLU for Healthcare Crashcourse of every of the 50 + healthcare Domains and 200+ healthcare models](https://www.youtube.com/watch?v=gGDsZXt1SF8)
+
+#### Optional get_embeddings parameter for pipelines
+NLU pipelines can now be forced to not return embeddings via `get_embeddings` parameter.
+
+#### Updated Compatibility Docs
+Added documentation section regarding compatibility of NLU, Spark NLP and Spark NLP for healthcare
+
+#### Bugfixes
+- Fixed a bug with Pyspark versions 3.0 and below that caused failure of predicting with pipeline
+- Fixed a bug that caused the results  of TokenClassifier Models to not be properly extracted
+
+
+
+#### Additional NLU ressources
+* [140+ NLU Tutorials](https://github.com/JohnSnowLabs/nlu/tree/master/examples)
+* [Streamlit visualizations docs](https://nlu.johnsnowlabs.com/docs/en/streamlit_viz_examples)
+* The complete list of all 4000+ models & pipelines in 200+ languages is available on [Models Hub](https://nlp.johnsnowlabs.com/models).
+* [Spark NLP publications](https://medium.com/spark-nlp)
+* [NLU in Action](https://nlp.johnsnowlabs.com/demo)
+* [NLU documentation](https://nlu.johnsnowlabs.com/docs/en/install)
+* [Discussions](https://github.com/JohnSnowLabs/spark-nlp/discussions) Engage with other community members, share ideas, and show off how you use Spark NLP and NLU!
+
+
+#### Install NLU in 1 line!
+
+```
+* Install NLU on Google Colab : !wget https://setup.johnsnowlabs.com/nlu/colab.sh  -O - | bash
+* Install NLU on Kaggle       : !wget https://setup.johnsnowlabs.com/nlu/kaggle.sh  -O - | bash
+* Install NLU via Pip         : ! pip install nlu pyspark streamlit==0.80.0`
+```
+
+
+
+## NLU Version 3.2.1
+
+#### 27 new models in 7 Languages, including Japanese NER, resolution models for SNOMED, ICDO, CPT and RxNorm codes and much more in NLU 3.2.1
+
+We are very excited to announce NLU 3.2.1!
+This release comes with models 27 new models for 7 languages which are transformer based.     
+New `NER-Classifiers`, `BertSentenceEmbeddings`, `BertEmbeddings` and `BertForTokenClassificationEmbeddings`
+for Japanese, German, Dutch, Swedish, Spanish, French and English.    
+For healthcare there are new `Entity Resolvers` and `MedicalNerModels`
+for `Snomed Conditions`, `Cpt Measurements`, `Icd0`, `Rxnorm Dispositions`, `Posology` and `Deidentification`.
+Finally, a new tutorial notebook and a webinar are available, which showcase almost every feature of NLU
+for [the over 50 Domains in Healthcare/Clinical/Biomedical/etc..](https://github.com/JohnSnowLabs/nlu/tree/master/examples/webinars_conferences_etc/healthcare_webinar)
+
+
+#### New Transformer Models
+Models in Japanese, German, Dutch, Swedish, Spanish, French and English from the great [Spark NLP 3.2.3 release](https://github.com/JohnSnowLabs/spark-nlp/releases/tag/3.2.3)
+
+| nlu.load() Refrence                                          | Spark NLP Refrence                                           |Annotater class|Language|
+| ------------------------------------------------------------ | ------------------------------------------------------------ |------------------- |--------------|
+| [en.embed.bert.base_uncased_legal](https://nlp.johnsnowlabs.com//2021/09/07/bert_base_uncased_legal_en.html) | [bert_base_uncased_legal](https://nlp.johnsnowlabs.com//2021/09/07/bert_base_uncased_legal_en.html) |BertEmbeddings|en|
+| [en.embed_sentence.bert.base_uncased_legal](https://nlp.johnsnowlabs.com//2021/09/06/sent_bert_base_uncased_legal_en.html) | [sent_bert_base_uncased_legal](https://nlp.johnsnowlabs.com//2021/09/06/sent_bert_base_uncased_legal_en.html) |BertSentenceEmbeddings|en|
+| [en.embed.token_bert.classifier_ner_btc](https://nlp.johnsnowlabs.com//2021/09/09/bert_token_classifier_ner_btc_en.html) | [bert_token_classifier_ner_btc](https://nlp.johnsnowlabs.com//2021/09/09/bert_token_classifier_ner_btc_en.html) |BertForTokenClassification|en|
+| [es.embed.bert.base_uncased](https://nlp.johnsnowlabs.com//2021/09/07/bert_base_uncased_es.html) | [bert_base_uncased](https://nlp.johnsnowlabs.com//2021/09/07/bert_base_uncased_es.html) |BertEmbeddings|es|
+| [es.embed.bert.base_cased](https://nlp.johnsnowlabs.com//2021/09/07/bert_base_cased_es.html) | [bert_base_cased](https://nlp.johnsnowlabs.com//2021/09/07/bert_base_cased_es.html) |BertEmbeddings|es|
+| [es.embed_sentence.bert.base_uncased](https://nlp.johnsnowlabs.com//2021/09/06/sent_bert_base_uncased_es.html) | [sent_bert_base_uncased](https://nlp.johnsnowlabs.com//2021/09/06/sent_bert_base_uncased_es.html) |BertSentenceEmbeddings|es|
+| [es.embed_sentence.bert.base_cased](https://nlp.johnsnowlabs.com//2021/09/06/sent_bert_base_cased_es.html) | [sent_bert_base_cased](https://nlp.johnsnowlabs.com//2021/09/06/sent_bert_base_cased_es.html) |BertSentenceEmbeddings|es|
+| [el.embed.bert.base_uncased](https://nlp.johnsnowlabs.com//2021/09/07/bert_base_uncased_el.html) | [bert_base_uncased](https://nlp.johnsnowlabs.com//2021/09/07/bert_base_uncased_el.html) |BertEmbeddings|el|
+| [el.embed_sentence.bert.base_uncased](https://nlp.johnsnowlabs.com//2021/09/06/sent_bert_base_uncased_el.html) | [sent_bert_base_uncased](https://nlp.johnsnowlabs.com//2021/09/06/sent_bert_base_uncased_el.html) |BertSentenceEmbeddings|el|
+| [sv.embed.bert.base_cased](https://nlp.johnsnowlabs.com//2021/09/07/bert_base_cased_sv.html) | [bert_base_cased](https://nlp.johnsnowlabs.com//2021/09/07/bert_base_cased_sv.html) |BertEmbeddings|sv|
+| [sv.embed_sentence.bert.base_cased](https://nlp.johnsnowlabs.com//2021/09/06/sent_bert_base_cased_sv.html) | [sent_bert_base_cased](https://nlp.johnsnowlabs.com//2021/09/06/sent_bert_base_cased_sv.html) |BertSentenceEmbeddings|sv|
+| [nl.embed_sentence.bert.base_cased](https://nlp.johnsnowlabs.com//2021/09/06/sent_bert_base_cased_nl.html) | [sent_bert_base_cased](https://nlp.johnsnowlabs.com//2021/09/06/sent_bert_base_cased_nl.html) |BertSentenceEmbeddings|nl|
+| [nl.embed.bert.base_cased](https://nlp.johnsnowlabs.com//2021/09/07/bert_base_cased_nl.html) | [bert_base_cased](https://nlp.johnsnowlabs.com//2021/09/07/bert_base_cased_nl.html) |BertEmbeddings|nl|
+| [fr.classify.sentiment.bert](https://nlp.johnsnowlabs.com//2021/09/08/classifierdl_bert_sentiment_fr.html) | [classifierdl_bert_sentiment](https://nlp.johnsnowlabs.com//2021/09/08/classifierdl_bert_sentiment_fr.html) |ClassifierDLModel|fr|
+| [ja.embed.glove.cc_300d](https://nlp.johnsnowlabs.com//2021/09/09/japanese_cc_300d_ja.html) | [japanese_cc_300d](https://nlp.johnsnowlabs.com//2021/09/09/japanese_cc_300d_ja.html) |WordEmbeddingsModel|ja|
+| [ja.ner.ud_gsd_cc_300d](https://nlp.johnsnowlabs.com//2021/09/09/ner_ud_gsd_cc_300d_ja.html) | [ner_ud_gsd_cc_300d](https://nlp.johnsnowlabs.com//2021/09/09/ner_ud_gsd_cc_300d_ja.html) |NerDLModel|ja|
+| [ja.ner.ud_gsd_xlm_roberta_base](https://nlp.johnsnowlabs.com//2021/09/15/ner_ud_gsd_xlm_roberta_base_ja.html) | [ner_ud_gsd_xlm_roberta_base](https://nlp.johnsnowlabs.com//2021/09/15/ner_ud_gsd_xlm_roberta_base_ja.html) |NerDLModel|ja|
+| [ja.embed.token_bert.classifier_ner_ud_gsd](https://nlp.johnsnowlabs.com//2021/09/10/bert_token_classifier_ner_ud_gsd_ja.html) | [bert_token_classifier_ner_ud_gsd](https://nlp.johnsnowlabs.com//2021/09/10/bert_token_classifier_ner_ud_gsd_ja.html) |BertForTokenClassification|ja|
+| [de.embed_sentence.bert.base_cased](https://nlp.johnsnowlabs.com//2021/09/15/sent_bert_base_cased_de.html) | [sent_bert_base_cased](https://nlp.johnsnowlabs.com//2021/09/15/sent_bert_base_cased_de.html) |BertSentenceEmbeddings|de|
+| [de.classify.sentiment.bert](https://nlp.johnsnowlabs.com//2021/09/09/classifierdl_bert_sentiment_de.html) | [classifierdl_bert_sentiment](https://nlp.johnsnowlabs.com//2021/09/09/classifierdl_bert_sentiment_de.html) |ClassifierDLModel|de|
+
+
+#### New Healthcare Transformer Models
+Models for Snomed Conditions, Cpt Measurements, Icd0, Rxnorm Dispositions, Posology and Deidentification from the amazing [Spark NLP 3.2.2  for Healthcare Release](https://nlp.johnsnowlabs.com/docs/en/licensed_release_notes)
+
+| nlu.load() Refrences                                         | Spark NLP Refrence                                           |Annotater class|Language|
+| ------------------------------------------------------------ | ------------------------------------------------------------ |------ |------|
+| [en.resolve.snomed_conditions](https://nlp.johnsnowlabs.com//2021/08/28/sbertresolve_snomed_conditions_en.html) | [sbertresolve_snomed_conditions](https://nlp.johnsnowlabs.com//2021/08/28/sbertresolve_snomed_conditions_en.html) |SentenceEntityResolverModel|en|
+| [en.resolve.cpt.procedures_measurements](https://nlp.johnsnowlabs.com//2021/07/02/sbiobertresolve_cpt_procedures_measurements_augmented_en.html) | [sbiobertresolve_cpt_procedures_measurements_augmented](https://nlp.johnsnowlabs.com//2021/07/02/sbiobertresolve_cpt_procedures_measurements_augmented_en.html) |SentenceEntityResolverModel|en|
+| [en.resolve.icdo.base](https://nlp.johnsnowlabs.com//2021/07/02/sbiobertresolve_icdo_base_en.html) | [sbiobertresolve_icdo_base](https://nlp.johnsnowlabs.com//2021/07/02/sbiobertresolve_icdo_base_en.html) |SentenceEntityResolverModel|en|
+| [en.resolve.rxnorm.disposition.sbert](https://nlp.johnsnowlabs.com//2021/08/28/sbertresolve_rxnorm_disposition_en.html) | [sbertresolve_rxnorm_disposition](https://nlp.johnsnowlabs.com//2021/08/28/sbertresolve_rxnorm_disposition_en.html) |SentenceEntityResolverModel|en|
+| [en.resolve.rxnorm_disposition.sbert](https://nlp.johnsnowlabs.com//2021/08/28/sbertresolve_rxnorm_disposition_en.html) | [sbertresolve_rxnorm_disposition](https://nlp.johnsnowlabs.com//2021/08/28/sbertresolve_rxnorm_disposition_en.html) |SentenceEntityResolverModel|en|
+| [en.med_ner.posology.experimental](https://nlp.johnsnowlabs.com//2021/09/01/ner_posology_experimental_en.html) | [ner_posology_experimental](https://nlp.johnsnowlabs.com//2021/09/01/ner_posology_experimental_en.html) |MedicalNerModel|en|
+| [en.med_ner.deid.subentity_augmented](https://nlp.johnsnowlabs.com//2021/09/03/ner_deid_subentity_augmented_en.html) | [ner_deid_subentity_augmented](https://nlp.johnsnowlabs.com//2021/09/03/ner_deid_subentity_augmented_en.html) |MedicalNerModel|en|
+
+#### New Notebooks
+- [NLU Healthcare Overview and Crashcourse](https://github.com/JohnSnowLabs/nlu/tree/master/examples/webinars_conferences_etc/healthcare_webinar)
+
+
+#### Enhancements
+- Columns of the Pandas DataFrame returned by NLU will now be sorted alphabetically
+
+#### Bugfixes
+- Fixed a bug that caused output levels no beeing inferred properly
+- Fixed a bug that caused SentenceResolver visualizations not to appear.
+
+
+
+## NLU Version 3.2.0
+
+#### 100+ Transformers Models in 40+ languages, 3-D Streamlit Entity-Embedding-Manifold visualizations, Multi-Lingual NER, Longformers, TokenDistilBERT, Trainable Sentence Resolvers, 7% less memory usage and much more in NLU 3.2.0
+
+We are extremely excited to announce the release of NLU 3.2.0
+which marks the 1-year anniversary of the birth of this magical library.  
+This release packs features and improvements in every division of NLU's aspects,
+89 new NLP models with  new Models including `Longformer`, `TokenBert`, `TokenDistilBert` and Multi-Lingual `NER for 40+ Languages`.
+12 new Healthcare models with  `trainable sentence resolvers` and models Adverse Drug Relations, Clinical Token Bert Models, NER Models for Radiology, Drugs, Posology,  Administration Cycles, RXNorm, and new Medical Assertion models.
+New Streamlit visualizations enable you to see `Entities` in 3-D, 2-D, and 1-D Manifolds which are applicable to Entities and their Embeddings, Detected by Named-Entity-Recognizer models.    
+Finally, a  ~7% decrease in Memory consumption in NLU's core which benefits every computation, achieved by leveraging Pyarrow.
+We are incredibly thankful to our community, which helped us come this far, and are looking forward to another magical year of NLU!
+
+
+#### Streamlit Entity Manifold visualization
+#### <kbd>function</kbd> `pipe.viz_streamlit_entity_embed_manifold`
+Visualize recognized entities by NER models via their Entity Embeddings in `1-D`, `2-D`, or `3-D` by `Reducing Dimensionality` via 10+ Supported methods from  [Manifold Algorithms](https://scikit-learn.org/stable/modules/classes.html#module-sklearn.manifold)
+and [Matrix Decomposition Algorithms](https://scikit-learn.org/stable/modules/classes.html#module-sklearn.decomposition).
+You can pick additional NER models and compare them via the GUI dropdown on the left.
+
+- Reduces Dimensionality of high dimensional Entity Embeddings to `1-D`, `2-D`, or `3-D` and plot the resulting data in an interactive `Plotly` plot
+- Applicable with [any of the 330+ Named Entity Recognizer models](https://nlp.johnsnowlabs.com/models?task=Named+Entity+Recognition)
+- Gemerates `NUM-DIMENSIONS` * `NUM-NER-MODELS` * `NUM-DIMENSION-REDUCTION-ALGOS` plots
+
+```python
+nlu.load('ner').viz_streamlit_sentence_embed_manifold(['Hello From John Snow Labs', 'Peter loves to visit New York'])
+```
+
+or just run
+```shell
+streamlit run https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/examples/streamlit/09_entity_embedding_manifolds.py
+```
+
+
+<img  src="https://github.com/JohnSnowLabs/nlu/blob/master/docs/assets/streamlit_docs_assets/gif/entity_embedding_dimension_reduction/low_quality.gif?raw=true">
+
+#### <kbd>function parameters</kbd> `pipe.viz_streamlit_sentence_embed_manifold`
+| Argument    | Type        |                                                            Default         |Description |
+|----------------------------|------------|-----------------------------------------------------------|---------------------------------------------------------|
+|`default_texts`|                    `List[str]`  |"Donald Trump likes to visit New York", "Angela Merkel likes to visit Berlin!", 'Peter hates visiting Paris')| List of strings to apply classifiers, embeddings, and manifolds to. |  
+| `title`                 |  `str`                                             | `'NLU ❤️ Streamlit - Prototype your NLP startup in 0 lines of code🚀'`                      | Title of the Streamlit app
+|`sub_title`|                    `Optional[str]` | "Apply any of the 10+ `Manifold` or `Matrix Decomposition` algorithms to reduce the dimensionality of `Entity Embeddings` to `1-D`, `2-D` and `3-D` " | Sub title of the Streamlit app |   
+|`default_algos_to_apply`|           `List[str]` | `["TSNE", "PCA"]` | A list Manifold and Matrix Decomposition Algorithms to apply. Can be either `'TSNE'`,`'ISOMAP'`,`'LLE'`,`'Spectral Embedding'`, `'MDS'`,`'PCA'`,`'SVD aka LSA'`,`'DictionaryLearning'`,`'FactorAnalysis'`,`'FastICA'` or `'KernelPCA'`, |   
+|`target_dimensions`|              `List[int]`   | `(1,2,3)` | Defines the target dimension embeddings will be reduced to |
+|`show_algo_select`|               `bool`        | `True`  | Show selector for Manifold and Matrix Decomposition Algorithms |   
+| `set_wide_layout_CSS`                          |  `bool`                                                             |  `True`                                                                                   | Whether to inject custom CSS or not.|  
+|`num_cols`                                      | `int`               |  `2`                            |  How many columns should for the layout in streamlit when rendering the similarity matrixes.|  
+|     `key`                                      |  `str`              | `"NLU_streamlit"`               | Key for the Streamlit elements drawn  |
+| `show_logo`                                    |  `bool`                                            | `True`                                                                                   | Show logo  |
+| `display_infos`                                |  `bool`                                            | `False`                                                                                  | Display additonal information about ISO codes and the NLU namespace structure.|  
+| `n_jobs`                                       |          `Optional[int]` | `3`|   `False` | How many cores to use for paralellzing when using Sklearn Dimension Reduction algorithms.  |
+
+
+
+#### Sentence Entity Resolver Training
+[Sentence Entity Resolver Training Tutorial Notebook](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/Training/sentence_entity_resolution/sentence_entity_resolution_training.ipynb)
+Named Entities are sub pieces in textual data which are labeled with classes.    
+These classes and strings are still ambiguous though and it is not possible to group semantically identically entities without any definition of `terminology`.
+With the `Sentence Resolver` you can train a state-of-the-art deep learning architecture to map entities to their unique terminological representation.
+
+Train a Sentence resolver on a dataset with columns named `y` , `_y` and `text`. `y` is a label, `_y` is an extra identifier label, `text` is the raw text
+```python
+import pandas as pd 
+import nlu
+dataset = pd.DataFrame({
+    'text': ['The Tesla company is good to invest is', 'TSLA is good to invest','TESLA INC. we should buy','PUT ALL MONEY IN TSLA inc!!'],
+    'y': ['23','23','23','23'],
+    '_y': ['TESLA','TESLA','TESLA','TESLA'],
+
+})
+
+trainable_pipe = nlu.load('train.resolve_sentence')
+fitted_pipe  = trainable_pipe.fit(dataset)
+res = fitted_pipe.predict(dataset)
+fitted_pipe.predict(["Peter told me to buy Tesla ", 'I have money to loose, is TSLA a good option?'])
+```
+
+|    | sentence_resolution_resolve_sentence_confidence   | sentence_resolution_resolve_sentence_code   | sentence_resolution_resolve_sentence   | sentence                                   |
+|---:|:--------------------------------------------------|:--------------------------------------------|:---------------------------------------|:-------------------------------------------|
+|  0 | '1.0000'                                        | '23'                                      | 'TESLA'                              | 'The Tesla company is good to invest is' |
+|  1 | '1.0000'                                        | '23'                                      | 'TESLA'                              | 'TSLA is good to invest'                 |
+|  2 | '1.0000'                                        | '23'                                      | 'TESLA'                              | 'TESLA INC. we should buy'               |
+|  3 | '1.0000'                                        | '23'                                      | 'TESLA'                              | 'PUT ALL MONEY IN TSLA inc!!'            |
+
+Alternatively you can also use non-default healthcare embeddings.
+```python
+trainable_pipe = nlu.load('en.embed.glove.biovec train.resolve_sentence')
+
+```
+
+
+#### Transformer Models
+New models from the spectacular  [Spark NLP  3.2.0 +](https://nlp.johnsnowlabs.com/docs/en/release_notes) releases are integrated.
+89 new models in total, with new `LongFormer`, `TokenBert`, `TokenDistilBert` and `Multi-Lingual NER` for 40+ languages.
+The supported languages with their ISO 639-1 code are : `af`, `ar`, `bg`, `bn`, `de`, `el`, `en`, `es`, `et`, `eu`, `fa`, `fi`, `fr`, `he`, `hi`, `hu`, `id`, `it`, `ja`, `jv`, `ka`, `kk`, `ko`, `ml`, `mr`, `ms`, `my`, `nl`, `pt`, `ru`, `sw`, `ta`, `te`, `th`, `tl`, `tr`, `ur,` `vi`, `yo`, and `zh`
+
+
+
+| nlu.load() Refrence                                          | Spark NLP Refrence                                           |Annotator Class  |language  |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |------------------- |------------------- |
+| [en.embed.longformer](https://nlp.johnsnowlabs.com//2021/08/04/longformer_base_4096_en.html) | [longformer_base_4096](https://nlp.johnsnowlabs.com//2021/08/04/longformer_base_4096_en.html) |LongformerEmbeddings|en|
+| [en.embed.longformer.large](https://nlp.johnsnowlabs.com//2021/08/04/longformer_large_4096_en.html) | [longformer_large_4096](https://nlp.johnsnowlabs.com//2021/08/04/longformer_large_4096_en.html) |LongformerEmbeddings|en|
+| [en.ner.ontonotes_roberta_base](https://nlp.johnsnowlabs.com//2021/08/04/ner_ontonotes_roberta_base_en.html) | [ner_ontonotes_roberta_base](https://nlp.johnsnowlabs.com//2021/08/04/ner_ontonotes_roberta_base_en.html) |NerDLModel|en|
+| [en.ner.ontonotes_roberta_large](https://nlp.johnsnowlabs.com//2021/08/04/ner_ontonotes_roberta_large_en.html) | [ner_ontonotes_roberta_large](https://nlp.johnsnowlabs.com//2021/08/04/ner_ontonotes_roberta_large_en.html) |NerDLModel|en|
+| [en.ner.ontonotes_distilbert_base_cased](https://nlp.johnsnowlabs.com//2021/08/04/ner_ontonotes_distilbert_base_cased_en.html) | [ner_ontonotes_distilbert_base_cased](https://nlp.johnsnowlabs.com//2021/08/04/ner_ontonotes_distilbert_base_cased_en.html) |NerDLModel|en|
+| [en.ner.conll_bert_base_cased](https://nlp.johnsnowlabs.com//2021/08/04/ner_conll_bert_base_cased_en.html) | [ner_conll_bert_base_cased](https://nlp.johnsnowlabs.com//2021/08/04/ner_conll_bert_base_cased_en.html) |NerDLModel|en|
+| [en.ner.conll_distilbert_base_cased](https://nlp.johnsnowlabs.com//2021/08/04/ner_conll_distilbert_base_cased_en.html) | [ner_conll_distilbert_base_cased](https://nlp.johnsnowlabs.com//2021/08/04/ner_conll_distilbert_base_cased_en.html) |NerDLModel|en|
+| [en.ner.conll_roberta_base](https://nlp.johnsnowlabs.com//2021/08/04/ner_conll_roberta_base_en.html) | [ner_conll_roberta_base](https://nlp.johnsnowlabs.com//2021/08/04/ner_conll_roberta_base_en.html) |NerDLModel|en|
+| [en.ner.conll_roberta_large](https://nlp.johnsnowlabs.com//2021/08/04/ner_conll_roberta_large_en.html) | [ner_conll_roberta_large](https://nlp.johnsnowlabs.com//2021/08/04/ner_conll_roberta_large_en.html) |NerDLModel|en|
+| [en.ner.conll_xlm_roberta_base](https://nlp.johnsnowlabs.com//2021/08/04/ner_conll_xlm_roberta_base_en.html) | [ner_conll_xlm_roberta_base](https://nlp.johnsnowlabs.com//2021/08/04/ner_conll_xlm_roberta_base_en.html) |NerDLModel|en|
+| [en.ner.conll_longformer_large_4096](https://nlp.johnsnowlabs.com//2021/08/04/ner_conll_longformer_large_4096_en.html) | [ner_conll_longformer_large_4096](https://nlp.johnsnowlabs.com//2021/08/04/ner_conll_longformer_large_4096_en.html) |NerDLModel|en|
+| [en.embed.token_bert.conll03](https://nlp.johnsnowlabs.com//2021/08/05/bert_base_token_classifier_conll03_en.html) | [bert_base_token_classifier_conll03](https://nlp.johnsnowlabs.com//2021/08/05/bert_base_token_classifier_conll03_en.html) |NerDLModel|en|
+| [en.embed.token_bert.large_conll03](https://nlp.johnsnowlabs.com//2021/08/05/bert_large_token_classifier_conll03_en.html) | [bert_large_token_classifier_conll03](https://nlp.johnsnowlabs.com//2021/08/05/bert_large_token_classifier_conll03_en.html) |NerDLModel|en|
+| [en.embed.token_bert.ontonote](https://nlp.johnsnowlabs.com//2021/08/05/bert_base_token_classifier_ontonote_en.html) | [bert_base_token_classifier_ontonote](https://nlp.johnsnowlabs.com//2021/08/05/bert_base_token_classifier_ontonote_en.html) |NerDLModel|en|
+| [en.embed.token_bert.large_ontonote](https://nlp.johnsnowlabs.com//2021/08/05/bert_large_token_classifier_ontonote_en.html) | [bert_large_token_classifier_ontonote](https://nlp.johnsnowlabs.com//2021/08/05/bert_large_token_classifier_ontonote_en.html) |NerDLModel|en|
+| [en.embed.token_bert.few_nerd](https://nlp.johnsnowlabs.com//2021/08/08/bert_base_token_classifier_few_nerd_en.html) | [bert_base_token_classifier_few_nerd](https://nlp.johnsnowlabs.com//2021/08/08/bert_base_token_classifier_few_nerd_en.html) |NerDLModel|en|
+| [fa.embed.token_bert.parsbert_armanner](https://nlp.johnsnowlabs.com//2021/08/05/bert_token_classifier_parsbert_armanner_fa.html) | [bert_token_classifier_parsbert_armanner](https://nlp.johnsnowlabs.com//2021/08/05/bert_token_classifier_parsbert_armanner_fa.html) |NerDLModel|fa|
+| [fa.embed.token_bert.parsbert_ner](https://nlp.johnsnowlabs.com//2021/08/05/bert_token_classifier_parsbert_ner_fa.html) | [bert_token_classifier_parsbert_ner](https://nlp.johnsnowlabs.com//2021/08/05/bert_token_classifier_parsbert_ner_fa.html) |NerDLModel|fa|
+| [fa.embed.token_bert.parsbert_peymaner](https://nlp.johnsnowlabs.com//2021/08/05/bert_token_classifier_parsbert_peymaner_fa.html) | [bert_token_classifier_parsbert_peymaner](https://nlp.johnsnowlabs.com//2021/08/05/bert_token_classifier_parsbert_peymaner_fa.html) |NerDLModel|fa|
+| [tr.embed.token_bert.turkish_ner](https://nlp.johnsnowlabs.com//2021/08/05/bert_token_classifier_turkish_ner_tr.html) | [bert_token_classifier_turkish_ner](https://nlp.johnsnowlabs.com//2021/08/05/bert_token_classifier_turkish_ner_tr.html) |NerDLModel|tr|
+| [es.embed.token_bert.spanish_ner](https://nlp.johnsnowlabs.com//2021/08/05/bert_token_classifier_spanish_ner_es.html) | [bert_token_classifier_spanish_ner](https://nlp.johnsnowlabs.com//2021/08/05/bert_token_classifier_spanish_ner_es.html) |NerDLModel|es|
+| [sv.embed.token_bert.swedish_ner](https://nlp.johnsnowlabs.com//2021/08/05/bert_token_classifier_swedish_ner_sv.html) | [bert_token_classifier_swedish_ner](https://nlp.johnsnowlabs.com//2021/08/05/bert_token_classifier_swedish_ner_sv.html) |NerDLModel|sv|
+| [en.ner.fewnerd](https://nlp.johnsnowlabs.com//2021/07/02/nerdl_fewnerd_100d_en.html) | [nerdl_fewnerd_100d](https://nlp.johnsnowlabs.com//2021/07/02/nerdl_fewnerd_100d_en.html) |NerDLModel|en|
+| [en.ner.fewnerd_subentity](https://nlp.johnsnowlabs.com//2021/07/22/nerdl_fewnerd_subentity_100d_en.html) | [nerdl_fewnerd_subentity_100d](https://nlp.johnsnowlabs.com//2021/07/22/nerdl_fewnerd_subentity_100d_en.html) |NerDLModel|en|
+| [en.ner.movie](https://nlp.johnsnowlabs.com//2021/07/20/ner_mit_movie_complex_bert_base_cased_en.html) | [ner_mit_movie_complex_bert_base_cased](https://nlp.johnsnowlabs.com//2021/07/20/ner_mit_movie_complex_bert_base_cased_en.html) |NerDLModel|en|
+| [en.ner.movie_complex](https://nlp.johnsnowlabs.com//2021/07/20/ner_mit_movie_complex_bert_base_cased_en.html) | [ner_mit_movie_complex_bert_base_cased](https://nlp.johnsnowlabs.com//2021/07/20/ner_mit_movie_complex_bert_base_cased_en.html) |NerDLModel|en|
+| [en.ner.movie_simple](https://nlp.johnsnowlabs.com//2021/07/20/ner_mit_movie_complex_bert_base_cased_en.html) | [ner_mit_movie_complex_bert_base_cased](https://nlp.johnsnowlabs.com//2021/07/20/ner_mit_movie_complex_bert_base_cased_en.html) |NerDLModel|en|
+| [en.ner.mit_movie_complex_bert](https://nlp.johnsnowlabs.com//2021/07/20/ner_mit_movie_complex_bert_base_cased_en.html) | [ner_mit_movie_complex_bert_base_cased](https://nlp.johnsnowlabs.com//2021/07/20/ner_mit_movie_complex_bert_base_cased_en.html) |NerDLModel|en|
+| [en.ner.mit_movie_complex_distilbert](https://nlp.johnsnowlabs.com//2021/07/20/ner_mit_movie_complex_distilbert_base_cased_en.html) | [ner_mit_movie_complex_distilbert_base_cased](https://nlp.johnsnowlabs.com//2021/07/20/ner_mit_movie_complex_distilbert_base_cased_en.html) |NerDLModel|en|
+| [en.ner.mit_movie_simple](https://nlp.johnsnowlabs.com//2021/07/20/ner_mit_movie_simple_distilbert_base_cased_en.html) | [ner_mit_movie_simple_distilbert_base_cased](https://nlp.johnsnowlabs.com//2021/07/20/ner_mit_movie_simple_distilbert_base_cased_en.html) |NerDLModel|en|
+| [en.embed_sentence.bert_use_cmlm_en_base](https://nlp.johnsnowlabs.com//2021/07/20/sent_bert_use_cmlm_en_base_en.html) | [sent_bert_use_cmlm_en_base](https://nlp.johnsnowlabs.com//2021/07/20/sent_bert_use_cmlm_en_base_en.html) |BertSentenceEmbeddings|en|
+| [en.embed_sentence.bert_use_cmlm_en_large](https://nlp.johnsnowlabs.com//2021/07/20/sent_bert_use_cmlm_en_large_en.html) | [sent_bert_use_cmlm_en_large](https://nlp.johnsnowlabs.com//2021/07/20/sent_bert_use_cmlm_en_large_en.html) |BertSentenceEmbeddings|en|
+| [xx.ner.xtreme_glove_840B_300](https://nlp.johnsnowlabs.com//2021/07/19/ner_xtreme_glove_840B_300_xx.html) | [ner_xtreme_glove_840B_300](https://nlp.johnsnowlabs.com//2021/07/19/ner_xtreme_glove_840B_300_xx.html) |NerDLModel|xx|
+| [xx.ner.xtreme_xlm_roberta_xtreme_base](https://nlp.johnsnowlabs.com//2021/07/19/ner_xtreme_xlm_roberta_xtreme_base_xx.html) | [ner_xtreme_xlm_roberta_xtreme_base](https://nlp.johnsnowlabs.com//2021/07/19/ner_xtreme_xlm_roberta_xtreme_base_xx.html) |NerDLModel|xx|
+| [xx.ner.wikiner_glove_840B_300](https://nlp.johnsnowlabs.com//2021/07/19/ner_wikiner_glove_840B_300_xx.html) | [ner_wikiner_glove_840B_300](https://nlp.johnsnowlabs.com//2021/07/19/ner_wikiner_glove_840B_300_xx.html) |NerDLModel|xx|
+| [xx.ner.wikiner_xlm_roberta_base](https://nlp.johnsnowlabs.com//2021/07/19/ner_wikiner_xlm_roberta_base_xx.html) | [ner_wikiner_xlm_roberta_base](https://nlp.johnsnowlabs.com//2021/07/19/ner_wikiner_xlm_roberta_base_xx.html) |NerDLModel|xx|
+| [xx.embed_sentence.bert_use_cmlm_multi_base_br](https://nlp.johnsnowlabs.com//2021/07/20/sent_bert_use_cmlm_multi_base_br_xx.html) | [sent_bert_use_cmlm_multi_base_br](https://nlp.johnsnowlabs.com//2021/07/20/sent_bert_use_cmlm_multi_base_br_xx.html) |BertSentenceEmbeddings|xx|
+| [xx.embed_sentence.bert_use_cmlm_multi_base](https://nlp.johnsnowlabs.com//2021/07/20/sent_bert_use_cmlm_multi_base_xx.html) | [sent_bert_use_cmlm_multi_base](https://nlp.johnsnowlabs.com//2021/07/20/sent_bert_use_cmlm_multi_base_xx.html) |BertSentenceEmbeddings|xx|
+| [xx.embed.xlm_roberta_xtreme_base](https://nlp.johnsnowlabs.com//2021/07/19/xlm_roberta_xtreme_base_xx.html) | [xlm_roberta_xtreme_base](https://nlp.johnsnowlabs.com//2021/07/19/xlm_roberta_xtreme_base_xx.html) |XlmRoBertaEmbeddings|xx|
+| [xx.embed.bert_base_multilingual_cased](https://nlp.johnsnowlabs.com//2021/05/20/bert_base_multilingual_cased_xx.html) | [bert_base_multilingual_cased](https://nlp.johnsnowlabs.com//2021/05/20/bert_base_multilingual_cased_xx.html) |Embeddings|xx|
+| [xx.embed.bert_base_multilingual_uncased](https://nlp.johnsnowlabs.com//2021/05/20/bert_base_multilingual_uncased_xx.html) | [bert_base_multilingual_uncased](https://nlp.johnsnowlabs.com//2021/05/20/bert_base_multilingual_uncased_xx.html) |Embeddings|xx|
+| [xx.af.translate_to.ru](https://nlp.johnsnowlabs.com//2021/06/01/opus_tatoeba_af_ru_xx.html) | [opus_tatoeba_af_ru](https://nlp.johnsnowlabs.com//2021/06/01/opus_tatoeba_af_ru_xx.html) |Translation|xx|
+| [xx.he.translate_to.fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_tatoeba_he_fr_xx.html) | [opus_tatoeba_he_fr](https://nlp.johnsnowlabs.com//2021/06/01/opus_tatoeba_he_fr_xx.html) |Translation|xx|
+| [xx.it.translate_to.he](https://nlp.johnsnowlabs.com//2021/06/01/opus_tatoeba_it_he_xx.html) | [opus_tatoeba_it_he](https://nlp.johnsnowlabs.com//2021/06/01/opus_tatoeba_it_he_xx.html) |Translation|xx|
+| [xx.cs.translate_to.sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_cs_sv_xx.html) | [opus_mt_cs_sv](https://nlp.johnsnowlabs.com//2021/06/01/opus_mt_cs_sv_xx.html) |Translation|xx|
+| [tr.classify.cyberbullying](https://nlp.johnsnowlabs.com//2021/07/21/classifierdl_berturk_cyberbullying_tr.html) | [classifierdl_berturk_cyberbullying](https://nlp.johnsnowlabs.com//2021/07/21/classifierdl_berturk_cyberbullying_tr.html) |Pipelines|tr|
+| [zh.embed.xlnet](https://nlp.johnsnowlabs.com//2021/07/07/chinese_xlnet_base_zh.html) | [chinese_xlnet_base](https://nlp.johnsnowlabs.com//2021/07/07/chinese_xlnet_base_zh.html) |Embeddings|zh|
+| [de.classify.news](https://nlp.johnsnowlabs.com//2021/07/12/classifierdl_bert_news_de.html) | [classifierdl_bert_news](https://nlp.johnsnowlabs.com//2021/07/12/classifierdl_bert_news_de.html) |Pipelines|de|
+| [tr.classify.berturk_cyberbullying](https://nlp.johnsnowlabs.com//2021/08/13/classifierdl_berturk_cyberbullying_pipeline_tr.html) | [classifierdl_berturk_cyberbullying_pipeline](https://nlp.johnsnowlabs.com//2021/08/13/classifierdl_berturk_cyberbullying_pipeline_tr.html) |Pipelines|tr|
+| [de.classify.bert_news](https://nlp.johnsnowlabs.com//2021/08/13/classifierdl_bert_news_pipeline_de.html) | [classifierdl_bert_news_pipeline](https://nlp.johnsnowlabs.com//2021/08/13/classifierdl_bert_news_pipeline_de.html) |Pipelines|de|
+| [en.classify.electra_questionpair](https://nlp.johnsnowlabs.com//2021/08/25/classifierdl_electra_questionpair_pipeline_en.html) | [classifierdl_electra_questionpair_pipeline](https://nlp.johnsnowlabs.com//2021/08/25/classifierdl_electra_questionpair_pipeline_en.html) |Pipelines|en|
+| [tr.classify.bert_news](https://nlp.johnsnowlabs.com//2021/08/27/classifierdl_bert_news_pipeline_tr.html) | [classifierdl_bert_news_pipeline](https://nlp.johnsnowlabs.com//2021/08/27/classifierdl_bert_news_pipeline_tr.html) |Pipelines|tr|
+| [en.ner.conll_elmo](https://nlp.johnsnowlabs.com//2021/08/31/ner_conll_elmo_en.html) | [ner_conll_elmo](https://nlp.johnsnowlabs.com//2021/08/31/ner_conll_elmo_en.html) |NerDLModel|en|
+| [en.ner.conll_albert_base_uncased](https://nlp.johnsnowlabs.com//2021/08/31/ner_conll_albert_base_uncased_en.html) | [ner_conll_albert_base_uncased](https://nlp.johnsnowlabs.com//2021/08/31/ner_conll_albert_base_uncased_en.html) |NerDLModel|en|
+| [en.ner.conll_albert_large_uncased](https://nlp.johnsnowlabs.com//2021/08/31/ner_conll_albert_large_uncased_en.html) | [ner_conll_albert_large_uncased](https://nlp.johnsnowlabs.com//2021/08/31/ner_conll_albert_large_uncased_en.html) |NerDLModel|en|
+| [en.ner.conll_xlnet_base_cased](https://nlp.johnsnowlabs.com//2021/08/31/ner_conll_xlnet_base_cased_en.html) | [ner_conll_xlnet_base_cased](https://nlp.johnsnowlabs.com//2021/08/31/ner_conll_xlnet_base_cased_en.html) |NerDLModel|en|
+| [xx.embed.bert.muril](https://nlp.johnsnowlabs.com//2021/08/29/bert_muril_xx.html) | [bert_muril](https://nlp.johnsnowlabs.com//2021/08/29/bert_muril_xx.html) |BertEmbeddings|xx|
+| [en.embed.bert.wiki_books_sst2](https://nlp.johnsnowlabs.com//2021/08/30/bert_wiki_books_sst2_en.html) | [bert_wiki_books_sst2](https://nlp.johnsnowlabs.com//2021/08/30/bert_wiki_books_sst2_en.html) |BertEmbeddings|en|
+| [en.embed.bert.wiki_books_squad2](https://nlp.johnsnowlabs.com//2021/08/30/bert_wiki_books_squad2_en.html) | [bert_wiki_books_squad2](https://nlp.johnsnowlabs.com//2021/08/30/bert_wiki_books_squad2_en.html) |BertEmbeddings|en|
+| [en.embed.bert.wiki_books_qqp](https://nlp.johnsnowlabs.com//2021/08/30/bert_wiki_books_qqp_en.html) | [bert_wiki_books_qqp](https://nlp.johnsnowlabs.com//2021/08/30/bert_wiki_books_qqp_en.html) |BertEmbeddings|en|
+| [en.embed.bert.wiki_books_qnli](https://nlp.johnsnowlabs.com//2021/08/30/bert_wiki_books_qnli_en.html) | [bert_wiki_books_qnli](https://nlp.johnsnowlabs.com//2021/08/30/bert_wiki_books_qnli_en.html) |BertEmbeddings|en|
+| [en.embed.bert.wiki_books_mnli](https://nlp.johnsnowlabs.com//2021/08/30/bert_wiki_books_mnli_en.html) | [bert_wiki_books_mnli](https://nlp.johnsnowlabs.com//2021/08/30/bert_wiki_books_mnli_en.html) |BertEmbeddings|en|
+| [en.embed.bert.wiki_books](https://nlp.johnsnowlabs.com//2021/08/30/bert_wiki_books_en.html) | [bert_wiki_books](https://nlp.johnsnowlabs.com//2021/08/30/bert_wiki_books_en.html) |BertEmbeddings|en|
+| [en.embed.bert.pubmed_squad2](https://nlp.johnsnowlabs.com//2021/08/30/bert_pubmed_squad2_en.html) | [bert_pubmed_squad2](https://nlp.johnsnowlabs.com//2021/08/30/bert_pubmed_squad2_en.html) |BertEmbeddings|en|
+| [en.embed.bert.pubmed](https://nlp.johnsnowlabs.com//2021/08/30/bert_pubmed_en.html) | [bert_pubmed](https://nlp.johnsnowlabs.com//2021/08/30/bert_pubmed_en.html) |BertEmbeddings|en|
+| [en.embed_sentence.bert.wiki_books_sst2](https://nlp.johnsnowlabs.com//2021/08/31/sent_bert_wiki_books_sst2_en.html) | [sent_bert_wiki_books_sst2](https://nlp.johnsnowlabs.com//2021/08/31/sent_bert_wiki_books_sst2_en.html) |BertSentenceEmbeddings|en|
+| [en.embed_sentence.bert.wiki_books_squad2](https://nlp.johnsnowlabs.com//2021/08/31/sent_bert_wiki_books_squad2_en.html) | [sent_bert_wiki_books_squad2](https://nlp.johnsnowlabs.com//2021/08/31/sent_bert_wiki_books_squad2_en.html) |BertSentenceEmbeddings|en|
+| [en.embed_sentence.bert.wiki_books_qqp](https://nlp.johnsnowlabs.com//2021/08/31/sent_bert_wiki_books_qqp_en.html) | [sent_bert_wiki_books_qqp](https://nlp.johnsnowlabs.com//2021/08/31/sent_bert_wiki_books_qqp_en.html) |BertSentenceEmbeddings|en|
+| [en.embed_sentence.bert.wiki_books_qnli](https://nlp.johnsnowlabs.com//2021/08/31/sent_bert_wiki_books_qnli_en.html) | [sent_bert_wiki_books_qnli](https://nlp.johnsnowlabs.com//2021/08/31/sent_bert_wiki_books_qnli_en.html) |BertSentenceEmbeddings|en|
+| [en.embed_sentence.bert.wiki_books_mnli](https://nlp.johnsnowlabs.com//2021/08/31/sent_bert_wiki_books_mnli_en.html) | [sent_bert_wiki_books_mnli](https://nlp.johnsnowlabs.com//2021/08/31/sent_bert_wiki_books_mnli_en.html) |BertSentenceEmbeddings|en|
+| [en.embed_sentence.bert.wiki_books](https://nlp.johnsnowlabs.com//2021/08/31/sent_bert_wiki_books_en.html) | [sent_bert_wiki_books](https://nlp.johnsnowlabs.com//2021/08/31/sent_bert_wiki_books_en.html) |BertSentenceEmbeddings|en|
+| [en.embed_sentence.bert.pubmed_squad2](https://nlp.johnsnowlabs.com//2021/08/31/sent_bert_pubmed_squad2_en.html) | [sent_bert_pubmed_squad2](https://nlp.johnsnowlabs.com//2021/08/31/sent_bert_pubmed_squad2_en.html) |BertSentenceEmbeddings|en|
+| [en.embed_sentence.bert.pubmed](https://nlp.johnsnowlabs.com//2021/08/31/sent_bert_pubmed_en.html) | [sent_bert_pubmed](https://nlp.johnsnowlabs.com//2021/08/31/sent_bert_pubmed_en.html) |BertSentenceEmbeddings|en|
+| [xx.embed_sentence.bert.muril](https://nlp.johnsnowlabs.com//2021/09/01/sent_bert_muril_xx.html) | [sent_bert_muril](https://nlp.johnsnowlabs.com//2021/09/01/sent_bert_muril_xx.html) |BertSentenceEmbeddings|xx|
+| [yi.detect_sentence](https://nlp.johnsnowlabs.com//2021/08/30/sentence_detector_dl_yi.html) | [sentence_detector_dl](https://nlp.johnsnowlabs.com//2021/08/30/sentence_detector_dl_yi.html) |SentenceDetectorDLModel|yi|
+| [uk.detect_sentence](https://nlp.johnsnowlabs.com//2021/08/30/sentence_detector_dl_uk.html) | [sentence_detector_dl](https://nlp.johnsnowlabs.com//2021/08/30/sentence_detector_dl_uk.html) | SentenceDetectorDLModel | uk |
+| [te.detect_sentence](https://nlp.johnsnowlabs.com//2021/08/30/sentence_detector_dl_te.html) | [sentence_detector_dl](https://nlp.johnsnowlabs.com//2021/08/30/sentence_detector_dl_te.html) |SentenceDetectorDLModel|te|
+| [ta.detect_sentence](https://nlp.johnsnowlabs.com//2021/08/30/sentence_detector_dl_ta.html) | [sentence_detector_dl](https://nlp.johnsnowlabs.com//2021/08/30/sentence_detector_dl_ta.html) |SentenceDetectorDLModel|ta|
+| [so.detect_sentence](https://nlp.johnsnowlabs.com//2021/08/30/sentence_detector_dl_so.html) | [sentence_detector_dl](https://nlp.johnsnowlabs.com//2021/08/30/sentence_detector_dl_so.html) |SentenceDetectorDLModel|so|
+| [sd.detect_sentence](https://nlp.johnsnowlabs.com//2021/08/30/sentence_detector_dl_sd.html) | [sentence_detector_dl](https://nlp.johnsnowlabs.com//2021/08/30/sentence_detector_dl_sd.html) |SentenceDetectorDLModel|sd|
+| [ru.detect_sentence](https://nlp.johnsnowlabs.com//2021/08/30/sentence_detector_dl_ru.html) | [sentence_detector_dl](https://nlp.johnsnowlabs.com//2021/08/30/sentence_detector_dl_ru.html) |SentenceDetectorDLModel|ru|
+| [pa.detect_sentence](https://nlp.johnsnowlabs.com//2021/08/30/sentence_detector_dl_pa.html) | [sentence_detector_dl](https://nlp.johnsnowlabs.com//2021/08/30/sentence_detector_dl_pa.html) |SentenceDetectorDLModel|pa|
+| [ne.detect_sentence](https://nlp.johnsnowlabs.com//2021/08/30/sentence_detector_dl_ne.html) | [sentence_detector_dl](https://nlp.johnsnowlabs.com//2021/08/30/sentence_detector_dl_ne.html) |SentenceDetectorDLModel|ne|
+| [mr.detect_sentence](https://nlp.johnsnowlabs.com//2021/08/30/sentence_detector_dl_mr.html) | [sentence_detector_dl](https://nlp.johnsnowlabs.com//2021/08/30/sentence_detector_dl_mr.html) |SentenceDetectorDLModel|mr|
+| [ml.detect_sentence](https://nlp.johnsnowlabs.com//2021/08/30/sentence_detector_dl_ml.html) | [sentence_detector_dl](https://nlp.johnsnowlabs.com//2021/08/30/sentence_detector_dl_ml.html) |SentenceDetectorDLModel|ml|
+| [kn.detect_sentence](https://nlp.johnsnowlabs.com//2021/08/30/sentence_detector_dl_kn.html) | [sentence_detector_dl](https://nlp.johnsnowlabs.com//2021/08/30/sentence_detector_dl_kn.html) |SentenceDetectorDLModel|kn|
+| [bs.detect_sentence](https://nlp.johnsnowlabs.com//2021/08/30/sentence_detector_dl_bs.html) | [sentence_detector_dl](https://nlp.johnsnowlabs.com//2021/08/30/sentence_detector_dl_bs.html) |SentenceDetectorDLModel|bs|
+| [id.detect_sentence](https://nlp.johnsnowlabs.com//2021/08/30/sentence_detector_dl_id.html) | [sentence_detector_dl](https://nlp.johnsnowlabs.com//2021/08/30/sentence_detector_dl_id.html) |SentenceDetectorDLModel|id|
+| [gu.detect_sentence](https://nlp.johnsnowlabs.com//2021/08/30/sentence_detector_dl_gu.html) | [sentence_detector_dl](https://nlp.johnsnowlabs.com//2021/08/30/sentence_detector_dl_gu.html) |SentenceDetectorDLModel|gu|
+
+
+#### New Healthcare Transformer Models
+12 new models from the amazing  [Spark NLP for Healthcare  3.2.0+](https://nlp.johnsnowlabs.com/docs/en/licensed_release_notes) releases, including models for `genetic variants`, `radiology`, `assertion`,
+`rxnorm`, `adverse drugs` and new `clinical tokenbert` models that improves accuracy by 4% compared to the previous models.
+
+| nlu.load() Refrence                                          | Spark NLP Refrence                                           |Annotator Class  |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |------------------- |
+| [en.med_ner.radiology.wip_greedy_biobert](https://nlp.johnsnowlabs.com/2021/07/26/jsl_rd_ner_wip_greedy_biobert_en.html) |  [jsl_rd_ner_wip_greedy_biobert](https://nlp.johnsnowlabs.com/2021/07/26/jsl_rd_ner_wip_greedy_biobert_en.html)  | MedicalNerModel
+| [en.med_ner.genetic_variants](https://nlp.johnsnowlabs.com/2021/06/25/ner_genetic_variants_en.html)                      |  [ner_genetic_variants](https://nlp.johnsnowlabs.com/2021/06/25/ner_genetic_variants_en.html)  | MedicalNerModel
+| [en.med_ner.jsl_slim](https://nlp.johnsnowlabs.com//2021/08/13/ner_jsl_slim_en.html) | [ner_jsl_slim](https://nlp.johnsnowlabs.com//2021/08/13/ner_jsl_slim_en.html) |MedicalNerModel|
+| [en.med_ner.jsl_greedy_biobert](https://nlp.johnsnowlabs.com//2021/08/13/ner_jsl_greedy_biobert_en.html) | [ner_jsl_greedy_biobert](https://nlp.johnsnowlabs.com//2021/08/13/ner_jsl_greedy_biobert_en.html) |MedicalNerModel|
+| [en.embed.token_bert.ner_clinical](https://nlp.johnsnowlabs.com//2021/08/28/bert_token_classifier_ner_clinical_en.html) | [bert_token_classifier_ner_clinical](https://nlp.johnsnowlabs.com//2021/08/28/bert_token_classifier_ner_clinical_en.html) |MedicalNerModel|
+| [en.embed.token_bert.ner_jsl](https://nlp.johnsnowlabs.com//2021/08/28/bert_token_classifier_ner_jsl_en.html) | [bert_token_classifier_ner_jsl](https://nlp.johnsnowlabs.com//2021/08/28/bert_token_classifier_ner_jsl_en.html) |MedicalNerModel|
+| [en.relation.ade](https://nlp.johnsnowlabs.com//2021/07/12/redl_ade_biobert_en.html) | [redl_ade_biobert](https://nlp.johnsnowlabs.com//2021/07/12/redl_ade_biobert_en.html) |RelationExtractionDLModel|
+| [en.relation.ade_clinical](https://nlp.johnsnowlabs.com//2021/07/12/re_ade_clinical_en.html) | [re_ade_clinical](https://nlp.johnsnowlabs.com//2021/07/12/re_ade_clinical_en.html) |RelationExtractionDLModel|
+| [en.relation.ade_biobert](https://nlp.johnsnowlabs.com//2021/07/16/re_ade_biobert_en.html) | [re_ade_biobert](https://nlp.johnsnowlabs.com//2021/07/16/re_ade_biobert_en.html) |RelationExtractionDLModel|
+| [en.resolve.rxnorm_disposition](https://nlp.johnsnowlabs.com//2021/08/12/sbiobertresolve_rxnorm_disposition_en.html) | [sbiobertresolve_rxnorm_disposition](https://nlp.johnsnowlabs.com//2021/08/12/sbiobertresolve_rxnorm_disposition_en.html) |SentenceEntityResolverModel|
+| [en.assert.jsl](https://nlp.johnsnowlabs.com//2021/07/24/assertion_jsl_en.html) | [assertion_jsl](https://nlp.johnsnowlabs.com//2021/07/24/assertion_jsl_en.html) |AssertionDLModel|
+| [en.assert.jsl_large](https://nlp.johnsnowlabs.com//2021/07/24/assertion_jsl_large_en.html) | [assertion_jsl_large](https://nlp.johnsnowlabs.com//2021/07/24/assertion_jsl_large_en.html) |AssertionDLModel|
+
+#### PyArrow Memory Optimizations
+Optimized integration with Pyarrow to share memory between the Python Virtual Machine and Java Virtual Machine which yields around
+7% less memory consumption on average in all computations. This improvement will take effect for everyone using the default pyspark installation, which comes with a compatible Pyarrow Version.    
+If you manually install or upgrade Pyarrow, please refer to the official [Spark docs ](https://spark.apache.org/docs/latest/api/python/user_guide/arrow_pandas.html#compatibility-setting-for-pyarrow-0-15-0-and-spark-2-3-x-2-4-x) and make sure
+you have a Pyarrow version installed that works with your Pyspark version.
+![Memory Benchmark](https://github.com/JohnSnowLabs/nlu/blob/master/docs/assets/images/releases/3_2_0/mem_benchmark.png)
+
+#### New Notebooks
+- [Sentence Resolution Training Notebook](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/Training/sentence_entity_resolution/sentence_entity_resolution_training.ipynb)
+- [Benchmark Notebook](https://colab.research.google.com/drive/1Ja9_QF9Sm1zhr-tyhFv6z2a3qnNjOaR6?usp=sharing)
+
+
+#### Bugfixes
+- Fixed a bug that caused the similarity matrix calculations to generate NaNs and crash
+
+
+#### Additional NLU ressources
+* [140+ NLU Tutorials](https://github.com/JohnSnowLabs/nlu/tree/master/examples)
+* [Streamlit visualizations docs](https://nlu.johnsnowlabs.com/docs/en/streamlit_viz_examples)
+* The complete list of all 4000+ models & pipelines in 200+ languages is available on [Models Hub](https://nlp.johnsnowlabs.com/models).
+* [Spark NLP publications](https://medium.com/spark-nlp)
+* [NLU in Action](https://nlp.johnsnowlabs.com/demo)
+* [NLU documentation](https://nlu.johnsnowlabs.com/docs/en/install)
+* [Discussions](https://github.com/JohnSnowLabs/spark-nlp/discussions) Engage with other community members, share ideas, and show off how you use Spark NLP and NLU!
+
+
+#### Install NLU in 1 line!
+
+```
+* Install NLU on Google Colab : !wget https://setup.johnsnowlabs.com/nlu/colab.sh  -O - | bash
+* Install NLU on Kaggle       : !wget https://setup.johnsnowlabs.com/nlu/kaggle.sh  -O - | bash
+* Install NLU via Pip         : ! pip install nlu pyspark streamlit==0.80.0`
+```
+
+
+## NLU Version 3.1.1
+
+#### Sentence Embedding Visualizations, 20+ New Models, 2 New Trainable Models, Drug Normalizer and more in John Snow Labs NLU 3.1.1
+
+We are very excited to announce NLU 3.1.1 has been released!   
+It features a new Sentence Embedding visualization component for Streamlit which supports all 10+ previous dimension
+reduction techniques. Additionally, all embedding visualizations now support [Latent Dirichlet Allocation](https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.LatentDirichletAllocation.html) for dimension reduction.
+Finally, 2 new trainable models for NER and chunk resolution are supported, a new drug normalizer algorithm has been added,
+20+ new pre-trained models including Multi-Lingual, German,
+various healthcare models and improved NER defaults when using licensed models that have NER dependencies.
+
+#### Streamlit Sentence Embedding visualization via Manifold and Matrix Decomposition algorithms
+
+#### <kbd>function</kbd> `pipe.viz_streamlit_sentence_embed_manifold`
+
+Visualize Sentence Embeddings in `1-D`, `2-D`, or `3-D` by `Reducing Dimensionality` via 12 Supported methods from  [Manifold Algorithms](https://scikit-learn.org/stable/modules/classes.html#module-sklearn.manifold)
+and [Matrix Decomposition Algorithms](https://scikit-learn.org/stable/modules/classes.html#module-sklearn.decomposition).
+Additionally, you can color the lower dimensional points with a label that has been previously assigned to the text by specifying a list of nlu references in the `additional_classifiers_for_coloring` parameter.
+You can also select additional classifiers via the GUI.
+
+- Reduces Dimensionality of high dimensional Sentence Embeddings to `1-D`, `2-D`, or `3-D` and plot the resulting data in an interactive `Plotly` plot
+- Applicable with [any of the 100+ Sentence Embedding models](https://nlp.johnsnowlabs.com/models?task=Embeddings)
+- Color points by classifying with any of the 100+ [Document Classifiers](https://nlp.johnsnowlabs.com/models?task=Text+Classification)
+- Gemerates `NUM-DIMENSIONS` * `NUM-EMBEDDINGS` * `NUM-DIMENSION-REDUCTION-ALGOS` plots
+
+```python
+text= """You can visualize any of the 100 + Sentence Embeddings
+with 10+ dimension reduction algorithms
+and view the results in 3D, 2D, and 1D  
+which can be colored by various classifier labels!
+"""
+nlu.load('embed_sentence.bert').viz_streamlit_sentence_embed_manifold(text)
+```
+
+<img  src="https://github.com/JohnSnowLabs/nlu/blob/master/docs/assets/streamlit_docs_assets/gif/sentence_embedding_dimension_reduction/sentence_manifold_low_qual.gif?raw=true">
+
+#### <kbd>function parameters</kbd> `pipe.viz_streamlit_sentence_embed_manifold`
+| Argument    | Type        |                                                            Default         |Description |
+|----------------------------|------------|-----------------------------------------------------------|---------------------------------------------------------|
+|`default_texts`|                    `List[str]`  | ("Donald Trump likes to party!", "Angela Merkel likes to party!", 'Peter HATES TO PARTTY!!!! :(') | List of strings to apply classifiers, embeddings, and manifolds to. |  
+| `text`                                         | `Optional[str]`   |     `'Billy likes to swim'`                 | Text to predict classes for. |   
+|`sub_title`|                    `Optional[str]` | "Apply any of the 11 `Manifold` or `Matrix Decomposition` algorithms to reduce the dimensionality of `Sentence Embeddings` to `1-D`, `2-D` and `3-D` " | Sub title of the Streamlit app |   
+|`default_algos_to_apply`|           `List[str]` | `["TSNE", "PCA"]` | A list Manifold and Matrix Decomposition Algorithms to apply. Can be either `'TSNE'`,`'ISOMAP'`,`'LLE'`,`'Spectral Embedding'`, `'MDS'`,`'PCA'`,`'SVD aka LSA'`,`'DictionaryLearning'`,`'FactorAnalysis'`,`'FastICA'` or `'KernelPCA'`, |   
+|`target_dimensions`|              `List[int]`   | `(1,2,3)` | Defines the target dimension embeddings will be reduced to |
+|`show_algo_select`|               `bool`        | `True`  | Show selector for Manifold and Matrix Decomposition Algorithms |   
+|`show_embed_select`|              `bool`        | `True` | Show selector for Embedding Selection |  
+|`show_color_select`|              `bool`        | `True` | Show selector for coloring plots  |
+|`display_embed_information`                     | `bool`              |  `True`                         | Show additional embedding information like `dimension`, `nlu_reference`, `spark_nlp_reference`, `sotrage_reference`, `modelhub link` and more.|  
+| `set_wide_layout_CSS`                          |  `bool`                                                             |  `True`                                                                                   | Whether to inject custom CSS or not.|  
+|`num_cols`                                      | `int`               |  `2`                            |  How many columns should for the layout in streamlit when rendering the similarity matrixes.|  
+|     `key`                                      |  `str`              | `"NLU_streamlit"`               | Key for the Streamlit elements drawn  |
+|`additional_classifiers_for_coloring`           |         `List[str]`|`['sentiment.imdb']` | List of additional NLU references to load for generting hue colors  |
+| `show_model_select`                            |  `bool`                                          | `True`                                                                                 | Show a model selection dropdowns that makes any of the 1000+ models avaiable in 1 click  |
+| `model_select_position`                        |  `str`                                                             |   `'side'`            | [Whether to output the positions of predictions or not, see `pipe.predict(positions=true`) for more info](https://nlu.johnsnowlabs.com/docs/en/predict_api#output-positions-parameter)  |   
+| `show_logo`                                    |  `bool`                                            | `True`                                                                                   | Show logo  |
+| `display_infos`                                |  `bool`                                            | `False`                                                                                  | Display additonal information about ISO codes and the NLU namespace structure.|  
+| `n_jobs`                                       |          `Optional[int]` | `3`|   `False` | How many cores to use for paralellzing when using Sklearn Dimension Reduction algorithms.  |  
+
+
+
+
+#### General Streamlit enhancements
+
+#### Support for  [Latent Dirichlet Allocation](https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.LatentDirichletAllocation.html)
+The [Latent Dirichlet Allocation](https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.LatentDirichletAllocation.html) algorithm is now supported
+for the Word Embedding Visualizations and the Sentence Embedding Visualizations
+#### Normalization of Vectors before calculating sentence similarity.
+WordEmbedding vectors will now be normalized before calculating similarity scores, which bounds each similarity between 0 and 1
+
+#### Control order of plots
+You can now control the order in Which visualizations appear in the main GUI
+
+#### Sentence Embedding Visualization
+
+
+
+
+#### Chunk Entity Resolver Training
+[Chunk Entity Resolver Training Tutorial Notebook]()
+Named Entities are sub pieces in textual data which are labeled with classes.    
+These classes and strings are still ambigous though and it is not possible to group semantically identically entities without any definition of `terminology`.
+With the `Chunk Resolver` you can train a state-of-the-art deep learning architecture to map entities to their unique terminological representation.
+
+Train a chunk resolver on a dataset with columns named `y` , `_y` and `text`. `y` is a label, `_y` is an extra identifier label, `text` is the raw text
+
+```python
+import pandas as pd 
+dataset = pd.DataFrame({
+    'text': ['The Tesla company is good to invest is', 'TSLA is good to invest','TESLA INC. we should buy','PUT ALL MONEY IN TSLA inc!!'],
+    'y': ['23','23','23','23']
+    '_y': ['TESLA','TESLA','TESLA','TESLA'], 
+
+})
+
+
+trainable_pipe = nlu.load('train.resolve_chunks')
+fitted_pipe  = trainable_pipe.fit(dataset)
+res = fitted_pipe.predict(dataset)
+fitted_pipe.predict(["Peter told me to buy Tesla ", 'I have money to loose, is TSLA a good option?'])
+```
+
+| entity_resolution_confidence   | entity_resolution_code   | entity_resolution   | document                                      |
+|:-------------------------------|:-------------------------|:--------------------|:----------------------------------------------|
+| '1.0000'                     | '23'                   | 'TESLA'           | Peter told me to buy Tesla                    |
+| '1.0000'                     | '23'                   | 'TESLA'           | I have money to loose, is TSLA a good option? |
+
+
+#### Train with default glove embeddings
+```python
+untrained_chunk_resolver = nlu.load('train.resolve_chunks')
+trained_chunk_resolver  =  untrained_chunk_resolver.fit(df)
+trained_chunk_resolver.predict(df)
+```
+
+#### Train with custom embeddings
+```python
+# Use BIo GLove
+untrained_chunk_resolver = nlu.load('en.embed.glove.biovec train.resolve_chunks')
+trained_chunk_resolver  =  untrained_chunk_resolver.fit(df)
+trained_chunk_resolver.predict(df)
+ ```
+
+
+
+#### Rule based NER with Context Matcher
+[Rule based NER with context matching tutorial notebook](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/Training/rule_based_named_entity_recognition_and_resolution/rule_based_NER_and_resolution_with_context_matching.ipynb)    
+Define a rule-based NER algorithm by providing Regex Patterns and resolution mappings.
+The confidence value is computed using a heuristic approach based on how many matches it has.    
+A dictionary can be provided with setDictionary to map extracted entities to a unified representation. The first column of the dictionary file should be the representation with the following columns the possible matches.
+
+
+```python
+import nlu
+import json
+# Define helper functions to write NER rules to file 
+"""Generate json with dict contexts at target path"""
+def dump_dict_to_json_file(dict, path): 
+  with open(path, 'w') as f: json.dump(dict, f)
+
+"""Dump raw text file """
+def dump_file_to_csv(data,path):
+  with open(path, 'w') as f:f.write(data)
+sample_text = """A 28-year-old female with a history of gestational diabetes mellitus diagnosed eight years prior to presentation and subsequent type two diabetes mellitus ( T2DM ), one prior episode of HTG-induced pancreatitis three years prior to presentation , associated with an acute hepatitis , and obesity with a body mass index ( BMI ) of 33.5 kg/m2 , presented with a one-week history of polyuria , polydipsia , poor appetite , and vomiting. Two weeks prior to presentation , she was treated with a five-day course of amoxicillin for a respiratory tract infection . She was on metformin , glipizide , and dapagliflozin for T2DM and atorvastatin and gemfibrozil for HTG . She had been on dapagliflozin for six months at the time of presentation . Physical examination on presentation was significant for dry oral mucosa ; significantly , her abdominal examination was benign with no tenderness , guarding , or rigidity . Pertinent laboratory findings on admission were : serum glucose 111 mg/dl , bicarbonate 18 mmol/l , anion gap 20 , creatinine 0.4 mg/dL , triglycerides 508 mg/dL , total cholesterol 122 mg/dL , glycated hemoglobin ( HbA1c ) 10% , and venous pH 7.27 . Serum lipase was normal at 43 U/L . Serum acetone levels could not be assessed as blood samples kept hemolyzing due to significant lipemia . The patient was initially admitted for starvation ketosis , as she reported poor oral intake for three days prior to admission . However , serum chemistry obtained six hours after presentation revealed her glucose was 186 mg/dL , the anion gap was still elevated at 21 , serum bicarbonate was 16 mmol/L , triglyceride level peaked at 2050 mg/dL , and lipase was 52 U/L . β-hydroxybutyrate level was obtained and found to be elevated at 5.29 mmol/L - the original sample was centrifuged and the chylomicron layer removed prior to analysis due to interference from turbidity caused by lipemia again . The patient was treated with an insulin drip for euDKA and HTG with a reduction in the anion gap to 13 and triglycerides to 1400 mg/dL , within 24 hours . Twenty days ago. Her euDKA was thought to be precipitated by her respiratory tract infection in the setting of SGLT2 inhibitor use . At birth the typical boy is growing slightly faster than the typical girl, but the velocities become equal at about seven months, and then the girl grows faster until four years. From then until adolescence no differences in velocity can be detected. 21-02-2020 21/04/2020 """
+
+# Define Gender NER matching rules
+gender_rules = {
+    "entity": "Gender",
+    "ruleScope": "sentence",
+    "completeMatchRegex": "true"    }
+
+# Define dict data in csv format
+gender_data = '''male,man,male,boy,gentleman,he,him
+female,woman,female,girl,lady,old-lady,she,her
+neutral,neutral'''
+
+# Dump configs to file 
+dump_dict_to_json_file(gender_data, 'gender.csv')
+dump_dict_to_json_file(gender_rules, 'gender.json')
+gender_NER_pipe = nlu.load('match.context')
+gender_NER_pipe.print_info()
+gender_NER_pipe['context_matcher'].setJsonPath('gender.json')
+gender_NER_pipe['context_matcher'].setDictionary('gender.csv', options={"delimiter":","})
+gender_NER_pipe.predict(sample_text)
+```
+
+| context_match | context_match_confidence |
+| :------------ | -----------------------: |
+| female        |                     0.13 |
+| she           |                     0.13 |
+| she           |                     0.13 |
+| she           |                     0.13 |
+| she           |                     0.13 |
+| boy           |                     0.13 |
+| girl          |                     0.13 |
+| girl          |                     0.13 |
+
+#### Context Matcher Parameters
+You can define the following parameters in your rules.json file to define the entities to be matched
+
+| Parameter             | Type                    | Description                                                  |
+| --------------------- | ----------------------- | ------------------------------------------------------------ |
+| entity                | `str   `                | The name of this rule                                        |
+| regex                 | `Optional[str] `        | Regex Pattern to extract candidates                          |
+| contextLength         | `Optional[int] `        | defines the maximum distance a prefix and suffix words can be away from the word to match,whereas context are words that must be immediately after or before the word to match |
+| prefix                | `Optional[List[str]] `  | Words preceding the regex match, that are at most `contextLength` characters aways |
+| regexPrefix           | `Optional[str]  `       | RegexPattern of words preceding the regex match, that are at most `contextLength` characters aways |
+| suffix                | `Optional[List[str]]  ` | Words following the regex match, that are at most `contextLength` characters aways |
+| regexSuffix           | `Optional[str] `        | RegexPattern of words following the regex match, that are at most `contextLength` distance aways |
+| context               | `Optional[List[str]] `  | list of words that must be immediatly before/after a match   |
+| contextException      | `Optional[List[str]] `  | ?? List of words that may not be immediatly before/after a match |
+| exceptionDistance     | `Optional[int] `        | Distance exceptions must be away from a match                |
+| regexContextException | `Optional[str] `        | Regex Pattern of exceptions that may not be within `exceptionDistance` range of the match |
+| matchScope            | `Optional[str]`         | Either `token` or `sub-token` to match on character basis    |
+| completeMatchRegex    | `Optional[str]`         | Wether to use complete or partial matching, either `"true"` or `"false"` |
+| ruleScope             | `str`                   | currently only `sentence` supported                          |
+
+#### Drug Normalizer
+[Drug Normalizer tutorial notebook](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/healthcare/drug_normalization/drug_norm.ipynb)
+
+Normalize raw text from clinical documents, e.g. scraped web pages or xml documents. Removes all dirty characters from text following one or more input regex patterns. Can apply unwanted character removal which a specific policy. Can apply lower case normalization.
+
+**Parameters are**
+- lowercase: whether to convert strings to lowercase. Default is False.
+- `policy`: rule to remove patterns from text. Valid policy values are: `all` `abbreviations`, `dosages`
+  Defaults is `all`. `abbreviation` policy used to expend common drugs abbreviations, `dosages` policy used to convert drugs dosages and values to the standard form (see examples below).
+
+```python
+data = ["Agnogenic one half cup","adalimumab 54.5 + 43.2 gm","aspirin 10 meq/ 5 ml oral sol","interferon alfa-2b 10 million unit ( 1 ml ) injec","Sodium Chloride/Potassium Chloride 13bag"]
+nlu.load('norm_drugs').predict(data)
+```
+
+
+| drug_norm                                            | text                                              |
+| :--------------------------------------------------- | :------------------------------------------------ |
+| Agnogenic 0.5 oral solution                          | Agnogenic one half cup                            |
+| adalimumab 97700 mg                                  | adalimumab 54.5 + 43.2 gm                         |
+| aspirin 2 meq/ml oral solution                       | aspirin 10 meq/ 5 ml oral sol                     |
+| interferon alfa - 2b 10000000 unt ( 1 ml ) injection | interferon alfa-2b 10 million unit ( 1 ml ) injec |
+| Sodium Chloride / Potassium Chloride 13 bag          | Sodium Chloride/Potassium Chloride 13bag          |
+
+
+
+
+#### New NLU Spells
+These new magical 1-liners which get new the folowing models
+
+#### Open Source NLU Spells
+
+| NLU Spell                                                    | Spark NLP Model                                              |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
+| [nlu.load('de.ner.wikiner.6B_100')](https://nlp.johnsnowlabs.com//2019/07/13/wikiner_6B_100_de.html) | [wikiner_6B_100](https://nlp.johnsnowlabs.com//2019/07/13/wikiner_6B_100_de.html) |
+| nlu.load('xx.embed.glove.glove_6B_100')                      | glove_6B_100                                                 |
+
+
+#### Healthcare NLU spells
+
+| NLU Spell | Spark NLP Model |
+| --------- | --------------- |
+|[nlu.load('en.resolve.snomed_body_structure_med')](https://nlp.johnsnowlabs.com//2021/06/15/sbertresolve_snomed_bodyStructure_med_en.html)        | [sbertresolve_snomed_bodyStructure_med](https://nlp.johnsnowlabs.com//2021/06/15/sbertresolve_snomed_bodyStructure_med_en.html)
+|[nlu.load('en.resolve.snomed_body_structure')](https://nlp.johnsnowlabs.com//2021/06/15/sbiobertresolve_snomed_bodyStructure_en.html)        | [sbiobertresolve_snomed_bodyStructure](https://nlp.johnsnowlabs.com//2021/06/15/sbiobertresolve_snomed_bodyStructure_en.html)
+|[nlu.load('en.resolve.icdo_augmented')](https://nlp.johnsnowlabs.com//2021/06/22/sbiobertresolve_icdo_augmented_en.html)        | [sbiobertresolve_icdo_augmented](https://nlp.johnsnowlabs.com//2021/06/22/sbiobertresolve_icdo_augmented_en.html)
+|[nlu.load('en.embed_sentence.biobert.jsl_cased')](https://nlp.johnsnowlabs.com//2021/05/14/sbiobert_jsl_cased_en.html)        | [sbiobert_jsl_cased](https://nlp.johnsnowlabs.com//2021/05/14/sbiobert_jsl_cased_en.html)
+|[nlu.load('en.embed_sentence.biobert.jsl_umls_cased')](https://nlp.johnsnowlabs.com//2021/05/14/sbiobert_jsl_umls_cased_en.html)        | [sbiobert_jsl_umls_cased](https://nlp.johnsnowlabs.com//2021/05/14/sbiobert_jsl_umls_cased_en.html)
+|[nlu.load('en.embed_sentence.bert.jsl_medium_uncased')](https://nlp.johnsnowlabs.com//2021/05/14/sbert_jsl_medium_uncased_en.html)        | [sbert_jsl_medium_uncased](https://nlp.johnsnowlabs.com//2021/05/14/sbert_jsl_medium_uncased_en.html)
+|[nlu.load('en.embed_sentence.bert.jsl_medium_umls_uncased')](https://nlp.johnsnowlabs.com//2021/05/14/sbert_jsl_medium_umls_uncased_en.html)        | [sbert_jsl_medium_umls_uncased](https://nlp.johnsnowlabs.com//2021/05/14/sbert_jsl_medium_umls_uncased_en.html)
+|[nlu.load('en.embed_sentence.bert.jsl_mini_uncased')](https://nlp.johnsnowlabs.com//2021/05/14/sbert_jsl_mini_uncased_en.html)        | [sbert_jsl_mini_uncased](https://nlp.johnsnowlabs.com//2021/05/14/sbert_jsl_mini_uncased_en.html)
+|[nlu.load('en.embed_sentence.bert.jsl_mini_umlsuncased')](https://nlp.johnsnowlabs.com//2021/05/14/sbert_jsl_mini_umls_uncased_en.html)        | [sbert_jsl_mini_umls_uncasedjsl_tiny_uncased](https://nlp.johnsnowlabs.com//2021/05/14/sbert_jsl_mini_umls_uncased_en.html)
+|[nlu.load('en.embed_sentence.bert.jsl_tiny_uncased')](https://nlp.johnsnowlabs.com//2021/05/14/sbert_jsl_tiny_uncased_en.html)        | [sbert_jsl_tiny_uncased](https://nlp.johnsnowlabs.com//2021/05/14/sbert_jsl_tiny_uncased_en.html)
+|[nlu.load('en.embed_sentence.bert.jsl_tiny_umls_uncased')](https://nlp.johnsnowlabs.com//2021/05/14/sbert_jsl_tiny_umls_uncased_en.html)        | [sbert_jsl_tiny_umls_uncased](https://nlp.johnsnowlabs.com//2021/05/14/sbert_jsl_tiny_umls_uncased_en.html)
+|[nlu.load('en.resolve.icd10cm.slim_billable_hcc')](https://nlp.johnsnowlabs.com//2021/05/21/sbiobertresolve_icd10cm_slim_billable_hcc_en.html)        | [sbiobertresolve_icd10cm_slim_billable_hcc](https://nlp.johnsnowlabs.com//2021/05/21/sbiobertresolve_icd10cm_slim_billable_hcc_en.html)
+|[nlu.load('en.resolve.icd10cm.slim_billable_hcc_med')](https://nlp.johnsnowlabs.com//2021/05/21/sbertresolve_icd10cm_slim_billable_hcc_med_en.html)        | [sbertresolve_icd10cm_slim_billable_hcc_med](https://nlp.johnsnowlabs.com//2021/05/21/sbertresolve_icd10cm_slim_billable_hcc_med_en.html)
+|[nlu.load('med_ner.deid.generic_augmented')](https://nlp.johnsnowlabs.com//2021/06/30/ner_deid_generic_augmented_en.html)        | [ner_deid_generic_augmented](https://nlp.johnsnowlabs.com//2021/06/30/ner_deid_generic_augmented_en.html)
+|[nlu.load('med_ner.deid.subentity_augmented')](https://nlp.johnsnowlabs.com//2021/06/30/ner_deid_subentity_augmented_en.html)        | [ner_deid_subentity_augmented](https://nlp.johnsnowlabs.com//2021/06/30/ner_deid_subentity_augmented_en.html)
+|[nlu.load('en.assert.radiology')](https://nlp.johnsnowlabs.com//2021/03/18/assertion_dl_radiology_en.html)        | [assertion_dl_radiology](https://nlp.johnsnowlabs.com//2021/03/18/assertion_dl_radiology_en.html)
+|[nlu.load('en.relation.test_result_date')](https://nlp.johnsnowlabs.com//2021/02/24/re_test_result_date_en.html)        | [re_test_result_date](https://nlp.johnsnowlabs.com//2021/02/24/re_test_result_date_en.html)
+|[nlu.load('en.med_ner.admission_events')](https://nlp.johnsnowlabs.com//2021/03/01/ner_events_admission_clinical_en.html)        | [ner_events_admission_clinical](https://nlp.johnsnowlabs.com//2021/03/01/ner_events_admission_clinical_en.html)
+|[nlu.load('en.classify.ade.clinicalbert')](https://nlp.johnsnowlabs.com//2021/01/21/classifierdl_ade_clinicalbert_en.html)        | [classifierdl_ade_clinicalbert](https://nlp.johnsnowlabs.com//2021/01/21/classifierdl_ade_clinicalbert_en.html)
+|[nlu.load('en.recognize_entities.posology')](https://nlp.johnsnowlabs.com//2021/03/29/recognize_entities_posology_en.html)        | [recognize_entities_posology](https://nlp.johnsnowlabs.com//2021/03/29/recognize_entities_posology_en.html)
+|[nlu.load('en.embed_sentence.bluebert_cased_mli')](TODO.com)        | [spark_name](todo.com)
+
+#### Improved NER  defaults
+When loading licensed models that require a NER features like  `Assertion`, `Relation`, `Resolution`,
+nlu will now use the `en.med_ner` model which maps to the Spark NLP model `jsl_ner_wip_clinical` as default.
+See https://nlp.johnsnowlabs.com/2021/03/31/jsl_ner_wip_clinical_en.html for more infos on this model.
+
+
+
+
+#### New Notebooks
+- [Rule based NER with context matching tutorial notebook](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/Training/rule_based_named_entity_recognition_and_resolution/rule_based_NER_and_resolution_with_context_matching.ipynb)
+- [Drug Normalizer tutorial notebook](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/healthcare/drug_normalization/drug_norm.ipynb)
+- [Generic Deep Learning Tensorflow Classifier](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/Training/generic_TF_classifier/generic_classifier.ipynb)
+
+
+
+
+
+
+
+
+#### Additional NLU ressources
+* [140+ NLU Tutorials](https://github.com/JohnSnowLabs/nlu/tree/master/examples)
+* [Streamlit visualizations docs](https://nlu.johnsnowlabs.com/docs/en/streamlit_viz_examples)
+* The complete list of all 4000+ models & pipelines in 200+ languages is available on [Models Hub](https://nlp.johnsnowlabs.com/models).
+* [Spark NLP publications](https://medium.com/spark-nlp)
+* [NLU in Action](https://nlp.johnsnowlabs.com/demo)
+* [NLU documentation](https://nlu.johnsnowlabs.com/docs/en/install)
+* [Discussions](https://github.com/JohnSnowLabs/spark-nlp/discussions) Engage with other community members, share ideas, and show off how you use Spark NLP and NLU!
+
+
+#### Install NLU in 1 line!
+
+```
+* Install NLU on Google Colab : !wget https://setup.johnsnowlabs.com/nlu/colab.sh  -O - | bash
+* Install NLU on Kaggle       : !wget https://setup.johnsnowlabs.com/nlu/kaggle.sh  -O - | bash
+* Install NLU via Pip         : ! pip install nlu pyspark==3.0.3
+```
+
+## NLU Version 3.1.0
+
+#### 2600+ New Models for 200+ Languages and 10+ Dimension Reduction Algorithms for Streamlit Word-Embedding visualizations in 3-D
 
 We are extremely excited to announce the release of NLU 3.1 !
 This is our biggest release so far and it comes with over `2600+ new models in 200+` languages, including `DistilBERT`, `RoBERTa`, and `XLM-RoBERTa` and Huggingface based Embeddings from the [incredible Spark-NLP 3.1.0 release](https://github.com/JohnSnowLabs/spark-nlp/releases/tag/3.1.0),
@@ -817,9 +2415,9 @@ and finally `confidence extraction` for open source NER models.
 Additionally, the NLU Namespace has been renamed to the NLU Spellbook, to reflect the magicalness of each 1-liners represented by them!
 
 
-## Streamlit Word Embedding visualization via Manifold and Matrix Decomposition algorithms
+#### Streamlit Word Embedding visualization via Manifold and Matrix Decomposition algorithms
 
-### <kbd>function</kbd> `pipe.viz_streamlit_word_embed_manifold`
+#### <kbd>function</kbd> `pipe.viz_streamlit_word_embed_manifold`
 
 Visualize Word Embeddings in `1-D`, `2-D`, or `3-D` by `Reducing Dimensionality` via 11 Supported methods from  [Manifold Algorithms](https://scikit-learn.org/stable/modules/classes.html#module-sklearn.manifold)
 and [Matrix Decomposition Algorithms](https://scikit-learn.org/stable/modules/classes.html#module-sklearn.decomposition).
@@ -841,7 +2439,7 @@ nlu.load('bert',verbose=True).viz_streamlit_word_embed_manifold(default_texts=TH
 
 
 
-### <kbd>function parameters</kbd> `pipe.viz_streamlit_word_embed_manifold`
+#### <kbd>function parameters</kbd> `pipe.viz_streamlit_word_embed_manifold`
 
 
 | Argument    | Type        |                                          Default         |Description |
@@ -866,19 +2464,19 @@ nlu.load('bert',verbose=True).viz_streamlit_word_embed_manifold(default_texts=TH
 | `display_infos` |  `bool` | `False` | Display additonal information about ISO codes and the NLU namespace structure. |
 | `n_jobs`| `Optional[int]` | `False` | How many cores to use for paralellzing when using Sklearn Dimension Reduction algorithms.  |
 
-### Larger Example showcasing more dimension reduction techniques on a larger corpus :
+#### Larger Example showcasing more dimension reduction techniques on a larger corpus :
 
 <img  src="https://github.com/JohnSnowLabs/nlu/blob/master/docs/assets/streamlit_docs_assets/gif/word_embed_dimension_reduction/big_example_word_embedding_dimension_reduction.gif?raw=true">
 
 
-### [Supported Manifold Algorithms ](https://scikit-learn.org/stable/modules/classes.html#module-sklearn.manifold)
+#### [Supported Manifold Algorithms ](https://scikit-learn.org/stable/modules/classes.html#module-sklearn.manifold)
 - [TSNE](https://scikit-learn.org/stable/modules/generated/sklearn.manifold.TSNE.html#sklearn.manifold.TSNE)
 - [ISOMAP](https://scikit-learn.org/stable/modules/generated/sklearn.manifold.Isomap.html#sklearn.manifold.Isomap)
 - [LLE](https://scikit-learn.org/stable/modules/generated/sklearn.manifold.LocallyLinearEmbedding.html#sklearn.manifold.LocallyLinearEmbedding)
 - [Spectral Embedding](https://scikit-learn.org/stable/modules/generated/sklearn.manifold.SpectralEmbedding.html#sklearn.manifold.SpectralEmbedding)
 - [MDS](https://scikit-learn.org/stable/modules/generated/sklearn.manifold.MDS.html#sklearn.manifold.MDS)
 
-### [Supported Matrix Decomposition Algorithms ](https://scikit-learn.org/stable/modules/classes.html#module-sklearn.decomposition)
+#### [Supported Matrix Decomposition Algorithms ](https://scikit-learn.org/stable/modules/classes.html#module-sklearn.decomposition)
 - [PCA](https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.PCA.html#sklearn.decomposition.PCA)
 - [Truncated SVD aka LSA](https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.TruncatedSVD.html#sklearn.decomposition.TruncatedSVD)
 - [DictionaryLearning](https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.DictionaryLearning.html#sklearn.decomposition.DictionaryLearning)
@@ -889,7 +2487,7 @@ nlu.load('bert',verbose=True).viz_streamlit_word_embed_manifold(default_texts=TH
 
 
 
-## New Healthcare Pipelines Pipelines
+#### New Healthcare Pipelines
 Five new healthcare code mapping pipelines:
 - `nlu.load(en.resolve.icd10cm.umls)`: This pretrained pipeline maps ICD10CM codes to UMLS codes without using any text data. You’ll just feed white space-delimited ICD10CM codes and it will return the corresponding UMLS codes as a list. If there is no mapping, the original code is returned with no mapping.
 
@@ -910,8 +2508,7 @@ Five new healthcare code mapping pipelines:
 - `nlu.load(en.resolve.snomed.umls)`: This pretrained pipeline maps SNOMED codes to UMLS codes without using any text data. You’ll just feed white space-delimited SNOMED codes and it will return the corresponding UMLS codes as a list. If there is no mapping, the original code is returned with no mapping.
   `{'snomed': ['733187009', '449433008', '51264003'],'umls': ['C4546029', 'C3164619', 'C0271267']}`
 
-## New Healthcare Pipelines
-
+In the following table the NLU and Spark-NLP references are listed:
 
 |NLU Reference| Spark NLP Reference  | 
 |---------------|---------------------|
@@ -924,7 +2521,7 @@ Five new healthcare code mapping pipelines:
 |[en.explain_doc.era     ]((https://nlp.johnsnowlabs.com/2021/04/01/explain_clinical_doc_era_en.html)) | [explain_clinical_doc_era](https://nlp.johnsnowlabs.com/2021/04/01/explain_clinical_doc_era_en.html)  |
 
 
-## New Open Source Models and Pipelines
+#### New Open Source Models and Pipelines
 
 
 | nlu.load() Refrence                                          | Spark NLP Refrence                                           |
@@ -2937,11 +4534,8 @@ Five new healthcare code mapping pipelines:
 | [xx.sv.translate_to.uk](https://nlp.johnsnowlabs.com//2021/06/04/translate_uk_sv_xx.html) | [translate_uk_sv](https://nlp.johnsnowlabs.com//2021/06/04/translate_uk_sv_xx.html) |
 
 
-## Bugfixes
+#### Bugfixes
 - Fixed bugs that occured when loading a model from disk.
-
-
-
 
 * [140+ NLU Tutorials](https://github.com/JohnSnowLabs/nlu/tree/master/examples)
 * [Streamlit visualizations docs](https://nlu.johnsnowlabs.com/docs/en/streamlit_viz_examples)
@@ -2951,18 +4545,15 @@ Five new healthcare code mapping pipelines:
 * [NLU documentation](https://nlu.johnsnowlabs.com/docs/en/install)
 * [Discussions](https://github.com/JohnSnowLabs/spark-nlp/discussions) Engage with other community members, share ideas, and show off how you use Spark NLP and NLU!
 
-## 1 line Install NLU on Google Colab
-```!wget https://setup.johnsnowlabs.com/nlu/colab.sh  -O - | bash```
-## 1 line Install NLU on Kaggle
-```!wget https://setup.johnsnowlabs.com/nlu/kaggle.sh  -O - | bash```
-## Install via PIP
-```! pip install nlu pyspark==3.0.3```
+#### Install NLU in 1 line!
 
+```
+* Install NLU on Google Colab : !wget https://setup.johnsnowlabs.com/nlu/colab.sh  -O - | bash
+* Install NLU on Kaggle       : !wget https://setup.johnsnowlabs.com/nlu/kaggle.sh  -O - | bash
+* Install NLU via Pip         : ! pip install nlu pyspark==3.0.3
+```
 
-
-
-
-## NLU 3.0.2 Release Notes
+## NLU Version 3.0.2
 <img width="65%" align="right" src="https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/streamlit_docs_assets/gif/start.gif">
 
 This release contains examples and tutorials on how to visualize the 1000+ state-of-the-art NLP models provided by NLU in *just 1 line of code* in `streamlit`.
@@ -2973,7 +4564,7 @@ This is the ultimate NLP research tool. You can visualize and compare the result
 and can see with your own eyes how context is encoded by transformer models like `BERT` or `XLNET`and many more !
 Besides that, you can also compare the results of the 200+ NER models John Snow Labs provides and see how peformances changes with varrying ebeddings, like Contextual, Static and Domain Specific Embeddings.
 
-## Install
+#### Install
 [For detailed instructions refer to the NLU install documentation here](https://nlu.johnsnowlabs.com/docs/en/install)   
 You need `Open JDK 8` installed and the following python packages
 ```bash
@@ -2981,51 +4572,51 @@ pip install nlu streamlit pyspark==3.0.1 sklearn plotly
 ```
 Problems? [Connect with us on Slack!](https://join.slack.com/t/spark-nlp/shared_invite/zt-lutct9gm-kuUazcyFKhuGY3_0AMkxqA)
 
-## Impatient and want some action?
+#### Impatient and want some action?
 Just run this Streamlit app, you can use it to generate python code for each NLU-Streamlit building block
 ```shell
 streamlit run https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/examples/streamlit/01_dashboard.py
 ```
 
-## Quick Starter cheat sheet - All you need to know in 1 picture for NLU + Streamlit
+#### Quick Starter cheat sheet - All you need to know in 1 picture for NLU + Streamlit
 For NLU models to load, see [the NLU Namespace](https://nlu.johnsnowlabs.com/docs/en/namespace) or the [John Snow Labs Modelshub](https://modelshub.johnsnowlabs.com/models)  or go [straight to the source](https://github.com/JohnSnowLabs/nlu/blob/master/nlu/namespace.py).
 ![NLU Streamlit Cheatsheet](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/streamlit_docs_assets/img/NLU_Streamlit_Cheetsheet.png)
 
 
-## Examples
+#### Examples
 Just try out any of these.
 You can use the first example to generate python-code snippets which you can
 recycle as building blocks in your streamlit apps!
-### Example:  [`01_dashboard`](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/examples/streamlit/01_dashboard.py)
+#### Example:  [`01_dashboard`](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/examples/streamlit/01_dashboard.py)
 ```shell
 streamlit run https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/examples/streamlit/01_dashboard.py
 ```
-### Example:  [`02_NER`](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/examples/streamlit/02_NER.py)
+#### Example:  [`02_NER`](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/examples/streamlit/02_NER.py)
 ```shell
 streamlit run https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/examples/streamlit/02_NER.py
 ```
-### Example:  [`03_text_similarity_matrix`](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/examples/streamlit/03_text_similarity_matrix.py)
+#### Example:  [`03_text_similarity_matrix`](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/examples/streamlit/03_text_similarity_matrix.py)
 ```shell
 streamlit run https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/examples/streamlit/03_text_similarity_matrix.py
 ```
 
 
-### Example:  [`04_dependency_tree`](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/examples/streamlit/04_dependency_tree.py)
+#### Example:  [`04_dependency_tree`](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/examples/streamlit/04_dependency_tree.py)
 ```shell
 streamlit run https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/examples/streamlit/04_dependency_tree.py
 ```
 
-### Example:  [`05_classifiers`](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/examples/streamlit/05_classifiers.py)
+#### Example:  [`05_classifiers`](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/examples/streamlit/05_classifiers.py)
 ```shell
 streamlit run https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/examples/streamlit/05_classifiers.py
 ```
 
-### Example:  [`06_token_features`](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/examples/streamlit/06_token_features.py)
+#### Example:  [`06_token_features`](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/examples/streamlit/06_token_features.py)
 ```shell
 streamlit run https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/examples/streamlit/06_token_features.py
 ```
 
-## How to use NLU?
+#### How to use NLU?
 All you need to know about NLU is that there is the [`nlu.load()`](https://nlu.johnsnowlabs.com/docs/en/load_api) method which returns a `NLUPipeline` object
 which has a [`.predict()`](https://nlu.johnsnowlabs.com/docs/en/predict_api) that works on most [common data types in the pydata stack like Pandas dataframes](https://nlu.johnsnowlabs.com/docs/en/predict_api#supported-data-types) .     
 Ontop of that, there are various visualization methods a NLUPipeline provides easily integrate in Streamlit as re-usable components. [`viz() method`](https://nlu.johnsnowlabs.com/docs/en/viz_examples)
@@ -3034,7 +4625,7 @@ Ontop of that, there are various visualization methods a NLUPipeline provides ea
 
 
 
-### Overview of NLU + Streamlit buildingblocks
+#### Overview of NLU + Streamlit buildingblocks
 
 |Method                                                         |               Description                 |
 |---------------------------------------------------------------|-------------------------------------------|
@@ -3049,9 +4640,9 @@ Ontop of that, there are various visualization methods a NLUPipeline provides ea
 | [`nlu.enable_streamlit_caching()`](#test)  | Enable caching the `nlu.load()` call. Once enabled, the `nlu.load()` method will automatically cached. **This is recommended** to run first and for large peformance gans |
 
 
-## Detailed visualizer information and API docs
+#### Detailed visualizer information and API docs
 
-## <kbd>function</kbd> `pipe.viz_streamlit`
+#### <kbd>function</kbd> `pipe.viz_streamlit`
 
 
 Display a highly configurable UI that showcases almost every feature available for Streamlit visualization with model selection dropdowns in your applications.   
@@ -3075,7 +4666,7 @@ nlu.load('ner').viz_streamlit(['I love NLU and Streamlit!','I hate buggy softwar
 
 ![NLU Streamlit UI Overview](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/streamlit_docs_assets/gif/ui.gif)
 
-### <kbd>function parameters</kbd> `pipe.viz_streamlit`
+#### <kbd>function parameters</kbd> `pipe.viz_streamlit`
 
 | Argument              | Type                                             |                                                            Default                     |Description |
 |-----------------------|--------------------------------------------------|----------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------|
@@ -3098,7 +4689,7 @@ nlu.load('ner').viz_streamlit(['I love NLU and Streamlit!','I hate buggy softwar
 
 
 
-## <kbd>function</kbd> `pipe.viz_streamlit_classes`
+#### <kbd>function</kbd> `pipe.viz_streamlit_classes`
 
 Visualize the predicted classes and their confidences and additional metadata to streamlit.
 Aplicable with [any of the 100+ classifiers](https://nlp.johnsnowlabs.com/models?task=Text+Classification)
@@ -3109,7 +4700,7 @@ nlu.load('sentiment').viz_streamlit_classes(['I love NLU and Streamlit!','I love
 ![text_class1](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/streamlit_docs_assets/gif/class.gif)
 
 
-### <kbd>function parameters</kbd> `pipe.viz_streamlit_classes`
+#### <kbd>function parameters</kbd> `pipe.viz_streamlit_classes`
 
 | Argument    | Type        |                                                            Default         |Description |
 |--------------------------- | ---------- |-----------------------------------------------------------| ------------------------------------------------------- |
@@ -3129,7 +4720,7 @@ nlu.load('sentiment').viz_streamlit_classes(['I love NLU and Streamlit!','I love
 
 
 
-## <kbd>function</kbd> `pipe.viz_streamlit_ner`
+#### <kbd>function</kbd> `pipe.viz_streamlit_ner`
 Visualize the predicted classes and their confidences and additional metadata to Streamlit.
 Aplicable with [any of the 250+ NER models](https://nlp.johnsnowlabs.com/models?task=Named+Entity+Recognition).    
 You can filter which NER tags to highlight via the dropdown in the main window.
@@ -3148,7 +4739,7 @@ nlu.load('ner').viz_streamlit_ner('Donald Trump from America and Angela Merkel f
 ```
 ![NER coloring](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/streamlit_docs_assets/img/NER_colored.png)
 
-### <kbd>function parameters</kbd> `pipe.viz_streamlit_ner`
+#### <kbd>function parameters</kbd> `pipe.viz_streamlit_ner`
 
 | Argument    | Type        |                                                                                      Default                                        |Description                  |
 |--------------------------- | -----------------------|-----------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------ |
@@ -3171,7 +4762,7 @@ nlu.load('ner').viz_streamlit_ner('Donald Trump from America and Angela Merkel f
 
 
 
-## <kbd>function</kbd> `pipe.viz_streamlit_dep_tree`
+#### <kbd>function</kbd> `pipe.viz_streamlit_dep_tree`
 Visualize a typed dependency tree, the relations between tokens and part of speech tags predicted.
 Aplicable with [any of the 100+ Part of Speech(POS) models and dep tree model](https://nlp.johnsnowlabs.com/models?task=Part+of+Speech+Tagging)
 
@@ -3180,7 +4771,7 @@ nlu.load('dep.typed').viz_streamlit_dep_tree('POS tags define a grammatical labe
 ```
 ![Dependency Tree](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/streamlit_docs_assets/img/DEP.png)
 
-### <kbd>function parameters</kbd> `pipe.viz_streamlit_dep_tree`
+#### <kbd>function parameters</kbd> `pipe.viz_streamlit_dep_tree`
 
 | Argument    | Type        |                                                            Default         |Description |
 |--------------------------- | ---------- |-----------------------------------------------------------| ------------------------------------------------------- |
@@ -3201,7 +4792,7 @@ nlu.load('dep.typed').viz_streamlit_dep_tree('POS tags define a grammatical labe
 
 
 
-## <kbd>function</kbd> `pipe.viz_streamlit_token`
+#### <kbd>function</kbd> `pipe.viz_streamlit_token`
 Visualize predicted token and text features for every model loaded.
 You can use this with [any of the 1000+ models](https://nlp.johnsnowlabs.com/models) and select them from the left dropdown.
 
@@ -3211,7 +4802,7 @@ nlu.load('stemm pos spell').viz_streamlit_token('I liek pentut buttr and jelly !
 ![text_class1](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/streamlit_docs_assets/gif/token.gif)
 
 
-### <kbd>function parameters</kbd> `pipe.viz_streamlit_token`
+#### <kbd>function parameters</kbd> `pipe.viz_streamlit_token`
 
 | Argument    | Type        |                                                            Default         |Description |
 |--------------------------- | ---------- |-----------------------------------------------------------| ------------------------------------------------------- |
@@ -3233,7 +4824,7 @@ nlu.load('stemm pos spell').viz_streamlit_token('I liek pentut buttr and jelly !
 
 
 
-## <kbd>function</kbd> `pipe.viz_streamlit_similarity`
+#### <kbd>function</kbd> `pipe.viz_streamlit_similarity`
 
 - Displays a `similarity matrix`, where `x-axis` is every token in the first text and `y-axis` is every token in the second text.
 - Index `i,j` in the matrix describes the similarity of `token-i` to `token-j` based on the loaded embeddings and distance metrics, based on [Sklearns Pariwise Metrics.](https://scikit-learn.org/stable/modules/classes.html#module-sklearn.metrics.pairwise). [See this article for more elaboration on similarities](https://medium.com/spark-nlp/easy-sentence-similarity-with-bert-sentence-embeddings-using-john-snow-labs-nlu-ea078deb6ebf)
@@ -3249,7 +4840,7 @@ nlu.load('bert').viz_streamlit_word_similarity(['I love love loooove NLU! <3','I
 ```
 ![text_class1](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/streamlit_docs_assets/gif/SIM.gif)
 
-### <kbd>function parameters</kbd> `pipe.viz_streamlit_similarity`
+#### <kbd>function parameters</kbd> `pipe.viz_streamlit_similarity`
 
 | Argument    | Type        |                                                            Default         |Description |
 |--------------------------- | ---------- |-----------------------------------------------------------| ------------------------------------------------------- |
@@ -3288,17 +4879,17 @@ In addition have added some new features to our T5 Transformer annotator to help
 
 
 
-## T5 Model Improvements
+#### T5 Model Improvements
 * Add 6 new features to T5Transformer for longer and better text generation
-  - doSample: Whether or not to use sampling; use greedy decoding otherwise
-  - temperature: The value used to module the next token probabilities
-  - topK: The number of highest probability vocabulary tokens to keep for top-k-filtering
-  - topP: If set to float < 1, only the most probable tokens with probabilities that add up to ``top_p`` or higher are kept for generation
-  - repetitionPenalty: The parameter for repetition penalty. 1.0 means no penalty. See [CTRL: A Conditional Transformer Language Model for Controllable Generation](https://arxiv.org/abs/1909.05858) paper for more details
-  - noRepeatNgramSize: If set to int > 0, all ngrams of that size can only occur once
+    - doSample: Whether or not to use sampling; use greedy decoding otherwise
+    - temperature: The value used to module the next token probabilities
+    - topK: The number of highest probability vocabulary tokens to keep for top-k-filtering
+    - topP: If set to float < 1, only the most probable tokens with probabilities that add up to ``top_p`` or higher are kept for generation
+    - repetitionPenalty: The parameter for repetition penalty. 1.0 means no penalty. See [CTRL: A Conditional Transformer Language Model for Controllable Generation](https://arxiv.org/abs/1909.05858) paper for more details
+    - noRepeatNgramSize: If set to int > 0, all ngrams of that size can only occur once
 
 
-## New Open Source Model in NLU 3.0.2
+#### New Open Source Model in NLU 3.0.2
 New multilingual models and pipelines for `Farsi`, `Hebrew`, `Korean`, and `Turkish`
 
 | Model       |NLU Reference         | Spark NLP Reference               | Lang |  
@@ -3315,7 +4906,7 @@ New multilingual models and pipelines for `Farsi`, `Hebrew`, `Korean`, and `Turk
 
 
 
-## New Healthcare Models in NLU 3.0.2
+#### New Healthcare Models in NLU 3.0.2
 Five new resolver models:
 - `en.resolve.umls`: This model returns CUI (concept unique identifier) codes for Clinical Findings, Medical Devices, Anatomical Structures and Injuries & Poisoning terms.
 - `en.resolve.umls.findings`: This model returns CUI (concept unique identifier) codes for 200K concepts from clinical findings.
@@ -3406,35 +4997,33 @@ hepatitis, and obesity with a body mass index (BMI) of 33.5 kg/m2, presented wit
 * [NLU documentation](https://nlu.johnsnowlabs.com/docs/en/install)
 * [Discussions](https://github.com/JohnSnowLabs/spark-nlp/discussions) Engage with other community members, share ideas, and show off how you use Spark NLP and NLU!
 
-## 1 line Install NLU on Google Colab
-```!wget https://setup.johnsnowlabs.com/nlu/colab.sh  -O - | bash```
-## 1 line Install NLU on Kaggle
-```!wget https://setup.johnsnowlabs.com/nlu/kaggle.sh  -O - | bash```
-## Install via PIP
-```! pip install nlu pyspark==3.0.1```
 
 
+#### Install NLU in 1 line!
 
+```
+* Install NLU on Google Colab : !wget https://setup.johnsnowlabs.com/nlu/colab.sh  -O - | bash
+* Install NLU on Kaggle       : !wget https://setup.johnsnowlabs.com/nlu/kaggle.sh  -O - | bash
+* Install NLU via Pip         : ! pip install nlu pyspark==3.0.1
+```
 
-
-
-## NLU 3.0.1 Release Notes
+## NLU Version 3.0.1
 We are very excited to announce NLU 3.0.1 has been released!
-This is one of the most visually appealing releases, with the integration of the [Spark-NLP-Display](https://nlp.johnsnowlabs.com/docs/en/display) library and visualizations for `dependency trees`, `entity resolution`, `entity assertion`, `relationship between entities` and `named 
+This is one of the most visually appealing releases, with the integration of the [Spark-NLP-Display](https://nlp.johnsnowlabs.com/docs/en/display) library and visualizations for `dependency trees`, `entity resolution`, `entity assertion`, `relationship between entities` and `named
 entity recognition`. In addition to this, the schema of how columns are named by NLU has been reworked and all 140+ tutorial notebooks have been updated to reflect the latest changes in NLU 3.0.0+
 Finally, new multilingual models for `Afrikaans`, `Welsh`, `Maltese`, `Tamil`, and`Vietnamese` are now available.
 
 
 
 
-## New Features and Enhancements
+#### New Features and Enhancements
 - 1 line to visualization for `NER`, `Dependency`, `Resolution`, `Assertion` and `Relation` via [Spark-NLP-Display](https://nlp.johnsnowlabs.com/docs/en/display) integration
 - Improved column naming schema
 - [Over 140 + NLU tutorial Notebooks updated](https://github.com/JohnSnowLabs/nlu/tree/master/examples) and improved to reflect latest changes in NLU 3.0.0 +
 - New multilingual models for `Afrikaans`, `Welsh`, `Maltese`, `Tamil`, and`Vietnamese`
- 
 
-## Improved Column Name generation
+
+#### Improved Column Name generation
 - NLU categorized each internal component now with boolean labels for `name_deductable` and `always_name_deductable` .
 - Before generating column names, NLU checks wether each component is of unique in the pipeline or not. If a component is not unique in the
   pipe and there are multiple components of same type, i.e. multiple `NER` models, NLU will deduct a base name for the final output columns from the
@@ -3443,11 +5032,11 @@ Finally, new multilingual models for `Afrikaans`, `Welsh`, `Maltese`, `Tamil`, a
 - For some components, like `embeddings` and `classifiers` are now defined as `always_name_deductable`, for those NLU will always try to infer a meaningful base name for the output columns.
 - Newly trained component output columns will now be prefixed with `trained_<type>` , for types `pos` , `ner`, `cLassifier`, `sentiment` and `multi_classifier`
 
-## Enhanced offline mode
+#### Enhanced offline mode
 - You can still load a model from a path as usual with `nlu.load(path=model_path)` and output columns will be suffixed with `from_disk`
 - You can now optionally also specify `request` parameter during  load a model from HDD, it will be used to deduct more meaningful column name suffixes, instead of `from_disk`, i.e. by calling `nlu.load(request ='en.embed_sentence.biobert.pubmed_pmc_base_cased', path=model_path)`
 
-## NLU visualization
+#### NLU visualization
 The latest NLU release integrated the beautiful Spark-NLP-Display package visualizations. You do not need to worry about installing it, when you try to visualize something, NLU will check if
 Spark-NLP-Display is installed, if it is missing it will be dynamically installed into your python executable environment, so you don't need to worry about anything!
 
@@ -3455,14 +5044,14 @@ See the [visualization tutorial notebook](https://github.com/JohnSnowLabs/nlu/bl
 
 ![Cheat Sheet visualization](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/images/nlu/VizExamples/viz_module/cheat_sheet.png)
 
-## NER visualization
+#### NER visualization
 Applicable to any of the [100+ NER models! See here for an overview](https://nlp.johnsnowlabs.com/models?task=Named+Entity+Recognition)
 ```python
 nlu.load('ner').viz("Donald Trump from America and Angela Merkel from Germany don't share many oppinions.")
 ```
 ![NER visualization](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/images/nlu/VizExamples/viz_module/NER.png)
 
-## Dependency tree visualization
+#### Dependency tree visualization
 Visualizes the structure of the labeled dependency tree and part of speech tags
 ```python
 nlu.load('dep.typed').viz("Billy went to the mall")
@@ -3476,7 +5065,7 @@ nlu.load('dep.typed').viz("Donald Trump from America and Angela Merkel from Germ
 ```
 ![Dependency Tree visualization](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/images/nlu/VizExamples/viz_module/DEP_big.png)
 
-## Assertion status visualization
+#### Assertion status visualization
 Visualizes asserted statuses and entities.        
 Applicable to any of the [10 + Assertion models! See here for an overview](https://nlp.johnsnowlabs.com/models?task=Assertion+Status)
 ```python
@@ -3494,7 +5083,7 @@ nlu.load('med_ner.clinical assert').viz(data)
 ![Assert visualization](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/images/nlu/VizExamples/viz_module/assertion_big.png)
 
 
-## Relationship between entities visualization
+#### Relationship between entities visualization
 Visualizes the extracted entities between relationship.    
 Applicable to any of the [20 + Relation Extractor models See here for an overview](https://nlp.johnsnowlabs.com/models?task=Relation+Extraction)
 ```python
@@ -3510,7 +5099,7 @@ pipe = nlu.load('med_ner.jsl.wip.clinical relation.clinical').viz(data)
 ![Entity Relation visualization](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/images/nlu/VizExamples/viz_module/relation_big.png)
 
 
-## Entity Resolution visualization for chunks
+#### Entity Resolution visualization for chunks
 Visualizes resolutions of entities
 Applicable to any of the [100+ Resolver models See here for an overview](https://nlp.johnsnowlabs.com/models?task=Entity+Resolution)
 ```python
@@ -3527,7 +5116,7 @@ nlu.load('med_ner.jsl.wip.clinical resolve_chunk.rxnorm.in').viz(data)
 ![Chunk Resolution visualization](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/images/nlu/VizExamples/viz_module/resolve_chunk_big.png)
 
 
-## Entity Resolution visualization for sentences
+#### Entity Resolution visualization for sentences
 Visualizes resolutions of entities in sentences
 Applicable to any of the [100+ Resolver models See here for an overview](https://nlp.johnsnowlabs.com/models?task=Entity+Resolution)
 ```python
@@ -3542,8 +5131,8 @@ nlu.load('med_ner.jsl.wip.clinical resolve.icd10cm').viz(data)
 ```
 ![Sentence Resolution visualization](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/images/nlu/VizExamples/viz_module/resolve_sentence_big.png)
 
-## Configure visualizations
-### Define custom colors for labels
+#### Configure visualizations
+##### Define custom colors for labels
 Some entity and relation labels will be highlighted with a pre-defined color, which you [can find here](https://github.com/JohnSnowLabs/spark-nlp-display/tree/main/sparknlp_display/label_colors).    
 For labels that have no color defined, a random color will be generated.     
 You can define colors for labels manually, by specifying via the `viz_colors` parameter
@@ -3557,7 +5146,7 @@ nlu.load('med_ner.jsl.wip.clinical').viz(data,viz_colors =viz_colors)
 ![define colors labels](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/images/nlu/VizExamples/viz_module/define_colors.png)
 
 
-### Filter entities that get highlighted
+##### Filter entities that get highlighted
 By default every entity class will be visualized.    
 The `labels_to_viz` can be used to define a set of labels to highlight.       
 Applicable for ner, resolution and assert.
@@ -3570,7 +5159,7 @@ nlu.load('med_ner.jsl.wip.clinical').viz(data,labels_to_viz=labels_to_viz)
 ![filter labels](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/images/nlu/VizExamples/viz_module/filter_labels.png)
 
 
-## New models
+#### New models
 New multilingual models for `Afrikaans`, `Welsh`, `Maltese`, `Tamil`, and`Vietnamese`
 
 | nlu.load() Refrence                                          | Spark NLP Refrence                                           |
@@ -3582,13 +5171,13 @@ New multilingual models for `Afrikaans`, `Welsh`, `Maltese`, `Tamil`, and`Vietna
 | [af.pos](https://nlp.johnsnowlabs.com/2021/04/06/pos_afribooms_af.html) | [pos_afribooms](https://nlp.johnsnowlabs.com/2021/04/06/pos_afribooms_af.html) |
 | [cy.lemma](https://nlp.johnsnowlabs.com/2021/04/02/lemma_cy.html) | [lemma](https://nlp.johnsnowlabs.com/2021/04/02/lemma_cy.html) |
 
-## Reworked and updated NLU tutorial notebooks
+#### Reworked and updated NLU tutorial notebooks
 
 All of the [140+ NLU tutorial Notebooks](https://github.com/JohnSnowLabs/nlu/tree/master/examples) have been updated and reworked to reflect the latest changes in NLU 3.0.0+
 
 
 
-### Bugfixes
+#### Bugfixes
 - Fixed a bug that caused  resolution algorithms output level to be inferred incorrectly
 - Fixed a bug that caused stranger cols got dropped
 - Fixed a bug that caused endings to miss when  .predict(position=True) was specified
@@ -3605,26 +5194,25 @@ All of the [140+ NLU tutorial Notebooks](https://github.com/JohnSnowLabs/nlu/tre
 * [NLU documentation](https://nlu.johnsnowlabs.com/docs/en/install)
 * [Discussions](https://github.com/JohnSnowLabs/spark-nlp/discussions) Engage with other community members, share ideas, and show off how you use Spark NLP and NLU!
 
-## 1 line Install NLU on Google Colab
-```!wget https://setup.johnsnowlabs.com/nlu/colab.sh  -O - | bash```
-## 1 line Install NLU on Kaggle
-```!wget https://setup.johnsnowlabs.com/nlu/kaggle.sh  -O - | bash```
-## Install via PIP
-```! pip install nlu pyspark==3.0.1```
+#### Install NLU in 1 line!aaa
 
-
+```
+* Install NLU on Google Colab : ! wget https://setup.johnsnowlabs.com/nlu/colab.sh  -O - | bash
+* Install NLU on Kaggle       : ! wget https://setup.johnsnowlabs.com/nlu/kaggle.sh  -O - | bash
+* Install NLU via Pip         : ! pip install nlu pyspark==3.0.3
+```
 
 
 <div class="h3-box" markdown="1">
 
-## 200+ State of the Art Medical Models for NER, Entity Resolution, Relation Extraction, Assertion, Spark 3 and Python 3.8 support in  NLU 3.0 Release and much more
+#### 200+ State of the Art Medical Models for NER, Entity Resolution, Relation Extraction, Assertion, Spark 3 and Python 3.8 support in  NLU 3.0 Release and much more
 We are incredible excited to announce the release of `NLU 3.0.0` which makes most of John Snow Labs medical healthcare model available in just 1 line of code in NLU.
 These models are the most accurate in their domains and highly scalable in Spark clusters.  
 In addition, `Spark 3.0.X`  and `Spark 3.1.X ` is now supported, together with Python3.8
 
 This is enabled by the the amazing [Spark NLP3.0.1](https://nlp.johnsnowlabs.com/docs/en/release_notes#300) and [Spark NLP for Healthcare 3.0.1](https://nlp.johnsnowlabs.com/docs/en/licensed_release_notes#301) releases.
 
-## New Features
+#### New Features
 - Over 200 new models for the `healthcare` domain
 - 6 new classes of models, Assertion, Sentence/Chunk Resolvers, Relation Extractors, Medical NER models, De-Identificator Models
 - Spark 3.0.X and 3.1.X support
@@ -3635,12 +5223,12 @@ This is enabled by the the amazing [Spark NLP3.0.1](https://nlp.johnsnowlabs.com
 - GPU Mode, more then 600% speedup by enabling GPU mode.
 - Authorized mode for licensed features
 
-## New Documentation
+#### New Documentation
 - [NLU for Healthcare Examples](https://nlu.johnsnowlabs.com/docs/en/examples_hc#usage-examples-of-nluload)
 - [Instrunctions to authorize your environment to use Licensed features](https://nlu.johnsnowlabs.com/docs/en/examples_hc#authorize-access-to-licensed-features-and-install-healthcare-dependencies)
 
 
-## New Notebooks
+#### New Notebooks
 - [Medical Named Entity Extraction (NER) notebook](https://colab.research.google.com/github/JohnSnowLabs/nlu/blob/master/examples/colab/healthcare/medical_named_entity_recognition/overview_medical_entity_recognizers.ipynb)
 - [Relation extraction notebook](https://colab.research.google.com/github/JohnSnowLabs/nlu/blob/master/examples/colab/healthcare/relation_extraction/overview_relation.ipynb)
 - [Entity Resolution overview notebook](https://colab.research.google.com/github/JohnSnowLabs/nlu/blob/master/examples/colab/healthcare/entity_resolution/entity_resolvers_overview.ipynb)
@@ -3649,7 +5237,7 @@ This is enabled by the the amazing [Spark NLP3.0.1](https://nlp.johnsnowlabs.com
 - [Graph NLU tutorial](https://colab.research.google.com/github/JohnSnowLabs/nlu/blob/master/examples/webinars_conferences_etc/graph_ai_summit/Healthcare_Graph_NLU_COVID_Tigergraph.ipynb) for the  [GRAPH+AI Summit hosted by Tigergraph ](https://www.tigergraph.com/graphaisummit/)
 
 
-## AssertionDLModels
+#### AssertionDLModels
 
 | Language | nlu.load() reference                                         | Spark NLP Model reference          |
 | -------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
@@ -3658,7 +5246,7 @@ This is enabled by the the amazing [Spark NLP3.0.1](https://nlp.johnsnowlabs.com
 | English  | [assert.healthcare](https://nlp.johnsnowlabs.com/2020/09/23/assertion_dl_healthcare_en.html) | [assertion_dl_healthcare](https://nlp.johnsnowlabs.com/2020/09/23/assertion_dl_healthcare_en.html)                   |
 | English  | [assert.large](https://nlp.johnsnowlabs.com/2020/05/21/assertion_dl_large_en.html) | [assertion_dl_large](https://nlp.johnsnowlabs.com/2020/05/21/assertion_dl_large_en.html)                   |
 
-##  New Word Embeddings
+####  New Word Embeddings
 
 | Language | nlu.load() reference                                         | Spark NLP Model reference          |
 | -------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
@@ -3669,7 +5257,7 @@ This is enabled by the the amazing [Spark NLP3.0.1](https://nlp.johnsnowlabs.com
 | English  | en.embed.glove.icdoem | embeddings_icdoem          |
 | English  | en.embed.glove.icdoem_2ng | embeddings_icdoem_2ng          |
 
-## Sentence Entity resolvers
+#### Sentence Entity resolvers
 
 | Language | nlu.load() reference                                         | Spark NLP Model reference          |
 | -------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
@@ -3692,7 +5280,7 @@ This is enabled by the the amazing [Spark NLP3.0.1](https://nlp.johnsnowlabs.com
 | English  | [resolve.snomed.findings](https://nlp.johnsnowlabs.com/2020/11/27/sbiobertresolve_snomed_findings_en.html) | [sbiobertresolve_snomed_findings](https://nlp.johnsnowlabs.com/2020/11/27/sbiobertresolve_snomed_findings_en.html)                   |
 | English  | [resolve.snomed.findings_int](https://nlp.johnsnowlabs.com/2020/11/27/sbiobertresolve_snomed_findings_int_en.html) | [sbiobertresolve_snomed_findings_int](https://nlp.johnsnowlabs.com/2020/11/27/sbiobertresolve_snomed_findings_int_en.html)                   |
 
-## RelationExtractionModel
+#### RelationExtractionModel
 
 | Language | nlu.load() reference                                         | Spark NLP Model reference          |
 | -------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
@@ -3710,7 +5298,7 @@ This is enabled by the the amazing [Spark NLP3.0.1](https://nlp.johnsnowlabs.com
 
 
 
-## NERDLModels
+#### NERDLModels
 
 | Language | nlu.load() reference                                         | Spark NLP Model reference          |
 | -------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
@@ -3774,7 +5362,7 @@ This is enabled by the the amazing [Spark NLP3.0.1](https://nlp.johnsnowlabs.com
 | English  | [med_ner.jsl.wip.clinical.rd](https://nlp.johnsnowlabs.com/2021/04/01/jsl_rd_ner_wip_greedy_clinical_en.html) | [jsl_rd_ner_wip_greedy_clinical](https://nlp.johnsnowlabs.com/2021/04/01/jsl_rd_ner_wip_greedy_clinical_en.html)           |
 
 
-## De-Identification Models
+#### De-Identification Models
 
 | Language | nlu.load() reference                                         | Spark NLP Model reference          |
 | -------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
@@ -3797,7 +5385,7 @@ This is enabled by the the amazing [Spark NLP3.0.1](https://nlp.johnsnowlabs.com
 
 
 
-## Chunk resolvers
+#### Chunk resolvers
 
 | Language | nlu.load() reference                                         | Spark NLP Model reference          |
 | -------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
@@ -3826,7 +5414,7 @@ This is enabled by the the amazing [Spark NLP3.0.1](https://nlp.johnsnowlabs.com
 | English  | [resolve_chunk.snomed.findings](https://nlp.johnsnowlabs.com/2020/06/20/chunkresolve_snomed_findings_clinical_en.html) | [chunkresolve_snomed_findings_clinical](https://nlp.johnsnowlabs.com/2020/06/20/chunkresolve_snomed_findings_clinical_en.html)           |
 
 
-## New Classifiers
+#### New Classifiers
 
 | Language | nlu.load() reference                                         | Spark NLP Model reference          |
 | -------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
@@ -3840,7 +5428,7 @@ This is enabled by the the amazing [Spark NLP3.0.1](https://nlp.johnsnowlabs.com
 | English  | classify.pico | classifierdl_pico_biobert          |
 
 
-## German Medical models
+#### German Medical models
 
 | nlu.load() reference                                         | Spark NLP Model reference          |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
@@ -3855,7 +5443,8 @@ This is enabled by the the amazing [Spark NLP3.0.1](https://nlp.johnsnowlabs.com
 | med_ner.healthcare_slim    | ner_healthcare_slim|
 | med_ner.traffic    | ner_traffic|
 
-## Spanish Medical models
+#### Spanish Medical models
+
 | nlu.load() reference                                         | Spark NLP Model reference          |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
 | [embed.scielo.150d](https://nlp.johnsnowlabs.com/2020/05/26/embeddings_scielo_150d_es.html) | [embeddings_scielo_150d](https://nlp.johnsnowlabs.com/2020/05/26/embeddings_scielo_150d_es.html)| 
@@ -3871,25 +5460,26 @@ This is enabled by the the amazing [Spark NLP3.0.1](https://nlp.johnsnowlabs.com
 | [med_ner.neoplasm](https://nlp.johnsnowlabs.com/2021/03/31/ner_neoplasms_es.html)  | [ner_neoplasms](https://nlp.johnsnowlabs.com/2021/03/31/ner_neoplasms_es.html)| 
 | [med_ner.diag_proc](https://nlp.johnsnowlabs.com/2021/03/31/ner_diag_proc_es.html)  | [ner_diag_proc](https://nlp.johnsnowlabs.com/2021/03/31/ner_diag_proc_es.html)| 
 
-## GPU Mode
+#### GPU Mode
 You can now enable NLU GPU mode by setting `gpu=true` while loading a model. I.e. `nlu.load('train.sentiment' gpu=True)` . If must resart you kernel, if you already loaded a nlu pipeline withouth GPU mode.
 
-## Output Level Relation
+#### Output Level Relation
 This new output level is used for relation extractors and will give you 1 row per relation extracted.
 
 
-## Bug fixes
+#### Bug fixes
 - Fixed a bug that caused loading NLU models in offline mode not to work in some occasions
 
 
-## 1 line Install NLU
-```!wget https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/scripts/colab_setup.sh -O - | bash```
 
-## Install via PIP 
-```! pip install nlu pyspark==3.0.1```
+#### Install NLU in 1 line!
 
+```
+* Install NLU on Google Colab : !wget https://setup.johnsnowlabs.com/nlu/colab.sh  -O - | bash
+* Install NLU via Pip         : ! pip install nlu pyspark==3.0.3
+```
 
-## Additional NLU ressources
+#### Additional NLU ressources
 
 - [NLU Website](https://nlu.johnsnowlabs.com/)
 - [All NLU Tutorial Notebooks](https://nlu.johnsnowlabs.com/docs/en/notebooks)
@@ -3906,9 +5496,12 @@ This new output level is used for relation extractors and will give you 1 row pe
 
 <div class="h3-box" markdown="1">
 
-### Intent and Action Classification,  analyze Chinese News and the Crypto market, train a classifier that understands 100+ languages, translate between 200 + languages, answer questions, summarize text, and much more in NLU 1.1.3
 
-## NLU 1.1.3 Release Notes
+
+## NLU Version 1.1.3
+
+#### Intent and Action Classification,  analyze Chinese News and the Crypto market, train a classifier that understands 100+ languages, translate between 200 + languages, answer questions, summarize text, and much more in NLU 1.1.3
+
 We are very excited to announce that the latest NLU release comes with a new pretrained Intent Classifier and NER Action Extractor for text related to
 music, restaurants, and movies trained on the SNIPS dataset. Make sure to check out the models hub and the easy 1-liners for more info!
 
@@ -3917,20 +5510,20 @@ In addition to that, new NER and Embedding models for Bengali are now available
 Finally, there is a new NLU Webinar with 9 accompanying tutorial notebooks which teach you  a lot of things and is segmented into the following parts :
 
 - Part1: Easy 1 Liners
-  - Spell checking/Sentiment/POS/NER/ BERTtology embeddings
+    - Spell checking/Sentiment/POS/NER/ BERTtology embeddings
 - Part2: Data analysis and NLP tasks on [Crypto News Headline dataset](https://www.kaggle.com/kashnitsky/news-about-major-cryptocurrencies-20132018-40k)
-  - Preprocessing and extracting Emotions, Keywords, Named Entities and visualize them
+    - Preprocessing and extracting Emotions, Keywords, Named Entities and visualize them
 - Part3: NLU Multi-Lingual 1 Liners with [Microsoft's Marian Models](https://marian-nmt.github.io/publications/)
-  - Translate between 200+ languages (and classify lang afterward)
+    - Translate between 200+ languages (and classify lang afterward)
 - Part 4: Data analysis and NLP tasks on [Chinese News Article Dataset](https://github.com/JohnSnowLabs/nlu/blob/master/examples/webinars_conferences_etc/multi_lingual_webinar/4_Unsupervise_Chinese_Keyword_Extraction_NER_and_Translation_from_Chinese_News.ipynb)
-  - Word Segmentation, Lemmatization, Extract Keywords, Named Entities and translate to english
+    - Word Segmentation, Lemmatization, Extract Keywords, Named Entities and translate to english
 - Part 5: Train a sentiment Classifier that understands 100+ Languages
-  - Train on a french sentiment dataset and predict the sentiment of 100+ languages with [language-agnostic BERT Sentence Embedding](https://arxiv.org/abs/2007.01852)
+    - Train on a french sentiment dataset and predict the sentiment of 100+ languages with [language-agnostic BERT Sentence Embedding](https://arxiv.org/abs/2007.01852)
 - Part 6: Question answering, Summarization, Squad and more with [Google's T5](https://arxiv.org/abs/1910.10683)
-  - T5 Question answering and 18 + other NLP tasks ([SQUAD](https://arxiv.org/abs/1606.05250) / [GLUE](https://arxiv.org/abs/1804.07461) / [SUPER GLUE](https://super.gluebenchmark.com/))
+    - T5 Question answering and 18 + other NLP tasks ([SQUAD](https://arxiv.org/abs/1606.05250) / [GLUE](https://arxiv.org/abs/1804.07461) / [SUPER GLUE](https://super.gluebenchmark.com/))
 
 
-### New Models
+#### New Models
 
 #### NLU 1.1.3 New Non-English Models
 
@@ -3955,7 +5548,7 @@ Finally, there is a new NLU Webinar with 9 accompanying tutorial notebooks which
 
 
 
-### New NLU Webinar
+#### New NLU Webinar
 #### [State-of-the-art Natural Language Processing for 200+ Languages with 1 Line of code](https://events.johnsnowlabs.com/state-of-the-art-natural-language-processing-for-200-languages-with-1-line-of-code)
 
 
@@ -3968,7 +5561,7 @@ This webinar will show you how to leverage the multi-lingual capabilities of Spa
 
 You can watch the [video here,](https://events.johnsnowlabs.com/state-of-the-art-natural-language-processing-for-200-languages-with-1-line-of-code)
 
-### NLU 1.1.3 New Notebooks and tutorials
+#### NLU 1.1.3 New Notebooks and tutorials
 
 
 #### New Webinar Notebooks
@@ -4049,17 +5642,17 @@ outputs :
 
 
 
-### NLU 1.1.3 Enhancements
+#### NLU 1.1.3 Enhancements
 - Added automatic conversion  to Sentence Embeddings of Word Embeddings when there is no Sentence Embedding Avaiable and a model needs the converted version to run.
 
 
-### NLU 1.1.3 Bug Fixes
+#### NLU 1.1.3 Bug Fixes
 - Fixed a bug that caused `ur.sentiment` NLU pipeline to build incorrectly
 - Fixed a bug that caused `sentiment.imdb.glove` NLU pipeline to build incorrectly
 - Fixed a bug that caused `en.sentiment.glove.imdb` NLU pipeline to build incorrectly
 - Fixed a bug that caused Spark 2.3.X environments to crash.
 
-### NLU Installation
+#### NLU Installation
 
 ```bash
 # PyPi
@@ -4069,7 +5662,7 @@ outputs :
 conda install -os_components johnsnowlabs nlu
 ```
 
-### Additional NLU ressources
+#### Additional NLU ressources
 
 - [NLU Website](https://nlu.johnsnowlabs.com/)
 - [All NLU Tutorial Notebooks](https://nlu.johnsnowlabs.com/docs/en/notebooks)
@@ -4080,15 +5673,15 @@ conda install -os_components johnsnowlabs nlu
 
 
 
-## NLU 1.1.2 Release Notes
-### Hindi  WordEmbeddings , Bengali Named Entity Recognition (NER), 30+ new models, analyze Crypto news with John Snow Labs NLU 1.1.2 
+## NLU Version 1.1.2
+#### Hindi  WordEmbeddings , Bengali Named Entity Recognition (NER), 30+ new models, analyze Crypto news with John Snow Labs NLU 1.1.2
 
 We are very happy to announce NLU 1.1.2 has been released with the integration of 30+ models and pipelines Bengali Named Entity Recognition, Hindi Word Embeddings,
 and state-of-the-art transformer based OntoNotes models and pipelines from the [incredible Spark NLP 2.7.3 Release](https://github.com/JohnSnowLabs/spark-nlp/releases/tag/2.7.3) in addition to a few bugfixes.  
-In addition to that, there is a [new NLU Webinar video](https://www.youtube.com/watch?t=2141&v=hJR9m3NYnwk&feature=youtu.be) showcasing in detail 
+In addition to that, there is a [new NLU Webinar video](https://www.youtube.com/watch?t=2141&v=hJR9m3NYnwk&feature=youtu.be) showcasing in detail
 how to use NLU to analyze a crypto news dataset to extract keywords unsupervised and predict sentimential/emotional distributions of the dataset and much more!
 
-### [Python's NLU library: 1,000+ models, 200+ Languages, State of the Art Accuracy, 1 Line of code - NLU NYC/DC NLP Meetup Webinar](https://www.youtube.com/watch?t=2141&v=hJR9m3NYnwk&feature=youtu.be)
+#### [Python's NLU library: 1,000+ models, 200+ Languages, State of the Art Accuracy, 1 Line of code - NLU NYC/DC NLP Meetup Webinar](https://www.youtube.com/watch?t=2141&v=hJR9m3NYnwk&feature=youtu.be)
 Using just 1 line of Python code by leveraging the NLU library, which is powered by the award-winning Spark NLP.
 
 This webinar covers, using live coding in real-time,
@@ -4102,9 +5695,7 @@ This includes 20 languages families; non-Latin alphabets; languages that do not 
 Chinese, Japanese, and Korean; and languages written from right to left like Arabic, Farsi, Urdu, and Hebrew.
 We'll also cover some of the algorithms and models that are included. The code notebooks will be freely available online.
 
- 
 
-### NLU 1.1.2 New Models  and Pipelines
 
 #### NLU 1.1.2 New Non-English Models
 
@@ -4143,7 +5734,7 @@ We'll also cover some of the algorithms and models that are included. The code n
 
 
 
-### New Tutorials and Notebooks
+#### New Tutorials and Notebooks
 
 - [NYC/DC NLP Meetup Webinar video analyze Crypto News, Unsupervised Keywords, Translate between 300 Languages, Question Answering, Summerization, POS, NER in 1 line of code in almost just 20 minutes](https://www.youtube.com/watch?t=2141&v=hJR9m3NYnwk&feature=youtu.be)
 - [NLU basics POS/NER/Sentiment Classification/BERTology Embeddings](https://github.com/JohnSnowLabs/nlu/blob/master/examples/webinars_conferences_etc/NYC_DC_NLP_MEETUP/0_liners_intro.ipynb)
@@ -4152,14 +5743,14 @@ We'll also cover some of the algorithms and models that are included. The code n
 - [New NLU 1.1.2 Models Showcase Notebooks, Bengali NER, Hindi Embeddings, 30 new_models](https://colab.research.google.com/github/JohnSnowLabs/nlu/blob/master/examples/release_notebooks/NLU1.1.2_Bengali_ner_Hindi_Embeddings_30_new_models.ipynb)
 
 
-### NLU 1.1.2 Bug Fixes
+#### NLU 1.1.2 Bug Fixes
 
 - Fixed a bug that caused NER confidences not beeing extracted
 - Fixed a bug that caused nlu.load('spell') to crash
 - Fixed a bug that caused Uralic/Estonian/ET language models not to be loaded properly
 
 
-### New  Easy NLU 1-liners in 1.1.2
+#### New  Easy NLU 1-liners in 1.1.2
 
 
 #### [Named Entity Recognition for Bengali (GloVe 840B 300d)](https://nlp.johnsnowlabs.com/2021/01/27/ner_jifs_glove_840B_300d_bn.html)
@@ -4219,7 +5810,7 @@ output :
 |:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:-------------------------------------------------------------------------------------------------|
 | ['これ', 'にる', '不快', '感', 'を', '示す', '住民', 'はる', 'いる', 'まする', 'たる', 'がる', ',', '現在', ',', '表立つ', 'てる', '反対', 'やる', '抗議', 'のる', '声', 'を', '挙げる', 'てる', 'いる', '住民', 'はる', 'いる', 'なぐ', 'よう', 'です', '。'] | これに不快感を示す住民はいましたが,現在,表立って反対や抗議の声を挙げている住民はいないようです。 |
 
-#### [Aharic Lemmatizer](https://nlp.johnsnowlabs.com/2021/01/20/lemma_am.html)
+#### [Amharic Lemmatizer](https://nlp.johnsnowlabs.com/2021/01/20/lemma_am.html)
 
 
 ```python
@@ -4549,7 +6140,7 @@ output :
 |---------------:|:----------------------------------------------------------------------|:-----------------------------------------------------|
 |              [0.9998000264167786, 0.9613999724388123, 0.998...] | ['Johnson', 'first', '2001', 'eight years', 'London', '2008 to 2016'] | ['PERSON', 'ORDINAL', 'DATE', 'DATE', 'GPE', 'DATE'] |
 
-### NLU Installation
+#### NLU Installation
 
 ```bash
 # PyPi
@@ -4559,14 +6150,14 @@ output :
 conda install -os_components johnsnowlabs nlu
 ```
 
-### Additional NLU ressources
+#### Additional NLU ressources
 - [NLU Website](https://nlu.johnsnowlabs.com/)
 - [All NLU Tutorial Notebooks](https://nlu.johnsnowlabs.com/docs/en/notebooks)
 - [NLU Videos and Blogposts on NLU](https://nlp.johnsnowlabs.com/learn#pythons-nlu-library)
 - [NLU on Github](https://github.com/JohnSnowLabs/nlu)
 
 
-## NLU 1.1.1 Release Notes
+## NLU Version 1.1.1
 
 We are very excited to release NLU 1.1.1!
 This release features 3 new tutorial notebooks for Open/Closed book question answering with Google's T5, Intent classification and Aspect Based NER.
@@ -4574,7 +6165,7 @@ In Addition NLU 1.1.0 comes with  25+ pretrained models and pipelines in Amharic
 Finally NLU now supports running on Spark 2.3 clusters.
 
 
-### NLU 1.1.0 New Non-English Models
+#### NLU 1.1.1 New Non-English Models
 
 |Language | nlu.load() reference | Spark NLP Model reference | Type |
 |---------|---------------------|----------------------------|------|
@@ -4594,7 +6185,7 @@ Finally NLU now supports running on Spark 2.3 clusters.
 
 
 
-### NLU 1.1.1 New English Models and Pipelines
+#### NLU 1.1.1 New English Models and Pipelines
 
 |Language | nlu.load() reference | Spark NLP Model reference | Type |
 |---------|---------------------|----------------------------|------|
@@ -4613,7 +6204,7 @@ Finally NLU now supports running on Spark 2.3 clusters.
 | English | [en.ner.aspect.airline](https://nlp.johnsnowlabs.com/2021/01/25/nerdl_atis_840b_300d_en.html) |[nerdl_atis_840b_300d](https://nlp.johnsnowlabs.com/2021/01/25/nerdl_atis_840b_300d_en.html)     | Aspect based NER (Alias) |
 | English | [en.ner.aspect.atis](https://nlp.johnsnowlabs.com/2021/01/25/nerdl_atis_840b_300d_en.html) |[nerdl_atis_840b_300d](https://nlp.johnsnowlabs.com/2021/01/25/nerdl_atis_840b_300d_en.html)     | Aspect based NER (Alias) |
 
-### New Easy NLU 1-liner Examples : 
+#### New Easy NLU 1-liner Examples :
 
 #### Extract aspects and entities from airline questions (ATIS dataset)
 
@@ -4854,15 +6445,15 @@ Output:
 
 
 
-### NLU 1.1.0 Enhancements : 
+#### NLU 1.1.1 Enhancements :
 -  Spark 2.3 compatibility
 
-### New NLU Notebooks and Tutorials 
+#### New NLU Notebooks and Tutorials
 - [Open and Closed book question Ansering](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/sequence2sequence/T5_question_answering.ipynb)
 - [Aspect based NER for Airline ATIS](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/classifiers/intent_classification_airlines_ATIS.ipynb)
 - [Intent Classification for Airline emssages ATIS](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/named_entity_recognition_(NER)/NER_aspect_airline_ATIS.ipynb)
 
-### Installation
+#### Installation
 
 ```bash
 # PyPi
@@ -4872,7 +6463,7 @@ Output:
 conda install -os_components johnsnowlabs nlu
 ```
 
-### Additional NLU ressources
+#### Additional NLU ressources
 - [NLU Website](https://nlu.johnsnowlabs.com/)
 - [All NLU Tutorial Notebooks](https://nlu.johnsnowlabs.com/docs/en/notebooks)
 - [NLU Videos and Blogposts on NLU](https://nlp.johnsnowlabs.com/learn#pythons-nlu-library)
@@ -4881,17 +6472,17 @@ conda install -os_components johnsnowlabs nlu
 
 
 
-##  NLU 1.1.0 Release Notes 
+##  NLU Version 1.1.0
 We are incredibly excited to release NLU 1.1.0!
-This release it integrates the 720+ new models from the latest [Spark-NLP 2.7.0 + releases](https://github.com/JohnSnowLabs/spark-nlp/releases)
-You can now achieve state-of-the-art results with Sequence2Sequence transformers like for problems text summarization, question answering, translation between  192+ languages and extract Named Entity in various Right to Left written languages like Koreas, Japanese, Chinese and many more in 1 line of code!     
+This release integrates the 720+ new models from the latest [Spark-NLP 2.7.0 + releases](https://github.com/JohnSnowLabs/spark-nlp/releases).
+You can now achieve state-of-the-art results with Sequence2Sequence transformers for problems like text summarization, question answering, translation between  192+ languages and extract Named Entity in various Right to Left written languages like Korean, Japanese, Chinese and many more in 1 line of code!     
 These new features are possible because of the integration of the [Google's T5 models](https://ai.googleblog.com/2020/02/exploring-transfer-learning-with-t5.html) and [Microsoft's Marian models](https://marian-nmt.github.io/publications/)  transformers
 
-NLU 1.1.0 has over 720+ new pretrained models and pipelines while extending the support of multi-lingual models to 192+ languages such as Chinese, Japanese, Korean, Arabic, Persian, Urdu, and Hebrew.     
+NLU 1.1.0 has over 720+ new pretrained models and pipelines while extending the support of multi-lingual models to 192+ languages such as Chinese, Japanese, Korean, Arabic, Persian, Urdu, and Hebrew.
 
 
 
-### NLU 1.1.0  New Features
+#### NLU 1.1.0  New Features
 * **720+** new models you can find an overview of all NLU models [here](https://nlu.johnsnowlabs.com/docs/en/spellbook) and further documentation in the [models hub](https://nlp.johnsnowlabs.com/models)
 * **NEW:** Introducing MarianTransformer annotator for machine translation based on MarianNMT models. Marian is an efficient, free Neural Machine Translation framework mainly being developed by the Microsoft Translator team (646+ pretrained models & pipelines in 192+ languages)
 * **NEW:** Introducing T5Transformer annotator for Text-To-Text Transfer Transformer (Google T5) models to achieve state-of-the-art results on multiple NLP tasks such as Translation, Summarization, Question Answering, Sentence Similarity, and so on
@@ -4900,7 +6491,7 @@ NLU 1.1.0 has over 720+ new pretrained models and pipelines while extending the 
 * **NEW:** Introducing DocumentNormalizer component for cleaning content from HTML or XML documents, applying either data cleansing using an arbitrary number of custom regular expressions either data extraction following the different parameters
 
 
-### NLU 1.1.0  New Notebooks, Tutorials and Articles
+#### NLU 1.1.0  New Notebooks, Tutorials and Articles
 - [Translate between 192+ languages with marian](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/sequence2sequence/translation_demo.ipynb)
 - [Try out the 18 Tasks like Summarization Question Answering and more on T5](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/sequence2sequence/T5_tasks_summarize_question_answering_and_more)
 - [Tokenize, extract POS and NER in Chinese](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/multilingual/chinese_ner_pos_and_tokenization.ipynb)
@@ -4909,7 +6500,7 @@ NLU 1.1.0 has over 720+ new pretrained models and pipelines while extending the 
 - [Normalize documents](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/text_pre_processing_and_cleaning/document_normalizer_demo.ipynb)
 - [Aspect based sentiment NER sentiment for restaurants](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/named_entity_recognition_(NER)/aspect_based_ner_sentiment_restaurants.ipynb)
 
-### NLU 1.1.0 New Training Tutorials
+#### NLU 1.1.0 New Training Tutorials
 #### Binary Classifier training Jupyter tutorials
 - [2 class Finance News sentiment classifier training](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/Training/binary_text_classification/NLU_training_sentiment_classifier_demo_apple_twitter.ipynb)
 - [2 class Reddit comment sentiment classifier training](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/Training/binary_text_classification/NLU_training_sentiment_classifier_demo_reddit.ipynb)
@@ -4918,26 +6509,26 @@ NLU 1.1.0 has over 720+ new pretrained models and pipelines while extending the 
 - [2 class twitter classifier training](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/Training/binary_text_classification/NLU_training_sentiment_classifier_demo_twitter.ipynb)
 
 #### Multi Class text Classifier training Jupyter tutorials
-- [5 class WineEnthusiast Wine review classifier training](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/Training/multi_class_text_classification/NLU_training_multi_class_text_classifier_demo_wine.ipynb) 
+- [5 class WineEnthusiast Wine review classifier training](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/Training/multi_class_text_classification/NLU_training_multi_class_text_classifier_demo_wine.ipynb)
 - [3 class Amazon Phone review classifier training](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/Training/multi_class_text_classification/NLU_training_multi_class_text_classifier_demo_amazon.ipynb)
 - [5 class Amazon Musical Instruments review classifier training](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/Training/multi_class_text_classification/NLU_training_multi_class_text_classifier_demo_musical_instruments.ipynb)
 - [5 class Tripadvisor Hotel review classifier training](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/Training/multi_class_text_classification/NLU_training_multi_class_text_classifier_demo_hotel_reviews.ipynb)
 - [5 class Phone review classifier training](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/Training/multi_class_text_classification/NLU_training_multi_class_text_classifier_demo_hotel_reviews.ipynb)
 
 
-### NLU 1.1.0 New Medium Tutorials
+#### NLU 1.1.0 New Medium Tutorials
 
-- [1 line to Glove Word Embeddings with NLU     with t-SNE plots](https://medium.com/spark-nlp/1-line-to-glove-word-embeddings-with-nlu-in-python-baed152fff4d)     
-- [1 line to Xlnet Word Embeddings with NLU     with t-SNE plots](https://medium.com/spark-nlp/1-line-to-xlnet-word-embeddings-with-nlu-in-python-5efc57d7ac79)     
-- [1 line to AlBERT Word Embeddings with NLU    with t-SNE plots](https://medium.com/spark-nlp/1-line-to-albert-word-embeddings-with-nlu-in-python-1691bc048ed1)     
-- [1 line to CovidBERT Word Embeddings with NLU with t-SNE plots](https://medium.com/spark-nlp/1-line-to-covidbert-word-embeddings-with-nlu-in-python-e67396da2f78)     
-- [1 line to Electra Word Embeddings with NLU   with t-SNE plots](https://medium.com/spark-nlp/1-line-to-electra-word-embeddings-with-nlu-in-python-25f749bf3e92)     
-- [1 line to BioBERT Word Embeddings with NLU   with t-SNE plots](https://medium.com/spark-nlp/1-line-to-biobert-word-embeddings-with-nlu-in-python-7224ab52e131)     
-
-
+- [1 line to Glove Word Embeddings with NLU     with t-SNE plots](https://medium.com/spark-nlp/1-line-to-glove-word-embeddings-with-nlu-in-python-baed152fff4d)
+- [1 line to Xlnet Word Embeddings with NLU     with t-SNE plots](https://medium.com/spark-nlp/1-line-to-xlnet-word-embeddings-with-nlu-in-python-5efc57d7ac79)
+- [1 line to AlBERT Word Embeddings with NLU    with t-SNE plots](https://medium.com/spark-nlp/1-line-to-albert-word-embeddings-with-nlu-in-python-1691bc048ed1)
+- [1 line to CovidBERT Word Embeddings with NLU with t-SNE plots](https://medium.com/spark-nlp/1-line-to-covidbert-word-embeddings-with-nlu-in-python-e67396da2f78)
+- [1 line to Electra Word Embeddings with NLU   with t-SNE plots](https://medium.com/spark-nlp/1-line-to-electra-word-embeddings-with-nlu-in-python-25f749bf3e92)
+- [1 line to BioBERT Word Embeddings with NLU   with t-SNE plots](https://medium.com/spark-nlp/1-line-to-biobert-word-embeddings-with-nlu-in-python-7224ab52e131)
 
 
-## Translation
+
+
+#### Translation
 [Translation example](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/sequence2sequence/translation_demo.ipynb)       
 You can translate between more than 192 Languages pairs with the [Marian Models](https://marian-nmt.github.io/publications/)
 You need to specify the language your data is in as `start_language` and the language you want to translate to as `target_language`.    
@@ -4967,12 +6558,7 @@ df
 
 
 
-
-
-
-## T5
-[Example of every T5 task](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/sequence2sequence/T5_tasks_summarize_question_answering_and_more)
-### Overview of every task available with T5
+#### Overview of every task available with T5
 [The T5 model](https://arxiv.org/pdf/1910.10683.pdf) is trained on various datasets for 17 different tasks which fall into 8 categories.
 
 
@@ -4985,7 +6571,7 @@ df
 7. Sentence Completion
 8. Word sense disambiguation
 
-### Every T5 Task with explanation:
+#### Every T5 Task with explanation:
 
 |Task Name | Explanation | 
 |----------|--------------|
@@ -5011,9 +6597,7 @@ df
 [refer to this notebook](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/sequence2sequence/T5_tasks_summarize_question_answering_and_more) to see how to use every T5 Task.
 
 
-
-
-## Question Answering
+#### Question Answering
 [Question answering example](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/sequence2sequence/T5_tasks_summarize_question_answering_and_more))
 
 Predict an `answer` to a `question` based on input `context`.    
@@ -5041,10 +6625,10 @@ context: Hyperbaric (high-pressure) medicine uses special oxygen chambers to inc
 t5.predict(data)
 ```
 
-### How to configure T5 task parameter for Squad Context based question answering and pre-process data
+#### How to configure T5 task parameter for Squad Context based question answering and pre-process data
 `.setTask('question:)` and prefix the context which can be made up of multiple sentences with `context:`
 
-### Example pre-processed input for T5 Squad Context based question answering:
+#### Example pre-processed input for T5 Squad Context based question answering:
 ```
 question: What does increased oxygen concentrations in the patient’s lungs displace? 
 context: Hyperbaric (high-pressure) medicine uses special oxygen chambers to increase the partial pressure of O 2 around the patient and, when needed, the medical staff. Carbon monoxide poisoning, gas gangrene, and decompression sickness (the ’bends’) are sometimes treated using these devices. Increased O 2 concentration in the lungs helps to displace carbon monoxide from the heme group of hemoglobin. Oxygen gas is poisonous to the anaerobic bacteria that cause gas gangrene, so increasing its partial pressure helps kill them. Decompression sickness occurs in divers who decompress too quickly after a dive, resulting in bubbles of inert gas, mostly nitrogen and helium, forming in their blood. Increasing the pressure of O 2 as soon as possible is part of the treatment.
@@ -5052,7 +6636,7 @@ context: Hyperbaric (high-pressure) medicine uses special oxygen chambers to inc
 
 
 
-## Text Summarization
+#### Text Summarization
 [Summarization example](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/sequence2sequence/T5_tasks_summarize_question_answering_and_more)
 
 `Summarizes` a paragraph into a shorter version with the same semantic meaning, based on [Text summarization](https://arxiv.org/abs/1506.03340)
@@ -5079,7 +6663,7 @@ pipe.predict(data)
 | manchester united face newcastle in the premier league on wednesday . louis van gaal's side currently sit two points clear of liverpool in fourth . the belgian duo took to the dance floor on monday night with some friends .            | the belgian duo took to the dance floor on monday night with some friends . manchester united face newcastle in the premier league on wednesday . red devils will be looking for just their second league away win in seven . louis van gaal’s side currently sit two points clear of liverpool in fourth . | 
 
 
-## Binary Sentence similarity/ Paraphrasing
+#### Binary Sentence similarity/ Paraphrasing
 [Binary sentence similarity example](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/sequence2sequence/T5_tasks_summarize_question_answering_and_more)
 Classify whether one sentence is a re-phrasing or similar to another sentence      
 This is a sub-task of [GLUE](https://arxiv.org/pdf/1804.07461.pdf) and based on [MRPC - Binary Paraphrasing/ sentence similarity classification ](https://www.aclweb.org/anthology/I05-5002.pdf)
@@ -5110,10 +6694,10 @@ t5.predict(data)
 | I like to eat peanutbutter for breakfast| I like to play football | not_equivalent | 
 
 
-### How to configure T5 task for MRPC and pre-process text
+#### How to configure T5 task for MRPC and pre-process text
 `.setTask('mrpc sentence1:)` and prefix second sentence with `sentence2:`
 
-### Example pre-processed input for T5 MRPC - Binary Paraphrasing/ sentence similarity
+#### Example pre-processed input for T5 MRPC - Binary Paraphrasing/ sentence similarity
 
 ```
 mrpc 
@@ -5123,7 +6707,7 @@ sentence2: Rather , the US acted because the administration saw " existing evide
 
 
 
-## Regressive Sentence similarity/ Paraphrasing
+#### Regressive Sentence similarity/ Paraphrasing
 
 Measures how similar two sentences are on a scale from 0 to 5 with 21 classes representing a regressive label.     
 This is a sub-task of [GLUE](https://arxiv.org/pdf/1804.07461.pdf) and based on[STSB - Regressive semantic sentence similarity](https://www.aclweb.org/anthology/S17-2001/) .
@@ -5165,13 +6749,13 @@ t5.predict(data)
 |What was live like as a King in Ancient Rome??       | What is it like to live in Rome? | 3.2 | 
 
 
-### How to configure T5 task for stsb and pre-process text
+#### How to configure T5 task for stsb and pre-process text
 `.setTask('stsb sentence1:)` and prefix second sentence with `sentence2:`
 
 
 
 
-### Example pre-processed input for T5 STSB - Regressive semantic sentence similarity
+#### Example pre-processed input for T5 STSB - Regressive semantic sentence similarity
 
 ```
 stsb
@@ -5183,7 +6767,7 @@ sentence2: How I GET OPPERTINUTY TO JOIN IT COMPANY AS A FRESHER?',
 
 
 
-## Grammar Checking
+#### Grammar Checking
 [Grammar checking with T5 example](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/sequence2sequence/T5_tasks_summarize_question_answering_and_more))
 Judges if a sentence is grammatically acceptable.    
 Based on [CoLA - Binary Grammatical Sentence acceptability classification](https://nyu-mll.github.io/CoLA/)
@@ -5203,7 +6787,7 @@ pipe.predict(data)
 | Anna and Mike like to dance | acceptable | 
 
 
-## Document Normalization
+#### Document Normalization
 [Document Normalizer example](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/text_pre_processing_and_cleaning/document_normalizer_demo.ipynb)     
 The DocumentNormalizer extracts content from HTML or XML documents, applying either data cleansing using an arbitrary number of custom regular expressions either data extraction following the different parameters
 
@@ -5217,7 +6801,7 @@ df
 |------|-------------|
 | `<!DOCTYPE html> <html> <head> <title>Example</title> </head> <body> <p>This is an example of a simple HTML page with one paragraph.</p> </body> </html>`       |Example This is an example of a simple HTML page with one paragraph.|
 
-## Word Segmenter
+#### Word Segmenter
 [Word Segmenter Example](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/multilingual/japanese_ner_pos_and_tokenization.ipynb)     
 The WordSegmenter segments languages without any rule-based tokenization such as Chinese, Japanese, or Korean
 ```python
@@ -5251,7 +6835,7 @@ df
 |	ん|
 
 
-### Installation
+#### Installation
 
 ```bash
 # PyPi
@@ -5262,24 +6846,25 @@ conda install -os_components johnsnowlabs nlu
 ```
 
 
-### Additional NLU ressources
+#### Additional NLU ressources
 - [NLU Website](https://nlu.johnsnowlabs.com/)
 - [All NLU Tutorial Notebooks](https://nlu.johnsnowlabs.com/docs/en/notebooks)
 - [NLU Videos and Blogposts on NLU](https://nlp.johnsnowlabs.com/learn#pythons-nlu-library)
 - [NLU on Github](https://github.com/JohnSnowLabs/nlu)
 
 
-##  NLU 1.0.6 Release Notes
-### Trainable Multi Label Classifiers, predict Stackoverflow Tags and much more in 1 Line of with NLU 1.0.6
+##  NLU Version 1.0.6
+
+#### Trainable Multi Label Classifiers, predict Stackoverflow Tags and much more in 1 Line of with NLU 1.0.6
 We are glad to announce NLU 1.0.6 has been released!
 NLU 1.0.6 comes with the Multi Label classifier, it can learn to map strings to multiple labels.
 The Multi Label Classifier is using Bidirectional GRU and CNNs inside TensorFlow and supports up to 100 classes.
 
-### NLU 1.0.6 New Features
+#### NLU 1.0.6 New Features
 - Multi Label Classifier
-   - The Multi Label Classifier learns a 1 to many mapping between text and labels. This means it can predict multiple labels at the same time for a given input string. This is very helpful for tasks similar to content tag prediction (HashTags/RedditTags/YoutubeTags/Toxic/E2e etc..)
-   - Support up to 100 classes
-   - Pre-trained Multi Label Classifiers are already avaiable as [Toxic](https://nlu.johnsnowlabs.com/docs/en/examples#toxic-classifier) and [E2E](https://nlu.johnsnowlabs.com/docs/en/examples#e2e-classifier) classifiers
+    - The Multi Label Classifier learns a 1 to many mapping between text and labels. This means it can predict multiple labels at the same time for a given input string. This is very helpful for tasks similar to content tag prediction (HashTags/RedditTags/YoutubeTags/Toxic/E2e etc..)
+    - Support up to 100 classes
+    - Pre-trained Multi Label Classifiers are already avaiable as [Toxic](https://nlu.johnsnowlabs.com/docs/en/examples#toxic-classifier) and [E2E](https://nlu.johnsnowlabs.com/docs/en/examples#e2e-classifier) classifiers
 
 ####  Multi Label Classifier
 - [ Train Multi Label Classifier on E2E dataset Demo](https://colab.research.google.com/drive/15ZqfNUqliRKP4UgaFcRg5KOSTkqrtDXy?usp=sharing)
@@ -5312,41 +6897,41 @@ preds = fitted_pipe.predict(train_df)
 ```
 
 
-### NLU 1.0.6 Enhancements
+#### NLU 1.0.6 Enhancements
 - Improved outputs for Toxic and E2E Classifier.
-  - by default, all predicted classes and their confidences which are above the threshold will be returned inside of a list in the Pandas dataframe
-  - by configuring meta=True, the confidences for all classes will be returned.
+    - by default, all predicted classes and their confidences which are above the threshold will be returned inside of a list in the Pandas dataframe
+    - by configuring meta=True, the confidences for all classes will be returned.
 
 
-### NLU 1.0.6 New Notebooks and Tutorials
+#### NLU Version 1.0.6
 
 - [ Train Multi Label Classifier on E2E dataset](https://colab.research.google.com/drive/15ZqfNUqliRKP4UgaFcRg5KOSTkqrtDXy?usp=sharing)
 - [Train Multi Label  Classifier on Stack Overflow Question Tags dataset](https://drive.google.com/file/d/1Nmrncn-y559od3AKJglwfJ0VmZKjtMAF/view?usp=sharing)
 
-### NLU 1.0.6 Bug-fixes
+#### NLU 1.0.6 Bug-fixes
 - Fixed a bug that caused ```en.ner.dl.bert``` to be inaccessible
 - Fixed a bug that caused ```pt.ner.large``` to be inaccessible
 - Fixed a bug that caused USE embeddings not properly beeing configured to document level output when using multiple embeddings at the same time
 
 
-##  NLU 1.0.5 Release Notes 
+##  NLU Version 1.0.5
 
-### Trainable Part of Speech Tagger (POS), Sentiment Classifier with BERT/USE/ELECTRA sentence embeddings in 1 Line of code! Latest NLU Release 1.0.5
+#### Trainable Part of Speech Tagger (POS), Sentiment Classifier with BERT/USE/ELECTRA sentence embeddings in 1 Line of code! Latest NLU Release 1.0.5
 We are glad to announce NLU 1.0.5 has been released!       
 This release comes with a **trainable Sentiment classifier** and a **Trainable Part of Speech (POS)** models!       
 These Neural Network Architectures achieve the state of the art (SOTA) on most **binary Sentiment analysis** and **Part of Speech Tagging** tasks!       
 You can train the Sentiment Model on any of the **100+ Sentence Embeddings** which include **BERT, ELECTRA, USE, Multi Lingual BERT Sentence Embeddings** and many more!       
 Leverage this and achieve the state of the art in any of your datasets, all of this in **just 1 line of Python code**
 
-### NLU 1.0.5 New Features
+#### NLU 1.0.5 New Features
 - Trainable Sentiment DL classifier
 - Trainable POS
 
-### NLU 1.0.5 New Notebooks and Tutorials 
+#### NLU 1.0.5 New Notebooks and Tutorials
 - [Sentiment Classification Training Demo](https://colab.research.google.com/drive/1f-EORjO3IpvwRAktuL4EvZPqPr2IZ_g8?usp=sharing)
 - [Part Of Speech Tagger Training demo](https://colab.research.google.com/drive/1CZqHQmrxkDf7y3rQHVjO-97tCnpUXu_3?usp=sharing)
 
-### Sentiment Classifier Training
+#### Sentiment Classifier Training
 [Sentiment Classification Training Demo](https://colab.research.google.com/drive/1f-EORjO3IpvwRAktuL4EvZPqPr2IZ_g8?usp=sharing)
 
 To train the Binary Sentiment classifier model, you must pass a dataframe with a 'text' column and a 'y' column for the label.
@@ -5372,7 +6957,7 @@ fitted_pipe = nlu.load('embed_sentence.electra train.classifier').fit(train_df)
 preds = fitted_pipe.predict(train_df)
 ```
 
-### Part Of Speech Tagger Training 
+#### Part Of Speech Tagger Training
 [Part Of Speech Tagger Training demo](https://colab.research.google.com/drive/1CZqHQmrxkDf7y3rQHVjO-97tCnpUXu_3?usp=sharing)
 
 ```python
@@ -5382,7 +6967,7 @@ preds = fitted_pipe.predict(train_df)
 
 
 
-### NLU 1.0.5 Installation changes
+#### NLU 1.0.5 Installation changes
 Starting from version 1.0.5 NLU will not automatically install pyspark for users anymore.      
 This enables easier customizing the Pyspark version which makes it easier to use in various cluster enviroments.
 
@@ -5392,14 +6977,15 @@ pip install nlu pyspark==2.4.7
 ```
 or install any pyspark>=2.4.0 with pyspark<3
 
-### NLU 1.0.5 Improvements
+#### NLU 1.0.5 Improvements
 - Improved Databricks path handling for loading and storing models.
 
 
 
 
-## NLU  1.0.4 Release Notes 
-##  John Snow Labs NLU 1.0.4 : Trainable Named Entity Recognizer (NER) , achieve SOTA in 1 line of code and easy scaling to 100's of Spark nodes
+## NLU Version 1.0.4
+
+####  John Snow Labs NLU 1.0.4 : Trainable Named Entity Recognizer (NER) , achieve SOTA in 1 line of code and easy scaling to 100's of Spark nodes
 We are glad to announce NLU 1.0.4 releases the State of the Art breaking Neural Network architecture for NER, Char CNNs - BiLSTM - CRF!
 
 ```python
@@ -5432,35 +7018,35 @@ pyspark_pipe.transform(spark_df)
 ```
 
 
-### NLU 1.0.4 New Features
+#### NLU 1.0.4 New Features
 - Trainable  [Named Entity Recognizer](https://nlp.johnsnowlabs.com/docs/en/annotators#ner-dl-named-entity-recognition-deep-learning-annotator)
 - NLU pipeline loadable as Spark pipelines
 
-### NLU 1.0.4 New Notebooks,Tutorials and Docs
-- [NER training demo](https://colab.research.google.com/drive/1_GwhdXULq45GZkw3157fAOx4Wqo-fmFV?usp=sharing)        
-- [Multi Class Text Classifier Training Demo updated to showcase usage of different Embeddings](https://colab.research.google.com/drive/12FA2TVvvRWw4pRhxDnK32WAzl9dbF6Qw?usp=sharing)         
+#### NLU 1.0.4 New Notebooks,Tutorials and Docs
+- [NER training demo](https://colab.research.google.com/drive/1_GwhdXULq45GZkw3157fAOx4Wqo-fmFV?usp=sharing)
+- [Multi Class Text Classifier Training Demo updated to showcase usage of different Embeddings](https://colab.research.google.com/drive/12FA2TVvvRWw4pRhxDnK32WAzl9dbF6Qw?usp=sharing)
 - [New Documentation Page on how to train Models with NLU](https://nlu.johnsnowlabs.com/docs/en/training)
 - Databricks Notebook showcasing Scaling with NLU
 
 
-## NLU 1.0.4 Bug Fixes
+#### NLU 1.0.4 Bug Fixes
 - Fixed a bug that NER token confidences do not appear. They now appear when nlu.load('ner').predict(df, meta=True) is called.
 - Fixed a bug that caused some Spark NLP models to not be loaded properly in offline mode
 
 
 
-## 1.0.3 Release Notes 
+## NLU Version 1.0.3
 We are happy to announce NLU 1.0.3 comes with a lot new features, training classifiers, saving them and loading them offline, enabling running NLU with no internet connection, new notebooks and articles!
 
-### NLU 1.0.3 New Features
+#### NLU 1.0.3 New Features
 - Train a Deep Learning classifier in 1 line! The popular [ClassifierDL](https://nlp.johnsnowlabs.com/docs/en/annotators#classifierdl-multi-class-text-classification)
-which can achieve state of the art results on any multi class text classification problem is now trainable!
-All it takes is just nlu.load('train.classifier).fit(dataset) . Your dataset can be a Pandas/Spark/Modin/Ray/Dask dataframe and needs to have a column named x for text data and a column named y for labels
+  which can achieve state of the art results on any multi class text classification problem is now trainable!
+  All it takes is just nlu.load('train.classifier).fit(dataset) . Your dataset can be a Pandas/Spark/Modin/Ray/Dask dataframe and needs to have a column named x for text data and a column named y for labels
 - Saving pipelines to HDD is now possible with nlu.save(path)
-- Loading pipelines from disk now possible with nlu.load(path=path). 
+- Loading pipelines from disk now possible with nlu.load(path=path).
 - NLU offline mode: Loading from disk makes running NLU offline now possible, since you can load pipelines/models from your local hard drive instead of John Snow Labs AWS servers.
 
-### NLU 1.0.3 New Notebooks and Tutorials
+#### NLU 1.0.3 New Notebooks and Tutorials
 - New colab notebook showcasing nlu training, saving and loading from disk
 - [Sentence Similarity with BERT, Electra and Universal Sentence Encoder Medium Tutorial](https://medium.com/spark-nlp/easy-sentence-similarity-with-bert-sentence-embeddings-using-john-snow-labs-nlu-ea078deb6ebf)
 - [Sentence Similarity with BERT, Electra and Universal Sentence Encoder](https://colab.research.google.com/drive/1LtOdtXtRJ3_N8kYywPd5k2AJMCGcgAdN?usp=sharing)
@@ -5469,113 +7055,91 @@ All it takes is just nlu.load('train.classifier).fit(dataset) . Your dataset can
 - [New Workshop video](https://events.johnsnowlabs.com/cs/c/?cta_guid=8b2b188b-92a3-48ba-ad7e-073b384425b0&signature=AAH58kFAHrVT-HfvWFxdTg_lm8reKUdTBw&pageId=25538044150&placement_guid=c659363c-2188-4c86-945f-5cfb7b42fcfc&click=8cd42d22-2f03-4358-a9e8-0d8f9aa33139&hsutk=c7a000001cda197314f90175e307161f&canon=https%3A%2F%2Fevents.johnsnowlabs.com%2Fwebinars&utm_referrer=https%3A%2F%2Fwww.johnsnowlabs.com%2F&portal_id=1794529&redirect_url=APefjpGh4Q9Hy0Mg9Ezy0_kJOOLC3l5QYyJsCSfZc1Lf61qrn2Bk6OQIJj65atZ9zzzrNrxuDPk5EHt94G0ZcIJaP_QMuD_E7fnMeJs4bQrEdLl7HE2MC4WNHGB6t1cqABfjZntS_TYSaj02yJNDf6p7Zaj9OYy0qQCmM8bbeuVgxUe6s5946UqHDsVHrpY0Oa2Fs7DJXIahZsB08hGkVj3qSHIM5vpjsA)
 
 
-### NLU 1.0.3 Bug fixes
-- Sentence Detector bugfix 
+#### NLU 1.0.3 Bug fixes
+- Sentence Detector bugfix
 
 
 
 
-## NLU 1.0.2 Release Notes 
+## NLU Version 1.0.2
 
 We are glad to announce nlu 1.0.2 is released!
 
-### NLU 1.0.2  Enhancements
-- More semantically concise output levels sentence and document enforced : 
-  - If a pipe is set to output_level='document' : 
-    -  Every Sentence Embedding will generate 1 Embedding per Document/row in the input Dataframe, instead of 1 embedding per sentence. 
-    - Every  Classifier will classify an entire Document/row 
-    - Each row in the output DF is a 1 to 1 mapping of the original input DF. 1 to 1 mapping from input to output.
-  - If a pipe is set to output_level='sentence' : 
-    -  Every Sentence Embedding will generate 1 Embedding per Sentence, 
-    - Every  Classifier will classify exactly one sentence
-    - Each row in the output DF can is mapped to one row in the input DF, but one row in the input DF can have multiple corresponding rows in the output DF. 1 to N mapping from input to output.
+#### NLU 1.0.2  Enhancements
+- More semantically concise output levels sentence and document enforced :
+    - If a pipe is set to output_level='document' :
+        -  Every Sentence Embedding will generate 1 Embedding per Document/row in the input Dataframe, instead of 1 embedding per sentence.
+        - Every  Classifier will classify an entire Document/row
+        - Each row in the output DF is a 1 to 1 mapping of the original input DF. 1 to 1 mapping from input to output.
+    - If a pipe is set to output_level='sentence' :
+        -  Every Sentence Embedding will generate 1 Embedding per Sentence,
+        - Every  Classifier will classify exactly one sentence
+        - Each row in the output DF can is mapped to one row in the input DF, but one row in the input DF can have multiple corresponding rows in the output DF. 1 to N mapping from input to output.
 - Improved generation of column names for classifiers. based on input nlu reference
 - Improved generation of column names for embeddings, based on input nlu reference
 - Improved automatic output level inference
 - Various test updates
-- Integration of CI pipeline with Github Actions 
+- Integration of CI pipeline with Github Actions
 
-### New  Documentation is out!
+#### New Documentation is out!
 Check it out here :  http://nlu.johnsnowlabs.com/
 
 
-## NLU 1.0.1 Release Notes 
+## NLU Version 1.0.1
 
-### NLU 1.0.1 Bugfixes
+#### NLU 1.0.1 Bugfixes
 - Fixed bug that caused NER pipelines to crash in NLU when input string caused the NER model to predict without additional metadata
 
-## 1.0 Release Notes 
+## NLU Version 1.0.0
 - Automatic to Numpy conversion of embeddings
 - Added various testing classes
 - [New 6 embeddings at once notebook with t-SNE and Medium article](https://medium.com/spark-nlp/1-line-of-code-for-bert-albert-elmo-electra-xlnet-glove-part-of-speech-with-nlu-and-t-sne-9ebcd5379cd)
- <img src="https://miro.medium.com/max/1296/1*WI4AJ78hwPpT_2SqpRpolA.png" >
+  <img src="https://miro.medium.com/max/1296/1*WI4AJ78hwPpT_2SqpRpolA.png" >
 - Integration of Spark NLP 2.6.2 enhancements and bugfixes https://github.com/JohnSnowLabs/spark-nlp/releases/tag/2.6.2
-- Updated old T-SNE notebooks with more elegant and simpler generation of t-SNE embeddings 
+- Updated old T-SNE notebooks with more elegant and simpler generation of t-SNE embeddings
 
 </div><div class="h3-box" markdown="1">
 
-## 0.2.1 Release Notes 
+
+
+
+## NLU Version 0.2.1
 - Various bugfixes
 - Improved output column names when using multiple classifirs at once
 
-</div><div class="h3-box" markdown="1">
-
-## 0.2 Release Notes 
+## NLU Version 0.2.0
 -   Improved output column names  classifiers
 
-</div><div class="h3-box" markdown="1">
-    
-## 0.1 Release Notes
-
-
-
-## 1.0 Release Notes 
-- Automatic to Numpy conversion of embeddings
-- Added various testing classes
-- [New 6 embeddings at once notebook with t-SNE and Medium article](https://medium.com/spark-nlp/1-line-of-code-for-bert-albert-elmo-electra-xlnet-glove-part-of-speech-with-nlu-and-t-sne-9ebcd5379cd)
- <img src="https://miro.medium.com/max/1296/1*WI4AJ78hwPpT_2SqpRpolA.png" >
-- Integration of Spark NLP 2.6.2 enhancements and bugfixes https://github.com/JohnSnowLabs/spark-nlp/releases/tag/2.6.2
-- Updated old T-SNE notebooks with more elegant and simpler generation of t-SNE embeddings 
-
-## 0.2.1 Release Notes 
-- Various bugfixes
-- Improved output column names when using multiple classifirs at once
-
-## 0.2 Release Notes 
--   Improved output column names  classifiers
-    
-## 0.1 Release Notes
-We are glad to announce that NLU 0.0.1 has been released!
+## NLU Version 0.1.0
+We are glad to announce that NLU 0.1 has been released!
 NLU makes the 350+ models and annotators in Spark NLPs arsenal available in just 1 line of python code and it works with Pandas dataframes!
 A picture says more than a 1000 words, so here is a demo clip of the 12 coolest features in NLU, all just in 1 line!
 
 </div><div class="h3-box" markdown="1">
 
-## NLU in action 
+#### NLU in action
 <img src="http://ckl-it.de/wp-content/uploads/2020/08/My-Video6.gif" width="1800" height="500"/>
 
 </div><div class="h3-box" markdown="1">
 
-## What does NLU 0.1 include?
 
-## NLU in action 
-<img src="http://ckl-it.de/wp-content/uploads/2020/08/My-Video6.gif" width="1800" height="500"/>
-
-## What does NLU 0.1 include?
- - NLU provides everything a data scientist might want to wish for in one line of code!
- - 350 + pre-trained models
- - 100+ of the latest NLP word embeddings ( BERT, ELMO, ALBERT, XLNET, GLOVE, BIOBERT, ELECTRA, COVIDBERT) and different variations of them
- - 50+ of the latest NLP sentence embeddings ( BERT, ELECTRA, USE) and different variations of them
- - 50+ Classifiers (NER, POS, Emotion, Sarcasm, Questions, Spam)
- - 40+ Supported Languages
- - Labeled and Unlabeled Dependency parsing
- - Various Text Cleaning and Pre-Processing methods like Stemming, Lemmatizing, Normalizing, Filtering, Cleaning pipelines and more
+#### What does NLU 0.1 include?
+- NLU provides everything a data scientist might want to wish for in one line of code!
+- 350 + pre-trained models
+- 100+ of the latest NLP word embeddings ( BERT, ELMO, ALBERT, XLNET, GLOVE, BIOBERT, ELECTRA, COVIDBERT) and different variations of them
+- 50+ of the latest NLP sentence embeddings ( BERT, ELECTRA, USE) and different variations of them
+- 50+ Classifiers (NER, POS, Emotion, Sarcasm, Questions, Spam)
+- 40+ Supported Languages
+- Labeled and Unlabeled Dependency parsing
+- Various Text Cleaning and Pre-Processing methods like Stemming, Lemmatizing, Normalizing, Filtering, Cleaning pipelines and more
 
  </div><div class="h3-box" markdown="1">
 
-## NLU 0.1 Features Google Collab Notebook Demos
+#### NLU 0.1 Features Google Collab Notebook Demos
 
 - Named Entity Recognition (NER)
+    - [NER pretrained on ONTO Notes](https://colab.research.google.com/drive/1_sgbJV3dYPZ_Q7acCgKWgqZkWcKAfg79?usp=sharing)
+    - [NER pretrained on CONLL](https://colab.research.google.com/drive/1CYzHfQyFCdvIOVO2Z5aggVI9c0hDEOrw?usp=sharing)
     - [NER pretrained on ONTO Notes](https://colab.research.google.com/drive/1_sgbJV3dYPZ_Q7acCgKWgqZkWcKAfg79?usp=sharing)
     - [NER pretrained on CONLL](https://colab.research.google.com/drive/1CYzHfQyFCdvIOVO2Z5aggVI9c0hDEOrw?usp=sharing)
 </div><div class="h3-box" markdown="1">
@@ -5585,13 +7149,7 @@ A picture says more than a 1000 words, so here is a demo clip of the 12 coolest 
 
 </div><div class="h3-box" markdown="1">
 
-## NLU 0.1 Features Google Collab Notebook Demos
 
-- Named Entity Recognition (NER)
-    -[NER pretrained on ONTO Notes](https://colab.research.google.com/drive/1_sgbJV3dYPZ_Q7acCgKWgqZkWcKAfg79?usp=sharing)
-    -[NER pretrained on CONLL](https://colab.research.google.com/drive/1CYzHfQyFCdvIOVO2Z5aggVI9c0hDEOrw?usp=sharing)
-- Part of speech (POS)
-    - [POS pretrained on ANC dataset](https://colab.research.google.com/drive/1tW833T3HS8F5Lvn6LgeDd5LW5226syKN?usp=sharing)
 - Classifiers
     - [Unsupervised Keyword Extraction with YAKE](https://colab.research.google.com/drive/1BdomIc1nhrGxLFOpK5r82Zc4eFgnIgaO?usp=sharing)
     - [Toxic Text Classifier](https://colab.research.google.com/drive/1QRG5ZtAvoJAMZ8ytFMfXj_W8ogdeRi9m?usp=sharing)
@@ -5607,7 +7165,7 @@ A picture says more than a 1000 words, so here is a demo clip of the 12 coolest 
 
 </div><div class="h3-box" markdown="1">
 
-- Word and Sentence Embeddings 
+- Word and Sentence Embeddings
     - [BERT Word Embeddings and T-SNE plotting](https://colab.research.google.com/drive/1Rg1vdSeq6sURc48RV8lpS47ja0bYwQmt?usp=sharing)
     - [BERT Sentence Embeddings and T-SNE plotting](https://colab.research.google.com/drive/1FmREx0O4BDeogldyN74_7Lur5NeiOVye?usp=sharing)
     - [ALBERT Word Embeddings and T-SNE plotting](https://colab.research.google.com/drive/18yd9pDoPkde79boTbAC8Xd03ROKisPsn?usp=sharing)
@@ -5621,15 +7179,13 @@ A picture says more than a 1000 words, so here is a demo clip of the 12 coolest 
 
 </div><div class="h3-box" markdown="1">
 
-- Depenency Parsing 
+- Depenency Parsing
     - [Untyped Dependency Parsing](https://colab.research.google.com/drive/1PC8ga_NFlOcTNeDVJY4x8Pl5oe0jVmue?usp=sharing)
     - [Typed Dependency Parsing](https://colab.research.google.com/drive/1KXUqcF8e-LU9cXnHE8ni8z758LuFPvY7?usp=sharing)
 
 </div><div class="h3-box" markdown="1">
 
-- Depenency Parsing 
-    -[Untyped Dependency Parsing](https://colab.research.google.com/drive/1PC8ga_NFlOcTNeDVJY4x8Pl5oe0jVmue?usp=sharing)
-    -[Typed Dependency Parsing](https://colab.research.google.com/drive/1KXUqcF8e-LU9cXnHE8ni8z758LuFPvY7?usp=sharing)
+
 
 - Text Pre Processing and Cleaning
     - [Tokenization](https://colab.research.google.com/drive/13BC6k6gLj1w5RZ0SyHjKsT2EOwJwbYwb?usp=sharing)
@@ -5650,10 +7206,3 @@ A picture says more than a 1000 words, so here is a demo clip of the 12 coolest 
 
 - Matchers
     - [Date Matcher](https://colab.research.google.com/drive/1JrlfuV2jNGTdOXvaWIoHTSf6BscDMkN7?usp=sharing)
-
-</div></div>
-- Chunkers
-    -[N Gram](https://colab.research.google.com/drive/1pgqoRJ6yGWbTLWdLnRvwG5DLSU3rxuMq?usp=sharing)
-    -[Entity Chunking](https://colab.research.google.com/drive/1svpqtC3cY6JnRGeJngIPl2raqxdowpyi?usp=sharing)
-- Matchers
-    -[Date Matcher](https://colab.research.google.com/drive/1JrlfuV2jNGTdOXvaWIoHTSf6BscDMkN7?usp=sharing)
