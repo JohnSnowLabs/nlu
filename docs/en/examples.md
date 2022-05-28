@@ -325,7 +325,7 @@ nlu.load('en.classify.trec50').predict('How expensive is the Watch?')
 </div></div></div><div class="h3-box" markdown="1">
 
 ## Fake News Classifier
-[Fake News Classifier example](https://colab.research.google.com/drive/1k5x1zxnG4bBkmYAc-bc63sMA4-oQ6-dP?usp=sharing)
+[Fake News Classifier example](https://colab.research.google.com/github/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/classifiers/fake_news_classification.ipynb)
 
 ```python
 nlu.load('en.classify.fakenews').predict('Unicorns have been sighted on Mars!')
@@ -341,7 +341,7 @@ nlu.load('en.classify.fakenews').predict('Unicorns have been sighted on Mars!')
 </div></div></div><div class="h3-box" markdown="1">
 
 ## Cyberbullying Classifier
-[Cyberbullying Classifier example](https://colab.research.google.com/drive/1OSkiXGEpKlm9HWDoVb42uLNQQgb7nqNZ?usp=sharing)
+[Cyberbullying Classifier example](https://colab.research.google.com/github/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/classifiers/cyberbullying_cassification_for_racism_and_sexism.ipynb)
 
 Classifies sexism and racism
 ```python
