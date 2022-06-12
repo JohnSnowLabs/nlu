@@ -1135,7 +1135,7 @@ df
 
 
 ## T5
-[Example of every T5 task](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/sequence2sequence/T5_tasks_summarize_question_answering_and_more)
+[Example of every T5 task](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/sequence2sequence/T5_tasks_summarize_question_answering_and_more.ipynb)
 ### Overview of every task available with T5
 [The T5 model](https://arxiv.org/pdf/1910.10683.pdf) is trained on various datasets for 17 different tasks which fall into 8 categories.
 
@@ -1174,14 +1174,14 @@ df
 |[17.WMT2.](https://arxiv.org/abs/1706.03762)                   | Translate English to French|
 |[18.WMT3.](https://arxiv.org/abs/1706.03762)                   | Translate English to Romanian|
 
-- [Every T5 Task example notebook](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/sequence2sequence/T5_tasks_summarize_question_answering_and_more) to see how to use every T5 Task.
+- [Every T5 Task example notebook](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/sequence2sequence/T5_tasks_summarize_question_answering_and_more.ipynb) to see how to use every T5 Task.
 - [T5 Open and Closed Book question answering  notebook](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/sequence2sequence/T5_question_answering.ipynb)
 
 
 
 
 ## Text Summarization 
-[Summarization example](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/sequence2sequence/T5_tasks_summarize_question_answering_and_more)
+[Summarization example](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/sequence2sequence/T5_tasks_summarize_question_answering_and_more.ipynb)
 
 `Summarizes` a paragraph into a shorter version with the same semantic meaning, based on [Text summarization](https://arxiv.org/abs/1506.03340)
 
@@ -1210,7 +1210,7 @@ pipe.predict(data)
 
 
 ## Binary Sentence similarity/ Paraphrasing 
-[Binary sentence similarity example](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/sequence2sequence/T5_tasks_summarize_question_answering_and_more)
+[Binary sentence similarity example](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/sequence2sequence/T5_tasks_summarize_question_answering_and_more.ipynb)
 Classify whether one sentence is a re-phrasing or similar to another sentence      
 This is a sub-task of [GLUE](https://arxiv.org/pdf/1804.07461.pdf) and based on [MRPC - Binary Paraphrasing/ sentence similarity classification ](https://www.aclweb.org/anthology/I05-5002.pdf)
 
@@ -1319,7 +1319,7 @@ sentence2: How I GET OPPERTINUTY TO JOIN IT COMPANY AS A FRESHER?',
 
 
 ## Grammar Checking
-[Grammar checking with T5 example](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/sequence2sequence/T5_tasks_summarize_question_answering_and_more))
+[Grammar checking with T5 example](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/sequence2sequence/T5_tasks_summarize_question_answering_and_more.ipynb))
 Judges if a sentence is grammatically acceptable.    
 Based on [CoLA - Binary Grammatical Sentence acceptability classification](https://nyu-mll.github.io/CoLA/)
 
