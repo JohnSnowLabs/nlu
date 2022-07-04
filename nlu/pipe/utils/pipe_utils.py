@@ -218,8 +218,9 @@ class PipeUtils:
 
             # TRANSFORMER_TOKEN_CLASSIFIER might be a NER provider. Regardless, No ner-Conversion will be performed
             # because it will not return NER IOB
-            if ComponentUtils.is_NER_provider(c) and c.type != AnnoTypes.TRANSFORMER_TOKEN_CLASSIFIER:
-
+            if ComponentUtils.is_NER_provider(c):
+                if c.type == AnnoTypes.TRANSFORMER_TOKEN_CLASSIFIER and not ComponentUtils.is_NER_IOB_token_classifier(c):
+                    continue
                 output_NER_col = ComponentUtils.extract_NER_col(c, 'output')
                 converter_to_update = None
                 for other_c in pipe.components:

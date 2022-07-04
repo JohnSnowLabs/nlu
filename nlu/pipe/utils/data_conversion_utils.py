@@ -249,7 +249,7 @@ class DataConversionUtils:
 
         """
         if isinstance(data, pyspark.sql.dataframe.DataFrame):
-            return data.size()
+            return data.count()
         elif isinstance(data, pd.DataFrame):
             return data.shape[0]
         elif isinstance(data, pd.Series):
