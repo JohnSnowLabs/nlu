@@ -83,7 +83,7 @@ class Spellbook:
         'tokenize': ('spark_nlp_tokenizer', 'model_anno_obj'),  # tokenizer rule based model_anno_obj
         'stem': ('stemmer', 'model_anno_obj'),  # stem rule based model_anno_obj
         'norm': ('normalizer', 'model_anno_obj'),  # rule based model_anno_obj
-        'norm_document': ('normalizer', 'model_anno_obj'),  # rule based model_anno_obj
+        'norm_document': ('document_normalizer', 'model_anno_obj'),  # rule based model_anno_obj
 
         'chunk': ('default_chunker', 'model_anno_obj'),  # rule based model_anno_obj
         'embed_chunk': ('chunk_embeddings', 'model_anno_obj'),  # rule based model_anno_obj
@@ -109,9 +109,9 @@ class Spellbook:
         'sentiment.vivekn': ('sentiment_vivekn', 'model_anno_obj'),
         'dep.untyped.conllu': ('dependency_conllu', 'model_anno_obj'),
         'dep.untyped': ('dependency_conllu', 'model_anno_obj'),  # default untyped dependency
-        'dep': ('dependency_typed_conllu', 'model_anno_obj'),  # default typed dependency
-        'dep.typed': ('dependency_typed_conllu', 'model_anno_obj'),  # default typed dependency dataset
-        'dep.typed.conllu': ('dependency_typed_conllu', 'model_anno_obj'),
+        # 'dep': ('dependency_typed_conllu', 'model_anno_obj'),  # default typed dependency
+        # 'dep.typed': ('dependency_typed_conllu', 'model_anno_obj'),  # default typed dependency dataset
+        # 'dep.typed.conllu': ('dependency_typed_conllu', 'model_anno_obj'),
         'stopwords': ('stopwords_en', 'model_anno_obj'),
 
         # embeddings models
@@ -2036,9 +2036,9 @@ class Spellbook:
                                            'en.classify.typos.distilbert': 'distilbert_token_classifier_typo_detector',
                                            'en.classify.xlm_roberta.ag_news': 'xlm_roberta_base_sequence_classifier_ag_news',
                                            'en.classify.xlm_roberta.imdb': 'xlm_roberta_base_sequence_classifier_imdb',
-                                           'en.dep': 'dependency_typed_conllu',
-                                           'en.dep.typed': 'dependency_typed_conllu',
-                                           'en.dep.typed.conllu': 'dependency_typed_conllu',
+                                           # 'en.dep': 'dependency_typed_conllu',
+                                           # 'en.dep.typed': 'dependency_typed_conllu',
+                                           # 'en.dep.typed.conllu': 'dependency_typed_conllu',
                                            'en.dep.untyped': 'dependency_conllu',
                                            'en.dep.untyped.conllu': 'dependency_conllu',
                                            'en.e2e': 'multiclassifierdl_use_e2e',
@@ -2257,7 +2257,7 @@ class Spellbook:
                                            'en.lemma.lines': 'lemma_lines',
                                            'en.lemma.partut': 'lemma_partut',
                                            'en.lemma.spacylookup': 'lemma_spacylookup',
-                                           'en.ner': 'ner_dl',
+                                           'en.ner.dl_model': 'ner_dl',
                                            'en.ner.airline': 'nerdl_atis_840b_300d',
                                            'en.ner.aspect.airline': 'nerdl_atis_840b_300d',
                                            'en.ner.aspect.atis': 'nerdl_atis_840b_300d',
@@ -2280,7 +2280,6 @@ class Spellbook:
                                            'en.ner.debertav3_small.ontonotes': 'deberta_v3_small_token_classifier_ontonotes',
                                            'en.ner.debertav3_xsmall.conll03': 'deberta_v3_xsmall_token_classifier_conll03',
                                            'en.ner.debertav3_xsmall.ontonotes': 'deberta_v3_xsmall_token_classifier_ontonotes',
-                                           'en.ner.dl': 'ner_dl',
                                            'en.ner.dl.bert': 'ner_dl_bert',
                                            'en.ner.fewnerd': 'nerdl_fewnerd_100d',
                                            'en.ner.fewnerd_subentity': 'nerdl_fewnerd_subentity_100d',
@@ -6387,6 +6386,7 @@ class Spellbook:
         'ngram': 'NGramGenerator',
         'norm': 'NormalizerModel',
         'normalizer': 'NormalizerModel',
+        'document_normalizer': 'DocumentNormalizer',
         'norne_6B_100': 'NerDLModel',
         'norne_6B_300': 'NerDLModel',
         'norne_840B_300': 'NerDLModel',
