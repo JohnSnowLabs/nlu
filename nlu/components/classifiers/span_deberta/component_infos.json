@@ -1,22 +1,22 @@
 {
-  "name": "bert",
+  "name": "seq_distilbert",
+  "output_level": "sentence",
   "description": "todo",
-  "output_level": "token",
   "trainable": false,
   "outputs": [
-    "word_embeddings"
+    "category"
   ],
   "inputs": [
-    "sentence",
-    "token"
+    "token",
+    "sentence"
   ],
-  "type": "word_embeddings",
+  "type": "classifier",
   "spark_input_column_names": [
-    "sentence",
-    "token"
+    "token",
+    "sentence"
   ],
   "spark_output_column_names": [
-    "bert"
+    "category"
   ],
   "provider": "sparknlp",
   "license": "open source",

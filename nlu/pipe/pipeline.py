@@ -56,6 +56,7 @@ class NLUPipeline(dict):
         self.estimator_pipe = None
         self.light_transformer_pipe = None
         self.has_licensed_components = False
+        self.has_span_classifiers = True
 
     def add(self, component: NluComponent, nlu_reference=None, pretrained_pipe_component=False,
             name_to_add='', idx=None):
@@ -217,40 +218,35 @@ class NLUPipeline(dict):
         for c in self.components:
             if c.license == Licenses.ocr:
                 # OCR can output more than 1 col
-                extractors = {col :c.pdf_extractor_methods['default'](output_col_prefix=col) for col in c.spark_output_column_names}
+                extractors = {col: c.pdf_extractor_methods['default'](output_col_prefix=col) for col in
+                              c.spark_output_column_names}
                 anno_2_ex_config.update(extractors)
                 continue
             if 'embedding' in c.type and not get_embeddings:
                 continue
+            for col in c.spark_output_column_names:
+                if 'default' in c.pdf_extractor_methods.keys() and not full_meta:
+                    anno_2_ex_config[col] = c.pdf_extractor_methods['default'](output_col_prefix=col)
+                elif 'default_full' in c.pdf_extractor_methods.keys() and full_meta:
+                    anno_2_ex_config[col] = c.pdf_extractor_methods['default_full'](output_col_prefix=col)
+                else:
+                    # Fallback if no output defined
+                    anno_2_ex_config[col] = default_full_config(output_col_prefix=col)
 
-            if 'default' in c.pdf_extractor_methods.keys() and not full_meta:
-                anno_2_ex_config[c.spark_output_column_names[0]] = c.pdf_extractor_methods['default'](
-                    output_col_prefix=c.spark_output_column_names[0])
-            elif 'default_full' in c.pdf_extractor_methods.keys() and full_meta:
-                anno_2_ex_config[c.spark_output_column_names[0]] = c.pdf_extractor_methods['default_full'](
-                    output_col_prefix=c.spark_output_column_names[0])
-            else:
-                # Fallback if no output defined
-                anno_2_ex_config[c.spark_output_column_names[0]] = default_full_config(
-                    output_col_prefix=c.spark_output_column_names[0])
-
-            # Tune the Extractor configs based on prediction parameters
-            if c_level_mapping[c] == 'document' and not anno_2_ex_config[c.spark_output_column_names[0]].pop_never:
-                # Disable popping for doc level outputs, output will not be [element] but instead element in each row.
-                anno_2_ex_config[c.spark_output_column_names[0]].pop_meta_list = True
-                anno_2_ex_config[c.spark_output_column_names[0]].pop_result_list = True
-            if positions:
-                anno_2_ex_config[c.spark_output_column_names[0]].get_positions = True
-            else:
-                anno_2_ex_config[c.spark_output_column_names[0]].get_begin = False
-                anno_2_ex_config[c.spark_output_column_names[0]].get_end = False
-                anno_2_ex_config[c.spark_output_column_names[0]].get_positions = False
-
-            if c.loaded_from_pretrained_pipe:
-                # Use original col name of pretrained pipes as prefix
-                anno_2_ex_config[c.spark_output_column_names[0]].output_col_prefix = \
-                    c.spark_output_column_names[0]
-
+                # Tune the Extractor configs based on prediction parameters
+                if c_level_mapping[c] == 'document' and not anno_2_ex_config[col].pop_never:
+                    # Disable popping for doc level outputs, output will not be [element] but instead element in each row.
+                    anno_2_ex_config[col].pop_meta_list = True
+                    anno_2_ex_config[col].pop_result_list = True
+                if positions:
+                    anno_2_ex_config[col].get_positions = True
+                else:
+                    anno_2_ex_config[col].get_begin = False
+                    anno_2_ex_config[col].get_end = False
+                    anno_2_ex_config[col].get_positions = False
+                if c.loaded_from_pretrained_pipe:
+                    # Use original col name of pretrained pipes as prefix
+                    anno_2_ex_config[col].output_col_prefix = col
         return anno_2_ex_config
 
     def unpack_and_apply_extractors(self, pdf: Union[pyspark.sql.DataFrame, pd.DataFrame], keep_stranger_features=True,

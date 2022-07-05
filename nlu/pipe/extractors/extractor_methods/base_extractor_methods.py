@@ -73,9 +73,9 @@ def extract_base_sparkocr_features(row: pd.Series, configs: SparkOCRExtractorCon
     # Check for primitive type here and return
     if 'visual_classifier' in configs.name:
         # Either Label or Confidence
-        if isinstance(row,str):
+        if isinstance(row, str):
             return {'visual_classifier_label': row}
-        else :
+        else:
             return {'visual_classifier_confidence': row}
 
     else:
@@ -232,14 +232,20 @@ def extract_sparknlp_metadata(row: pd.Series, configs: SparkNLPExtractorConfig) 
         keys_in_metadata = []
 
     # dectorate lambda with key to extract, equalt to def decorate_f(key): return lambda x,y :  x+ [y[key]]
-    # For a list of dicts which all have the same keys, will return a lit of all the values for one key in all the dicts
+    # For a list of dicts which all have the same keys, will return a list of all the values for one key in all the dicts
+    if configs.pop_meta_list:
+        f = lambda key: metadatas_dict_list[0][key]
+        metadata_scalars = list(map(f, keys_in_metadata))
+        result = dict(
+            zip(map(lambda x: 'meta_' + configs.output_col_prefix + '_' + x, keys_in_metadata), metadata_scalars))
+        return result
     extract_val_from_dic_list_to_list = lambda key: lambda x, y: x + [y[key]]
     # List of lambda expression, on for each Key to be extracted. (TODO balcklisting?)
     dict_value_extractors = list(map(extract_val_from_dic_list_to_list, keys_in_metadata))
     # reduce list of dicts with same struct and a common key to a list of values for thay key. Leveraging closuer for meta_dict_list
     reduce_dict_list_to_values = lambda t: reduce(t, metadatas_dict_list, [])
     # list of lists, where each list is corrosponding to all values in the previous dict list
-    meta_values_list = list(map(reduce_dict_list_to_values, dict_value_extractors))  # , metadatas_dict_list,[] ))
+    meta_values_list = list(map(reduce_dict_list_to_values, dict_value_extractors))
     # add prefix to key and zip with values for final dict result
     result = dict(
         zip(list(map(lambda x: 'meta_' + configs.output_col_prefix + '_' + x, keys_in_metadata)), meta_values_list))
@@ -341,7 +347,7 @@ def zip_and_explode(df: pd.DataFrame, cols_to_explode: List[str]) -> pd.DataFram
         # We must pad all cols we want to explode to the same length because pandas limitation.
         # Spark API does not require this since it handles cols with not same length by creating nan. We do it ourselves here manually
         df[cols_to_explode] = df[cols_to_explode].apply(pad_same_level_cols, axis=1)
-        return pd.concat([df.explode(c)[c] for c in cols_to_explode]+ [df.drop(cols_to_explode, axis=1)], axis=1)
+        return pd.concat([df.explode(c)[c] for c in cols_to_explode] + [df.drop(cols_to_explode, axis=1)], axis=1)
     else:
         # No padding
         return pd.concat([df.drop(cols_to_explode, axis=1)], axis=1)

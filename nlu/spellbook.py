@@ -2352,7 +2352,11 @@ class Spellbook:
                                            'en.use': 'tfhub_use',
                                            'en.xlnet': 'xlnet_base_cased',
                                            'en.yake': 'yake',
-                                           'roberta': 'distilroberta_base'},
+                                           'roberta': 'distilroberta_base',
+
+
+                                           'en.span_question.albert': 'albert_base_qa_squad2',
+                                           },
                                     'eo': {'eo.embed.w2v_cc_300d': 'w2v_cc_300d', 'eo.stopwords': 'stopwords_eo'},
                                     'es': {'es.classify.token_bert.spanish_ner': 'bert_token_classifier_spanish_ner',
                                            'es.embed.RoBERTalex': 'roberta_embeddings_RoBERTalex',
@@ -5287,6 +5291,8 @@ class Spellbook:
         # HC
         # NLP_HC_NODE_IDS.DE_IDENTIFICATION: 'DeIdentification',
         # # OCR
+        'albert_base_qa_squad2': 'AlbertForQuestionAnswering',
+
         'visual_document_classifier_tobacco3482': 'VisualDocumentClassifier',
         OCR_NODE_IDS.IMAGE2TEXT: 'ImageToText',
         OCR_NODE_IDS.PDF2TEXT: 'PdfToText',

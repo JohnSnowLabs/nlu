@@ -174,7 +174,7 @@ def substitute_tokenizer_cols(c, cols, nlu_identifier=True):
             continue  # new_cols[col] = f'{new_base_name}_type'
         elif 'meta' in col:
             if '_sentence' in col:
-                new_cols[col] = f'{new_base_name}_origin_sentence' 
+                new_cols[col] = f'{new_base_name}_origin_sentence'
             else:
                 logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
             # new_cols[col]= f"{new_base_name}_confidence"
@@ -200,7 +200,7 @@ def substitute_transformer_token_classifier_cols(c, cols, nlu_identifier=True):
             continue  # new_cols[col] = f'{new_base_name}_type'
         elif 'meta' in col:
             if '_sentence' in col: new_cols[
-                col] = f'{new_base_name}_origin_sentence' 
+                col] = f'{new_base_name}_origin_sentence'
             if 'Some' in col:
                 new_cols[
                     col] = f"'{new_base_name}_{col.split('Some(')[-1].split(')')[0]}_confidence"
@@ -218,7 +218,7 @@ def substitute_seq_bert_classifier_cols(c, cols, nlu_identifier=True):
 
     # Remove sequence from nlu_identifier because we use it in the base name anyways
     if '_sequence' in nlu_identifier:
-        nlu_identifier = nlu_identifier.replace('_sequence','')
+        nlu_identifier = nlu_identifier.replace('_sequence', '')
     new_base_name = 'classified_sequence' if nlu_identifier == 'UNIQUE' else f'classified_sequence_{nlu_identifier}'
     for col in cols:
         if '_results' in col:
@@ -233,14 +233,57 @@ def substitute_seq_bert_classifier_cols(c, cols, nlu_identifier=True):
             continue  # new_cols[col] = f'{new_base_name}_type'
         elif 'meta' in col:
             if '_sentence' in col:
-                new_cols[col] = f'{new_base_name}_origin_sentence' 
+                new_cols[col] = f'{new_base_name}_origin_sentence'
             if '_confidence' in col:
-                new_cols[col] = f'{new_base_name}_confidence' 
+                new_cols[col] = f'{new_base_name}_confidence'
             if 'Some' in col:
-                new_cols[col] = f"'{new_base_name}_{col.split('Some(')[-1].split(')')[0]}_confidence" 
+                new_cols[col] = f"'{new_base_name}_{col.split('Some(')[-1].split(')')[0]}_confidence"
             else:
                 logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
 
+    return new_cols
+
+
+def substitute_span_classifier_cols(c, cols, nlu_identifier=True):
+    """
+    Seq classifier
+    """
+    new_cols = {}
+    # Remove sequence from nlu_identifier because we use it in the base name anyways
+    # if '_sequence' in nlu_identifier:
+    #     nlu_identifier = nlu_identifier.replace('_sequence', '')
+    new_base_name = 'answer' if nlu_identifier == 'UNIQUE' else f'{nlu_identifier}_answer'
+    for col in cols:
+        if 'span_result' in col:
+            new_cols[col] = f'{new_base_name}'
+        if 'span_score' in col:
+            new_cols[col] = f'{new_base_name}_confidence'
+
+        elif 'span_start_score' in col:
+            new_cols[col] = f'{new_base_name}_start_confidence'
+        elif 'span_end_score' in col:
+            new_cols[col] = f'{new_base_name}_end_confidence'
+        elif 'start' in col and not 'score' in col:
+            new_cols[col] = f'{new_base_name}_start'
+        elif 'end' in col and not 'score' in col:
+            new_cols[col] = f'{new_base_name}_end'
+        elif 'sentence' in col:
+            new_cols[col] = f'{new_base_name}_sentence'
+
+    return new_cols
+
+
+def substitute_multi_doc_span_assembler_cols(c, cols, nlu_identifier=True):
+    """
+    Seq classifier
+    """
+    new_cols = {}
+    # Remove sequence from nlu_identifier because we use it in the base name anyways
+    for col in cols:
+        if 'question' in col and not 'context' in col:
+            new_cols[col] = f'question'
+        elif 'context' in col:
+            new_cols[col] = f'context'
     return new_cols
 
 
@@ -261,13 +304,13 @@ def substitute_word_embed_cols(c, cols, nlu_identifier=True):
             continue  # new_cols[col] = f'{new_base_name}_type'
         elif 'meta' in col:
             if '_sentence' in col:
-                new_cols[col] = f'{new_base_name}_origin_sentence' 
+                new_cols[col] = f'{new_base_name}_origin_sentence'
             elif 'OOV' in col:
-                new_cols[col] = f'{new_base_name}_is_OOV' 
+                new_cols[col] = f'{new_base_name}_is_OOV'
             elif 'isWordStart' in col:
-                new_cols[col] = f'{new_base_name}_is_word_start' 
+                new_cols[col] = f'{new_base_name}_is_word_start'
             elif 'pieceId' in col:
-                new_cols[col] = f'{new_base_name}_piece_id' 
+                new_cols[col] = f'{new_base_name}_piece_id'
             elif '_token' in col:
                 continue  # Can be omitted, is the same as _result, just maps to origin_token
             else:
@@ -283,7 +326,11 @@ def substitute_sent_embed_cols(c, cols, nlu_identifier=True):
     Substitute col name for Word Embeddings. For Word_Embeddings, some name will be infered, and word_embedding_<name> will become the base name schema
     """
     new_cols = {}
-    new_base_name = f'sentence_embedding_{nlu_identifier}'  # if nlu_identifier else f'document_{nlu_identifier}'
+    if 'converter' in nlu_identifier:
+        # TODO we need storage ref here
+        new_base_name = f'sentence_embedding_converter'  # if nlu_identifier else f'document_{nlu_identifier}'
+    else:
+        new_base_name = f'sentence_embedding_{nlu_identifier}'  # if nlu_identifier else f'document_{nlu_identifier}'
     for col in cols:
         if '_results' in col:
             continue  # new_cols[col] = new_base_name can be omitted for word_embeddings, maps to the origin token, which will be in the tokenizer col anyways
@@ -295,11 +342,11 @@ def substitute_sent_embed_cols(c, cols, nlu_identifier=True):
             continue  # new_cols[col] = f'{new_base_name}_type'
         elif 'meta' in col:
             if 'OOV' in col:
-                new_cols[col] = f'{new_base_name}_is_OOV' 
+                new_cols[col] = f'{new_base_name}_is_OOV'
             elif 'isWordStart' in col:
-                new_cols[col] = f'{new_base_name}_is_word_start' 
+                new_cols[col] = f'{new_base_name}_is_word_start'
             elif 'pieceId' in col:
-                new_cols[col] = f'{new_base_name}_piece_id' 
+                new_cols[col] = f'{new_base_name}_piece_id'
             elif '_token' in col:
                 continue  # Can be omited, is the same as _result, just maps to origin_token
             else:
@@ -307,7 +354,7 @@ def substitute_sent_embed_cols(c, cols, nlu_identifier=True):
         elif '_embeddings' in col:
             new_cols[col] = new_base_name  # stores the embeds and represents basically the main result
         elif '_sentence' in col and 'meta' in col:
-            new_cols[col] = f'{new_base_name}_origin_sentence' 
+            new_cols[col] = f'{new_base_name}_origin_sentence'
 
     return new_cols
 
@@ -329,11 +376,11 @@ def substitute_chunk_embed_cols(c, cols, nlu_identifier=True):
             continue  # new_cols[col] = f'{new_base_name}_type'
         elif 'meta' in col:
             if '_sentence' in col:
-                new_cols[col] = f'{new_base_name}_origin_sentence' 
+                new_cols[col] = f'{new_base_name}_origin_sentence'
             elif 'isWordStart' in col:
-                new_cols[col] = f'{new_base_name}_is_word_start' 
+                new_cols[col] = f'{new_base_name}_is_word_start'
             elif 'pieceId' in col:
-                new_cols[col] = f'{new_base_name}_piece_id' 
+                new_cols[col] = f'{new_base_name}_piece_id'
             elif '_token' in col:
                 continue  # Can be omited, is the same as _result, just maps to origin_token
             else:
@@ -366,8 +413,8 @@ def substitute_classifier_dl_cols(c, cols, nlu_identifier=True):
             old_base_name = f'meta_{c.out_types[0]}'
             metadata = col.split(old_base_name)[-1]
             if '_sentence' in col:
-                new_cols[col] = f'{new_base_name}_origin_sentence' 
-            elif metadata == 'confidence':
+                new_cols[col] = f'{new_base_name}_origin_sentence'
+            elif metadata in ['confidence', '_confidence']:
                 new_cols[col] = f'{new_base_name}_confidence'  # max confidence over all classes
             else:
                 new_cols[col] = f'{new_base_name}{metadata}_confidence'  # confidence field
@@ -395,7 +442,7 @@ def substitute_ngram_cols(c, cols, nlu_identifier=True):
             continue  #
         elif 'meta' in col:
             if '_sentence' in col:
-                new_cols[col] = f'{new_base_name}_origin_sentence' 
+                new_cols[col] = f'{new_base_name}_origin_sentence'
             else:
                 logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
 
@@ -421,7 +468,7 @@ def substitute_labled_dependency_cols(c, cols, nlu_identifier=True):
             continue  #
         elif 'meta' in col:
             if '_sentence' in col:
-                new_cols[col] = f'{new_base_name}_origin_sentence' 
+                new_cols[col] = f'{new_base_name}_origin_sentence'
             else:
                 logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
 
@@ -639,7 +686,7 @@ def substitute_word_seg_cols(c, cols, nlu_identifier=True):
             continue  # new_cols[col] = f'{new_base_name}_type'
         elif 'meta' in col:
             if '_sentence' in col:
-                new_cols[col] = f'{new_base_name}_origin_sentence' 
+                new_cols[col] = f'{new_base_name}_origin_sentence'
             else:
                 logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
             # new_cols[col]= f"{new_base_name}_confidence"
@@ -665,7 +712,7 @@ def substitute_stem_cols(c, cols, nlu_identifier=True):
             continue  # new_cols[col] = f'{new_base_name}_type'
         elif 'meta' in col:
             if '_sentence' in col:
-                new_cols[col] = f'{new_base_name}_origin_sentence' 
+                new_cols[col] = f'{new_base_name}_origin_sentence'
             else:
                 logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
             # new_cols[col]= f"{new_base_name}_confidence"
@@ -691,7 +738,7 @@ def substitute_lem_cols(c, cols, nlu_identifier=True):
             continue  # new_cols[col] = f'{new_base_name}_type'
         elif 'meta' in col:
             if '_sentence' in col:
-                new_cols[col] = f'{new_base_name}_origin_sentence' 
+                new_cols[col] = f'{new_base_name}_origin_sentence'
             else:
                 logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
             # new_cols[col]= f"{new_base_name}_confidence"
@@ -717,7 +764,7 @@ def substitute_stopwords_cols(c, cols, nlu_identifier=True):
             continue  # new_cols[col] = f'{new_base_name}_type'
         elif 'meta' in col:
             if '_sentence' in col:
-                new_cols[col] = f'{new_base_name}_origin_sentence' 
+                new_cols[col] = f'{new_base_name}_origin_sentence'
             else:
                 logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
             # new_cols[col]= f"{new_base_name}_confidence"
@@ -743,7 +790,7 @@ def substitute_chunk_cols(c, cols, nlu_identifier=True):
             continue  # new_cols[col] = f'{new_base_name}_type'
         elif 'meta' in col:
             if '_sentence' in col:
-                new_cols[col] = f'{new_base_name}_origin_sentence' 
+                new_cols[col] = f'{new_base_name}_origin_sentence'
             else:
                 logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
             # new_cols[col]= f"{new_base_name}_confidence"
@@ -769,9 +816,9 @@ def substitute_YAKE_cols(c, cols, nlu_identifier=True):
             continue  # new_cols[col] = f'{new_base_name}_type'
         elif 'meta' in col:
             if '_sentence' in col: new_cols[
-                col] = f'{new_base_name}_origin_sentence' 
+                col] = f'{new_base_name}_origin_sentence'
             if '_score' in col:
-                new_cols[col] = f'{new_base_name}_confidence' 
+                new_cols[col] = f'{new_base_name}_confidence'
             else:
                 logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
             # new_cols[col]= f"{new_base_name}_confidence"
@@ -797,7 +844,7 @@ def substitute_marian_cols(c, cols, nlu_identifier=True):
             continue  # new_cols[col] = f'{new_base_name}_type'
         elif 'meta' in col:
             if '_sentence' in col:
-                new_cols[col] = f'{new_base_name}_origin_sentence' 
+                new_cols[col] = f'{new_base_name}_origin_sentence'
             else:
                 logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
             # new_cols[col]= f"{new_base_name}_confidence"
@@ -823,7 +870,7 @@ def substitute_gpt2_cols(c, cols, nlu_identifier=True):
             continue  # new_cols[col] = f'{new_base_name}_type'
         elif 'meta' in col:
             if '_sentence' in col:
-                new_cols[col] = f'{new_base_name}_origin_sentence' 
+                new_cols[col] = f'{new_base_name}_origin_sentence'
             else:
                 logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
             # new_cols[col]= f"{new_base_name}_confidence"
@@ -849,7 +896,7 @@ def substitute_T5_cols(c, cols, nlu_identifier=True):
             continue  # new_cols[col] = f'{new_base_name}_type'
         elif 'meta' in col:
             if '_sentence' in col:
-                new_cols[col] = f'{new_base_name}_origin_sentence' 
+                new_cols[col] = f'{new_base_name}_origin_sentence'
             else:
                 logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
             # new_cols[col]= f"{new_base_name}_confidence"
@@ -872,9 +919,9 @@ def substitute_sentiment_vivk_cols(c, cols, nlu_identifier=True):
             continue  # new_cols[col] = f'{new_base_name}_type'
         elif 'meta' in col:
             if '_sentence' in col:
-                new_cols[col] = f'{new_base_name}_origin_sentence' 
+                new_cols[col] = f'{new_base_name}_origin_sentence'
             elif '_confidence' in col:
-                new_cols[col] = f'{new_base_name}_confidence' 
+                new_cols[col] = f'{new_base_name}_confidence'
             else:
                 logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
             # new_cols[col]= f"{new_base_name}_confidence"
@@ -897,13 +944,13 @@ def substitute_sentiment_dl_cols(c, cols, nlu_identifier=True):
             continue  # new_cols[col] = f'{new_base_name}_type'
         elif 'meta' in col:
             if '_sentence' in col:
-                new_cols[col] = f'{new_base_name}_origin_sentence' 
+                new_cols[col] = f'{new_base_name}_origin_sentence'
             elif '_confidence' in col:
-                new_cols[col] = f'{new_base_name}_confidence' 
+                new_cols[col] = f'{new_base_name}_confidence'
             elif '_negative' in col:
-                new_cols[col] = f'{new_base_name}_negative' 
+                new_cols[col] = f'{new_base_name}_negative'
             elif '_positive' in col:
-                new_cols[col] = f'{new_base_name}_positive' 
+                new_cols[col] = f'{new_base_name}_positive'
             else:
                 logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
     return new_cols
@@ -931,7 +978,7 @@ def substitute_multi_classifier_dl_cols(c, cols, nlu_identifier=True):
             old_base_name = f'meta_{c.out_types[0]}'
             metadata = col.split(old_base_name)[-1]
             if '_sentence' in col:
-                new_cols[col] = f'{new_base_name}_origin_sentence' 
+                new_cols[col] = f'{new_base_name}_origin_sentence'
             elif metadata == 'confidence':
                 new_cols[col] = f'{new_base_name}_confidence'  # max confidence over all classes
             else:
@@ -960,7 +1007,7 @@ def substitute_date_match_cols(c, cols, nlu_identifier=True):
             continue  # new_cols[col] = f'{new_base_name}_type'
         elif 'meta' in col:
             if '_sentence' in col:
-                new_cols[col] = f'{new_base_name}_origin_sentence' 
+                new_cols[col] = f'{new_base_name}_origin_sentence'
             else:
                 logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
             # new_cols[col]= f"{new_base_name}_confidence"
@@ -986,7 +1033,7 @@ def substitute_regex_match_cols(c, cols, nlu_identifier=True):
             continue  # new_cols[col] = f'{new_base_name}_type'
         elif 'meta' in col:
             if '_sentence' in col:
-                new_cols[col] = f'{new_base_name}_origin_sentence' 
+                new_cols[col] = f'{new_base_name}_origin_sentence'
             else:
                 logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
             # new_cols[col]= f"{new_base_name}_confidence"
@@ -1012,7 +1059,7 @@ def substitute_text_match_cols(c, cols, nlu_identifier=True):
             continue  # new_cols[col] = f'{new_base_name}_type'
         elif 'meta' in col:
             if '_sentence' in col:
-                new_cols[col] = f'{new_base_name}_origin_sentence' 
+                new_cols[col] = f'{new_base_name}_origin_sentence'
             else:
                 logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
             # new_cols[col]= f"{new_base_name}_confidence"
@@ -1042,7 +1089,7 @@ def substitute_classifier_dl_approach_cols(c, cols, nlu_identifier=True):
             old_base_name = f'meta_{c.out_types[0]}'
             metadata = col.split(old_base_name)[-1]
             if '_sentence' in col:
-                new_cols[col] = f'{new_base_name}_origin_sentence' 
+                new_cols[col] = f'{new_base_name}_origin_sentence'
             elif metadata == 'confidence':
                 new_cols[col] = f'{new_base_name}_confidence'  # max confidence over all classes
             else:
@@ -1067,9 +1114,9 @@ def substitute_sentiment_vivk_approach_cols(c, cols, nlu_identifier=True):
             continue  # new_cols[col] = f'{new_base_name}_type'
         elif 'meta' in col:
             if '_sentence' in col:
-                new_cols[col] = f'{new_base_name}_origin_sentence' 
+                new_cols[col] = f'{new_base_name}_origin_sentence'
             elif '_confidence' in col:
-                new_cols[col] = f'{new_base_name}_confidence' 
+                new_cols[col] = f'{new_base_name}_confidence'
             else:
                 logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
             # new_cols[col]= f"{new_base_name}_confidence"
@@ -1092,13 +1139,13 @@ def substitute_sentiment_dl_approach_cols(c, cols, nlu_identifier=True):
             continue  # new_cols[col] = f'{new_base_name}_type'
         elif 'meta' in col:
             if '_sentence' in col:
-                new_cols[col] = f'{new_base_name}_origin_sentence' 
+                new_cols[col] = f'{new_base_name}_origin_sentence'
             elif '_confidence' in col:
-                new_cols[col] = f'{new_base_name}_confidence' 
+                new_cols[col] = f'{new_base_name}_confidence'
             elif '_negative' in col:
-                new_cols[col] = f'{new_base_name}_negative' 
+                new_cols[col] = f'{new_base_name}_negative'
             elif '_positive' in col:
-                new_cols[col] = f'{new_base_name}_positive' 
+                new_cols[col] = f'{new_base_name}_positive'
             else:
                 logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
     return new_cols
@@ -1126,7 +1173,7 @@ def substitute_multi_classifier_dl_approach_cols(c, cols, nlu_identifier=True):
             old_base_name = f'meta_{c.out_types[0]}'
             metadata = col.split(old_base_name)[-1]
             if '_sentence' in col:
-                new_cols[col] = f'{new_base_name}_origin_sentence' 
+                new_cols[col] = f'{new_base_name}_origin_sentence'
             elif metadata == 'confidence':
                 new_cols[col] = f'{new_base_name}_confidence'  # max confidence over all classes
             else:

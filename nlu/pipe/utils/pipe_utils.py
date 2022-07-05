@@ -325,7 +325,12 @@ class PipeUtils:
                 continue
             if c.name in blacklisted:
                 continue
-            c.model.setOutputCol(c.spark_output_column_names[0])
+
+            if hasattr(c.model, 'setOutputCol'):
+                c.model.setOutputCol(c.spark_output_column_names[0])
+            else :
+                c.model.setOutputCols(c.spark_output_column_names)
+
             if hasattr(c.model, 'setInputCols'):
                 c.model.setInputCols(c.spark_input_column_names)
             else:
@@ -647,6 +652,10 @@ class PipeUtils:
             # Check for NLP Component, which is any open source
             if c.license == Licenses.open_source:
                 pipe.has_nlp_components = True
+
+            if c.license == AnnoTypes.SPAN_CLASSIFIER:
+                pipe.has_span_classifiers = True
+
 
         return pipe
 

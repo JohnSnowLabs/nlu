@@ -27,6 +27,19 @@ class AnnoClassRef:
         A_N.DOC2VEC: 'Doc2VecModel',
         A_N.TRAIANBLE_DOC2VEC: 'Doc2VecApproach',
 
+        A_N.MULTI_DOCUMENT_ASSEMBLER : 'MultiDocumentAssembler',
+        A_N.ALBERT_FOR_QUESTION_ANSWERING : 'AlbertForQuestionAnswering',
+        A_N.BERT_FOR_QUESTION_ANSWERING : 'BertForQuestionAnswering',
+        A_N.DE_BERTA_FOR_QUESTION_ANSWERING : 'DeBertaForQuestionAnswering',
+        A_N.DISTIL_BERT_FOR_QUESTION_ANSWERING : 'DistilBertForQuestionAnswering',
+        A_N.LONGFORMER_FOR_QUESTION_ANSWERING : 'LongformerForQuestionAnswering',
+        A_N.ROBERTA__FOR_QUESTION_ANSWERING : 'RoBertaForQuestionAnswering',
+        A_N.XLM_ROBERTA_FOR_QUESTION_ANSWERING : 'XlmRoBertaForQuestionAnswering',
+        A_N.SPAN_BERT_COREF_MODEL : 'SpanBertCorefModel',
+
+
+
+
         A_N.DOCUMENT_ASSEMBLER: 'DocumentAssembler',
         A_N.DOCUMENT_NORMALIZER: 'DocumentNormalizer',
         A_N.EMBEDDINGS_FINISHER: 'EmbeddingsFinisher',

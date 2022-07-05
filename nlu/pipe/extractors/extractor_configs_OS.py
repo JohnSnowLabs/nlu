@@ -47,6 +47,13 @@ def default_document_config(output_col_prefix='document'):
         get_result          = True,
     )
 
+# def default_multi_document_config(output_col_prefix='document'):
+#     return SparkNLPExtractorConfig(
+#         output_col_prefix   = output_col_prefix,
+#         pop_result_list     = True,
+#         get_result          = True,
+#     )
+
 
 def default_NER_config(output_col_prefix='NER'):
     """Extracts NER tokens withouth positions, just the IOB tags,confidences and classified tokens """
@@ -189,6 +196,40 @@ def default_classifier_dl_config(output_col_prefix='classifier_dl'):
         meta_data_extractor = SparkNLPExtractor(extract_maximum_confidence,
                                                 'Instead returning confidence for each class, only return max confidence',
                                                 'Max confidence')
+
+    )
+
+def default_span_classifier_config(output_col_prefix='answer'):
+    return SparkNLPExtractorConfig(
+        output_col_prefix   = output_col_prefix,
+        get_result          = True,
+        get_meta       = True,
+        name                = 'default_span_classifier_config',
+        description         = 'Get predicted span and score for it ',
+        meta_white_list= ['score'],
+        pop_meta_list=True,
+        pop_result_list=True,
+
+        # meta_data_extractor = SparkNLPExtractor(extract_maximum_confidence,
+        #                                         'Instead returning confidence for each class, only return max confidence',
+        #                                         'Max confidence')
+
+    )
+
+
+def default_full_span_classifier_config(output_col_prefix='answer'):
+    return SparkNLPExtractorConfig(
+        output_col_prefix   = output_col_prefix,
+        get_result          = True,
+        get_meta       = True,
+        name                = 'default_full_span_classifier_config',
+        description         = 'Get predicted span and score for it, including beging and end of span and positions for them ',
+        pop_meta_list=True,
+        pop_result_list=True,
+        meta_white_list= ['score', 'start_score', 'end_score', 'start','end']
+        # meta_data_extractor = SparkNLPExtractor(extract_maximum_confidence,
+        #                                         'Instead returning confidence for each class, only return max confidence',
+        #                                         'Max confidence')
 
     )
 

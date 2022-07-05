@@ -24,6 +24,7 @@ from nlu.components.classifiers.seq_longformer.seq_longformer import SeqLongform
 from nlu.components.classifiers.seq_roberta.seq_roberta import SeqRobertaClassifier
 from nlu.components.classifiers.seq_xlm_roberta.seq_xlm_roberta import SeqXlmRobertaClassifier
 from nlu.components.classifiers.seq_xlnet.seq_xlnet import SeqXlnetClassifier
+from nlu.components.classifiers.span_albert.span_albert import SpanAlbertClassifier
 from nlu.components.classifiers.token_albert.token_albert import TokenAlbert
 from nlu.components.classifiers.token_bert.token_bert import TokenBert
 from nlu.components.classifiers.token_bert_healthcare.token_bert_healthcare import TokenBertHealthcare
@@ -84,6 +85,8 @@ from nlu.components.tokenizers.word_segmenter.word_segmenter import WordSegmente
 from nlu.components.utils.chunk_2_doc.doc_2_chunk import Chunk_2_Doc
 from nlu.components.utils.doc2chunk.doc_2_chunk import Doc_2_Chunk
 from nlu.components.utils.document_assembler.spark_nlp_document_assembler import SparkNlpDocumentAssembler
+from nlu.components.utils.multi_document_assembler.spark_nlp_multi_document_assembler import \
+    SparkNlpMultiDocumentAssembler
 from nlu.components.utils.ner_to_chunk_converter.ner_to_chunk_converter import NerToChunkConverter
 from nlu.components.utils.ner_to_chunk_converter_licensed.ner_to_chunk_converter_licensed import \
     NerToChunkConverterLicensed
@@ -1820,6 +1823,59 @@ class ComponentUniverse:
                                                        jsl_anno_py_class=ACR.JSL_anno2_py_class[
                                                            A.DEBERTA_FOR_SEQUENCE_CLASSIFICATION],
                                                        ),
+
+
+
+        A.ALBERT_FOR_QUESTION_ANSWERING: partial(NluComponent,
+                                                       name=A.ALBERT_FOR_QUESTION_ANSWERING,
+                                                       type=T.SPAN_CLASSIFIER,
+                                                       get_default_model=SpanAlbertClassifier.get_default_model,
+                                                       get_pretrained_model=SpanAlbertClassifier.get_pretrained_model,
+                                                       pdf_extractor_methods={
+                                                           'default': default_span_classifier_config,
+                                                           'default_full': default_full_span_classifier_config, },
+                                                       pdf_col_name_substitutor=substitute_span_classifier_cols,
+                                                       output_level=L.INPUT_DEPENDENT_DOCUMENT_CLASSIFIER,
+                                                       node=NLP_FEATURE_NODES.nodes[
+                                                           A.ALBERT_FOR_QUESTION_ANSWERING],
+                                                       description='TODO',
+                                                       provider=ComponentBackends.open_source,
+                                                       license=Licenses.open_source,
+                                                       computation_context=ComputeContexts.spark,
+                                                       output_context=ComputeContexts.spark,
+                                                       jsl_anno_class_id=A.ALBERT_FOR_QUESTION_ANSWERING,
+                                                       jsl_anno_py_class=ACR.JSL_anno2_py_class[
+                                                           A.ALBERT_FOR_QUESTION_ANSWERING],
+                                                       ),
+
+
+
+
+        A.MULTI_DOCUMENT_ASSEMBLER: partial(NluComponent,
+                                                       name=A.MULTI_DOCUMENT_ASSEMBLER,
+                                                       type=T.HELPER_ANNO,
+                                                       get_default_model=SparkNlpMultiDocumentAssembler.get_default_model,
+                                                        # TODO EXTRACT AND SUBSTY!!!
+                                                       pdf_extractor_methods={
+                                                           'default': default_document_config,
+                                                           'default_full': default_document_config, },
+                                                       pdf_col_name_substitutor=substitute_multi_doc_span_assembler_cols,
+                                                       output_level=L.DOCUMENT,
+                                                       node=NLP_FEATURE_NODES.nodes[
+                                                           A.MULTI_DOCUMENT_ASSEMBLER],
+                                                       description='The DeBERTa model_anno_obj was proposed in DeBERTa: Decoding-enhanced BERT with Disentangled Attention by Pengcheng He, Xiaodong Liu, Jianfeng Gao, Weizhu Chen. It is based on Google’s BERT model_anno_obj released in 2018 and Facebook’s RoBERTa model_anno_obj released in 2019. This classifier uses DeBERTa embeddingss with a linear classification head ontop.',
+                                                       provider=ComponentBackends.open_source,
+
+                                                       license=Licenses.open_source,
+                                                       computation_context=ComputeContexts.spark,
+                                                       output_context=ComputeContexts.spark,
+                                                       jsl_anno_class_id=A.MULTI_DOCUMENT_ASSEMBLER,
+                                                       jsl_anno_py_class=ACR.JSL_anno2_py_class[
+                                                           A.MULTI_DOCUMENT_ASSEMBLER],
+                                                       ),
+
+
+
 
         ######### HEALTHCARE ##############
 
