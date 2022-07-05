@@ -33,7 +33,7 @@ class AnnoClassRef:
         A_N.DE_BERTA_FOR_QUESTION_ANSWERING : 'DeBertaForQuestionAnswering',
         A_N.DISTIL_BERT_FOR_QUESTION_ANSWERING : 'DistilBertForQuestionAnswering',
         A_N.LONGFORMER_FOR_QUESTION_ANSWERING : 'LongformerForQuestionAnswering',
-        A_N.ROBERTA__FOR_QUESTION_ANSWERING : 'RoBertaForQuestionAnswering',
+        A_N.ROBERTA_FOR_QUESTION_ANSWERING : 'RoBertaForQuestionAnswering',
         A_N.XLM_ROBERTA_FOR_QUESTION_ANSWERING : 'XlmRoBertaForQuestionAnswering',
         A_N.SPAN_BERT_COREF_MODEL : 'SpanBertCorefModel',
 

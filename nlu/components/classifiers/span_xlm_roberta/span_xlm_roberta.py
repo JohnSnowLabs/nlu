@@ -1,7 +1,7 @@
 from sparknlp.annotator import XlmRoBertaForQuestionAnswering
 
 
-class SpanRobertaClassifier:
+class SpanXlmRobertaClassifier:
     @staticmethod
     def get_default_model():
         return XlmRoBertaForQuestionAnswering.pretrained() \

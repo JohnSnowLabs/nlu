@@ -25,6 +25,12 @@ from nlu.components.classifiers.seq_roberta.seq_roberta import SeqRobertaClassif
 from nlu.components.classifiers.seq_xlm_roberta.seq_xlm_roberta import SeqXlmRobertaClassifier
 from nlu.components.classifiers.seq_xlnet.seq_xlnet import SeqXlnetClassifier
 from nlu.components.classifiers.span_albert.span_albert import SpanAlbertClassifier
+from nlu.components.classifiers.span_bert.span_bert import SpanBertClassifier
+from nlu.components.classifiers.span_deberta.span_deberta import SpanDeBertaClassifier
+from nlu.components.classifiers.span_distilbert.span_distilbert import SpanDistilBertClassifier
+from nlu.components.classifiers.span_longformer.span_longformer import SpanLongFormerClassifier
+from nlu.components.classifiers.span_roberta.span_roberta import SpanRobertaClassifier
+from nlu.components.classifiers.span_xlm_roberta.span_xlm_roberta import SpanXlmRobertaClassifier
 from nlu.components.classifiers.token_albert.token_albert import TokenAlbert
 from nlu.components.classifiers.token_bert.token_bert import TokenBert
 from nlu.components.classifiers.token_bert_healthcare.token_bert_healthcare import TokenBertHealthcare
@@ -1825,28 +1831,133 @@ class ComponentUniverse:
                                                        ),
 
 
+        A.BERT_FOR_QUESTION_ANSWERING: partial(NluComponent,
+                                                    name=A.BERT_FOR_QUESTION_ANSWERING,
+                                                    jsl_anno_class_id=A.BERT_FOR_QUESTION_ANSWERING,
+                                                    jsl_anno_py_class=ACR.JSL_anno2_py_class[A.BERT_FOR_QUESTION_ANSWERING],
+                                                    node=NLP_FEATURE_NODES.nodes[A.BERT_FOR_QUESTION_ANSWERING],
+                                                    get_default_model=SpanBertClassifier.get_default_model,
+                                                    get_pretrained_model=SpanBertClassifier.get_pretrained_model,
+                                                    type=T.SPAN_CLASSIFIER,
+                                                    pdf_extractor_methods={
+                                                    'default': default_span_classifier_config,
+                                                    'default_full': default_full_span_classifier_config, },
+                                                    pdf_col_name_substitutor=substitute_span_classifier_cols,
+                                                    output_level=L.INPUT_DEPENDENT_DOCUMENT_CLASSIFIER,
+                                                    description='TODO',
+                                                    provider=ComponentBackends.open_source,
+                                                    license=Licenses.open_source,
+                                                    computation_context=ComputeContexts.spark,
+                                                    output_context=ComputeContexts.spark,
+                                                 ),
 
-        A.ALBERT_FOR_QUESTION_ANSWERING: partial(NluComponent,
-                                                       name=A.ALBERT_FOR_QUESTION_ANSWERING,
-                                                       type=T.SPAN_CLASSIFIER,
-                                                       get_default_model=SpanAlbertClassifier.get_default_model,
-                                                       get_pretrained_model=SpanAlbertClassifier.get_pretrained_model,
-                                                       pdf_extractor_methods={
-                                                           'default': default_span_classifier_config,
-                                                           'default_full': default_full_span_classifier_config, },
-                                                       pdf_col_name_substitutor=substitute_span_classifier_cols,
-                                                       output_level=L.INPUT_DEPENDENT_DOCUMENT_CLASSIFIER,
-                                                       node=NLP_FEATURE_NODES.nodes[
-                                                           A.ALBERT_FOR_QUESTION_ANSWERING],
-                                                       description='TODO',
-                                                       provider=ComponentBackends.open_source,
-                                                       license=Licenses.open_source,
-                                                       computation_context=ComputeContexts.spark,
-                                                       output_context=ComputeContexts.spark,
-                                                       jsl_anno_class_id=A.ALBERT_FOR_QUESTION_ANSWERING,
-                                                       jsl_anno_py_class=ACR.JSL_anno2_py_class[
-                                                           A.ALBERT_FOR_QUESTION_ANSWERING],
-                                                       ),
+        A.DE_BERTA_FOR_QUESTION_ANSWERING: partial(NluComponent,
+                                               name=A.DE_BERTA_FOR_QUESTION_ANSWERING,
+                                               jsl_anno_class_id=A.DE_BERTA_FOR_QUESTION_ANSWERING,
+                                               jsl_anno_py_class=ACR.JSL_anno2_py_class[A.DE_BERTA_FOR_QUESTION_ANSWERING],
+                                               node=NLP_FEATURE_NODES.nodes[A.DE_BERTA_FOR_QUESTION_ANSWERING],
+                                               get_default_model=SpanDeBertaClassifier.get_default_model,
+                                               get_pretrained_model=SpanDeBertaClassifier.get_pretrained_model,
+                                               type=T.SPAN_CLASSIFIER,
+                                               pdf_extractor_methods={
+                                                   'default': default_span_classifier_config,
+                                                   'default_full': default_full_span_classifier_config, },
+                                               pdf_col_name_substitutor=substitute_span_classifier_cols,
+                                               output_level=L.INPUT_DEPENDENT_DOCUMENT_CLASSIFIER,
+                                               description='TODO',
+                                               provider=ComponentBackends.open_source,
+                                               license=Licenses.open_source,
+                                               computation_context=ComputeContexts.spark,
+                                               output_context=ComputeContexts.spark,
+                                               ),
+
+        A.DISTIL_BERT_FOR_QUESTION_ANSWERING: partial(NluComponent,
+                                                   name=A.DISTIL_BERT_FOR_QUESTION_ANSWERING,
+                                                   jsl_anno_class_id=A.DISTIL_BERT_FOR_QUESTION_ANSWERING,
+                                                   jsl_anno_py_class=ACR.JSL_anno2_py_class[A.DISTIL_BERT_FOR_QUESTION_ANSWERING],
+                                                   node=NLP_FEATURE_NODES.nodes[A.DISTIL_BERT_FOR_QUESTION_ANSWERING],
+                                                   get_default_model=SpanDistilBertClassifier.get_default_model,
+                                                   get_pretrained_model=SpanDistilBertClassifier.get_pretrained_model,
+                                                   type=T.SPAN_CLASSIFIER,
+                                                   pdf_extractor_methods={
+                                                       'default': default_span_classifier_config,
+                                                       'default_full': default_full_span_classifier_config, },
+                                                   pdf_col_name_substitutor=substitute_span_classifier_cols,
+                                                   output_level=L.INPUT_DEPENDENT_DOCUMENT_CLASSIFIER,
+                                                   description='TODO',
+                                                   provider=ComponentBackends.open_source,
+                                                   license=Licenses.open_source,
+                                                   computation_context=ComputeContexts.spark,
+                                                   output_context=ComputeContexts.spark,
+                                                   ),
+
+        A.LONGFORMER_FOR_QUESTION_ANSWERING: partial(NluComponent,
+                                                      name=A.LONGFORMER_FOR_QUESTION_ANSWERING,
+                                                      jsl_anno_class_id=A.LONGFORMER_FOR_QUESTION_ANSWERING,
+                                                      jsl_anno_py_class=ACR.JSL_anno2_py_class[A.LONGFORMER_FOR_QUESTION_ANSWERING],
+                                                      node=NLP_FEATURE_NODES.nodes[A.LONGFORMER_FOR_QUESTION_ANSWERING],
+                                                      get_default_model=SpanLongFormerClassifier.get_default_model,
+                                                      get_pretrained_model=SpanLongFormerClassifier.get_pretrained_model,
+                                                      type=T.SPAN_CLASSIFIER,
+                                                      pdf_extractor_methods={
+                                                          'default': default_span_classifier_config,
+                                                          'default_full': default_full_span_classifier_config, },
+                                                      pdf_col_name_substitutor=substitute_span_classifier_cols,
+                                                      output_level=L.INPUT_DEPENDENT_DOCUMENT_CLASSIFIER,
+                                                      description='TODO',
+                                                      provider=ComponentBackends.open_source,
+                                                      license=Licenses.open_source,
+                                                      computation_context=ComputeContexts.spark,
+                                                      output_context=ComputeContexts.spark,
+                                                      ),
+
+        A.ROBERTA_FOR_QUESTION_ANSWERING: partial(NluComponent,
+                                                  name=A.ROBERTA_FOR_QUESTION_ANSWERING,
+                                                  jsl_anno_class_id=A.ROBERTA_FOR_QUESTION_ANSWERING,
+                                                  jsl_anno_py_class=ACR.JSL_anno2_py_class[A.ROBERTA_FOR_QUESTION_ANSWERING],
+                                                  node=NLP_FEATURE_NODES.nodes[A.ROBERTA_FOR_QUESTION_ANSWERING],
+                                                  get_default_model=SpanRobertaClassifier.get_default_model,
+                                                  get_pretrained_model=SpanRobertaClassifier.get_pretrained_model,
+                                                  type=T.SPAN_CLASSIFIER,
+                                                  pdf_extractor_methods={
+                                                         'default': default_span_classifier_config,
+                                                         'default_full': default_full_span_classifier_config, },
+                                                  pdf_col_name_substitutor=substitute_span_classifier_cols,
+                                                  output_level=L.INPUT_DEPENDENT_DOCUMENT_CLASSIFIER,
+                                                  description='TODO',
+                                                  provider=ComponentBackends.open_source,
+                                                  license=Licenses.open_source,
+                                                  computation_context=ComputeContexts.spark,
+                                                  output_context=ComputeContexts.spark,
+                                                  ),
+
+
+        A.XLM_ROBERTA_FOR_QUESTION_ANSWERING: partial(NluComponent,
+                                                  name=A.XLM_ROBERTA_FOR_QUESTION_ANSWERING,
+                                                  jsl_anno_class_id=A.XLM_ROBERTA_FOR_QUESTION_ANSWERING,
+                                                  jsl_anno_py_class=ACR.JSL_anno2_py_class[A.XLM_ROBERTA_FOR_QUESTION_ANSWERING],
+                                                  node=NLP_FEATURE_NODES.nodes[A.XLM_ROBERTA_FOR_QUESTION_ANSWERING],
+                                                  get_default_model=SpanXlmRobertaClassifier.get_default_model,
+                                                  get_pretrained_model=SpanXlmRobertaClassifier.get_pretrained_model,
+                                                  type=T.SPAN_CLASSIFIER,
+                                                  pdf_extractor_methods={
+                                                      'default': default_span_classifier_config,
+                                                      'default_full': default_full_span_classifier_config, },
+                                                  pdf_col_name_substitutor=substitute_span_classifier_cols,
+                                                  output_level=L.INPUT_DEPENDENT_DOCUMENT_CLASSIFIER,
+                                                  description='TODO',
+                                                  provider=ComponentBackends.open_source,
+                                                  license=Licenses.open_source,
+                                                  computation_context=ComputeContexts.spark,
+                                                  output_context=ComputeContexts.spark,
+                                                  ),
+
+
+
+
+
+
+
 
 
 
@@ -1855,7 +1966,6 @@ class ComponentUniverse:
                                                        name=A.MULTI_DOCUMENT_ASSEMBLER,
                                                        type=T.HELPER_ANNO,
                                                        get_default_model=SparkNlpMultiDocumentAssembler.get_default_model,
-                                                        # TODO EXTRACT AND SUBSTY!!!
                                                        pdf_extractor_methods={
                                                            'default': default_document_config,
                                                            'default_full': default_document_config, },
@@ -1863,7 +1973,7 @@ class ComponentUniverse:
                                                        output_level=L.DOCUMENT,
                                                        node=NLP_FEATURE_NODES.nodes[
                                                            A.MULTI_DOCUMENT_ASSEMBLER],
-                                                       description='The DeBERTa model_anno_obj was proposed in DeBERTa: Decoding-enhanced BERT with Disentangled Attention by Pengcheng He, Xiaodong Liu, Jianfeng Gao, Weizhu Chen. It is based on Google’s BERT model_anno_obj released in 2018 and Facebook’s RoBERTa model_anno_obj released in 2019. This classifier uses DeBERTa embeddingss with a linear classification head ontop.',
+                                                       description='TODO',
                                                        provider=ComponentBackends.open_source,
 
                                                        license=Licenses.open_source,

@@ -30,7 +30,7 @@ class NLP_NODE_IDS:
     DE_BERTA_FOR_QUESTION_ANSWERING = JslAnnoId('de_berta_for_question_answering')
     DISTIL_BERT_FOR_QUESTION_ANSWERING = JslAnnoId('distil_bert_for_question_answering')
     LONGFORMER_FOR_QUESTION_ANSWERING = JslAnnoId('longformer_for_question_answering')
-    ROBERTA__FOR_QUESTION_ANSWERING = JslAnnoId('roberta_for_question_answering')
+    ROBERTA_FOR_QUESTION_ANSWERING = JslAnnoId('roberta_for_question_answering')
     XLM_ROBERTA_FOR_QUESTION_ANSWERING = JslAnnoId('xlm_roberta_for_question_answering')
     SPAN_BERT_COREF_MODEL = JslAnnoId('span_bert_coref_model')
 
