@@ -66,7 +66,7 @@ class ChunkMapperTestCase(unittest.TestCase):
         'en.map_entity.snomed_to_icdo',
         'en.map_entity.snomed_to_umls',]
         for t in tests:
-            p = nlu.load(t)
+            p = nlu.load('en.med_ner.posology.small ' + t)
             res = p.predict(text)
             for c in res.columns:
                 print(res[c])
