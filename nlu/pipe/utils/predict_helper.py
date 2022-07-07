@@ -147,7 +147,8 @@ def __predict__(pipe, data, output_level, positions, keep_stranger_features, met
             logger.warning(f"Predictions Failed={err}")
             pipe.print_exception_err(err)
             raise Exception("Failure to process data with NLU")
-    elif not get_embeddings and multithread:
+    elif not get_embeddings and multithread or pipe.prefer_light:
+        # In Some scenarios we prefer light, because Bugs in ChunkMapper...
         # Try Multithreaded with Fallback vanilla as option. No Embeddings in this mode
         try:
             return predict_multi_threaded_light_pipe(pipe, data, output_level, positions, keep_stranger_features,

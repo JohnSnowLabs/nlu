@@ -47,7 +47,29 @@ class ChunkMapperTestCase(unittest.TestCase):
     #     for c in res.columns:
     #         print(res[c])
 
-    def test_chunk_mapper_deep(self):
+    def test_all_chunk_mapper_pipes(self):
+        text = """The patient is a 71-year-old female patient of Dr. X. and she was given Aklis, Dermovate, Aacidexam and Paracetamol."""
+
+        tests = [
+
+            'en.icd10cm_to_snomed',
+            'en.icd10cm_to_umls',
+            'en.icdo_to_snomed',
+            'en.mesh_to_umls',
+            'en.rxnorm_to_ndc',
+            'en.rxnorm_to_umls',
+            'en.snomed_to_icd10cm',
+            'en.snomed_to_icdo',
+            'en.snomed_to_umls',
+
+        ]
+        for t in tests:
+            p = nlu.load(t,verbose=True)
+            res = p.predict(text)
+            for c in res.columns:
+                print(res[c])
+
+    def test_chunk_mapper_all(self):
         text = """The patient is a 71-year-old female patient of Dr. X. and she was given Aklis, Dermovate, Aacidexam and Paracetamol."""
 
         tests = ['en.map_entity.section_headers_normalized',

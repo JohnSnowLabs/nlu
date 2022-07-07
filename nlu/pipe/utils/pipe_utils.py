@@ -647,6 +647,8 @@ class PipeUtils:
             # Check for NLP Component, which is any open source
             if c.license == Licenses.open_source:
                 pipe.has_nlp_components = True
+            if c.type == AnnoTypes.CHUNK_MAPPER:
+                pipe.prefer_light = True
 
         return pipe
 
