@@ -70,3 +70,7 @@ class AnnoTypes:
     TABLE_RECOGNIZER = 'table_recognizer'
     PDF_BUILDER = 'table_recognizer'
     OCR_UTIL = 'ocr_util'
+
+
+
+    PARTIALLY_READY = 'partially_ready'

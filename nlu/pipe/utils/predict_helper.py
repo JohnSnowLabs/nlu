@@ -24,7 +24,7 @@ def __predict_standard_spark(pipe, data, output_level, positions, keep_stranger_
     data = pipe.vanilla_transformer_pipe.transform(data)
 
     # 4. Convert resulting spark DF into nicer format and by default into pandas.
-    if return_spark_df: return data  # Returns RAW  Spark Dataframe result of component_list prediction
+    if return_spark_df: return data   # Returns RAW  Spark Dataframe result of component_list prediction
     return pipe.pythonify_spark_dataframe(data,
                                           keep_stranger_features=keep_stranger_features,
                                           stranger_features=stranger_features,

@@ -8,6 +8,40 @@ import logging
 logger = logging.getLogger('nlu')
 
 
+def partially_implemented_substitutor(c, cols, nlu_identifier):
+    """
+    Fetched fields are:
+    - entities@<storage_ref>_results
+    - entities@<storage_ref>_<metadata>
+        - entities@<storage_ref>_entity
+        - entities@<storage_ref>_confidence
+    """
+    new_cols = {}
+    new_base_name = nlu_identifier
+    for col in cols:
+        if 'results' in col:
+            new_cols[col] = new_base_name
+        elif '_beginnings' in col:
+            new_cols[col] = f'{new_base_name}_begin'
+        elif '_endings' in col:
+            new_cols[col] = f'{new_base_name}_end'
+        elif '_embeddings' in col:
+            new_cols[col] = f'{new_base_name}_embedding'
+        elif 'meta' in col:
+            if 'confidence' in col:
+                new_cols[col] = f"{new_base_name}_confidence"
+            elif 'entity' in col:
+                new_cols[col] = f"{new_base_name}_class"
+            elif 'chunk' in col:
+                new_cols[col] = f"{new_base_name}_origin_chunk"
+            elif 'sentence' in col:
+                new_cols[col] = f"{new_base_name}_origin_sentence"
+            else:
+                logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
+    return new_cols
+
+
+
 def substitute_ner_converter_cols(c, cols, nlu_identifier):
     """
     Fetched fields are:

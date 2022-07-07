@@ -11,6 +11,8 @@ class NLP_FEATURES(JslFeature):
     NLP Features
     """
     #  STems from an nlp annotator in the NLP lib, i.e. Fnisher or so. Generates NO JSL-Annotation Schema for result df. Just 1 str per orw
+    UNKOWN = JslFeature("unkown")
+
     DOCUMENT = JslFeature("document")
     DOCUMENT_FROM_CHUNK = JslFeature("document_from_chunk")
     DOCUMENT_DE_IDENTIFIED = JslFeature("document_de_identified")

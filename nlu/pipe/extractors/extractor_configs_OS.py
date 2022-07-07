@@ -86,6 +86,9 @@ def default_language_classifier_config(output_col_prefix='language'):
     )
 
 
+def default_partial_implement_config(output_col_prefix):
+    return default_only_result_config(output_col_prefix)
+
 def default_only_result_config(output_col_prefix):
     return SparkNLPExtractorConfig(
         output_col_prefix   = output_col_prefix,

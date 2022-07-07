@@ -114,6 +114,7 @@ def resolver_conifg_with_metadata(output_col_prefix='DEFAULT'):
     return SparkNLPExtractorConfig(
         output_col_prefix=output_col_prefix,
         get_meta=True,
+        get_result=True,
         get_full_meta=True,
         name='with metadata',
         description='Full resolver outputs, with any _k_ field in the metadata dict splitted :::',
