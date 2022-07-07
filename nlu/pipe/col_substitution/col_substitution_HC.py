@@ -63,7 +63,8 @@ token -> Token index
         elif 'meta' in col:
             if 'all_k_aux_labels' in col  : new_cols[col] = f'{new_base_name}_k_aux_labels'  # maps to which sentence token comes from
             elif 'resolved_text' in col  : new_cols[col] = f'{new_base_name}' #The most likely resolution
-            elif 'target_text' in col  : continue # Can be omitted, origin chunk basically, which will be included in the nerConverterInternal result
+            elif 'target_text' in col  : new_cols[col] = f'{new_base_name}_target_text' # Can be omitted, origin chunk basically, which will be included in the nerConverterInternal result
+            elif 'token' in col  : new_cols[col] = f'{new_base_name}_token' # Can be omitted, origin chunk basically, which will be included in the nerConverterInternal result
             elif 'all_k_confidences' in col  : new_cols[col] = f'{new_base_name}_k_confidences'  # confidences of the k resolutions
             elif 'confidence' in col  : new_cols[col] = f'{new_base_name}_confidence'
             elif 'all_k_results' in col  : new_cols[col] = f'{new_base_name}_k_results'

@@ -140,6 +140,8 @@ class ColSubstitutionUtils:
                         id2 = int(c.spark_output_column_names.split('_')[-1])
                         if id1 != id2: continue
                     result_cols.append(meta_col_name)
+                elif c.type == AnnoTypes.CHUNK_CLASSIFIER:
+                    result_cols.append(col)
                 else:
                     logger.info(f"Could not find meta col for os_components={c}, col={col}. Ommiting col..")
         return result_cols
