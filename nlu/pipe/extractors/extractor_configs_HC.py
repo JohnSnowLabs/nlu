@@ -59,6 +59,25 @@ def default_NER_converter_licensed_config(output_col_prefix='entities'):
     )
 
 
+
+def default_chunk_mapper_config(output_col_prefix='mapped_entity'):
+    """Extracts NER tokens withouth positions, just the converted IOB tags,confidences and classified tokens """
+    return SparkNLPExtractorConfig(
+        output_col_prefix=output_col_prefix,
+        get_result=True,
+        get_meta=True,
+        meta_white_list=['relation', 'all_relations','chunk', 'entity',
+                         'sentence'
+                         ],  # MAYBE DROP 'chunk', 'entity'default_chunk_mapper_config, sentence
+        name='default_ner',
+        meta_data_extractor=SparkNLPExtractor(extract_chunk_mapper_relation_data,
+                                          'Get ChunkMapper Relation Metadata',
+                                          'Get ChunkMapper Relation Metadata'),
+        description='Extract Chunk Mapper with relation Data',
+    )
+
+
+
 def default_chunk_resolution_config(output_col_prefix='resolved_entities'):
     """Extracts NER tokens withouth positions, just the IOB tags,confidences and classified tokens """
     return SparkNLPExtractorConfig(

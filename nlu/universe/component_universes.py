@@ -1,5 +1,6 @@
 from nlu.components.assertions.assertion_dl.assertion_dl import AssertionDL
 from nlu.components.assertions.assertion_log_reg.assertion_log_reg import AssertionLogReg
+from nlu.components.chunkers.chunk_mapper.chunk_mapper import ChunkMapper
 from nlu.components.chunkers.contextual_parser.contextual_parser import ContextualParser
 from nlu.components.chunkers.default_chunker.default_chunker import DefaultChunker
 from nlu.components.chunkers.ngram.ngram import NGram
@@ -98,7 +99,7 @@ from nlu.ocr_components.text_recognizers.pdf2text.pdf2text import Pdf2Text
 from nlu.ocr_components.utils.binary2image.binary2image import Binary2Image
 from nlu.ocr_components.utils.image2hocr.image2hocr import Image2Hocr
 
-from nlu.ocr_components.visual_classifiers.visual_doc_classifier.visual_doc_classifier import VisualDocClassifier
+# from nlu.ocr_components.visual_classifiers.visual_doc_classifier.visual_doc_classifier import VisualDocClassifier
 from nlu.pipe.col_substitution.col_substitution_HC import *
 from nlu.pipe.col_substitution.col_substitution_OCR import substitute_recognized_text_cols
 from nlu.pipe.col_substitution.col_substitution_OS import *
@@ -2256,6 +2257,32 @@ class ComponentUniverse:
 
                                             # trainable_mirror_anno=H_A.TRAINABLE_RELATION_EXTRACTION_DL
                                             ),
+
+        H_A.CHUNK_MAPPER_MODEL: partial(NluComponent,
+                                            name=H_A.CHUNK_MAPPER_MODEL,
+                                            type=T.CHUNK_MAPPER,
+                                            get_default_model=ChunkMapper.get_default_model,
+                                            get_pretrained_model=ChunkMapper.get_pretrained_model,
+                                            # TODO EXTRACTORS!/subs
+                                            pdf_extractor_methods={'default': default_chunk_mapper_config,
+                                                                   # 'positional': default_relation_extraction_positional_config,
+                                                                   'default_full': default_full_config, },
+                                            pdf_col_name_substitutor=substitute_chunk_mapper_cols,
+                                            output_level=L.CHUNK,
+                                            node=NLP_HC_FEATURE_NODES.nodes[H_A.CHUNK_MAPPER_MODEL],
+                                            description='Map entities into relation and metadata',
+                                            provider=ComponentBackends.hc,
+                                            license=Licenses.hc,
+                                            computation_context=ComputeContexts.spark,
+                                            output_context=ComputeContexts.spark,
+                                            jsl_anno_class_id=H_A.CHUNK_MAPPER_MODEL,
+                                            jsl_anno_py_class=ACR.JSL_anno_HC_ref_2_py_class[
+                                                H_A.CHUNK_MAPPER_MODEL],
+
+                                            # trainable_mirror_anno=H_A.TRAINABLE_RELATION_EXTRACTION_DL
+                                            ),
+
+
         # H_A.TRAINABLE_RELATION_EXTRACTION_DL: partial(NluComponent, # DOES NOT EXIST!
         #     name=H_A.TRAINABLE_RELATION_EXTRACTION_DL,
         #     type=T.RELATION_CLASSIFIER,
@@ -2524,28 +2551,28 @@ class ComponentUniverse:
                                     applicable_file_types=['DOCX', 'DOC']
                                     ),
 
-        O_A.VISUAL_DOCUMENT_CLASSIFIER: partial(NluComponent,
-                                                name=O_A.VISUAL_DOCUMENT_CLASSIFIER,
-                                                type=T.PDF_BUILDER,
-                                                get_default_model=VisualDocClassifier.get_default_model,
-                                                get_pretrained_model=VisualDocClassifier.get_pretrained_model,
-
-                                                pdf_extractor_methods={'default': default_visual_classifier_config},
-                                                # TODO EXtractor
-                                                pdf_col_name_substitutor=substitute_recognized_text_cols,
-                                                # TODO substitor
-                                                output_level=L.DOCUMENT,
-                                                node=OCR_FEATURE_NODES.nodes[O_A.VISUAL_DOCUMENT_CLASSIFIER],
-                                                description='Convert text to PDF file',
-                                                provider=ComponentBackends.ocr,
-                                                license=Licenses.ocr,
-                                                computation_context=ComputeContexts.spark,
-                                                output_context=ComputeContexts.spark,
-                                                jsl_anno_class_id=O_A.VISUAL_DOCUMENT_CLASSIFIER,
-                                                jsl_anno_py_class=ACR.JSL_anno_OCR_ref_2_py_class[
-                                                    O_A.VISUAL_DOCUMENT_CLASSIFIER],
-                                                applicable_file_types=['JPG', 'JPEG']
-                                                ),
+        # O_A.VISUAL_DOCUMENT_CLASSIFIER: partial(NluComponent,
+        #                                         name=O_A.VISUAL_DOCUMENT_CLASSIFIER,
+        #                                         type=T.PDF_BUILDER,
+        #                                         get_default_model=VisualDocClassifier.get_default_model,
+        #                                         get_pretrained_model=VisualDocClassifier.get_pretrained_model,
+        #
+        #                                         pdf_extractor_methods={'default': default_visual_classifier_config},
+        #                                         # TODO EXtractor
+        #                                         pdf_col_name_substitutor=substitute_recognized_text_cols,
+        #                                         # TODO substitor
+        #                                         output_level=L.DOCUMENT,
+        #                                         node=OCR_FEATURE_NODES.nodes[O_A.VISUAL_DOCUMENT_CLASSIFIER],
+        #                                         description='Convert text to PDF file',
+        #                                         provider=ComponentBackends.ocr,
+        #                                         license=Licenses.ocr,
+        #                                         computation_context=ComputeContexts.spark,
+        #                                         output_context=ComputeContexts.spark,
+        #                                         jsl_anno_class_id=O_A.VISUAL_DOCUMENT_CLASSIFIER,
+        #                                         jsl_anno_py_class=ACR.JSL_anno_OCR_ref_2_py_class[
+        #                                             O_A.VISUAL_DOCUMENT_CLASSIFIER],
+        #                                         applicable_file_types=['JPG', 'JPEG']
+        #                                         ),
 
         O_A.IMAGE2HOCR: partial(NluComponent,
                                 name=O_A.IMAGE2HOCR,

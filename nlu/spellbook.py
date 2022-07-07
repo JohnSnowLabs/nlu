@@ -4627,6 +4627,22 @@ class Spellbook:
             },
         'en':
             {
+                # 4.0 Chunk Mapperswr
+                'en.map_entity.section_headers_normalized' : 'normalized_section_header_mapper',
+                'en.map_entity.abbreviation_to_definition' : 'abbreviation_mapper',
+                'en.map_entity.drug_to_action_treatment' : 'drug_action_treatment_mapper',
+                'en.map_entity.drug_brand_to_ndc' : 'drug_brandname_ndc_mapper',
+                'en.map_entity.icd10cm_to_snomed' : 'icd10cm_snomed_mapper',
+                'en.map_entity.icd10cm_to_umls' : 'icd10cm_umls_mapper',
+                'en.map_entity.icdo_to_snomed' : 'icdo_snomed_mapper',
+                'en.map_entity.mesh_to_umls' : 'mesh_umls_mapper',
+                'en.map_entity.rxnorm_to_action_treatment' : 'rxnorm_action_treatment_mapper',
+                'en.map_entity.rxnorm_resolver' : 'rxnorm_mapper',
+                'en.map_entity.rxnorm_to_ndc' : 'rxnorm_ndc_mapper',
+                'en.map_entity.rxnorm_to_umls' : 'rxnorm_umls_mapper',
+                'en.map_entity.snomed_to_icd10cm' : 'snomed_icd10cm_mapper',
+                'en.map_entity.snomed_to_icdo' : 'snomed_icdo_mapper',
+                'en.map_entity.snomed_to_umls' : 'snomed_umls_mapper',
 
                 # 3.4.3
                 'en.relation.zeroshot_biobert': 're_zeroshot_biobert',
@@ -5296,10 +5312,34 @@ class Spellbook:
         OCR_NODE_IDS.PPT2TEXT_TABLE: 'PptToTextTable',
         OCR_NODE_IDS.DOC2TEXT_TABLE: 'DocToTextTable',
         OCR_NODE_IDS.VISUAL_DOCUMENT_CLASSIFIER: 'VisualDocumentClassifier',
-         'roberta_embeddings_MedRoBERTa.nl':'RoBertaEmbeddings',
-        
-         
 
+
+        'rxnorm_action_treatment_mapper': 'ChunkMapperModel',
+        'rxnorm_ndc_mapper': 'ChunkMapperModel',
+        'abbreviation_mapper': 'ChunkMapperModel',
+        'drug_brandname_ndc_mapper': 'ChunkMapperModel',
+        'rxnorm_mapper': 'ChunkMapperModel',
+        'rxnorm_umls_mapper': 'ChunkMapperModel',
+        'snomed_icdo_mapper': 'ChunkMapperModel',
+        'snomed_icd10cm_mapper': 'ChunkMapperModel',
+        'rxnorm_umls_mapper': 'ChunkMapperModel',
+        'normalized_section_header_mapper': 'ChunkMapperModel',
+        'mesh_umls_mapper': 'ChunkMapperModel',
+        'icdo_snomed_mapper': 'ChunkMapperModel',
+        'icd10cm_umls_mapper': 'ChunkMapperModel',
+        'icd10cm_snomed_mapper': 'ChunkMapperModel',
+        'drug_brandname_ndc_mapper': 'ChunkMapperModel',
+        'abbreviation_mapper': 'ChunkMapperModel',
+        'rxnorm_action_treatment_mapper': 'ChunkMapperModel',
+        'rxnorm_mapper': 'ChunkMapperModel',
+        'rxnorm_ndc_mapper': 'ChunkMapperModel',
+        'snomed_umls_mapper': 'ChunkMapperModel',
+        'drug_action_treatment_mapper': 'ChunkMapperModel',
+
+
+
+
+         'roberta_embeddings_MedRoBERTa.nl':'RoBertaEmbeddings',
         'w2v_cc_300d': 'WordEmbeddingsModel',
         'stopwords_iso': 'StopWordsCleaner',
         'w2v_cc_300d': 'WordEmbeddingsModel',

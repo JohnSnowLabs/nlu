@@ -43,6 +43,8 @@ class OCR_OUTPUT_LEVELS:
 
 class AnnoTypes:
     # DOCUMENT_XX can be sbustituted for SENTENCE
+    CHUNK_MAPPER = 'chunk_mapper'
+
     TOKENIZER = 'tokenizer'
     TOKEN_CLASSIFIER = 'token_classifier'
     TRANSFORMER_TOKEN_CLASSIFIER = 'transformer_token_classifier'  # Can be token level but also NER level

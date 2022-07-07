@@ -252,7 +252,6 @@ def extract_master(row: pd.Series, configs: SparkNLPExtractorConfig) -> pd.Serie
     extract_universal/?/Better name?
     row = a list or Spark-NLP annotations as dictionary
     """
-    # TODO Primitive types can come from OCR HERE!!
     if isinstance(row, pyspark.sql.Row) and len(row) == 0:
         return pd.Series({})
     if isinstance(configs, SparkOCRExtractorConfig):
