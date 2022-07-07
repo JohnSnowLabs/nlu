@@ -325,7 +325,7 @@ class NLUPipeline(dict):
 
         # Processed becomes pandas after applying extractors
         processed = self.unpack_and_apply_extractors(processed, keep_stranger_features, stranger_features,
-                                                     anno_2_ex_config, self.light_pipe_configured, get_embeddings)
+                                                      anno_2_ex_config, self.light_pipe_configured, get_embeddings)
 
         # Get mapping between column_name and pipe_prediction_output_level
         same_level = OutputLevelUtils.get_columns_at_same_level_of_pipe(self, processed, anno_2_ex_config,

@@ -20,13 +20,11 @@ def partially_implemented_substitutor(c, cols, nlu_identifier):
     new_base_name = nlu_identifier
     for col in cols:
         if 'results' in col:
-            new_cols[col] = new_base_name
+            new_cols[col] = f'{new_base_name}_result'
         elif '_beginnings' in col:
             new_cols[col] = f'{new_base_name}_begin'
         elif '_endings' in col:
             new_cols[col] = f'{new_base_name}_end'
-        elif '_embeddings' in col:
-            new_cols[col] = f'{new_base_name}_embedding'
         elif 'meta' in col:
             if 'confidence' in col:
                 new_cols[col] = f"{new_base_name}_confidence"
@@ -38,6 +36,10 @@ def partially_implemented_substitutor(c, cols, nlu_identifier):
                 new_cols[col] = f"{new_base_name}_origin_sentence"
             else:
                 logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
+                continue
+        if '_embeddings' in col and f'{new_base_name}_embedding' not in new_cols.values():
+            new_cols[col] = f'{new_base_name}_embedding'
+
     return new_cols
 
 
@@ -66,10 +68,10 @@ def substitute_ner_converter_cols(c, cols, nlu_identifier):
                 new_cols[col] = f"{new_base_name}_confidence"
             elif 'entity' in col:
                 new_cols[col] = f"{new_base_name}_class"
-            elif 'chunk' in col:
-                new_cols[col] = f"{new_base_name}_origin_chunk"
             elif 'sentence' in col:
                 new_cols[col] = f"{new_base_name}_origin_sentence"
+            elif 'chunk' in col:
+                new_cols[col] = f"{new_base_name}_origin_chunk"
             else:
                 logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
     return new_cols

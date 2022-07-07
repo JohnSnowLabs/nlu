@@ -125,5 +125,34 @@ class PartiallyImplementedComponentsCase(unittest.TestCase):
         for c in df:
             print(df[c])
 
+    def test_small_example(self):
+
+        documentAssembler = DocumentAssembler() \
+            .setInputCol("text") \
+            .setOutputCol("ner_chunk")
+
+        sbert_embedder = BertSentenceEmbeddings.pretrained('sbiobert_base_cased_mli', 'en','clinical/models') \
+            .setInputCols(["ner_chunk"]) \
+            .setOutputCol("sentence_embeddings") \
+            .setCaseSensitive(False)
+
+        rxnorm_resolver = SentenceEntityResolverModel.pretrained("sbiobertresolve_rxnorm_augmented","en", "clinical/models") \
+            .setInputCols(["ner_chunk", "sentence_embeddings"]) \
+            .setOutputCol("rxnorm_code") \
+            .setDistanceFunction("EUCLIDEAN")
+
+        rxnorm_pipelineModel = PipelineModel(
+            stages = [
+                documentAssembler,
+                sbert_embedder,
+                rxnorm_resolver])
+        nlu.enable_verbose()
+        p = nlu.to_nlu_pipe(rxnorm_pipelineModel)
+        text = 'metformin 100 mg'
+        df = p.predict(text)
+        print (df)
+        for c in df:
+            print(df[c])
+
 if __name__ == "__main__":
     unittest.main()

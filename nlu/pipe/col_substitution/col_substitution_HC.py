@@ -1,6 +1,8 @@
 """Collection of methods to substitute cols of licensed component_to_resolve results"""
 import logging
+
 logger = logging.getLogger('nlu')
+
 
 def substitute_ner_internal_converter_cols(c, cols, nlu_identifier):
     """
@@ -11,23 +13,28 @@ def substitute_ner_internal_converter_cols(c, cols, nlu_identifier):
         - entities@<storage_ref>_confidence
     """
     new_cols = {}
-    new_base_name = 'entities' if nlu_identifier=='UNIQUE' else f'entities_{nlu_identifier}'
-    for col in cols :
-        if 'results'     in col     : new_cols[col] = new_base_name
-        elif '_beginnings' in col     : new_cols[col] = f'{new_base_name}_begin'
-        elif '_endings'    in col     : new_cols[col] = f'{new_base_name}_end'
-        elif '_embeddings' in col     : new_cols[col] = f'{new_base_name}_embedding'
+    new_base_name = 'entities' if nlu_identifier == 'UNIQUE' else f'entities_{nlu_identifier}'
+    for col in cols:
+        if 'results' in col:
+            new_cols[col] = new_base_name
+        elif '_beginnings' in col:
+            new_cols[col] = f'{new_base_name}_begin'
+        elif '_endings' in col:
+            new_cols[col] = f'{new_base_name}_end'
+        elif '_embeddings' in col:
+            new_cols[col] = f'{new_base_name}_embedding'
         elif 'meta' in col:
-            if 'confidence' in col: new_cols[col]= f"{new_base_name}_confidence"
-            elif 'entity' in     col: new_cols[col]= f"{new_base_name}_class"
-            elif 'chunk' in     col: new_cols[col]= f"{new_base_name}_origin_chunk"
-            elif 'sentence' in     col: new_cols[col]= f"{new_base_name}_origin_sentence"
-            else : logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
+            if 'confidence' in col:
+                new_cols[col] = f"{new_base_name}_confidence"
+            elif 'entity' in col:
+                new_cols[col] = f"{new_base_name}_class"
+            elif 'sentence' in col:
+                new_cols[col] = f"{new_base_name}_origin_sentence"
+            elif 'chunk' in col:
+                new_cols[col] = f"{new_base_name}_origin_chunk"
+            else:
+                logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
     return new_cols
-
-
-
-
 
 
 def substitute_sentence_resolution_cols(c, cols, nlu_identifier=True):
@@ -52,43 +59,73 @@ chunk -> Chunk Index
 token -> Token index
     """
     new_cols = {}
-    new_base_name = f'resolution' if nlu_identifier=='UNIQUE' else f'resolution_{nlu_identifier}'
-    for col in cols :
-        if '_results'      in col    and 'all_k' not in col :
-            new_cols[col] = f'{new_base_name}_code' if  'code' not in new_base_name else new_base_name  # resolved code
-        elif '_beginnings' in col     : new_cols[col]  = f'{new_base_name}_begin'
-        elif '_endings'    in col     : new_cols[col]  = f'{new_base_name}_end'
-        elif '_types'      in col          : continue # new_cols[col] = f'{new_base_name}_type'
-        elif '_embeddings' in col     : continue # omit , no data
+    new_base_name = f'resolution' if nlu_identifier == 'UNIQUE' else f'resolution_{nlu_identifier}'
+    for col in cols:
+        if '_results' in col and 'all_k' not in col:
+            new_cols[col] = f'{new_base_name}_code' if 'code' not in new_base_name else new_base_name  # resolved code
+        elif '_beginnings' in col:
+            new_cols[col] = f'{new_base_name}_begin'
+        elif '_endings' in col:
+            new_cols[col] = f'{new_base_name}_end'
+        elif '_types' in col:
+            continue  # new_cols[col] = f'{new_base_name}_type'
+        elif '_embeddings' in col:
+            continue  # omit , no data
         elif 'meta' in col:
-            if 'all_k_aux_labels' in col  : new_cols[col] = f'{new_base_name}_k_aux_labels'  # maps to which sentence token comes from
-            elif 'resolved_text' in col  : new_cols[col] = f'{new_base_name}' #The most likely resolution
-            elif 'target_text' in col  : new_cols[col] = f'{new_base_name}_target_text' # Can be omitted, origin chunk basically, which will be included in the nerConverterInternal result
-            elif 'token' in col  : new_cols[col] = f'{new_base_name}_token' # Can be omitted, origin chunk basically, which will be included in the nerConverterInternal result
-            elif 'all_k_confidences' in col  : new_cols[col] = f'{new_base_name}_k_confidences'  # confidences of the k resolutions
-            elif 'confidence' in col  : new_cols[col] = f'{new_base_name}_confidence'
-            elif 'all_k_results' in col  : new_cols[col] = f'{new_base_name}_k_results'
-            elif 'all_k_distances' in col  : new_cols[col] = f'{new_base_name}_k_distances'
-            elif 'all_k_resolutions' in col  : new_cols[col] = f'{new_base_name}_k_resolution'
-            elif 'all_k_cosine_distances' in col  : new_cols[col] = f'{new_base_name}_k_cos_distances'
-            elif 'all_k_wmd_distances' in col  : new_cols[col] = f'{new_base_name}_k_wmd_distances'
-            elif 'all_k_tfidf_distances' in col  : new_cols[col] = f'{new_base_name}_k_tfidf_distances'
-            elif 'all_k_jaccard_distances' in col  : new_cols[col] = f'{new_base_name}_k_jaccard_distances'
-            elif 'all_k_sorensen_distances' in col  : new_cols[col] = f'{new_base_name}_k_sorensen_distances'
-            elif 'all_k_jaro_distances' in col  : new_cols[col] = f'{new_base_name}_k_jaro_distances'
-            elif 'all_k_levenshtein_distances' in col  : new_cols[col] = f'{new_base_name}_k_levenshtein_distances'
-            elif 'all_k_codes' in col  : new_cols[col] = f'{new_base_name}_k_codes'
-            elif '_k_' in col  : new_cols[col] = f'{new_base_name}_{col}'
-            elif 'billable' in col  : new_cols[col] = f'{new_base_name}_billable'
-            elif 'hcc_status' in col  : new_cols[col] = f'{new_base_name}_hcc_status'
-            elif 'hcc_code' in col  : new_cols[col] = f'{new_base_name}_hcc_code'
-            elif 'distance' in col  : new_cols[col] = f'{new_base_name}_distance'
-            elif 'chunk' in col  : continue # Omit, irreleant new_cols[col] = f'{new_base_name}_confidence'
-            elif   '_sentence' in col  : new_cols[col] = f'{new_base_name}_origin_sentence'  # maps to which sentence token comes from
-            else : logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
+            if 'all_k_aux_labels' in col:
+                new_cols[col] = f'{new_base_name}_k_aux_labels'  # maps to which sentence token comes from
+            elif 'resolved_text' in col:
+                new_cols[col] = f'{new_base_name}_resolved_text'  # The most likely resolution
+            elif 'target_text' in col:
+                new_cols[
+                    col] = f'{new_base_name}_target_text'  # Can be omitted, origin chunk basically, which will be included in the nerConverterInternal result
+            elif 'token' in col:
+                new_cols[
+                    col] = f'{new_base_name}_token'  # Can be omitted, origin chunk basically, which will be included in the nerConverterInternal result
+            elif 'all_k_confidences' in col:
+                new_cols[col] = f'{new_base_name}_k_confidences'  # confidences of the k resolutions
+            elif 'confidence' in col:
+                new_cols[col] = f'{new_base_name}_confidence'
+            elif 'all_k_results' in col:
+                new_cols[col] = f'{new_base_name}_k_results'
+            elif 'all_k_distances' in col:
+                new_cols[col] = f'{new_base_name}_k_distances'
+            elif 'all_k_resolutions' in col:
+                new_cols[col] = f'{new_base_name}_k_resolution'
+            elif 'all_k_cosine_distances' in col:
+                new_cols[col] = f'{new_base_name}_k_cos_distances'
+            elif 'all_k_wmd_distances' in col:
+                new_cols[col] = f'{new_base_name}_k_wmd_distances'
+            elif 'all_k_tfidf_distances' in col:
+                new_cols[col] = f'{new_base_name}_k_tfidf_distances'
+            elif 'all_k_jaccard_distances' in col:
+                new_cols[col] = f'{new_base_name}_k_jaccard_distances'
+            elif 'all_k_sorensen_distances' in col:
+                new_cols[col] = f'{new_base_name}_k_sorensen_distances'
+            elif 'all_k_jaro_distances' in col:
+                new_cols[col] = f'{new_base_name}_k_jaro_distances'
+            elif 'all_k_levenshtein_distances' in col:
+                new_cols[col] = f'{new_base_name}_k_levenshtein_distances'
+            elif 'all_k_codes' in col:
+                new_cols[col] = f'{new_base_name}_k_codes'
+            elif '_k_' in col:
+                new_cols[col] = f'{new_base_name}_{col}'
+            elif 'billable' in col:
+                new_cols[col] = f'{new_base_name}_billable'
+            elif 'hcc_status' in col:
+                new_cols[col] = f'{new_base_name}_hcc_status'
+            elif 'hcc_code' in col:
+                new_cols[col] = f'{new_base_name}_hcc_code'
+            elif 'distance' in col:
+                new_cols[col] = f'{new_base_name}_distance'
+            elif 'chunk' in col:
+                continue  # Omit, irreleant new_cols[col] = f'{new_base_name}_confidence'
+            elif '_sentence' in col:
+                new_cols[col] = f'{new_base_name}_origin_sentence'  # maps to which sentence token comes from
+            else:
+                logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
 
     return new_cols
-
 
 
 def substitute_assertion_cols(c, cols, nlu_identifier=True):
@@ -98,22 +135,29 @@ def substitute_assertion_cols(c, cols, nlu_identifier=True):
     """
     new_cols = {}
     # c_name   = extract_nlu_identifier(os_components)
-    new_base_name = f'assertion'# if is_unique else f'sentence_resolution_{c_name}'
-    for col in cols :
-        if '_results'      in col     :  new_cols[col] = f'{new_base_name}' # resolved code
-        elif '_beginnings' in col     : new_cols[col]  = f'{new_base_name}_begin'
-        elif '_endings'    in col     : new_cols[col]  = f'{new_base_name}_end'
-        elif '_types'      in col     : continue # new_cols[col] = f'{new_base_name}_type'
-        elif '_embeddings' in col     : continue # omit , no data
+    new_base_name = f'assertion'  # if is_unique else f'sentence_resolution_{c_name}'
+    for col in cols:
+        if '_results' in col:
+            new_cols[col] = f'{new_base_name}'  # resolved code
+        elif '_beginnings' in col:
+            new_cols[col] = f'{new_base_name}_begin'
+        elif '_endings' in col:
+            new_cols[col] = f'{new_base_name}_end'
+        elif '_types' in col:
+            continue  # new_cols[col] = f'{new_base_name}_type'
+        elif '_embeddings' in col:
+            continue  # omit , no data
         elif 'meta' in col:
-            if   '_sentence' in col  : new_cols[col] = f'{new_base_name}_origin_sentence'  # maps to which sentence token comes from
-            elif 'chunk' in col : new_cols[col] = f'{new_base_name}_origin_chunk'  # maps to which sentence token comes from
-            elif 'confidence' in col  : new_cols[col] = f'{new_base_name}' #The most likely resolution
-            else : logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
+            if '_sentence' in col:
+                new_cols[col] = f'{new_base_name}_origin_sentence'  # maps to which sentence token comes from
+            elif 'chunk' in col:
+                new_cols[col] = f'{new_base_name}_origin_chunk'  # maps to which sentence token comes from
+            elif 'confidence' in col:
+                new_cols[col] = f'{new_base_name}'  # The most likely resolution
+            else:
+                logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
 
     return new_cols
-
-
 
 
 def substitute_de_identification_cols(c, cols, is_unique=True):
@@ -122,19 +166,25 @@ def substitute_de_identification_cols(c, cols, is_unique=True):
     de_identify should always be unique
     """
     new_cols = {}
-    new_base_name = f'de_identified'#
-    for col in cols :
-        if '_results'      in col     :  new_cols[col] = f'{new_base_name}' # resolved code
-        elif '_beginnings' in col     : new_cols[col]  = f'{new_base_name}_begin'
-        elif '_endings'    in col     : new_cols[col]  = f'{new_base_name}_end'
-        elif '_types'      in col     : continue # new_cols[col] = f'{new_base_name}_type'
-        elif '_embeddings' in col     : continue # omit , no data
+    new_base_name = f'de_identified'  #
+    for col in cols:
+        if '_results' in col:
+            new_cols[col] = f'{new_base_name}'  # resolved code
+        elif '_beginnings' in col:
+            new_cols[col] = f'{new_base_name}_begin'
+        elif '_endings' in col:
+            new_cols[col] = f'{new_base_name}_end'
+        elif '_types' in col:
+            continue  # new_cols[col] = f'{new_base_name}_type'
+        elif '_embeddings' in col:
+            continue  # omit , no data
         elif 'meta' in col:
-            if   '_sentence' in col  : new_cols[col] = f'{new_base_name}_origin_sentence'  # maps to which sentence token comes from
-            else : logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
+            if '_sentence' in col:
+                new_cols[col] = f'{new_base_name}_origin_sentence'  # maps to which sentence token comes from
+            else:
+                logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
 
     return new_cols
-
 
 
 def substitute_relation_cols(c, cols, nlu_identifier=True):
@@ -156,28 +206,43 @@ def substitute_relation_cols(c, cols, nlu_identifier=True):
 
     """
     new_cols = {}
-    new_base_name = f'relation' if nlu_identifier=='UNIQUE' else f'relation_{nlu_identifier}'
-    for col in cols :
-        if '_results'      in col     : new_cols[col]  = f'{new_base_name}' # resolved code
-        elif '_beginnings' in col     : new_cols[col]  = f'{new_base_name}_begin'
-        elif '_endings'    in col     : new_cols[col]  = f'{new_base_name}_end'
-        elif '_types'      in col     : continue # new_cols[col] = f'{new_base_name}_type'
-        elif '_embeddings' in col     : continue # omit , no data
+
+    new_base_name = f'relation' if nlu_identifier == 'UNIQUE' else f'relation_{nlu_identifier}' if 'relation' not in nlu_identifier else nlu_identifier
+    for col in cols:
+        if '_results' in col:
+            new_cols[col] = f'{new_base_name}'  # resolved code
+        elif '_beginnings' in col:
+            new_cols[col] = f'{new_base_name}_begin'
+        elif '_endings' in col:
+            new_cols[col] = f'{new_base_name}_end'
+        elif '_types' in col:
+            continue  # new_cols[col] = f'{new_base_name}_type'
+        elif '_embeddings' in col:
+            continue  # omit , no data
         elif 'meta' in col:
-            if   '_sentence'       in col  : new_cols[col] = f'{new_base_name}_origin_sentence'  # maps to which sentence token comes from
-            elif   'entity1_begin' in col  : new_cols[col] = f'{new_base_name}_entity1_begin'  # maps to which sentence token comes from
-            elif   'entity2_begin' in col  : new_cols[col] = f'{new_base_name}_entity2_begin'  # maps to which sentence token comes from
-            elif   'entity1_end'   in col  : new_cols[col] = f'{new_base_name}_entity1_end'  # maps to which sentence token comes from
-            elif   'entity2_end'   in col  : new_cols[col] = f'{new_base_name}_entity2_end'  # maps to which sentence token comes from
-            elif   'confidence'    in col  : new_cols[col] = f'{new_base_name}_confidence'  # maps to which sentence token comes from
-            elif   'entity1'       in col  : new_cols[col] = f'{new_base_name}_entity1_class'  # maps to which sentence token comes from
-            elif   'entity2'       in col  : new_cols[col] = f'{new_base_name}_entity2_class'  # maps to which sentence token comes from
-            elif   'chunk1'        in col  : new_cols[col] = f'{new_base_name}_entity1'  # maps to which sentence token comes from
-            elif   'chunk2'        in col  : new_cols[col] = f'{new_base_name}_entity2'  # maps to which sentence token comes from
-            else : logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
+            if '_sentence' in col:
+                new_cols[col] = f'{new_base_name}_origin_sentence'  # maps to which sentence token comes from
+            elif 'entity1_begin' in col:
+                new_cols[col] = f'{new_base_name}_entity1_begin'  # maps to which sentence token comes from
+            elif 'entity2_begin' in col:
+                new_cols[col] = f'{new_base_name}_entity2_begin'  # maps to which sentence token comes from
+            elif 'entity1_end' in col:
+                new_cols[col] = f'{new_base_name}_entity1_end'  # maps to which sentence token comes from
+            elif 'entity2_end' in col:
+                new_cols[col] = f'{new_base_name}_entity2_end'  # maps to which sentence token comes from
+            elif 'confidence' in col:
+                new_cols[col] = f'{new_base_name}_confidence'  # maps to which sentence token comes from
+            elif 'entity1' in col:
+                new_cols[col] = f'{new_base_name}_entity1_class'  # maps to which sentence token comes from
+            elif 'entity2' in col:
+                new_cols[col] = f'{new_base_name}_entity2_class'  # maps to which sentence token comes from
+            elif 'chunk1' in col:
+                new_cols[col] = f'{new_base_name}_entity1'  # maps to which sentence token comes from
+            elif 'chunk2' in col:
+                new_cols[col] = f'{new_base_name}_entity2'  # maps to which sentence token comes from
+            else:
+                logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
     return new_cols
-
-
 
 
 def substitute_chunk_mapper_cols(c, cols, nlu_identifier=True):
@@ -199,24 +264,32 @@ def substitute_chunk_mapper_cols(c, cols, nlu_identifier=True):
 
     """
     new_cols = {}
-    new_base_name = f'mapped_entity' if nlu_identifier=='UNIQUE' else f'mapped_entity_{nlu_identifier}'
-    for col in cols :
-        if '_results'      in col     : new_cols[col]  = f'{new_base_name}' # resolved code
-        elif '_beginnings' in col     : new_cols[col]  = f'{new_base_name}_begin'
-        elif '_endings'    in col     : new_cols[col]  = f'{new_base_name}_end'
-        elif '_types'      in col     : continue # new_cols[col] = f'{new_base_name}_type'
-        elif '_embeddings' in col     : continue # omit , no data
+    new_base_name = f'mapped_entity' if nlu_identifier == 'UNIQUE' else f'mapped_entity_{nlu_identifier}'
+    for col in cols:
+        if '_results' in col:
+            new_cols[col] = f'{new_base_name}'  # resolved code
+        elif '_beginnings' in col:
+            new_cols[col] = f'{new_base_name}_begin'
+        elif '_endings' in col:
+            new_cols[col] = f'{new_base_name}_end'
+        elif '_types' in col:
+            continue  # new_cols[col] = f'{new_base_name}_type'
+        elif '_embeddings' in col:
+            continue  # omit , no data
         elif 'meta' in col:
-            if   '_sentence'       in col  : new_cols[col] = f'{new_base_name}_origin_sentence_id'  # maps to which sentence token comes from
-            elif   'chunk_relation' in col  : new_cols[col] = f'{new_base_name}_relation_type'  # maps to which sentence token comes from
-            elif   'chunk_chunk' in col  : new_cols[col] = f'{new_base_name}_origin_entity_id'  # maps to which sentence token comes from
-            elif   'all_relations' in col  : new_cols[col] = f'{new_base_name}_all_relations'  # maps to which sentence token comes from
-            elif   'entity' in col  : new_cols[col] = f'{new_base_name}_origin_ent ity'  # maps to which sentence token comes from
-            else : logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
+            if '_sentence' in col:
+                new_cols[col] = f'{new_base_name}_origin_sentence_id'  # maps to which sentence token comes from
+            elif 'chunk_relation' in col:
+                new_cols[col] = f'{new_base_name}_relation_type'  # maps to which sentence token comes from
+            elif 'chunk_chunk' in col:
+                new_cols[col] = f'{new_base_name}_origin_entity_id'  # maps to which sentence token comes from
+            elif 'all_relations' in col:
+                new_cols[col] = f'{new_base_name}_all_relations'  # maps to which sentence token comes from
+            elif 'entity' in col:
+                new_cols[col] = f'{new_base_name}_origin_ent ity'  # maps to which sentence token comes from
+            else:
+                logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
     return new_cols
-
-
-
 
 
 def substitute_drug_normalizer_cols(c, cols, is_unique=True):
@@ -229,19 +302,25 @@ def substitute_drug_normalizer_cols(c, cols, is_unique=True):
         - entities@<storage_ref>_confidence
     """
     new_cols = {}
-    new_base_name = 'drug_norm'# if is_unique else f'document_{nlu_identifier}'
-    for col in cols :
-        if '_results'    in col     : new_cols[col] = new_base_name
-        elif '_beginnings' in col     : new_cols[col] = f'{new_base_name}_begin'
-        elif '_endings'    in col     : new_cols[col] = f'{new_base_name}_end'
-        elif '_embeddings' in col     : continue # irrelevant  new_cols[col] = f'{new_base_name}_embedding'
-        elif '_types'      in col     : continue # new_cols[col] = f'{new_base_name}_type'
+    new_base_name = 'drug_norm'  # if is_unique else f'document_{nlu_identifier}'
+    for col in cols:
+        if '_results' in col:
+            new_cols[col] = new_base_name
+        elif '_beginnings' in col:
+            new_cols[col] = f'{new_base_name}_begin'
+        elif '_endings' in col:
+            new_cols[col] = f'{new_base_name}_end'
+        elif '_embeddings' in col:
+            continue  # irrelevant  new_cols[col] = f'{new_base_name}_embedding'
+        elif '_types' in col:
+            continue  # new_cols[col] = f'{new_base_name}_type'
         elif 'meta' in col:
-            if   '_sentence'       in col  : new_cols[col] = f'{new_base_name}_origin_sentence'  # maps to which sentence token comes from
-            else : logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
+            if '_sentence' in col:
+                new_cols[col] = f'{new_base_name}_origin_sentence'  # maps to which sentence token comes from
+            else:
+                logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
             # new_cols[col]= f"{new_base_name}_confidence"
     return new_cols
-
 
 
 def substitute_context_parser_cols(c, cols, is_unique=True):
@@ -254,22 +333,33 @@ def substitute_context_parser_cols(c, cols, is_unique=True):
         - entities@<storage_ref>_confidence
     """
     new_cols = {}
-    new_base_name = 'context_match'# if is_unique else f'document_{nlu_identifier}'
-    for col in cols :
-        if '_results'    in col     : new_cols[col] = new_base_name
-        elif '_beginnings' in col     : new_cols[col] = f'{new_base_name}_begin'
-        elif '_endings'    in col     : new_cols[col] = f'{new_base_name}_end'
-        elif '_embeddings' in col     : continue # irrelevant  new_cols[col] = f'{new_base_name}_embedding'
-        elif '_types'      in col     : continue # new_cols[col] = f'{new_base_name}_type'
+    new_base_name = 'context_match'  # if is_unique else f'document_{nlu_identifier}'
+    for col in cols:
+        if '_results' in col:
+            new_cols[col] = new_base_name
+        elif '_beginnings' in col:
+            new_cols[col] = f'{new_base_name}_begin'
+        elif '_endings' in col:
+            new_cols[col] = f'{new_base_name}_end'
+        elif '_embeddings' in col:
+            continue  # irrelevant  new_cols[col] = f'{new_base_name}_embedding'
+        elif '_types' in col:
+            continue  # new_cols[col] = f'{new_base_name}_type'
         elif 'meta' in col:
-            if   '_sentence'       in col  : new_cols[col] = f'{new_base_name}_origin_sentence'  # maps to which sentence token comes from
-            elif   'field'       in col  : new_cols[col] = f'{new_base_name}_field'  # maps to which sentence token comes from
-            elif   'normalized'       in col  : new_cols[col] = f'{new_base_name}_normalized'  # maps to which sentence token comes from
-            elif   'confidenceValue'       in col  : new_cols[col] = f'{new_base_name}_confidence'  # maps to which sentence token comes from
-            elif   'hits'       in col  : new_cols[col] = f'{new_base_name}_hits'  # maps to which sentence token comes from
+            if '_sentence' in col:
+                new_cols[col] = f'{new_base_name}_origin_sentence'  # maps to which sentence token comes from
+            elif 'field' in col:
+                new_cols[col] = f'{new_base_name}_field'  # maps to which sentence token comes from
+            elif 'normalized' in col:
+                new_cols[col] = f'{new_base_name}_normalized'  # maps to which sentence token comes from
+            elif 'confidenceValue' in col:
+                new_cols[col] = f'{new_base_name}_confidence'  # maps to which sentence token comes from
+            elif 'hits' in col:
+                new_cols[col] = f'{new_base_name}_hits'  # maps to which sentence token comes from
 
-        else : logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
-            # new_cols[col]= f"{new_base_name}_confidence"
+        else:
+            logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
+        # new_cols[col]= f"{new_base_name}_confidence"
     return new_cols
 
 
@@ -284,18 +374,24 @@ def substitute_generic_classifier_parser_cols(c, cols, is_unique=True, nlu_ident
     """
     new_cols = {}
     new_base_name = 'generic_classifier' if is_unique else f'generic_classification_{nlu_identifier}'
-    for col in cols :
-        if '_results'    in col     : new_cols[col] = new_base_name
-        elif '_beginnings' in col     : new_cols[col] = f'{new_base_name}_begin'
-        elif '_endings'    in col     : new_cols[col] = f'{new_base_name}_end'
-        elif '_embeddings' in col     : continue # irrelevant  new_cols[col] = f'{new_base_name}_embedding'
-        elif '_types'      in col     : continue # new_cols[col] = f'{new_base_name}_type'
+    for col in cols:
+        if '_results' in col:
+            new_cols[col] = new_base_name
+        elif '_beginnings' in col:
+            new_cols[col] = f'{new_base_name}_begin'
+        elif '_endings' in col:
+            new_cols[col] = f'{new_base_name}_end'
+        elif '_embeddings' in col:
+            continue  # irrelevant  new_cols[col] = f'{new_base_name}_embedding'
+        elif '_types' in col:
+            continue  # new_cols[col] = f'{new_base_name}_type'
         elif 'meta' in col:
-            if   '_sentence'       in col  : new_cols[col] = f'{new_base_name}_origin_sentence'  # maps to which sentence token comes from
-            elif   'confidence'       in col  : new_cols[col] = f'{new_base_name}_confidence'  # maps to which sentence token comes from
+            if '_sentence' in col:
+                new_cols[col] = f'{new_base_name}_origin_sentence'  # maps to which sentence token comes from
+            elif 'confidence' in col:
+                new_cols[col] = f'{new_base_name}_confidence'  # maps to which sentence token comes from
 
-        else : logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
+        else:
+            logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
         # new_cols[col]= f"{new_base_name}_confidence"
     return new_cols
-
-
