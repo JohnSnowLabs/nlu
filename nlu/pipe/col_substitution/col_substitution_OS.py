@@ -283,7 +283,7 @@ def substitute_word_embed_cols(c, cols, nlu_identifier=True):
     Substitute col name for Word Embeddings. For Word_Embeddings, some name will be infered, and word_embedding_<name> will become the base name schema
     """
     new_cols = {}
-    new_base_name = f'word_embedding_{nlu_identifier}'  # if nlu_identifier else f'document_{nlu_identifier}'
+    new_base_name = f'word_embedding_{nlu_identifier}' if 'word_embedding_'  not in nlu_identifier else nlu_identifier# if nlu_identifier else f'document_{nlu_identifier}'
     for col in cols:
         if '_results' in col:
             continue  # new_cols[col] = new_base_name can be omitted for word_embeddings, maps to the origin token, which will be in the tokenizer col anyways
@@ -352,7 +352,7 @@ def substitute_chunk_embed_cols(c, cols, nlu_identifier=True):
     Substitute col name for chunk Embeddings. For Word_Embeddings, some name will be infered, and chunk_embedding_<name> will become the base name schema
     """
     new_cols = {}
-    new_base_name = f'chunk_embedding_{nlu_identifier}'  # if nlu_identifier else f'document_{nlu_identifier}'
+    new_base_name = f'chunk_embedding_{nlu_identifier}' if'chunk_embedding_' not in nlu_identifier else nlu_identifier  # if nlu_identifier else f'document_{nlu_identifier}'
     for col in cols:
         if '_results' in col:
             continue  # new_cols[col] = new_base_name can be omitted for chunk_embeddings, maps to the origin chunk, which will be in the tokenizer col anyways

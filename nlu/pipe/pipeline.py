@@ -242,6 +242,9 @@ class NLUPipeline(dict):
                 anno_2_ex_config[c.spark_output_column_names[0]].pop_result_list = True
             if positions:
                 anno_2_ex_config[c.spark_output_column_names[0]].get_positions = True
+                anno_2_ex_config[c.spark_output_column_names[0]].get_begin = True
+                anno_2_ex_config[c.spark_output_column_names[0]].get_end = True
+
             else:
                 anno_2_ex_config[c.spark_output_column_names[0]].get_begin = False
                 anno_2_ex_config[c.spark_output_column_names[0]].get_end = False

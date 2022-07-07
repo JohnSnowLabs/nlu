@@ -76,6 +76,7 @@ token -> Token index
             elif 'all_k_sorensen_distances' in col  : new_cols[col] = f'{new_base_name}_k_sorensen_distances'
             elif 'all_k_jaro_distances' in col  : new_cols[col] = f'{new_base_name}_k_jaro_distances'
             elif 'all_k_levenshtein_distances' in col  : new_cols[col] = f'{new_base_name}_k_levenshtein_distances'
+            elif 'all_k_codes' in col  : new_cols[col] = f'{new_base_name}_k_codes'
             elif '_k_' in col  : new_cols[col] = f'{new_base_name}_{col}'
             elif 'billable' in col  : new_cols[col] = f'{new_base_name}_billable'
             elif 'hcc_status' in col  : new_cols[col] = f'{new_base_name}_hcc_status'
