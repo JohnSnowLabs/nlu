@@ -214,8 +214,10 @@ def get_nlu_pipe_for_nlp_pipe(pipe: Union[Pipeline, LightPipeline, PipelineModel
         pipe = get_component_list_for_iterable_stages(pipe, is_pre_configured=is_pre_configured)
     elif isinstance(pipe, Pipeline):
         pipe = get_component_list_for_iterable_stages(pipe.getStages(), is_pre_configured=is_pre_configured)
-    elif isinstance(pipe, (LightPipeline, PipelineModel)):
+    elif isinstance(pipe, LightPipeline):
         pipe = get_component_list_for_iterable_stages(pipe.pipeline_model.stages, is_pre_configured=is_pre_configured)
+    elif isinstance(pipe, PipelineModel):
+        pipe = get_component_list_for_iterable_stages(pipe.stages, is_pre_configured=is_pre_configured)
     else:
         raise ValueError(
             f'Invalid Pipe-Like class {type(pipe)} supported types: Pipeline,LightPipeline,PipelineModel,List')
