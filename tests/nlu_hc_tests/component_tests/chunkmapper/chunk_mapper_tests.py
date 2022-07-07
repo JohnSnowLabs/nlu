@@ -40,12 +40,14 @@ class ChunkMapperTestCase(unittest.TestCase):
         for c in res.columns:
              print(res[c])
 
-    # def test_chunk_mapper_with_resolver(self):
-    #     data = ['Sinequan 150 MG', 'Zonalon 50 mg']
-    #     p = nlu.load('en.resolve.rxnorm.augmented_re en.map_entity.rxnorm_to_action_treatment')
-    #     res = p.predict(data)
-    #     for c in res.columns:
-    #         print(res[c])
+    def test_chunk_mapper_with_resolver(self):
+        # TODO need feature subsitution logic or inheritance
+        pass
+        # data = ['Sinequan 150 MG', 'Zonalon 50 mg']
+        # p = nlu.load('en.resolve.rxnorm.augmented_re en.map_entity.rxnorm_to_action_treatment')
+        # res = p.predict(data)
+        # for c in res.columns:
+        #     print(res[c])
 
     def test_all_chunk_mapper_pipes(self):
         text = """The patient is a 71-year-old female patient of Dr. X. and she was given Aklis, Dermovate, Aacidexam and Paracetamol."""
