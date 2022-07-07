@@ -113,7 +113,7 @@ def unpack_HPO_codes(row, k):
             if not OMIM_ok:
                 OMIM_CODES.append(None)
     return UMLS_codes, ORPHA_CODES, MSH_CODES, SNOMED_CODES, OMIM_CODES,
-            # Write into dict
+    # Write into dict
 
 
 def extract_resolver_all_k_subfields_splitted(row, configs):
@@ -176,3 +176,19 @@ unpacked[2]
             # Any other metadata field hadling
             res[k] = row[k]
     return res
+
+
+def extract_chunk_mapper_relation_data(row, configs):
+    ''' Splits all_relations field on ::: to create an array ,
+
+
+    uses row.relation as prefix
+
+
+    '''
+
+    prefix = 'meta_' + configs.output_col_prefix + '_'
+    for k in row.keys():
+        if 'chunk_all_relations' in k:
+            row[k] = [s.split(':::') for s in row[k]]
+    return row

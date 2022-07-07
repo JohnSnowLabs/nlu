@@ -87,6 +87,8 @@ class PipelineQueryVerifier:
         """Extract provided features from component_list, which have no storage ref"""
         provided_features_no_ref = []
         for c in pipe.components:
+            if c.loaded_from_pretrained_pipe:
+                continue
             for feat in c.in_types:
                 if 'embed' not in feat: provided_features_no_ref.append(feat)
         return ComponentUtils.clean_irrelevant_features(provided_features_no_ref)
@@ -119,6 +121,9 @@ class PipelineQueryVerifier:
         """Extract provided features from component_list, which have  storage ref"""
         provided_features_ref = []
         for c in pipe.components:
+            if c.loaded_from_pretrained_pipe:
+                continue
+
             for feat in c.in_types:
                 if 'embed' in feat:
                     # if StorageRefUtils.extract_storage_ref(os_components) !='':  # special edge case, some components might not have a storage ref set

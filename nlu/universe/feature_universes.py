@@ -111,5 +111,6 @@ class NLP_HC_FEATURES(JslFeature):
     ASSERTION = JslFeature('assertion')
     RESOLVED_ENTITY = JslFeature('resolved_entity')
     FEATURE_VECTOR = JslFeature('feature_vector')
+    MAPPED_CHUNK = JslFeature('mapped_chunk')
     DISAMBIGUATION = JslFeature('disambiguation')
     RELATION = JslFeature('relation')

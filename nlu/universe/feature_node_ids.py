@@ -166,6 +166,8 @@ class NLP_HC_NODE_IDS:  # or Mode Node?
     TRAINABLE_RELATION_EXTRACTION = JslAnnoId('trainable_relation_extraction')
     ZERO_SHOT_RELATION_EXTRACTION = JslAnnoId('zero_shot_relation_extraction')
     RELATION_EXTRACTION_DL = JslAnnoId('relation_extraction_dl')
+    CHUNK_MAPPER_MODEL = JslAnnoId('chunk_mapper_model')
+
     # TRAINABLE_RELATION_EXTRACTION_DL = JslAnnoId('trainable_relation_extraction_dl')
     SENTENCE_ENTITY_RESOLVER = JslAnnoId('sentence_entity_resolver')
     TRAINABLE_SENTENCE_ENTITY_RESOLVER = JslAnnoId('trainable_sentence_entity_resolver')

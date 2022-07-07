@@ -1,0 +1,25 @@
+{
+  "name": "contextual_parser",
+  "description": "todo",
+  "output_level": "chunk",
+  "trainable": false,
+  "outputs": [
+    "parsed_context"
+  ],
+  "inputs": [
+    "document",
+    "token"
+  ],
+  "type": "chunker",
+  "spark_input_column_names": [
+    "document",
+    "token"
+  ],
+  "spark_output_column_names": [
+    "parsed_context"
+  ],
+  "provider": "sparknlp",
+  "license": "licensed",
+  "computation_context": "spark",
+  "output_context": "spark"
+}

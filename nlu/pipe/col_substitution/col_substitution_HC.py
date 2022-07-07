@@ -227,6 +227,47 @@ def substitute_relation_cols(c, cols, nlu_identifier=True):
     return new_cols
 
 
+
+
+def substitute_chunk_mapper_cols(c, cols, nlu_identifier=True):
+    """
+    Substitute col name for de-identification. For de-identification, some name will be infered, and de_identified_<sub_field> defines the base name schema
+    de_identify should always be unique
+
+              metadata = Map(
+                "entity1" -> relation.entity1,
+                "entity2" -> relation.entity2,
+                "entity1_begin" -> relation.entity1_begin.toString,
+                "entity1_end" -> relation.entity1_end.toString,
+                "entity2_begin" -> relation.entity2_begin.toString,
+                "entity2_end" -> relation.entity2_end.toString,
+                "chunk1" -> relation.chunk1,
+                "chunk2" -> relation.chunk2,
+                "confidence" -> result._2.toString
+              ),
+
+    """
+    new_cols = {}
+    new_base_name = f'mapped_entity' if nlu_identifier=='UNIQUE' else f'mapped_entity_{nlu_identifier}'
+    for col in cols :
+        if '_results'      in col     : new_cols[col]  = f'{new_base_name}' # resolved code
+        elif '_beginnings' in col     : new_cols[col]  = f'{new_base_name}_begin'
+        elif '_endings'    in col     : new_cols[col]  = f'{new_base_name}_end'
+        elif '_types'      in col     : continue # new_cols[col] = f'{new_base_name}_type'
+        elif '_embeddings' in col     : continue # omit , no data
+        elif 'meta' in col:
+            if   '_sentence'       in col  : new_cols[col] = f'{new_base_name}_origin_sentence_id'  # maps to which sentence token comes from
+            elif   'chunk_relation' in col  : new_cols[col] = f'{new_base_name}_relation_type'  # maps to which sentence token comes from
+            elif   'chunk_chunk' in col  : new_cols[col] = f'{new_base_name}_origin_entity_id'  # maps to which sentence token comes from
+            elif   'all_relations' in col  : new_cols[col] = f'{new_base_name}_all_relations'  # maps to which sentence token comes from
+            elif   'entity' in col  : new_cols[col] = f'{new_base_name}_origin_ent ity'  # maps to which sentence token comes from
+            else : logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
+    return new_cols
+
+
+
+
+
 def substitute_drug_normalizer_cols(c, cols, is_unique=True):
     """
     Drug Norm is always unique

@@ -56,6 +56,7 @@ class NLUPipeline(dict):
         self.estimator_pipe = None
         self.light_transformer_pipe = None
         self.has_licensed_components = False
+        self.prefer_light = False
 
     def add(self, component: NluComponent, nlu_reference=None, pretrained_pipe_component=False,
             name_to_add='', idx=None):
@@ -267,7 +268,7 @@ class NLUPipeline(dict):
            Can process Spark DF output from Vanilla pipes and Pandas Converts outputs of Lightpipeline
            """
         # Light pipe, does not fetch emebddings
-        if light_pipe_enabled and not get_embeddings and not isinstance(pdf, pyspark.sql.dataframe.DataFrame):
+        if light_pipe_enabled and not get_embeddings and not isinstance(pdf, pyspark.sql.dataframe.DataFrame) or  self.prefer_light:
             return apply_extractors_and_merge(extract_light_pipe_rows(pdf),
                                               anno_2_ex_config, keep_stranger_features, stranger_features)
 

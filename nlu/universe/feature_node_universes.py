@@ -143,7 +143,7 @@ class NLP_FEATURE_NODES:  # or Mode Node?
         A.YAKE_KEYWORD_EXTRACTION: NlpFeatureNode(A.YAKE_KEYWORD_EXTRACTION, [F.TOKEN], [F.CHUNK]),
         A.ALBERT_EMBEDDINGS: NlpFeatureNode(A.ALBERT_EMBEDDINGS, [F.DOCUMENT, F.TOKEN], [F.WORD_EMBEDDINGS]),
         A.DEBERTA_FOR_TOKEN_CLASSIFICATION: NlpFeatureNode(A.DEBERTA_FOR_TOKEN_CLASSIFICATION, [F.DOCUMENT, F.TOKEN],
-                                                              [F.TOKEN_CLASSIFICATION]),
+                                                           [F.TOKEN_CLASSIFICATION]),
         A.ALBERT_FOR_TOKEN_CLASSIFICATION: NlpFeatureNode(A.ALBERT_FOR_TOKEN_CLASSIFICATION, [F.DOCUMENT, F.TOKEN],
                                                           [F.TOKEN_CLASSIFICATION]),
         A.BERT_EMBEDDINGS: NlpFeatureNode(A.BERT_EMBEDDINGS, [F.DOCUMENT, F.TOKEN], [F.WORD_EMBEDDINGS]),
@@ -225,8 +225,7 @@ class OCR_FEATURE_NODES:
         A.VISUAL_DOCUMENT_CLASSIFIER: OcrFeatureNode(A.VISUAL_DOCUMENT_CLASSIFIER, [F.HOCR],
                                                      [F.VISUAL_CLASSIFIER_PREDICTION, F.VISUAL_CLASSIFIER_CONFIDENCE]),
 
-        A.IMAGE2HOCR: OcrFeatureNode(A.IMAGE2HOCR, [F.OCR_IMAGE],[F.HOCR]),
-
+        A.IMAGE2HOCR: OcrFeatureNode(A.IMAGE2HOCR, [F.OCR_IMAGE], [F.HOCR]),
 
         # VISUAL_DOCUMENT_NER : OcrFeatureNode(A.VISUAL_DOCUMENT_NER, [OcrFeature.HOCR, OcrFeature.FILE_PATH], [NlpFeature.NER_Annotation]), # TODO NlpFeature Space!
 
@@ -292,7 +291,6 @@ class OCR_FEATURE_NODES:
         A.IMAGE2TEXT: OcrFeatureNode(A.IMAGE2TEXT, [F.OCR_IMAGE], [F.TEXT, F.OCR_POSITIONS]),
         A.IMAGE2TEXTPDF: OcrFeatureNode(A.IMAGE2TEXTPDF, [F.OCR_IMAGE, F.FILE_PATH, F.PAGE_NUM], [F.BINARY_PDF]),
 
-
         # TODO is ouput HOCR format as in HOCR_DOCUMENT_ASSAMBLER???
         A.IMAGE_BRANDS2TEXT: OcrFeatureNode(A.IMAGE_BRANDS2TEXT, [F.OCR_IMAGE], [F.OCR_POSITIONS, F.TEXT,
                                                                                  F.OCR_IMAGE]),
@@ -323,6 +321,10 @@ class NLP_HC_FEATURE_NODES():
     H_F = NLP_HC_FEATURES
     # HC Feature Nodes
     nodes = {
+
+        A.CHUNK_MAPPER_MODEL: NlpHcFeatureNode(A.CHUNK_MAPPER_MODEL, [F.NAMED_ENTITY_CONVERTED],
+                                               [H_F.MAPPED_CHUNK]),
+
         A.ASSERTION_DL: NlpHcFeatureNode(A.ASSERTION_DL, [F.DOCUMENT, F.NAMED_ENTITY_CONVERTED, F.WORD_EMBEDDINGS],
                                          [H_F.ASSERTION]),
         A.TRAINABLE_ASSERTION_DL: NlpHcFeatureNode(A.TRAINABLE_ASSERTION_DL,
@@ -375,10 +377,8 @@ class NLP_HC_FEATURE_NODES():
                                                 [H_F.RELATION]),
 
         A.ZERO_SHOT_RELATION_EXTRACTION: NlpHcFeatureNode(A.ZERO_SHOT_RELATION_EXTRACTION,
-                                                [F.NAMED_ENTITY_CONVERTED, F.DOCUMENT,],
-                                                [H_F.RELATION]),
-
-
+                                                          [F.NAMED_ENTITY_CONVERTED, F.DOCUMENT, ],
+                                                          [H_F.RELATION]),
 
         A.TRAINABLE_RELATION_EXTRACTION: NlpHcFeatureNode(A.TRAINABLE_RELATION_EXTRACTION,
                                                           [F.NAMED_ENTITY_CONVERTED, F.WORD_EMBEDDINGS, F.POS,

@@ -27,7 +27,7 @@ name_deductable_HC=[
     NerOverwriter,
     ContextualParserModel, # todo
     ContextualParserApproach,
-
+ChunkMapperModel
 
 ]
 
