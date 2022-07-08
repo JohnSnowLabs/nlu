@@ -275,15 +275,15 @@ class Spellbook:
 
         },
         'fa': {
-            'fa.ner.dl': '	recognize_entities_dl',
+            'fa.ner.dl': '  recognize_entities_dl',
         },
         'he': {
-            'he.explain_document': '	explain_document_lg',
-            'he.explain_document.lg': '	explain_document_lg',
+            'he.explain_document': '    explain_document_lg',
+            'he.explain_document.lg': ' explain_document_lg',
         },
         'ko': {
-            'ko.explain_document': '	explain_document_lg',
-            'ko.explain_document.lg': '	explain_document_lg',
+            'ko.explain_document': '    explain_document_lg',
+            'ko.explain_document.lg': ' explain_document_lg',
 
         },
         'sv': {
@@ -2360,6 +2360,7 @@ class Spellbook:
                                            'es.embed.RuPERTa_base': 'roberta_embeddings_RuPERTa_base',
                                            'es.embed.alberti_bert_base_multilingual_cased': 'bert_embeddings_alberti_bert_base_multilingual_cased',
                                            'es.embed.bert.base_cased': 'bert_base_cased',
+                                           'es.embed.scielo300':'embeddings_scielo_300d',
                                            'es.embed.bert.base_uncased': 'bert_base_uncased',
                                            'es.embed.bert_base_5lang_cased': 'bert_embeddings_bert_base_5lang_cased',
                                            'es.embed.bert_base_es_cased': 'bert_embeddings_bert_base_es_cased',
@@ -2917,6 +2918,7 @@ class Spellbook:
                                     'qu': {'qu.embed.w2v_cc_300d': 'w2v_cc_300d'},
                                     'rm': {'rm.embed.w2v_cc_300d': 'w2v_cc_300d'},
                                     'ro': {'ro.embed.ALR_BERT': 'albert_embeddings_ALR_BERT',
+                                            'ro.embed.bert.base_cased': 'bert_base_cased',
                                            'ro.embed.distilbert_base_cased': 'distilbert_embeddings_distilbert_base_ro_cased',
                                            'ro.embed.w2v_cc_300d': 'w2v_cc_300d',
                                            'ro.lemma': 'lemma_spacylookup',
@@ -4618,6 +4620,9 @@ class Spellbook:
         'fr': {
             'fr.med_ner.deid_generic': 'ner_deid_generic',
             'fr.med_ner.deid_subentity': 'ner_deid_subentity',
+            #4.0.0
+            'fr.med_ner.living_species':'ner_living_species',
+            'fr.med_ner.bert_living_species':'ner_living_species_bert'
 
         },
         'it':
@@ -4625,10 +4630,25 @@ class Spellbook:
                 'it.med_ner.deid_generic': 'ner_deid_generic',
                 'it.med_ner.deid_subentity': 'ner_deid_subentity',
 
+                #4.0.0
+                'it.med_ner.bert_living_species':'bert_token_classifier_ner_living_species',
+                'it.med_ner.living_species_bert':'ner_living_species_bert',
+                'it.med_ner.living_species':'ner_living_species'
+
             },
         'en':
             {
 
+
+                #4.0.0
+
+                'en.med_ner.clinical_trials_abstracts':'ner_clinical_trials_abstracts',
+                'en.med_ner.bert_clinical_trials_abstracts':'bert_token_classifier_ner_clinical_trials_abstracts',
+                'en.med_ner.pathogen':'ner_pathogen',
+                'en.med_ner.bert_living_species':'bert_token_classifier_ner_living_species',
+                'en.med_ner.living_species':'ner_living_species',
+                'en.med_ner.biobert_living_species':'ner_living_species_biobert',
+                'en.classify.bert_stress':'bert_sequence_classifier_stress',
                 # 3.4.3
                 'en.relation.zeroshot_biobert': 're_zeroshot_biobert',
 
@@ -4993,6 +5013,15 @@ class Spellbook:
             },
 
         'es': {
+
+            #4.0.0
+            'es.med_ner.bert_living_species':'bert_token_classifier_ner_living_species',
+            'es.med_ner.living_species_bert':'ner_living_species_bert',
+            'es.med_ner.living_species_roberta':'ner_living_species_roberta',
+            'es.med_ner.living_species_300':'ner_living_species_300',
+            'es.med_ner.living_species':'ner_living_species',
+            'es.embed.scielo300':'embeddings_scielo_300d',
+
             # 3.4.2
             'es.med_ner.deid.generic.roberta': 'ner_deid_generic_roberta_augmented',
             'es.med_ner.deid.subentity.roberta': 'ner_deid_subentity_roberta_augmented',
@@ -5003,7 +5032,6 @@ class Spellbook:
             'es.med_ner.deid.subentity': 'ner_deid_subentity',
 
             'es.embed.scielo.150d': 'embeddings_scielo_150d',
-            'es.embed.scielo.300d': 'embeddings_scielo_300d',
             'es.embed.scielo.50d': 'embeddings_scielo_50d',
             'es.embed.scielowiki.150d': 'embeddings_scielowiki_150d',
             'es.embed.scielowiki.300d': 'embeddings_scielowiki_300d',
@@ -5024,6 +5052,29 @@ class Spellbook:
             'pt.med_ner.deid.subentity': 'ner_deid_subentity',
             'pt.med_ner.deid.generic': 'ner_deid_generic',
             'pt.med_ner.deid': 'ner_deid_generic',
+
+            #4.0.0
+            'pt.med_ner.token_bert_living_species':'bert_token_classifier_ner_living_species',
+            'pt.med_ner.living_species':'ner_living_species',
+            'pt.med_ner.living_species_roberta':'ner_living_species_roberta',
+            'pt.med_ner.bert_living_species':'ner_living_species_bert'
+        },
+        'ro':{
+        #4.0.0
+        'ro.med_ner.bert_living_species':'ner_living_species_bert',
+        'ro.med_ner.clinical':'ner_clinical',
+        'ro.med_ner.clinical_bert':'ner_clinical_bert',
+        'ro.med_ner.deid.subentity':'ner_deid_subentity',
+        'ro.med_ner.deid.subentity.bert':'ner_deid_subentity_bert'
+
+        },
+        'gl':{
+        #4.0.0
+        'gl.med_ner.living_species':'ner_living_species'
+        },
+        'ca':{
+        #4.0.0
+        'ca.med_ner.living_species':'ner_living_species'
 
         }
     }
@@ -5180,6 +5231,8 @@ class Spellbook:
             'es.ner': 'roberta_token_classifier_bne_capitel_ner',
             'glove_840B_300': 'xx.embed.glove.840B_300',
             'glove_6B_300': 'xx.embed.glove.6B_300',
+            'embeddings_scielo300':'es.embed.scielo300',
+            'w2v_cc_300d_es':'es.embed.w2v_cc_300d',
 
         },
 
@@ -5235,6 +5288,8 @@ class Spellbook:
             'embeddings_wiki300': 'es.embed.sciwiki_300d',
             'ROBERTA_EMBEDDINGS_39f3e48e5c3f': 'es.embed.roberta_base_biomedical',
             'clinical': 'es.embed.roberta_base_biomedical',
+            'bert_base_cased_es': 'es.embed.bert.base_cased',
+            'embeddings_scielo300':'es.embed.scielo300',
             # 'clinical' : 'es.embed.roberta_base_biomedical',
 
         },
@@ -5244,17 +5299,33 @@ class Spellbook:
         },
         'fr': {
             'WordEmbeddings_b266d1e5126a': 'fr.embed.w2v_cc_300d',
+            'bert_embeddings_bert_base_fr_cased_fr':'fr.embed.bert_base_fr_cased'
 
         },
         'it': {
-            'w2v_cc_300d_it': 'it.embed.word2vec'
+            'w2v_cc_300d_it': 'it.embed.word2vec',
+            'bert_embeddings_bert_base_italian_xxl_cased_it':'it.embed.bert_base_italian_xxl_cased',
 
         },
 
         'pt': {
-            'w2v_cc_300d_pt': 'pt.embed.w2v_cc_300d'
+            'w2v_cc_300d_pt': 'pt.embed.w2v_cc_300d',
+            'biobert_embeddings_biomedical_pt':'pt.embed.gs_biomedical',
+            'roberta_embeddings_BR_BERTo_pt':'pt.embed.BR_BERTo'
 
         },
+        'ro':{
+
+        'bert_base_cased_v1':'ro.embed.bert.base_cased',
+        'w2v_cc_300d_ro':'ro.embed.w2v_cc_300d'
+        },
+        'ca':{
+        'w2v_cc_300d_ca':'ca.embed.w2v_cc_300d'
+        },
+
+        'gl':{
+        'w2v_cc_300d_gl':'gl.embed.w2v_cc_300d'
+        }
 
     }
 
@@ -6012,6 +6083,7 @@ class Spellbook:
         'bert_portuguese_large_cased': 'BertEmbeddings',
         'bert_pubmed': 'BertEmbeddings',
         'bert_pubmed_squad2': 'BertEmbeddings',
+        'bert_sequence_classifier_stress':'MedicalBertForSequenceClassification',
         'bert_sequence_classifier_ade': 'MedicalBertForSequenceClassification',
         'bert_sequence_classifier_dehatebert_mono': 'BertForSequenceClassification',
         'bert_sequence_classifier_emotion': 'BertForSequenceClassification',
@@ -6028,6 +6100,8 @@ class Spellbook:
         'bert_token_classifier_drug_development_trials': 'BertForTokenClassification',
         'bert_token_classifier_dutch_udlassy_ner': 'BertForTokenClassification',
         'bert_token_classifier_hi_en_ner': 'BertForTokenClassification',
+        'bert_token_classifier_ner_living_species':'MedicalBertForTokenClassifier',
+        'bert_token_classifier_ner_clinical_trials_abstracts':'MedicalBertForTokenClassifier',
         'bert_token_classifier_ner_ade': 'MedicalBertForTokenClassifier',
         'bert_token_classifier_ner_anatomy': 'MedicalBertForTokenClassifier',
         'bert_token_classifier_ner_bacteria': 'MedicalBertForTokenClassifier',
@@ -6261,6 +6335,16 @@ class Spellbook:
         'multiclassifierdl_use_e2e': 'MultiClassifierDLModel',
         'multiclassifierdl_use_toxic': 'MultiClassifierDLModel',
         'multiclassifierdl_use_toxic_sm': 'MultiClassifierDLModel',
+        'ner_clinical_bert':'MedicalNerModel',
+        'ner_deid_subentity_bert':'MedicalNerModel',
+        'clinical_deidentification':'MedicalNerModel',
+        'ner_living_species_biobert':'MedicalNerModel',
+        'ner_living_species_300':'MedicalNerModel',
+        'ner_living_species':'MedicalNerModel',
+        'ner_living_species_roberta':'MedicalNerModel',
+        'ner_living_species_bert':'MedicalNerModel',
+        'ner_pathogen':'MedicalNerModel',
+        'ner_clinical_trials_abstracts':'MedicalNerModel',
         'ner_abbreviation_clinical': 'MedicalNerModel',
         'ner_ade_biobert': 'MedicalNerModel',
         'ner_ade_clinical': 'MedicalNerModel',
