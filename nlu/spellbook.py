@@ -278,12 +278,12 @@ class Spellbook:
             'fa.ner.dl': '	recognize_entities_dl',
         },
         'he': {
-            'he.explain_document': '	explain_document_lg',
-            'he.explain_document.lg': '	explain_document_lg',
+            'he.explain_document': 'explain_document_lg',
+            'he.explain_document.lg': 'explain_document_lg',
         },
         'ko': {
-            'ko.explain_document': '	explain_document_lg',
-            'ko.explain_document.lg': '	explain_document_lg',
+            'ko.explain_document': 'explain_document_lg',
+            'ko.explain_document.lg': 'explain_document_lg',
 
         },
         'sv': {
