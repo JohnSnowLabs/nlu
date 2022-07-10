@@ -192,3 +192,35 @@ def extract_chunk_mapper_relation_data(row, configs):
         if 'chunk_all_relations' in k:
             row[k] = [s.split(':::') for s in row[k]]
     return row
+
+
+
+def extract_coreference_data(row_metadata,row_results, configs):
+    ''' Splits all_relations field on ::: to create an array ,
+    | Text                                                                    |heads         | Co-References    | Heads_sentence| Coref_sentence| coref_head_begin | coref_head_end|
+    |John told Mary he would like to borrow a book from her, after his lunch  |[John, Marry]  | [he,his], [her] | [0,0]         | [0,0],[0]     | [0,0], [10]      | [3,3], [13]
+
+
+    |Text     | heads  | Co-Refernces
+    | John    | ROOT   |   [he,his]
+    | told    | /      |  /
+    | Marry   |  ROOT | [her]
+    | he      | JOHN  | /
+    | likes   | /     |  /
+    | her     | MARRY |/
+
+
+
+    |ORIGIN_REFERENCE | CO_REFERENCES|
+    | Peter           | he , him, that dude |
+    | Maria           | her, she, the lady |
+
+
+    '''
+    head_to_coref = {}
+    prefix = 'meta_' + configs.output_col_prefix + '_'
+
+    # for (k_meta,v_meta), (k_result,v_result) in zip(row_metadata.items(), row_results.items()):
+    #     if
+
+    raise NotImplemented('Not implemented')

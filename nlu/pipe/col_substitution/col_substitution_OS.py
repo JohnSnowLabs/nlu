@@ -210,6 +210,41 @@ def substitute_transformer_token_classifier_cols(c, cols, nlu_identifier=True):
     return new_cols
 
 
+
+
+def substitute_coref_cols(c, cols, nlu_identifier=True):
+    """
+    |ORIGIN_REFERENCE | CO_REFERENCES|
+    | Peter           | he , him, that dude |
+    | Maria           | her, she, the lady |
+
+    # {'head': 'ROOT', 'head.end': '-1', 'sentence': '0', 'head.sentence': '-1', 'head.begin': '-1'}
+
+    """
+    new_cols = {}
+    new_base_name = 'coref' if nlu_identifier == 'UNIQUE' else f'coref_{nlu_identifier}'
+    for col in cols:
+        if '_result' in col:
+            new_cols[col] = new_base_name
+        elif '_sentence' in col :
+            new_cols[col] = f'{new_base_name}_origin_sentence'
+        elif '_endings' in col:
+            new_cols[col] = f'{new_base_name}_end'
+        elif '_embeddings' in col and 'Some' not in col:
+            continue
+        elif '_types' in col:
+            continue
+        elif 'meta' in col:
+            if 'head.sentence' in col: new_cols[col] = f'{new_base_name}_head_origin_sentence'
+            elif 'head.end' in col: new_cols[col] = f'{new_base_name}_head_end'
+            elif 'head.begin' in col: new_cols[col] = f'{new_base_name}_head_begin'
+            elif '_head' in col: new_cols[col] = f'{new_base_name}_head'
+            else:
+                logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
+            # new_cols[col]= f"{new_base_name}_confidence"
+    return new_cols
+
+
 def substitute_seq_bert_classifier_cols(c, cols, nlu_identifier=True):
     """
     Seq classifier

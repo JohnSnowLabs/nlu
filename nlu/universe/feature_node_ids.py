@@ -108,6 +108,7 @@ class NLP_NODE_IDS:
     DEBERTA_WORD_EMBEDDINGS = JslAnnoId('deberta')
     DEBERTA_FOR_SEQUENCE_CLASSIFICATION = JslAnnoId('deberta_for_sequence_classification')
     DEBERTA_FOR_TOKEN_CLASSIFICATION = JslAnnoId('deberta_for_token_classification')
+    COREF_SPAN_BERT = JslAnnoId('coref_spanbert')
 
 
     TRAINABLE_CONTEXT_SPELL_CHECKER = JslAnnoId('trainable_context_spell_checker')

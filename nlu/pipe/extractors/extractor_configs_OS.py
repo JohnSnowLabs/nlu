@@ -210,9 +210,6 @@ def default_span_classifier_config(output_col_prefix='answer'):
         pop_meta_list=True,
         pop_result_list=True,
 
-        # meta_data_extractor = SparkNLPExtractor(extract_maximum_confidence,
-        #                                         'Instead returning confidence for each class, only return max confidence',
-        #                                         'Max confidence')
 
     )
 
@@ -227,9 +224,7 @@ def default_full_span_classifier_config(output_col_prefix='answer'):
         pop_meta_list=True,
         pop_result_list=True,
         meta_white_list= ['score', 'start_score', 'end_score', 'start','end']
-        # meta_data_extractor = SparkNLPExtractor(extract_maximum_confidence,
-        #                                         'Instead returning confidence for each class, only return max confidence',
-        #                                         'Max confidence')
+
 
     )
 
@@ -354,4 +349,25 @@ def default_doc2chunk_config(output_col_prefix='doc2chunk'):
         name                = 'doc2chunk',
         get_meta            = False,
         description         = 'Converts Doc type col to chunk aka entity type',
+    )
+
+
+
+
+def default_coref_spanbert_config(output_col_prefix='coreferences'):
+    """Extracts YAKE keywords with confidences """
+    return SparkNLPExtractorConfig(
+        output_col_prefix   = output_col_prefix,
+        get_result          = True,
+        name                = 'default_coref_bert',
+        get_meta            = True,
+        get_full_meta= True,
+        meta_white_list     = ['score'],
+        description         = 'Gets all Coreferences',
+
+    #
+    # meta_data_extractor = SparkNLPExtractor(None,extract_coreference_data,
+    #                                         'Extract coreference data',
+    #                                         'Extract coreference data')
+
     )
