@@ -269,7 +269,10 @@ def extract_master(row: pd.Series, configs: SparkNLPExtractorConfig) -> pd.Serie
 
     # Apply custom extractor methods
     if configs.meta_data_extractor.name != '':
-        all_metas = configs.meta_data_extractor.extractor_method(all_metas, configs)
+        if configs.meta_data_extractor.extractor_with_result_method:
+            all_metas = configs.meta_data_extractor.extractor_with_result_method(all_metas, base_annos, configs)
+        else:
+            all_metas = configs.meta_data_extractor.extractor_method(all_metas, configs)
 
     # Apply Finishers on metadata/additional fields
     return pd.Series(

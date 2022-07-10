@@ -655,7 +655,7 @@ class PipeUtils:
             if c.type == AnnoTypes.CHUNK_MAPPER:
                 pipe.prefer_light = True
 
-            if c.license == AnnoTypes.SPAN_CLASSIFIER:
+            if c.type == AnnoTypes.QUESTION_SPAN_CLASSIFIER:
                 pipe.has_span_classifiers = True
 
 

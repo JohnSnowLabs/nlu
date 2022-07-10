@@ -32,12 +32,13 @@ class SparkNLPExtractor:
           Description
     """
     extractor_method: Callable[[List[Dict[str, Any]]], List[Any]] = field(repr=False, default=lambda x: x)
+    extractor_with_result_method: \
+        Optional[Callable[[List[Dict[str, Any]], List[Dict[str, Any]]], List[Any]]] = field(repr=False, default=None)
     description: str = field(default='')
     name: str = field(default='')
 
 
 ## TODO extra config for getting "to which sentence did chunk/x/y/z belong to?"
-## TODO What abotu Parametericed extractor methods, like get_k_confidence for lang classifier??
 @dataclass
 class SparkNLPExtractorConfig:
     """
@@ -128,7 +129,6 @@ class SparkNLPExtractorConfig:
     name: str = field(default='')
 
 
-@dataclass
 class SparkOCRExtractorConfig(SparkNLPExtractorConfig):
     get_text: bool = field(default=False)
     # Image struct fields
