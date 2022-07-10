@@ -3,7 +3,7 @@ import nlu
 import sys
 
 
-class Test344(unittest.TestCase):
+class Test400(unittest.TestCase):
 
     def test_400_HC_models(self):
         import tests.secrets as sct
