@@ -27,8 +27,15 @@ def init_component(component):
         component = component()
     return component
 
+def is_produced_by_multi_output_component(missing_feature_type: Union[NLP_FEATURES, OCR_FEATURES, NLP_HC_FEATURES]):
+    """For these components we resolve to None,
+    because they are already beeign satisfied by another component that outputs multiple features
+    including the ones coverd here """
+    return missing_feature_type == NLP_FEATURES.DOCUMENT_QUESTION_CONTEXT
 
-def resolve_feature(missing_feature_type: Union[NLP_HC_FEATURES, OCR_FEATURES, NLP_HC_FEATURES], language='en',
+
+
+def resolve_feature(missing_feature_type: Union[NLP_FEATURES, OCR_FEATURES, NLP_HC_FEATURES], language='en',
                     is_licensed=False,
                     is_trainable_pipe=False) -> NluComponent:
     '''
@@ -42,6 +49,8 @@ def resolve_feature(missing_feature_type: Union[NLP_HC_FEATURES, OCR_FEATURES, N
     missing_component_type or a default component_to_resolve for that particular type
     '''
     logger.info(f'Getting default for missing_feature_type={missing_feature_type}')
+    if is_produced_by_multi_output_component(missing_feature_type) :
+        return None
     if '@' not in missing_feature_type:
         # Resolve feature which has no storage ref or if storage ref is irrelevant at this point
         if is_licensed and is_trainable_pipe and missing_feature_type in FeatureResolutions.default_HC_train_resolutions.keys():

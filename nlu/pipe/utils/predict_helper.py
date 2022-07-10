@@ -18,7 +18,7 @@ from nlu.pipe.utils.data_conversion_utils import DataConversionUtils
 def __predict_standard_spark(pipe, data, output_level, positions, keep_stranger_features, metadata,
                              drop_irrelevant_cols, return_spark_df, get_embeddings):
     # 1. Convert data to Spark DF
-    data, stranger_features, output_datatype = DataConversionUtils.to_spark_df(data, pipe.spark, pipe.raw_text_column)
+    data, stranger_features, output_datatype = DataConversionUtils.to_spark_df(data, pipe.spark, pipe.raw_text_column, pipe.has_span_classifiers)
 
     # 3. Apply Spark Pipeline
     data = pipe.vanilla_transformer_pipe.transform(data)
@@ -102,7 +102,7 @@ def __predict__(pipe, data, output_level, positions, keep_stranger_features, met
 
     if output_level == '':
         # Default sentence level for all components
-        if pipe.has_nlp_components and not PipeUtils.contains_T5_or_GPT_transformer(pipe):
+        if pipe.has_nlp_components and not PipeUtils.contains_T5_or_GPT_transformer(pipe) and not pipe.has_span_classifiers:
             pipe.component_output_level = 'sentence'
             pipe.components = PipeUtils.configure_component_output_levels(pipe, 'sentence')
     else:

@@ -61,7 +61,17 @@ name_deductable_OS = [
     PerceptronApproach         ,
     Doc2Chunk,
     Chunk2Doc,
-    DeBertaEmbeddings
+    DeBertaEmbeddings,
+    # MultiDocumentAssembler,
+    AlbertForQuestionAnswering,
+    BertForQuestionAnswering,
+    DeBertaForQuestionAnswering,
+    DistilBertForQuestionAnswering,
+    LongformerForQuestionAnswering,
+    RoBertaForQuestionAnswering,
+    XlmRoBertaForQuestionAnswering,
+    # SpanBertCorefModel,
+#
 
 
 ]
@@ -93,8 +103,17 @@ always_name_deductable_OS = [
     XlmRoBertaEmbeddings,
 
     Chunk2Doc,
-    DeBertaEmbeddings
+    DeBertaEmbeddings,
 
+    # MultiDocumentAssembler,
+    # AlbertForQuestionAnswering,
+    # BertForQuestionAnswering,
+    # DeBertaForQuestionAnswering,
+    # DistilBertForQuestionAnswering,
+    # LongformerForQuestionAnswering,
+    # RoBertaForQuestionAnswering,
+    # XlmRoBertaForQuestionAnswering,
+    # # SpanBertCorefModel,
 
 ]
 

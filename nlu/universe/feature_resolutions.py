@@ -25,6 +25,14 @@ class FeatureResolutions:
     # TODO use lang families, i.e. en.tokenize works for all Latin style languages but not Chinese, I.e. not actually multi lingual
 
     default_OS_resolutions = {
+        NLP_FEATURES.DOCUMENT_QUESTION: ResolvedFeature('multi_document_assembler', 'multi_document_assembler', 'xx', False,
+                                               ComponentUniverse.components[NLP_NODE_IDS.MULTI_DOCUMENT_ASSEMBLER]),
+        # NLP_FEATURES.DOCUMENT_QUESTION_CONTEXT: ResolvedFeature('multi_document_assembler', 'multi_document_assembler', 'xx', False,
+        #                                        ComponentUniverse.components[NLP_NODE_IDS.MULTI_DOCUMENT_ASSEMBLER]),
+
+
+
+
         NLP_FEATURES.DOCUMENT: ResolvedFeature('document_assembler', 'document_assembler', 'xx', False,
                                                ComponentUniverse.components[NLP_NODE_IDS.DOCUMENT_ASSEMBLER]),
         NLP_FEATURES.TOKEN: ResolvedFeature('en.tokenize', 'spark_nlp_tokenizer', 'en', False,

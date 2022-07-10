@@ -23,6 +23,19 @@ class NLP_NODE_IDS:
     DOC2VEC = JslAnnoId('doc2vec')
     TRAIANBLE_DOC2VEC = JslAnnoId('trainable_doc2vec')
     DOCUMENT_ASSEMBLER = JslAnnoId('document_assembler')
+    MULTI_DOCUMENT_ASSEMBLER = JslAnnoId('multi_document_assembler')
+
+    ALBERT_FOR_QUESTION_ANSWERING = JslAnnoId('albert_for_question_answering')
+    BERT_FOR_QUESTION_ANSWERING = JslAnnoId('bert_for_question_answering')
+    DE_BERTA_FOR_QUESTION_ANSWERING = JslAnnoId('de_berta_for_question_answering')
+    DISTIL_BERT_FOR_QUESTION_ANSWERING = JslAnnoId('distil_bert_for_question_answering')
+    LONGFORMER_FOR_QUESTION_ANSWERING = JslAnnoId('longformer_for_question_answering')
+    ROBERTA_FOR_QUESTION_ANSWERING = JslAnnoId('roberta_for_question_answering')
+    XLM_ROBERTA_FOR_QUESTION_ANSWERING = JslAnnoId('xlm_roberta_for_question_answering')
+    SPAN_BERT_COREF_MODEL = JslAnnoId('span_bert_coref_model')
+
+
+
     DOCUMENT_NORMALIZER = JslAnnoId('document_normalizer')
     EMBEDDINGS_FINISHER = JslAnnoId('embeddings_finisher')
     ENTITY_RULER = JslAnnoId('entitiy_ruler')

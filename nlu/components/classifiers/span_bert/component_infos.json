@@ -1,25 +1,25 @@
 {
-  "name": "relation_extractor_dl",
+  "name": "seq_distilbert",
+  "output_level": "sentence",
   "description": "todo",
-  "output_level": "relation",
-  "trainable": true,
+  "trainable": false,
   "outputs": [
-    "relation"
+    "category"
   ],
   "inputs": [
-    "entities",
+    "token",
     "sentence"
   ],
-  "type": "asserter",
+  "type": "classifier",
   "spark_input_column_names": [
-    "entities",
+    "token",
     "sentence"
   ],
   "spark_output_column_names": [
-    "relation"
+    "category"
   ],
-  "provider": "sparknlp healthcare",
-  "license": "licensed",
+  "provider": "sparknlp",
+  "license": "open source",
   "computation_context": "spark",
   "output_context": "spark"
 }

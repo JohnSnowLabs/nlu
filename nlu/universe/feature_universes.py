@@ -18,6 +18,15 @@ class NLP_FEATURES(JslFeature):
     DOCUMENT_NORMALIZED = JslFeature("document_normalized")
     DOCUMENT_TRANSLATED = JslFeature("document_translated")
 
+    RAW_QUESTION = JslFeature("question")
+    RAW_QUESTION_CONTEXT = JslFeature("context")
+    DOCUMENT_QUESTION = JslFeature("document_question")
+    DOCUMENT_QUESTION_CONTEXT = JslFeature("document_question_context")
+    CLASSIFIED_SPAN = JslFeature("classified_span")
+
+
+
+
     # GPT, T5, X2IMG (PDF2IMG, IMG2IMG, etc..)
     DOCUMENT_GENERATED = JslFeature("document_generated")
 

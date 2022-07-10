@@ -1,0 +1,25 @@
+{
+  "name": "seq_distilbert",
+  "output_level": "sentence",
+  "description": "todo",
+  "trainable": false,
+  "outputs": [
+    "category"
+  ],
+  "inputs": [
+    "token",
+    "sentence"
+  ],
+  "type": "classifier",
+  "spark_input_column_names": [
+    "token",
+    "sentence"
+  ],
+  "spark_output_column_names": [
+    "category"
+  ],
+  "provider": "sparknlp",
+  "license": "open source",
+  "computation_context": "spark",
+  "output_context": "spark"
+}

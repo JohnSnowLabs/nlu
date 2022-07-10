@@ -53,6 +53,11 @@ class ComponentUtils:
             feature_list.remove('%%%feature_elements%%%')
         if NLP_FEATURES.ANY in feature_list:
             feature_list.remove(NLP_FEATURES.ANY)
+        if NLP_FEATURES.RAW_QUESTION in feature_list:
+            feature_list.remove(NLP_FEATURES.RAW_QUESTION)
+        if NLP_FEATURES.RAW_QUESTION_CONTEXT in feature_list:
+            feature_list.remove(NLP_FEATURES.RAW_QUESTION_CONTEXT)
+
         if OCR_FEATURES.BINARY_IMG in feature_list:
             feature_list.remove(OCR_FEATURES.BINARY_IMG)
         if OCR_FEATURES.FILE_PATH in feature_list:

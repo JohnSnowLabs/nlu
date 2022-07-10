@@ -346,8 +346,9 @@ class PipelineQueryVerifier:
 
             # Add missing components
             for new_component in components_to_add:
-                logger.info(f'adding {new_component.name}')
-                pipe.add(new_component)
+                if  new_component:
+                    logger.info(f'adding {new_component.name}')
+                    pipe.add(new_component)
 
             # For some models we update storage ref to the resovling models storageref.
             # We need to update them so dependencies can properly be deducted as satisfied
