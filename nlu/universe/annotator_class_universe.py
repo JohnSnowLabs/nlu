@@ -13,6 +13,7 @@ class AnnoClassRef:
     HC_A_N = NLP_HC_NODE_IDS
     # Map AnnoID to PyCLass
     JSL_anno2_py_class: Dict[JslAnnoId, JslAnnoPyClass] = {
+        A_N.COREF_SPAN_BERT: 'SpanBertCorefModel',
         A_N.BIG_TEXT_MATCHER: 'BigTextMatcher',
         A_N.CHUNK2DOC: 'Chunk2Doc',
         A_N.CHUNK_EMBEDDINGS_CONVERTER: 'ChunkEmbeddings',
@@ -35,7 +36,6 @@ class AnnoClassRef:
         A_N.LONGFORMER_FOR_QUESTION_ANSWERING : 'LongformerForQuestionAnswering',
         A_N.ROBERTA_FOR_QUESTION_ANSWERING : 'RoBertaForQuestionAnswering',
         A_N.XLM_ROBERTA_FOR_QUESTION_ANSWERING : 'XlmRoBertaForQuestionAnswering',
-        A_N.SPAN_BERT_COREF_MODEL : 'SpanBertCorefModel',
 
 
 

@@ -32,6 +32,8 @@ class NLP_FEATURES(JslFeature):
 
     SENTENCE = JslFeature("sentence")
     TOKEN = JslFeature("token")
+    COREF_TOKEN = JslFeature("coref_token")
+
     TOKEN_CHUNKED = JslFeature("token_chunked")
     TOKEN_SPELL_CHECKED = JslFeature("token_chunked")
     TOKEN_LEMATIZED = JslFeature("token_lemmatized")

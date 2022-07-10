@@ -56,7 +56,8 @@ class NLUPipeline(dict):
         self.estimator_pipe = None
         self.light_transformer_pipe = None
         self.has_licensed_components = False
-        self.has_span_classifiers = True
+        self.has_span_classifiers = False
+        self.prefer_light = False
 
     def add(self, component: NluComponent, nlu_reference=None, pretrained_pipe_component=False,
             name_to_add='', idx=None):
