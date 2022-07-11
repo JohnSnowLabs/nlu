@@ -1,4 +1,4 @@
-__version__ = '3.4.4'
+__version__ = '4.0.0'
 
 import nlu.utils.environment.env_utils as env_utils
 
@@ -44,6 +44,13 @@ def autocomplete_annotator(annotator, lang='en'):
     pipe = PipelineQueryVerifier.check_and_fix_nlu_pipeline(pipe)
     return pipe
 
+def to_pretty_df(nlp_pipe: Union[Pipeline, LightPipeline, PipelineModel, List],data, positions=False,
+                  output_level=None,metadata=False,):
+    #         Annotates a Pandas Dataframe/Pandas Series/Numpy Array/ Python List strings /Python String
+    return to_nlu_pipe(nlp_pipe,True).predict(data, positions=positions,
+                                              output_level=output_level,
+                                              metadata=metadata)
+
 
 def to_nlu_pipe(nlp_pipe: Union[Pipeline, LightPipeline, PipelineModel, List], is_pre_configured=True) -> NLUPipeline:
     """
@@ -59,6 +66,8 @@ def to_nlu_pipe(nlp_pipe: Union[Pipeline, LightPipeline, PipelineModel, List], i
     components = get_nlu_pipe_for_nlp_pipe(nlp_pipe, is_pre_configured)
     for c in components:
         pipe.add(c, is_pre_configured)
+        if c.license == Licenses.hc:
+            pipe.has_licensed_components = True
     return pipe
 
 
@@ -213,7 +222,7 @@ def auth(HEALTHCARE_LICENSE_OR_JSON_PATH='/content/spark_nlp_for_healthcare.json
 
     return nlu
 
-
+# TODO EXPORT
 def load_nlu_pipe_from_hdd(pipe_path, request) -> NLUPipeline:
     """Either there is a pipeline of models in the path or just one singular model_anno_obj.
     If it is a component_list,  load the component_list and return it.
@@ -246,7 +255,7 @@ def load_nlu_pipe_from_hdd(pipe_path, request) -> NLUPipeline:
             f"Could not load model_anno_obj in path {pipe_path}. Make sure the jsl_folder contains either a stages subfolder or a metadata subfolder.")
         raise ValueError
 
-
+# TODO EXPORT
 def get_open_source_spark_context(gpu):
     if is_env_pyspark_2_3():
         return sparknlp.start(spark23=True, gpu=gpu)
@@ -286,7 +295,7 @@ def enable_streamlit_caching():
 #     if hasattr(nlu, 'non_caching_load') : nlu.load = nlu.non_caching_load
 #     else : print("Could not disable caching.")
 
-
+# TODO EXPORT
 def wrap_with_st_cache_if_available_and_set_layout_to_wide(f):
     """Wrap function with ST cache method if streamlit is importable"""
     try:
