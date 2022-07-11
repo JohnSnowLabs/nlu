@@ -218,7 +218,8 @@ class NLUPipeline(dict):
         for c in self.components:
             if c.license == Licenses.ocr:
                 # OCR can output more than 1 col
-                extractors = {col :c.pdf_extractor_methods['default'](output_col_prefix=col) for col in c.spark_output_column_names}
+                extractors = {col: c.pdf_extractor_methods['default'](output_col_prefix=col) for col in
+                              c.spark_output_column_names}
                 anno_2_ex_config.update(extractors)
                 continue
             if 'embedding' in c.type and not get_embeddings:
@@ -271,7 +272,8 @@ class NLUPipeline(dict):
            Can process Spark DF output from Vanilla pipes and Pandas Converts outputs of Lightpipeline
            """
         # Light pipe, does not fetch emebddings
-        if light_pipe_enabled and not get_embeddings and not isinstance(pdf, pyspark.sql.dataframe.DataFrame) or  self.prefer_light:
+        if light_pipe_enabled and not get_embeddings and not isinstance(pdf,
+                                                                        pyspark.sql.dataframe.DataFrame) or self.prefer_light:
             return apply_extractors_and_merge(extract_light_pipe_rows(pdf),
                                               anno_2_ex_config, keep_stranger_features, stranger_features)
 
@@ -325,7 +327,7 @@ class NLUPipeline(dict):
 
         # Processed becomes pandas after applying extractors
         processed = self.unpack_and_apply_extractors(processed, keep_stranger_features, stranger_features,
-                                                      anno_2_ex_config, self.light_pipe_configured, get_embeddings)
+                                                     anno_2_ex_config, self.light_pipe_configured, get_embeddings)
 
         # Get mapping between column_name and pipe_prediction_output_level
         same_level = OutputLevelUtils.get_columns_at_same_level_of_pipe(self, processed, anno_2_ex_config,
@@ -427,6 +429,7 @@ class NLUPipeline(dict):
                 self.light_transformer_pipe = LightPipeline(self.vanilla_transformer_pipe, parse_embeddings=True)
 
     def save(self, path, component='entire_pipeline', overwrite=False):
+        from nlu.utils.environment.env_utils import is_running_in_databricks
         if is_running_in_databricks():
             if path.startswith('/dbfs/') or path.startswith('dbfs/'):
                 nlu_path = path
@@ -446,7 +449,7 @@ class NLUPipeline(dict):
                 self.is_fitted = True
             if component == 'entire_pipeline':
                 self.vanilla_transformer_pipe.save(nlp_path)
-        if overwrite and not nlu.is_running_in_databricks():
+        if overwrite and not is_running_in_databricks():
             import shutil
             shutil.rmtree(path, ignore_errors=True)
         if not self.is_fitted:
@@ -488,6 +491,7 @@ class NLUPipeline(dict):
         :param drop_irrelevant_cols: Whether to drop cols of different output levels, i.e. when predicting token level
                 and drop_irrelevant_cols = True then chunk, sentence and Doc will be dropped
         :param return_spark_df: Prediction results will be returned right after transforming with the Spark NLP pipeline
+                                 This will run fully distributed in on the Spark Master, but not prettify the output dataframe
         :param get_embeddings: Whether to return embeddings or not
         :return:
         '''
