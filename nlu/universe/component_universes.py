@@ -687,23 +687,6 @@ class ComponentUniverse:
                                           output_context=ComputeContexts.spark,
                                           ),
 
-        A.PARTIAL_PosologyREModel: partial(NluComponent,
-                                           name=A.PARTIAL_ChunkMergeApproach,
-                                           jsl_anno_class_id=A.PARTIAL_PosologyREModel,
-                                           jsl_anno_py_class=ACR.JSL_anno2_py_class[A.PARTIAL_PosologyREModel],
-                                           node=NLP_FEATURE_NODES.nodes[A.PARTIALLY_IMPLEMENTED],
-                                           type=T.PARTIALLY_READY,
-                                           pdf_extractor_methods={'default': default_partial_implement_config,
-                                                                  'default_full': default_full_config, },
-                                           pdf_col_name_substitutor=partially_implemented_substitutor,
-                                           output_level=L.DOCUMENT,
-                                           description='Not fully integrated',
-                                           provider=ComponentBackends.open_source,
-                                           license=Licenses.open_source,
-                                           computation_context=ComputeContexts.spark,
-                                           output_context=ComputeContexts.spark,
-                                           ),
-
         A.PARTIAL_RENerChunksFilter: partial(NluComponent,
                                              name=A.PARTIAL_ChunkMergeApproach,
                                              jsl_anno_class_id=A.PARTIAL_RENerChunksFilter,
@@ -3463,7 +3446,7 @@ class ComponentUniverse:
                                             pdf_col_name_substitutor=substitute_ner_internal_converter_cols,
                                             output_level=L.CHUNK,
                                             node=NLP_HC_FEATURE_NODES.nodes[H_A.NER_CONVERTER_INTERNAL],
-                                            description='Convert NER-IOB tokens into concatenated strings (aka chunks)',
+                                            description='Convert NER-IOB tokens into concatenated strings (aka chunks)'             ,
                                             provider=ComponentBackends.hc,
                                             license=Licenses.hc,
                                             computation_context=ComputeContexts.spark,
@@ -3497,6 +3480,29 @@ class ComponentUniverse:
                                          is_storage_ref_consumer=True
 
                                          ),
+
+        A.PARTIAL_PosologyREModel: partial(NluComponent,
+                                           name=A.PARTIAL_ChunkMergeApproach,
+                                           jsl_anno_class_id=A.PARTIAL_PosologyREModel,
+                                           jsl_anno_py_class=ACR.JSL_anno2_py_class[A.PARTIAL_PosologyREModel],
+                                           node=NLP_FEATURE_NODES.nodes[A.PARTIALLY_IMPLEMENTED],
+                                           type=T.RELATION_CLASSIFIER,
+                                           pdf_extractor_methods={'default': default_relation_extraction_config,
+                                                                  'positional': default_relation_extraction_positional_config,
+                                                                  'default_full': default_full_config, },
+                                           pdf_col_name_substitutor=substitute_relation_cols,
+                                           output_level=L.RELATION,
+                                           description='Not fully integrated',
+                                           provider=ComponentBackends.hc,
+                                           license=Licenses.hc,
+                                           computation_context=ComputeContexts.spark,
+                                           output_context=ComputeContexts.spark,
+                                           ),
+
+
+
+
+
         H_A.TRAINABLE_RELATION_EXTRACTION: partial(NluComponent,
                                                    name=H_A.TRAINABLE_RELATION_EXTRACTION,
                                                    type=T.RELATION_CLASSIFIER,
