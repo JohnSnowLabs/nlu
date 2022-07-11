@@ -153,7 +153,7 @@ def substitute_assertion_cols(c, cols, nlu_identifier=True):
             elif 'chunk' in col:
                 new_cols[col] = f'{new_base_name}_origin_chunk'  # maps to which sentence token comes from
             elif 'confidence' in col:
-                new_cols[col] = f'{new_base_name}'  # The most likely resolution
+                new_cols[col] = f'{new_base_name}_confidence'  # The most likely resolution
             else:
                 logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
 
