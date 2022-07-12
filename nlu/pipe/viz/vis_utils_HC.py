@@ -188,9 +188,12 @@ class VizUtilsHC():
         """Finds relation_col,document_col  cols for relation viz viz"""
         entities_component, assert_component, doc_component = None, None, None
         for c in pipe.components:
-            if c.name == NLP_NODE_IDS.DOCUMENT_ASSEMBLER:              doc_component = c
-            if c.name in [NLP_HC_NODE_IDS.NER_CONVERTER_INTERNAL, NLP_NODE_IDS.NER_CONVERTER]:   entities_component = c
-            if c.name in [NLP_HC_NODE_IDS.ASSERTION_DL,NLP_HC_NODE_IDS.ASSERTION_LOG_REG]:        assert_component = c
+            if c.name == NLP_NODE_IDS.DOCUMENT_ASSEMBLER:
+                doc_component = c
+            if c.name in [NLP_HC_NODE_IDS.NER_CONVERTER_INTERNAL, NLP_NODE_IDS.NER_CONVERTER, NLP_NODE_IDS.PARTIAL_NerConverterInternalModel]:
+                entities_component = c
+            if c.name in [NLP_HC_NODE_IDS.ASSERTION_DL,NLP_HC_NODE_IDS.ASSERTION_LOG_REG]:
+                assert_component = c
         entities_col = entities_component.spark_output_column_names[0]
         assertion_col = assert_component.spark_output_column_names[0]
         doc_col = doc_component.spark_output_column_names[0]
