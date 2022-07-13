@@ -74,6 +74,7 @@ class NLP_FEATURE_NODES:  # or Mode Node?
     A = NLP_NODE_IDS
     F = NLP_FEATURES
     nodes = {
+        A.PARTIALLY_IMPLEMENTED: NlpFeatureNode(A.PARTIALLY_IMPLEMENTED, [F.UNKOWN], [F.UNKOWN]),
 
         A.COREF_SPAN_BERT: NlpFeatureNode(A.COREF_SPAN_BERT, [F.DOCUMENT, F.TOKEN], [F.COREF_TOKEN]),
 

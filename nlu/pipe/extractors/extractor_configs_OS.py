@@ -35,7 +35,7 @@ def default_full_config(output_col_prefix='DEFAULT'):
         get_result          = True,
         get_meta            = True,
         get_full_meta       = True,
-        get_annotator_type  = True,
+        get_annotator_type  = False,
         name                = 'default_full',
         description         = 'Default full configuration, keeps all data and gets all metadata fields',
 
@@ -92,6 +92,9 @@ def default_language_classifier_config(output_col_prefix='language'):
                                                 'Keep only top language confidence')
     )
 
+
+def default_partial_implement_config(output_col_prefix):
+    return default_only_result_config(output_col_prefix)
 
 def default_only_result_config(output_col_prefix):
     return SparkNLPExtractorConfig(
@@ -338,7 +341,7 @@ def default_ner_converter_config(output_col_prefix='ner_chunk'):
         get_result          = True,
         name                = 'default_ner',
         get_meta            = True,
-        meta_white_list     = ['entity','confidence'],
+        meta_white_list     = ['entity','confidence','sentence','chunk',],
         description         = 'Converts IOB-NER representation into entity representation and generates confidences for the entire entity chunk',
     )
 

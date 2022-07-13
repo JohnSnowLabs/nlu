@@ -16,7 +16,7 @@ class VizUtilsOS():
 
     @staticmethod
     def viz_ner(anno_res, pipe, labels=None, viz_colors={}, is_databricks_env=False, write_to_streamlit=False,
-                streamlit_key='RANDOM'):
+                streamlit_key='RANDOM',  user_ner_col=None):
         """Infer columns required for ner viz and then viz it.
         viz_colors :  set label colors by specifying hex codes , i.e. viz_colors =  {'LOC':'#800080', 'PER':'#77b5fe'}
         labels : only allow these labels to be displayed. (default: [] - all labels will be displayed)
@@ -24,6 +24,8 @@ class VizUtilsOS():
         document_col, entities_col = VizUtilsOS.infer_ner_dependencies(pipe)
         ner_vis = NerVisualizer()
         ner_vis.set_label_colors(viz_colors)
+        if user_ner_col :
+            entities_col = user_ner_col
         if write_to_streamlit:
             import streamlit as st
             HTML = ner_vis.display(anno_res, label_col=entities_col, document_col=document_col, labels=labels,
@@ -55,10 +57,20 @@ class VizUtilsOS():
         return document_col, entities_col
 
     @staticmethod
-    def viz_dep(anno_res, pipe, is_databricks_env, write_to_streamlit, streamlit_key='RANDOM'):
+    def viz_dep(anno_res, pipe, is_databricks_env, write_to_streamlit, streamlit_key='RANDOM',
+                user_pos_col=None, user_dep_untyped_col=None, user_dep_typed_col=None
+                ):
         """Viz dep result"""
         pos_col, dep_typ_col, dep_untyp_col = VizUtilsOS.infer_dep_dependencies(pipe)
         dependency_vis = DependencyParserVisualizer()
+        if user_pos_col :
+            pos_col = user_pos_col
+
+        if user_dep_typed_col:
+            dep_typ_col = user_dep_typed_col
+
+        if user_dep_untyped_col:
+            dep_untyp_col = dep_untyp_col
 
         if write_to_streamlit:
             import streamlit as st

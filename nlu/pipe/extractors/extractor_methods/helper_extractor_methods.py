@@ -140,7 +140,7 @@ unpacked[2]
 
     :UMLS
     '''
-
+    # todo del AUX label col for CODES
     HPO_CODES = ['UMLS', 'ORPHA', 'MSH', 'SNOMED', 'OMIM']
     prefix = 'meta_' + configs.output_col_prefix + '_'
     res = {}
@@ -164,14 +164,14 @@ unpacked[2]
                     res[prefix + 'hcc_status'], \
                     res[prefix + 'hcc_code'] = zip(*map(lambda x: zip(*x), map(f, row[k])))
                     # Casting from tuple to list or we get problems during pd explode
-                    h = lambda z: list(map(lambda r: list(r), z))
+                    h = lambda z: list(map(lambda r: list(r), z))# [0]
                     res[prefix + 'billable'] = h(res[prefix + 'billable'])
                     res[prefix + 'hcc_status'] = h(res[prefix + 'hcc_status'])
                     res[prefix + 'hcc_code'] = h(res[prefix + 'hcc_code'])
 
             elif ':::' in row[k][0]:
                 # CASE : General code handling
-                res[k.replace('results', 'codes')] = list(map(lambda x: x.split(':::'), row[k]))
+                res[prefix+k.replace('results', 'codes')] = list(map(lambda x: x.split(':::'), row[k]))# [0]
         else:
             # Any other metadata field hadling
             res[k] = row[k]

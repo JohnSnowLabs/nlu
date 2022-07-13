@@ -8,6 +8,41 @@ import logging
 logger = logging.getLogger('nlu')
 
 
+def partially_implemented_substitutor(c, cols, nlu_identifier):
+    """
+    Fetched fields are:
+    - entities@<storage_ref>_results
+    - entities@<storage_ref>_<metadata>
+        - entities@<storage_ref>_entity
+        - entities@<storage_ref>_confidence
+    """
+    new_cols = {}
+    new_base_name = nlu_identifier
+    for col in cols:
+        if 'results' in col:
+            new_cols[col] = f'{new_base_name}_result'
+        elif '_beginnings' in col:
+            new_cols[col] = f'{new_base_name}_begin'
+        elif '_endings' in col:
+            new_cols[col] = f'{new_base_name}_end'
+        elif 'meta' in col:
+            if 'confidence' in col:
+                new_cols[col] = f"{new_base_name}_confidence"
+            elif 'entity' in col:
+                new_cols[col] = f"{new_base_name}_class"
+            elif 'chunk' in col:
+                new_cols[col] = f"{new_base_name}_origin_chunk"
+            elif 'sentence' in col:
+                new_cols[col] = f"{new_base_name}_origin_sentence"
+            else:
+                logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
+                continue
+        if '_embeddings' in col and f'{new_base_name}_embedding' not in new_cols.values():
+            new_cols[col] = f'{new_base_name}_embedding'
+
+    return new_cols
+
+
 def substitute_ner_converter_cols(c, cols, nlu_identifier):
     """
     Fetched fields are:
@@ -32,10 +67,10 @@ def substitute_ner_converter_cols(c, cols, nlu_identifier):
                 new_cols[col] = f"{new_base_name}_confidence"
             elif 'entity' in col:
                 new_cols[col] = f"{new_base_name}_class"
-            elif 'chunk' in col:
-                new_cols[col] = f"{new_base_name}_origin_chunk"
             elif 'sentence' in col:
                 new_cols[col] = f"{new_base_name}_origin_sentence"
+            elif 'chunk' in col:
+                new_cols[col] = f"{new_base_name}_origin_chunk"
             else:
                 logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
     return new_cols
@@ -327,7 +362,7 @@ def substitute_word_embed_cols(c, cols, nlu_identifier=True):
     Substitute col name for Word Embeddings. For Word_Embeddings, some name will be infered, and word_embedding_<name> will become the base name schema
     """
     new_cols = {}
-    new_base_name = f'word_embedding_{nlu_identifier}'  # if nlu_identifier else f'document_{nlu_identifier}'
+    new_base_name = f'word_embedding_{nlu_identifier}' if 'word_embedding_' not in nlu_identifier else nlu_identifier  # if nlu_identifier else f'document_{nlu_identifier}'
     for col in cols:
         if '_results' in col:
             continue  # new_cols[col] = new_base_name can be omitted for word_embeddings, maps to the origin token, which will be in the tokenizer col anyways
@@ -361,11 +396,8 @@ def substitute_sent_embed_cols(c, cols, nlu_identifier=True):
     Substitute col name for Word Embeddings. For Word_Embeddings, some name will be infered, and word_embedding_<name> will become the base name schema
     """
     new_cols = {}
-    if 'converter' in nlu_identifier:
-        # TODO we need storage ref here
-        new_base_name = f'sentence_embedding_converter'  # if nlu_identifier else f'document_{nlu_identifier}'
-    else:
-        new_base_name = f'sentence_embedding_{nlu_identifier}'  # if nlu_identifier else f'document_{nlu_identifier}'
+    # new_base_name = f'sentence_embedding_{nlu_identifier}'  # if nlu_identifier else f'document_{nlu_identifier}'
+    new_base_name = f'sentence_embedding_{nlu_identifier}' if 'sentence_embedding' not in nlu_identifier else nlu_identifier  # if nlu_identifier else f'document_{nlu_identifier}'
     for col in cols:
         if '_results' in col:
             continue  # new_cols[col] = new_base_name can be omitted for word_embeddings, maps to the origin token, which will be in the tokenizer col anyways
@@ -399,7 +431,7 @@ def substitute_chunk_embed_cols(c, cols, nlu_identifier=True):
     Substitute col name for chunk Embeddings. For Word_Embeddings, some name will be infered, and chunk_embedding_<name> will become the base name schema
     """
     new_cols = {}
-    new_base_name = f'chunk_embedding_{nlu_identifier}'  # if nlu_identifier else f'document_{nlu_identifier}'
+    new_base_name = f'chunk_embedding_{nlu_identifier}' if'chunk_embedding_' not in nlu_identifier else nlu_identifier  # if nlu_identifier else f'document_{nlu_identifier}'
     for col in cols:
         if '_results' in col:
             continue  # new_cols[col] = new_base_name can be omitted for chunk_embeddings, maps to the origin chunk, which will be in the tokenizer col anyways
@@ -451,8 +483,8 @@ def substitute_classifier_dl_cols(c, cols, nlu_identifier=True):
                 new_cols[col] = f'{new_base_name}_origin_sentence'
             elif metadata in ['confidence', '_confidence']:
                 new_cols[col] = f'{new_base_name}_confidence'  # max confidence over all classes
-            else:
-                new_cols[col] = f'{new_base_name}{metadata}_confidence'  # confidence field
+            # else:
+            #     new_cols[col] = f'{new_base_name}{metadata}_confidence'  # confidence field
             # else : logger.info(f'Dropping unmatched metadata_col={col} for os_components={os_components}')
 
     return new_cols
