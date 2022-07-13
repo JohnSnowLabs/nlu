@@ -233,12 +233,15 @@ def set_cols_on_nlu_components(iterable_components):
     for c in iterable_components:
         c.spark_input_column_names = c.model.getInputCols() if hasattr(c.model, 'getInputCols') else [
             c.model.getInputCol()]
-        c.spark_output_column_names = [c.model.getOutputCol()]
+        if hasattr(c.model, 'getOutputCol'):
+            c.spark_output_column_names = [c.model.getOutputCol()]
+        elif hasattr(c.model, 'getOutputCols'):
+            c.spark_output_column_names = [c.model.getOutputCols()]
+
     return iterable_components
 
 
 def get_component_list_for_iterable_stages(iterable_stages, language=None, nlp_ref=None, nlu_ref=None,
-                                           license_type: LicenseType = Licenses.open_source,
                                            is_pre_configured=True
                                            ):
     constructed_components = []
@@ -246,7 +249,8 @@ def get_component_list_for_iterable_stages(iterable_stages, language=None, nlp_r
         anno_class_name = type(jsl_anno_object).__name__
         logger.info(f"Building NLU component for class_name = {anno_class_name} ")
         component = anno_class_to_empty_component(anno_class_name)
-        component.set_metadata(jsl_anno_object, nlu_ref, nlp_ref, language, is_pre_configured, license_type)
+
+        component.set_metadata(jsl_anno_object, nlu_ref, nlp_ref, language, is_pre_configured)
         constructed_components.append(component)
         if None in constructed_components or len(constructed_components) == 0:
             raise Exception(f"Failure inferring type anno_class={anno_class_name} ")
