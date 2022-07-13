@@ -207,7 +207,7 @@ class NLUPipeline(dict):
 
         return self
 
-    def get_extraction_configs(self, full_meta, positions, get_embeddings):
+    def get_extraction_configs(self, full_meta, positions, get_embeddings, processed):
         """Search first OC namespace and if not found the HC Namespace for each Annotator Class in pipeline and get
         corresponding config Returns a dictionary of methods, where keys are column names values are methods  that
         are applied to extract and represent the data in these columns in a more pythonic and panda-esque way
@@ -255,6 +255,15 @@ class NLUPipeline(dict):
                 # Use original col name of pretrained pipes as prefix
                 anno_2_ex_config[c.spark_output_column_names[0]].output_col_prefix = \
                     c.spark_output_column_names[0]
+
+        # drop all entries which are missing in DF
+        # Finisher Annotator could have dropped them
+        bad_c = []
+        for c in anno_2_ex_config.keys():
+            if c not in processed.columns:
+                bad_c.append(c)
+        for c in bad_c:
+            del anno_2_ex_config[c]
 
         return anno_2_ex_config
 
@@ -323,7 +332,7 @@ class NLUPipeline(dict):
             self.prediction_output_level = output_level
 
         # Get mapping from component to feature extractor method configs
-        anno_2_ex_config = self.get_extraction_configs(output_metadata, positions, get_embeddings)
+        anno_2_ex_config = self.get_extraction_configs(output_metadata, positions, get_embeddings, processed)
 
         # Processed becomes pandas after applying extractors
         processed = self.unpack_and_apply_extractors(processed, keep_stranger_features, stranger_features,
@@ -339,7 +348,7 @@ class NLUPipeline(dict):
                                                               get_embeddings)
         processed = processed.loc[:, ~processed.columns.duplicated()]
 
-        if drop_irrelevant_cols:
+        if drop_irrelevant_cols and not output_metadata:
             processed = processed[self.drop_irrelevant_cols(list(processed.columns))]
         # Sort cols alphabetically
         processed = processed.reindex(sorted(processed.columns), axis=1)
@@ -569,12 +578,23 @@ class NLUPipeline(dict):
             'Stuck? Contact us on Slack! https://join.slack.com/t/spark-nlp/shared_invite/zt-lutct9gm-kuUazcyFKhuGY3_0AMkxqA')
 
     def viz(self, text_to_viz: str, viz_type='', labels_to_viz=None, viz_colors={}, return_html=False,
-            write_to_streamlit=False, streamlit_key='NLU_streamlit'):
+            write_to_streamlit=False, streamlit_key='NLU_streamlit',
+            ner_col=None,
+            pos_col=None,
+            dep_untyped_col=None,
+            dep_typed_col=None,
+            resolution_col=None,
+            relation_col=None,
+            assertion_col=None,
+            ):
         """Visualize predictions of a Pipeline, using Spark-NLP-Display
         text_to_viz : String to viz
         viz_type    : Viz type, one of [ner,dep,resolution,relation,assert]. If none defined, nlu will infer and apply all applicable viz
         labels_to_viz : Defines a subset of NER labels to viz i.e. ['PER'] , by default=[] which will display all labels. Applicable only for NER viz
         viz_colors  : Applicable for [ner, resolution, assert ] key = label, value=hex color, i.e. viz_colors={'TREATMENT':'#008080', 'problem':'#800080'}
+
+        Any of the col parameters can be used to point to a specific model in the pipeline, if there are multiple candidates of the same type for visualization.
+        I.e. multiple NER models. By default, the last model in pipe of applicable viz type will be used.
         """
         from nlu.utils.environment.env_utils import install_and_import_package
         install_and_import_package('spark-nlp-display', import_name='sparknlp_display')
@@ -593,10 +613,25 @@ class NLUPipeline(dict):
         anno_res = anno_res.collect()[0]
         if self.has_licensed_components == False:
             HTML = VizUtils.viz_OS(anno_res, self, viz_type, viz_colors, labels_to_viz, is_databricks_env,
-                                   write_to_streamlit, streamlit_key)
+                                   write_to_streamlit, streamlit_key,
+                                   ner_col,
+                                   pos_col,
+                                   dep_untyped_col,
+                                   dep_typed_col,
+
+                                   )
         else:
             HTML = VizUtils.viz_HC(anno_res, self, viz_type, viz_colors, labels_to_viz, is_databricks_env,
-                                   write_to_streamlit)
+                                   write_to_streamlit,
+                                   ner_col,
+                                   pos_col,
+                                   dep_untyped_col,
+                                   dep_typed_col,
+                                   resolution_col,
+                                   relation_col,
+                                   assertion_col,
+
+                                   )
         if return_html or is_databricks_env: return HTML
 
     def viz_streamlit(self,

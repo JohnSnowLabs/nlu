@@ -38,18 +38,53 @@ slack_link = 'https://join.slack.com/t/spark-nlp/shared_invite/zt-lutct9gm-kuUaz
 github_issues_link = 'https://github.com/JohnSnowLabs/nlu/issues'
 
 
+def viz(nlp_pipe: Union[Pipeline, LightPipeline, PipelineModel, List], data, viz_type: str = '', labels_to_viz=None,
+        viz_colors={}, return_html=False,
+        ner_col: str = None,
+        pos_col: str = None,
+        dep_untyped_col: str = None,
+        dep_typed_col: str = None,
+        resolution_col: str = None,
+        relation_col: str = None,
+        assertion_col: str = None, ):
+    """Visualize predictions of a Pipeline, using Spark-NLP-Display
+    text_to_viz : String to viz
+    viz_type    : Viz type, one of [ner,dep,resolution,relation,assert]. If none defined, nlu will infer and apply all applicable viz
+    labels_to_viz : Defines a subset of NER labels to viz i.e. ['PER'] , by default=[] which will display all labels. Applicable only for NER viz
+    viz_colors  : Applicable for [ner, resolution, assert ] key = label, value=hex color, i.e. viz_colors={'TREATMENT':'#008080', 'problem':'#800080'}
+
+
+    Any of the col parameters can be used to point to a specific model in the pipeline, if there are multiple candidates of the same type for visualization.
+    I.e. multiple NER models. By default, the last model in pipe of applicable viz type will be used.
+
+    """
+    return to_nlu_pipe(nlp_pipe, True).viz(text_to_viz=data,
+                                           viz_type=viz_type,
+                                           labels_to_viz=labels_to_viz,
+                                           return_html=return_html,
+                                           viz_colors=viz_colors,
+                                           ner_col=ner_col,
+                                           pos_col=pos_col,
+                                           dep_untyped_col=dep_untyped_col,
+                                           dep_typed_col=dep_typed_col,
+                                           resolution_col=resolution_col,
+                                           relation_col=relation_col,
+                                           assertion_col=assertion_col, )
+
+
 def autocomplete_annotator(annotator, lang='en'):
     # If you dont set lang, you can get storage ref errors!
     pipe = to_nlu_pipe([annotator], is_pre_configured=False)
     pipe = PipelineQueryVerifier.check_and_fix_nlu_pipeline(pipe)
     return pipe
 
-def to_pretty_df(nlp_pipe: Union[Pipeline, LightPipeline, PipelineModel, List],data, positions=False,
-                  output_level=None,metadata=False,):
+
+def to_pretty_df(nlp_pipe: Union[Pipeline, LightPipeline, PipelineModel, List], data, positions=False,
+                 output_level='', metadata=False, ):
     #         Annotates a Pandas Dataframe/Pandas Series/Numpy Array/ Python List strings /Python String
-    return to_nlu_pipe(nlp_pipe,True).predict(data, positions=positions,
-                                              output_level=output_level,
-                                              metadata=metadata)
+    return to_nlu_pipe(nlp_pipe, True).predict(data, positions=positions,
+                                               output_level=output_level,
+                                               metadata=metadata)
 
 
 def to_nlu_pipe(nlp_pipe: Union[Pipeline, LightPipeline, PipelineModel, List], is_pre_configured=True) -> NLUPipeline:
@@ -222,6 +257,7 @@ def auth(HEALTHCARE_LICENSE_OR_JSON_PATH='/content/spark_nlp_for_healthcare.json
 
     return nlu
 
+
 # TODO EXPORT
 def load_nlu_pipe_from_hdd(pipe_path, request) -> NLUPipeline:
     """Either there is a pipeline of models in the path or just one singular model_anno_obj.
@@ -254,6 +290,7 @@ def load_nlu_pipe_from_hdd(pipe_path, request) -> NLUPipeline:
         print(
             f"Could not load model_anno_obj in path {pipe_path}. Make sure the jsl_folder contains either a stages subfolder or a metadata subfolder.")
         raise ValueError
+
 
 # TODO EXPORT
 def get_open_source_spark_context(gpu):
@@ -347,7 +384,5 @@ def print_trainable_components():
 
 def get_components(m_type='', include_pipes=False, lang='', licensed=False, get_all=False):
     return discoverer.get_components(m_type, include_pipes, lang, licensed, get_all)
-
-
 
 # https://forms.gle/VZeJRLBDM6m9fhF68
