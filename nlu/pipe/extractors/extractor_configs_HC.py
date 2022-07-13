@@ -130,11 +130,10 @@ def default_relation_extraction_positional_config(output_col_prefix='extracted_r
     return SparkNLPExtractorConfig(
         output_col_prefix=output_col_prefix,
         get_result=True,
-        meta_white_list=[],
         get_meta=True,
-        meta_black_list=['entity1_begin', 'entity2_begin', 'entity1_end', 'entity2_end', ],
-        name='default_relation_extraction',
-        description='Get relation extraction result and all metadata, positions of entities excluded',
+        get_full_meta=True,
+        name='full_relation_extraction',
+        description='Get relation extraction result and all metadata, with positions of entities',
     )
 
 
