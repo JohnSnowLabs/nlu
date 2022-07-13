@@ -1164,7 +1164,7 @@ class ComponentUniverse:
                                    type=T.TOKEN_CLASSIFIER,
                                    get_default_model=CorefBert.get_default_model,
                                    get_pretrained_model=CorefBert.get_pretrained_model,
-                                    pdf_extractor_methods={'default': default_coref_spanbert_config,
+                                   pdf_extractor_methods={'default': default_coref_spanbert_config,
                                                           'default_full': default_full_config, },
                                    pdf_col_name_substitutor=substitute_coref_cols,
                                    output_level=L.CO_REFERENCE,
@@ -1851,6 +1851,27 @@ class ComponentUniverse:
                                                        jsl_anno_py_class=ACR.JSL_anno2_py_class[
                                                            A.DEBERTA_FOR_SEQUENCE_CLASSIFICATION],
                                                        ),
+
+        A.ALBERT_FOR_QUESTION_ANSWERING: partial(NluComponent,
+                                                 name=A.ALBERT_FOR_QUESTION_ANSWERING,
+                                                 jsl_anno_class_id=A.ALBERT_FOR_QUESTION_ANSWERING,
+                                                 jsl_anno_py_class=ACR.JSL_anno2_py_class[
+                                                     A.ALBERT_FOR_QUESTION_ANSWERING],
+                                                 node=NLP_FEATURE_NODES.nodes[A.ALBERT_FOR_QUESTION_ANSWERING],
+                                                 get_default_model=SpanAlbertClassifier.get_default_model,
+                                                 get_pretrained_model=SpanAlbertClassifier.get_pretrained_model,
+                                                 type=T.QUESTION_SPAN_CLASSIFIER,
+                                                 pdf_extractor_methods={
+                                                     'default': default_span_classifier_config,
+                                                     'default_full': default_full_span_classifier_config, },
+                                                 pdf_col_name_substitutor=substitute_span_classifier_cols,
+                                                 output_level=L.INPUT_DEPENDENT_DOCUMENT_CLASSIFIER,
+                                                 description='TODO',
+                                                 provider=ComponentBackends.open_source,
+                                                 license=Licenses.open_source,
+                                                 computation_context=ComputeContexts.spark,
+                                                 output_context=ComputeContexts.spark,
+                                                 ),
 
         A.BERT_FOR_QUESTION_ANSWERING: partial(NluComponent,
                                                name=A.BERT_FOR_QUESTION_ANSWERING,
