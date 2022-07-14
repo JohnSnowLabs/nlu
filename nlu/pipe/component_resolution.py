@@ -150,7 +150,6 @@ def nlu_ref_to_component(nlu_ref, detect_lang=False, authenticated=False) -> Nlu
                 s = "\n"
                 raise ValueError(f'Could not find trainable model_anno_obj for nlu_ref={nlu_ref}.'
                                  f'Supported values = {s.join(nlu.Spellbook.trainable_models.keys())}')
-            # TODO ,nlp ref for trainable?
             return get_trainable_component_for_nlu_ref(nlu_ref)
     lang, nlu_ref, nlp_ref, license_type, is_pipe, model_params = nlu_ref_to_nlp_metadata(nlu_ref)
 
@@ -166,14 +165,13 @@ def nlu_ref_to_component(nlu_ref, detect_lang=False, authenticated=False) -> Nlu
 
 
 def get_trainable_component_for_nlu_ref(nlu_ref) -> NluComponent:
-    # TODO deduct license type
     if nlu_ref in Spellbook.traianble_nlu_ref_to_jsl_anno_id:
         anno_id = Spellbook.traianble_nlu_ref_to_jsl_anno_id[nlu_ref]
     else:
         raise ValueError(f'Could not find trainable Model for nlu_spell ={nlu_ref}')
     if anno_id in ComponentUniverse.components:
         component = ComponentUniverse.components[anno_id]()
-        return component.set_metadata(component.get_trainable_model(), nlu_ref, '', 'xx', False, Licenses.open_source)
+        return component.set_metadata(component.get_trainable_model(), nlu_ref, '', 'xx', False )
     else:
         raise ValueError(f'Could not find trainable Model for anno_id ={anno_id}')
 
