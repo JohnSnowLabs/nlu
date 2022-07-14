@@ -185,10 +185,6 @@ jobs:
 #        if: always()
 #        run: |
 #          python -m unittest  discover  -s ./tests/nlu_hc_tests/pipe_tests -p '*tests.py'
-      - name: NLU Healthcare Training Assertion DL tests
-        if: always()
-        run: |
-          python -m unittest  discover  -s ./tests/nlu_hc_tests/training_tests/assertion_dl -p '*tests.py'
 #      - name: NLU Healthcare Training Chunk Resolution tests
 #        if: always()
 #        run: |
