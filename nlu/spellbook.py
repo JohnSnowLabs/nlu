@@ -5650,15 +5650,23 @@ class Spellbook:
         'en': {
             'en.med_ner.profiling_clinical': 'ner_profiling_clinical',
             'en.med_ner.profiling_biobert': 'ner_profiling_biobert',
-            'en.resolve.icd10cm.umls': 'icd10cm_umls_mapping',
-            'en.resolve.mesh.umls': 'mesh_umls_mapping',
-            'en.resolve.rxnorm.umls': 'rxnorm_umls_mapping',
-            'en.resolve.rxnorm.mesh': 'rxnorm_mesh_mapping',
-            'en.resolve.snomed.umls': 'snomed_umls_mapping',
+            'en.icd10cm.umls.mapping': 'icd10cm_umls_mapping',
+            'en.mesh.umls.mapping': 'mesh_umls_mapping',
+            'en.rxnorm.umls.mapping': 'rxnorm_umls_mapping',
+            'en.snomed.umls.mapping': 'snomed_umls_mapping',
+
+            'en.map_entity.icd10cm_to_snomed.pipe': 'icd10cm_snomed_mapping',
+            'en.map_entity.snomed_to_icd10cm.pipe': 'snomed_icd10cm_mapping',
+            'en.map_entity.icdo_to_snomed.pipe': 'icdo_snomed_mapping',
+            'en.map_entity.snomed_to_icdo.pipe': 'snomed_icdo_mapping',
+            'en.map_entity.rxnorm_to_ndc.pipe': 'rxnorm_ndc_mapping',
 
             # '' :'clinical_analysis', # Not 3+ compatible
             # '' :'clinical_deidentification', # todo to big ner consumer stack for NLU to handle..
             # '' :'clinical_ner_assertion', Not 3+ compatible
+            'en.med_ner.pathogen.pipeline': 'ner_pathogen_pipeline',
+            'en.med_ner.biomedical_bc2gm.pipeline': 'ner_biomedical_bc2gm_pipeline',
+            'en.med_ner.clinical_trials_abstracts.pipe': 'ner_clinical_trials_abstracts_pipeline',
 
             # Explain Pipes
             'en.explain_doc.carp': 'explain_clinical_doc_carp',
@@ -5671,7 +5679,12 @@ class Spellbook:
         'fr': {
             'fr.deid_obfuscated': 'clinical_deidentification'  # need finisher support first
 
-        }
+        },
+        'ro':
+            {
+                'ro.deid.clinical': 'clinical_deidentification',
+
+            }
     }
     pretrained_healthcare_model_references = {
         'fr': {
@@ -5679,7 +5692,7 @@ class Spellbook:
             'fr.med_ner.deid_subentity': 'ner_deid_subentity',
             # 4.0.0
             'fr.med_ner.living_species': 'ner_living_species',
-            'fr.med_ner.bert_living_species': 'ner_living_species_bert'
+            'fr.med_ner.living_species.bert': 'ner_living_species_bert'
 
         },
         'it':
@@ -5688,8 +5701,8 @@ class Spellbook:
                 'it.med_ner.deid_subentity': 'ner_deid_subentity',
 
                 # 4.0.0
-                'it.med_ner.bert_living_species': 'bert_token_classifier_ner_living_species',
-                'it.med_ner.living_species_bert': 'ner_living_species_bert',
+                'it.med_ner.living_species': 'bert_token_classifier_ner_living_species',
+                'it.med_ner.living_species.bert': 'ner_living_species_bert',
                 'it.med_ner.living_species': 'ner_living_species'
 
             },
@@ -5698,13 +5711,22 @@ class Spellbook:
 
                 # 4.0.0
 
-                'en.med_ner.clinical_trials_abstracts': 'ner_clinical_trials_abstracts',
-                'en.med_ner.bert_clinical_trials_abstracts': 'bert_token_classifier_ner_clinical_trials_abstracts',
+                'en.map_entity.snomed_to_icd10cm': 'snomed_icd10cm_mapper',
+                'en.map_entity.icd10cm_to_snomed': 'icd10cm_snomed_mapper',
+                'en.map_entity.snomed_to_icdo': 'snomed_icdo_mapper',
+                'en.map_entity.icdo_to_snomed': 'icdo_snomed_mapper',
+                'en.map_entity.rxnorm_to_umls': 'rxnorm_umls_mapper',
+                'en.map_entity.icd10cm_to_umls': 'icd10cm_umls_mapper',
+                'en.map_entity.mesh_to_umls': 'mesh_umls_mapper',
+                'en.map_entity.snomed_to_umls': 'snomed_umls_mapper',
+
+                'en.ner.clinical_trials_abstracts': 'ner_clinical_trials_abstracts',
+                'en.med_ner.clinical_trials_abstracts': 'bert_token_classifier_ner_clinical_trials_abstracts',
                 'en.med_ner.pathogen': 'ner_pathogen',
-                'en.med_ner.bert_living_species': 'bert_token_classifier_ner_living_species',
+                'en.med_ner.living_species.token_bert': 'bert_token_classifier_ner_living_species',
                 'en.med_ner.living_species': 'ner_living_species',
-                'en.med_ner.biobert_living_species': 'ner_living_species_biobert',
-                'en.classify.bert_stress': 'bert_sequence_classifier_stress',
+                'en.med_ner.living_species.biobert': 'ner_living_species_biobert',
+                'en.classify.stress': 'bert_sequence_classifier_stress',
                 # 3.4.3
                 'en.relation.zeroshot_biobert': 're_zeroshot_biobert',
 
@@ -6071,12 +6093,12 @@ class Spellbook:
         'es': {
 
             # 4.0.0
-            'es.med_ner.bert_living_species': 'bert_token_classifier_ner_living_species',
-            'es.med_ner.living_species_bert': 'ner_living_species_bert',
-            'es.med_ner.living_species_roberta': 'ner_living_species_roberta',
-            'es.med_ner.living_species_300': 'ner_living_species_300',
+            'es.med_ner.living_species': 'bert_token_classifier_ner_living_species',
+            'es.med_ner.living_species.bert': 'ner_living_species_bert',
+            'es.med_ner.living_species.roberta': 'ner_living_species_roberta',
+            'es.med_ner.living_species.300': 'ner_living_species_300',
             'es.med_ner.living_species': 'ner_living_species',
-            'es.embed.scielo300': 'embeddings_scielo_300d',
+            'es.embed.scielo300d': 'embeddings_scielo_300d',
 
             # 3.4.2
             'es.med_ner.deid.generic.roberta': 'ner_deid_generic_roberta_augmented',
@@ -6111,16 +6133,16 @@ class Spellbook:
             'pt.med_ner.deid': 'ner_deid_generic',
 
             # 4.0.0
-            'pt.med_ner.token_bert_living_species': 'bert_token_classifier_ner_living_species',
+            'pt.med_ner.living_species.token_bert': 'bert_token_classifier_ner_living_species',
             'pt.med_ner.living_species': 'ner_living_species',
-            'pt.med_ner.living_species_roberta': 'ner_living_species_roberta',
-            'pt.med_ner.bert_living_species': 'ner_living_species_bert'
+            'pt.med_ner.living_species.roberta': 'ner_living_species_roberta',
+            'pt.med_ner.living_species.bert': 'ner_living_species_bert'
         },
         'ro': {
             # 4.0.0
-            'ro.med_ner.bert_living_species': 'ner_living_species_bert',
+            'ro.med_ner.living_species.bert': 'ner_living_species_bert',
             'ro.med_ner.clinical': 'ner_clinical',
-            'ro.med_ner.clinical_bert': 'ner_clinical_bert',
+            'ro.embed.clinical.bert.base_cased': 'ner_clinical_bert',
             'ro.med_ner.deid.subentity': 'ner_deid_subentity',
             'ro.med_ner.deid.subentity.bert': 'ner_deid_subentity_bert'
 
@@ -6416,7 +6438,7 @@ class Spellbook:
         # HC
         # NLP_HC_NODE_IDS.DE_IDENTIFICATION: 'DeIdentification',
         # # OCR
-        'spanbert_base_coref' :'SpanBertCorefModel',
+        'spanbert_base_coref': 'SpanBertCorefModel',
 
         'albert_base_qa_squad2': 'AlbertForQuestionAnswering',
 
@@ -6430,6 +6452,15 @@ class Spellbook:
         OCR_NODE_IDS.DOC2TEXT_TABLE: 'DocToTextTable',
         OCR_NODE_IDS.VISUAL_DOCUMENT_CLASSIFIER: 'VisualDocumentClassifier',
         'roberta_embeddings_MedRoBERTa.nl': 'RoBertaEmbeddings',
+
+        'snomed_icd10cm_mapper': 'ChunkMapperModel',
+        'icd10cm_snomed_mapper': 'ChunkMapperModel',
+        'snomed_icdo_mapper': 'ChunkMapperModel',
+        'icdo_snomed_mapper': 'ChunkMapperModel',
+        'rxnorm_umls_mapper': 'ChunkMapperModel',
+        'icd10cm_umls_mapper': 'ChunkMapperModel',
+        'mesh_umls_mapper': 'ChunkMapperModel',
+        'snomed_umls_mapper': 'ChunkMapperModel',
 
         'w2v_cc_300d': 'WordEmbeddingsModel',
         'stopwords_iso': 'StopWordsCleaner',
