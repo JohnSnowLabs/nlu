@@ -31,120 +31,116 @@ jobs:
           pip install  wheel  dataclasses pandas numpy pytest modin[ray] pyspark==3.2.0 spark-nlp
           java -version
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-#          ! echo 2 |  update-alternatives --config java
-#      - name: NLU Basic Component tests
+          ! echo 2 |  update-alternatives --config java
+      - name: NLU Chunker Component tests
+        if: always()
+        run: |
+          python -m unittest  discover   -s './tests/nlu_core_tests/component_tests/chunker_tests' -p '*tests.py'
+      - name: NLU Classifier Cyber tests -
+        if: always()
+        run: |
+          python -m unittest  'tests/nlu_core_tests/component_tests/classifier_tests/cyber_tests.py'
+      - name: NLU Classifier E2E tests -
+        if: always()
+        run: |
+          python -m unittest  'tests/nlu_core_tests/component_tests/classifier_tests/e2e_tests.py'
+      - name: NLU Classifier Emotion tests -
+        if: always()
+        run: |
+          python -m unittest  'tests/nlu_core_tests/component_tests/classifier_tests/emotion_tests.py'
+      - name: NLU Classifier Language tests -
+        if: always()
+        run: |
+          python -m unittest  'tests/nlu_core_tests/component_tests/classifier_tests/language_tests.py'
+      - name: NLU Classifier NER tests -
+        if: always()
+        run: |
+          python -m unittest  'tests/nlu_core_tests/component_tests/classifier_tests/ner_tests.py'
+      - name: NLU Classifier POS tests -
+        if: always()
+        run: |
+          python -m unittest  'tests/nlu_core_tests/component_tests/classifier_tests/pos_tests.py'
+      - name: NLU Classifier Question tests -
+        if: always()
+        run: |
+          python -m unittest  'tests/nlu_core_tests/component_tests/classifier_tests/question_tests.py'
+      - name: NLU Classifier Sarcasm tests -
+        if: always()
+        run: |
+          python -m unittest  'tests/nlu_core_tests/component_tests/classifier_tests/sarcasm_tests.py'
+      - name: NLU Classifier Sentiment tests -
+        if: always()
+        run: |
+          python -m unittest  'tests/nlu_core_tests/component_tests/classifier_tests/sentiment_tests.py'
+      - name: NLU Classifier Sentiment test Imdb -
+        if: always()
+        run: |
+          python -m unittest  'tests/nlu_core_tests/component_tests/classifier_tests/sentiment_test_imdb.py'
+      - name: NLU Classifier Sentiment test Twitter -
+        if: always()
+        run: |
+          python -m unittest  'tests/nlu_core_tests/component_tests/classifier_tests/sentiment_test_twitter.py'
+      - name: NLU Classifier Spam tests -
+        if: always()
+        run: |
+          python -m unittest  'tests/nlu_core_tests/component_tests/classifier_tests/spam_tests.py'
+      - name: NLU Classifier Toxic tests -
+        if: always()
+        run: |
+          python -m unittest  'tests/nlu_core_tests/component_tests/classifier_tests/toxic_tests.py'
+      - name: NLU Classifier YAKE tests -
+        if: always()
+        run: |
+          python -m unittest  'tests/nlu_core_tests/component_tests/classifier_tests/yake_tests.py'
+      - name: NLU Embed Component tests
+        if: always()
+        run: |
+          python -m unittest  discover   -s './tests/nlu_core_tests/component_tests/embed_tests' -p '*tests.py'
+      - name: NLU Text Cleaner Component tests -
+        if: always()
+        run: |
+          python -m unittest  discover   -s './tests/nlu_core_tests/component_tests/pre_processing_tests' -p '*tests.py'
+#      - name: NLU Matcher Component tests # not yet converted in Spark 3
 #        if: always()
 #        run: |
-#          python -m unittest  discover   -s './tests/nlu_core_tests/component_tests/basic_component_tests' -p '*tests.py'
-#      - name: NLU Chunker Component tests
+#          python -m unittest  discover   -s 'tests/nlu_core_tests/component_tests/matcher_tests' -p '*tests.py'
+      - name: NLU Typed Dependency Component tests -
+        if: always()
+        run: |
+          python -m unittest  discover   -s './tests/nlu_core_tests/component_tests/typed_dependency_tests' -p '*tests.py'
+      - name: NLU Untyped Dependency Component tests -
+        if: always()
+        run: |
+          python -m unittest  discover   -s './tests/nlu_core_tests/component_tests/untyped_dependency_tests' -p '*tests.py'
+      - name: NLU Pipe tests
+        if: always()
+        run: |
+          python -m unittest  discover   -s './tests/nlu_core_tests/pipeline_tests' -p '*tests.py'
+      - name: NLU Training sentiment tests
+        if: always()
+        run: |
+          python -m unittest  discover   -s './tests/nlu_core_tests/training_tests/classifiers' -p '*sentiment_dl*.py'
+      # Too hevy for Github actions
+      #      - name: NLU Training classifier tests
+      #        if: always()
+      #        run: |
+      #          python -m unittest  discover   -s './tests/nlu_core_tests/training_tests/classifiers' -p '*classifier_dl*.py'
+#      - name: NLU Training multi classifier tests
 #        if: always()
 #        run: |
-#          python -m unittest  discover   -s './tests/nlu_core_tests/component_tests/chunker_tests' -p '*tests.py'
-#      - name: NLU Classifier Cyber tests -
+#          python -m unittest  discover   -s './tests/nlu_core_tests/training_tests/classifiers' -p '*multi*.py'
+#      - name: NLU Training NER tests
 #        if: always()
 #        run: |
-#          python -m unittest  'tests/nlu_core_tests/component_tests/classifier_tests/cyber_tests.py'
-#      - name: NLU Classifier E2E tests -
-#        if: always()
-#        run: |
-#          python -m unittest  'tests/nlu_core_tests/component_tests/classifier_tests/e2e_tests.py'
-#      - name: NLU Classifier Emotion tests -
-#        if: always()
-#        run: |
-#          python -m unittest  'tests/nlu_core_tests/component_tests/classifier_tests/emotion_tests.py'
-#      - name: NLU Classifier Language tests -
-#        if: always()
-#        run: |
-#          python -m unittest  'tests/nlu_core_tests/component_tests/classifier_tests/language_tests.py'
-#      - name: NLU Classifier NER tests -
-#        if: always()
-#        run: |
-#          python -m unittest  'tests/nlu_core_tests/component_tests/classifier_tests/ner_tests.py'
-#      - name: NLU Classifier POS tests -
-#        if: always()
-#        run: |
-#          python -m unittest  'tests/nlu_core_tests/component_tests/classifier_tests/pos_tests.py'
-#      - name: NLU Classifier Question tests -
-#        if: always()
-#        run: |
-#          python -m unittest  'tests/nlu_core_tests/component_tests/classifier_tests/question_tests.py'
-#      - name: NLU Classifier Sarcasm tests -
-#        if: always()
-#        run: |
-#          python -m unittest  'tests/nlu_core_tests/component_tests/classifier_tests/sarcasm_tests.py'
-#      - name: NLU Classifier Sentiment tests -
-#        if: always()
-#        run: |
-#          python -m unittest  'tests/nlu_core_tests/component_tests/classifier_tests/sentiment_tests.py'
-#      - name: NLU Classifier Sentiment test Imdb -
-#        if: always()
-#        run: |
-#          python -m unittest  'tests/nlu_core_tests/component_tests/classifier_tests/sentiment_test_imdb.py'
-#      - name: NLU Classifier Sentiment test Twitter -
-#        if: always()
-#        run: |
-#          python -m unittest  'tests/nlu_core_tests/component_tests/classifier_tests/sentiment_test_twitter.py'
-#      - name: NLU Classifier Spam tests -
-#        if: always()
-#        run: |
-#          python -m unittest  'tests/nlu_core_tests/component_tests/classifier_tests/spam_tests.py'
-#      - name: NLU Classifier Toxic tests -
-#        if: always()
-#        run: |
-#          python -m unittest  'tests/nlu_core_tests/component_tests/classifier_tests/toxic_tests.py'
-#      - name: NLU Classifier YAKE tests -
-#        if: always()
-#        run: |
-#          python -m unittest  'tests/nlu_core_tests/component_tests/classifier_tests/yake_tests.py'
-#      - name: NLU Embed Component tests
-#        if: always()
-#        run: |
-#          python -m unittest  discover   -s './tests/nlu_core_tests/component_tests/embed_tests' -p '*tests.py'
-#      - name: NLU Text Cleaner Component tests -
-#        if: always()
-#        run: |
-#          python -m unittest  discover   -s './tests/nlu_core_tests/component_tests/pre_processing_tests' -p '*tests.py'
-##      - name: NLU Matcher Component tests # not yet converted in Spark 3
-##        if: always()
-##        run: |
-##          python -m unittest  discover   -s 'tests/nlu_core_tests/component_tests/matcher_tests' -p '*tests.py'
-#      - name: NLU Typed Dependency Component tests -
-#        if: always()
-#        run: |
-#          python -m unittest  discover   -s './tests/nlu_core_tests/component_tests/typed_dependency_tests' -p '*tests.py'
-#      - name: NLU Untyped Dependency Component tests -
-#        if: always()
-#        run: |
-#          python -m unittest  discover   -s './tests/nlu_core_tests/component_tests/untyped_dependency_tests' -p '*tests.py'
-#      - name: NLU Pipe tests
-#        if: always()
-#        run: |
-#          python -m unittest  discover   -s './tests/nlu_core_tests/pipeline_tests' -p '*tests.py'
-#      - name: NLU Training sentiment tests
-#        if: always()
-#        run: |
-#          python -m unittest  discover   -s './tests/nlu_core_tests/training_tests/classifiers' -p '*sentiment_dl*.py'
-#      # Too hevy for Github actions
-#      #      - name: NLU Training classifier tests
-#      #        if: always()
-#      #        run: |
-#      #          python -m unittest  discover   -s './tests/nlu_core_tests/training_tests/classifiers' -p '*classifier_dl*.py'
-##      - name: NLU Training multi classifier tests
-##        if: always()
-##        run: |
-##          python -m unittest  discover   -s './tests/nlu_core_tests/training_tests/classifiers' -p '*multi*.py'
-##      - name: NLU Training NER tests
-##        if: always()
-##        run: |
-##          python -m unittest  discover   -s './tests/nlu_core_tests/training_tests/classifiers' -p '*ner*.py'
-#      - name: NLU Training POS tests
-#        if: always()
-#        run: |
-#          python -m unittest  discover   -s './tests/nlu_core_tests/training_tests/classifiers' -p '*pos*.py'
-#      - name: NLU Healthcare Verification tests
-#        if: always()
-#        run: |
-#          python -m unittest  discover  -s ./tests/nlu_hc_tests -p 'verification_tests.py'
+#          python -m unittest  discover   -s './tests/nlu_core_tests/training_tests/classifiers' -p '*ner*.py'
+      - name: NLU Training POS tests
+        if: always()
+        run: |
+          python -m unittest  discover   -s './tests/nlu_core_tests/training_tests/classifiers' -p '*pos*.py'
+      - name: NLU Healthcare Verification tests
+        if: always()
+        run: |
+          python -m unittest  discover  -s ./tests/nlu_hc_tests -p 'verification_tests.py'
       - name: NLU OCR tests
         if: always()
         run: |
