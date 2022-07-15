@@ -92,10 +92,10 @@ jobs:
         if: always()
         run: |
           python -m unittest  'tests/nlu_core_tests/component_tests/classifier_tests/yake_tests.py'
-      - name: NLU Embed Component tests
-        if: always()
-        run: |
-          python -m unittest  discover   -s './tests/nlu_core_tests/component_tests/embed_tests' -p '*tests.py'
+#      - name: NLU Embed Component tests
+#        if: always()
+#        run: |
+#          python -m unittest  discover   -s './tests/nlu_core_tests/component_tests/embed_tests' -p '*tests.py'
       - name: NLU Text Cleaner Component tests -
         if: always()
         run: |
