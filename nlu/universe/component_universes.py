@@ -220,7 +220,9 @@ class ComponentUniverse:
     F = NLP_FEATURES
     L = NLP_LEVELS
     ACR = AnnoClassRef
-
+    # os_components = {}
+    # hc_components = {}
+    # ocr_components = {}
     components = {
         #### Partially Implemented
 
@@ -3827,7 +3829,7 @@ class ComponentUniverse:
                                               name=H_A.SENTENCE_ENTITY_RESOLVER,
                                               type=T.CHUNK_CLASSIFIER,
                                               get_pretrained_model=SentenceResolver.get_pretrained_model,
-                                              get_trainable_model=SentenceResolver.get_default_trainable_model,
+                                               get_trainable_model=SentenceResolver.get_default_trainable_model,
                                               pdf_extractor_methods={'default': resolver_conifg_with_metadata,
                                                                      'default_full': full_resolver_config, },
                                               pdf_col_name_substitutor=substitute_sentence_resolution_cols,

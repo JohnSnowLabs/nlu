@@ -47,6 +47,16 @@ def is_env_pyspark_2_3():
         return True
     return False
 
+def is_env_pyspark_2_x():
+    v = get_pyspark_major_and_minor()
+    return int(v[0]) <= 2
+
+def is_env_pyspark_3_x():
+    v = get_pyspark_major_and_minor()
+    return int(v[0]) == 3
+
+
+
 
 def check_pyspark_install():
     try:

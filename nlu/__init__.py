@@ -292,19 +292,11 @@ def load_nlu_pipe_from_hdd(pipe_path, request) -> NLUPipeline:
         raise ValueError
 
 
-# TODO EXPORT
 def get_open_source_spark_context(gpu):
-    if is_env_pyspark_2_3():
-        return sparknlp.start(spark23=True, gpu=gpu)
-    if is_env_pyspark_2_4():
-        return sparknlp.start(spark24=True, gpu=gpu)
-    if is_env_pyspark_3_0() or is_env_pyspark_3_1():
+    if env_utils.is_env_pyspark_3_x():
         return sparknlp.start(gpu=gpu)
-    if is_env_pyspark_3_2():
-        return sparknlp.start(spark32=True, gpu=gpu)
-    print(f"Current Spark version {get_pyspark_version()} not supported!\n"
-          f"Please install any of the Pyspark versions 3.1.x, 3.2.x, 3.0.x, 2.4.x, 2.3.x")
-    raise ValueError(f"Failure starting Spark Context! Current Spark version {get_pyspark_version()} not supported! ")
+    raise ValueError(f"Failure starting Spark Context! Current Spark version {get_pyspark_version()} not supported! "
+                     f"Please install any of Pyspark 3.X versions.")
 
 
 def enable_verbose() -> None:
