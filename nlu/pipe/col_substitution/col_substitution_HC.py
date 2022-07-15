@@ -286,7 +286,7 @@ def substitute_chunk_mapper_cols(c, cols, nlu_identifier=True):
             elif 'all_relations' in col:
                 new_cols[col] = f'{new_base_name}_all_relations'  # maps to which sentence token comes from
             elif 'entity' in col:
-                new_cols[col] = f'{new_base_name}_origin_ent ity'  # maps to which sentence token comes from
+                new_cols[col] = f'{new_base_name}_origin_entity'  # maps to which sentence token comes from
             else:
                 logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
     return new_cols
