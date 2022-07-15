@@ -15,11 +15,16 @@ class VizUtilsHC():
         """For a given NLUPipeline with licensed components, infers which visualizations are applicable. """
         # we go in reverse, which makes NER always take lowest priority and NER feeder annotators have higher priority
         for c in pipe.components[::-1]:
-            if isinstance(c.model, TypedDependencyParserModel): return 'dep'
-            if isinstance(c.model, (SentenceEntityResolverModel)): return 'resolution'
-            if isinstance(c.model, (RelationExtractionDLModel, RelationExtractionDLModel)): return 'relation'
-            if isinstance(c.model, (AssertionDLModel, AssertionLogRegModel)): return 'assert'
-            if isinstance(c.model, (NerConverter, NerConverterInternal)): return 'ner'
+            if isinstance(c.model, TypedDependencyParserModel):
+                return 'dep'
+            if isinstance(c.model, (SentenceEntityResolverModel)):
+                return 'resolution'
+            if isinstance(c.model, (RelationExtractionDLModel, RelationExtractionDLModel)):
+                return 'relation'
+            if isinstance(c.model, (AssertionDLModel, AssertionLogRegModel)):
+                return 'assert'
+            if isinstance(c.model, (NerConverter, NerConverterInternal)):
+                return 'ner'
 
     @staticmethod
     def viz_ner(anno_res, pipe, labels=[], viz_colors={}, is_databricks_env=False, write_to_streamlit=False,
