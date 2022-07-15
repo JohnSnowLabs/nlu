@@ -31,7 +31,6 @@ ch.setLevel(logging.CRITICAL)
 logger.addHandler(ch)
 st_cache_enabled = False
 nlu_package_location = nlu.__file__[:-11]
-
 discoverer = Discoverer()
 
 slack_link = 'https://join.slack.com/t/spark-nlp/shared_invite/zt-lutct9gm-kuUazcyFKhuGY3_0AMkxqA'
@@ -72,9 +71,12 @@ def viz(nlp_pipe: Union[Pipeline, LightPipeline, PipelineModel, List], data, viz
                                            assertion_col=assertion_col, )
 
 
-def autocomplete_annotator(annotator, lang='en'):
+def autocomplete_pipeline(annotator, lang='en'):
     # If you dont set lang, you can get storage ref errors!
-    pipe = to_nlu_pipe([annotator], is_pre_configured=False)
+    if isinstance(annotator, List):
+        pipe = to_nlu_pipe(annotator, is_pre_configured=False)
+    else:
+        pipe = to_nlu_pipe([annotator], is_pre_configured=False)
     pipe = PipelineQueryVerifier.check_and_fix_nlu_pipeline(pipe)
     return pipe
 
@@ -107,7 +109,9 @@ def to_nlu_pipe(nlp_pipe: Union[Pipeline, LightPipeline, PipelineModel, List], i
 
 
 def load(request: str = 'from_disk', path: Optional[str] = None, verbose: bool = False, gpu: bool = False,
-         streamlit_caching: bool = False) -> NLUPipeline:
+         streamlit_caching: bool = False,
+         m1_chip: bool = False
+         ) -> NLUPipeline:
     '''
     Load either a prebuild pipeline or a set of components identified by a whitespace seperated list of components
     You must call nlu.auth() BEFORE calling nlu.load() to access licensed models.
@@ -125,7 +129,7 @@ def load(request: str = 'from_disk', path: Optional[str] = None, verbose: bool =
         return nlu.load(request, path, verbose, gpu, streamlit_caching)
     # check if secrets are in default loc, if yes load them and create licensed context automatically
     auth(gpu=gpu)
-    spark = get_open_source_spark_context(gpu)
+    spark = get_open_source_spark_context(gpu,m1_chip)
     spark.catalog.clearCache()
 
     if verbose:
@@ -258,7 +262,6 @@ def auth(HEALTHCARE_LICENSE_OR_JSON_PATH='/content/spark_nlp_for_healthcare.json
     return nlu
 
 
-# TODO EXPORT
 def load_nlu_pipe_from_hdd(pipe_path, request) -> NLUPipeline:
     """Either there is a pipeline of models in the path or just one singular model_anno_obj.
     If it is a component_list,  load the component_list and return it.
@@ -292,9 +295,12 @@ def load_nlu_pipe_from_hdd(pipe_path, request) -> NLUPipeline:
         raise ValueError
 
 
-def get_open_source_spark_context(gpu):
+def get_open_source_spark_context(gpu,m1_chip):
     if env_utils.is_env_pyspark_3_x():
-        return sparknlp.start(gpu=gpu)
+        if m1_chip:
+            return sparknlp.start(gpu=gpu, m1=True)
+        else:
+            return sparknlp.start(gpu=gpu)
     raise ValueError(f"Failure starting Spark Context! Current Spark version {get_pyspark_version()} not supported! "
                      f"Please install any of Pyspark 3.X versions.")
 
