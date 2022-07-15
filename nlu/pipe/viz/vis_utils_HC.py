@@ -146,16 +146,20 @@ class VizUtilsHC():
         """Finds entities_col,resolution_col,doc_col cols for resolution viz viz"""
         entities_component, resolution_component, doc_component = None, None, None
         for c in pipe.components:
-            if c.name == NLP_NODE_IDS.DOCUMENT_ASSEMBLER:              doc_component = c
-            if c.name in [NLP_HC_NODE_IDS.NER_CONVERTER_INTERNAL, NLP_NODE_IDS.NER_CONVERTER]:   entities_component = c
-            if c.name == NLP_HC_NODE_IDS.SENTENCE_ENTITY_RESOLVER:        resolution_component = c
+            if c.name == NLP_NODE_IDS.DOCUMENT_ASSEMBLER:
+                doc_component = c
+            if NLP_FEATURES.NAMED_ENTITY_CONVERTED in c.out_types:
+                entities_component = c
+
+            if c.name == NLP_HC_NODE_IDS.SENTENCE_ENTITY_RESOLVER:
+                resolution_component = c
         entities_col = entities_component.spark_output_column_names[0]
         resolution_col = resolution_component.spark_output_column_names[0]
         doc_col = doc_component.spark_output_column_names[0]
         return entities_col, resolution_col, doc_col
 
     @staticmethod
-    def viz_relation(anno_res, pipe, is_databricks_env, write_to_streamlit=False, user_relation_col = None ):
+    def viz_relation(anno_res, pipe, is_databricks_env, write_to_streamlit=False, user_relation_col=None):
         """Viz relation result. Set label colors by specifying hex codes, i.e. viz_colors={'TREATMENT':'#800080', 'PROBLEM':'#77b5fe'} """
         relation_col, document_col = VizUtilsHC.infer_relation_dependencies(pipe)
         if user_relation_col:
@@ -188,7 +192,7 @@ class VizUtilsHC():
 
     @staticmethod
     def viz_assertion(anno_res, pipe, viz_colors={}, is_databricks_env=False, write_to_streamlit=False,
-                      user_ner_col=None,user_assertion_col=None
+                      user_ner_col=None, user_assertion_col=None
                       ):
         """Viz relation result. Set label colors by specifying hex codes, i.e. viz_colors={'TREATMENT':'#008080', 'problem':'#800080'} """
         entities_col, assertion_col, doc_col = VizUtilsHC.infer_assertion_dependencies(pipe)
@@ -197,8 +201,6 @@ class VizUtilsHC():
             entities_col = user_ner_col
         if user_assertion_col:
             assertion_col = assertion_col
-
-
 
         if len(viz_colors) > 0: assertion_vis.set_label_colors(viz_colors)
         if write_to_streamlit:
