@@ -325,7 +325,7 @@ nlu.load('en.classify.trec50').predict('How expensive is the Watch?')
 </div></div></div><div class="h3-box" markdown="1">
 
 ## Fake News Classifier
-[Fake News Classifier example](https://colab.research.google.com/drive/1k5x1zxnG4bBkmYAc-bc63sMA4-oQ6-dP?usp=sharing)
+[Fake News Classifier example](https://colab.research.google.com/github/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/classifiers/fake_news_classification.ipynb)
 
 ```python
 nlu.load('en.classify.fakenews').predict('Unicorns have been sighted on Mars!')
@@ -341,7 +341,7 @@ nlu.load('en.classify.fakenews').predict('Unicorns have been sighted on Mars!')
 </div></div></div><div class="h3-box" markdown="1">
 
 ## Cyberbullying Classifier
-[Cyberbullying Classifier example](https://colab.research.google.com/drive/1OSkiXGEpKlm9HWDoVb42uLNQQgb7nqNZ?usp=sharing)
+[Cyberbullying Classifier example](https://colab.research.google.com/github/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/classifiers/cyberbullying_cassification_for_racism_and_sexism.ipynb)
 
 Classifies sexism and racism
 ```python
@@ -853,7 +853,7 @@ nlu.load('tokenize').predict('Each word and symbol in a sentence will generate t
 [Stemmer example](https://colab.research.google.com/drive/1gKTJJmffR9wz13Ms3pDy64jhUI8ZHZYu?usp=sharing)
 
 ```python
-nlu.load('stemm').predict('NLU can get you the stem of a word')
+nlu.load('stem').predict('NLU can get you the stem of a word')
 ```
 
 {:.table-model-big.mb0}
@@ -976,7 +976,7 @@ nlu.load('match.datetime').predict('In the years 2000/01/01 to 2010/01/01 a lot 
 </div></div></div><div class="h3-box" markdown="1">
 
 ## Entity Chunking    
-Checkout [see here](http://localhost:4000/docs/en/examples#part-of-speech--pos) for all possible POS labels or        
+Checkout [see here](https://nlu.johnsnowlabs.com/docs/en/examples#part-of-speech--pos) for all possible POS labels or        
 Splits text into rows based on matched grammatical entities.     
 
 [Entity Chunking Example](https://colab.research.google.com/drive/1svpqtC3cY6JnRGeJngIPl2raqxdowpyi?usp=sharing)
@@ -1106,20 +1106,20 @@ You can translate between more than 192 Languages pairs with the [Marian Models]
 You need to specify the language your data is in as `start_language` and the language you want to translate to as `target_language`.    
 The language references must be [ISO language codes](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes)
 
-`nlu.load('<start_language>.translate.<target_language>')`
+`nlu.load('xx.<start_language>.translate_to.<target_language>')`
 
 **Translate Turkish to English:**     
-`nlu.load('tr.translate_to.fr')`
+`nlu.load('xx.tr.translate_to.fr')`
 
 **Translate English to French:**     
-`nlu.load('en.translate_to.fr')`
+`nlu.load('xx.en.translate_to.fr')`
 
 
 **Translate French to Hebrew:**     
-`nlu.load('en.translate_to.fr')`
+`nlu.load('xx.en.translate_to.fr')`
 
 ```python
-translate_pipe = nlu.load('en.translate_to.de')
+translate_pipe = nlu.load('xx.en.translate_to.de')
 df = translate_pipe.predict('Billy likes to go to the mall every sunday')
 df
 ```
@@ -1135,7 +1135,7 @@ df
 
 
 ## T5
-[Example of every T5 task](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/sequence2sequence/T5_tasks_summarize_question_answering_and_more)
+[Example of every T5 task](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/sequence2sequence/T5_tasks_summarize_question_answering_and_more.ipynb)
 ### Overview of every task available with T5
 [The T5 model](https://arxiv.org/pdf/1910.10683.pdf) is trained on various datasets for 17 different tasks which fall into 8 categories.
 
@@ -1174,14 +1174,14 @@ df
 |[17.WMT2.](https://arxiv.org/abs/1706.03762)                   | Translate English to French|
 |[18.WMT3.](https://arxiv.org/abs/1706.03762)                   | Translate English to Romanian|
 
-- [Every T5 Task example notebook](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/sequence2sequence/T5_tasks_summarize_question_answering_and_more) to see how to use every T5 Task.
+- [Every T5 Task example notebook](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/sequence2sequence/T5_tasks_summarize_question_answering_and_more.ipynb) to see how to use every T5 Task.
 - [T5 Open and Closed Book question answering  notebook](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/sequence2sequence/T5_question_answering.ipynb)
 
 
 
 
 ## Text Summarization 
-[Summarization example](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/sequence2sequence/T5_tasks_summarize_question_answering_and_more)
+[Summarization example](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/sequence2sequence/T5_tasks_summarize_question_answering_and_more.ipynb)
 
 `Summarizes` a paragraph into a shorter version with the same semantic meaning, based on [Text summarization](https://arxiv.org/abs/1506.03340)
 
@@ -1210,7 +1210,7 @@ pipe.predict(data)
 
 
 ## Binary Sentence similarity/ Paraphrasing 
-[Binary sentence similarity example](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/sequence2sequence/T5_tasks_summarize_question_answering_and_more)
+[Binary sentence similarity example](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/sequence2sequence/T5_tasks_summarize_question_answering_and_more.ipynb)
 Classify whether one sentence is a re-phrasing or similar to another sentence      
 This is a sub-task of [GLUE](https://arxiv.org/pdf/1804.07461.pdf) and based on [MRPC - Binary Paraphrasing/ sentence similarity classification ](https://www.aclweb.org/anthology/I05-5002.pdf)
 
@@ -1319,7 +1319,7 @@ sentence2: How I GET OPPERTINUTY TO JOIN IT COMPANY AS A FRESHER?',
 
 
 ## Grammar Checking
-[Grammar checking with T5 example](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/sequence2sequence/T5_tasks_summarize_question_answering_and_more))
+[Grammar checking with T5 example](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/sequence2sequence/T5_tasks_summarize_question_answering_and_more.ipynb))
 Judges if a sentence is grammatically acceptable.    
 Based on [CoLA - Binary Grammatical Sentence acceptability classification](https://nyu-mll.github.io/CoLA/)
 
