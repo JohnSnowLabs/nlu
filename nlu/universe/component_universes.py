@@ -132,7 +132,7 @@ from nlu.universe.universes import Licenses, ComputeContexts
 
 def anno_class_to_empty_component(anno_class) -> NluComponent:
     """
-    For a given anno-class returns NLU-Component which wraps the corrosponding annotator class
+    For a given anno-class returns NLU-Component which wraps the corrosponding pipe class
     but has no model_anno_obj yet loaded onto it.
     :param anno_class: compatible nlu-component to find for
     :return: NluComponent which can load anno_class models
@@ -150,7 +150,7 @@ def anno_class_to_empty_component(anno_class) -> NluComponent:
 def jsl_id_to_empty_component(jsl_id) -> NluComponent:
     """
     Get NLU component with given JSL-ID with no model_anno_obj loaded onto it
-    :param jsl_id: identifier of component/annotator type
+    :param jsl_id: identifier of component/pipe type
     :return: NluComponent for jsl_id
     """
     return anno_class_to_empty_component(jsl_id_to_anno_class(jsl_id))
@@ -346,23 +346,7 @@ class ComponentUniverse:
                                                  output_context=ComputeContexts.spark,
                                                  ),
 
-        A.PARTIAL_ChunkFiltererApproach: partial(NluComponent,
-                                                 name=A.PARTIAL_ChunkMergeApproach,
-                                                 jsl_anno_class_id=A.PARTIAL_ChunkFiltererApproach,
-                                                 jsl_anno_py_class=ACR.JSL_anno2_py_class[
-                                                     A.PARTIAL_ChunkFiltererApproach],
-                                                 node=NLP_FEATURE_NODES.nodes[A.PARTIALLY_IMPLEMENTED],
-                                                 type=T.PARTIALLY_READY,
-                                                 pdf_extractor_methods={'default': default_partial_implement_config,
-                                                                        'default_full': default_full_config, },
-                                                 pdf_col_name_substitutor=partially_implemented_substitutor,
-                                                 output_level=L.DOCUMENT,
-                                                 description='Not fully integrated',
-                                                 provider=ComponentBackends.open_source,
-                                                 license=Licenses.open_source,
-                                                 computation_context=ComputeContexts.spark,
-                                                 output_context=ComputeContexts.spark,
-                                                 ),
+
 
         A.PARTIAL_ChunkFiltererApproach: partial(NluComponent,
                                                  name=A.PARTIAL_ChunkMergeApproach,
@@ -399,22 +383,7 @@ class ComponentUniverse:
                                          output_context=ComputeContexts.spark,
                                          ),
 
-        A.PARTIAL_ChunkMapperApproach: partial(NluComponent,
-                                               name=A.PARTIAL_ChunkMergeApproach,
-                                               jsl_anno_class_id=A.PARTIAL_ChunkMapperApproach,
-                                               jsl_anno_py_class=ACR.JSL_anno2_py_class[A.PARTIAL_ChunkMapperApproach],
-                                               node=NLP_FEATURE_NODES.nodes[A.PARTIALLY_IMPLEMENTED],
-                                               type=T.PARTIALLY_READY,
-                                               pdf_extractor_methods={'default': default_partial_implement_config,
-                                                                      'default_full': default_full_config, },
-                                               pdf_col_name_substitutor=partially_implemented_substitutor,
-                                               output_level=L.DOCUMENT,
-                                               description='Not fully integrated',
-                                               provider=ComponentBackends.open_source,
-                                               license=Licenses.open_source,
-                                               computation_context=ComputeContexts.spark,
-                                               output_context=ComputeContexts.spark,
-                                               ),
+
 
         A.PARTIAL_ChunkMapperApproach: partial(NluComponent,
                                                name=A.PARTIAL_ChunkMergeApproach,
@@ -450,24 +419,7 @@ class ComponentUniverse:
                                                output_context=ComputeContexts.spark,
                                                ),
 
-        A.PARTIAL_DocumentLogRegClassifierApproach: partial(NluComponent,
-                                                            name=A.PARTIAL_ChunkMergeApproach,
-                                                            jsl_anno_class_id=A.PARTIAL_DocumentLogRegClassifierApproach,
-                                                            jsl_anno_py_class=ACR.JSL_anno2_py_class[
-                                                                A.PARTIAL_DocumentLogRegClassifierApproach],
-                                                            node=NLP_FEATURE_NODES.nodes[A.PARTIALLY_IMPLEMENTED],
-                                                            type=T.PARTIALLY_READY,
-                                                            pdf_extractor_methods={
-                                                                'default': default_partial_implement_config,
-                                                                'default_full': default_full_config, },
-                                                            pdf_col_name_substitutor=partially_implemented_substitutor,
-                                                            output_level=L.DOCUMENT,
-                                                            description='Not fully integrated',
-                                                            provider=ComponentBackends.open_source,
-                                                            license=Licenses.open_source,
-                                                            computation_context=ComputeContexts.spark,
-                                                            output_context=ComputeContexts.spark,
-                                                            ),
+
 
         A.PARTIAL_DocumentLogRegClassifierApproach: partial(NluComponent,
                                                             name=A.PARTIAL_ChunkMergeApproach,
@@ -507,23 +459,6 @@ class ComponentUniverse:
                                                          output_context=ComputeContexts.spark,
                                                          ),
 
-        A.PARTIAL_ContextualParserApproach: partial(NluComponent,
-                                                    name=A.PARTIAL_ChunkMergeApproach,
-                                                    jsl_anno_class_id=A.PARTIAL_ContextualParserApproach,
-                                                    jsl_anno_py_class=ACR.JSL_anno2_py_class[
-                                                        A.PARTIAL_ContextualParserApproach],
-                                                    node=NLP_FEATURE_NODES.nodes[A.PARTIALLY_IMPLEMENTED],
-                                                    type=T.PARTIALLY_READY,
-                                                    pdf_extractor_methods={'default': default_partial_implement_config,
-                                                                           'default_full': default_full_config, },
-                                                    pdf_col_name_substitutor=partially_implemented_substitutor,
-                                                    output_level=L.DOCUMENT,
-                                                    description='Not fully integrated',
-                                                    provider=ComponentBackends.open_source,
-                                                    license=Licenses.open_source,
-                                                    computation_context=ComputeContexts.spark,
-                                                    output_context=ComputeContexts.spark,
-                                                    ),
 
         A.PARTIAL_ContextualParserApproach: partial(NluComponent,
                                                     name=A.PARTIAL_ChunkMergeApproach,
@@ -733,22 +668,7 @@ class ComponentUniverse:
                                             ),
 
 
-        A.PARTIAL_Word2VecApproach: partial(NluComponent,
-                                            name=A.PARTIAL_ChunkMergeApproach,
-                                            jsl_anno_class_id=A.PARTIAL_Word2VecApproach,
-                                            jsl_anno_py_class=ACR.JSL_anno2_py_class[A.PARTIAL_Word2VecApproach],
-                                            node=NLP_FEATURE_NODES.nodes[A.PARTIALLY_IMPLEMENTED],
-                                            type=T.PARTIALLY_READY,
-                                            pdf_extractor_methods={'default': default_partial_implement_config,
-                                                                   'default_full': default_full_config, },
-                                            pdf_col_name_substitutor=partially_implemented_substitutor,
-                                            output_level=L.DOCUMENT,
-                                            description='Not fully integrated',
-                                            provider=ComponentBackends.open_source,
-                                            license=Licenses.open_source,
-                                            computation_context=ComputeContexts.spark,
-                                            output_context=ComputeContexts.spark,
-                                            ),
+
 
         A.PARTIAL_Word2VecApproach: partial(NluComponent,
                                             name=A.PARTIAL_ChunkMergeApproach,
@@ -784,22 +704,6 @@ class ComponentUniverse:
                                           output_context=ComputeContexts.spark,
                                           ),
 
-        A.PARTIAL_EntityRulerApproach: partial(NluComponent,
-                                               name=A.PARTIAL_ChunkMergeApproach,
-                                               jsl_anno_class_id=A.PARTIAL_EntityRulerApproach,
-                                               jsl_anno_py_class=ACR.JSL_anno2_py_class[A.PARTIAL_EntityRulerApproach],
-                                               node=NLP_FEATURE_NODES.nodes[A.PARTIALLY_IMPLEMENTED],
-                                               type=T.PARTIALLY_READY,
-                                               pdf_extractor_methods={'default': default_partial_implement_config,
-                                                                      'default_full': default_full_config, },
-                                               pdf_col_name_substitutor=partially_implemented_substitutor,
-                                               output_level=L.DOCUMENT,
-                                               description='Not fully integrated',
-                                               provider=ComponentBackends.open_source,
-                                               license=Licenses.open_source,
-                                               computation_context=ComputeContexts.spark,
-                                               output_context=ComputeContexts.spark,
-                                               ),
 
         A.PARTIAL_EntityRulerApproach: partial(NluComponent,
                                                name=A.PARTIAL_ChunkMergeApproach,
@@ -988,39 +892,7 @@ class ComponentUniverse:
                                           output_context=ComputeContexts.spark,
                                           ),
 
-        A.PARTIAL_NerCrfApproach: partial(NluComponent,
-                                          name=A.PARTIAL_ChunkMergeApproach,
-                                          jsl_anno_class_id=A.PARTIAL_NerCrfApproach,
-                                          jsl_anno_py_class=ACR.JSL_anno2_py_class[A.PARTIAL_NerCrfApproach],
-                                          node=NLP_FEATURE_NODES.nodes[A.PARTIALLY_IMPLEMENTED],
-                                          type=T.PARTIALLY_READY,
-                                          pdf_extractor_methods={'default': default_partial_implement_config,
-                                                                 'default_full': default_full_config, },
-                                          pdf_col_name_substitutor=partially_implemented_substitutor,
-                                          output_level=L.DOCUMENT,
-                                          description='Not fully integrated',
-                                          provider=ComponentBackends.open_source,
-                                          license=Licenses.open_source,
-                                          computation_context=ComputeContexts.spark,
-                                          output_context=ComputeContexts.spark,
-                                          ),
 
-        A.PARTIAL_NerCrfApproach: partial(NluComponent,
-                                          name=A.PARTIAL_ChunkMergeApproach,
-                                          jsl_anno_class_id=A.PARTIAL_NerCrfApproach,
-                                          jsl_anno_py_class=ACR.JSL_anno2_py_class[A.PARTIAL_NerCrfApproach],
-                                          node=NLP_FEATURE_NODES.nodes[A.PARTIALLY_IMPLEMENTED],
-                                          type=T.PARTIALLY_READY,
-                                          pdf_extractor_methods={'default': default_partial_implement_config,
-                                                                 'default_full': default_full_config, },
-                                          pdf_col_name_substitutor=partially_implemented_substitutor,
-                                          output_level=L.DOCUMENT,
-                                          description='Not fully integrated',
-                                          provider=ComponentBackends.open_source,
-                                          license=Licenses.open_source,
-                                          computation_context=ComputeContexts.spark,
-                                          output_context=ComputeContexts.spark,
-                                          ),
 
         A.PARTIAL_NerOverwriter: partial(NluComponent,
                                          name=A.PARTIAL_ChunkMergeApproach,
@@ -1039,23 +911,6 @@ class ComponentUniverse:
                                          output_context=ComputeContexts.spark,
                                          ),
 
-        A.PARTIAL_DependencyParserApproach: partial(NluComponent,
-                                                    name=A.PARTIAL_ChunkMergeApproach,
-                                                    jsl_anno_class_id=A.PARTIAL_DependencyParserApproach,
-                                                    jsl_anno_py_class=ACR.JSL_anno2_py_class[
-                                                        A.PARTIAL_DependencyParserApproach],
-                                                    node=NLP_FEATURE_NODES.nodes[A.PARTIALLY_IMPLEMENTED],
-                                                    type=T.PARTIALLY_READY,
-                                                    pdf_extractor_methods={'default': default_partial_implement_config,
-                                                                           'default_full': default_full_config, },
-                                                    pdf_col_name_substitutor=partially_implemented_substitutor,
-                                                    output_level=L.DOCUMENT,
-                                                    description='Not fully integrated',
-                                                    provider=ComponentBackends.open_source,
-                                                    license=Licenses.open_source,
-                                                    computation_context=ComputeContexts.spark,
-                                                    output_context=ComputeContexts.spark,
-                                                    ),
 
         A.PARTIAL_DependencyParserApproach: partial(NluComponent,
                                                     name=A.PARTIAL_ChunkMergeApproach,
@@ -1074,25 +929,6 @@ class ComponentUniverse:
                                                     computation_context=ComputeContexts.spark,
                                                     output_context=ComputeContexts.spark,
                                                     ),
-
-        A.PARTIAL_TypedDependencyParserApproach: partial(NluComponent,
-                                                         name=A.PARTIAL_ChunkMergeApproach,
-                                                         jsl_anno_class_id=A.PARTIAL_TypedDependencyParserApproach,
-                                                         jsl_anno_py_class=ACR.JSL_anno2_py_class[
-                                                             A.PARTIAL_TypedDependencyParserApproach],
-                                                         node=NLP_FEATURE_NODES.nodes[A.PARTIALLY_IMPLEMENTED],
-                                                         type=T.PARTIALLY_READY,
-                                                         pdf_extractor_methods={
-                                                             'default': default_partial_implement_config,
-                                                             'default_full': default_full_config, },
-                                                         pdf_col_name_substitutor=partially_implemented_substitutor,
-                                                         output_level=L.DOCUMENT,
-                                                         description='Not fully integrated',
-                                                         provider=ComponentBackends.open_source,
-                                                         license=Licenses.open_source,
-                                                         computation_context=ComputeContexts.spark,
-                                                         output_context=ComputeContexts.spark,
-                                                         ),
 
         A.PARTIAL_TypedDependencyParserApproach: partial(NluComponent,
                                                          name=A.PARTIAL_ChunkMergeApproach,
@@ -1132,24 +968,7 @@ class ComponentUniverse:
                                                       output_context=ComputeContexts.spark,
                                                       ),
 
-        A.PARTIAL_SentenceDetectorDLApproach: partial(NluComponent,
-                                                      name=A.PARTIAL_ChunkMergeApproach,
-                                                      jsl_anno_class_id=A.PARTIAL_SentenceDetectorDLApproach,
-                                                      jsl_anno_py_class=ACR.JSL_anno2_py_class[
-                                                          A.PARTIAL_SentenceDetectorDLApproach],
-                                                      node=NLP_FEATURE_NODES.nodes[A.PARTIALLY_IMPLEMENTED],
-                                                      type=T.PARTIALLY_READY,
-                                                      pdf_extractor_methods={
-                                                          'default': default_partial_implement_config,
-                                                          'default_full': default_full_config, },
-                                                      pdf_col_name_substitutor=partially_implemented_substitutor,
-                                                      output_level=L.DOCUMENT,
-                                                      description='Not fully integrated',
-                                                      provider=ComponentBackends.open_source,
-                                                      license=Licenses.open_source,
-                                                      computation_context=ComputeContexts.spark,
-                                                      output_context=ComputeContexts.spark,
-                                                      ),
+
 
         A.PARTIAL_SentimentDetector: partial(NluComponent,
                                              name=A.PARTIAL_ChunkMergeApproach,
@@ -1186,115 +1005,6 @@ class ComponentUniverse:
                                                    output_context=ComputeContexts.spark,
                                                    ),
 
-        A.PARTIAL_ViveknSentimentApproach: partial(NluComponent,
-                                                   name=A.PARTIAL_ChunkMergeApproach,
-                                                   jsl_anno_class_id=A.PARTIAL_ViveknSentimentApproach,
-                                                   jsl_anno_py_class=ACR.JSL_anno2_py_class[
-                                                       A.PARTIAL_ViveknSentimentApproach],
-                                                   node=NLP_FEATURE_NODES.nodes[A.PARTIALLY_IMPLEMENTED],
-                                                   type=T.PARTIALLY_READY,
-                                                   pdf_extractor_methods={'default': default_partial_implement_config,
-                                                                          'default_full': default_full_config, },
-                                                   pdf_col_name_substitutor=partially_implemented_substitutor,
-                                                   output_level=L.DOCUMENT,
-                                                   description='Not fully integrated',
-                                                   provider=ComponentBackends.open_source,
-                                                   license=Licenses.open_source,
-                                                   computation_context=ComputeContexts.spark,
-                                                   output_context=ComputeContexts.spark,
-                                                   ),
-
-        A.PARTIAL_ContextSpellCheckerApproach: partial(NluComponent,
-                                                       name=A.PARTIAL_ChunkMergeApproach,
-                                                       jsl_anno_class_id=A.PARTIAL_ContextSpellCheckerApproach,
-                                                       jsl_anno_py_class=ACR.JSL_anno2_py_class[
-                                                           A.PARTIAL_ContextSpellCheckerApproach],
-                                                       node=NLP_FEATURE_NODES.nodes[A.PARTIALLY_IMPLEMENTED],
-                                                       type=T.PARTIALLY_READY,
-                                                       pdf_extractor_methods={
-                                                           'default': default_partial_implement_config,
-                                                           'default_full': default_full_config, },
-                                                       pdf_col_name_substitutor=partially_implemented_substitutor,
-                                                       output_level=L.DOCUMENT,
-                                                       description='Not fully integrated',
-                                                       provider=ComponentBackends.open_source,
-                                                       license=Licenses.open_source,
-                                                       computation_context=ComputeContexts.spark,
-                                                       output_context=ComputeContexts.spark,
-                                                       ),
-
-        A.PARTIAL_ContextSpellCheckerApproach: partial(NluComponent,
-                                                       name=A.PARTIAL_ChunkMergeApproach,
-                                                       jsl_anno_class_id=A.PARTIAL_ContextSpellCheckerApproach,
-                                                       jsl_anno_py_class=ACR.JSL_anno2_py_class[
-                                                           A.PARTIAL_ContextSpellCheckerApproach],
-                                                       node=NLP_FEATURE_NODES.nodes[A.PARTIALLY_IMPLEMENTED],
-                                                       type=T.PARTIALLY_READY,
-                                                       pdf_extractor_methods={
-                                                           'default': default_partial_implement_config,
-                                                           'default_full': default_full_config, },
-                                                       pdf_col_name_substitutor=partially_implemented_substitutor,
-                                                       output_level=L.DOCUMENT,
-                                                       description='Not fully integrated',
-                                                       provider=ComponentBackends.open_source,
-                                                       license=Licenses.open_source,
-                                                       computation_context=ComputeContexts.spark,
-                                                       output_context=ComputeContexts.spark,
-                                                       ),
-
-        A.PARTIAL_NorvigSweetingApproach: partial(NluComponent,
-                                                  name=A.PARTIAL_ChunkMergeApproach,
-                                                  jsl_anno_class_id=A.PARTIAL_NorvigSweetingApproach,
-                                                  jsl_anno_py_class=ACR.JSL_anno2_py_class[
-                                                      A.PARTIAL_NorvigSweetingApproach],
-                                                  node=NLP_FEATURE_NODES.nodes[A.PARTIALLY_IMPLEMENTED],
-                                                  type=T.PARTIALLY_READY,
-                                                  pdf_extractor_methods={'default': default_partial_implement_config,
-                                                                         'default_full': default_full_config, },
-                                                  pdf_col_name_substitutor=partially_implemented_substitutor,
-                                                  output_level=L.DOCUMENT,
-                                                  description='Not fully integrated',
-                                                  provider=ComponentBackends.open_source,
-                                                  license=Licenses.open_source,
-                                                  computation_context=ComputeContexts.spark,
-                                                  output_context=ComputeContexts.spark,
-                                                  ),
-
-        A.PARTIAL_NorvigSweetingApproach: partial(NluComponent,
-                                                  name=A.PARTIAL_ChunkMergeApproach,
-                                                  jsl_anno_class_id=A.PARTIAL_NorvigSweetingApproach,
-                                                  jsl_anno_py_class=ACR.JSL_anno2_py_class[
-                                                      A.PARTIAL_NorvigSweetingApproach],
-                                                  node=NLP_FEATURE_NODES.nodes[A.PARTIALLY_IMPLEMENTED],
-                                                  type=T.PARTIALLY_READY,
-                                                  pdf_extractor_methods={'default': default_partial_implement_config,
-                                                                         'default_full': default_full_config, },
-                                                  pdf_col_name_substitutor=partially_implemented_substitutor,
-                                                  output_level=L.DOCUMENT,
-                                                  description='Not fully integrated',
-                                                  provider=ComponentBackends.open_source,
-                                                  license=Licenses.open_source,
-                                                  computation_context=ComputeContexts.spark,
-                                                  output_context=ComputeContexts.spark,
-                                                  ),
-
-        A.PARTIAL_SymmetricDeleteApproach: partial(NluComponent,
-                                                   name=A.PARTIAL_ChunkMergeApproach,
-                                                   jsl_anno_class_id=A.PARTIAL_SymmetricDeleteApproach,
-                                                   jsl_anno_py_class=ACR.JSL_anno2_py_class[
-                                                       A.PARTIAL_SymmetricDeleteApproach],
-                                                   node=NLP_FEATURE_NODES.nodes[A.PARTIALLY_IMPLEMENTED],
-                                                   type=T.PARTIALLY_READY,
-                                                   pdf_extractor_methods={'default': default_partial_implement_config,
-                                                                          'default_full': default_full_config, },
-                                                   pdf_col_name_substitutor=partially_implemented_substitutor,
-                                                   output_level=L.DOCUMENT,
-                                                   description='Not fully integrated',
-                                                   provider=ComponentBackends.open_source,
-                                                   license=Licenses.open_source,
-                                                   computation_context=ComputeContexts.spark,
-                                                   output_context=ComputeContexts.spark,
-                                                   ),
 
         A.PARTIAL_SymmetricDeleteApproach: partial(NluComponent,
                                                    name=A.PARTIAL_ChunkMergeApproach,
