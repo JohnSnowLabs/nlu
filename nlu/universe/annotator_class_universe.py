@@ -176,7 +176,6 @@ class AnnoClassRef:
         A_N.PARTIAL_ResolverMerger : 'ResolverMerger',
         A_N.PARTIAL_AnnotationMerger : 'AnnotationMerger',
         A_N.PARTIAL_Router : 'Router',
-        A_N.PARTIAL_RoBertaSentenceEmbeddings : 'RoBertaSentenceEmbeddings',
         A_N.PARTIAL_Word2VecApproach : 'Word2VecApproach',
         A_N.PARTIAL_Word2VecApproach : 'Word2VecApproach',
         A_N.PARTIAL_WordEmbeddings : 'WordEmbeddings',
@@ -220,7 +219,6 @@ class AnnoClassRef:
         A_N.PARTIAL_GraphExtraction : 'GraphExtraction',
         A_N.PARTIAL_Lemmatizer : 'Lemmatizer',
         A_N.PARTIAL_Normalizer : 'Normalizer',
-        A_N.PARTIAL_SpanBertCorefModel : 'SpanBertCorefModel',
 
 
 
