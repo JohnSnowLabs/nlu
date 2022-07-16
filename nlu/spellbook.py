@@ -5711,6 +5711,13 @@ class Spellbook:
 
                 # 4.0.0
 
+                'en.map_entity.rxnorm_to_action_treatment': 'rxnorm_action_treatment_mapper',
+                'en.map_entity.rxnorm_resolver': 'rxnorm_mapper',
+                'en.map_entity.rxnorm_to_ndc': 'rxnorm_ndc_mapper',
+                'en.map_entity.abbreviation_to_definition': 'abbreviation_mapper',
+                'en.map_entity.drug_to_action_treatment': 'drug_action_treatment_mapper',
+                'en.map_entity.drug_brand_to_ndc': 'drug_brandname_ndc_mapper',
+
                 'en.map_entity.snomed_to_icd10cm': 'snomed_icd10cm_mapper',
                 'en.map_entity.icd10cm_to_snomed': 'icd10cm_snomed_mapper',
                 'en.map_entity.snomed_to_icdo': 'snomed_icdo_mapper',
@@ -5780,7 +5787,7 @@ class Spellbook:
                 'en.classify.token_bert.ner_deid': 'bert_token_classifier_ner_deid',
 
                 'en.detect_sentence.clinical': 'sentence_detector_dl_healthcare',
-                'en.norm_drugs': 'drug_normalizer',  # TODO!?!??!
+                'en.norm_drugs': 'drug_normalizer',
                 # T5
                 'en.t5.mediqa': 't5_base_mediqa_mnli',
 
@@ -6452,6 +6459,13 @@ class Spellbook:
         OCR_NODE_IDS.DOC2TEXT_TABLE: 'DocToTextTable',
         OCR_NODE_IDS.VISUAL_DOCUMENT_CLASSIFIER: 'VisualDocumentClassifier',
         'roberta_embeddings_MedRoBERTa.nl': 'RoBertaEmbeddings',
+
+        'rxnorm_action_treatment_mapper': 'ChunkMapperModel',
+        'rxnorm_mapper': 'ChunkMapperModel',
+        'rxnorm_ndc_mapper': 'ChunkMapperModel',
+        'abbreviation_mapper': 'ChunkMapperModel',
+        'drug_action_treatment_mapper': 'ChunkMapperModel',
+        'drug_brandname_ndc_mapper': 'ChunkMapperModel',
 
         'snomed_icd10cm_mapper': 'ChunkMapperModel',
         'icd10cm_snomed_mapper': 'ChunkMapperModel',
