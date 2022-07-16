@@ -44,7 +44,6 @@ class SpanQuestionConversionTestCase(unittest.TestCase):
         ps = pd.Series(data)
         self.validate_conversion_result(DataConversionUtils.question_tuple_iterable_to_sdf(ps, self.spark)[0])
 
-
     def test_sdf_conversion(self):
         data = pd.DataFrame({'question': [self.q],
                              'context': [self.c]
