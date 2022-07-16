@@ -52,7 +52,7 @@ def substitute_ner_converter_cols(c, cols, nlu_identifier):
         - entities@<storage_ref>_confidence
     """
     new_cols = {}
-    new_base_name = 'entities' if nlu_identifier == 'UNIQUE' else f'entities_{nlu_identifier}'
+    new_base_name = 'entities' if nlu_identifier == 'UNIQUE' else f'entities_{nlu_identifier}' if 'entities' not in nlu_identifier else nlu_identifier
     for col in cols:
         if 'results' in col:
             new_cols[col] = new_base_name
@@ -245,8 +245,6 @@ def substitute_transformer_token_classifier_cols(c, cols, nlu_identifier=True):
     return new_cols
 
 
-
-
 def substitute_coref_cols(c, cols, nlu_identifier=True):
     """
     |ORIGIN_REFERENCE | CO_REFERENCES|
@@ -261,7 +259,7 @@ def substitute_coref_cols(c, cols, nlu_identifier=True):
     for col in cols:
         if '_result' in col:
             new_cols[col] = new_base_name
-        elif '_sentence' in col :
+        elif '_sentence' in col:
             new_cols[col] = f'{new_base_name}_origin_sentence'
         elif '_endings' in col:
             new_cols[col] = f'{new_base_name}_end'
@@ -270,10 +268,14 @@ def substitute_coref_cols(c, cols, nlu_identifier=True):
         elif '_types' in col:
             continue
         elif 'meta' in col:
-            if 'head.sentence' in col: new_cols[col] = f'{new_base_name}_head_origin_sentence'
-            elif 'head.end' in col: new_cols[col] = f'{new_base_name}_head_end'
-            elif 'head.begin' in col: new_cols[col] = f'{new_base_name}_head_begin'
-            elif '_head' in col: new_cols[col] = f'{new_base_name}_head'
+            if 'head.sentence' in col:
+                new_cols[col] = f'{new_base_name}_head_origin_sentence'
+            elif 'head.end' in col:
+                new_cols[col] = f'{new_base_name}_head_end'
+            elif 'head.begin' in col:
+                new_cols[col] = f'{new_base_name}_head_begin'
+            elif '_head' in col:
+                new_cols[col] = f'{new_base_name}_head'
             else:
                 logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
             # new_cols[col]= f"{new_base_name}_confidence"
@@ -431,7 +433,7 @@ def substitute_chunk_embed_cols(c, cols, nlu_identifier=True):
     Substitute col name for chunk Embeddings. For Word_Embeddings, some name will be infered, and chunk_embedding_<name> will become the base name schema
     """
     new_cols = {}
-    new_base_name = f'chunk_embedding_{nlu_identifier}' if'chunk_embedding_' not in nlu_identifier else nlu_identifier  # if nlu_identifier else f'document_{nlu_identifier}'
+    new_base_name = f'chunk_embedding_{nlu_identifier}' if 'chunk_embedding_' not in nlu_identifier else nlu_identifier  # if nlu_identifier else f'document_{nlu_identifier}'
     for col in cols:
         if '_results' in col:
             continue  # new_cols[col] = new_base_name can be omitted for chunk_embeddings, maps to the origin chunk, which will be in the tokenizer col anyways
