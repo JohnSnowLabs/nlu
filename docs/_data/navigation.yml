@@ -50,6 +50,8 @@ docs-en:
         key: streamlit_viz
       - title:  Spellbook
         url:    /docs/en/spellbook
+      - title:  Utils for Spark NLP
+        url:    /docs/en/utils_for_spark_nlp
 
 
   - title:      Documentation
