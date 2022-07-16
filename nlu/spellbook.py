@@ -5710,6 +5710,17 @@ class Spellbook:
             {
 
                 # 4.0.0
+                # 
+                'en.rxnorm_to_ndc' : 'rxnorm_ndc_mapper',
+                'en.map_entity.section_headers_normalized': 'normalized_section_header_mapper',
+                'en.icd10cm_to_snomed': 'icd10cm_snomed_mapper',
+                'en.icd10cm_to_umls': 'icd10cm_umls_mapper',
+                'en.icdo_to_snomed': 'icdo_snomed_mapper',
+                'en.mesh_to_umls': 'mesh_umls_mapper',
+                'en.rxnorm_to_umls': 'rxnorm_umls_mapper',
+                'en.snomed_to_icd10cm': 'snomed_icd10cm_mapper',
+                'en.snomed_to_icdo': 'snomed_icdo_mapper',
+                'en.snomed_to_umls': 'snomed_umls_mapper',
 
                 'en.map_entity.rxnorm_to_action_treatment': 'rxnorm_action_treatment_mapper',
                 'en.map_entity.rxnorm_resolver': 'rxnorm_mapper',
@@ -6466,6 +6477,7 @@ class Spellbook:
         'abbreviation_mapper': 'ChunkMapperModel',
         'drug_action_treatment_mapper': 'ChunkMapperModel',
         'drug_brandname_ndc_mapper': 'ChunkMapperModel',
+        'rxnorm_ndc_mapper': 'ChunkMapperModel',
 
         'snomed_icd10cm_mapper': 'ChunkMapperModel',
         'icd10cm_snomed_mapper': 'ChunkMapperModel',
