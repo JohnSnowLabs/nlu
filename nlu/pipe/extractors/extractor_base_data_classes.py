@@ -32,10 +32,10 @@ class SparkNLPExtractor:
           Description
     """
     extractor_method: Callable[[List[Dict[str, Any]]], List[Any]] = field(repr=False, default=lambda x: x)
-    extractor_with_result_method: \
-        Optional[Callable[[List[Dict[str, Any]], List[Dict[str, Any]]], List[Any]]] = field(repr=False, default=None)
     description: str = field(default='')
     name: str = field(default='')
+    extractor_with_result_method: \
+        Optional[Callable[[List[Dict[str, Any]], List[Dict[str, Any]]], List[Any]]] = field(repr=False, default=None)
 
 
 ## TODO extra config for getting "to which sentence did chunk/x/y/z belong to?"
