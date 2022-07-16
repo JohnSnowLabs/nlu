@@ -281,7 +281,7 @@ def get_trained_component_for_nlp_model_ref(lang: str, nlu_ref: Optional[str] = 
         if model_configs:
             for method_name, parameter in model_configs.items():
                 # Dynamically call method from provided name and value, to set parameters like T5 task
-                code = f'component.model_anno_obj.{method_name}({parameter})'
+                code = f'component.model.{method_name}({parameter})'
                 eval(code)
     except Exception as e:
         raise ValueError(f'Failure making component, nlp_ref={nlp_ref}, nlu_ref={nlu_ref}, lang={lang}, \n err={e}')
