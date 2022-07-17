@@ -173,11 +173,7 @@ These substrings define up the `<domain>` part of the NLU reference
 - Biomedical Literature [pubmed](https://pubmed.ncbi.nlm.nih.gov/)
 - Twitter [tweet](https://aclanthology.org/P19-1496.pdf)
 - Wikipedia [wiki](https://www.wikipedia.org/)
-- News [news](https://www.microsoft.com/en-us/research/project/newsqa-dataset/)   * [Notebook for Classification of Banking Queries](https://github.com/JohnSnowLabs/nlu/blob/4.0.0/examples/colab/component_examples/classifiers/Banking_Queries_Classification.ipynb)
-* [Notebook for Classification of Intent in Texts ](https://github.com/JohnSnowLabs/nlu/blob/4.0.0/examples/colab/component_examples/classifiers/Identify_intent_in_general_text.ipynb)
-* [Notebook for classification of Similar Questions ](https://github.com/JohnSnowLabs/nlu/blob/4.0.0/examples/colab/component_examples/classifiers/Question_Pair_Classification.ipynb)
-* [Notebook for Classification of Questions vs Statements](https://github.com/JohnSnowLabs/nlu/blob/4.0.0/examples/colab/component_examples/classifiers/Question_vs_Statement.ipynb)
-  *[Notebook for Classification of News into 4 classes](https://github.com/JohnSnowLabs/nlu/blob/4.0.0/examples/colab/component_examples/classifiers/News_Classification.ipynb)
+- News [news](https://www.microsoft.com/en-us/research/project/newsqa-dataset/)   
 - Tech [tech](https://arxiv.org/abs/1911.02984)
 
 These substrings define up the `<dataset>` part of the NLU reference
@@ -712,6 +708,7 @@ All healthcare models added in NLU 4.0 :
 
 All core models added in NLU 4.0 :
 Can be found on the [NLU website](https://nlu.johnsnowlabs.com/docs/en/release_notes) because of Github Limitations
+
 
 
 
@@ -1676,7 +1673,6 @@ Can be found on the [NLU website](https://nlu.johnsnowlabs.com/docs/en/release_n
 | [xx.answer_question.distil_bert.en_de_tuned.by_ZYW](https://nlp.johnsnowlabs.com/2022/06/08/distilbert_qa_en_de_model_xx_3_0.html)                                                                                                                 | [distilbert_qa_en_de_model](https://nlp.johnsnowlabs.com/2022/06/08/distilbert_qa_en_de_model_xx_3_0.html)                                                                                                                                                             | Question Answering | [nan](https://iso639-3.sil.org/code/xx)                      | DistilBertForQuestionAnswering |
 | [xx.answer_question.distil_bert.en_de_es_tuned.by_ZYW](https://nlp.johnsnowlabs.com/2022/06/08/distilbert_qa_en_de_es_model_xx_3_0.html)                                                                                                           | [distilbert_qa_en_de_es_model](https://nlp.johnsnowlabs.com/2022/06/08/distilbert_qa_en_de_es_model_xx_3_0.html)                                                                                                                                                       | Question Answering | [nan](https://iso639-3.sil.org/code/xx)                      | DistilBertForQuestionAnswering |
 | [xx.answer_question.squad.distil_bert.en_de_es_tuned.by_ZYW](https://nlp.johnsnowlabs.com/2022/06/08/distilbert_qa_squad_en_de_es_model_xx_3_0.html)                                                                                               | [distilbert_qa_squad_en_de_es_model](https://nlp.johnsnowlabs.com/2022/06/08/distilbert_qa_squad_en_de_es_model_xx_3_0.html)                                                                                                                                           | Question Answering | [nan](https://iso639-3.sil.org/code/xx)                      | DistilBertForQuestionAnswering |
-
 
 --------------------- 
 
