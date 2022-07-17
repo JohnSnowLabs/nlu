@@ -2083,3 +2083,20 @@ wrapped inside of a NLU Pipeline.
 | [English](https://iso639-3.sil.org/code/eng)                       | [en.explain_doc.carp](https://nlp.johnsnowlabs.com/2021/04/01/explain_clinical_doc_carp_en.html)                                        | [explain_clinical_doc_carp](https://nlp.johnsnowlabs.com/2021/04/01/explain_clinical_doc_carp_en.html)                               |
 | [French](https://iso639-3.sil.org/code/fra)                        | [fr.deid_obfuscated](https://nlp.johnsnowlabs.com/2022/03/04/clinical_deidentification_fr_2_4.html)                                     | [clinical_deidentification](https://nlp.johnsnowlabs.com/2022/03/04/clinical_deidentification_fr_2_4.html)                           |
 | [Moldavian, Moldovan, Romanian](https://iso639-3.sil.org/code/ron) | [ro.deid.clinical](https://nlp.johnsnowlabs.com/2022/06/28/clinical_deidentification_ro_3_0.html)                                       | [clinical_deidentification](https://nlp.johnsnowlabs.com/2022/06/28/clinical_deidentification_ro_3_0.html)                           |
+
+
+## OCR Model references
+
+{:.table-model-big.mb0}
+| NLU Spell | Transformer Class |
+|----------------------|-----------------------------------------------------------------------------------------|
+| nlu.load(`img2text`) | [ImageToText](https://nlp.johnsnowlabs.com/docs/en/ocr_pipeline_components#imagetotext) |
+| nlu.load(`png2text`) | [ImageToText](https://nlp.johnsnowlabs.com/docs/en/ocr_pipeline_components#imagetotext) |
+| nlu.load(`jpg2text`) | [ImageToText](https://nlp.johnsnowlabs.com/docs/en/ocr_pipeline_components#imagetotext) |
+| nlu.load(`pdf2text`) | [PdfToText](https://nlp.johnsnowlabs.com/docs/en/ocr_pipeline_components#pdftotext) |
+| nlu.load(`doc2text`) | [DocToText](https://nlp.johnsnowlabs.com/docs/en/ocr_pipeline_components#doctotext) |
+| nlu.load(`pdf2table`) | [PdfToTextTable](https://nlp.johnsnowlabs.com/docs/en/ocr_pipeline_components#pdftotexttable) |              
+| nlu.load(`ppt2table`) | [PptToTextTable](https://nlp.johnsnowlabs.com/docs/en/ocr_pipeline_components#ppttotexttable)     |              
+| nlu.load(`doc2table`) | [DocToTextTable](https://nlp.johnsnowlabs.com/docs/en/ocr_pipeline_components#doctotexttable)     |     
+| nlu.load(`classify.image`) | [VisualDocumentClassifier](https://nlp.johnsnowlabs.com/docs/en/ocr_visual_document_understanding#visualdocumentclassifier)     |     
+| nlu.load(`en.classify_image.tabacco`) | [VisualDocumentClassifier](https://nlp.johnsnowlabs.com/docs/en/ocr_visual_document_understanding#visualdocumentclassifier)     |     
