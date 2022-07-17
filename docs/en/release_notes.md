@@ -1,4 +1,4 @@
- ---
+---
 layout: docs
 header: true
 seotitle: NLU | John Snow Labs
