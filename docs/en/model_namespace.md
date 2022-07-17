@@ -13,22 +13,6 @@ modify_date: "2020-05-08"
 <div class="h3-box" markdown="1">
 
 
-## OCR Model references
-
-{:.table-model-big.mb0}
-| Language Name(s)                             | NLU Reference                                             | Spark NLP  Reference                                                   |
-|:---------------------------------------------|:----------------------------------------------------------|:-----------------------------------------------------------------------|
-| [English](https://iso639-3.sil.org/code/eng) | [en.ppt2table](https://nlp.johnsnowlabs.com)              | [ppt2text_table](https://nlp.johnsnowlabs.com)                         |
-| [English](https://iso639-3.sil.org/code/eng) | [en.png2text](https://nlp.johnsnowlabs.com)               | [image2text](https://nlp.johnsnowlabs.com)                             |
-| [English](https://iso639-3.sil.org/code/eng) | [en.pdf2text](https://nlp.johnsnowlabs.com)               | [pdf2text](https://nlp.johnsnowlabs.com)                               |
-| [English](https://iso639-3.sil.org/code/eng) | [en.pdf2table](https://nlp.johnsnowlabs.com)              | [pdf2table](https://nlp.johnsnowlabs.com)                              |
-| [English](https://iso639-3.sil.org/code/eng) | [en.jpg2text](https://nlp.johnsnowlabs.com)               | [image2text](https://nlp.johnsnowlabs.com)                             |
-| [English](https://iso639-3.sil.org/code/eng) | [en.img2text](https://nlp.johnsnowlabs.com)               | [image2text](https://nlp.johnsnowlabs.com)                             |
-| [English](https://iso639-3.sil.org/code/eng) | [en.doc2text](https://nlp.johnsnowlabs.com)               | [doc2text](https://nlp.johnsnowlabs.com)                               |
-| [English](https://iso639-3.sil.org/code/eng) | [en.doc2table](https://nlp.johnsnowlabs.com)              | [doc2text_table](https://nlp.johnsnowlabs.com)                         |
-| [English](https://iso639-3.sil.org/code/eng) | [en.classify_image.tabacco](https://nlp.johnsnowlabs.com) | [visual_document_classifier_tobacco3482](https://nlp.johnsnowlabs.com) |
-| [English](https://iso639-3.sil.org/code/eng) | [en.classify.image](https://nlp.johnsnowlabs.com)         | [visual_document_classifier](https://nlp.johnsnowlabs.com)             |
-
 
 ## Default Component References 
 
