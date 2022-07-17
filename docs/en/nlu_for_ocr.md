@@ -12,12 +12,21 @@ modify_date: "2019-05-16"
 This page gives you an overview of every OCR model in NLU which are provided by [Spark
 OCR](https://nlp.johnsnowlabs.com/docs/en/ocr).
 
-Additionally this [this tutorial NLU OCR notebook](https://colab.research.google.com/github/JohnSnowLabs/nlu/blob/master/examples/colab/ocr/ocr_for_img_pdf_docx_files.ipynb) gives you an overview of all OCR features
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/JohnSnowLabs/nlu/blob/master/examples/colab/ocr/ocr_for_img_pdf_docx_files.ipynb)
+
+
+Additionally you can refer to the OCR tutorial Notebooks 
+- [OCR Tutorial for extracting `Text` from Image/PDF/DOC(X) files](https://colab.research.google.com/github/JohnSnowLabs/nlu/blob/master/examples/colab/ocr/ocr_for_img_pdf_docx_files.ipynb) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/JohnSnowLabs/nlu/blob/master/examples/colab/ocr/ocr_for_img_pdf_docx_files.ipynb)
+- [OCR Tutorial for extracting `Tables` from Image/PDF/DOC(X) files ](https://colab.research.google.com/github/JohnSnowLabs/nlu/blob/master/examples/colab/ocr/table_extraction.ipynb.ipynb) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/JohnSnowLabs/nlu/blob/master/examples/colab/ocr/table_extraction.ipynb)
 
 
 <div class="h3-box" markdown="1">
 
+<br>
+
+## Overview of all OCR features
+
+**Overview of OCR Text Extractors**        
+These models grab the text directly from your input file and returns it as a Pandas DataFrame
 
 | NLU Spell | Transformer Class |
 |----------------------|-----------------------------------------------------------------------------------------|
@@ -25,6 +34,20 @@ Additionally this [this tutorial NLU OCR notebook](https://colab.research.google
 | nlu.load(`pdf2text`) | [PdfToText](https://nlp.johnsnowlabs.com/docs/en/ocr_pipeline_components#pdftotext) |
 | nlu.load(`doc2text`) | [DocToText](https://nlp.johnsnowlabs.com/docs/en/ocr_pipeline_components#doctotext) |
 
+
+**Overview of OCR Table Extractors**          
+These models grab all Table data from the files detected and return a `list of Pandas DataFrames`,
+containing Pandas DataFrame for every table detected
+
+| NLU Spell            | Transformer Class                                                                       |
+|----------------------|-----------------------------------------------------------------------------------------|
+| nlu.load(`pdf2table`) | [PdfToTextTable](https://nlp.johnsnowlabs.com/docs/en/ocr_pipeline_components#pdftotexttable) |              
+| nlu.load(`ppt2table`) | [PptToTextTable](https://nlp.johnsnowlabs.com/docs/en/ocr_pipeline_components#ppttotexttable)     |              
+| nlu.load(`doc2table`) | [DocToTextTable](https://nlp.johnsnowlabs.com/docs/en/ocr_pipeline_components#doctotexttable)     |              
+
+
+
+## File Path handling for OCR Models
 
 When your nlu pipeline contains a `ocr spell` the predict method will accept the following inputs :
 
@@ -34,12 +57,12 @@ When your nlu pipeline contains a `ocr spell` the predict method will accept the
 pointing to folders or files
 
 For every path in the input passed to the `predict()` method, nlu will distinguish between two cases:
-1. If the path points to a `file`, nlu will apply OCR transformers to it, if the file type is applicable with
+1. If the path points to a `file`, nlu will apply OCR transformers to it, if the file type is processable with
 the currently loaded OCR pipeline.
-2. If the path points to a `folder`, nlu will recuirsively search for files in the folder and subfolders which
-have file types wich are applicable with the loaded OCR pipeline.
+2. If the path points to a `folder`, nlu will recursively search for files in the folder and sub-folders which
+have file types which are applicable with the loaded OCR pipeline.
 
-NLU checks the file endings to determine wether the OCR models can be applied or not, i.e. `.pdf`, `.img` etc..
+NLU checks the file endings to determine whether the OCR models can be applied or not, i.e. `.pdf`, `.img` etc..
 If your files lack these endings, NLU will not process them.
 
 
@@ -91,6 +114,90 @@ nlu.load('doc2text').predict('path/to/haiku.docx')
 | “In a Station of the Metro” by Ezra Pound   |
 | The apparition of these faces in the crowd; |
 | Petals on a wet, black bough.               |
+
+
+## PDF with Tables
+
+Sample PDF: ![Sample PDF](/assets/images/ocr/nlu_ocr/tables/pdf.png )
+
+```python
+nlu.load('pdf2table').predict('/path/to/sample.pdf')
+```   
+
+**Output of PDF Table OCR :**
+
+|   mpg |   cyl |   disp |   hp |   drat |    wt |   qsec |   vs |   am |   gear |
+|------:|------:|-------:|-----:|-------:|------:|-------:|-----:|-----:|-------:|
+|  21   |     6 |  160   |  110 |   3.9  | 2.62  |  16.46 |    0 |    1 |      4 |
+|  21   |     6 |  160   |  110 |   3.9  | 2.875 |  17.02 |    0 |    1 |      4 |
+|  22.8 |     4 |  108   |   93 |   3.85 | 2.32  |  18.61 |    1 |    1 |      4 |
+|  21.4 |     6 |  258   |  110 |   3.08 | 3.215 |  19.44 |    1 |    0 |      3 |
+|  18.7 |     8 |  360   |  175 |   3.15 | 3.44  |  17.02 |    0 |    0 |      3 |
+|  13.3 |     8 |  350   |  245 |   3.73 | 3.84  |  15.41 |    0 |    0 |      3 |
+|  19.2 |     8 |  400   |  175 |   3.08 | 3.845 |  17.05 |    0 |    0 |      3 |
+|  27.3 |     4 |   79   |   66 |   4.08 | 1.935 |  18.9  |    1 |    1 |      4 |
+|  26   |     4 |  120.3 |   91 |   4.43 | 2.14  |  16.7  |    0 |    1 |      5 |
+|  30.4 |     4 |   95.1 |  113 |   3.77 | 1.513 |  16.9  |    1 |    1 |      5 |
+|  15.8 |     8 |  351   |  264 |   4.22 | 3.17  |  14.5  |    0 |    1 |      5 |
+|  19.7 |     6 |  145   |  175 |   3.62 | 2.77  |  15.5  |    0 |    1 |      5 |
+|  15   |     8 |  301   |  335 |   3.54 | 3.57  |  14.6  |    0 |    1 |      5 |
+|  21.4 |     4 |  121   |  109 |   4.11 | 2.78  |  18.6  |    1 |    1 |      4 |
+
+## DOCX with Tables
+
+Sample DOCX: ![Sample DOCX](/assets/images/ocr/nlu_ocr/tables/doc.png )
+
+```python
+nlu.load('doc2table').predict('/path/to/sample.docx')
+```   
+
+**Output of DOCX Table OCR :**
+
+| Screen Reader   |   Responses | Share   |
+|:----------------|------------:|:--------|
+| JAWS            |         853 | 49%     |
+| NVDA            |         238 | 14%     |
+| Window-Eyes     |         214 | 12%     |
+| System Access   |         181 | 10%     |
+| VoiceOver       |         159 | 9%      |
+
+
+
+
+
+## PPT with Tables
+
+Sample PPT with two tables: ![Sample PPT with two tables](/assets/images/ocr/nlu_ocr/tables/ppt.png )
+
+```python
+nlu.load('ppt2table').predict('/path/to/sample.docx')
+```   
+
+**Output of PPT Table OCR :**
+
+
+|   Sepal.Length |   Sepal.Width |   Petal.Length |   Petal.Width | Species   |
+|---------------:|--------------:|---------------:|--------------:|:----------|
+|            5.1 |           3.5 |            1.4 |           0.2 | setosa    |
+|            4.9 |           3   |            1.4 |           0.2 | setosa    |
+|            4.7 |           3.2 |            1.3 |           0.2 | setosa    |
+|            4.6 |           3.1 |            1.5 |           0.2 | setosa    |
+|            5   |           3.6 |            1.4 |           0.2 | setosa    |
+|            5.4 |           3.9 |            1.7 |           0.4 | setosa    |
+
+and 
+
+|   Sepal.Length |   Sepal.Width |   Petal.Length |   Petal.Width | Species   |
+|---------------:|--------------:|---------------:|--------------:|:----------|
+|            6.7 |           3.3 |            5.7 |           2.5 | virginica |
+|            6.7 |           3   |            5.2 |           2.3 | virginica |
+|            6.3 |           2.5 |            5   |           1.9 | virginica |
+|            6.5 |           3   |            5.2 |           2   | virginica |
+|            6.2 |           3.4 |            5.4 |           2.3 | virginica |
+|            5.9 |           3   |            5.1 |           1.8 | virginica |
+
+
+
 
 ## Combine OCR and NLP models
 
