@@ -23,6 +23,19 @@ class NLP_NODE_IDS:
     DOC2VEC = JslAnnoId('doc2vec')
     TRAIANBLE_DOC2VEC = JslAnnoId('trainable_doc2vec')
     DOCUMENT_ASSEMBLER = JslAnnoId('document_assembler')
+    MULTI_DOCUMENT_ASSEMBLER = JslAnnoId('multi_document_assembler')
+
+    ALBERT_FOR_QUESTION_ANSWERING = JslAnnoId('albert_for_question_answering')
+    BERT_FOR_QUESTION_ANSWERING = JslAnnoId('bert_for_question_answering')
+    DE_BERTA_FOR_QUESTION_ANSWERING = JslAnnoId('de_berta_for_question_answering')
+    DISTIL_BERT_FOR_QUESTION_ANSWERING = JslAnnoId('distil_bert_for_question_answering')
+    LONGFORMER_FOR_QUESTION_ANSWERING = JslAnnoId('longformer_for_question_answering')
+    ROBERTA_FOR_QUESTION_ANSWERING = JslAnnoId('roberta_for_question_answering')
+    XLM_ROBERTA_FOR_QUESTION_ANSWERING = JslAnnoId('xlm_roberta_for_question_answering')
+    SPAN_BERT_COREF_MODEL = JslAnnoId('span_bert_coref_model')
+
+
+
     DOCUMENT_NORMALIZER = JslAnnoId('document_normalizer')
     EMBEDDINGS_FINISHER = JslAnnoId('embeddings_finisher')
     ENTITY_RULER = JslAnnoId('entitiy_ruler')
@@ -79,6 +92,14 @@ class NLP_NODE_IDS:
     ROBERTA_FOR_TOKEN_CLASSIFICATION = JslAnnoId('roberta_for_token_classification')
     ROBERTA_SENTENCE_EMBEDDINGS = JslAnnoId('roberta_sentence_embeddings')
     T5_TRANSFORMER = JslAnnoId('t5_transformer')
+
+
+
+
+
+
+
+
     UNIVERSAL_SENTENCE_ENCODER = JslAnnoId('universal_sentence_encoder')
     XLM_ROBERTA_EMBEDDINGS = JslAnnoId('xlm_roberta_embeddings')
     XLM_ROBERTA_FOR_TOKEN_CLASSIFICATION = JslAnnoId('xlm_roberta_for_token_classification')
@@ -95,6 +116,7 @@ class NLP_NODE_IDS:
     DEBERTA_WORD_EMBEDDINGS = JslAnnoId('deberta')
     DEBERTA_FOR_SEQUENCE_CLASSIFICATION = JslAnnoId('deberta_for_sequence_classification')
     DEBERTA_FOR_TOKEN_CLASSIFICATION = JslAnnoId('deberta_for_token_classification')
+    COREF_SPAN_BERT = JslAnnoId('coref_spanbert')
 
 
     TRAINABLE_CONTEXT_SPELL_CHECKER = JslAnnoId('trainable_context_spell_checker')
@@ -122,6 +144,89 @@ class NLP_NODE_IDS:
     TRAINABLE_TOKENIZER = JslAnnoId('trainable_tokenizer')
     TRAINABLE_WORD_SEGMENTER = JslAnnoId('trainable_word_segmenter')
     BERT_SENTENCE_CHUNK_EMBEDDINGS = JslAnnoId('bert_sentence_chunk_embeddings')
+
+
+    PARTIALLY_IMPLEMENTED = JslAnnoId('partially_implemented')
+    PARTIAL_AssertionFilterer = JslAnnoId('PARTIAL_AssertionFilterer')
+    PARTIAL_ChunkConverter = JslAnnoId('PARTIAL_ChunkConverter')
+    PARTIAL_ChunkKeyPhraseExtraction = JslAnnoId('PARTIAL_ChunkKeyPhraseExtraction')
+    PARTIAL_ChunkSentenceSplitter = JslAnnoId('PARTIAL_ChunkSentenceSplitter')
+    PARTIAL_ChunkFiltererApproach = JslAnnoId('PARTIAL_ChunkFiltererApproach')
+    PARTIAL_ChunkFiltererApproach = JslAnnoId('PARTIAL_ChunkFiltererApproach')
+    PARTIAL_ChunkFilterer = JslAnnoId('PARTIAL_ChunkFilterer')
+    PARTIAL_ChunkMapperApproach = JslAnnoId('PARTIAL_ChunkMapperApproach')
+    PARTIAL_ChunkMapperApproach = JslAnnoId('PARTIAL_ChunkMapperApproach')
+    PARTIAL_ChunkMapperFilterer = JslAnnoId('PARTIAL_ChunkMapperFilterer')
+    PARTIAL_DocumentLogRegClassifierApproach = JslAnnoId('PARTIAL_DocumentLogRegClassifierApproach')
+    PARTIAL_DocumentLogRegClassifierApproach = JslAnnoId('PARTIAL_DocumentLogRegClassifierApproach')
+    PARTIAL_DocumentLogRegClassifierModel = JslAnnoId('PARTIAL_DocumentLogRegClassifierModel')
+    PARTIAL_ContextualParserApproach = JslAnnoId('PARTIAL_ContextualParserApproach')
+    PARTIAL_ContextualParserApproach = JslAnnoId('PARTIAL_ContextualParserApproach')
+    PARTIAL_ReIdentification = JslAnnoId('PARTIAL_ReIdentification')
+    PARTIAL_NerDisambiguator = JslAnnoId('PARTIAL_NerDisambiguator')
+    PARTIAL_NerDisambiguatorModel = JslAnnoId('PARTIAL_NerDisambiguatorModel')
+    PARTIAL_AverageEmbeddings = JslAnnoId('PARTIAL_AverageEmbeddings')
+    PARTIAL_EntityChunkEmbeddings = JslAnnoId('PARTIAL_EntityChunkEmbeddings')
+    PARTIAL_ChunkMergeApproach = JslAnnoId('PARTIAL_ChunkMergeApproach')
+    PARTIAL_ChunkMergeApproach = JslAnnoId('PARTIAL_ChunkMergeApproach')
+    PARTIAL_IOBTagger = JslAnnoId('PARTIAL_IOBTagger')
+    PARTIAL_NerChunker = JslAnnoId('PARTIAL_NerChunker')
+    PARTIAL_NerConverterInternalModel = JslAnnoId('PARTIAL_NerConverterInternalModel')
+    PARTIAL_DateNormalizer = JslAnnoId('PARTIAL_DateNormalizer')
+    PARTIAL_PosologyREModel = JslAnnoId('PARTIAL_PosologyREModel')
+    PARTIAL_RENerChunksFilter = JslAnnoId('PARTIAL_RENerChunksFilter')
+    PARTIAL_ResolverMerger = JslAnnoId('PARTIAL_ResolverMerger')
+    PARTIAL_AnnotationMerger = JslAnnoId('PARTIAL_AnnotationMerger')
+    PARTIAL_Router = JslAnnoId('PARTIAL_Router')
+    PARTIAL_RoBertaSentenceEmbeddings = JslAnnoId('PARTIAL_RoBertaSentenceEmbeddings')
+    PARTIAL_Word2VecApproach = JslAnnoId('PARTIAL_Word2VecApproach')
+    PARTIAL_Word2VecApproach = JslAnnoId('PARTIAL_Word2VecApproach')
+    PARTIAL_WordEmbeddings = JslAnnoId('PARTIAL_WordEmbeddings')
+    PARTIAL_EntityRulerApproach = JslAnnoId('PARTIAL_EntityRulerApproach')
+    PARTIAL_EntityRulerApproach = JslAnnoId('PARTIAL_EntityRulerApproach')
+    PARTIAL_EntityRulerModel = JslAnnoId('PARTIAL_EntityRulerModel')
+    PARTIAL_TextMatcherModel = JslAnnoId('PARTIAL_TextMatcherModel')
+    PARTIAL_BigTextMatcher = JslAnnoId('PARTIAL_BigTextMatcher')
+    PARTIAL_BigTextMatcherModel = JslAnnoId('PARTIAL_BigTextMatcherModel')
+    PARTIAL_DateMatcher = JslAnnoId('PARTIAL_DateMatcher')
+    PARTIAL_MultiDateMatcher = JslAnnoId('PARTIAL_MultiDateMatcher')
+    PARTIAL_RegexMatcher = JslAnnoId('PARTIAL_RegexMatcher')
+    PARTIAL_TextMatcher = JslAnnoId('PARTIAL_TextMatcher')
+    PARTIAL_NerApproach = JslAnnoId('PARTIAL_NerApproach')
+    PARTIAL_NerCrfApproach = JslAnnoId('PARTIAL_NerCrfApproach')
+    PARTIAL_NerCrfApproach = JslAnnoId('PARTIAL_NerCrfApproach')
+    PARTIAL_NerCrfApproach = JslAnnoId('PARTIAL_NerCrfApproach')
+    PARTIAL_NerOverwriter = JslAnnoId('PARTIAL_NerOverwriter')
+    PARTIAL_DependencyParserApproach = JslAnnoId('PARTIAL_DependencyParserApproach')
+    PARTIAL_DependencyParserApproach = JslAnnoId('PARTIAL_DependencyParserApproach')
+    PARTIAL_TypedDependencyParserApproach = JslAnnoId('PARTIAL_TypedDependencyParserApproach')
+    PARTIAL_TypedDependencyParserApproach = JslAnnoId('PARTIAL_TypedDependencyParserApproach')
+    PARTIAL_SentenceDetectorDLApproach = JslAnnoId('PARTIAL_SentenceDetectorDLApproach')
+    PARTIAL_SentenceDetectorDLApproach = JslAnnoId('PARTIAL_SentenceDetectorDLApproach')
+    PARTIAL_SentimentDetector = JslAnnoId('PARTIAL_SentimentDetector')
+    PARTIAL_ViveknSentimentApproach = JslAnnoId('PARTIAL_ViveknSentimentApproach')
+    PARTIAL_ViveknSentimentApproach = JslAnnoId('PARTIAL_ViveknSentimentApproach')
+    PARTIAL_ContextSpellCheckerApproach = JslAnnoId('PARTIAL_ContextSpellCheckerApproach')
+    PARTIAL_ContextSpellCheckerApproach = JslAnnoId('PARTIAL_ContextSpellCheckerApproach')
+    PARTIAL_NorvigSweetingApproach = JslAnnoId('PARTIAL_NorvigSweetingApproach')
+    PARTIAL_NorvigSweetingApproach = JslAnnoId('PARTIAL_NorvigSweetingApproach')
+    PARTIAL_SymmetricDeleteApproach = JslAnnoId('PARTIAL_SymmetricDeleteApproach')
+    PARTIAL_SymmetricDeleteApproach = JslAnnoId('PARTIAL_SymmetricDeleteApproach')
+    PARTIAL_ChunkTokenizer = JslAnnoId('PARTIAL_ChunkTokenizer')
+    PARTIAL_ChunkTokenizerModel = JslAnnoId('PARTIAL_ChunkTokenizerModel')
+    PARTIAL_RecursiveTokenizer = JslAnnoId('PARTIAL_RecursiveTokenizer')
+    PARTIAL_RecursiveTokenizerModel = JslAnnoId('PARTIAL_RecursiveTokenizerModel')
+    PARTIAL_Token2Chunk = JslAnnoId('PARTIAL_Token2Chunk')
+    PARTIAL_WordSegmenterApproach = JslAnnoId('PARTIAL_WordSegmenterApproach')
+    PARTIAL_WordSegmenterApproach = JslAnnoId('PARTIAL_WordSegmenterApproach')
+    PARTIAL_GraphExtraction = JslAnnoId('PARTIAL_GraphExtraction')
+    PARTIAL_Lemmatizer = JslAnnoId('PARTIAL_Lemmatizer')
+    PARTIAL_Normalizer = JslAnnoId('PARTIAL_Normalizer')
+    PARTIAL_SpanBertCorefModel = JslAnnoId('PARTIAL_SpanBertCorefModel')
+
+
+
+
 
 
 class NLP_HC_NODE_IDS:  # or Mode Node?
@@ -166,6 +271,8 @@ class NLP_HC_NODE_IDS:  # or Mode Node?
     TRAINABLE_RELATION_EXTRACTION = JslAnnoId('trainable_relation_extraction')
     ZERO_SHOT_RELATION_EXTRACTION = JslAnnoId('zero_shot_relation_extraction')
     RELATION_EXTRACTION_DL = JslAnnoId('relation_extraction_dl')
+    CHUNK_MAPPER_MODEL = JslAnnoId('chunk_mapper_model')
+
     # TRAINABLE_RELATION_EXTRACTION_DL = JslAnnoId('trainable_relation_extraction_dl')
     SENTENCE_ENTITY_RESOLVER = JslAnnoId('sentence_entity_resolver')
     TRAINABLE_SENTENCE_ENTITY_RESOLVER = JslAnnoId('trainable_sentence_entity_resolver')

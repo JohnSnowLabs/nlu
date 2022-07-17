@@ -53,6 +53,11 @@ class ComponentUtils:
             feature_list.remove('%%%feature_elements%%%')
         if NLP_FEATURES.ANY in feature_list:
             feature_list.remove(NLP_FEATURES.ANY)
+        if NLP_FEATURES.RAW_QUESTION in feature_list:
+            feature_list.remove(NLP_FEATURES.RAW_QUESTION)
+        if NLP_FEATURES.RAW_QUESTION_CONTEXT in feature_list:
+            feature_list.remove(NLP_FEATURES.RAW_QUESTION_CONTEXT)
+
         if OCR_FEATURES.BINARY_IMG in feature_list:
             feature_list.remove(OCR_FEATURES.BINARY_IMG)
         if OCR_FEATURES.FILE_PATH in feature_list:
@@ -118,6 +123,15 @@ class ComponentUtils:
                               NLP_NODE_IDS.NER_CRF]: return True
         if component.type == AnnoTypes.TRANSFORMER_TOKEN_CLASSIFIER: return True
 
+
+
+    @staticmethod
+    def is_NER_IOB_token_classifier(component: NluComponent) -> bool:
+        """Check if a Token Classifier uses IOB PRediction format"""
+        if not hasattr(component.model,'getClasses'):
+            return False
+        return any(['-' in label for label in component.model.getClasses()])
+
     @staticmethod
     def is_NER_converter(component: NluComponent) -> bool:
         """Check if a NLU Component wraps a NER-IOB to NER-Pr etty converter """
@@ -125,14 +139,14 @@ class ComponentUtils:
 
     @staticmethod
     def extract_NER_col(component: NluComponent, column='input') -> str:
-        """Extract the exact name of the NER column in the component_to_resolve"""
+        """Extract the exact name of the NER IOB column in the component_to_resolve"""
         if column == 'input':
             for f in component.in_types:
-                if f == NLP_FEATURES.NAMED_ENTITY_IOB:
+                if f in [NLP_FEATURES.NAMED_ENTITY_IOB, NLP_FEATURES.TOKEN_CLASSIFICATION]:
                     return f
         if column == 'output':
             for f in component.out_types:
-                if f == NLP_FEATURES.NAMED_ENTITY_IOB:
+                if f in [NLP_FEATURES.NAMED_ENTITY_IOB, NLP_FEATURES.TOKEN_CLASSIFICATION]:
                     return f
         raise ValueError(f"Could not find NER col for component_to_resolve ={component}")
 

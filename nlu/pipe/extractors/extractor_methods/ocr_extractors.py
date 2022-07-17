@@ -1,3 +1,8 @@
+from typing import List
+
+import pandas as pd
+
+
 def extract_table(df):
     import pyspark.sql.functions as f
     columns = df.select(f.size(f.col("ocr_table.chunks").getItem(0).chunkText)).collect()[0][0]
@@ -19,8 +24,25 @@ def extract_tables(df, rename_cols=True):
                 (df.path == r.path) & (df.ocr_table.area.page == r.ocr_table.area.page) & (
                         df.table_index == r.table_index))))
     if rename_cols:
-        return use_first_row_as_column_names_for_list_of_dfs(pandas_tables)
+        pandas_tables = use_first_row_as_column_names_for_list_of_dfs(pandas_tables)
+
+    pandas_tables = rename_duplicate_cols(pandas_tables)
     return pandas_tables
+
+
+def rename_duplicate_cols(dfs: List[pd.DataFrame]):
+    for df in dfs:
+        import collections
+        duplicates = [item for item, count in collections.Counter(df.columns).items() if count > 1]
+        new_cols = []
+
+        for i, c in enumerate(df.columns):
+            if c in duplicates:
+                # update duplicate cols
+                c = f'{i}_{c}'
+            new_cols.append(c)
+        df.columns = new_cols
+    return dfs
 
 
 def use_first_row_as_column_names(df):

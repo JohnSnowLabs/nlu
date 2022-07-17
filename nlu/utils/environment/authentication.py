@@ -174,13 +174,10 @@ def get_authenticated_spark_HC(HC_LICENSE, HC_SECRET, AWS_ACCESS_KEY, AWS_SECRET
               "spark.kryoserializer.buffer.max": "2000M",
               "spark.driver.maxResultSize": "2000M"}
 
-    if is_env_pyspark_2_3():
-        return sparknlp_jsl.start(HC_SECRET, spark23=True, gpu=gpu, public=sparknlp.version(), params=params)
-    if is_env_pyspark_2_4():
-        return sparknlp_jsl.start(HC_SECRET, spark24=True, gpu=gpu, public=sparknlp.version(), params=params)
-    if is_env_pyspark_3_0() or is_env_pyspark_3_1():
+    if is_env_pyspark_3_x():
         return sparknlp_jsl.start(HC_SECRET, gpu=gpu, public=sparknlp.version(), params=params)
-    raise ValueError(f"Current Spark version {get_pyspark_version()} not supported!")
+    else:
+        raise ValueError(f"Current Spark version {get_pyspark_version()} not supported!")
 
 
 def get_authenticated_spark_OCR(OCR_LICENSE, OCR_SECRET, AWS_ACCESS_KEY, AWS_SECRET_KEY, gpu):
@@ -225,13 +222,10 @@ def get_authenticated_spark(SPARK_NLP_LICENSE, AWS_ACCESS_KEY_ID, AWS_SECRET_ACC
     params = {"spark.driver.memory": "16G",
               "spark.kryoserializer.buffer.max": "2000M",
               "spark.driver.maxResultSize": "2000M"}
-    if is_env_pyspark_2_3():
-        return sparknlp_jsl.start(JSL_SECRET, spark23=True, gpu=gpu, params=params)
-    if is_env_pyspark_2_4():
-        return sparknlp_jsl.start(JSL_SECRET, spark24=True, gpu=gpu, params=params)
-    if is_env_pyspark_3_0() or is_env_pyspark_3_1():
+    if is_env_pyspark_3_x():
         return sparknlp_jsl.start(JSL_SECRET, gpu=gpu, public=sparknlp.version(), params=params)
-    raise ValueError(f"Current Spark version {get_pyspark_version()} not supported!")
+    else:
+        raise ValueError(f"Current Spark version {get_pyspark_version()} not supported!")
 
 
 def is_authorized_environment():

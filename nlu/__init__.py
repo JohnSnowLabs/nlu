@@ -1,4 +1,4 @@
-__version__ = '3.4.4'
+__version__ = '4.0.0'
 
 import nlu.utils.environment.env_utils as env_utils
 
@@ -31,18 +31,129 @@ ch.setLevel(logging.CRITICAL)
 logger.addHandler(ch)
 st_cache_enabled = False
 nlu_package_location = nlu.__file__[:-11]
-
 discoverer = Discoverer()
 
 slack_link = 'https://join.slack.com/t/spark-nlp/shared_invite/zt-lutct9gm-kuUazcyFKhuGY3_0AMkxqA'
 github_issues_link = 'https://github.com/JohnSnowLabs/nlu/issues'
 
 
-def autocomplete_annotator(annotator, lang='en'):
+
+
+def viz(nlp_pipe: Union[Pipeline, LightPipeline, PipelineModel, List],
+        data:str, viz_type: str = '',
+        labels_to_viz=None,
+        viz_colors={},
+        return_html=False,
+        ner_col: str = None,
+        pos_col: str = None,
+        dep_untyped_col: str = None,
+        dep_typed_col: str = None,
+        resolution_col: str = None,
+        relation_col: str = None,
+        assertion_col: str = None, ):
+    """
+Visualize input data with an already configured Spark NLP pipeline,
+for  Algorithms of type (Ner,Assertion, Relation, Resolution, Dependency)
+using Spark-NLP-Display.
+Automatically infers applicable viz type and output columns to use for visualization.
+Data may only be a string.
+
+
+If a pipeline has multiple models candidates that can be used for a viz,
+the first Annotator that is vizzable will be used to create viz.
+You can specify which type of viz to create with the viz_type parameter
+
+Output columns to use for the viz are automatically deducted from the pipeline, by using the
+first pipe that provides the correct output type for a specific viz.
+You can specify which columns to use for a viz by using the
+corresponding ner_col, pos_col, dep_untyped_col, dep_typed_col, resolution_col, relation_col, assertion_col, parameters.
+
+    :param nlp_pipe: One of  [Pipeline, LightPipeline, PipelineModel, List[Annotator] ]
+    :param data:  String to viz
+    :param viz_type: Viz type, one of [ner,dep,resolution,relation,assert].
+            If none defined, nlu will infer and apply all applicable viz
+    :param labels_to_viz: Defines a subset of NER labels to viz i.e. ['PER'] ,
+        by default=[] which will display all labels. Applicable only for NER viz
+
+    :param viz_colors: Applicable for [ner, resolution, assert ],
+        a dictionary where key = label, value=hex color,
+        i.e. viz_colors={'TREATMENT':'#008080', 'problem':'#800080'}
+    :param return_html:
+    :param ner_col: Specify NER column for NER/Resolution/Assertion viz.
+    :param pos_col: Specify POS column for Dependency Tree viz
+    :param dep_untyped_col: Specify Untyped Dependency Column for Tree Viz
+    :param dep_typed_col: Specify Typed Dependency Column for Tree Viz
+    :param resolution_col: Specify Resolution col for resolution viz
+    :param relation_col: Specify Relation col for Relation viz
+    :param assertion_col: Specify Assertion col for Assertion viz
+    :return:
+    """
+    return to_nlu_pipe(nlp_pipe, True).viz(text_to_viz=data,
+                                           viz_type=viz_type,
+                                           labels_to_viz=labels_to_viz,
+                                           return_html=return_html,
+                                           viz_colors=viz_colors,
+                                           ner_col=ner_col,
+                                           pos_col=pos_col,
+                                           dep_untyped_col=dep_untyped_col,
+                                           dep_typed_col=dep_typed_col,
+                                           resolution_col=resolution_col,
+                                           relation_col=relation_col,
+                                           assertion_col=assertion_col, )
+
+
+def autocomplete_pipeline(pipe:Union[Pipeline, LightPipeline, PipelineModel, List], lang='en'):
+    """
+Auto-Complete a pipeline or single annotator into a runnable pipeline by harnessing NLU's DAG Autocompletion algorithm
+and returns it as NLU pipeline.
+The standard Spark pipeline is avaiable on the `.vanilla_transformer_pipe` attribute of the returned nlu pipe
+
+Every Annotator and Pipeline of Annotators defines a `DAG` of tasks, with various
+dependencies that must be satisfied in `topoligical order`.
+NLU enables the completion of an incomplete DAG by finding or creating a path between
+the very first input node which is almost always is `DocumentAssembler/MultiDocumentAssembler`
+and the very last node(s), which is given by the `topoligical sorting` the iterable annotators parameter.
+Paths are created by resolving input features of
+ annotators to the corresponding providers with matching storage references.
+
+
+
+
+    :param pipe: Pipeline, list of Annotators or single annotator to complete
+    :param lang: Language of the elements in pipe, used to resolve correct language for dependencies of the pipe.
+    :return: NLU pipeline with completed pipeline
+    """
     # If you dont set lang, you can get storage ref errors!
-    pipe = to_nlu_pipe([annotator], is_pre_configured=False)
+    if isinstance(pipe, List):
+        pipe = to_nlu_pipe(pipe, is_pre_configured=False)
+    else:
+        pipe = to_nlu_pipe([pipe], is_pre_configured=False)
     pipe = PipelineQueryVerifier.check_and_fix_nlu_pipeline(pipe)
     return pipe
+
+
+def to_pretty_df(nlp_pipe: Union[Pipeline, LightPipeline, PipelineModel, List], data, positions=False,
+                 output_level='', metadata=False, ):
+    """
+Annotates a Pandas Dataframe/Pandas Series/Numpy Array/Spark DataFrame/Python List strings /Python String
+with given Spark NLP pipeline, which is assumed to be complete and runnable.
+
+Annotators are grouped internally by NLU into specific output levels, which will be zipped and exploded together to create
+the final output df. Additionally, most  keys from the metadata dictionary in the result annotations will be
+expanded into their own columns in the resulting Dataframe.
+Some columns are omitted from metadata to reduce total amount of output columns, these can be re-enabled by setting metadata=True
+
+
+    :param nlp_pipe: Pipeline or List of annotators to use for prediction
+    :param data: Data to predict on
+    :param output_level: output level, either document/sentence/chunk/token/relation
+    :param positions: whether to output indexes that map predictions back to position in origin string
+    :param metadata: whether to keep additional metadata in final df or not like
+            confidences of every possible class for predictions.
+    """
+    return to_nlu_pipe(nlp_pipe, True).predict(data, positions=positions,
+                                               output_level=output_level,
+                                               metadata=metadata)
 
 
 def to_nlu_pipe(nlp_pipe: Union[Pipeline, LightPipeline, PipelineModel, List], is_pre_configured=True) -> NLUPipeline:
@@ -50,7 +161,7 @@ def to_nlu_pipe(nlp_pipe: Union[Pipeline, LightPipeline, PipelineModel, List], i
     Convert a pipeline or list which contains sparknlp/sparknlp_jsl annotators
     into NLU pipeline, while maintaining original configuration.
     The pipeline does not need to be pre-fitted.
-    :param nlp_pipe: the pipeline to convert, must have iterable attribute of annotator stages.
+    :param nlp_pipe: the pipeline to convert, must have iterable attribute of pipe stages.
     :param is_pre_configured: Is the pipeline already configured, i.e. input/output cols are properly matched between anotators? \
             If True, NLU will treat this as a already configured pipeline and will not do any pipeline autocompletion or configs
     :return: nlu pipe wrapping
@@ -59,11 +170,15 @@ def to_nlu_pipe(nlp_pipe: Union[Pipeline, LightPipeline, PipelineModel, List], i
     components = get_nlu_pipe_for_nlp_pipe(nlp_pipe, is_pre_configured)
     for c in components:
         pipe.add(c, is_pre_configured)
+        if c.license == Licenses.hc:
+            pipe.has_licensed_components = True
     return pipe
 
 
 def load(request: str = 'from_disk', path: Optional[str] = None, verbose: bool = False, gpu: bool = False,
-         streamlit_caching: bool = False) -> NLUPipeline:
+         streamlit_caching: bool = False,
+         m1_chip: bool = False
+         ) -> NLUPipeline:
     '''
     Load either a prebuild pipeline or a set of components identified by a whitespace seperated list of components
     You must call nlu.auth() BEFORE calling nlu.load() to access licensed models.
@@ -81,7 +196,7 @@ def load(request: str = 'from_disk', path: Optional[str] = None, verbose: bool =
         return nlu.load(request, path, verbose, gpu, streamlit_caching)
     # check if secrets are in default loc, if yes load them and create licensed context automatically
     auth(gpu=gpu)
-    spark = get_open_source_spark_context(gpu)
+    spark = get_open_source_spark_context(gpu, m1_chip)
     spark.catalog.clearCache()
 
     if verbose:
@@ -247,18 +362,14 @@ def load_nlu_pipe_from_hdd(pipe_path, request) -> NLUPipeline:
         raise ValueError
 
 
-def get_open_source_spark_context(gpu):
-    if is_env_pyspark_2_3():
-        return sparknlp.start(spark23=True, gpu=gpu)
-    if is_env_pyspark_2_4():
-        return sparknlp.start(spark24=True, gpu=gpu)
-    if is_env_pyspark_3_0() or is_env_pyspark_3_1():
-        return sparknlp.start(gpu=gpu)
-    if is_env_pyspark_3_2():
-        return sparknlp.start(spark32=True, gpu=gpu)
-    print(f"Current Spark version {get_pyspark_version()} not supported!\n"
-          f"Please install any of the Pyspark versions 3.1.x, 3.2.x, 3.0.x, 2.4.x, 2.3.x")
-    raise ValueError(f"Failure starting Spark Context! Current Spark version {get_pyspark_version()} not supported! ")
+def get_open_source_spark_context(gpu, m1_chip):
+    if env_utils.is_env_pyspark_3_x():
+        if m1_chip:
+            return sparknlp.start(gpu=gpu, m1=True)
+        else:
+            return sparknlp.start(gpu=gpu)
+    raise ValueError(f"Failure starting Spark Context! Current Spark version {get_pyspark_version()} not supported! "
+                     f"Please install any of Pyspark 3.X versions.")
 
 
 def enable_verbose() -> None:
@@ -286,7 +397,7 @@ def enable_streamlit_caching():
 #     if hasattr(nlu, 'non_caching_load') : nlu.load = nlu.non_caching_load
 #     else : print("Could not disable caching.")
 
-
+# TODO EXPORT
 def wrap_with_st_cache_if_available_and_set_layout_to_wide(f):
     """Wrap function with ST cache method if streamlit is importable"""
     try:
@@ -338,7 +449,5 @@ def print_trainable_components():
 
 def get_components(m_type='', include_pipes=False, lang='', licensed=False, get_all=False):
     return discoverer.get_components(m_type, include_pipes, lang, licensed, get_all)
-
-
 
 # https://forms.gle/VZeJRLBDM6m9fhF68

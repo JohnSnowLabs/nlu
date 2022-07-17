@@ -68,27 +68,12 @@ HC_anno2substitution_fn = {
     },
 
 
-    ChunkMergeModel : {
-        'default': '',# TODO
-    },
-
-    NerDisambiguatorModel : {
-        'default': '',# TODO
-    },
-
-    RENerChunksFilter : {
-        'default': '',# TODO
-    },
-
-    NerOverwriter : {
-        'default': '',# TODO
-    },
     PosologyREModel : {
         'default': substitute_relation_cols,
     },
-    Chunk2Token : {
-        'default': '',# TODO
-    },
+    # Chunk2Token : {
+    #     'default': '',# TODO
+    # },
 
 
 }

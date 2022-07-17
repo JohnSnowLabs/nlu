@@ -59,10 +59,11 @@ def nlu_ref_to_nlp_metadata(nlu_ref, is_recursive_call=False):
     nlp_ref = None
     license_type = Licenses.open_source
     is_pipe = False
-    if 'translate_to' in nlu_ref:
+    if 'translate_to' in nlu_ref :
         # We append here xx and set lang as xx  so users don't have to specify it
-        nlu_ref = 'xx.' + nlu_ref
         lang = 'xx'
+        if 'xx' not in nlu_ref:
+            nlu_ref = 'xx.' + nlu_ref
     # 1. check if open source pipeline
     if lang in Spellbook.pretrained_pipe_references.keys():
         if nlu_ref in Spellbook.pretrained_pipe_references[lang].keys():

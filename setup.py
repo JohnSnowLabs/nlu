@@ -18,7 +18,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 REQUIRED_PKGS = [
-    'spark-nlp>=3.4.4,<3.5.0',
+    'spark-nlp>=4.0.0,<4.1.0',
     'numpy',
     'pyarrow>=0.16.0',
     'pandas>=1.3.5',
@@ -38,7 +38,7 @@ setup(
     #
     # There are some restrictions on what makes a valid project name
     # specification here:    # https://packaging.python.org/specifications/core-metadata/#name
-    name='nlu_tmp',  # Required #nlu
+    name='nlu',  # Required #nlu
 
     # Versions should comply with PEP 440:
     # https://www.python.org/dev/peps/pep-0440/
@@ -46,12 +46,12 @@ setup(
     # For a discussion on single-sourcing the version across setup.py and the
     # project code, see
     # https://packaging.python.org/en/latest/single_source_version.html
-    version='3.4.4',  # Required
+    version='4.0.0',  # Required
 
     # This is a one-line description or tagline of what your project does. This
     # corresponds to the "Summary" metadata field:
     # https://packaging.python.org/specifications/core-metadata/#summary
-    description='John Snow Labs NLU provides state of the art algorithms for NLP&NLU with 4000+ of pretrained models in 200+ languages. It enables swift and simple development and research with its powerful Pythonic and Keras inspired API. It is powerd by John Snow Labs powerful Spark NLP library.',
+    description='John Snow Labs NLU provides state of the art algorithms for NLP&NLU with 5000+ of pretrained models in 200+ languages. It enables swift and simple development and research with its powerful Pythonic and Keras inspired API. It is powerd by John Snow Labs powerful Spark NLP library.',
 
     # This is an optional longer description of your project that represents
     # the body of text which users will see when they visit PyPI.

@@ -113,7 +113,7 @@ def unpack_HPO_codes(row, k):
             if not OMIM_ok:
                 OMIM_CODES.append(None)
     return UMLS_codes, ORPHA_CODES, MSH_CODES, SNOMED_CODES, OMIM_CODES,
-            # Write into dict
+    # Write into dict
 
 
 def extract_resolver_all_k_subfields_splitted(row, configs):
@@ -140,7 +140,7 @@ unpacked[2]
 
     :UMLS
     '''
-
+    # todo del AUX label col for CODES
     HPO_CODES = ['UMLS', 'ORPHA', 'MSH', 'SNOMED', 'OMIM']
     prefix = 'meta_' + configs.output_col_prefix + '_'
     res = {}
@@ -164,15 +164,63 @@ unpacked[2]
                     res[prefix + 'hcc_status'], \
                     res[prefix + 'hcc_code'] = zip(*map(lambda x: zip(*x), map(f, row[k])))
                     # Casting from tuple to list or we get problems during pd explode
-                    h = lambda z: list(map(lambda r: list(r), z))
+                    h = lambda z: list(map(lambda r: list(r), z))# [0]
                     res[prefix + 'billable'] = h(res[prefix + 'billable'])
                     res[prefix + 'hcc_status'] = h(res[prefix + 'hcc_status'])
                     res[prefix + 'hcc_code'] = h(res[prefix + 'hcc_code'])
 
             elif ':::' in row[k][0]:
                 # CASE : General code handling
-                res[k.replace('results', 'codes')] = list(map(lambda x: x.split(':::'), row[k]))
+                res[prefix+k.replace('results', 'codes')] = list(map(lambda x: x.split(':::'), row[k]))# [0]
         else:
             # Any other metadata field hadling
             res[k] = row[k]
     return res
+
+
+def extract_chunk_mapper_relation_data(row, configs):
+    ''' Splits all_relations field on ::: to create an array ,
+
+
+    uses row.relation as prefix
+
+
+    '''
+
+    prefix = 'meta_' + configs.output_col_prefix + '_'
+    for k in row.keys():
+        if 'chunk_all_relations' in k:
+            row[k] = [s.split(':::') for s in row[k]]
+    return row
+
+
+
+def extract_coreference_data(row_metadata,row_results, configs):
+    ''' Splits all_relations field on ::: to create an array ,
+    | Text                                                                    |heads         | Co-References    | Heads_sentence| Coref_sentence| coref_head_begin | coref_head_end|
+    |John told Mary he would like to borrow a book from her, after his lunch  |[John, Marry]  | [he,his], [her] | [0,0]         | [0,0],[0]     | [0,0], [10]      | [3,3], [13]
+
+
+    |Text     | heads  | Co-Refernces
+    | John    | ROOT   |   [he,his]
+    | told    | /      |  /
+    | Marry   |  ROOT | [her]
+    | he      | JOHN  | /
+    | likes   | /     |  /
+    | her     | MARRY |/
+
+
+
+    |ORIGIN_REFERENCE | CO_REFERENCES|
+    | Peter           | he , him, that dude |
+    | Maria           | her, she, the lady |
+
+
+    '''
+    head_to_coref = {}
+    prefix = 'meta_' + configs.output_col_prefix + '_'
+
+    # for (k_meta,v_meta), (k_result,v_result) in zip(row_metadata.items(), row_results.items()):
+    #     if
+
+    raise NotImplemented('Not implemented')

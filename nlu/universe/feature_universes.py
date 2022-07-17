@@ -11,6 +11,8 @@ class NLP_FEATURES(JslFeature):
     NLP Features
     """
     #  STems from an nlp annotator in the NLP lib, i.e. Fnisher or so. Generates NO JSL-Annotation Schema for result df. Just 1 str per orw
+    UNKOWN = JslFeature("unkown")
+
     DOCUMENT = JslFeature("document")
     DOCUMENT_FROM_CHUNK = JslFeature("document_from_chunk")
     DOCUMENT_DE_IDENTIFIED = JslFeature("document_de_identified")
@@ -18,11 +20,22 @@ class NLP_FEATURES(JslFeature):
     DOCUMENT_NORMALIZED = JslFeature("document_normalized")
     DOCUMENT_TRANSLATED = JslFeature("document_translated")
 
+    RAW_QUESTION = JslFeature("question")
+    RAW_QUESTION_CONTEXT = JslFeature("context")
+    DOCUMENT_QUESTION = JslFeature("document_question")
+    DOCUMENT_QUESTION_CONTEXT = JslFeature("document_question_context")
+    CLASSIFIED_SPAN = JslFeature("classified_span")
+
+
+
+
     # GPT, T5, X2IMG (PDF2IMG, IMG2IMG, etc..)
     DOCUMENT_GENERATED = JslFeature("document_generated")
 
     SENTENCE = JslFeature("sentence")
     TOKEN = JslFeature("token")
+    COREF_TOKEN = JslFeature("coref_token")
+
     TOKEN_CHUNKED = JslFeature("token_chunked")
     TOKEN_SPELL_CHECKED = JslFeature("token_chunked")
     TOKEN_LEMATIZED = JslFeature("token_lemmatized")
@@ -111,5 +124,6 @@ class NLP_HC_FEATURES(JslFeature):
     ASSERTION = JslFeature('assertion')
     RESOLVED_ENTITY = JslFeature('resolved_entity')
     FEATURE_VECTOR = JslFeature('feature_vector')
+    MAPPED_CHUNK = JslFeature('mapped_chunk')
     DISAMBIGUATION = JslFeature('disambiguation')
     RELATION = JslFeature('relation')

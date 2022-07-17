@@ -59,6 +59,25 @@ def default_NER_converter_licensed_config(output_col_prefix='entities'):
     )
 
 
+
+def default_chunk_mapper_config(output_col_prefix='mapped_entity'):
+    """Extracts NER tokens withouth positions, just the converted IOB tags,confidences and classified tokens """
+    return SparkNLPExtractorConfig(
+        output_col_prefix=output_col_prefix,
+        get_result=True,
+        get_meta=True,
+        meta_white_list=['relation', 'all_relations','chunk', 'entity',
+                         'sentence'
+                         ],  # MAYBE DROP 'chunk', 'entity'default_chunk_mapper_config, sentence
+        name='default_ner',
+        meta_data_extractor=SparkNLPExtractor(extract_chunk_mapper_relation_data,
+                                          'Get ChunkMapper Relation Metadata',
+                                          'Get ChunkMapper Relation Metadata'),
+        description='Extract Chunk Mapper with relation Data',
+    )
+
+
+
 def default_chunk_resolution_config(output_col_prefix='resolved_entities'):
     """Extracts NER tokens withouth positions, just the IOB tags,confidences and classified tokens """
     return SparkNLPExtractorConfig(
@@ -95,6 +114,7 @@ def resolver_conifg_with_metadata(output_col_prefix='DEFAULT'):
     return SparkNLPExtractorConfig(
         output_col_prefix=output_col_prefix,
         get_meta=True,
+        get_result=True,
         get_full_meta=True,
         name='with metadata',
         description='Full resolver outputs, with any _k_ field in the metadata dict splitted :::',
@@ -110,11 +130,10 @@ def default_relation_extraction_positional_config(output_col_prefix='extracted_r
     return SparkNLPExtractorConfig(
         output_col_prefix=output_col_prefix,
         get_result=True,
-        meta_white_list=[],
         get_meta=True,
-        meta_black_list=['entity1_begin', 'entity2_begin', 'entity1_end', 'entity2_end', ],
-        name='default_relation_extraction',
-        description='Get relation extraction result and all metadata, positions of entities excluded',
+        get_full_meta=True,
+        name='full_relation_extraction',
+        description='Get relation extraction result and all metadata, with positions of entities',
     )
 
 

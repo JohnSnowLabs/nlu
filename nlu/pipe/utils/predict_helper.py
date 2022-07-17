@@ -18,13 +18,13 @@ from nlu.pipe.utils.data_conversion_utils import DataConversionUtils
 def __predict_standard_spark(pipe, data, output_level, positions, keep_stranger_features, metadata,
                              drop_irrelevant_cols, return_spark_df, get_embeddings):
     # 1. Convert data to Spark DF
-    data, stranger_features, output_datatype = DataConversionUtils.to_spark_df(data, pipe.spark, pipe.raw_text_column)
+    data, stranger_features, output_datatype = DataConversionUtils.to_spark_df(data, pipe.spark, pipe.raw_text_column, pipe.has_span_classifiers)
 
     # 3. Apply Spark Pipeline
     data = pipe.vanilla_transformer_pipe.transform(data)
 
     # 4. Convert resulting spark DF into nicer format and by default into pandas.
-    if return_spark_df: return data  # Returns RAW  Spark Dataframe result of component_list prediction
+    if return_spark_df: return data   # Returns RAW  Spark Dataframe result of component_list prediction
     return pipe.pythonify_spark_dataframe(data,
                                           keep_stranger_features=keep_stranger_features,
                                           stranger_features=stranger_features,
@@ -102,7 +102,7 @@ def __predict__(pipe, data, output_level, positions, keep_stranger_features, met
 
     if output_level == '':
         # Default sentence level for all components
-        if pipe.has_nlp_components and not PipeUtils.contains_T5_or_GPT_transformer(pipe):
+        if pipe.has_nlp_components and not PipeUtils.contains_T5_or_GPT_transformer(pipe) and not pipe.has_span_classifiers:
             pipe.component_output_level = 'sentence'
             pipe.components = PipeUtils.configure_component_output_levels(pipe, 'sentence')
     else:
@@ -147,7 +147,8 @@ def __predict__(pipe, data, output_level, positions, keep_stranger_features, met
             logger.warning(f"Predictions Failed={err}")
             pipe.print_exception_err(err)
             raise Exception("Failure to process data with NLU")
-    elif not get_embeddings and multithread:
+    elif not get_embeddings and multithread or pipe.prefer_light:
+        # In Some scenarios we prefer light, because Bugs in ChunkMapper...
         # Try Multithreaded with Fallback vanilla as option. No Embeddings in this mode
         try:
             return predict_multi_threaded_light_pipe(pipe, data, output_level, positions, keep_stranger_features,

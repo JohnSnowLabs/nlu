@@ -89,9 +89,9 @@ class OutputLevelUtils:
             if output_level == pipe.prediction_output_level:
                 generated_cols = ColSubstitutionUtils.get_final_output_cols_of_component(c, df, anno_2_ex_config)
                 for generated_col in generated_cols:
-                    if '_k_' in generated_col and c.jsl_anno_class_id == NLP_HC_NODE_IDS.SENTENCE_ENTITY_RESOLVER:
-                        # all _k_ fields of resolver may never be viewed as any common outputlevel and thus never be zipped.
-                        continue
+                    # if '_k_' in generated_col and c.jsl_anno_class_id == NLP_HC_NODE_IDS.SENTENCE_ENTITY_RESOLVER:
+                    #     # all _k_ fields of resolver may never be viewed as any common outputlevel and thus never be zipped.
+                    #     continue
                     same_output_level_cols.append(generated_col)
         return list(set(same_output_level_cols))
 

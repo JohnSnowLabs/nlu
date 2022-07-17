@@ -1,6 +1,8 @@
 """Get data into JVM for prediction and out again as Spark Dataframe"""
 import logging
 
+from nlu.universe.feature_universes import NLP_FEATURES
+
 logger = logging.getLogger('nlu')
 import pyspark
 from pyspark.sql.functions import monotonically_increasing_id
@@ -15,8 +17,15 @@ class DataConversionUtils:
 
     @staticmethod
     def except_text_col_not_found(cols):
-        print(
+        raise ValueError(
             f'Could not find column named "text" in input Pandas Dataframe. Please ensure one column named such exists. Columns in DF are : {cols} ')
+
+    @staticmethod
+    def except_invalid_question_data_format(cols):
+        raise ValueError(
+            f'You input data format is invalid for question answering with span classification.'
+            f'Make sure you have at least 2 columns in you dataset, named context/question  for pandas Dataframes'
+            f'For Strings/Iterables/Tuples make sure to use the format `question|||context` or (question,context) ' )
 
     @staticmethod
     def sdf_to_sdf(data, spark_sess, raw_text_column='text'):
@@ -32,6 +41,75 @@ class DataConversionUtils:
             else:
                 DataConversionUtils.except_text_col_not_found(data.columns)
         return data, stranger_features, output_datatype
+
+    @staticmethod
+    def question_sdf_to_sdf(data, spark_sess):
+        """Casting question pandas to spark and add index col"""
+        logger.info(f"Casting Pandas DF to Spark DF")
+        output_datatype = 'spark'
+        if NLP_FEATURES.RAW_QUESTION not in data.columns or NLP_FEATURES.RAW_QUESTION_CONTEXT not in data.columns:
+            if len(data.columns) < 2:
+                DataConversionUtils.except_invalid_question_data_format(data)
+            data = data.withColumnRenamed(data.columns[0], NLP_FEATURES.RAW_QUESTION) \
+                .withColumnRenamed(data.columns[1], NLP_FEATURES.RAW_QUESTION_CONTEXT)
+
+        data = data.withColumn('origin_index', monotonically_increasing_id().alias('origin_index'))
+        # make  Nans to None, or spark will crash
+        stranger_features = list(set(data.columns) - {NLP_FEATURES.RAW_QUESTION, NLP_FEATURES.RAW_QUESTION_CONTEXT})
+        return data, stranger_features, output_datatype
+
+    @staticmethod
+    def question_str_to_sdf(data, spark_sess):
+        """Casting str  to spark and add index col. This is a bit inefficient. Casting follow  # inefficient, str->pd->spark->pd , we can could first pd"""
+        output_datatype = 'string'
+        if '|||' not in data:
+            DataConversionUtils.except_invalid_question_data_format(data)
+        question, context = data.split('|||')
+        sdf = spark_sess.createDataFrame(pd.DataFrame({NLP_FEATURES.RAW_QUESTION: question,
+                                                       NLP_FEATURES.RAW_QUESTION_CONTEXT: context,
+                                                       'origin_index': [0]}, index=[0]))
+        return sdf, [], output_datatype
+
+    @staticmethod
+    def question_tuple_to_sdf(data, spark_sess):
+        """Casting str  to spark and add index col. This is a bit inefficient. Casting follow  # inefficient, str->pd->spark->pd , we can could first pd"""
+        output_datatype = 'string'
+        question, context = data[0], data[1]
+        sdf = spark_sess.createDataFrame(pd.DataFrame({NLP_FEATURES.RAW_QUESTION: question,
+                                                       NLP_FEATURES.RAW_QUESTION_CONTEXT: context,
+                                                       'origin_index': [0]}, index=[0]))
+        return sdf, [], output_datatype
+
+    @staticmethod
+    def question_tuple_iterable_to_sdf(data, spark_sess):
+        """Casting str  to spark and add index col. This is a bit inefficient. Casting follow  # inefficient, str->pd->spark->pd , we can could first pd"""
+        output_datatype = 'string'
+
+        if len(data) == 0:
+            DataConversionUtils.except_invalid_question_data_format(data)
+        if len(data[0]) != 2:
+            DataConversionUtils.except_invalid_question_data_format(data)
+
+        question, context = zip(*[(d[0], d[1]) for d in data])
+
+        sdf = spark_sess.createDataFrame(pd.DataFrame({NLP_FEATURES.RAW_QUESTION: question,
+                                                       NLP_FEATURES.RAW_QUESTION_CONTEXT: context,
+                                                       'origin_index': [0]}, index=list(range(len(question)))))
+        return sdf, [], output_datatype
+
+    @staticmethod
+    def question_str_iterable_to_sdf(data, spark_sess):
+        """Casting str  to spark and add index col. This is a bit inefficient. Casting follow  # inefficient, str->pd->spark->pd , we can could first pd"""
+        output_datatype = 'string'
+        if len(data) == 0:
+            DataConversionUtils.except_invalid_question_data_format(data)
+        if '|||' not in data[0]:
+            DataConversionUtils.except_invalid_question_data_format(data)
+        question, context = zip(*[d.split('|||') for d in data])
+        sdf = spark_sess.createDataFrame(pd.DataFrame({NLP_FEATURES.RAW_QUESTION: question,
+                                                       NLP_FEATURES.RAW_QUESTION_CONTEXT: context,
+                                                       'origin_index': list(range(len(question)))}))
+        return sdf, [], output_datatype
 
     @staticmethod
     def pdf_to_sdf(data, spark_sess, raw_text_column='text'):
@@ -52,6 +130,27 @@ class DataConversionUtils:
             sdf = spark_sess.createDataFrame(data)
         else:
             DataConversionUtils.except_text_col_not_found(data.columns)
+        return sdf, stranger_features, output_datatype
+
+    @staticmethod
+    def question_pdf_to_sdf(data, spark_sess):
+        """Casting question pandas to spark and add index col"""
+        logger.info(f"Casting Pandas DF to Spark DF")
+        output_datatype = 'pandas'
+        if NLP_FEATURES.RAW_QUESTION not in data.columns or NLP_FEATURES.RAW_QUESTION_CONTEXT not in data.columns:
+            if len(data.columns) < 2:
+                DataConversionUtils.except_invalid_question_data_format(data)
+            data = data.rename(columns={
+                data.columns[0]: NLP_FEATURES.RAW_QUESTION,
+                data.columns[1]: NLP_FEATURES.RAW_QUESTION_CONTEXT,
+            })
+
+        data['origin_index'] = data.index
+        # make  Nans to None, or spark will crash
+        data = data.where(pd.notnull(data), None)
+        data = data.dropna(axis=1, how='all')
+        stranger_features = list(set(data.columns) - {NLP_FEATURES.RAW_QUESTION, NLP_FEATURES.RAW_QUESTION_CONTEXT})
+        sdf = spark_sess.createDataFrame(data)
         return sdf, stranger_features, output_datatype
 
     @staticmethod
@@ -145,25 +244,44 @@ class DataConversionUtils:
         return sdf, [], output_datatype
 
     @staticmethod
-    def to_spark_df(data, spark_sess, raw_text_column='text'):
+    def to_spark_df(data, spark_sess, raw_text_column='text', is_span_data=False):
         """Convert supported datatypes to SparkDF and extract extra data for prediction later on."""
-        try:
-            if isinstance(data, pyspark.sql.dataframe.DataFrame):
-                return DataConversionUtils.sdf_to_sdf(data, spark_sess, raw_text_column)
-            elif isinstance(data, pd.DataFrame):
-                return DataConversionUtils.pdf_to_sdf(data, spark_sess, raw_text_column)
-            elif isinstance(data, pd.Series):
-                return DataConversionUtils.pds_to_sdf(data, spark_sess, raw_text_column)
-            elif isinstance(data, np.ndarray):
-                return DataConversionUtils.np_to_sdf(data, spark_sess, raw_text_column)
-            elif isinstance(data, str):
-                return DataConversionUtils.str_to_sdf(data, spark_sess, raw_text_column)
-            elif isinstance(data, list):
-                return DataConversionUtils.str_list_to_sdf(data, spark_sess, raw_text_column)
-            else:
-                return DataConversionUtils.fallback_modin_to_sdf(data, spark_sess, raw_text_column)
-        except:
-            ValueError("Data could not be converted to Spark Dataframe for internal conversion.")
+        if is_span_data:
+            try:
+                if isinstance(data, pyspark.sql.dataframe.DataFrame):
+                    return DataConversionUtils.question_sdf_to_sdf(data, spark_sess)
+                elif isinstance(data, pd.DataFrame):
+                    return DataConversionUtils.question_pdf_to_sdf(data, spark_sess)
+                elif isinstance(data, tuple):
+                    return DataConversionUtils.question_tuple_to_sdf(data, spark_sess)
+                elif isinstance(data, str):
+                    return DataConversionUtils.question_str_to_sdf(data, spark_sess)
+                elif isinstance(data, (list, pd.Series, np.ndarray)):
+                    if isinstance(data[0], tuple):
+                        return DataConversionUtils.question_tuple_iterable_to_sdf(data, spark_sess)
+                    elif isinstance(data[0], str):
+                        return DataConversionUtils.question_str_iterable_to_sdf(data, spark_sess)
+            except:
+                ValueError("Data could not be converted to Spark Dataframe for internal conversion.")
+        else:
+            try:
+                if isinstance(data, pyspark.sql.dataframe.DataFrame):
+                    return DataConversionUtils.sdf_to_sdf(data, spark_sess, raw_text_column)
+                elif isinstance(data, pd.DataFrame):
+                    return DataConversionUtils.pdf_to_sdf(data, spark_sess, raw_text_column)
+                elif isinstance(data, pd.Series):
+                    return DataConversionUtils.pds_to_sdf(data, spark_sess, raw_text_column)
+                elif isinstance(data, np.ndarray):
+                    return DataConversionUtils.np_to_sdf(data, spark_sess, raw_text_column)
+                elif isinstance(data, str):
+                    return DataConversionUtils.str_to_sdf(data, spark_sess, raw_text_column)
+                elif isinstance(data, list):
+                    return DataConversionUtils.str_list_to_sdf(data, spark_sess, raw_text_column)
+                else:
+                    return DataConversionUtils.fallback_modin_to_sdf(data, spark_sess, raw_text_column)
+            except:
+                ValueError("Data could not be converted to Spark Dataframe for internal conversion.")
+        raise TypeError(f"Invalid datatype = {type(data)}")
 
     @staticmethod
     def str_to_pdf(data, raw_text_column):
@@ -249,7 +367,7 @@ class DataConversionUtils:
 
         """
         if isinstance(data, pyspark.sql.dataframe.DataFrame):
-            return data.size()
+            return data.count()
         elif isinstance(data, pd.DataFrame):
             return data.shape[0]
         elif isinstance(data, pd.Series):

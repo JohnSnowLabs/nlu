@@ -27,8 +27,15 @@ def init_component(component):
         component = component()
     return component
 
+def is_produced_by_multi_output_component(missing_feature_type: Union[NLP_FEATURES, OCR_FEATURES, NLP_HC_FEATURES]):
+    """For these components we resolve to None,
+    because they are already beeign satisfied by another component that outputs multiple features
+    including the ones coverd here """
+    return missing_feature_type == NLP_FEATURES.DOCUMENT_QUESTION_CONTEXT
 
-def resolve_feature(missing_feature_type: Union[NLP_HC_FEATURES, OCR_FEATURES, NLP_HC_FEATURES], language='en',
+
+
+def resolve_feature(missing_feature_type: Union[NLP_FEATURES, OCR_FEATURES, NLP_HC_FEATURES], language='en',
                     is_licensed=False,
                     is_trainable_pipe=False) -> NluComponent:
     '''
@@ -42,6 +49,8 @@ def resolve_feature(missing_feature_type: Union[NLP_HC_FEATURES, OCR_FEATURES, N
     missing_component_type or a default component_to_resolve for that particular type
     '''
     logger.info(f'Getting default for missing_feature_type={missing_feature_type}')
+    if is_produced_by_multi_output_component(missing_feature_type) :
+        return None
     if '@' not in missing_feature_type:
         # Resolve feature which has no storage ref or if storage ref is irrelevant at this point
         if is_licensed and is_trainable_pipe and missing_feature_type in FeatureResolutions.default_HC_train_resolutions.keys():
@@ -141,7 +150,6 @@ def nlu_ref_to_component(nlu_ref, detect_lang=False, authenticated=False) -> Nlu
                 s = "\n"
                 raise ValueError(f'Could not find trainable model_anno_obj for nlu_ref={nlu_ref}.'
                                  f'Supported values = {s.join(nlu.Spellbook.trainable_models.keys())}')
-            # TODO ,nlp ref for trainable?
             return get_trainable_component_for_nlu_ref(nlu_ref)
     lang, nlu_ref, nlp_ref, license_type, is_pipe, model_params = nlu_ref_to_nlp_metadata(nlu_ref)
 
@@ -157,14 +165,13 @@ def nlu_ref_to_component(nlu_ref, detect_lang=False, authenticated=False) -> Nlu
 
 
 def get_trainable_component_for_nlu_ref(nlu_ref) -> NluComponent:
-    # TODO deduct license type
     if nlu_ref in Spellbook.traianble_nlu_ref_to_jsl_anno_id:
         anno_id = Spellbook.traianble_nlu_ref_to_jsl_anno_id[nlu_ref]
     else:
         raise ValueError(f'Could not find trainable Model for nlu_spell ={nlu_ref}')
     if anno_id in ComponentUniverse.components:
         component = ComponentUniverse.components[anno_id]()
-        return component.set_metadata(component.get_trainable_model(), nlu_ref, '', 'xx', False, Licenses.open_source)
+        return component.set_metadata(component.get_trainable_model(), nlu_ref, '', 'xx', False )
     else:
         raise ValueError(f'Could not find trainable Model for anno_id ={anno_id}')
 
@@ -214,8 +221,12 @@ def get_nlu_pipe_for_nlp_pipe(pipe: Union[Pipeline, LightPipeline, PipelineModel
         pipe = get_component_list_for_iterable_stages(pipe, is_pre_configured=is_pre_configured)
     elif isinstance(pipe, Pipeline):
         pipe = get_component_list_for_iterable_stages(pipe.getStages(), is_pre_configured=is_pre_configured)
-    elif isinstance(pipe, (LightPipeline, PipelineModel)):
+    elif isinstance(pipe, LightPipeline):
         pipe = get_component_list_for_iterable_stages(pipe.pipeline_model.stages, is_pre_configured=is_pre_configured)
+    elif isinstance(pipe, PipelineModel):
+        pipe = get_component_list_for_iterable_stages(pipe.stages, is_pre_configured=is_pre_configured)
+    elif isinstance(pipe, PretrainedPipeline):
+        pipe = get_component_list_for_iterable_stages(pipe.model.stages, is_pre_configured=is_pre_configured)
     else:
         raise ValueError(
             f'Invalid Pipe-Like class {type(pipe)} supported types: Pipeline,LightPipeline,PipelineModel,List')
@@ -229,12 +240,15 @@ def set_cols_on_nlu_components(iterable_components):
     for c in iterable_components:
         c.spark_input_column_names = c.model.getInputCols() if hasattr(c.model, 'getInputCols') else [
             c.model.getInputCol()]
-        c.spark_output_column_names = [c.model.getOutputCol()]
+        if hasattr(c.model, 'getOutputCol'):
+            c.spark_output_column_names = [c.model.getOutputCol()]
+        elif hasattr(c.model, 'getOutputCols'):
+            c.spark_output_column_names = [c.model.getOutputCols()]
+
     return iterable_components
 
 
 def get_component_list_for_iterable_stages(iterable_stages, language=None, nlp_ref=None, nlu_ref=None,
-                                           license_type: LicenseType = Licenses.open_source,
                                            is_pre_configured=True
                                            ):
     constructed_components = []
@@ -242,7 +256,8 @@ def get_component_list_for_iterable_stages(iterable_stages, language=None, nlp_r
         anno_class_name = type(jsl_anno_object).__name__
         logger.info(f"Building NLU component for class_name = {anno_class_name} ")
         component = anno_class_to_empty_component(anno_class_name)
-        component.set_metadata(jsl_anno_object, nlu_ref, nlp_ref, language, is_pre_configured, license_type)
+
+        component.set_metadata(jsl_anno_object, nlu_ref, nlp_ref, language, is_pre_configured)
         constructed_components.append(component)
         if None in constructed_components or len(constructed_components) == 0:
             raise Exception(f"Failure inferring type anno_class={anno_class_name} ")
@@ -266,7 +281,7 @@ def get_trained_component_for_nlp_model_ref(lang: str, nlu_ref: Optional[str] = 
         if model_configs:
             for method_name, parameter in model_configs.items():
                 # Dynamically call method from provided name and value, to set parameters like T5 task
-                code = f'component.model_anno_obj.{method_name}({parameter})'
+                code = f'component.model.{method_name}({parameter})'
                 eval(code)
     except Exception as e:
         raise ValueError(f'Failure making component, nlp_ref={nlp_ref}, nlu_ref={nlu_ref}, lang={lang}, \n err={e}')

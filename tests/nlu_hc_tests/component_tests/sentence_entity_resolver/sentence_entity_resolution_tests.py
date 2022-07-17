@@ -24,7 +24,8 @@ class SentenceResolutionTests(unittest.TestCase):
         # en.resolve_sentence.icd10cm
         resolver_ref = "en.resolve.icd10cm.augmented_billable"
         res = nlu.load(f"en.med_ner.diseases {resolver_ref}", verbose=True).predict(
-            data, drop_irrelevant_cols=False, metadata=True
+            data, drop_irrelevant_cols=False, metadata=True,
+            positions=True,
         )
 
         # res = nlu.load('en.ner.anatomy', verbose=True).predict(['The patient has cancer and a tumor and high fever and will die next week. He has pain in his left food and right upper brain', ' She had a seizure.'], drop_irrelevant_cols=False, metadata=True)

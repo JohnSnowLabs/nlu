@@ -1,25 +1,25 @@
 {
-  "name": "bert",
+  "name": "contextual_parser",
   "description": "todo",
-  "output_level": "token",
+  "output_level": "chunk",
   "trainable": false,
   "outputs": [
-    "word_embeddings"
+    "parsed_context"
   ],
   "inputs": [
-    "sentence",
+    "document",
     "token"
   ],
-  "type": "word_embeddings",
+  "type": "chunker",
   "spark_input_column_names": [
-    "sentence",
+    "document",
     "token"
   ],
   "spark_output_column_names": [
-    "bert"
+    "parsed_context"
   ],
   "provider": "sparknlp",
-  "license": "open source",
+  "license": "licensed",
   "computation_context": "spark",
   "output_context": "spark"
 }

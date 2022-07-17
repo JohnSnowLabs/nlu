@@ -35,7 +35,7 @@ def default_full_config(output_col_prefix='DEFAULT'):
         get_result          = True,
         get_meta            = True,
         get_full_meta       = True,
-        get_annotator_type  = True,
+        get_annotator_type  = False,
         name                = 'default_full',
         description         = 'Default full configuration, keeps all data and gets all metadata fields',
 
@@ -46,6 +46,13 @@ def default_document_config(output_col_prefix='document'):
         pop_result_list     = True,
         get_result          = True,
     )
+
+# def default_multi_document_config(output_col_prefix='document'):
+#     return SparkNLPExtractorConfig(
+#         output_col_prefix   = output_col_prefix,
+#         pop_result_list     = True,
+#         get_result          = True,
+#     )
 
 
 def default_NER_config(output_col_prefix='NER'):
@@ -85,6 +92,9 @@ def default_language_classifier_config(output_col_prefix='language'):
                                                 'Keep only top language confidence')
     )
 
+
+def default_partial_implement_config(output_col_prefix):
+    return default_only_result_config(output_col_prefix)
 
 def default_only_result_config(output_col_prefix):
     return SparkNLPExtractorConfig(
@@ -187,8 +197,51 @@ def default_classifier_dl_config(output_col_prefix='classifier_dl'):
         name                = 'default_classifier_dl',
         description         = 'Get all predicted confidences and labels',
         meta_data_extractor = SparkNLPExtractor(extract_maximum_confidence,
+                                                'Instead returning confidence for each class, only return max confidence  unless get_full_meta=True',
+                                                'Max confidence')
+
+    )
+
+def default_seq_classifier_config(output_col_prefix='classified_sequence '):
+    return SparkNLPExtractorConfig(
+        output_col_prefix   = output_col_prefix,
+        get_result          = True,
+        get_full_meta=False,
+        name                = 'default_seq_classifier',
+        description         = 'Get max predicted confidence and label',
+        meta_data_extractor = SparkNLPExtractor(extract_maximum_confidence,
                                                 'Instead returning confidence for each class, only return max confidence',
                                                 'Max confidence')
+    )
+
+
+
+def default_span_classifier_config(output_col_prefix='answer'):
+    return SparkNLPExtractorConfig(
+        output_col_prefix   = output_col_prefix,
+        get_result          = True,
+        get_meta       = True,
+        name                = 'default_span_classifier_config',
+        description         = 'Get predicted span and score for it ',
+        meta_white_list= ['score'],
+        pop_meta_list=True,
+        pop_result_list=True,
+
+
+    )
+
+
+def default_full_span_classifier_config(output_col_prefix='answer'):
+    return SparkNLPExtractorConfig(
+        output_col_prefix   = output_col_prefix,
+        get_result          = True,
+        get_meta       = True,
+        name                = 'default_full_span_classifier_config',
+        description         = 'Get predicted span and score for it, including beging and end of span and positions for them ',
+        pop_meta_list=True,
+        pop_result_list=True,
+        meta_white_list= ['score', 'start_score', 'end_score', 'start','end']
+
 
     )
 
@@ -302,7 +355,7 @@ def default_ner_converter_config(output_col_prefix='ner_chunk'):
         get_result          = True,
         name                = 'default_ner',
         get_meta            = True,
-        meta_white_list     = ['entity','confidence'],
+        meta_white_list     = ['entity','confidence','sentence','chunk',],
         description         = 'Converts IOB-NER representation into entity representation and generates confidences for the entire entity chunk',
     )
 
@@ -313,4 +366,25 @@ def default_doc2chunk_config(output_col_prefix='doc2chunk'):
         name                = 'doc2chunk',
         get_meta            = False,
         description         = 'Converts Doc type col to chunk aka entity type',
+    )
+
+
+
+
+def default_coref_spanbert_config(output_col_prefix='coreferences'):
+    """Extracts YAKE keywords with confidences """
+    return SparkNLPExtractorConfig(
+        output_col_prefix   = output_col_prefix,
+        get_result          = True,
+        name                = 'default_coref_bert',
+        get_meta            = True,
+        get_full_meta= True,
+        meta_white_list     = ['score'],
+        description         = 'Gets all Coreferences',
+
+    #
+    # meta_data_extractor = SparkNLPExtractor(None,extract_coreference_data,
+    #                                         'Extract coreference data',
+    #                                         'Extract coreference data')
+
     )

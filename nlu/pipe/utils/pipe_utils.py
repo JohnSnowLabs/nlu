@@ -218,8 +218,9 @@ class PipeUtils:
 
             # TRANSFORMER_TOKEN_CLASSIFIER might be a NER provider. Regardless, No ner-Conversion will be performed
             # because it will not return NER IOB
-            if ComponentUtils.is_NER_provider(c) and c.type != AnnoTypes.TRANSFORMER_TOKEN_CLASSIFIER:
-
+            if ComponentUtils.is_NER_provider(c):
+                if c.type == AnnoTypes.TRANSFORMER_TOKEN_CLASSIFIER and not ComponentUtils.is_NER_IOB_token_classifier(c):
+                    continue
                 output_NER_col = ComponentUtils.extract_NER_col(c, 'output')
                 converter_to_update = None
                 for other_c in pipe.components:
@@ -324,7 +325,12 @@ class PipeUtils:
                 continue
             if c.name in blacklisted:
                 continue
-            c.model.setOutputCol(c.spark_output_column_names[0])
+
+            if hasattr(c.model, 'setOutputCol'):
+                c.model.setOutputCol(c.spark_output_column_names[0])
+            else :
+                c.model.setOutputCols(c.spark_output_column_names)
+
             if hasattr(c.model, 'setInputCols'):
                 c.model.setInputCols(c.spark_input_column_names)
             else:
@@ -646,6 +652,12 @@ class PipeUtils:
             # Check for NLP Component, which is any open source
             if c.license == Licenses.open_source:
                 pipe.has_nlp_components = True
+            if c.type == AnnoTypes.CHUNK_MAPPER:
+                pipe.prefer_light = True
+
+            if c.type == AnnoTypes.QUESTION_SPAN_CLASSIFIER:
+                pipe.has_span_classifiers = True
+
 
         return pipe
 
