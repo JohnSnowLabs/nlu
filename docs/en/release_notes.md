@@ -1,4 +1,4 @@
----
+ ---
 layout: docs
 header: true
 seotitle: NLU | John Snow Labs
@@ -394,7 +394,9 @@ returns :
 | present     | itchy                               | ADE                                       |                                        0.8414  |
 | present     | sore throat/burning/itchy           | ADE                                       |                                        0.9019  |
 | present     | numbness in tongue and gums         | ADE                                       |                                        0.9991  |
+
 and
+
 <img src="https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/images/releases/4_0_0/nlu_utils_viz_example.png"  />
 
 
