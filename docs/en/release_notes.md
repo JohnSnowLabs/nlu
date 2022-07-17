@@ -1,4 +1,4 @@
----
+ ---
 layout: docs
 header: true
 seotitle: NLU | John Snow Labs
@@ -394,7 +394,9 @@ returns :
 | present     | itchy                               | ADE                                       |                                        0.8414  |
 | present     | sore throat/burning/itchy           | ADE                                       |                                        0.9019  |
 | present     | numbness in tongue and gums         | ADE                                       |                                        0.9991  |
+
 and
+
 <img src="https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/images/releases/4_0_0/nlu_utils_viz_example.png"  />
 
 
@@ -425,15 +427,11 @@ The following annotator classes are newly captured:
 - ChunkKeyPhraseExtraction
 - ChunkSentenceSplitter
 - ChunkFiltererApproach
-- ChunkFiltererApproach
 - ChunkFilterer
-- ChunkMapperApproach
 - ChunkMapperApproach
 - ChunkMapperFilterer
 - DocumentLogRegClassifierApproach
-- DocumentLogRegClassifierApproach
 - DocumentLogRegClassifierModel
-- ContextualParserApproach
 - ContextualParserApproach
 - ReIdentification
 - NerDisambiguator
@@ -452,9 +450,7 @@ The following annotator classes are newly captured:
 - AnnotationMerger
 - Router
 - Word2VecApproach
-- Word2VecApproach
 - WordEmbeddings
-- EntityRulerApproach
 - EntityRulerApproach
 - EntityRulerModel
 - TextMatcherModel
@@ -466,30 +462,20 @@ The following annotator classes are newly captured:
 - TextMatcher
 - NerApproach
 - NerCrfApproach
-- NerCrfApproach
-- NerCrfApproach
 - NerOverwriter
 - DependencyParserApproach
-- DependencyParserApproach
 - TypedDependencyParserApproach
-- TypedDependencyParserApproach
-- SentenceDetectorDLApproach
 - SentenceDetectorDLApproach
 - SentimentDetector
 - ViveknSentimentApproach
-- ViveknSentimentApproach
-- ContextSpellCheckerApproach
 - ContextSpellCheckerApproach
 - NorvigSweetingApproach
-- NorvigSweetingApproach
-- SymmetricDeleteApproach
 - SymmetricDeleteApproach
 - ChunkTokenizer
 - ChunkTokenizerModel
 - RecursiveTokenizer
 - RecursiveTokenizerModel
 - Token2Chunk
-- WordSegmenterApproach
 - WordSegmenterApproach
 - GraphExtraction
 - Lemmatizer
