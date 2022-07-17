@@ -32,7 +32,6 @@ def extract_tables(df, rename_cols=True):
 
 def rename_duplicate_cols(dfs: List[pd.DataFrame]):
     for df in dfs:
-        print(df)
         import collections
         duplicates = [item for item, count in collections.Counter(df.columns).items() if count > 1]
         new_cols = []
