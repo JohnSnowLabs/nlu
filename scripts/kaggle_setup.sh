@@ -43,4 +43,4 @@ if [[ "$GPU" == "true" ]];
 fi
 
 # Install pyspark spark-nlp
-! pip install --upgrade -q pyspark==$PYSPARK spark-nlp==$SPARKNLP nlu==$NLU findspark
+! pip install --upgrade -q pyspark==$PYSPARK spark-nlp==$SPARKNLP nlu=$NLU findspark
