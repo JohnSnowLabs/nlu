@@ -1,45 +1,45 @@
 #!/bin/bash
 #default values for pyspark, spark-nlp, and SPARK_HOME
-SPARKNLP="3.4.4"
-PYSPARK="3.0.3"
-NLU="3.4.4"
-SPARKHOME="/content/spark-3.1.1-bin-hadoop2.7"
+SPARKNLP="4.0.1"
+PYSPARK="3.2.0"
+NLU="4.0.0"
 
-while getopts s:p: option
+while getopts s:p:g option
 do
  case "${option}"
  in
  s) SPARKNLP=${OPTARG};;
  p) PYSPARK=${OPTARG};;
+ g) GPU="true";;
  esac
 done
 
-echo "Installing  NLU $NLU with  PySpark $PYSPARK and Spark NLP $SPARKNLP for Google Colab ..."
+export JAVA_HOME="/usr/lib/jvm/java-11-openjdk-amd64"
 
-apt-get update
-apt-get purge -y openjdk-11* -qq > /dev/null && sudo apt-get autoremove -y -qq > /dev/null
-apt-get install -y openjdk-8-jdk-headless -qq > /dev/null
-
-if [[ "$PYSPARK" == "3.1"* ]]; then
-  wget -q "https://downloads.apache.org/spark/spark-3.1.1/spark-3.1.1-bin-hadoop2.7.tgz" > /dev/null
-  tar -xvf spark-3.1.1-bin-hadoop2.7.tgz > /dev/null
-  SPARKHOME="/content/spark-3.1.1-bin-hadoop2.7"
+if [[ "$PYSPARK" == "3.3"* ]]; then
+  PYSPARK="3.3.0"
+  echo "Installing PySpark $PYSPARK and Spark NLP $SPARKNLP"
+elif [[ "$PYSPARK" == "3.2"* ]]; then
+  PYSPARK="3.2.1"
+  echo "Installing PySpark $PYSPARK and Spark NLP $SPARKNLP"
+elif [[ "$PYSPARK" == "3.1"* ]]; then
+  PYSPARK="3.1.3"
+  echo "Installing PySpark $PYSPARK and Spark NLP $SPARKNLP"
 elif [[ "$PYSPARK" == "3.0"* ]]; then
-  wget -q "https://downloads.apache.org/spark/spark-3.0.2/spark-3.0.2-bin-hadoop2.7.tgz" > /dev/null
-  tar -xvf spark-3.0.2-bin-hadoop2.7.tgz > /dev/null
-  SPARKHOME="/content/spark-3.0.2-bin-hadoop2.7"
-elif [[ "$PYSPARK" == "2"* ]]; then
-  wget -q "https://downloads.apache.org/spark/spark-2.4.7/spark-2.4.7-bin-hadoop2.7.tgz" > /dev/null
-  tar -xvf spark-2.4.7-bin-hadoop2.7.tgz > /dev/null
-  SPARKHOME="/content/spark-2.4.7-bin-hadoop2.7"
+  PYSPARK="3.0.3"
+  echo "Installing PySpark $PYSPARK and Spark NLP $SPARKNLP"
 else
-  wget -q "https://downloads.apache.org/spark/spark-3.1.1/spark-3.1.1-bin-hadoop2.7.tgz" > /dev/null
-  tar -xvf spark-3.1.1-bin-hadoop2.7.tgz > /dev/null
-  SPARKHOME="/content/spark-3.1.1-bin-hadoop2.7"
+  PYSPARK="3.2.1"
+  echo "Installing PySpark $PYSPARK and Spark NLP $SPARKNLP"
 fi
 
-export SPARK_HOME=$SPARKHOME
-export JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64"
+echo "setup Colab for PySpark $PYSPARK and Spark NLP $SPARKNLP"
+
+if [[ "$GPU" == "true" ]];
+  then
+    echo "Upgrading libcudnn8 to 8.1.0 for GPU"
+    apt install -qq --allow-change-held-packages libcudnn8=8.1.0.77-1+cuda11.2 -y &> /dev/null
+fi
 
 # Install pyspark spark-nlp
-! pip install --upgrade -q pyspark==$PYSPARK spark-nlp==$SPARKNLP findspark nlu==$NLU
+! pip install --upgrade -q pyspark==$PYSPARK spark-nlp==$SPARKNLP nlu==$NLU findspark
