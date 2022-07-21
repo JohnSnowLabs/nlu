@@ -57,13 +57,13 @@ To get your hands on the power of NLU, you just need to install it via pip and e
 pip install nlu pyspark==3.0.2
 ``` 
 
-## Loading and predict with any model in 1 line python 
+## Loading and predicting with any model in 1 line python 
 ```python
 import nlu 
 nlu.load('sentiment').predict('I love NLU! <3') 
 ``` 
 
-## Loading and predict with multiple models in 1 line 
+## Loading and predicting with multiple models in 1 line 
 
 Get 6 different embeddings in 1 line and use them for downstream data science tasks! 
 
@@ -84,7 +84,7 @@ NLU provides everything a data scientist might want to wish for in one line of c
  - Various Text Cleaning and Pre-Processing methods like Stemming, Lemmatizing, Normalizing, Filtering, Cleaning pipelines and more
 
 
-## Classifiers trained on many different different datasets 
+## Classifiers trained on many different datasets 
 Choose the right tool for the right task! Whether you analyze movies or twitter, NLU has the right model for you! 
 
 - trec6 classifier 
@@ -102,7 +102,7 @@ Choose the right tool for the right task! Whether you analyze movies or twitter,
 - Language classifier for 20 languages on the wiki 20 lang dataset. 
 
 ## Utilities for the Data Science NLU applications 
-Working with text data can sometimes be quite a dirty job. NLU helps you keep your hands clean by providing lots of components that take away data engineering intensive tasks. 
+Working with text data can sometimes be quite a dirty job. NLU helps you keep your hands clean by providing components that take away from data engineering intensive tasks. 
 
 - Datetime Matcher
 - Pattern Matcher
@@ -123,11 +123,11 @@ For NLU models to load, see [the NLU Namespace](https://nlu.johnsnowlabs.com/doc
 - Numpy arrays
 - Strings and lists of strings 
 
-## Overview of all tutorial using the NLU-Library
+## Overview of all tutorials using the NLU-Library
 
 In the following tabular, all available tutorials using NLU are listed. These tutorials will help you learn the 
 usage of the NLU library and on how to use it for your own tasks. Some of the tasks NLU does are
-translating from any language into the english language, lemmatizing, tokenizing, cleaning text from 
+translating from any language to the english language, lemmatizing, tokenizing, cleaning text from 
 Symbol or unwanted syntax, spellchecking, detecting entities, analyzing sentiments and many more!
 
 {:.table2}
@@ -199,7 +199,7 @@ Symbol or unwanted syntax, spellchecking, detecting entities, analyzing sentimen
 | NLU 20 Minutes Crashcourse - the fast Data Science route                                            |  `spell`, `sentiment`, `pos`, `ner`, `yake`, `en.t5`, `emotion`, `answer_question`, `en.t5.base` ...                      | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/JohnSnowLabs/nlu/blob/master/examples/webinars_conferences_etc/AI4_2021/NLU_crash_course_AI4.ipynb)                                                                          | [T5-Model](https://nlp.johnsnowlabs.com/2021/01/08/t5_base_en.html), [Part of Speech](https://nlp.johnsnowlabs.com/2021/03/05/pos_anc.html), [NER-Piple](https://nlp.johnsnowlabs.com/2021/03/22/onto_recognize_entities_sm_en.html), [Emotion detection](https://nlp.johnsnowlabs.com/2021/01/09/classifierdl_use_emotion_en.html) , [Spellchecker](https://nlp.johnsnowlabs.com/2021/03/28/spellcheck_dl_en.html), [Sentiment classification](https://nlp.johnsnowlabs.com/2021/03/24/analyze_sentiment_en.html)                                             |
 | Chapter 0: Intro: 1-liners                                                                          |  `sentiment`, `pos`, `ner`, `bert`, `elmo`, `embed_sentence.bert`                                                         | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/JohnSnowLabs/nlu/blob/master/examples/webinars_conferences_etc/NYC_DC_NLP_MEETUP/0_liners_intro.ipynb)                                                                       |  [Part of Speech](https://nlp.johnsnowlabs.com/2021/03/05/pos_anc.html), [NER-Piple](https://nlp.johnsnowlabs.com/2021/03/22/onto_recognize_entities_sm_en.html), [Sentiment classification](https://nlp.johnsnowlabs.com/2021/03/24/analyze_sentiment_en.html), [Elmo-Embedding](https://nlp.johnsnowlabs.com/2020/01/31/elmo.html), [Bert-Sentence_Embedding](https://nlp.johnsnowlabs.com/2020/08/25/sent_small_bert_L2_128.html)                                                                                                                           |
 | Chapter 1: NLU base-features with some classifiers on testdata                                      |  `emotion`, `yake`, `stem`                                                                                                | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/JohnSnowLabs/nlu/blob/master/examples/webinars_conferences_etc/NYC_DC_NLP_MEETUP/1_NLU_base_features_on_dataset_with_YAKE_Lemma_Stemm_classifiers_NER_.ipynb)                |  [Emotion detection](https://nlp.johnsnowlabs.com/2021/01/09/classifierdl_use_emotion_en.html)                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
-| Chapter 2: Translation between 300+ langauges with Marian                                           |  `tr.translate_to.en`, `en.translate_to.fr`, `en.translate_to.he`                                                         | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/sequence2sequence/translation_demo.ipynb)                                                                     |  [Translation-Pipeline (En to Fr)](https://nlp.johnsnowlabs.com/2021/06/04/translate_en_fr_xx.html), [Translation (En to He)](https://nlp.johnsnowlabs.com/2021/06/04/translate_en_he_xx.html)                                                                                                                                                                                                                                                                                                                                                                 |
+| Chapter 2: Translation between 300+ languages with Marian                                           |  `tr.translate_to.en`, `en.translate_to.fr`, `en.translate_to.he`                                                         | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/sequence2sequence/translation_demo.ipynb)                                                                     |  [Translation-Pipeline (En to Fr)](https://nlp.johnsnowlabs.com/2021/06/04/translate_en_fr_xx.html), [Translation (En to He)](https://nlp.johnsnowlabs.com/2021/06/04/translate_en_he_xx.html)                                                                                                                                                                                                                                                                                                                                                                 |
 | Chapter 3: Answer questions and summarize Texts with T5                                             |  `answer_question`, `en.t5`, `en.t5.base`                                                                                 | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/sequence2sequence/T5_question_answering.ipynb)                                                                |  [T5-Model](https://nlp.johnsnowlabs.com/2021/01/08/t5_base_en.html)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | Chapter 4: Overview of T5-Tasks                                                                     |  `en.t5.base`                                                                                                             | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/JohnSnowLabs/nlu/blob/master/examples/colab/component_examples/sequence2sequence/T5_tasks_summarize_question_answering_and_more.ipynb)                                       |  [T5-Model](https://nlp.johnsnowlabs.com/2021/01/08/t5_base_en.html)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | Graph NLU 20 Minutes Crashcourse - State of the Art Text Mining for Graphs                          |  `spell`, `sentiment`, `pos`, `ner`, `yake`, `emotion`, `med_ner.jsl.wip.clinical`, ...                                   | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/JohnSnowLabs/nlu/blob/master/examples/webinars_conferences_etc/graph_ai_summit/Healthcare_Graph_NLU_COVID_Tigergraph.ipynb)                                                  |  [Part of Speech](https://nlp.johnsnowlabs.com/2021/03/05/pos_anc.html), [NER-Piple](https://nlp.johnsnowlabs.com/2021/03/22/onto_recognize_entities_sm_en.html), [Emotion detection](https://nlp.johnsnowlabs.com/2021/01/09/classifierdl_use_emotion_en.html), [Spellchecker](https://nlp.johnsnowlabs.com/2021/03/28/spellcheck_dl_en.html), [Sentiment classification](https://nlp.johnsnowlabs.com/2021/03/24/analyze_sentiment_en.html)                                                                                                                  |
