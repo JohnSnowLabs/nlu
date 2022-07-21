@@ -1,7 +1,7 @@
 
 # NLU: The Power of Spark NLP, the Simplicity of Python
 John Snow Labs' NLU is a Python library for applying state-of-the-art text mining, directly on any dataframe, with a single line of code.
-As a facade of the award-winning Spark NLP library, it comes with **1000+** of pretrained models in **100+** , all production-grade, scalable, and trainable and **everything in 1 line of code.**
+As a facade of the award-winning Spark NLP library, it comes with **1000+** of pretrained models in **100+**, all production-grade, scalable, and trainable, with **everything in 1 line of code.**
 
 
 
@@ -102,7 +102,7 @@ Choose the right tool for the right task! Whether you analyze movies or twitter,
 - Language classifier for 20 languages on the wiki 20 lang dataset. 
 
 ## Utilities for the Data Science NLU applications 
-Working with text data can sometimes be quite a dirty Job. NLU helps you keep your hands clean by providing lots of components that take away data engineering intensive tasks. 
+Working with text data can sometimes be quite a dirty job. NLU helps you keep your hands clean by providing lots of components that take away data engineering intensive tasks. 
 
 - Datetime Matcher
 - Pattern Matcher
@@ -125,9 +125,9 @@ For NLU models to load, see [the NLU Namespace](https://nlu.johnsnowlabs.com/doc
 
 ## Overview of all tutorial using the NLU-Library
 
-In the following tabular, all available tutorials using NLU are listed. These tutorials will help you learn on
-how to use the NLU library correctly and on how to  use it for your own tasks. Some of the tasks NLU does are
-for example translating from any language into the english language, lemmatizing, tokenizing, cleaning text from 
+In the following tabular, all available tutorials using NLU are listed. These tutorials will help you learn the 
+usage of the NLU library and on how to use it for your own tasks. Some of the tasks NLU does are
+translating from any language into the english language, lemmatizing, tokenizing, cleaning text from 
 Symbol or unwanted syntax, spellchecking, detecting entities, analyzing sentiments and many more!
 
 {:.table2}
