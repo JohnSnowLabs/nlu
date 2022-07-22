@@ -1,6 +1,6 @@
 #!/bin/bash
 #default values for pyspark, spark-nlp, and SPARK_HOME
-SPARKNLP="4.0.1"
+SPARKNLP="4.0.0"
 PYSPARK="3.2.0"
 NLU="4.0.0"
 
