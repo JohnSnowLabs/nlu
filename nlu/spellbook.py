@@ -5646,535 +5646,380 @@ class Spellbook:
                                     'zu': {'zu.stopwords': 'stopwords_zu'}}
 
     healthcare_component_alias_references = {}
-    pretrained_healthcare_pipe_references = {
-        'en': {
-            'en.med_ner.profiling_clinical': 'ner_profiling_clinical',
-            'en.med_ner.profiling_biobert': 'ner_profiling_biobert',
-            'en.icd10cm.umls.mapping': 'icd10cm_umls_mapping',
-            'en.mesh.umls.mapping': 'mesh_umls_mapping',
-            'en.rxnorm.umls.mapping': 'rxnorm_umls_mapping',
-            'en.snomed.umls.mapping': 'snomed_umls_mapping',
-
-            'en.map_entity.icd10cm_to_snomed.pipe': 'icd10cm_snomed_mapping',
-            'en.map_entity.snomed_to_icd10cm.pipe': 'snomed_icd10cm_mapping',
-            'en.map_entity.icdo_to_snomed.pipe': 'icdo_snomed_mapping',
-            'en.map_entity.snomed_to_icdo.pipe': 'snomed_icdo_mapping',
-            'en.map_entity.rxnorm_to_ndc.pipe': 'rxnorm_ndc_mapping',
-
-            # '' :'clinical_analysis', # Not 3+ compatible
-            # '' :'clinical_deidentification', # todo to big ner consumer stack for NLU to handle..
-            # '' :'clinical_ner_assertion', Not 3+ compatible
-            'en.med_ner.pathogen.pipeline': 'ner_pathogen_pipeline',
-            'en.med_ner.biomedical_bc2gm.pipeline': 'ner_biomedical_bc2gm_pipeline',
-            'en.med_ner.clinical_trials_abstracts.pipe': 'ner_clinical_trials_abstracts_pipeline',
-
-            # Explain Pipes
-            'en.explain_doc.carp': 'explain_clinical_doc_carp',
-            'en.explain_doc.era': 'explain_clinical_doc_era',
-            # 'en.explain_doc.ade':'explain_clinical_doc_ade', # todo wierd 2x Converter 1x NER component_list, messes up component_list logic
-
-            'en.recognize_entities.posology': 'recognize_entities_posology',  # PIPE
-
-        },
-        'fr': {
-            'fr.deid_obfuscated': 'clinical_deidentification'  # need finisher support first
-
-        },
-        'ro':
-            {
-                'ro.deid.clinical': 'clinical_deidentification',
-
-            }
-    }
-    pretrained_healthcare_model_references = {
-        'fr': {
-            'fr.med_ner.deid_generic': 'ner_deid_generic',
-            'fr.med_ner.deid_subentity': 'ner_deid_subentity',
-            # 4.0.0
-            'fr.med_ner.living_species': 'ner_living_species',
-            'fr.med_ner.living_species.bert': 'ner_living_species_bert'
-
-        },
-        'it':
-            {
-                'it.med_ner.deid_generic': 'ner_deid_generic',
-                'it.med_ner.deid_subentity': 'ner_deid_subentity',
-
-                # 4.0.0
-                'it.med_ner.living_species': 'bert_token_classifier_ner_living_species',
-                'it.med_ner.living_species.bert': 'ner_living_species_bert',
-                'it.med_ner.living_species': 'ner_living_species'
-
-            },
-        'en':
-            {
-
-                # 4.0.0
-                # 
-                'en.rxnorm_to_ndc' : 'rxnorm_ndc_mapper',
-                'en.map_entity.section_headers_normalized': 'normalized_section_header_mapper',
-                'en.icd10cm_to_snomed': 'icd10cm_snomed_mapper',
-                'en.icd10cm_to_umls': 'icd10cm_umls_mapper',
-                'en.icdo_to_snomed': 'icdo_snomed_mapper',
-                'en.mesh_to_umls': 'mesh_umls_mapper',
-                'en.rxnorm_to_umls': 'rxnorm_umls_mapper',
-                'en.snomed_to_icd10cm': 'snomed_icd10cm_mapper',
-                'en.snomed_to_icdo': 'snomed_icdo_mapper',
-                'en.snomed_to_umls': 'snomed_umls_mapper',
-
-                'en.map_entity.rxnorm_to_action_treatment': 'rxnorm_action_treatment_mapper',
-                'en.map_entity.rxnorm_resolver': 'rxnorm_mapper',
-                'en.map_entity.rxnorm_to_ndc': 'rxnorm_ndc_mapper',
-                'en.map_entity.abbreviation_to_definition': 'abbreviation_mapper',
-                'en.map_entity.drug_to_action_treatment': 'drug_action_treatment_mapper',
-                'en.map_entity.drug_brand_to_ndc': 'drug_brandname_ndc_mapper',
-
-                'en.map_entity.snomed_to_icd10cm': 'snomed_icd10cm_mapper',
-                'en.map_entity.icd10cm_to_snomed': 'icd10cm_snomed_mapper',
-                'en.map_entity.snomed_to_icdo': 'snomed_icdo_mapper',
-                'en.map_entity.icdo_to_snomed': 'icdo_snomed_mapper',
-                'en.map_entity.rxnorm_to_umls': 'rxnorm_umls_mapper',
-                'en.map_entity.icd10cm_to_umls': 'icd10cm_umls_mapper',
-                'en.map_entity.mesh_to_umls': 'mesh_umls_mapper',
-                'en.map_entity.snomed_to_umls': 'snomed_umls_mapper',
-
-                'en.ner.clinical_trials_abstracts': 'ner_clinical_trials_abstracts',
-                'en.med_ner.clinical_trials_abstracts': 'bert_token_classifier_ner_clinical_trials_abstracts',
-                'en.med_ner.pathogen': 'ner_pathogen',
-                'en.med_ner.living_species.token_bert': 'bert_token_classifier_ner_living_species',
-                'en.med_ner.living_species': 'ner_living_species',
-                'en.med_ner.living_species.biobert': 'ner_living_species_biobert',
-                'en.classify.stress': 'bert_sequence_classifier_stress',
-                # 3.4.3
-                'en.relation.zeroshot_biobert': 're_zeroshot_biobert',
-
-                # 3.4.2
-                'en.med_ner.clinical_trials': 'bert_sequence_classifier_rct_biobert',
-
-                # 3.4.1
-                'en.med_ner.supplement_clinical': 'ner_supplement_clinical',
-                'en.resolve.rxnorm.augmented_re': 'sbiobertresolve_rxnorm_augmented_re',
-                'en.classify.ade.seq_biobert': 'bert_sequence_classifier_ade',
-                'en.classify.gender.seq_biobert': 'bert_sequence_classifier_gender_biobert',
-                'en.classify.pico.seq_biobert': 'bert_sequence_classifier_pico_biobert',
-                'en.classify.ade.seq_distilbert': 'distilbert_sequence_classifier_ade',
-                'en.relation.temporal_events_clinical': 're_temporal_events_clinical',
-                'en.relation.adverse_drug_events.clinical': 're_ade_clinical',
-                'en.relation.adverse_drug_events.clinical.biobert': 'redl_ade_biobert',
-
-                # 3.4.0
-                'en.med_ner.abbreviation_clinical': 'ner_abbreviation_clinical',
-                'en.med_ner.drugprot_clinical': 'ner_drugprot_clinical',
-                'en.ner.drug_development_trials': 'bert_token_classifier_drug_development_trials',
-                'en.med_ner.chemprot.bert': 'bert_token_classifier_ner_chemprot',
-                'en.relation.drugprot': 'redl_drugprot_biobert',
-                'en.relation.drugprot.clinical': 're_drugprot_clinical',
-                'en.resolve.clinical_abbreviation_acronym': 'sbiobertresolve_clinical_abbreviation_acronym',
-                'en.resolve.umls_drug_substance': 'sbiobertresolve_umls_drug_substance',
-                'en.resolve.loinc_cased': 'sbiobertresolve_loinc_cased',
-                'en.resolve.loinc_uncased': 'sbluebertresolve_loinc_uncased',
-                'en.embed_sentence.biobert.rxnorm': 'sbiobert_jsl_rxnorm_cased',
-                'en.embed_sentence.bert_uncased.rxnorm': 'sbert_jsl_medium_rxnorm_uncased',
-                'en.resolve.snomed_drug': 'sbiobertresolve_snomed_drug',
-
-                # clinical spellchecker
-                'en.spell.clinical': 'spellcheck_clinical',  # todo crashing
-                # 'en.spell.med':        'context_spell_med', #todo crashing
-                # 'en.spell.context.med':'context_spell_med', #todo crashing Byteerror
-
-                # 3.3.0 Healthcare
-                'en.spell.drug_norvig': 'spellcheck_drug_norvig',
-                'en.classify.token_bert.ner_bacteria': 'bert_token_classifier_ner_bacteria',
-                'en.classify.token_bert.ner_anatomy': 'bert_token_classifier_ner_anatomy',
-                'en.classify.token_bert.ner_drugs': 'bert_token_classifier_ner_drugs',
-                'en.classify.token_bert.ner_jsl_slim': 'bert_token_classifier_ner_jsl_slim',
-                'en.classify.token_bert.ner_ade': 'bert_token_classifier_ner_ade',
-                'en.resolve.rxnorm_ndc': 'sbiobertresolve_rxnorm_ndc',
-                'en.resolve.icd10cm_generalised': 'sbiobertresolve_icd10cm_generalised',
-                'en.resolve.hcpcs': 'sbiobertresolve_hcpcs',
-                'en.med_ner.chexpert': 'ner_chexpert',
-
-                # 3.2.3 Healthcare
-                'en.classify.token_bert.ner_deid': 'bert_token_classifier_ner_deid',
-
-                'en.detect_sentence.clinical': 'sentence_detector_dl_healthcare',
-                'en.norm_drugs': 'drug_normalizer',
-                # T5
-                'en.t5.mediqa': 't5_base_mediqa_mnli',
-
-                # AssertionDLModel
-                'en.assert': 'assertion_dl',
-                'en.assert.biobert': 'assertion_dl_biobert',
-                'en.assert.healthcare': 'assertion_dl_healthcare',
-                'en.assert.large': 'assertion_dl_large',
-
-                # 2.7.6
-                'en.assert.radiology': 'assertion_dl_radiology',
-
-                # WordEmbedding Model Glove Embeddings
-                'en.embed.glove.clinical': 'embeddings_clinical',
-                'en.embed.glove.biovec': 'embeddings_biovec',
-                'en.embed.glove.healthcare': 'embeddings_healthcare',
-                'en.embed.glove.healthcare_100d': 'embeddings_healthcare_100d',
-                # 'en.embed.glove.icd10': 'embeddings_icd10_base', # Broken in JSL
-                'en.embed.glove.icdoem': 'embeddings_icdoem',
-                'en.embed.glove.icdoem_2ng': 'embeddings_icdoem_2ng',
-
-                # 3.1.1
-                'en.embed_sentence.biobert.jsl_cased': 'sbiobert_jsl_cased',
-                'en.embed_sentence.biobert.jsl_umls_cased': 'sbiobert_jsl_umls_cased',
-                'en.embed_sentence.bert.jsl_medium_uncased': 'sbert_jsl_medium_uncased',
-                'en.embed_sentence.bert.jsl_medium_umls_uncased': 'sbert_jsl_medium_umls_uncased',
-                'en.embed_sentence.bert.jsl_mini_uncased': 'sbert_jsl_mini_uncased',
-                'en.embed_sentence.bert.jsl_mini_umlsuncased': 'sbert_jsl_mini_umls_uncased',
-                'en.embed_sentence.bert.jsl_tiny_uncased': 'sbert_jsl_tiny_uncased',
-                'en.embed_sentence.bert.jsl_tiny_umls_uncased': 'sbert_jsl_tiny_umls_uncased',
-
-                # BIOBERT embeddings
-
-                # Todo errors with biobert embeds
-                # 'en.embed.biobert.clinical': 'biobert_clinical_base_cased', # broken
-                # 'en.embed.biobert.discharge': 'biobert_discharge_base_cased',# broken
-                # 'en.embed.biobert.pmc': 'biobert_pmc_base_cased', Broken
-                # 'en.embed.biobert.pubmed': 'biobert_pubmed_base_cased', # broken
-                # 'en.embed.biobert.pubmed_large': 'biobert_pubmed_large_cased', # broken
-                # 'en.embed.biobert.pubmed_pmc': 'biobert_pubmed_pmc_base_cased', # broken
-
-                # Sentence Entity resolvers
-
-                # BertSEntenceEmbeddings MLI
-                'en.embed_sentence.biobert.mli': 'sbiobert_base_cased_mli',
-                'en.embed_sentence.bluebert.mli': 'sbluebert_base_uncased_mli',  # Broken
-
-                # 'en.embed_sentence.bluebert.mednli': 'sent_bluebert_base_uncased_mednli', # broken  : java.util.NoSuchElementException: Param isSBert does not exist.
-                # 'en.embed_sentence.biobert.mednli': 'sent_biobert_base_uncased_mednli',  # broken
-
-                # resolve sentence cpt
-                'en.resolve': 'sbiobertresolve_cpt',
-                'en.resolve.cpt': 'sbiobertresolve_cpt',
-                'en.resolve.cpt.augmented': 'sbiobertresolve_cpt_augmented',
-                'en.resolve.cpt.procedures_augmented': 'sbiobertresolve_cpt_procedures_augmented',
-                # resolve sentence hcc
-                'en.resolve.hcc': 'sbiobertresolve_hcc_augmented',
-                'en.resolve.hcc.augmented': 'sbiobertresolve_hcc_augmented',
-                # resolve sentence icdf
-                'en.resolve.icd10cm': 'sbiobertresolve_icd10cm',
-                'en.resolve.icd10cm.augmented': 'sbiobertresolve_icd10cm_augmented',
-                'en.resolve.icd10cm.augmented_billable': 'sbiobertresolve_icd10cm_augmented_billable_hcc',
-                'en.resolve.icd10pcs': 'sbiobertresolve_icd10pcs',
-                'en.resolve.icdo': 'sbiobertresolve_icdo',
-                # rewsolve sentence rx
-                'en.resolve.rxcui': 'sbiobertresolve_rxcui',
-                'en.resolve.rxnorm': 'sbiobertresolve_rxnorm',
-                # resolve sentence snomed s
-                'en.resolve.snomed': 'sbiobertresolve_snomed_auxConcepts',  # alias
-                'en.resolve.snomed.aux_concepts': 'sbiobertresolve_snomed_auxConcepts',
-                'en.resolve.snomed.aux_concepts_int': 'sbiobertresolve_snomed_auxConcepts_int',
-                'en.resolve.snomed.findings': 'sbiobertresolve_snomed_findings',
-                'en.resolve.snomed.findings_int': 'sbiobertresolve_snomed_findings_int',
-                'en.resolve.cpt.procedures_measurements': 'sbiobertresolve_cpt_procedures_measurements_augmented',
-                'en.resolve.icdo.base': 'sbiobertresolve_icdo_base',
-                'en.resolve.rxnorm.disposition': 'sbertresolve_rxnorm_disposition',
-                'en.resolve.rxnorm.disposition.sbert': 'sbertresolve_rxnorm_disposition',
-
-                # 3.1.1
-                'en.resolve.snomed_body_structure_med': 'sbertresolve_snomed_bodyStructure_med',
-                'en.resolve.snomed_body_structure': 'sbiobertresolve_snomed_bodyStructure',
-                'en.resolve.icdo_augmented': 'sbiobertresolve_icdo_augmented',
-
-                'en.resolve.icd10cm.slim_billable_hcc': 'sbiobertresolve_icd10cm_slim_billable_hcc',
-                'en.resolve.icd10cm.slim_billable_hcc_med': 'sbertresolve_icd10cm_slim_billable_hcc_med',
-
-                # Greedy Relation extracction
-                # 'en.relation.posology': 'posology_re',  # TODo OCRASHES SOME STRINGS!
-
-                # RelationExtractionModel
-
-                # These biobert analogus models which are better or some are broken
-                # 'en.relation':'re_clinical',
-                # 'en.relation.bodypart.direction':'re_bodypart_directions',
-                # 'en.relation.bodypart.problem':'re_bodypart_problem',
-                # 'en.relation.bodypart.proceduretest':'re_bodypart_proceduretest',
-                # 'en.relation.chemprot':'re_chemprot_clinical',
-                # 'en.relation.clinical':'re_clinical',
-                # 'en.relation.date_clinical':'re_date_clinical',
-                # 'en.relation.drug_drug_interaction':'re_drug_drug_interaction_clinical',
-                # 'en.relation.human_phenotype_gene':'re_human_phenotype_gene_clinical',
-                # 'en.relation.temporal_events':'re_temporal_events_clinical',
-                # 'en.relation.temporal_events.enriched':'re_temporal_events_enriched_clinical',
-                # RelationExtractionDL
-
-                'en.relation': 'redl_bodypart_direction_biobert',
-                'en.relation.bodypart.direction': 'redl_bodypart_direction_biobert',
-                'en.relation.bodypart.problem': 'redl_bodypart_problem_biobert',
-                'en.relation.bodypart.procedure': 'redl_bodypart_procedure_test_biobert',
-                'en.relation.chemprot': 'redl_chemprot_biobert',
-                'en.relation.clinical': 'redl_clinical_biobert',
-                'en.relation.date': 'redl_date_clinical_biobert',
-                'en.relation.drug_drug_interaction': 'redl_drug_drug_interaction_biobert',
-                'en.relation.humen_phenotype_gene': 'redl_human_phenotype_gene_biobert',
-                'en.relation.temporal_events': 'redl_temporal_events_biobert',
-
-                # 2.7.5
-                'en.relation.test_result_date': 're_test_result_date',
-                # 2.7.3
-                # 'en.relation.chemport'   :'re_chemprot',
-
-                # PartOfSpeechModels
-                'en.pos.clinical': 'pos_clinical',  # DEFAULT POS HC|| RELATION EXTRACTION TRAIN ON THIS!
-
-                # NERDLModels
-                # 'en.med_ner.ade.biobert':'ner_ade_biobert', # Todo error param pooling layer does not exist
-                'en.med_ner': 'jsl_ner_wip_clinical',
-                'en.med_ner.ade.clinical': 'ner_ade_clinical',
-                'en.med_ner.ade.clinical_bert': 'ner_ade_clinicalbert',
-                'en.med_ner.ade.ade_healthcare': 'ner_ade_healthcare',
-                'en.med_ner.anatomy': 'ner_anatomy',
-                'en.med_ner.anatomy.biobert': 'ner_anatomy_biobert',
-                'en.med_ner.anatomy.coarse': 'ner_anatomy_coarse',
-                'en.med_ner.anatomy.coarse_biobert': 'ner_anatomy_coarse_biobert',
-                'en.med_ner.aspect_sentiment': 'ner_aspect_based_sentiment',
-                'en.med_ner.bacterial_species': 'ner_bacterial_species',
-                'en.med_ner.bionlp': 'ner_bionlp',
-                'en.med_ner.bionlp.biobert': 'ner_bionlp_biobert',
-                'en.med_ner.cancer': 'ner_cancer_genetics',
-                'en.med_ner.cellular': 'ner_cellular',
-                'en.med_ner.cellular.biobert': 'ner_cellular_biobert',
-                'en.med_ner.chemicals': 'ner_chemicals',
-                'en.med_ner.genetic_variants': 'ner_genetic_variants',
-                'en.med_ner.chemprot': 'ner_chemprot_biobert',
-                'en.med_ner.chemprot.clinical': 'ner_chemprot_clinical',
-                'en.med_ner.clinical': 'ner_clinical',
-                'en.med_ner.clinical.biobert': 'ner_clinical_biobert',
-                # 'en.med_ner.clinical.noncontrib': 'ner_clinical_noncontrib', # outtaded, NER model_anno_obj it is not MedNER
-                'en.med_ner.diseases': 'ner_diseases',
-                'en.med_ner.diseases.biobert': 'ner_diseases_biobert',
-                'en.med_ner.diseases.large': 'ner_diseases_large',
-                'en.med_ner.drugs': 'ner_drugs',
-                'en.med_ner.drugsgreedy': 'ner_drugs_greedy',
-                'en.med_ner.drugs.large': 'ner_drugs_large',
-                'en.med_ner.events_biobert': 'ner_events_biobert',
-                'en.med_ner.events_clinical': 'ner_events_clinical',
-                'en.med_ner.events_healthcre': 'ner_events_healthcare',
-                'en.med_ner.financial_contract': 'ner_financial_contract',
-                'en.med_ner.healthcare': 'ner_healthcare',
-                'en.med_ner.human_phenotype.gene_biobert': 'ner_human_phenotype_gene_biobert',
-                'en.med_ner.human_phenotype.gene_clinical': 'ner_human_phenotype_gene_clinical',
-                'en.med_ner.human_phenotype.go_biobert': 'ner_human_phenotype_go_biobert',
-                'en.med_ner.human_phenotype.go_clinical': 'ner_human_phenotype_go_clinical',
-                'en.med_ner.jsl': 'ner_jsl',
-                'en.med_ner.jsl.biobert': 'ner_jsl_biobert',
-                'en.med_ner.jsl.enriched': 'ner_jsl_enriched',
-                'en.med_ner.jsl.enriched_biobert': 'ner_jsl_enriched_biobert',
-                'en.med_ner.measurements': 'ner_measurements_clinical',
-                'en.med_ner.medmentions': 'ner_medmentions_coarse',
-                'en.med_ner.posology': 'ner_posology',
-                'en.med_ner.posology.biobert': 'ner_posology_biobert',
-                'en.med_ner.posology.greedy': 'ner_posology_greedy',
-                'en.med_ner.posology.healthcare': 'ner_posology_healthcare',
-                'en.med_ner.posology.large': 'ner_posology_large',
-                'en.med_ner.posology.large_biobert': 'ner_posology_large_biobert',
-                'en.med_ner.posology.small': 'ner_posology_small',
-                'en.med_ner.radiology': 'ner_radiology',
-                'en.med_ner.radiology.wip_clinical': 'ner_radiology_wip_clinical',
-                'en.med_ner.risk_factors': 'ner_risk_factors',
-                'en.med_ner.risk_factors.biobert': 'ner_risk_factors_biobert',
-                'en.med_ner.posology.experimental': 'ner_posology_experimental',
-                'en.med_ner.radiology.wip_greedy_biobert': 'jsl_rd_ner_wip_greedy_biobert',
-
-                # 'en.med_ner.i2b2': 'nerdl_i2b2', #  broken
-                'en.med_ner.tumour': 'nerdl_tumour_demo',
-                'en.med_ner.jsl.wip.clinical': 'jsl_ner_wip_clinical',
-                'en.med_ner.jsl.wip.clinical.greedy': 'jsl_ner_wip_greedy_clinical',
-                'en.med_ner.jsl.wip.clinical.modifier': 'jsl_ner_wip_modifier_clinical',
-                'en.med_ner.jsl.wip.clinical.rd': 'jsl_rd_ner_wip_greedy_clinical',
-                'en.med_ner.deid.augmented': 'ner_deid_augmented',
-                'en.med_ner.deid.biobert': 'ner_deid_biobert',
-                'en.med_ner.deid.enriched': 'ner_deid_enriched',
-                'en.med_ner.deid.enriched_biobert': 'ner_deid_enriched_biobert',
-                'en.med_ner.deid.large': 'ner_deid_large',
-                'en.med_ner.deid.sd': 'ner_deid_sd',
-                'en.med_ner.deid.sd_large': 'ner_deid_sd_large',
-                'en.med_ner.deid.synthetic': 'ner_deid_synthetic',
-                'en.med_ner.deid': 'ner_deidentify_dl',
-                # 2.7.5
-                'en.med_ner.admission_events': 'ner_events_admission_clinical',
-
-                # 3.1.1
-
-                'en.med_ner.deid.generic_augmented': 'ner_deid_generic_augmented',
-                'en.med_ner.deid.subentity_augmented': 'ner_deid_subentity_augmented',
-                # 'med_ner.deid.generic_glove':'ner_deid_generic_glove',
-                # 'med_ner.deid.subentity_glove':'ner_deid_subentity_glove',
-
-                # 'en.med_ner.clinical.icdem': 'ner_clinical_icdem', # TODO UNRESOLVable storageref
-                # 'en.med_ner.clinical.large': 'ner_clinical_large',# TODO URNESOLVED, PIPE?
-
-                # NLU 3.1.2
-
-                'en.med_ner.ade_biobert': 'ner_ade_biobert',
-                'en.classify.ade.clinicalbert': 'classifierdl_ade_clinicalbert',
-                # 'en.med_ner.large': 'ner_large_clinical', # Deprecated
-
-                # DeIdentificationModel
-
-                # 'en.de_identify':'deidentify_dl', # todo ????    lOAD AS ner moadel??? THIS ENEDS EMEBDDINGS??
-                'en.de_identify': 'deidentify_rb',
-                'en.de_identify.rules': 'deid_rules',
-                'en.de_identify.clinical': 'deidentify_enriched_clinical',
-                'en.de_identify.large': 'deidentify_large',
-                'en.de_identify.rb': 'deidentify_rb',
-                'en.de_identify.rb_no_regex': 'deidentify_rb_no_regex',
-
-                # 'en.classify.icd10.clinical':'classifier_icd10cm_hcc_clinical',      #  WHCIH CLASS? # TODO NOT LAODING
-                # 'en.classify.icd10.healthcare':'classifier_icd10cm_hcc_healthcare', # TODO NOT LOADING CORRECt
-                'en.classify.ade.biobert': 'classifierdl_ade_biobert',
-                'en.classify.ade.clinical': 'classifierdl_ade_clinicalbert',
-                'en.classify.ade.conversational': 'classifierdl_ade_conversational_biobert',
-                'en.classify.gender.biobert': 'classifierdl_gender_biobert',
-                'en.classify.gender.sbert': 'classifierdl_gender_sbert',  # ok!
-                'en.classify.pico': 'classifierdl_pico_biobert',
-                # 'en.classify.icd10.use':'useclassifier_icd10cm_hcc', buggy
-
-                # 3.0.3 healthcare
-                'en.resolve.umls': 'sbiobertresolve_umls_major_concepts',
-                'en.resolve.umls.findings': 'sbiobertresolve_umls_findings',
-                'en.resolve.loinc': 'sbiobertresolve_loinc',
-                'en.resolve.loinc.biobert': 'sbiobertresolve_loinc',
-                'en.resolve.HPO': 'sbiobertresolve_HPO',
-                'en.resolve.snomed_conditions': 'sbertresolve_snomed_conditions',
-
-                # Healthcare 3.1.2 to 3.2.0
-                'en.relation.ade': 'redl_ade_biobert',
-                'en.relation.ade_clinical': 're_ade_clinical',
-                'en.relation.ade_biobert': 're_ade_biobert',
-                'en.assert.jsl': 'assertion_jsl',
-                'en.assert.jsl_large': 'assertion_jsl_large',
-                # 'en.resolve.snomed_findings_aux_concepts': 'sbiobertresolve_snomed_findings_aux_concepts', # bad storage  sbiobert_base_cased_mli, but the model_anno_obj does not have that ref
-                'en.resolve.rxnorm_disposition': 'sbiobertresolve_rxnorm_disposition',
-                'en.resolve.rxnorm_disposition.sbert': 'sbertresolve_rxnorm_disposition',
-
-                'en.med_ner.jsl_slim': 'ner_jsl_slim',
-                'en.med_ner.jsl_greedy_biobert': 'ner_jsl_greedy_biobert',
-                'en.classify.token_bert.ner_clinical': 'bert_token_classifier_ner_clinical',
-                'en.classify.token_bert.ner_jsl': 'bert_token_classifier_ner_jsl',
-
-                # 3.3.1 healthcare
-                'en.classify.token_bert.ner_chemical': 'bert_token_classifier_ner_chemicals',
-
-                ## 3.3.3 HC
-                'en.med_ner.deid_subentity_augmented_i2b2': 'ner_deid_subentity_augmented_i2b2',
-                'en.med_ner.biomarker': 'ner_biomarker',
-                'en.med_ner.nihss': 'ner_nihss',
-                'en.extract_relation.nihss': 'redl_nihss_biobert',
-                'en.resolve.mesh': 'sbiobertresolve_mesh',
-                'en.resolve.ndc': 'sbiobertresolve_ndc',
-                'en.resolve.loinc.augmented': 'sbiobertresolve_loinc_augmented',
-                'en.resolve.clinical_snomed_procedures_measurements': 'sbiobertresolve_clinical_snomed_procedures_measurements',
-                'es.embed.roberta_base_biomedical': 'roberta_base_biomedical',
-                'es.med_ner.roberta_ner_diag_proc': 'roberta_ner_diag_proc',
-                'es.resolve.snomed': 'robertaresolve_snomed',
-                'en.med_ner.covid_trials': 'ner_covid_trials',
-                'en.med_ner.chemd': 'ner_chemd_clinical',
-                'en.classify.token_bert.bionlp': 'bert_token_classifier_ner_bionlp',
-                'en.classify.token_bert.cellular': 'bert_token_classifier_ner_cellular',
-                'en.classify.token_bert.chemicals': 'bert_token_classifier_ner_chemicals',
-                'en.resolve.rxnen.med_ner.deid_subentityorm_augmented': 'sbiobertresolve_rxnorm_augmented',
-                'en.resolve.umls_disease_syndrome': 'sbiobertresolve_umls_disease_syndrome',
-                'en.resolve.umls_clinical_drugs': 'sbiobertresolve_umls_clinical_drugs',
-                'en.classify.bert_sequence.question_statement_clinical': 'bert_sequence_classifier_question_statement_clinical',
-
-                'en.med_ner.biomedical_bc2gm': 'ner_biomedical_bc2gm',
-                'en.resolve.rxnorm_action_treatment': 'sbiobertresolve_rxnorm_action_treatment',
-                # 'en.classify.rct_binary.use':'rct_binary_classifier_use',
-                # 'en.classify.rct_binary.biobert':'rct_binary_classifier_biobert',
-
-            },
-
-        'de':
-            {
-
-                'de.med_ner.deid_subentity': 'ner_deid_subentity',
-                'de.med_ner.deid_generic': 'ner_deid_generic',
-                'de.embed.w2v': 'w2v_cc_300d',
-                'de.embed': 'w2v_cc_300d',
-                'de.med_ner.legal': 'ner_legal',
-                # 'de.med_ner' :'ner_healthcare', # BAD NER TRAINED ON STORAGE_REF embeddings_healthcare_100d which only exist in EN
-                #  'de.med_ner.healthcare' :'ner_healthcare', # BAD NER TRAINED ON STORAGE_REF embeddings_healthcare_100d which only exist in EN
-                'de.med_ner': 'ner_healthcare_slim',
-                'de.med_ner.traffic': 'ner_traffic',
-                'de.resolve.icd10gm': 'sbertresolve_icd10gm',
-                'de.resolve.snomed': 'sbertresolve_snomed',
-
-            },
-
-        'es': {
-
-            # 4.0.0
-            'es.med_ner.living_species': 'bert_token_classifier_ner_living_species',
-            'es.med_ner.living_species.bert': 'ner_living_species_bert',
-            'es.med_ner.living_species.roberta': 'ner_living_species_roberta',
-            'es.med_ner.living_species.300': 'ner_living_species_300',
-            'es.med_ner.living_species': 'ner_living_species',
-            'es.embed.scielo300d': 'embeddings_scielo_300d',
-
-            # 3.4.2
-            'es.med_ner.deid.generic.roberta': 'ner_deid_generic_roberta_augmented',
-            'es.med_ner.deid.subentity.roberta': 'ner_deid_subentity_roberta_augmented',
-
-            # 3.4.1
-            'es.embed.sciwiki_300d': 'embeddings_sciwiki_300d',
-            'es.med_ner.deid.generic': 'ner_deid_generic',
-            'es.med_ner.deid.subentity': 'ner_deid_subentity',
-
-            'es.embed.scielo.150d': 'embeddings_scielo_150d',
-            'es.embed.scielo.300d': 'embeddings_scielo_300d',
-            'es.embed.scielo.50d': 'embeddings_scielo_50d',
-            'es.embed.scielowiki.150d': 'embeddings_scielowiki_150d',
-            'es.embed.scielowiki.300d': 'embeddings_scielowiki_300d',
-            'es.embed.scielowiki.50d': 'embeddings_scielowiki_50d',
-            'es.embed.sciwiki.150d': 'embeddings_sciwiki_150d',
-            'es.embed.sciwiki.300d': 'embeddings_sciwiki_300d',
-            'es.embed.sciwiki.50d': 'embeddings_sciwiki_50d',
-            'es.med_ner': 'ner_diag_proc',
-            'es.med_ner.neoplasm': 'ner_neoplasms',
-            'es.med_ner.diag_proc': 'ner_diag_proc',
-
-            'es.embed.roberta_base_biomedical': 'roberta_base_biomedical',
-            'es.med_ner.roberta_ner_diag_proc': 'roberta_ner_diag_proc',
-            'es.resolve.snomed': 'robertaresolve_snomed',
-        },
-
-        'pt': {
-            'pt.med_ner.deid.subentity': 'ner_deid_subentity',
-            'pt.med_ner.deid.generic': 'ner_deid_generic',
-            'pt.med_ner.deid': 'ner_deid_generic',
-
-            # 4.0.0
-            'pt.med_ner.living_species.token_bert': 'bert_token_classifier_ner_living_species',
-            'pt.med_ner.living_species': 'ner_living_species',
-            'pt.med_ner.living_species.roberta': 'ner_living_species_roberta',
-            'pt.med_ner.living_species.bert': 'ner_living_species_bert'
-        },
-        'ro': {
-            # 4.0.0
-            'ro.med_ner.living_species.bert': 'ner_living_species_bert',
-            'ro.med_ner.clinical': 'ner_clinical',
-            'ro.embed.clinical.bert.base_cased': 'ner_clinical_bert',
-            'ro.med_ner.deid.subentity': 'ner_deid_subentity',
-            'ro.med_ner.deid.subentity.bert': 'ner_deid_subentity_bert'
-
-        },
-        'gl': {
-            # 4.0.0
-            'gl.med_ner.living_species': 'ner_living_species'
-        },
-        'ca': {
-            # 4.0.0
-            'ca.med_ner.living_species': 'ner_living_species'
-
-        }
-    }
+    pretrained_healthcare_pipe_references = {'en': {'en.de_identify.clinical': 'clinical_deidentification',
+                                                    'en.de_identify.clinical_slim': 'clinical_deidentification_slim',
+                                                    'en.explain_doc.carp': 'explain_clinical_doc_carp',
+                                                    'en.explain_doc.era': 'explain_clinical_doc_era',
+                                                    'en.icd10cm.umls.mapping': 'icd10cm_umls_mapping',
+                                                    'en.map_entity.icd10cm_to_snomed.pipe': 'icd10cm_snomed_mapping',
+                                                    'en.map_entity.icdo_to_snomed.pipe': 'icdo_snomed_mapping',
+                                                    'en.map_entity.rxnorm_to_ndc.pipe': 'rxnorm_ndc_mapping',
+                                                    'en.map_entity.snomed_to_icd10cm.pipe': 'snomed_icd10cm_mapping',
+                                                    'en.map_entity.snomed_to_icdo.pipe': 'snomed_icdo_mapping',
+                                                    'en.map_entity.umls_clinical_findings_resolver': 'umls_clinical_findings_resolver_pipeline',
+                                                    'en.map_entity.umls_disease_syndrome_resolver': 'umls_disease_syndrome_resolver_pipeline',
+                                                    'en.map_entity.umls_drug_resolver': 'umls_drug_resolver_pipeline',
+                                                    'en.map_entity.umls_drug_substance_resolver': 'umls_drug_substance_resolver_pipeline',
+                                                    'en.map_entity.umls_major_concepts_resolver': 'umls_major_concepts_resolver_pipeline',
+                                                    'en.med_ner.biomedical_bc2gm.pipeline': 'ner_biomedical_bc2gm_pipeline',
+                                                    'en.med_ner.clinical_trials_abstracts.pipe': 'ner_clinical_trials_abstracts_pipeline',
+                                                    'en.med_ner.pathogen.pipeline': 'ner_pathogen_pipeline',
+                                                    'en.med_ner.profiling_biobert': 'ner_profiling_biobert',
+                                                    'en.med_ner.profiling_clinical': 'ner_profiling_clinical',
+                                                    'en.mesh.umls.mapping': 'mesh_umls_mapping',
+                                                    'en.ner.medication': 'ner_medication_pipeline',
+                                                    'en.recognize_entities.posology': 'recognize_entities_posology',
+                                                    'en.resolve.medication': 'medication_resolver_pipeline',
+                                                    'en.rxnorm.umls.mapping': 'rxnorm_umls_mapping',
+                                                    'en.snomed.umls.mapping': 'snomed_umls_mapping'},
+                                             'fr': {'fr.deid_obfuscated': 'clinical_deidentification'},
+                                             'ro': {'ro.deid.clinical': 'clinical_deidentification'}}
+    pretrained_healthcare_model_references = {'ca': {'ca.med_ner.living_species': 'ner_living_species'},
+                                              'de': {'de.embed': 'w2v_cc_300d',
+                                                     'de.embed.w2v': 'w2v_cc_300d',
+                                                     'de.med_ner': 'ner_healthcare_slim',
+                                                     'de.med_ner.deid_generic': 'ner_deid_generic',
+                                                     'de.med_ner.deid_subentity': 'ner_deid_subentity',
+                                                     'de.med_ner.legal': 'ner_legal',
+                                                     'de.med_ner.traffic': 'ner_traffic',
+                                                     'de.resolve.icd10gm': 'sbertresolve_icd10gm',
+                                                     'de.resolve.snomed': 'sbertresolve_snomed'},
+                                              'en': {'en.assert': 'assertion_dl',
+                                                     'en.assert.biobert': 'assertion_dl_biobert',
+                                                     'en.assert.healthcare': 'assertion_dl_healthcare',
+                                                     'en.assert.jsl': 'assertion_jsl',
+                                                     'en.assert.jsl_large': 'assertion_jsl_large',
+                                                     'en.assert.large': 'assertion_dl_large',
+                                                     'en.assert.radiology': 'assertion_dl_radiology',
+                                                     'en.clasify.health_premise': 'bert_sequence_classifier_health_mandates_premise_tweet',
+                                                     'en.classify.ade.biobert': 'classifierdl_ade_biobert',
+                                                     'en.classify.ade.clinical': 'classifierdl_ade_clinicalbert',
+                                                     'en.classify.ade.clinicalbert': 'classifierdl_ade_clinicalbert',
+                                                     'en.classify.ade.conversational': 'classifierdl_ade_conversational_biobert',
+                                                     'en.classify.ade.seq_biobert': 'bert_sequence_classifier_ade',
+                                                     'en.classify.ade.seq_distilbert': 'distilbert_sequence_classifier_ade',
+                                                     'en.classify.adverse_drug_events': 'bert_sequence_classifier_ade_augmented',
+                                                     'en.classify.bert_sequence.question_statement_clinical': 'bert_sequence_classifier_question_statement_clinical',
+                                                     'en.classify.bert_sequence_vaccine_sentiment': 'bert_sequence_classifier_vaccine_sentiment',
+                                                     'en.classify.drug_reviews': 'bert_sequence_classifier_drug_reviews_webmd',
+                                                     'en.classify.exact_age': 'bert_sequence_classifier_exact_age_reddit',
+                                                     'en.classify.gender.biobert': 'classifierdl_gender_biobert',
+                                                     'en.classify.gender.sbert': 'classifierdl_gender_sbert',
+                                                     'en.classify.gender.seq_biobert': 'bert_sequence_classifier_gender_biobert',
+                                                     'en.classify.health': 'classifierdl_health_mentions',
+                                                     'en.classify.health_mentions': 'bert_sequence_classifier_health_mentions',
+                                                     'en.classify.health_stance': 'bert_sequence_classifier_health_mandates_stance_tweet',
+                                                     'en.classify.pico': 'classifierdl_pico_biobert',
+                                                     'en.classify.pico.seq_biobert': 'bert_sequence_classifier_pico_biobert',
+                                                     'en.classify.self_reported_age': 'bert_sequence_classifier_self_reported_age_tweet',
+                                                     'en.classify.self_reported_partner_violence': 'bert_sequence_classifier_self_reported_partner_violence_tweet',
+                                                     'en.classify.self_reported_stress': 'bert_sequence_classifier_self_reported_stress_tweet',
+                                                     'en.classify.self_reported_vaccine_status': 'bert_sequence_classifier_self_reported_vaccine_status_tweet',
+                                                     'en.classify.stress': 'bert_sequence_classifier_stress',
+                                                     'en.classify.stressor': 'bert_sequence_classifier_stressor',
+                                                     'en.classify.token_bert.anatem': 'bert_token_classifier_ner_anatem',
+                                                     'en.classify.token_bert.bc2gm_gene': 'bert_token_classifier_ner_bc2gm_gene',
+                                                     'en.classify.token_bert.bc4chemd_chemicals': 'bert_token_classifier_ner_bc4chemd_chemicals',
+                                                     'en.classify.token_bert.bc5cdr_chemicals': 'bert_token_classifier_ner_bc5cdr_chemicals',
+                                                     'en.classify.token_bert.bc5cdr_disease': 'bert_token_classifier_ner_bc5cdr_disease',
+                                                     'en.classify.token_bert.bionlp': 'bert_token_classifier_ner_bionlp',
+                                                     'en.classify.token_bert.cellular': 'bert_token_classifier_ner_cellular',
+                                                     'en.classify.token_bert.chemicals': 'bert_token_classifier_ner_chemicals',
+                                                     'en.classify.token_bert.jnlpba_cellular': 'bert_token_classifier_ner_jnlpba_cellular',
+                                                     'en.classify.token_bert.linnaeus_species': 'bert_token_classifier_ner_linnaeus_species',
+                                                     'en.classify.token_bert.ncbi_disease': 'bert_token_classifier_ner_ncbi_disease',
+                                                     'en.classify.token_bert.ner_ade': 'bert_token_classifier_ner_ade',
+                                                     'en.classify.token_bert.ner_anatomy': 'bert_token_classifier_ner_anatomy',
+                                                     'en.classify.token_bert.ner_bacteria': 'bert_token_classifier_ner_bacteria',
+                                                     'en.classify.token_bert.ner_chemical': 'bert_token_classifier_ner_chemicals',
+                                                     'en.classify.token_bert.ner_clinical': 'bert_token_classifier_ner_clinical',
+                                                     'en.classify.token_bert.ner_deid': 'bert_token_classifier_ner_deid',
+                                                     'en.classify.token_bert.ner_drugs': 'bert_token_classifier_ner_drugs',
+                                                     'en.classify.token_bert.ner_jsl': 'bert_token_classifier_ner_jsl',
+                                                     'en.classify.token_bert.ner_jsl_slim': 'bert_token_classifier_ner_jsl_slim',
+                                                     'en.classify.token_bert.pathogen': 'bert_token_classifier_ner_pathogen',
+                                                     'en.classify.token_bert.species': 'bert_token_classifier_ner_species',
+                                                     'en.classify.treatment_sentiment': 'bert_sequence_classifier_treatement_changes_sentiment_tweet',
+                                                     'en.classify.vaccine_sentiment': 'classifierdl_vaccine_sentiment',
+                                                     'en.de_identify': 'deidentify_rb',
+                                                     'en.de_identify.clinical': 'deidentify_enriched_clinical',
+                                                     'en.de_identify.large': 'deidentify_large',
+                                                     'en.de_identify.rb': 'deidentify_rb',
+                                                     'en.de_identify.rb_no_regex': 'deidentify_rb_no_regex',
+                                                     'en.de_identify.rules': 'deid_rules',
+                                                     'en.detect_sentence.clinical': 'sentence_detector_dl_healthcare',
+                                                     'en.embed.glove.biovec': 'embeddings_biovec',
+                                                     'en.embed.glove.clinical': 'embeddings_clinical',
+                                                     'en.embed.glove.healthcare': 'embeddings_healthcare',
+                                                     'en.embed.glove.healthcare_100d': 'embeddings_healthcare_100d',
+                                                     'en.embed.glove.icdoem': 'embeddings_icdoem',
+                                                     'en.embed.glove.icdoem_2ng': 'embeddings_icdoem_2ng',
+                                                     'en.embed_sentence.bert.jsl_medium_umls_uncased': 'sbert_jsl_medium_umls_uncased',
+                                                     'en.embed_sentence.bert.jsl_medium_uncased': 'sbert_jsl_medium_uncased',
+                                                     'en.embed_sentence.bert.jsl_mini_umlsuncased': 'sbert_jsl_mini_umls_uncased',
+                                                     'en.embed_sentence.bert.jsl_mini_uncased': 'sbert_jsl_mini_uncased',
+                                                     'en.embed_sentence.bert.jsl_tiny_umls_uncased': 'sbert_jsl_tiny_umls_uncased',
+                                                     'en.embed_sentence.bert.jsl_tiny_uncased': 'sbert_jsl_tiny_uncased',
+                                                     'en.embed_sentence.bert_uncased.rxnorm': 'sbert_jsl_medium_rxnorm_uncased',
+                                                     'en.embed_sentence.biobert.jsl_cased': 'sbiobert_jsl_cased',
+                                                     'en.embed_sentence.biobert.jsl_umls_cased': 'sbiobert_jsl_umls_cased',
+                                                     'en.embed_sentence.biobert.mli': 'sbiobert_base_cased_mli',
+                                                     'en.embed_sentence.biobert.rxnorm': 'sbiobert_jsl_rxnorm_cased',
+                                                     'en.embed_sentence.bluebert.mli': 'sbluebert_base_uncased_mli',
+                                                     'en.extract_relation.nihss': 'redl_nihss_biobert',
+                                                     'en.icd10cm_to_snomed': 'icd10cm_snomed_mapper',
+                                                     'en.icd10cm_to_umls': 'icd10cm_umls_mapper',
+                                                     'en.icdo_to_snomed': 'icdo_snomed_mapper',
+                                                     'en.map_entity.abbreviation_to_definition': 'abbreviation_mapper',
+                                                     'en.map_entity.drug_brand_to_ndc': 'drug_brandname_ndc_mapper',
+                                                     'en.map_entity.drug_to_action_treatment': 'drug_action_treatment_mapper',
+                                                     'en.map_entity.icd10cm_to_snomed': 'icd10cm_snomed_mapper',
+                                                     'en.map_entity.icd10cm_to_umls': 'icd10cm_umls_mapper',
+                                                     'en.map_entity.icdo_to_snomed': 'icdo_snomed_mapper',
+                                                     'en.map_entity.mesh_to_umls': 'mesh_umls_mapper',
+                                                     'en.map_entity.rxnorm_resolver': 'rxnorm_mapper',
+                                                     'en.map_entity.rxnorm_to_action_treatment': 'rxnorm_action_treatment_mapper',
+                                                     'en.map_entity.rxnorm_to_ndc': 'rxnorm_ndc_mapper',
+                                                     'en.map_entity.rxnorm_to_umls': 'rxnorm_umls_mapper',
+                                                     'en.map_entity.section_headers_normalized': 'normalized_section_header_mapper',
+                                                     'en.map_entity.snomed_to_icd10cm': 'snomed_icd10cm_mapper',
+                                                     'en.map_entity.snomed_to_icdo': 'snomed_icdo_mapper',
+                                                     'en.map_entity.snomed_to_umls': 'snomed_umls_mapper',
+                                                     'en.map_entity.umls_clinical_drugs_mapper': 'umls_clinical_drugs_mapper',
+                                                     'en.map_entity.umls_clinical_findings_mapper': 'umls_clinical_findings_mapper',
+                                                     'en.map_entity.umls_disease_syndrome_mapper': 'umls_disease_syndrome_mapper',
+                                                     'en.map_entity.umls_drug_substance_mapper': 'umls_drug_substance_mapper',
+                                                     'en.map_entity.umls_major_concepts_mapper': 'umls_major_concepts_mapper',
+                                                     'en.med_ner': 'jsl_ner_wip_clinical',
+                                                     'en.med_ner.abbreviation_clinical': 'ner_abbreviation_clinical',
+                                                     'en.med_ner.ade.ade_healthcare': 'ner_ade_healthcare',
+                                                     'en.med_ner.ade.clinical': 'ner_ade_clinical',
+                                                     'en.med_ner.ade.clinical_bert': 'ner_ade_clinicalbert',
+                                                     'en.med_ner.ade_biobert': 'ner_ade_biobert',
+                                                     'en.med_ner.admission_events': 'ner_events_admission_clinical',
+                                                     'en.med_ner.anatomy': 'ner_anatomy',
+                                                     'en.med_ner.anatomy.biobert': 'ner_anatomy_biobert',
+                                                     'en.med_ner.anatomy.coarse': 'ner_anatomy_coarse',
+                                                     'en.med_ner.anatomy.coarse_biobert': 'ner_anatomy_coarse_biobert',
+                                                     'en.med_ner.aspect_sentiment': 'ner_aspect_based_sentiment',
+                                                     'en.med_ner.bacterial_species': 'ner_bacterial_species',
+                                                     'en.med_ner.biomarker': 'ner_biomarker',
+                                                     'en.med_ner.biomedical_bc2gm': 'ner_biomedical_bc2gm',
+                                                     'en.med_ner.bionlp': 'ner_bionlp',
+                                                     'en.med_ner.bionlp.biobert': 'ner_bionlp_biobert',
+                                                     'en.med_ner.cancer': 'ner_cancer_genetics',
+                                                     'en.med_ner.cellular': 'ner_cellular',
+                                                     'en.med_ner.cellular.biobert': 'ner_cellular_biobert',
+                                                     'en.med_ner.chemd': 'ner_chemd_clinical',
+                                                     'en.med_ner.chemicals': 'ner_chemicals',
+                                                     'en.med_ner.chemprot': 'ner_chemprot_biobert',
+                                                     'en.med_ner.chemprot.bert': 'bert_token_classifier_ner_chemprot',
+                                                     'en.med_ner.chemprot.clinical': 'ner_chemprot_clinical',
+                                                     'en.med_ner.chexpert': 'ner_chexpert',
+                                                     'en.med_ner.clinical': 'ner_clinical',
+                                                     'en.med_ner.clinical.biobert': 'ner_clinical_biobert',
+                                                     'en.med_ner.clinical_trials': 'bert_sequence_classifier_rct_biobert',
+                                                     'en.med_ner.clinical_trials_abstracts': 'bert_token_classifier_ner_clinical_trials_abstracts',
+                                                     'en.med_ner.covid_trials': 'ner_covid_trials',
+                                                     'en.med_ner.deid': 'ner_deidentify_dl',
+                                                     'en.med_ner.deid.augmented': 'ner_deid_augmented',
+                                                     'en.med_ner.deid.biobert': 'ner_deid_biobert',
+                                                     'en.med_ner.deid.enriched': 'ner_deid_enriched',
+                                                     'en.med_ner.deid.enriched_biobert': 'ner_deid_enriched_biobert',
+                                                     'en.med_ner.deid.generic_augmented': 'ner_deid_generic_augmented',
+                                                     'en.med_ner.deid.large': 'ner_deid_large',
+                                                     'en.med_ner.deid.sd': 'ner_deid_sd',
+                                                     'en.med_ner.deid.sd_large': 'ner_deid_sd_large',
+                                                     'en.med_ner.deid.subentity_augmented': 'ner_deid_subentity_augmented',
+                                                     'en.med_ner.deid.synthetic': 'ner_deid_synthetic',
+                                                     'en.med_ner.deid_subentity_augmented_i2b2': 'ner_deid_subentity_augmented_i2b2',
+                                                     'en.med_ner.diseases': 'ner_diseases',
+                                                     'en.med_ner.diseases.biobert': 'ner_diseases_biobert',
+                                                     'en.med_ner.diseases.large': 'ner_diseases_large',
+                                                     'en.med_ner.drugprot_clinical': 'ner_drugprot_clinical',
+                                                     'en.med_ner.drugs': 'ner_drugs',
+                                                     'en.med_ner.drugs.large': 'ner_drugs_large',
+                                                     'en.med_ner.drugsgreedy': 'ner_drugs_greedy',
+                                                     'en.med_ner.events_biobert': 'ner_events_biobert',
+                                                     'en.med_ner.events_clinical': 'ner_events_clinical',
+                                                     'en.med_ner.events_healthcre': 'ner_events_healthcare',
+                                                     'en.med_ner.financial_contract': 'ner_financial_contract',
+                                                     'en.med_ner.genetic_variants': 'ner_genetic_variants',
+                                                     'en.med_ner.healthcare': 'ner_healthcare',
+                                                     'en.med_ner.human_phenotype.gene_biobert': 'ner_human_phenotype_gene_biobert',
+                                                     'en.med_ner.human_phenotype.gene_clinical': 'ner_human_phenotype_gene_clinical',
+                                                     'en.med_ner.human_phenotype.go_biobert': 'ner_human_phenotype_go_biobert',
+                                                     'en.med_ner.human_phenotype.go_clinical': 'ner_human_phenotype_go_clinical',
+                                                     'en.med_ner.jsl': 'ner_jsl',
+                                                     'en.med_ner.jsl.biobert': 'ner_jsl_biobert',
+                                                     'en.med_ner.jsl.enriched': 'ner_jsl_enriched',
+                                                     'en.med_ner.jsl.enriched_biobert': 'ner_jsl_enriched_biobert',
+                                                     'en.med_ner.jsl.wip.clinical': 'jsl_ner_wip_clinical',
+                                                     'en.med_ner.jsl.wip.clinical.greedy': 'jsl_ner_wip_greedy_clinical',
+                                                     'en.med_ner.jsl.wip.clinical.modifier': 'jsl_ner_wip_modifier_clinical',
+                                                     'en.med_ner.jsl.wip.clinical.rd': 'jsl_rd_ner_wip_greedy_clinical',
+                                                     'en.med_ner.jsl_greedy_biobert': 'ner_jsl_greedy_biobert',
+                                                     'en.med_ner.jsl_slim': 'ner_jsl_slim',
+                                                     'en.med_ner.living_species': 'ner_living_species',
+                                                     'en.med_ner.living_species.biobert': 'ner_living_species_biobert',
+                                                     'en.med_ner.living_species.token_bert': 'bert_token_classifier_ner_living_species',
+                                                     'en.med_ner.measurements': 'ner_measurements_clinical',
+                                                     'en.med_ner.medmentions': 'ner_medmentions_coarse',
+                                                     'en.med_ner.nihss': 'ner_nihss',
+                                                     'en.med_ner.pathogen': 'ner_pathogen',
+                                                     'en.med_ner.posology': 'ner_posology',
+                                                     'en.med_ner.posology.biobert': 'ner_posology_biobert',
+                                                     'en.med_ner.posology.experimental': 'ner_posology_experimental',
+                                                     'en.med_ner.posology.greedy': 'ner_posology_greedy',
+                                                     'en.med_ner.posology.healthcare': 'ner_posology_healthcare',
+                                                     'en.med_ner.posology.large': 'ner_posology_large',
+                                                     'en.med_ner.posology.large_biobert': 'ner_posology_large_biobert',
+                                                     'en.med_ner.posology.small': 'ner_posology_small',
+                                                     'en.med_ner.radiology': 'ner_radiology',
+                                                     'en.med_ner.radiology.wip_clinical': 'ner_radiology_wip_clinical',
+                                                     'en.med_ner.radiology.wip_greedy_biobert': 'jsl_rd_ner_wip_greedy_biobert',
+                                                     'en.med_ner.risk_factors': 'ner_risk_factors',
+                                                     'en.med_ner.risk_factors.biobert': 'ner_risk_factors_biobert',
+                                                     'en.med_ner.supplement_clinical': 'ner_supplement_clinical',
+                                                     'en.med_ner.tumour': 'nerdl_tumour_demo',
+                                                     'en.mesh_to_umls': 'mesh_umls_mapper',
+                                                     'en.ner.clinical_trials_abstracts': 'ner_clinical_trials_abstracts',
+                                                     'en.ner.drug_development_trials': 'bert_token_classifier_drug_development_trials',
+                                                     'en.norm_drugs': 'drug_normalizer',
+                                                     'en.pos.clinical': 'pos_clinical',
+                                                     'en.relation': 'redl_bodypart_direction_biobert',
+                                                     'en.relation.ade': 'redl_ade_biobert',
+                                                     'en.relation.ade_biobert': 're_ade_biobert',
+                                                     'en.relation.ade_clinical': 're_ade_clinical',
+                                                     'en.relation.adverse_drug_events.clinical': 're_ade_clinical',
+                                                     'en.relation.adverse_drug_events.clinical.biobert': 'redl_ade_biobert',
+                                                     'en.relation.adverse_drug_events.conversational': 're_ade_conversational',
+                                                     'en.relation.bodypart.direction': 'redl_bodypart_direction_biobert',
+                                                     'en.relation.bodypart.problem': 'redl_bodypart_problem_biobert',
+                                                     'en.relation.bodypart.procedure': 'redl_bodypart_procedure_test_biobert',
+                                                     'en.relation.chemprot': 'redl_chemprot_biobert',
+                                                     'en.relation.clinical': 'redl_clinical_biobert',
+                                                     'en.relation.date': 'redl_date_clinical_biobert',
+                                                     'en.relation.drug_drug_interaction': 'redl_drug_drug_interaction_biobert',
+                                                     'en.relation.drugprot': 'redl_drugprot_biobert',
+                                                     'en.relation.drugprot.clinical': 're_drugprot_clinical',
+                                                     'en.relation.humen_phenotype_gene': 'redl_human_phenotype_gene_biobert',
+                                                     'en.relation.temporal_events': 'redl_temporal_events_biobert',
+                                                     'en.relation.temporal_events_clinical': 're_temporal_events_clinical',
+                                                     'en.relation.test_result_date': 're_test_result_date',
+                                                     'en.relation.zeroshot_biobert': 're_zeroshot_biobert',
+                                                     'en.resolve': 'sbiobertresolve_cpt',
+                                                     'en.resolve.HPO': 'sbiobertresolve_HPO',
+                                                     'en.resolve.clinical_abbreviation_acronym': 'sbiobertresolve_clinical_abbreviation_acronym',
+                                                     'en.resolve.clinical_snomed_procedures_measurements': 'sbiobertresolve_clinical_snomed_procedures_measurements',
+                                                     'en.resolve.cpt': 'sbiobertresolve_cpt',
+                                                     'en.resolve.cpt.augmented': 'sbiobertresolve_cpt_augmented',
+                                                     'en.resolve.cpt.procedures_augmented': 'sbiobertresolve_cpt_procedures_augmented',
+                                                     'en.resolve.cpt.procedures_measurements': 'sbiobertresolve_cpt_procedures_measurements_augmented',
+                                                     'en.resolve.hcc': 'sbiobertresolve_hcc_augmented',
+                                                     'en.resolve.hcc.augmented': 'sbiobertresolve_hcc_augmented',
+                                                     'en.resolve.hcpcs': 'sbiobertresolve_hcpcs',
+                                                     'en.resolve.icd10cm': 'sbiobertresolve_icd10cm',
+                                                     'en.resolve.icd10cm.augmented': 'sbiobertresolve_icd10cm_augmented',
+                                                     'en.resolve.icd10cm.augmented_billable': 'sbiobertresolve_icd10cm_augmented_billable_hcc',
+                                                     'en.resolve.icd10cm.slim_billable_hcc': 'sbiobertresolve_icd10cm_slim_billable_hcc',
+                                                     'en.resolve.icd10cm.slim_billable_hcc_med': 'sbertresolve_icd10cm_slim_billable_hcc_med',
+                                                     'en.resolve.icd10cm_generalised': 'sbiobertresolve_icd10cm_generalised',
+                                                     'en.resolve.icd10pcs': 'sbiobertresolve_icd10pcs',
+                                                     'en.resolve.icdo': 'sbiobertresolve_icdo',
+                                                     'en.resolve.icdo.base': 'sbiobertresolve_icdo_base',
+                                                     'en.resolve.icdo_augmented': 'sbiobertresolve_icdo_augmented',
+                                                     'en.resolve.loinc': 'sbiobertresolve_loinc',
+                                                     'en.resolve.loinc.augmented': 'sbiobertresolve_loinc_augmented',
+                                                     'en.resolve.loinc.biobert': 'sbiobertresolve_loinc',
+                                                     'en.resolve.loinc_cased': 'sbiobertresolve_loinc_cased',
+                                                     'en.resolve.loinc_uncased': 'sbluebertresolve_loinc_uncased',
+                                                     'en.resolve.mesh': 'sbiobertresolve_mesh',
+                                                     'en.resolve.ndc': 'sbiobertresolve_ndc',
+                                                     'en.resolve.rxcui': 'sbiobertresolve_rxcui',
+                                                     'en.resolve.rxnen.med_ner.deid_subentityorm_augmented': 'sbiobertresolve_rxnorm_augmented',
+                                                     'en.resolve.rxnorm': 'sbiobertresolve_rxnorm',
+                                                     'en.resolve.rxnorm.augmented_re': 'sbiobertresolve_rxnorm_augmented_re',
+                                                     'en.resolve.rxnorm.disposition': 'sbertresolve_rxnorm_disposition',
+                                                     'en.resolve.rxnorm.disposition.sbert': 'sbertresolve_rxnorm_disposition',
+                                                     'en.resolve.rxnorm_action_treatment': 'sbiobertresolve_rxnorm_action_treatment',
+                                                     'en.resolve.rxnorm_disposition': 'sbiobertresolve_rxnorm_disposition',
+                                                     'en.resolve.rxnorm_disposition.sbert': 'sbertresolve_rxnorm_disposition',
+                                                     'en.resolve.rxnorm_ndc': 'sbiobertresolve_rxnorm_ndc',
+                                                     'en.resolve.snomed': 'sbiobertresolve_snomed_auxConcepts',
+                                                     'en.resolve.snomed.aux_concepts': 'sbiobertresolve_snomed_auxConcepts',
+                                                     'en.resolve.snomed.aux_concepts_int': 'sbiobertresolve_snomed_auxConcepts_int',
+                                                     'en.resolve.snomed.findings': 'sbiobertresolve_snomed_findings',
+                                                     'en.resolve.snomed.findings_int': 'sbiobertresolve_snomed_findings_int',
+                                                     'en.resolve.snomed_body_structure': 'sbiobertresolve_snomed_bodyStructure',
+                                                     'en.resolve.snomed_body_structure_med': 'sbertresolve_snomed_bodyStructure_med',
+                                                     'en.resolve.snomed_conditions': 'sbertresolve_snomed_conditions',
+                                                     'en.resolve.snomed_drug': 'sbiobertresolve_snomed_drug',
+                                                     'en.resolve.umls': 'sbiobertresolve_umls_major_concepts',
+                                                     'en.resolve.umls.findings': 'sbiobertresolve_umls_findings',
+                                                     'en.resolve.umls_clinical_drugs': 'sbiobertresolve_umls_clinical_drugs',
+                                                     'en.resolve.umls_disease_syndrome': 'sbiobertresolve_umls_disease_syndrome',
+                                                     'en.resolve.umls_drug_substance': 'sbiobertresolve_umls_drug_substance',
+                                                     'en.rxnorm_to_ndc': 'rxnorm_ndc_mapper',
+                                                     'en.rxnorm_to_umls': 'rxnorm_umls_mapper',
+                                                     'en.snomed_to_icd10cm': 'snomed_icd10cm_mapper',
+                                                     'en.snomed_to_icdo': 'snomed_icdo_mapper',
+                                                     'en.snomed_to_umls': 'snomed_umls_mapper',
+                                                     'en.spell.clinical': 'spellcheck_clinical',
+                                                     'en.spell.drug_norvig': 'spellcheck_drug_norvig',
+                                                     'en.t5.mediqa': 't5_base_mediqa_mnli',
+                                                     'es.embed.roberta_base_biomedical': 'roberta_base_biomedical',
+                                                     'es.med_ner.roberta_ner_diag_proc': 'roberta_ner_diag_proc',
+                                                     'es.resolve.snomed': 'robertaresolve_snomed'},
+                                              'es': {
+                                                  'es.classify.disease_mentions': 'bert_token_classifier_disease_mentions_tweet',
+                                                  'es.classify.self_reported_symptoms': 'bert_sequence_classifier_self_reported_symptoms_tweet',
+                                                  'es.embed.roberta_base_biomedical': 'roberta_base_biomedical',
+                                                  'es.embed.scielo.150d': 'embeddings_scielo_150d',
+                                                  'es.embed.scielo.300d': 'embeddings_scielo_300d',
+                                                  'es.embed.scielo.50d': 'embeddings_scielo_50d',
+                                                  'es.embed.scielo300d': 'embeddings_scielo_300d',
+                                                  'es.embed.scielowiki.150d': 'embeddings_scielowiki_150d',
+                                                  'es.embed.scielowiki.300d': 'embeddings_scielowiki_300d',
+                                                  'es.embed.scielowiki.50d': 'embeddings_scielowiki_50d',
+                                                  'es.embed.sciwiki.150d': 'embeddings_sciwiki_150d',
+                                                  'es.embed.sciwiki.300d': 'embeddings_sciwiki_300d',
+                                                  'es.embed.sciwiki.50d': 'embeddings_sciwiki_50d',
+                                                  'es.embed.sciwiki_300d': 'embeddings_sciwiki_300d',
+                                                  'es.med_ner': 'ner_diag_proc',
+                                                  'es.med_ner.deid.generic': 'ner_deid_generic',
+                                                  'es.med_ner.deid.generic.roberta': 'ner_deid_generic_roberta_augmented',
+                                                  'es.med_ner.deid.subentity': 'ner_deid_subentity',
+                                                  'es.med_ner.deid.subentity.roberta': 'ner_deid_subentity_roberta_augmented',
+                                                  'es.med_ner.diag_proc': 'ner_diag_proc',
+                                                  'es.med_ner.living_species': 'ner_living_species',
+                                                  'es.med_ner.living_species.300': 'ner_living_species_300',
+                                                  'es.med_ner.living_species.bert': 'ner_living_species_bert',
+                                                  'es.med_ner.living_species.roberta': 'ner_living_species_roberta',
+                                                  'es.med_ner.neoplasm': 'ner_neoplasms',
+                                                  'es.med_ner.roberta_ner_diag_proc': 'roberta_ner_diag_proc',
+                                                  'es.resolve.snomed': 'robertaresolve_snomed'},
+                                              'fr': {'fr.med_ner.deid_generic': 'ner_deid_generic',
+                                                     'fr.med_ner.deid_subentity': 'ner_deid_subentity',
+                                                     'fr.med_ner.living_species': 'ner_living_species',
+                                                     'fr.med_ner.living_species.bert': 'ner_living_species_bert'},
+                                              'gl': {'gl.med_ner.living_species': 'ner_living_species'},
+                                              'it': {'it.med_ner.deid_generic': 'ner_deid_generic',
+                                                     'it.med_ner.deid_subentity': 'ner_deid_subentity',
+                                                     'it.med_ner.living_species': 'ner_living_species',
+                                                     'it.med_ner.living_species.bert': 'ner_living_species_bert'},
+                                              'pt': {'pt.med_ner.deid': 'ner_deid_generic',
+                                                     'pt.med_ner.deid.generic': 'ner_deid_generic',
+                                                     'pt.med_ner.deid.subentity': 'ner_deid_subentity',
+                                                     'pt.med_ner.living_species': 'ner_living_species',
+                                                     'pt.med_ner.living_species.bert': 'ner_living_species_bert',
+                                                     'pt.med_ner.living_species.roberta': 'ner_living_species_roberta',
+                                                     'pt.med_ner.living_species.token_bert': 'bert_token_classifier_ner_living_species'},
+                                              'ro': {'ro.embed.clinical.bert.base_cased': 'ner_clinical_bert',
+                                                     'ro.med_ner.clinical': 'ner_clinical',
+                                                     'ro.med_ner.deid.subentity': 'ner_deid_subentity',
+                                                     'ro.med_ner.deid.subentity.bert': 'ner_deid_subentity_bert',
+                                                     'ro.med_ner.living_species.bert': 'ner_living_species_bert'}}
 
     ocr_model_references = {
         'img2text': OCR_NODE_IDS.IMAGE2TEXT,
