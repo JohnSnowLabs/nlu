@@ -3,8 +3,44 @@ import nlu
 import sys
 import tests.secrets as sct
 
+class Test401(unittest.TestCase):
 
-class Test400(unittest.TestCase):
+
+
+    def test_401_models(self):
+        import pandas as pd
+        q = 'What is my name?'
+        c = 'My name is Clara and I live in Berkeley'
+
+
+        te = ['de.embed.electra.base_64d_700000_cased.by_stefan_it',
+        'en.ner.pubmed_bert.chemical_pubmed_biored.512d_5_modified.by_ghadeermobasher',
+        'fr.embed.camem_bert.by_katrin_kc',
+        'xx.answer_question.multi_lingual_bert.mlqa.finetuned.extra_support_hi_zh',
+        'zh.ner.pos.base.by_ckiplab']
+        data = f'{q}|||{c}'
+        data = [data,data,data]
+        fails = []
+        fail_insta = True
+        for t in te:
+            try:
+                print(f'Testing spell = {t}')
+                pipe = nlu.load(t, verbose=True)
+                df = pipe.predict(data,metadata=True)
+                for c in df.columns: print(df[c])
+            except Exception as err:
+                print(f'Failure for spell = {t} ', err)
+                e = sys.exc_info()
+                print(e[0])
+                print(e[1])
+                fails.append(t)
+                if fail_insta :
+                    raise Exception(err)
+        fail_string = "\n".join(fails)
+        print(f'Done testing, failures = {fail_string}')
+        if len(fails) > 0:
+            raise Exception("Not all new spells completed successfully")
+
 
     def test_401_HC_models(self):
         import tests.secrets as sct
