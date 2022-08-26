@@ -21,7 +21,6 @@ class Test401(unittest.TestCase):
         data = f'{q}|||{c}'
         data = [data,data,data]
         fails = []
-        fail_insta = True
         for t in te:
             try:
                 print(f'Testing spell = {t}')
@@ -34,8 +33,6 @@ class Test401(unittest.TestCase):
                 print(e[0])
                 print(e[1])
                 fails.append(t)
-                if fail_insta :
-                    raise Exception(err)
         fail_string = "\n".join(fails)
         print(f'Done testing, failures = {fail_string}')
         if len(fails) > 0:
@@ -50,7 +47,7 @@ class Test401(unittest.TestCase):
         JSL_SECRET = sct.JSL_SECRET
         nlu.auth(SPARK_NLP_LICENSE, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, JSL_SECRET)
         te = [
-            ['en.classify.adverse_drug_events',
+            'en.classify.adverse_drug_events',
              'en.classify.health_stance',
              'en.clasify.health_premise',
              'en.classify.treatment_sentiment',
@@ -81,7 +78,7 @@ class Test401(unittest.TestCase):
              'en.map_entity.umls_drug_substance_resolver',
              'en.relation.adverse_drug_events.conversational',
              'en.de_identify.clinical_slim',
-             'en.de_identify.clinical',
+             'en.de_identify.clinical_pipeline',
              'en.classify.token_bert.anatem',
              'en.classify.token_bert.bc2gm_gene',
              'en.classify.token_bert.bc4chemd_chemicals',
@@ -93,7 +90,7 @@ class Test401(unittest.TestCase):
              'en.classify.token_bert.species',
              'en.classify.token_bert.pathogen']
 
-        ]
+        
         sample_texts = ["""
             Antonio Pérez Juan, nacido en Cadiz, España. Aún no estaba vacunado, se infectó con Covid-19 el dia 14/03/2020 y tuvo que ir al Hospital. Fue tratado con anticuerpos monoclonales en la Clinica San Carlos..
                         """,

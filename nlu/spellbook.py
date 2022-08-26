@@ -6475,7 +6475,7 @@ class Spellbook:
         'zh.tokenize': 'wordseg_weibo'},
  'zu': {'zu.stopwords': 'stopwords_zu'}}
     healthcare_component_alias_references = {}
-    pretrained_healthcare_pipe_references = {'en': {'en.de_identify.clinical': 'clinical_deidentification',
+    pretrained_healthcare_pipe_references = {'en': {'en.de_identify.clinical_pipeline': 'clinical_deidentification',
         'en.de_identify.clinical_slim': 'clinical_deidentification_slim',
         'en.explain_doc.carp': 'explain_clinical_doc_carp',
         'en.explain_doc.era': 'explain_clinical_doc_era',
