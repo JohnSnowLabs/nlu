@@ -7052,6 +7052,7 @@ class Spellbook:
             'RelationExtractionModel_53a12cc975cb': 'en.embed.glove.clinical',
             'biobert_clinical_base_cased': 'en.embed.biobert.clinical_base_cased',
             'sent_biobert_clinical_base_cased': 'en.embed_sentence.biobert.clinical_base_cased',
+            'RelationExtractionModel_723addf4b6aa':'en.embed.glove.clinical'
 
         },
         'es': {
