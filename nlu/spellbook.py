@@ -7037,7 +7037,7 @@ class Spellbook:
             'embeddings_healthcare100': 'en.embed.glove.healthcare_100d',
             'bert_base_cased': 'en.embed.bert.base_cased',
             'sent_bluebert_base_uncased_mednli': 'en.embed_sentence.bluebert.mli',
-
+            'bert_embeddings_PHS_BERT':'en.embed.bert_phs',
             'BERT_SENTENCE_EMBEDDINGS_c7e5b6a772f5': 'en.embed_sentence.bert.jsl_medium_uncased',
             'RelationExtractionModel_ce79d77d1bf1': 'en.embed.glove.clinical',
             'RelationExtractionModel_1fb1dfa024c7': 'en.embed.glove.clinical',
