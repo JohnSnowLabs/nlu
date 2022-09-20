@@ -10,6 +10,354 @@ modify_date: "2020-06-12"
 
 <div class="main-docs" markdown="1">
 
+## NLU Version 4.1.0
+Approximately 1000 new state-of-the-art transformer models for Question Answering (QA)  for over 10 languages, up to 700% speedup on GPU, 100+ Embeddings such as Bert, Bert Sentence, CamemBert, DistilBert, Roberta, Roberta Sentence, Universal Sentence Encoder, Word, XLM Roberta, XLM Roberta Sentence, 40 sequence classification models, +400 token classification  odels for over 10 languages various Spark NLP helper methods and much more in 1 line of code with John Snow Labs NLU 4.1.0
+
+---------------------------------------- 
+#### NLU 4.1.0 Core Overview
+
+- On the NLU core side we have over 1000 new state-of-the-art models in over 10 languages.
+
+- Additionally up to 700% speedup **transformer-based Word Embeddings** on **GPU** and up to **97% speedup on CPU** for **tensorflow operations**, support for Apple M1 chips, Pyspark 3.2 and 3.3 support.
+  Ontop of this, we are now supporting Apple M1 based architectures and every Pyspark 3.X version, while deprecating support for Pyspark 2.X.
+
+- Finally, NLU-Core features various new helper methods for working with Spark NLP and embellishes now the entire universe of Annotators defined by Spark NLP.
+
+
+-----------------------------
+
+#### NLU captures every Annotator of Spark NLP 
+
+The entire universe of Annotators in Spark NLP  is now embellished by NLU Components by using generalizable annotation extractors methods and configs internally to support enable the new NLU util methods.
+The following annotator classes are newly captured:
+
+- BertEmbeddings
+- BertForQuestionAnswering
+- BertForSequenceClassification
+- BertForTokenClassification
+- BertSentenceEmbeddings
+- CamemBertEmbeddings
+- ClassifierDLModel
+- ContextSpellCheckerModel
+- DistilBertEmbeddings
+- DistilBertForSequenceClassification
+- DistilBertForTokenClassification
+- LemmatizerModel
+- LongformerForTokenClassification
+- NerCrfModel
+- NerDLModel
+- PerceptronModel
+- RoBertaEmbeddings
+- RoBertaForQuestionAnswering
+- RoBertaForSequenceClassification
+- RoBertaForTokenClassification
+- RoBertaSentenceEmbeddings
+- SentenceDetectorDLModel
+- StopWordsCleaner
+- T5Transformer
+- UniversalSentenceEncoder
+- WordEmbeddingsModel
+- XlmRoBertaEmbeddings
+- XlmRoBertaForTokenClassification
+- XlmRoBertaSentenceEmbeddings
+
+-------------------- 
+
+#### Embeddings
+
+Embeddings provides dense vector representations for natural language by using a deep, pre-trained neural network with the Transformer architecture. On the NLU core side we have over 150 new embeddings models. We have new BertEmbeddings, BertSentenceEmbeddings, CamemBertEmbeddings, DistilBertEmbeddings, RoBertaEmbeddings, UniversalSentenceEncoder, XlmRoBertaEmbeddings, XlmRoBertaSentenceEmbeddings for in different languages. 
+
+- German BertEmbeddings
+
+```python
+
+nlu.load("de.embed.electra.base").predict("""Ich liebe Spark NLP""")
+
+```
+
+
+|   token  | word_embedding_electra   |
+|-----------------------------------------:|:--------------------------|
+|      Ich | -0.09518987685441971, -0.016133345663547516                 |
+|   liebe | -0.07025116682052612, -0.35387516021728516                  |
+| Spark   | -0.33390265703201294, 0.08874476701021194 |
+| NLP     | -0.2969835698604584, 0.1980721354484558 |
+
+
+- English BertEmbeddings
+
+```python
+
+text = ["I love NLP"]
+df = nlu.load('en.embed_sentence.bert.pubmed').predict(text, output_level='token')
+df
+
+```
+
+
+|   token  | sentence_embedding_bert   |
+|-----------------------------------------:|:--------------------------|
+|      I | -0.06332794576883316, -0.5097940564155579                 |
+|   love | -0.06332794576883316, -0.5097940564155579                  |
+| NLP  | -0.06332794576883316, -0.5097940564155579 |
+
+
+- Japan BertEmbeddings
+
+```python
+
+nlu.load("ja.embed.bert.base").predict("""私はSpark NLPを愛しています""")
+
+```
+
+
+|   token  | word_embedding_bert   |
+|-----------------------------------------:|:--------------------------|
+|      私はSpark | 0.3989057242870331, -0.20664098858833313                 |
+|   NLPを愛しています | 0.05264343321323395, -0.19963961839675903                  |
+
+
+- XLM RoBerta Embeddings MultiLanguage
+
+```python
+
+text = ["I love NLP", "Me encanta usar SparkNLP"]
+embeddings_df = nlu.load('xx.embed.xlmr_roberta.base_v2').predict(text, output_level='sentence')
+embeddings_df
+
+```
+
+
+|   sentence  | word_embedding_xlmr_roberta  |
+|-----------------------------------------:|:--------------------------|
+|      I love NLP | -0.07450243085622787, 0.022609828040003777                 |
+|  Me encanta usar SparkNLP | 0.0961054190993309, 0.03734250366687775                  |
+
+
+- RoBerta Embeddings English
+
+```python
+
+text = ["""I love Spark NLP"""]
+embeddings_df = nlu.load('en.embed.roberta').predict(text, output_level='token')
+embeddings_df
+
+```
+
+|   token  | word_embedding_roberta   |
+|-----------------------------------------:|:--------------------------|
+|      I | -0.06406927853822708, 0.16723069548606873                 |
+|   love | -0.06369957327842712, 0.21014901995658875                  |
+| Spark   | -0.1004200279712677, 0.03312099352478981 |
+| NLP     | -0.09467814117670059, -0.02236207202076912 |
+
+
+#### Question Answering
+
+Question Answering models can retrieve the answer to a question from a given text, which is useful for searching for an answer in a document. On the NLU core side we have over 200+ new question answering models. 
+
+
+- Bert For Question Answering
+
+```python
+
+nlu.load("answer_question.bert.base_uncased.by_ksabeh").predict("""What is my name?|||"My name is Clara and I live in Berkeley.""")
+
+```
+
+|   answer_confidence  | context   | question |
+|-----------------------------------------:|:--------------------------:|:---------------------- |
+|      0.3143375 | "My name is Clara and I live in Berkeley.  |    What is my name?       |
+
+
+#### Sequence Classification
+
+Sequence classification is the task of predicting a class label given a sequence of observations. On the NLU core side we have over 40 new sequence classification models. 
+
+
+- Bert For Sequence Classification
+
+```python
+
+nlu.load("classify.bert.by_mrm8488").predict("""Camera - You are awarded a SiPix Digital Camera! call 09061221066 from landline. Delivery within 28 days.""")
+
+```
+
+|   classified_sequence  | classified_sequence_confidence   | sentence |
+|-----------------------------------------:|:--------------------------:|:---------------------- |
+|      1 | 0.89954  |    Camera - You are awarded a SiPix Digital Camera! call 09061221066 from landline.       |
+|     0   |     0.93745     |                        Delivery within 28 days.         |
+
+
+- DistilBert For Sequence Classification
+
+```python
+
+nlu.load("de.classify.distil_bert.base").predict("Natürlich kann ich von zuwanderern mehr erwarten. muss ich sogar. sie müssen die sprache lernen, sie müssen die gepflogenheiten lernen und sich in die gesellschaft einfügen. dass muss ich nicht weil ich mich schon in die gesellschaft eingefügt habe. egal wo du hin ziehst, nirgendwo wird dir soviel zucker in den arsch geblasen wie in deutschland.")
+
+```
+
+|   classified_sequence  | classified_sequence_confidence   | sentence |
+|-----------------------------------------:|:--------------------------:|:---------------------- |
+|   non_toxic | 0.955292  |    Natürlich kann ich von zuwanderern mehr erwarten.       |
+|    non_toxic  |     0.968591     |   muss ich sogar.         |
+|    non_toxic  |     0.841958     |   sie müssen die sprache lernen, sie müssen die gepflogenheiten lernen und sich in die gesellschaft einfügen.         |
+|    non_toxic  |     0.934119     |   dass muss ich nicht weil ich mich schon in die gesellschaft eingefügt habe.         |
+|    non_toxic  |     0.771795	     |   egal wo du hin ziehst, nirgendwo wird dir soviel zucker in den arsch geblasen wie in deutschland.         |
+
+
+
+- RoBerta For Sequence Classification
+
+```python
+
+nlu.load("en.classify.roberta.finetuned").predict("I love you very much!")
+
+```
+
+|   classified_sequence  | classified_sequence_confidence   | sentence |
+|-----------------------------------------:|:--------------------------:|:---------------------- |
+|   LABEL_0 | 0.597792  |    I love you very much!       |
+
+
+
+#### Lemmatizer
+
+Lemmatization in linguistics is the process of grouping together the inflected forms of a word so they can be analysed as a single item, identified by the word's lemma, or dictionary form. On the NLU core side we have over 30 new lemmatizer models. 
+
+
+#### ClassifierDLModel
+
+ClassifierDL for generic Multi-class Text Classification. ClassifierDL uses the state-of-the-art Universal Sentence Encoder as an input for text classifications. The ClassifierDL annotator uses a deep learning model (DNNs) we have built inside TensorFlow and supports up to 100 classes. On the NLU core side we have over 5 new ClassifierDLModel models.
+
+
+#### ContextSpellCheckerModel
+
+Spell Checking is a sequence to sequence mapping problem. Given an input sequence, potentially containing a certain number of errors, ContextSpellChecker will rank correction sequences according to three things:
+
+1. Different correction candidates for each word — word level.
+2. The surrounding text of each word, i.e. it’s context — sentence level.
+3. The relative cost of different correction candidates according to the edit operations at the character level it requires — subword level. 
+
+On the NLU core side we have over 5 new ClassifierDLModel models.
+
+
+
+#### Token Classification
+
+Token classification is a natural language understanding task in which a label is assigned to some tokens in a text. Some popular token classification subtasks are Named Entity Recognition (NER) and Part-of-Speech (PoS) tagging. NER models could be trained to identify specific entities in a text, such as dates, individuals and places; and PoS tagging would identify, for example, which words in a text are verbs, nouns, and punctuation marks. We have new 463 models XlmRoBertaForTokenClassification, BertForTokenClassification, DistilBertForTokenClassification, DistilBertEmbeddings, LongformerForTokenClassification, RoBertaForTokenClassification for in different languages. 
+
+
+- BertForTokenClassification English
+
+```python
+
+nlu.load("en.ner.bc5cdr.biobert.disease").predict("I love you very much!")
+
+```
+
+|index|document|entities\_wikiner\_glove\_840B\_300|entities\_wikiner\_glove\_840B\_300\_class|entities\_wikiner\_glove\_840B\_300\_confidence|entities\_wikiner\_glove\_840B\_300\_origin\_chunk|entities\_wikiner\_glove\_840B\_300\_origin\_sentence|word\_embedding\_glove|
+|---|---|---|---|---|---|---|---|
+|0|I love you very much\!|I love you very much\!|MISC|0\.66433334|0|0|\[ 0\.19410001  0\.22603001 -0\.43764001 \]|
+
+
+- BertForTokenClassification German
+
+```python
+
+nlu.load("de.ner.distil_bert.base_cased").predict("Ich liebe Spark NLP")
+
+```
+
+|index|classified\_token|document|entities\_distil\_bert|entities\_distil\_bert\_class|entities\_distil\_bert\_origin\_chunk|entities\_distil\_bert\_origin\_sentence|
+|---|---|---|---|---|---|---|
+|0|O,O,B-OTHderiv,O|Ich liebe Spark NLP|Spark|OTHderiv|0|0|
+
+
+
+- XlmRoBertaForTokenClassification Igbo
+
+```python
+
+nlu.load("ig.ner.xlmr_roberta.base").predict("Ahụrụ m n'anya na-atọ m ụtọ")
+
+```
+
+|index|classified\_token|document|entities\_xlmr\_roberta|entities\_xlmr\_roberta\_class|entities\_xlmr\_roberta\_origin\_chunk|entities\_xlmr\_roberta\_origin\_sentence|
+|---|---|---|---|---|---|---|
+|0|B-ORG,I-ORG,I-ORG,I-ORG,I-ORG,I-ORG|Ahụrụ m n'anya na-atọ m ụtọ|Ahụrụ m n'anya na-atọ m ụtọ|ORG|0|0|
+
+
+#### NerCrfModel
+
+This Named Entity Recognizer is based on a CRF Algorithm. Conditional random fields (CRFs) are a class of statistical modeling methods often applied in pattern recognition and machine learning and used for structured prediction. Whereas a classifier predicts a label for a single sample without considering "neighbouring" samples, a CRF can take context into account. To do so, the predictions are modelled as a graphical model, which represents the presence of dependencies between the predictions. What kind of graph is used depends on the application. For example, in natural language processing, "linear chain" CRFs are popular, for which each prediction is dependent only on its immediate neighbours. In image processing, the graph typically connects locations to nearby and/or similar locations to enforce that they receive similar predictions. 
+
+
+- NerCrfModel
+
+```python
+
+nlu.load('en.ner.ner.crf').predict("Donald Trump and Angela Merkel dont share many oppinions")
+
+```
+
+|index|document|entities\_wikiner\_glove\_840B\_300|entities\_wikiner\_glove\_840B\_300\_class|entities\_wikiner\_glove\_840B\_300\_confidence|entities\_wikiner\_glove\_840B\_300\_origin\_chunk|entities\_wikiner\_glove\_840B\_300\_origin\_sentence|word\_embedding\_glove|
+|---|---|---|---|---|---|---|---|
+|0|Donald Trump and Angela Merkel dont share many oppinions|Donald Trump|PER|0\.78524995|0|0|\[\-0\.074014   -0\.23684999  0\.17772 \]|
+|0|Donald Trump and Angela Merkel dont share many oppinions|Angela Merkel|PER|0\.7701|1|0|\[\-0\.074014   -0\.23684999  0\.17772  \]|
+
+#### NerDLModel
+
+This Named Entity recognition annotator is a generic NER model based on Neural Networks.
+Neural Network architecture is Char CNNs - BiLSTM - CRF that achieves state-of-the-art in most datasets.
+This is the instantiated model of the NerDLApproach. For training your own model, please see the documentation of that class.
+We have new 6 models. 
+
+
+- NerDLModel Japanese
+
+```python
+
+nlu.load('ja.ner.ner.base').predict("宮本茂氏は、日本の任天堂のゲームプロデューサーです。")
+
+```
+
+|index|document|entities\_xtreme\_glove\_840B\_300|word\_embedding\_glove|
+|---|---|---|---|
+|0|宮本茂氏は、日本の任天堂のゲームプロデューサーです。|NaN|\[0\. 0\. \]|
+
+
+- NerDLModel English
+
+```python
+
+text = ["My name is John!"]
+
+nlu.load('en.ner.conll.ner.large').predict(text, output_level='token')
+
+```
+
+|index|entities\_wikiner\_glove\_840B\_300|entities\_wikiner\_glove\_840B\_300\_class|entities\_wikiner\_glove\_840B\_300\_confidence|entities\_wikiner\_glove\_840B\_300\_origin\_chunk|entities\_wikiner\_glove\_840B\_300\_origin\_sentence|token|word\_embedding\_glove|
+|---|---|---|---|---|---|---|---|
+|0|My name is John\!|MISC|0\.63266003|0|0|My|\[-2\.19990000e-01  2\.57800013e-01 -4\.25859988e-01 ]|
+|0|My name is John\!|MISC|0\.63266003|0|0|name|\[ 2\.32309997e-01 -2\.41020005e-02]|
+|0|My name is John\!|MISC|0\.63266003|0|0|is|\[-8\.49609971e-02  5\.01999974e-01  2\.38230010e-03]|
+|0|My name is John\!|MISC|0\.63266003|0|0|John|\[-2\.96090007e-01 -8\.18260014e-02  9\.67490021e-03 ]|
+|0|My name is John\!|MISC|0\.63266003|0|0|\!|\[-2\.65540004e-01  3\.35310012e-01  2\.18600005e-01 ]|
+
+
+
+#### PerceptronModel
+
+We have new 26 models. 
+
+#### StopWordsCleaner
+This model removes ‘stop words’ from text. Stop words are words so common that they can be removed without significantly altering the meaning of a text. Removing stop words is useful when one wants to deal with only the most semantically important words in a text, and ignore words that are rarely semantically relevant, such as articles and prepositions. We have new 33 models. 
+
+______________________
+______________________
+
+
 ## NLU Version 4.0.0
 OCR Visual Tables into Pandas DataFrames from PDF/DOC(X)/PPT files, 1000+ new state-of-the-art transformer models for Question Answering (QA)  for over 30 languages, up to 700% speedup on GPU, 20 Biomedical models for over 8 languages, 50+ Terminology Code Mappers between RXNORM, NDC, UMLS,ICD10, ICDO, UMLS, SNOMED and MESH, Deidentification in Romanian, various Spark NLP helper methods and much more in 1 line of code with John Snow Labs NLU 4.0.0
 
@@ -51,11 +399,11 @@ This is powerd by [John Snow Labs Spark OCR](https://www.johnsnowlabs.com/spark-
 
 - On the healthcare side NLU features 20 Biomedical models for over 8 languages (English, French, Italian, Portuguese, Romanian, Catalan and Galician) detect entities like  `HUMAN` and `SPECIES` based on [LivingNER corpus](https://temu.bsc.es/livingner/2022/05/03/multilingual-corpus/)
 
-- Romanian models for Deidentification and extracting Medical entities like `Measurements`, `Form`, `Symptom`, `Route`, `Procedure`, `Disease_Syndrome_Disorder`, `Score`, `Drug_Ingredient`, `Pulse`, `Frequency`, `Date`, `Body_Part`, `Drug_Brand_Name`, `Time`, `Direction`, `Dosage`, `Medical_Device`, `Imaging_Technique`, `Test`, `Imaging_Findings`, `Imaging_Test`, `Test_Result`, `Weight`, `Clinical_Dept` and `Units`  with SPELL and SPELL respectively
+- Romanian models for Deidentification and extracting Medical entities like `Measurements`, `Form`, `Symptom`, `Route`, `Procedure`, `Disease_Syndrome_Disorder`, `Score`, `Drug_Ingredient`, `Pulse`, `Frequency`, `Date`, `Body_Part`, `Drug_Brand_Name`, `Time`, `Direction`, `Dosage`, `Medical_Device`, `Imaging_Technique`, `Test`, `Imaging_Findings`, `Imaging_Test`, `Test_Result`, `Weight`, `Clinical_Dept` and `Units`  with SPELL and SPELL respectively
 
-- English NER models for parsing entities in  Clinical Trial Abstracts  like  `Age`, `AllocationRatio`, `Author`, `BioAndMedicalUnit`, ``CTAnalysisApproach``, `CTDesign`, `Confidence`, `Country`, `DisorderOrSyndrome`, `DoseValue`, `Drug`, `DrugTime`, `Duration`, `Journal`, `NumberPatients`, `PMID`, `PValue`, `PercentagePatients`, `PublicationYear`, `TimePoint`, `Value`  using `en.med_ner.clinical_trials_abstracts.pipe`  and also Pathogen NER models for `Pathogen`, `MedicalCondition`, `Medicine` with  `en.med_ner.pathogen` and `GENE_PROTEIN`  with `en.med_ner.biomedical_bc2gm.pipeline`
+- English NER models for parsing entities in  Clinical Trial Abstracts  like  `Age`, `AllocationRatio`, `Author`, `BioAndMedicalUnit`, ``CTAnalysisApproach``, `CTDesign`, `Confidence`, `Country`, `DisorderOrSyndrome`, `DoseValue`, `Drug`, `DrugTime`, `Duration`, `Journal`, `NumberPatients`, `PMID`, `PValue`, `PercentagePatients`, `PublicationYear`, `TimePoint`, `Value`  using `en.med_ner.clinical_trials_abstracts.pipe`  and also Pathogen NER models for `Pathogen`, `MedicalCondition`, `Medicine` with  `en.med_ner.pathogen` and `GENE_PROTEIN`  with `en.med_ner.biomedical_bc2gm.pipeline`
 
--  First Public Health Model for Emotional Stress classification It is a [PHS-BERT-based](https://huggingface.co/publichealthsurveillance/PHS-BERT) model and trained with the [Dreaddit dataset](https://arxiv.org/abs/1911.00133) using `en.classify.stress`
+-  First Public Health Model for Emotional Stress classification It is a [PHS-BERT-based](https://huggingface.co/publichealthsurveillance/PHS-BERT) model and trained with the [Dreaddit dataset](https://arxiv.org/abs/1911.00133) using `en.classify.stress`
 
 
 -  50 + new Entity Mappers  for problems like :
@@ -482,8 +830,7 @@ The following annotator classes are newly captured:
 - Normalizer
 
 
--------------------- 
-
+--------------------
 
 
 ##### All NLU 4.0 for Healthcare Models
