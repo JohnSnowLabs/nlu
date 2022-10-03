@@ -95,12 +95,9 @@ access to. Licenses are locally numbered in order they have been provided, for m
 | Browser Based Login (OAuth) on Google Colab                  | A button is displayed in your notebook, click it and visist new page to give access to your license                                                                                                         | `jsl.install()`                                                                                                                                            |
 | Access Token                                                 | Vist [my.johnsnowlabs.com](https://my.johnsnowlabs.com/) to extract a token which you can provide to enable license access. See [Accesses Token Example](TODO) for more details                             | `jsl.install(access_token=my_token)`                                                                                                                       |
 | License JSON file path                                       | Define JSON license file with keys  defined by [License Variable Overview](TODO) and provide file path                                                                                                      | `jsl.install(json_license_path=path)`                                                                                                                      |
-| **
-Auto-Detect** License JSON file from `os.getcwd()`         | `os.getcwd()` directory is scanned for a `.json` file containing license keys defined by [License Variable Overview](TODO)                                                                                  | `jsl.install()`                                                                                                                                            |
-| **
-Auto-Detect** OS Environment Variables                     | Environment Variables are scanned for license variables defined by [License Variable Overview](TODO)                                                                                                        | `jsl.install()`                                                                                                                                            |
-| **
-Auto-Detect** Cached License in `~/.johnsnowlabs/licenses` | If you already have provided a license previously, it is cached in `~/.johnsnowlabs/licenses` and automatically loaded.<br/> Use `license_number` parameter to choose between licenses if you have multiple | `jsl.install()`                                                                                                                                            |
+| **Auto-Detect** License JSON file from `os.getcwd()`         | `os.getcwd()` directory is scanned for a `.json` file containing license keys defined by [License Variable Overview](TODO)                                                                                  | `jsl.install()`                                                                                                                                            |
+| **Auto-Detect** OS Environment Variables                     | Environment Variables are scanned for license variables defined by [License Variable Overview](TODO)                                                                                                        | `jsl.install()`                                                                                                                                            |
+| **Auto-Detect** Cached License in `~/.johnsnowlabs/licenses` | If you already have provided a license previously, it is cached in `~/.johnsnowlabs/licenses` and automatically loaded.<br/> Use `license_number` parameter to choose between licenses if you have multiple | `jsl.install()`                                                                                                                                            |
 | Manually specify license data                                | Set each license value as python parameter, defined by  [License Variable Overview](TODO)                                                                                                                   | `jsl.install(hc_license=hc_license hc_secret=hc_secret ocr_secret=ocr_secret ocr_license=ocr_license aws_access_key=aws_access_key aws_key_id=aws_key_id)` |
 
 ### Optional Auth Flow Parameters
@@ -126,6 +123,7 @@ Use these parameters to configure **where** to install to
 | `offline_zip_dir`                         | Specify path to a folder in which 3 sub-folders are created,  `py_installsl`, `java_installs` with corrosponding Wheels/Jars/Tars and  `licenses`. It will additionallly be zipped.                                            |
 | `Install to Databricks` with access Token | See [Databricks Documentation](https://docs.databricks.com/dev-tools/api/latest/authentication.html) for  extracting a token which you can provide to databricks access, see [Databricks Install Section](TODO) for me details |
 
+
 ### Optional Installation Process Parameters
 
 Use these parameters to configure **what should** be installed to the target
@@ -136,13 +134,10 @@ Use these parameters to configure **what should** be installed to the target
 | `install_licensed`     | By default installs all licensed libraries you have access to if they are missing. Set to `False` to disable.                                                                                                        |
 | `include_dependencies` | Defaults to `True` which installs all depeendencies. If set to `False` pip will be executed with the `--no-deps` argument under the hood.                                                                            |
 | `product`              | Specify product to install. By default installs everything you have access to.                                                                                                                                       |
-| `only_download_jars`   | By default all libraries are installed to do current environment via pip. Set to False to disable installing Python dependencies and **
-only download jars** to the John Snow Labs home directory                     |
+| `only_download_jars`   | By default all libraries are installed to do current environment via pip. Set to False to disable installing Python dependencies and **only download jars** to the John Snow Labs home directory                     |
 | `jvm_install_type`     | Specify hardware install type, either `cpu`, `gpu`, `m1`, or `aarch` . Defaults to `cpu`. If you have a GPU and want to leverage CUDA, set `gpu`. If you are an Apple M1 or Arch user choose the corresponding types |
 | `py_install_type`      | Specify Python installation type to use, either `tar.gz` or `whl`, defaults to whl                                                                                                                                   |
-| `refresh_install`      | Delete any cached files before installing by removing John Snow Labs home folder. **Thiswill
-delete your locally
-cachedlicenses**                                                                                    |
+| `refresh_install`      | Delete any cached files before installing by removing John Snow Labs home folder. **This will delete your locally cached licenses**                                                                                  |
 
 ### Automatic Databricks Installation
 
@@ -167,7 +162,7 @@ Where to find your Databricks Access Token:
 The following variable names are checked when using a JSON or environment variables based approach for installing
 licensed features or when using   
 `jsl.start()` .         
-You can find all of your license information on https://my.johnsnowlabs.com/subscriptions
+You can find all of your license information on [https://my.johnsnowlabs.com/subscriptions](https://my.johnsnowlabs.com/subscriptions)
 
 - `AWS_ACCESS_KEY_ID` : Assigned to you by John Snow Labs. Must be defined.
 - `AWS_SECRET_ACCESS_KEY` : Assigned to you by John Snow Labs. Must be defined.
