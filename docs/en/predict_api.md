@@ -220,6 +220,14 @@ nlu.load('sentiment').predict(text_df[['tweet','tweet_location']])
 
 ## Supported data types
 NLU supports all of the common Python data types and formats
+- Pandas Dataframes
+- Spark Dataframes
+- Modin with Dask backend
+- Modin with Ray backend
+- 1-D Numpy arrays of Strings
+- Strings
+- Arrays of Strings
+
 
 </div><div class="h3-box" markdown="1">
 

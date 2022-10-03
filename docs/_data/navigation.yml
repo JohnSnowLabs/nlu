@@ -19,7 +19,6 @@ header:
   - title: Spellbook
     url:    /docs/en/spellbook
     key: tutorial_notebooks
-
   - title: '<span style="color: #FF8A00;"><i class="fab fa-github fa-2x"></i></span>'
     url: https://github.com/JohnSnowLabs/nlu
   - title: '<span style="color: #FF8A00;"><i class="fab fa-slack-hash fa-2x"></i></span>'
@@ -29,6 +28,10 @@ docs-en:
     children:
       - title:  Installation
         url:    /docs/en/install
+      - title:  Starting a Spark Session
+        url:    /docs/en/start-a-sparksession
+      - title:  John Snow Labs module overview & usage
+        url:    /docs/en/import-structure
       - title:  NLU Usage
         url:    /docs/en/concepts
       - title:  General NLU Examples
