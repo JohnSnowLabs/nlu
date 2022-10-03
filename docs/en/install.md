@@ -65,8 +65,6 @@ After clicking **Authorize**:
 - Windows Users must additionally follow every step precisely defined
   in [How to correctly install Spark NLP for Windows?](https://nlp.johnsnowlabs.com/docs/en/install#windows-support)
 
-The next segment showcases how you can easily install any of John Snow Labs **Licensed Libraries**
-
 # Install Licensed Libraries
 
 The following is a more detailed overview of the alternative installation methods and parameters you can use.
@@ -366,9 +364,9 @@ you want to load.
 jsl.list_local_licenses()
 ```
 
-## License Search presedence
+## License Search precedence
 
-If there are multiples possible sources for licenses, the following order takes presedence
+If there are multiples possible sources for licenses, the following order takes precedence
 
 1. Manually provided license data by defining all license parameters
 2. Browser/ Access Token

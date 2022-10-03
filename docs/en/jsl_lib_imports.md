@@ -1,7 +1,7 @@
 ---
 layout: docs
 seotitle: NLU | John Snow Labs
-title: The John Snow labs library usage & suite overview
+title: John Snow labs Usage & Overview
 permalink: /docs/en/import-structure
 key: docs-install
 modify_date: "2020-05-26"
