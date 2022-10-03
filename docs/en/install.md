@@ -372,7 +372,7 @@ Name of the json file does not matter, file just needs to end with .json
 
 The John Snow Labs Teams are working early to push out new Releases and Features each week!
 Simply run `pip install johnsnowlabs --upgrade` to get the latest open **source libraries** updated.  
-TODO open Source jar??!?
+
 
 For updating **licensed libraries** you must in addition also run one of the [Authorization Flows](TODO) again.
 They will be used to fetch the latest licensed library and install them to your target
