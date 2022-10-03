@@ -26,33 +26,37 @@ To quickly test the installation, you can run in your Shell:
 ```shell
 python -c "from johnsnowlabs import *;print(nlu.load('emotion').predict('Wow that easy!'))"
 ```
+
 or in Python:
+
 ```python
 from johnsnowlabs import *
 jsl.load('emotion').predict('Wow that easy!')
 ```
-The quickest way **licensed libraries** you have access to, like [Spark-NLP for Finance,Legal, Healthcare](https://nlp.johnsnowlabs.com/docs/en/licensed_install) or [Spark-OCR for Finance,Legal, Healthcare](https://nlp.johnsnowlabs.com/docs/en/ocr)
+
+The quickest way **licensed libraries** you have access to,
+like [Spark-NLP for Finance,Legal, Healthcare](https://nlp.johnsnowlabs.com/docs/en/licensed_install)
+or [Spark-OCR for Finance,Legal, Healthcare](https://nlp.johnsnowlabs.com/docs/en/ocr)
 is to run the following in python
+
 ```python
 from johnsnowlabs import *
 jsl.install()
 ```
+
 It will make a **Browser Window Pop Up**  or **Clickable Button with Pop Up** appear.
-On that page you can give access to you John Snow Labs license which enables installation and usage of all your licensed products
+On that page you can give access to you John Snow Labs license which enables installation and usage of all your licensed
+products
 Make sure to **Restart your Notebook** when installing to a notebook.
 
 Colab Button
 ![install_button_colab.png](/assets/images/jsl_lib/install/install_button_colab.png)
 
 Where the Pop-Up leads you to:
- ![install_pop_up.png](/assets/images/jsl_lib/install/install_pop_up.png)
+![install_pop_up.png](/assets/images/jsl_lib/install/install_pop_up.png)
 
 After clicking **Authorize**:
 ![install_logs_colab.png](/assets/images/jsl_lib/install/install_logs_colab.png)
-
-
-
-
 
 **Additional Requirements**
 
@@ -63,14 +67,14 @@ After clicking **Authorize**:
 
 The next segment showcases how you can easily install any of John Snow Labs **Licensed Libraries**
 
-#  Install Licensed Libraries
-
+# Install Licensed Libraries
 
 The following is a more detailed overview of the alternative installation methods and parameters you can use.
 The parameters of `jsl.install()`parameters fall into 3 categories:
 
 - **Authorization Flow Choice & Auth Flow Tweaks**
-- **Installation Target** such as `Airgap Offline`, `Databricks`, `new Pytho Venv`,  `Currently running Python Enviroment`,
+- **Installation Target** such as `Airgap Offline`, `Databricks`, `new Pytho Venv`
+  ,  `Currently running Python Enviroment`,
   or `target Python Environment`
 - **Installation process tweaks**
 
@@ -91,9 +95,12 @@ access to. Licenses are locally numbered in order they have been provided, for m
 | Browser Based Login (OAuth) on Google Colab                  | A button is displayed in your notebook, click it and visist new page to give access to your license                                                                                                         | `jsl.install()`                                                                                                                                            |
 | Access Token                                                 | Vist [my.johnsnowlabs.com](https://my.johnsnowlabs.com/) to extract a token which you can provide to enable license access. See [Accesses Token Example](TODO) for more details                             | `jsl.install(access_token=my_token)`                                                                                                                       |
 | License JSON file path                                       | Define JSON license file with keys  defined by [License Variable Overview](TODO) and provide file path                                                                                                      | `jsl.install(json_license_path=path)`                                                                                                                      |
-| **Auto-Detect** License JSON file from `os.getcwd()`         | `os.getcwd()` directory is scanned for a `.json` file containing license keys defined by [License Variable Overview](TODO)                                                                                  | `jsl.install()`                                                                                                                                            |
-| **Auto-Detect** OS Environment Variables                     | Environment Variables are scanned for license variables defined by [License Variable Overview](TODO)                                                                                                        | `jsl.install()`                                                                                                                                            |
-| **Auto-Detect** Cached License in `~/.johnsnowlabs/licenses` | If you already have provided a license previously, it is cached in `~/.johnsnowlabs/licenses` and automatically loaded.<br/> Use `license_number` parameter to choose between licenses if you have multiple | `jsl.install()`                                                                                                                                            |
+| **
+Auto-Detect** License JSON file from `os.getcwd()`         | `os.getcwd()` directory is scanned for a `.json` file containing license keys defined by [License Variable Overview](TODO)                                                                                  | `jsl.install()`                                                                                                                                            |
+| **
+Auto-Detect** OS Environment Variables                     | Environment Variables are scanned for license variables defined by [License Variable Overview](TODO)                                                                                                        | `jsl.install()`                                                                                                                                            |
+| **
+Auto-Detect** Cached License in `~/.johnsnowlabs/licenses` | If you already have provided a license previously, it is cached in `~/.johnsnowlabs/licenses` and automatically loaded.<br/> Use `license_number` parameter to choose between licenses if you have multiple | `jsl.install()`                                                                                                                                            |
 | Manually specify license data                                | Set each license value as python parameter, defined by  [License Variable Overview](TODO)                                                                                                                   | `jsl.install(hc_license=hc_license hc_secret=hc_secret ocr_secret=ocr_secret ocr_license=ocr_license aws_access_key=aws_access_key aws_key_id=aws_key_id)` |
 
 ### Optional Auth Flow Parameters
@@ -129,10 +136,13 @@ Use these parameters to configure **what should** be installed to the target
 | `install_licensed`     | By default installs all licensed libraries you have access to if they are missing. Set to `False` to disable.                                                                                                        |
 | `include_dependencies` | Defaults to `True` which installs all depeendencies. If set to `False` pip will be executed with the `--no-deps` argument under the hood.                                                                            |
 | `product`              | Specify product to install. By default installs everything you have access to.                                                                                                                                       |
-| `only_download_jars`   | By default all libraries are installed to do current environment via pip. Set to False to disable installing Python dependencies and **only download jars** to the John Snow Labs home directory                     |
+| `only_download_jars`   | By default all libraries are installed to do current environment via pip. Set to False to disable installing Python dependencies and **
+only download jars** to the John Snow Labs home directory                     |
 | `jvm_install_type`     | Specify hardware install type, either `cpu`, `gpu`, `m1`, or `aarch` . Defaults to `cpu`. If you have a GPU and want to leverage CUDA, set `gpu`. If you are an Apple M1 or Arch user choose the corresponding types |
 | `py_install_type`      | Specify Python installation type to use, either `tar.gz` or `whl`, defaults to whl                                                                                                                                   |
-| `refresh_install`      | Delete any cached files before installing by removing John Snow Labs home folder. **Thiswill delete your locally cachedlicenses**                                                                                    |
+| `refresh_install`      | Delete any cached files before installing by removing John Snow Labs home folder. **Thiswill
+delete your locally
+cachedlicenses**                                                                                    |
 
 ### Automatic Databricks Installation
 
@@ -186,9 +196,8 @@ jsl.install()
 ``` 
 
 ### Via Access Token
+
 Get your License Token from [My John Snow Labs](https://my.johnsnowlabs.com/)
-
-
 
 ```python
 jsl.install(access_token='secret')
@@ -196,7 +205,6 @@ jsl.install(access_token='secret')
 
 Where you find the license
 ![access_token1.png](/assets/images/jsl_lib/install/access_token1.png)
-
 
 ### Via Json Secrets file
 
@@ -254,6 +262,7 @@ jsl.install(venv_creation_path='path/to/where/my/new/venv/will/be')
 
 Create a Zip with all Jars/Wheels/Licenses you need to run all libraries in an offline environment.
 **Step1:**
+
 ```python
 jsl.install(offline_zip_dir='path/to/where/my/zip/will/be')
 ``` 
@@ -297,14 +306,18 @@ pip install ~/johnsnowlabs/py_installs/*.whl
 **Step5:**
 Test your installation
 Via shell
+
 ```shell
 python -c "from johnsnowlabs import *;print(nlu.load('emotion').predict('Wow that easy!'))"
 ```
+
 or in Python:
+
 ```python
 from johnsnowlabs import *
 jsl.load('emotion').predict('Wow that easy!')
 ```
+
 ### Offline/Airgap Manual
 
 Download all files yourself from the URLS printed by jsl.install().
@@ -340,22 +353,26 @@ After having provided license data once, you don't need to specify it again sinc
 Use the `license_number` parameter to switch between multiple licenses.     
 Note: Locally cached licenses are numbered in the order they have been provided, starting at 0
 
+## List all available licenses
 
-## List all available licenses 
 This shows you all licenses for your account in https://my.johnsnowlabs.com/
-Use this to decide which license number to install when installing via browser or access token, 
+Use this to decide which license number to install when installing via browser or access token,
+
 ```python
 jsl.list_remote_licenses()
 ```
 
 ## List all locally cached licenses
-Use this to decide which license number to use when using jsl.start() or jsl.install() to specify which local license you want to load. 
+
+Use this to decide which license number to use when using jsl.start() or jsl.install() to specify which local license
+you want to load.
 
 ```python
 jsl.list_local_licenses()
 ```
 
 ## License Search presedence
+
 If there are multiples possible sources for licenses, the following order takes presedence
 
 1. Manually provided license data by defining all license parameters
@@ -371,8 +388,7 @@ Name of the json file does not matter, file just needs to end with .json
 ## Upgrade Flow
 
 The John Snow Labs Teams are working early to push out new Releases and Features each week!
-Simply run `pip install johnsnowlabs --upgrade` to get the latest open **source libraries** updated.  
-
+Simply run `pip install johnsnowlabs --upgrade` to get the latest open **source libraries** updated.
 
 For updating **licensed libraries** you must in addition also run one of the [Authorization Flows](TODO) again.
 They will be used to fetch the latest licensed library and install them to your target
@@ -389,17 +405,19 @@ Join our channel, to ask for help and share your feedback. Developers and users 
 
 [NLU Slack](https://spark-nlp.slack.com/archives/C0196BQCDPY){:.button.button--info.button--rounded.button--md}
 
-
 ### Where to go next
 
-If you want to get your hands dirty with some NLU work, check out the [Examples page](examples)
-Detailed information about NLU APIs, concepts, components and more can be found on the following pages :
+If you want to get your hands dirty with any of the features check out the [NLU examples page](examples),
+or [Licensed Annotators Overview](https://nlp.johnsnowlabs.com/docs/en/licensed_annotators)
+Detailed information about Johnsnowlabs Libraries APIs, concepts, components and more can be found on the following pages :
 
 {:.list4}
 
+- [Starting a Spark Session](start-a-sparksession)
+- [John Snow Labs Library usage and import Overview](import-structure)
 - [The NLU load function](load_api)
 - [The NLU predict function](predict_api)
 - [The NLU components spellbook](https://nlu.johnsnowlabs.com/docs/en/spellbook)
 - [NLU Notebooks](notebooks)
 
-</div></div>
+</div>
