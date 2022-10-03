@@ -29,9 +29,9 @@ docs-en:
     children:
       - title:  Installation
         url:    /docs/en/install
-      - title:  Usage
+      - title:  NLU Usage
         url:    /docs/en/concepts
-      - title:  General Examples
+      - title:  General NLU Examples
         url:    /docs/en/examples
       - title:  NLU for Healthcare
         url:    /docs/en/nlu_for_healthcare
