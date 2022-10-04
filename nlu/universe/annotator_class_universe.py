@@ -43,6 +43,7 @@ class AnnoClassRef:
 
 
         A_N.DOCUMENT_ASSEMBLER: 'DocumentAssembler',
+        A_N.IMAGE_ASSEMBLER: 'ImageAssembler',
         A_N.DOCUMENT_NORMALIZER: 'DocumentNormalizer',
         A_N.EMBEDDINGS_FINISHER: 'EmbeddingsFinisher',
         A_N.ENTITY_RULER: 'EntityRulerModel',

@@ -71,6 +71,7 @@ from nlu.components.embeddings_chunks.chunk_embedder.chunk_embedder import Chunk
 from nlu.components.lemmatizers.lemmatizer.spark_nlp_lemmatizer import SparkNLPLemmatizer
 from nlu.components.matchers.regex_matcher.regex_matcher import RegexMatcher
 from nlu.components.normalizers.document_normalizer.spark_nlp_document_normalizer import SparkNLPDocumentNormalizer
+from nlu.components.utils.image_assembler.spark_nlp_image_assembler import SparkNlpImageAssembler
 from nlu.components.normalizers.drug_normalizer.drug_normalizer import DrugNorm
 from nlu.components.normalizers.normalizer.spark_nlp_normalizer import SparkNLPNormalizer
 from nlu.components.relation_extractors.relation_extractor.relation_extractor import RelationExtraction
@@ -3010,6 +3011,25 @@ class ComponentUniverse:
                                             jsl_anno_py_class=ACR.JSL_anno2_py_class[
                                                 A.VIT_IMAGE_CLASSIFICATION],
                                             ),
+
+
+        A.IMAGE_ASSEMBLER: partial(NluComponent,
+                                      name=A.IMAGE_ASSEMBLER,
+                                      type=T.HELPER_ANNO,
+                                      get_default_model=SparkNlpImageAssembler.get_default_model,
+                                      pdf_extractor_methods={'default': default_document_config,
+                                                             'default_full': default_full_config, },
+                                      pdf_col_name_substitutor=substitute_doc_assembler_cols,
+                                      output_level=L.DOCUMENT,
+                                      node=NLP_FEATURE_NODES.nodes[A.IMAGE_ASSEMBLER],
+                                      description='todo',
+                                      provider=ComponentBackends.open_source,
+                                      license=Licenses.open_source,
+                                      computation_context=ComputeContexts.spark,
+                                      output_context=ComputeContexts.spark,
+                                      jsl_anno_class_id=A.IMAGE_ASSEMBLER,
+                                      jsl_anno_py_class=ACR.JSL_anno2_py_class[A.IMAGE_ASSEMBLER],
+                                      ),
 
 
 
