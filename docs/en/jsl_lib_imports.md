@@ -36,9 +36,9 @@ The following Functions, Classes and Modules will available in the global namesp
 ## The **jsl** Module
 
 `jsl` module with the following methods
-- `jsl.install()` for installing John Snow Labs libraries and managing your licenses, [more info here](TODO)
+- `jsl.install()` for installing John Snow Labs libraries and managing your licenses, [more info here](https://nlu.johnsnowlabs.com/docs/en/install)
 - `jsl.load()` for predicting with any the 10k+ pretrained models in 1 line of code or training new ones, using the [nlu.load() method](https://nlu.johnsnowlabs.com/) under the hood
-- `jsl.start()` for starting a Spark Session with access to features, [more info here](TODO)
+- `jsl.start()` for starting a Spark Session with access to features, [more info here](https://nlu.johnsnowlabs.com/docs/en/start-a-sparksession)
 - `jsl.viz()` for visualizing predictions with any of the 10k+ pretrained models using [nlu.viz()](https://nlu.johnsnowlabs.com/docs/en/viz_examples) under the hood
 - `jsl.viz_streamlit()` and other `jsl.viz_streamlit_xyz for using any of the 10k+ pretrained models in 0 lines of code with an [interactive Streamlit GUI and re-usable and stackable Streamlit Components](https://nlu.johnsnowlabs.com/docs/en/streamlit_viz_examples)
 - `jsl.to_pretty_df()` for predicting on raw strings getting a nicely structures Pandas DF from a Spark Pipeline using [nlu.to_pretty_df()](https://nlu.johnsnowlabs.com/docs/en/utils_for_spark_nlp) under the hood
