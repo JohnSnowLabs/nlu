@@ -18,6 +18,7 @@ class NLP_LEVELS(NlpLevel):
     RELATION = NlpLevel('relation')
     MULTI_TOKEN_CLASSIFIER = NlpLevel('multi_token_classifier')
 
+    IMAGE= NlpLevel("image")
     INPUT_DEPENDENT_DOCUMENT_CLASSIFIER = NlpLevel('input_dependent_document_classifier')
     INPUT_DEPENDENT_DOCUMENT_EMBEDDING = NlpLevel('input_dependent_document_embedding')
 
@@ -72,7 +73,6 @@ class AnnoTypes:
     TABLE_RECOGNIZER = 'table_recognizer'
     PDF_BUILDER = 'table_recognizer'
     OCR_UTIL = 'ocr_util'
-
-
+    IMAGE_CLASSIFICATION = 'image_classifier'
 
     PARTIALLY_READY = 'partially_ready'

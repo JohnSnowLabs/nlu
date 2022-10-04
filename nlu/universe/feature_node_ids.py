@@ -92,8 +92,7 @@ class NLP_NODE_IDS:
     ROBERTA_FOR_TOKEN_CLASSIFICATION = JslAnnoId('roberta_for_token_classification')
     ROBERTA_SENTENCE_EMBEDDINGS = JslAnnoId('roberta_sentence_embeddings')
     T5_TRANSFORMER = JslAnnoId('t5_transformer')
-
-
+    VIT_IMAGE_CLASSIFICATION = JslAnnoId("vit_image_classification")
 
 
 
@@ -223,6 +222,7 @@ class NLP_NODE_IDS:
     PARTIAL_Lemmatizer = JslAnnoId('PARTIAL_Lemmatizer')
     PARTIAL_Normalizer = JslAnnoId('PARTIAL_Normalizer')
     PARTIAL_SpanBertCorefModel = JslAnnoId('PARTIAL_SpanBertCorefModel')
+
 
 
 

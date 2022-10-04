@@ -219,7 +219,7 @@ class AnnoClassRef:
         A_N.PARTIAL_GraphExtraction : 'GraphExtraction',
         A_N.PARTIAL_Lemmatizer : 'Lemmatizer',
         A_N.PARTIAL_Normalizer : 'Normalizer',
-
+        A_N.VIT_IMAGE_CLASSIFICATION:'ViTForImageClassification',
 
 
 

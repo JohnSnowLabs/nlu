@@ -227,7 +227,12 @@ class NLP_FEATURE_NODES:  # or Mode Node?
         A.BERT_SENTENCE_CHUNK_EMBEDDINGS: NlpFeatureNode(A.BERT_SENTENCE_CHUNK_EMBEDDINGS, [F.DOCUMENT],
                                                          [F.NAMED_ENTITY_CONVERTED]),
 
-    }
+        A.VIT_IMAGE_CLASSIFICATION: NlpFeatureNode(A.VIT_IMAGE_CLASSIFICATION, [F.Image], [F.CLASSIFIED_IMAGE]),
+
+
+
+
+            }
 
 
 @dataclass

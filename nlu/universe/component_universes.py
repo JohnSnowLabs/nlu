@@ -42,6 +42,7 @@ from nlu.components.classifiers.token_roberta.token_roberta import TokenRoBerta
 from nlu.components.classifiers.token_xlm_roberta.token_xlmroberta import TokenXlmRoBerta
 from nlu.components.classifiers.token_xlnet.token_xlnet import TokenXlnet
 from nlu.components.classifiers.vivekn_sentiment.vivekn_sentiment_detector import ViveknSentiment
+from nlu.components.classifiers.image_classification_vit.vit_image_classifier import VitImageClassifier
 from nlu.components.classifiers.yake.yake import Yake
 from nlu.components.coref.coref_bert.coref_bert import CorefBert
 from nlu.components.deidentifiers.deidentifier.deidentifier import Deidentifier
@@ -2987,6 +2988,30 @@ class ComponentUniverse:
                                             jsl_anno_py_class=ACR.JSL_anno2_py_class[
                                                 A.MULTI_DOCUMENT_ASSEMBLER],
                                             ),
+
+        A.VIT_IMAGE_CLASSIFICATION: partial(NluComponent,
+                                            name=A.VIT_IMAGE_CLASSIFICATION ,
+                                            type=T.IMAGE_CLASSIFICATION,
+                                            get_default_model=VitImageClassifier.get_default_model,
+                                            pdf_extractor_methods={
+                                                'default': default_document_config,
+                                                'default_full': default_document_config },
+                                            pdf_col_name_substitutor=substitute_multi_doc_span_assembler_cols,
+                                            output_level=L.DOCUMENT,
+                                            node=NLP_FEATURE_NODES.nodes[
+                                                A.VIT_IMAGE_CLASSIFICATION],
+                                            description='TODO',
+                                            provider=ComponentBackends.open_source,
+
+                                            license=Licenses.open_source,
+                                            computation_context=ComputeContexts.spark,
+                                            output_context=ComputeContexts.spark,
+                                            jsl_anno_class_id=A.VIT_IMAGE_CLASSIFICATION,
+                                            jsl_anno_py_class=ACR.JSL_anno2_py_class[
+                                                A.VIT_IMAGE_CLASSIFICATION],
+                                            ),
+
+
 
         ######### HEALTHCARE ##############
 

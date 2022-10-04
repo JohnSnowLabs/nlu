@@ -71,8 +71,8 @@ class NLP_FEATURES(JslFeature):
     LANGUAGE = JslFeature("language")
     NODE = JslFeature("node")
     DUMMY = JslFeature("dummy")
-
-
+    Image = JslFeature("image")
+    CLASSIFIED_IMAGE = JslFeature('classified_image')
 class OCR_FEATURES(JslFeature):
     """
     OCR Features
