@@ -15,7 +15,7 @@ This will launch a [Java Virtual Machine(JVM)](https://en.wikipedia.org/wiki/Jav
 which has all of John Snow Labs and Sparks [Scala/Java Libraries(JARs)](https://de.wikipedia.org/wiki/Java_Archive) you have access to loaded into memory. 
 
 The `jsl.start()` method downloads loads  and caches all jars for which credentials are provided if they are missing into `~/.jsl_home/java_installs`.       
-If you have installed via `jsl.install()` you can most likely **skip the rest of this page**, since your secrets have been`~/.jsl_home` and re-use will be re-used.        
+If you have installed via `jsl.install()` you can most likely **skip the rest of this page**, since your secrets have been cached in `~/.jsl_home` and will be re-used.        
 If you **disabled license caching** while installing or if you want to **tweak settings about your spark session** continue reading this section further.        
 
 Outputs of running `jsl.start()` tell you which jars are loaded and versions of all relevant libraries.  
@@ -24,7 +24,7 @@ Outputs of running `jsl.start()` tell you which jars are loaded and versions of 
 
 
 ## Authorization Flow Parameters 
-Most of the authorization Flows and Parameters of `jsl.install()` 
+Most of the authorization Flows and Parameters of `jsl.install()`         
 Review detailed [docs here](TODO)  
 
 | Parameter           | Description                                                                                                                                                    | Example                                          | Default |
@@ -52,18 +52,18 @@ These can be omitted according to the [License Variable Overview](TODO)
 | `leg_license`    | Corresponds to `JSL_FINANCE_LICENSE`   |
 
 ## Sparksession Parameters
-These parameters configure how your spark Session is started up.
+These parameters configure how your spark Session is started up.        
 See [Spark Configuration](https://spark.apache.org/docs/latest/configuration.html) for a comprehensive overview of all spark settings 
 
 | Parameter            | Default    | Description                                                                                                                                                        | Example                                                                     |
 |----------------------|------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------|
 | `spark_conf`         | `None`     | Dictionary Key/Value pairs of [Spark Configurations](https://spark.apache.org/docs/latest/configuration.html) for the Spark Session                                | `jsl.start(spark_conf={'spark.executor.memory':'6g'})`                      |
-| `master_url`         | `local[*]` | URL to Spark Cluster master                                                                                                                                        | `jsl.start(master_url=spark://my.master)`                                   |
+| `master_url`         | `local[*]` | URL to Spark Cluster master                                                                                                                                        | `jsl.start(master_url='spark://my.master')`                                 |
 | `jar_paths`          | `None`     | List of paths to jars which should be loaded into the Spark Session                                                                                                | `jsl.start(jar_paths=['my/jar_folder/jar1.zip','my/jar_folder/jar2.zip'] )` |
 | `exclude_nlp`        | `False`    | Whether to include Spark NLP jar in Session or not. This will always load the jar if available, unless set to `True`.                                              | `jsl.start(exclude_nlp=True)`                                               |
 | `exclude_healthcare` | `False`    | Whether to include licensed NLP Jar for Legal,Finance or Healthcare. This will always load the jar if available using your provided license, unless set to `True`. | `jsl.start(exclude_healthcare=True)`                                        |
 | `exclude_ocr`        | `False`    | Whether to include licensed OCR Jar for Legal,Finance or Healthcare. This will always load the jar if available using your provided license, unless set to `True`. | `jsl.start(exclude_ocr=True)`                                               |
-| `hardware_target`    | `cpu`      | Specify for which hardware Jar should be optimized. Valid values are `gpu`,`cpu`,`m1`,`aarch`                                                                      | `jsl.start(hardware_target=True)`                                           |
+| `hardware_target`    | `cpu`      | Specify for which hardware Jar should be optimized. Valid values are `gpu`,`cpu`,`m1`,`aarch`                                                                      | `jsl.start(hardware_target='m1')`                                           |
 | `model_cache_folder` | `None`     | Specify where models should be downloaded to when using `model.pretrained()`                                                                                       | `jsl.start(model_cache_folder=True)`                                        |
 
 

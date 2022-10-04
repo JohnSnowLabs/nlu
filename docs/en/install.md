@@ -142,11 +142,10 @@ Use these parameters to configure **what should** be installed to the target
 Use any of the databricks auth flows to enable the `johnsnowlabs` library to automatically install   
 all open source and licensed features into a Databricks cluster.   
 You additionally must use one of the [John Snow Labs License Authorization Flows](TODO) to give access to your John Snow
-Labs license,  
-which will be installed to your Databricks cluster.        
+Labs license,which will be installed to your Databricks cluster.        
 A John Snow Labs Home directory is constructed in the distributed Databricks File System`/dbfs/johnsnowlabs` which has
-all Jars, Wheels and License Information to run   
-all features in a Databricks cluster.
+all Jars, Wheels and License Information to run all features in a Databricks cluster.
+**Only Licensed Libraries and Spark NLP** will be installed to your cluster, without the 
 
 | Databricks Auth Flow Method | Description                                                                                                                                                                                                                    | Python `jsl.install()` usage                                                                                                        | 
 |-----------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------|
@@ -251,7 +250,7 @@ Create a new Venv from scratch, using the currently exectuing Pythons Venv Modul
 jsl.install(venv_creation_path='path/to/where/my/new/venv/will/be')
 ``` 
 
-### Offline/Airgap Installation (Automatic)
+### Into Airgap/Offline Installation (Automatic)
 
 Create a Zip with all Jars/Wheels/Licenses you need to run all libraries in an offline environment.
 **Step1:**
@@ -311,7 +310,7 @@ from johnsnowlabs import *
 jsl.load('emotion').predict('Wow that easy!')
 ```
 
-### Offline/Airgap Manual
+### Into Airgap/Offline Manual
 
 Download all files yourself from the URLS printed by jsl.install().
 You will have to folly the Automatic Instructions starting from step (2) of the automatic installation.
@@ -322,7 +321,7 @@ I.e. provide the files somehow on your offline machine.
 jsl.install(offline=True)
 ```
 
-### Into Databricks `TODO`
+### Into a freshly created Databricks cluster
 
 To install in databricks you must provide your `accessToken` and `hostUrl`.
 You can provide the secrets to the install function with any of the methods listed above, i.e. using `access_token`
@@ -331,13 +330,9 @@ Your get get it from
 
 ``` python
 # Create a new Cluster with Spark NLP and all licensed libraries ready to go
-jsl.install(databricks_host='https://?????.cloud.databricks.com', databricks_token = 'dbapi_token123',)
+jsl.install(databricks_host='https://your_host.cloud.databricks.com', databricks_token = 'dbapi_token123',)
 ```
 
-``` python
-# Install to an existing cluster
-jsl.install(databricks_host='https://?????.cloud.databricks.com', databricks_token = 'dbapi_token123',)
-```
 
 # Storage of License Data and License Search behaviour
 
