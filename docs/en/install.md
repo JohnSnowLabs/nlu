@@ -19,7 +19,7 @@ pip install johnsnowlabs
 This installs [Spark-NLP](https://nlp.johnsnowlabs.com/docs/en/quickstart), [NLU](https://nlu.johnsnowlabs.com/)
 , [Spark-NLP-Display](https://nlp.johnsnowlabs.com/docs/en/display)
 , [Pyspark](https://spark.apache.org/docs/latest/api/python/) and other open
-source [sub-dependencies](TODO link to setup.py).
+source [sub-dependencies](https://github.com/JohnSnowLabs/johnsnowlabs/blob/main/setup.py).
 
 To quickly test the installation, you can run in your Shell:
 

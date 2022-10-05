@@ -30,7 +30,7 @@ The following Functions, Classes and Modules will available in the global namesp
 - `nlp.T` via `import pyspark.sql.types as T` under the hood
 - `nlp.SQL` via `import pyspark.sql as SQL` under the hood
 - `nlp.ML` via  `from pyspark import ml as ML` under the hood
-- To see all the imports see [the source]()
+- To see all the imports see [the source](https://github.com/JohnSnowLabs/johnsnowlabs/blob/main/johnsnowlabs/nlp.py)
 
 
 ## The **jsl** Module
@@ -62,7 +62,7 @@ The following Functions, Classes and Modules will available in the global namesp
 - [Visual Document Understanding](https://nlp.johnsnowlabs.com/docs/en/ocr_visual_document_understanding) i.e. `ocr.VisualDocumentClassifier`
 - [Object detectors](https://nlp.johnsnowlabs.com/docs/en/ocr_object_detection) i.e. `ocr.ImageHandwrittenDetector`
 - [Enums, Structures and helpers](https://nlp.johnsnowlabs.com/docs/en/ocr_structures) i.e. `ocr.Color`
-- To see all the imports see [the source]()
+- To see all the imports see [the source](https://github.com/JohnSnowLabs/johnsnowlabs/blob/main/johnsnowlabs/ocr.py)
 
 ## The **medical** Module
 
@@ -73,7 +73,7 @@ The following Functions, Classes and Modules will available in the global namesp
 - [Evaluation Methods](https://nlp.johnsnowlabs.com/docs/en/evaluation), i.e. `medical.NerDLEvaluation`
 - **NOTE:** Any class which has `Medical` in its name is available, but the `Medical` prefix has been omitted. I.e. `medical.NerModel` maps to `sparknlp_jsl.annotator.MedicalNerModel`
   - This is achieved via `from sparknlp_jsl.annotator import MedicalNerModel as NerModel` under the hood.
-- To see all the imports see [the source]()
+- To see all the imports see [the source](https://github.com/JohnSnowLabs/johnsnowlabs/blob/main/johnsnowlabs/medical.py)
 
 ## The **legal** Module
 
@@ -83,7 +83,7 @@ The following Functions, Classes and Modules will available in the global namesp
 - [Evaluation Methods](https://nlp.johnsnowlabs.com/docs/en/evaluation), i.e. `legal.NerDLEvaluation`
 - **NOTE:** Any class which has `Legal` in its name is available, but the `Legal` prefix has been omitted. I.e. `legal.NerModel` maps to `sparknlp_jsl.annotator.LegalNerModel`
   - This is achieved via `from sparknlp_jsl.annotator import LegalNerModel as NerModel` under the hood.
-- To see all the imports see [the source]()
+- To see all the imports see [the source](https://github.com/JohnSnowLabs/johnsnowlabs/blob/main/johnsnowlabs/legal.py)
 
 
 ## The **finance** Module
@@ -95,5 +95,6 @@ The following Functions, Classes and Modules will available in the global namesp
 - [Evaluation Methods](https://nlp.johnsnowlabs.com/docs/en/evaluation), i.e. `finance.NerDLEvaluation`
 - **NOTE:** Any class which has `Finance` in its name is available, but the `Finance` prefix has been omitted. I.e. `finance.NerModel` maps to `sparknlp_jsl.annotator.FinanceNerModel`
   - This is achieved via `from sparknlp_jsl.annotator import FinanceNerModel as NerModel` under the hood.
-- To see all the imports see [the source]()
+- To see all the imports see [the source](https://github.com/JohnSnowLabs/johnsnowlabs/blob/main/johnsnowlabs/finance.py)
+- 
 </div>

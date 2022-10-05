@@ -17,7 +17,6 @@ Each version of the John Snow Labs library comes with a **hardcoded set of versi
 It will not accept **library secrets** which correspond to **versions do not match the settings**.
 This essentially prevents you from installing **outdated** or **new but not deeply tested** libraries, or from shooting yourself in the foot you might say.
 
-[incombatible_lib_secrets.png](TODO)
 
 You can work around this protection mechanism, by configuring which version of licensed and open source libraries should be installed and accepted by updating the 
 `jsl.settings` module. 
