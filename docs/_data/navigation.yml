@@ -19,19 +19,27 @@ header:
   - title: Spellbook
     url:    /docs/en/spellbook
     key: tutorial_notebooks
-
   - title: '<span style="color: #FF8A00;"><i class="fab fa-github fa-2x"></i></span>'
     url: https://github.com/JohnSnowLabs/nlu
   - title: '<span style="color: #FF8A00;"><i class="fab fa-slack-hash fa-2x"></i></span>'
     url: https://join.slack.com/t/spark-nlp/shared_invite/zt-lutct9gm-kuUazcyFKhuGY3_0AMkxqA
 docs-en:
-  - title:     NLU
+  - title:     John Snow Labs
     children:
       - title:  Installation
         url:    /docs/en/install
-      - title:  Usage
+      - title:  Starting a Spark Session
+        url:    /docs/en/start-a-sparksession
+      - title:  John Snow Labs Usage & Overview
+        url:    /docs/en/import-structure
+      - title:  Settings & Cache Folder
+        url:    /docs/en/john-snow-labs-home
+
+  - title:     NLU
+    children:
+      - title:  NLU Usage
         url:    /docs/en/concepts
-      - title:  General Examples
+      - title:  General NLU Examples
         url:    /docs/en/examples
       - title:  NLU for Healthcare
         url:    /docs/en/nlu_for_healthcare
