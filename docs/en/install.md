@@ -76,6 +76,13 @@ The parameters of `jsl.install()`parameters fall into 3 categories:
   or `target Python Environment`
 - **Installation process tweaks**
 
+
+### List all of your accessible Licenses
+
+You can use `jsl.list_remote_licenses()` to list all available licenses in your [my.johnsnowlabs.com/](https://my.johnsnowlabs.com/) account
+and `jsl.list_local_licenses()` to list all locally cached licenses. 
+```
+
 ### Authorization Flows overview
 
 The `johnsnowlabs` library gives you multiple methods to authorize and provide your license when installing licensed
@@ -96,7 +103,7 @@ access to. Licenses are locally numbered in order they have been provided, for m
 | **Auto-Detect** License JSON file from `os.getcwd()`         | `os.getcwd()` directory is scanned for a `.json` file containing license keys defined by [License Variable Overview](https://nlu.johnsnowlabs.com/docs/en/install#license-variables-names-for-json-and-os-variables)                                                                                  | `jsl.install()`                                                                                                                                            |
 | **Auto-Detect** OS Environment Variables                     | Environment Variables are scanned for license variables defined by [License Variable Overview](https://nlu.johnsnowlabs.com/docs/en/install#license-variables-names-for-json-and-os-variables)                                                                                                        | `jsl.install()`                                                                                                                                            |
 | **Auto-Detect** Cached License in `~/.johnsnowlabs/licenses` | If you already have provided a license previously, it is cached in `~/.johnsnowlabs/licenses` and automatically loaded.<br/> Use `license_number` parameter to choose between licenses if you have multiple | `jsl.install()`                                                                                                                                            |
-| Manually specify license data                                | Set each license value as python parameter, defined by  [License Variable Overview](https://nlu.johnsnowlabs.com/docs/en/install#license-variables-names-for-json-and-os-variables)                                                                                                                   | `jsl.install(hc_license=hc_license hc_secret=hc_secret ocr_secret=ocr_secret ocr_license=ocr_license aws_access_key=aws_access_key aws_key_id=aws_key_id)` |
+| Manually specify license data                                | Set each license value as python parameter, defined by  [License Variable Overview](https://nlu.johnsnowlabs.com/docs/en/install#license-variables-names-for-json-and-os-variables)                                                                                                                   | `jsl.install(hc_license=hc_license enterprise_nlp_secret=enterprise_nlp_secret ocr_secret=ocr_secret ocr_license=ocr_license aws_access_key=aws_access_key aws_key_id=aws_key_id)` |
 
 ### Optional Auth Flow Parameters
 
@@ -163,8 +170,8 @@ You can find all of your license information on [https://my.johnsnowlabs.com/sub
 
 - `AWS_ACCESS_KEY_ID` : Assigned to you by John Snow Labs. Must be defined.
 - `AWS_SECRET_ACCESS_KEY` : Assigned to you by John Snow Labs. Must be defined.
-- `HC_SECRET` : The secret for a version of the medical library. Changes between releases. Can be omitted if you don't
-  have a medical license.
+- `HC_SECRET` : The secret for a version of the enterprise NLP engine library. Changes between releases. Can be omitted if you don't
+  have access to enterprise nlp.
 - `HC_LICENSE` : Your license for the medical features. Can be omitted if you don't have a medical license.
 - `OCR_SECRET` : The secret for a version of the OCR library. Changes between releases. Can be omitted if you don't have
   a OCR license.
@@ -213,7 +220,7 @@ Manually specify all secrets. Some of these can be omitted, see [License Variabl
 ```python
 jsl.install(
     hc_license='Your Secret',
-    hc_secret='Your Secret',
+    enterprise_nlp_secret='Your Secret',
     ocr_secret='Your Secret',
     ocr_license='Your Secret',
     aws_access_key='Your Secret',
@@ -368,7 +375,7 @@ If there are multiples possible sources for licenses, the following order takes 
 3. `Os environment Variables` for any var names that match up with secret names
 4. `/content/*.json` for any json file smaller than 1 MB
 5. `current_working_dir/*.json` for any json smaller than 1 MB
-6. `~/.johnsnowlabs/jsl_config` for jsl config for
+6. `~/.johnsnowlabs/licenses` for any licenses
 
 JSON files are scanned if they have any keys that match up with names of secrets.
 Name of the json file does not matter, file just needs to end with .json

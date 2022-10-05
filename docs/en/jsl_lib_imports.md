@@ -71,7 +71,7 @@ The following Functions, Classes and Modules will available in the global namesp
 - [Medical Annotators](https://nlp.johnsnowlabs.com/docs/en/licensed_annotators) , i.e. `medical.DeIdentification`
 - [Training Methods](https://nlp.johnsnowlabs.com/docs/en/licensed_training)  i.e. `medical.AnnotationToolJsonReader`
 - [Evaluation Methods](https://nlp.johnsnowlabs.com/docs/en/evaluation), i.e. `medical.NerDLEvaluation`
-- NOTE: Any class which has `Medical` in its name is available, but the `Medical` prefix has been omitted. I.e. `medical.NerModel` maps to `sparknlp_jsl.annotator.MedicalNerModel`
+- **NOTE:** Any class which has `Medical` in its name is available, but the `Medical` prefix has been omitted. I.e. `medical.NerModel` maps to `sparknlp_jsl.annotator.MedicalNerModel`
   - This is achieved via `from sparknlp_jsl.annotator import MedicalNerModel as NerModel` under the hood.
 - To see all the imports see [the source]()
 
@@ -81,7 +81,7 @@ The following Functions, Classes and Modules will available in the global namesp
 - [Legal Annotators](https://nlp.johnsnowlabs.com/docs/en/licensed_annotators) , i.e. `legal.DeIdentification`
 - [Training Methods](https://nlp.johnsnowlabs.com/docs/en/licensed_training)  i.e. `legal.AnnotationToolJsonReader`
 - [Evaluation Methods](https://nlp.johnsnowlabs.com/docs/en/evaluation), i.e. `legal.NerDLEvaluation`
-- NOTE: Any class which has `Legal` in its name is available, but the `Legal` prefix has been omitted. I.e. `legal.NerModel` maps to `sparknlp_jsl.annotator.LegalNerModel`
+- **NOTE:** Any class which has `Legal` in its name is available, but the `Legal` prefix has been omitted. I.e. `legal.NerModel` maps to `sparknlp_jsl.annotator.LegalNerModel`
   - This is achieved via `from sparknlp_jsl.annotator import LegalNerModel as NerModel` under the hood.
 - To see all the imports see [the source]()
 
@@ -93,7 +93,7 @@ The following Functions, Classes and Modules will available in the global namesp
 - [Finance Annotators](https://nlp.johnsnowlabs.com/docs/en/licensed_annotators) , i.e. `finance.DeIdentification`
 - [Training Methods](https://nlp.johnsnowlabs.com/docs/en/licensed_training)  i.e. `finance.AnnotationToolJsonReader`
 - [Evaluation Methods](https://nlp.johnsnowlabs.com/docs/en/evaluation), i.e. `finance.NerDLEvaluation`
-- NOTE: Any class which has `Finance` in its name is available, but the `Finance` prefix has been omitted. I.e. `finance.NerModel` maps to `sparknlp_jsl.annotator.FinanceNerModel`
+- **NOTE:** Any class which has `Finance` in its name is available, but the `Finance` prefix has been omitted. I.e. `finance.NerModel` maps to `sparknlp_jsl.annotator.FinanceNerModel`
   - This is achieved via `from sparknlp_jsl.annotator import FinanceNerModel as NerModel` under the hood.
 - To see all the imports see [the source]()
 </div>

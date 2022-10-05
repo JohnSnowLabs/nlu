@@ -32,6 +32,9 @@ docs-en:
         url:    /docs/en/start-a-sparksession
       - title:  John Snow Labs Usage & Overview
         url:    /docs/en/import-structure
+      - title:  Settings & Cache Folder
+        url:    /docs/en/john-snow-labs-home
+
   - title:     NLU
     children:
       - title:  NLU Usage
