@@ -179,6 +179,8 @@ You can find all of your license information on [https://my.johnsnowlabs.com/sub
 - `JSL_LEGAL_LICENSE`: Your license for Legal OCR and Legal NLP Features
 - `JSL_FINANCE_LICENSE` Your license for Finance OCR and Finance NLP Features
 
+NOTE: Instead of `JSL_LEGAL_LICENSE`, `HC_LICENSE` and `JSL_FINANCE_LICENSE` you may have 1 generic `SPARK_NLP_LICENSE`.
+
 # Installation Examples
 
 ## Auth Flow Examples
@@ -210,7 +212,7 @@ Where you find the license
 Path to a JSON containing secrets, see [License Variable Names](https://nlu.johnsnowlabs.com/docs/en/install#license-variables-names-for-json-and-os-variables) for more details.
 
 ```python
-jsl.install(secrets_file='my/secret.json')
+jsl.install(json_file_path='my/secret.json')
 ``` 
 
 ### Via Manually defining Secrets
@@ -219,14 +221,14 @@ Manually specify all secrets. Some of these can be omitted, see [License Variabl
 
 ```python
 jsl.install(
-    hc_license='Your Secret',
-    enterprise_nlp_secret='Your Secret',
-    ocr_secret='Your Secret',
-    ocr_license='Your Secret',
-    aws_access_key='Your Secret',
-    aws_key_id='Your Secret',
-    fin_license='Your Secret',
-    leg_license='Your Secret',
+    hc_license='Your HC License',
+    fin_license='Your FIN License',
+    leg_license='Your LEG License',
+    enterprise_nlp_secret='Your NLP Secret',
+    ocr_secret='Your OCR Secret',
+    ocr_license='Your OCR License',
+    aws_access_key='Your Access Key',
+    aws_key_id='Your Key ID',
 )
 ```
 
@@ -333,7 +335,7 @@ jsl.install(offline=True)
 To install in databricks you must provide your `accessToken` and `hostUrl`.
 You can provide the secrets to the install function with any of the methods listed above, i.e. using `access_token`
 , `browser`, `json_file`, or `manually defining secrets`
-Your get get it from
+Your can get it from
 
 ``` python
 # Create a new Cluster with Spark NLP and all licensed libraries ready to go
