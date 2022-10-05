@@ -81,7 +81,7 @@ The parameters of `jsl.install()`parameters fall into 3 categories:
 
 You can use `jsl.list_remote_licenses()` to list all available licenses in your [my.johnsnowlabs.com/](https://my.johnsnowlabs.com/) account
 and `jsl.list_local_licenses()` to list all locally cached licenses. 
-```
+
 
 ### Authorization Flows overview
 
