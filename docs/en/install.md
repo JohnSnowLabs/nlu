@@ -8,7 +8,7 @@ modify_date: "2020-05-26"
 header: true
 ---
 
-<div class="main-docs" markdown="1">
+<div class="main-docs" markdown="1"><div class="h3-box" markdown="1">
 
 To install the johnsnowlabs Python library and all of John Snow Labs open **source libraries**, just run
 
@@ -65,7 +65,10 @@ After clicking **Authorize**:
 - Windows Users must additionally follow every step precisely defined
   in [How to correctly install Spark NLP for Windows?](https://nlp.johnsnowlabs.com/docs/en/install#windows-support)
 
-# Install Licensed Libraries
+</div><div class="h3-box" markdown="1">
+
+{:.h2-select}
+## Install Licensed Libraries
 
 The following is a more detailed overview of the alternative installation methods and parameters you can use.
 The parameters of `jsl.install()`parameters fall into 3 categories:
@@ -76,12 +79,14 @@ The parameters of `jsl.install()`parameters fall into 3 categories:
   or `target Python Environment`
 - **Installation process tweaks**
 
+</div><div class="h3-box" markdown="1">
 
 ### List all of your accessible Licenses
 
 You can use `jsl.list_remote_licenses()` to list all available licenses in your [my.johnsnowlabs.com/](https://my.johnsnowlabs.com/) account
 and `jsl.list_local_licenses()` to list all locally cached licenses. 
 
+</div><div class="h3-box" markdown="1">
 
 ### Authorization Flows overview
 
@@ -105,6 +110,8 @@ access to. Licenses are locally numbered in order they have been provided, for m
 | **Auto-Detect** Cached License in `~/.johnsnowlabs/licenses` | If you already have provided a license previously, it is cached in `~/.johnsnowlabs/licenses` and automatically loaded.<br/> Use `license_number` parameter to choose between licenses if you have multiple | `jsl.install()`                                                                                                                                            |
 | Manually specify license data                                | Set each license value as python parameter, defined by  [License Variable Overview](https://nlu.johnsnowlabs.com/docs/en/install#license-variables-names-for-json-and-os-variables)                                                                                                                   | `jsl.install(hc_license=hc_license enterprise_nlp_secret=enterprise_nlp_secret ocr_secret=ocr_secret ocr_license=ocr_license aws_access_key=aws_access_key aws_key_id=aws_key_id)` |
 
+</div><div class="h3-box" markdown="1">
+
 ### Optional Auth Flow Parameters
 
 Use these parameters to configure **how to authorize**
@@ -117,6 +124,8 @@ Use these parameters to configure **how to authorize**
 | `store_in_jsl_home`        | By default license data and Jars/Wheels are stored in in JSL home directory. <br/> This enables `jsl.start()` and `jsl.install()` to re-use your information and you don't have to specify it once authorized again.<br/> Set to `False` to disable this caching behaviour.<br/> |
 | `only_refresh_credentials` | Set to `True` if you don't want to install anything and just need to refresh or index a new license. Defaults to `False`                                                                                                                                                         |
 
+</div><div class="h3-box" markdown="1">
+
 ### Optional Installation Target Parameters
 
 Use these parameters to configure **where** to install to
@@ -128,6 +137,7 @@ Use these parameters to configure **where** to install to
 | `offline_zip_dir`                         | Specify path to a folder in which 3 sub-folders are created,  `py_installsl`, `java_installs` with corrosponding Wheels/Jars/Tars and  `licenses`. It will additionallly be zipped.                                            |
 | `Install to Databricks` with access Token | See [Databricks Documentation](https://docs.databricks.com/dev-tools/api/latest/authentication.html) for  extracting a token which you can provide to databricks access, see [Databricks Install Section](https://nlu.johnsnowlabs.com/docs/en/install#automatic-databricks-installation) for me details |
 
+</div><div class="h3-box" markdown="1">
 
 ### Optional Installation Process Parameters
 
@@ -143,6 +153,8 @@ Use these parameters to configure **what should** be installed to the target
 | `jvm_install_type`     | Specify hardware install type, either `cpu`, `gpu`, `m1`, or `aarch` . Defaults to `cpu`. If you have a GPU and want to leverage CUDA, set `gpu`. If you are an Apple M1 or Arch user choose the corresponding types |
 | `py_install_type`      | Specify Python installation type to use, either `tar.gz` or `whl`, defaults to whl                                                                                                                                   |
 | `refresh_install`      | Delete any cached files before installing by removing John Snow Labs home folder. **This will delete your locally cached licenses**                                                                                  |
+
+</div><div class="h3-box" markdown="1">
 
 ### Automatic Databricks Installation
 
@@ -160,6 +172,8 @@ all Jars, Wheels and License Information to run all features in a Databricks clu
 
 Where to find your Databricks Access Token:
 ![databricks_access_token.png](/assets/images/jsl_lib/install/databricks_access_token.png)
+
+</div><div class="h3-box" markdown="1">
 
 ### License Variables Names for JSON and OS variables
 
@@ -181,11 +195,14 @@ You can find all of your license information on [https://my.johnsnowlabs.com/sub
 
 NOTE: Instead of `JSL_LEGAL_LICENSE`, `HC_LICENSE` and `JSL_FINANCE_LICENSE` you may have 1 generic `SPARK_NLP_LICENSE`.
 
-# Installation Examples
+</div><div class="h3-box" markdown="1">
 
-## Auth Flow Examples
+{:.h2-select}
+## Installation Examples
 
-### Via Auto Detection & Browser Login
+### Auth Flow Examples
+
+#### Via Auto Detection & Browser Login
 
 All [default search locations ]() are searched, if any credentials are found they will be used used.
 If no credentials are auto-detected, a Browser Window will pop up, asking to Authroize yourself
@@ -196,7 +213,9 @@ In Google Colab, a clickable button will appear, which will make a window pop up
 jsl.install()
 ``` 
 
-### Via Access Token
+</div><div class="h3-box" markdown="1">
+
+#### Via Access Token
 
 Get your License Token from [My John Snow Labs](https://my.johnsnowlabs.com/)
 
@@ -207,7 +226,9 @@ jsl.install(access_token='secret')
 Where you find the license
 ![access_token1.png](/assets/images/jsl_lib/install/access_token1.png)
 
-### Via Json Secrets file
+</div><div class="h3-box" markdown="1">
+
+#### Via Json Secrets file
 
 Path to a JSON containing secrets, see [License Variable Names](https://nlu.johnsnowlabs.com/docs/en/install#license-variables-names-for-json-and-os-variables) for more details.
 
@@ -215,7 +236,9 @@ Path to a JSON containing secrets, see [License Variable Names](https://nlu.john
 jsl.install(json_file_path='my/secret.json')
 ``` 
 
-### Via Manually defining Secrets
+</div><div class="h3-box" markdown="1">
+
+#### Via Manually defining Secrets
 
 Manually specify all secrets. Some of these can be omitted, see [License Variable Names](https://nlu.johnsnowlabs.com/docs/en/install#license-variables-names-for-json-and-os-variables) for more details.
 
@@ -232,6 +255,8 @@ jsl.install(
 )
 ```
 
+</div><div class="h3-box" markdown="1">
+
 ## Installation Target Examples
 
 ### Into Current Python Process
@@ -242,6 +267,8 @@ Uses sys.executable by default, i.e. the Python that is currently running the pr
 jsl.install() 
 ``` 
 
+</div><div class="h3-box" markdown="1">
+
 ### Into Custom Python Env
 
 Using specific python executable, which is not the currently running python.
@@ -251,6 +278,9 @@ Will use the provided python's executable pip module to installl libraries
 jsl.install(python_exec_path='my/python.exe')
 ``` 
 
+</div><div class="h3-box" markdown="1">
+
+
 ### Into freshly created venv
 
 Create a new Venv from scratch, using the currently exectuing Pythons Venv Modulle
@@ -258,6 +288,8 @@ Create a new Venv from scratch, using the currently exectuing Pythons Venv Modul
 ```python
 jsl.install(venv_creation_path='path/to/where/my/new/venv/will/be')
 ``` 
+
+</div><div class="h3-box" markdown="1">
 
 ### Into Airgap/Offline Installation (Automatic)
 
@@ -319,6 +351,8 @@ from johnsnowlabs import *
 jsl.load('emotion').predict('Wow that easy!')
 ```
 
+</div><div class="h3-box" markdown="1">
+
 ### Into Airgap/Offline Manual
 
 Download all files yourself from the URLS printed by jsl.install().
@@ -329,6 +363,8 @@ I.e. provide the files somehow on your offline machine.
 # Print all URLS to files you need to provide on your host machine 
 jsl.install(offline=True)
 ```
+
+</div><div class="h3-box" markdown="1">
 
 ### Into a freshly created Databricks cluster
 
@@ -342,13 +378,17 @@ Your can get it from
 jsl.install(databricks_host='https://your_host.cloud.databricks.com', databricks_token = 'dbapi_token123',)
 ```
 
+</div><div class="h3-box" markdown="1">
 
-# Storage of License Data and License Search behaviour
+{:.h2-select}
+## Storage of License Data and License Search behaviour
 
 The John Snow Labs library caches license data in `~/.johnsnowlabs/licenses` whenever a new one is provided .
 After having provided license data once, you don't need to specify it again since the cached licensed will be used.
 Use the `license_number` parameter to switch between multiple licenses.     
 Note: Locally cached licenses are numbered in the order they have been provided, starting at 0
+
+</div><div class="h3-box" markdown="1">
 
 ## List all available licenses
 
@@ -359,6 +399,8 @@ Use this to decide which license number to install when installing via browser o
 jsl.list_remote_licenses()
 ```
 
+</div><div class="h3-box" markdown="1">
+
 ## List all locally cached licenses
 
 Use this to decide which license number to use when using jsl.start() or jsl.install() to specify which local license
@@ -367,6 +409,8 @@ you want to load.
 ```python
 jsl.list_local_licenses()
 ```
+
+</div><div class="h3-box" markdown="1">
 
 ## License Search precedence
 
@@ -382,6 +426,8 @@ If there are multiples possible sources for licenses, the following order takes 
 JSON files are scanned if they have any keys that match up with names of secrets.
 Name of the json file does not matter, file just needs to end with .json
 
+</div><div class="h3-box" markdown="1">
+
 ## Upgrade Flow
 
 The John Snow Labs Teams are working early to push out new Releases and Features each week!
@@ -390,17 +436,23 @@ Simply run `pip install johnsnowlabs --upgrade` to get the latest open **source 
 For updating **licensed libraries** you must in addition also run one of the [Authorization Flows](https://nlu.johnsnowlabs.com/docs/en/install#authorization-flows-overview) again.
 They will be used to fetch the latest licensed library and install them to your target
 
+</div><div class="h3-box" markdown="1">
+
 ## How to setup Java 8
 
 - [Setup Java 8 on Windows](https://access.redhat.com/documentation/en-us/openjdk/8/html/openjdk_8_for_windows_getting_started_guide/getting_started_with_openjdk_for_windows)
 - [Setup Java 8 on Linux](https://openjdk.java.net/install/)
 - [Setup Java 8 on Mac](https://docs.oracle.com/javase/8/docs/technotes/guides/install/mac_jdk.html)
 
+</div><div class="h3-box" markdown="1">
+
 ### Join our Slack channel
 
 Join our channel, to ask for help and share your feedback. Developers and users can help each other get started here.
 
 [NLU Slack](https://spark-nlp.slack.com/archives/C0196BQCDPY){:.button.button--info.button--rounded.button--md}
+
+</div><div class="h3-box" markdown="1">
 
 ### Where to go next
 
@@ -417,4 +469,4 @@ Detailed information about Johnsnowlabs Libraries APIs, concepts, components and
 - [The NLU components spellbook](https://nlu.johnsnowlabs.com/docs/en/spellbook)
 - [NLU Notebooks](notebooks)
 
-</div>
+</div></div>

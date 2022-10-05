@@ -8,7 +8,7 @@ permalink: /docs/en/utils_for_spark_nlp
 modify_date: "2019-05-16"
 ---
 
-
+<div class="main-docs" markdown="1"><div class="h3-box" markdown="1">
 
 You can see all features showcased in the demo notebook [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/JohnSnowLabs/nlu/blob/master/examples/colab/spark_nlp_utilities/NLU_utils_for_Spark_NLP.ipynb)
 
@@ -42,6 +42,8 @@ Output columns to use for the viz are automatically deducted from the pipeline, 
 first annotator that provides the correct output type for a specific viz.  
 You can specify which columns to use for a viz by using the  
 corresponding ner_col, pos_col, dep_untyped_col, dep_typed_col, resolution_col, relation_col, assertion_col, parameters.
+
+</div><div class="h3-box" markdown="1">
 
 ## nlu.autocomplete_pipeline(pipe)
 Auto-Complete a pipeline or single annotator into a runnable pipeline by harnessing NLU's DAG Autocompletion algorithm and returns it as NLU pipeline.
@@ -88,7 +90,7 @@ returns :
 |        1 |                   1 | numbness                  | gums                      | External_body_part_or_region |
 |        1 |                   1 | tongue                    | gums                      | External_body_part_or_region |
 
-
+</div><div class="h3-box" markdown="1">
 
 ## nlu.to_pretty_df(pipe,data)
 Annotates a Pandas Dataframe/Pandas Series/Numpy Array/Spark DataFrame/Python List strings /Python String  
@@ -123,6 +125,7 @@ Some columns are omitted from metadata to reduce total amount of output columns,
 For a given pipeline output level is automatically set to the last anntators output level by default.
 This can be changed by defining `to_preddty_df(pipe,text,output_level='my_level'` for levels `token`,`sentence`, `document`,`chunk` and `relation` .
 
+</div><div class="h3-box" markdown="1">
 
 ## nlu.to_nlu_pipe(pipe)
 Convert a pipeline or list of annotators into a NLU pipeline making `.predict()` and `.viz()` avaiable for every Spark NLP pipeline.
@@ -162,6 +165,4 @@ and
 
 <img src="https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/images/releases/4_0_0/nlu_utils_viz_example.png"  />
 
-
-
-
+</div>

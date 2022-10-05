@@ -8,15 +8,16 @@ permalink: /docs/en/viz_examples
 modify_date: "2019-05-16"
 ---
 
-<div class="main-docs" markdown="1">
-
-<div class="h3-box" markdown="1">
+<div class="main-docs" markdown="1"><div class="h3-box" markdown="1">
 
 NLU can do quite a lot of things in just one line.   
 But imagine the things you could do in multiple lines, like visualizations!    
 In this section we will demonstrate a few common NLU idioms for the data science lifecycle, especially for the data exploration phase.         
 
-# Visualizations using nlu.load().viz()
+</div><div class="h3-box" markdown="1">
+
+{:.h2-select}
+## Visualizations using nlu.load().viz()
 You can use the build in visualization module on any pipeline or model returned by `nlu.load()`.
 Simply call `viz()` and NLU will try to deduct a applicable visualization.    
 Alternatively, you can also manually specify, which visualization you want to invoke.   
@@ -32,12 +33,16 @@ These visualizations are provided via [Spark-NLP-Display package](https://nlp.jo
 
 See the [visualization tutorial](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/visualization/NLU_visualizations_tutorial.ipynb) notebook for more info.
 
+</div><div class="h3-box" markdown="1">
+
 ## NER visualization
 Applicable to any of the [100+ NER models! See here for an overview](https://nlp.johnsnowlabs.com/models?task=Named+Entity+Recognition)
 ```python
 nlu.load('ner').viz("Donald Trump from America and Angela Merkel from Germany don't share many oppinions.")
 ```
 ![NER visualization](/assets/images/nlu/VizExamples/viz_module/NER.png)
+
+</div><div class="h3-box" markdown="1">
 
 ## Dependency tree visualization
 Visualizes the structure of the labeled dependency tree and part of speech tags
@@ -52,6 +57,8 @@ nlu.load('dep.typed').viz("Billy went to the mall")
 nlu.load('dep.typed').viz("Donald Trump from America and Angela Merkel from Germany don't share many oppinions but they both love John Snow Labs software")
 ```
 ![Dependency Tree visualization](/assets/images/nlu/VizExamples/viz_module/DEP_big.png)
+
+</div><div class="h3-box" markdown="1">
 
 ## Assertion status visualization
 Visualizes asserted statuses and entities.        
@@ -70,6 +77,7 @@ nlu.load('med_ner.clinical assert').viz(data)
 ```
 ![Assert visualization](/assets/images/nlu/VizExamples/viz_module/assertion_big.png)
 
+</div><div class="h3-box" markdown="1">
 
 ## Relationship between entities visualization
 Visualizes the extracted entities between relationship.    
@@ -86,6 +94,7 @@ pipe = nlu.load('med_ner.jsl.wip.clinical relation.clinical').viz(data)
 ```
 ![Entity Relation visualization](/assets/images/nlu/VizExamples/viz_module/relation_big.png)
 
+</div><div class="h3-box" markdown="1">
 
 ## Entity Resolution visualization for chunks
 Visualizes resolutions of entities
@@ -103,6 +112,7 @@ nlu.load('med_ner.jsl.wip.clinical resolve_chunk.rxnorm.in').viz(data)
 
 ![Chunk Resolution visualization](/assets/images/nlu/VizExamples/viz_module/resolve_chunk_big.png)
 
+</div><div class="h3-box" markdown="1">
 
 ## Entity Resolution visualization for sentences
 Visualizes resolutions of entities in sentences
@@ -119,6 +129,8 @@ nlu.load('med_ner.jsl.wip.clinical resolve.icd10cm').viz(data)
 ```
 ![Sentence Resolution visualization](/assets/images/nlu/VizExamples/viz_module/resolve_sentence_big.png)
 
+</div><div class="h3-box" markdown="1">
+
 ## Configure visualizations
 ### Define custom colors for labels
 Some entity and relation labels will be highlighted with a pre-defined color, which you [can find here](https://github.com/JohnSnowLabs/spark-nlp-display/tree/main/sparknlp_display/label_colors).    
@@ -133,6 +145,7 @@ nlu.load('med_ner.jsl.wip.clinical').viz(data,viz_colors =viz_colors)
 ```
 ![define colors labels](/assets/images/nlu/VizExamples/viz_module/define_colors.png)
 
+</div><div class="h3-box" markdown="1">
 
 ### Filter entities that get highlighted
 By default every entity class will be visualized.    
@@ -146,9 +159,10 @@ nlu.load('med_ner.jsl.wip.clinical').viz(data,labels_to_viz=labels_to_viz)
 ```
 ![filter labels](/assets/images/nlu/VizExamples/viz_module/filter_labels.png)
 
+</div><div class="h3-box" markdown="1">
 
-
-# Visualizations using Pandas
+{:.h2-select}
+## Visualizations using Pandas
 The most common two liner you will use in NLU is loading a classifier like *emotion* or *sentiment*
 and then plotting the occurence of each predicted label .
 
@@ -192,5 +206,4 @@ keyword_predictions.explode('keywords').keywords.value_counts()[0:100].plot.bar(
 ```
 ![Category counts](/assets/images/nlu/VizExamples/keyword_distribution.png)
 
-</div>
-
+</div></div>

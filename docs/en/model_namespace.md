@@ -8,11 +8,7 @@ key: docs-spellbook
 modify_date: "2020-05-08"
 ---
 
-<div class="main-docs" markdown="1">
-
-<div class="h3-box" markdown="1">
-
-
+<div class="main-docs" markdown="1"><div class="h3-box" markdown="1">
 
 ## Default Component References 
 
@@ -1734,7 +1730,7 @@ wrapped inside of a NLU Pipeline.
 | Multilingual                                                              | [xx.classify.lang.21](https://nlp.johnsnowlabs.com/2020/12/05/detect_language_21_xx.html)                             | [detect_language_21](https://nlp.johnsnowlabs.com/2020/12/05/detect_language_21_xx.html)                                       |
 | Multilingual                                                              | [xx.classify.lang.20](https://nlp.johnsnowlabs.com)                                                                   | [detect_language_20](https://nlp.johnsnowlabs.com)                                                                             |
 
-</div></div></div></div>
+</div></div></div><div class="h3-box" markdown="1">
 
 
 
@@ -2055,9 +2051,7 @@ wrapped inside of a NLU Pipeline.
 | [Portuguese](https://iso639-3.sil.org/code/por)                    | [pt.med_ner.deid.subentity](https://nlp.johnsnowlabs.com/2022/04/13/ner_deid_subentity_pt_3_0.html)                                                           | [ner_deid_subentity](https://nlp.johnsnowlabs.com/2022/04/13/ner_deid_subentity_pt_3_0.html)                                                                       |
 | [Portuguese](https://iso639-3.sil.org/code/por)                    | [pt.med_ner.deid.generic](https://nlp.johnsnowlabs.com/2022/04/13/ner_deid_generic_pt_3_0.html)                                                               | [ner_deid_generic](https://nlp.johnsnowlabs.com/2022/04/13/ner_deid_generic_pt_3_0.html)                                                                           |
 
-</div></div>
-
-
+</div></div></div><div class="table-wrapper"><div class="table-inner" markdown="1">
 
 ## Healthcare Pipeline references
 
@@ -2083,3 +2077,5 @@ wrapped inside of a NLU Pipeline.
 | [English](https://iso639-3.sil.org/code/eng)                       | [en.explain_doc.carp](https://nlp.johnsnowlabs.com/2021/04/01/explain_clinical_doc_carp_en.html)                                        | [explain_clinical_doc_carp](https://nlp.johnsnowlabs.com/2021/04/01/explain_clinical_doc_carp_en.html)                               |
 | [French](https://iso639-3.sil.org/code/fra)                        | [fr.deid_obfuscated](https://nlp.johnsnowlabs.com/2022/03/04/clinical_deidentification_fr_2_4.html)                                     | [clinical_deidentification](https://nlp.johnsnowlabs.com/2022/03/04/clinical_deidentification_fr_2_4.html)                           |
 | [Moldavian, Moldovan, Romanian](https://iso639-3.sil.org/code/ron) | [ro.deid.clinical](https://nlp.johnsnowlabs.com/2022/06/28/clinical_deidentification_ro_3_0.html)                                       | [clinical_deidentification](https://nlp.johnsnowlabs.com/2022/06/28/clinical_deidentification_ro_3_0.html)                           |
+
+</div></div></div>

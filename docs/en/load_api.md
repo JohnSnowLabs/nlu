@@ -8,9 +8,7 @@ key: docs-developers
 modify_date: "2020-05-08"
 ---
 
-<div class="main-docs" markdown="1">
-
-<div class="h3-box" markdown="1">
+<div class="main-docs" markdown="1"><div class="h3-box" markdown="1">
 
 The nlu.load() method takes in one or multiple NLU pipeline, model or component references separated by whitespaces.     
 See [the NLU spellbook]( /docs/en/spellbook) for an overview of all possible NLU references.     

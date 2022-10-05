@@ -8,9 +8,7 @@ permalink: /docs/en/predict_api
 modify_date: "2019-05-16"
 ---
 
-<div class="main-docs" markdown="1">
-
-<div class="h3-box" markdown="1">
+<div class="main-docs" markdown="1"><div class="h3-box" markdown="1">
 
 ## The predict function
 NLU expects either a column named 'text' in the dataframe passed to it or alternatively it will assume the first column of the dataframe passed to it as the column it should predict for.

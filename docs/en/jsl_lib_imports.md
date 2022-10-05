@@ -8,7 +8,7 @@ modify_date: "2020-05-26"
 header: true
 ---
 
-<div class="main-docs" markdown="1">
+<div class="main-docs" markdown="1"><div class="h3-box" markdown="1">
 
 The John Snow Labs Python library gives you a clean and easy way to structure your Python projects.
 The very first line of a project should be:
@@ -21,6 +21,8 @@ many handy utility imports.
 
 The following Functions, Classes and Modules will available in the global namespace
 
+</div><div class="h3-box" markdown="1">
+
 ## The **nlp** Module
 -------------------
 `nlp` module with classes and methods from [Spark NLP](https://nlp.johnsnowlabs.com/docs/en/quickstart)  like `nlp.BertForSequenceClassification`  and `nlp.map_annotations()`
@@ -32,6 +34,7 @@ The following Functions, Classes and Modules will available in the global namesp
 - `nlp.ML` via  `from pyspark import ml as ML` under the hood
 - To see all the imports see [the source](https://github.com/JohnSnowLabs/johnsnowlabs/blob/main/johnsnowlabs/nlp.py)
 
+</div><div class="h3-box" markdown="1">
 
 ## The **jsl** Module
 
@@ -43,6 +46,7 @@ The following Functions, Classes and Modules will available in the global namesp
 - `jsl.viz_streamlit()` and other `jsl.viz_streamlit_xyz for using any of the 10k+ pretrained models in 0 lines of code with an [interactive Streamlit GUI and re-usable and stackable Streamlit Components](https://nlu.johnsnowlabs.com/docs/en/streamlit_viz_examples)
 - `jsl.to_pretty_df()` for predicting on raw strings getting a nicely structures Pandas DF from a Spark Pipeline using [nlu.to_pretty_df()](https://nlu.johnsnowlabs.com/docs/en/utils_for_spark_nlp) under the hood
 
+</div><div class="h3-box" markdown="1">
 
 ## The **viz** Module
 
@@ -53,6 +57,7 @@ The following Functions, Classes and Modules will available in the global namesp
 - `viz.EntityResolverVisualizer` for visualizing prediction outputs of EntityResolver based Spark Pipelines
 - `viz.AssertionVisualizer` for visualizing prediction outputs of Assertion based Spark Pipelines
 
+</div><div class="h3-box" markdown="1">
 
 ## The **ocr** Module
 
@@ -63,6 +68,8 @@ The following Functions, Classes and Modules will available in the global namesp
 - [Object detectors](https://nlp.johnsnowlabs.com/docs/en/ocr_object_detection) i.e. `ocr.ImageHandwrittenDetector`
 - [Enums, Structures and helpers](https://nlp.johnsnowlabs.com/docs/en/ocr_structures) i.e. `ocr.Color`
 - To see all the imports see [the source](https://github.com/JohnSnowLabs/johnsnowlabs/blob/main/johnsnowlabs/ocr.py)
+
+</div><div class="h3-box" markdown="1">
 
 ## The **medical** Module
 
@@ -75,6 +82,8 @@ The following Functions, Classes and Modules will available in the global namesp
   - This is achieved via `from sparknlp_jsl.annotator import MedicalNerModel as NerModel` under the hood.
 - To see all the imports see [the source](https://github.com/JohnSnowLabs/johnsnowlabs/blob/main/johnsnowlabs/medical.py)
 
+</div><div class="h3-box" markdown="1">
+
 ## The **legal** Module
 
 `legal` module with annotator classes and methods from [Spark NLP for Legal](https://nlp.johnsnowlabs.com/docs/en/licensed_annotators)  like `legal.RelationExtractionDL`  and `legal.profile()`
@@ -85,6 +94,7 @@ The following Functions, Classes and Modules will available in the global namesp
   - This is achieved via `from sparknlp_jsl.annotator import LegalNerModel as NerModel` under the hood.
 - To see all the imports see [the source](https://github.com/JohnSnowLabs/johnsnowlabs/blob/main/johnsnowlabs/legal.py)
 
+</div><div class="h3-box" markdown="1">
 
 ## The **finance** Module
 
@@ -97,4 +107,4 @@ The following Functions, Classes and Modules will available in the global namesp
   - This is achieved via `from sparknlp_jsl.annotator import FinanceNerModel as NerModel` under the hood.
 - To see all the imports see [the source](https://github.com/JohnSnowLabs/johnsnowlabs/blob/main/johnsnowlabs/finance.py)
 - 
-</div>
+</div></div>
