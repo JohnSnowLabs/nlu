@@ -26,7 +26,7 @@ Test-Report Pandas Dataframe has the columns:
 |---------------|---------------------------------------------------------------|
 | `test_script` | is the generated script for testing                           |
 | `stderr`      | Error logs of process ran. Print this to easily read          |
-| `stderr`      | Standard Print logs of process ran. Print this to easily read |
+| `stdout`      | Standard Print logs of process ran. Print this to easily read |
 | `success`     | True if script ran successfully from top to bottom            |
 | `notebook`    | The Source notebook for testing                               |
 
@@ -54,7 +54,7 @@ test_markdown('https://nlp.johnsnowlabs.com/2022/08/31/legpipe_deid_en.html')
 This will scan the folder for all files ending with `.md` , test them and generate a report
 ```python
 from johnsnowlabs.utils.modelhub_markdown import test_markdown
-test_markdown('my/markdown/folder')
+test_ipynb('my/markdown/folder')
 ```
 
 ### Test a List of Markdown References

@@ -34,7 +34,7 @@ The generated Test-Report Pandas Dataframe has the columns:
 |---------------|-------------------------------------------------------------------------------------------------------------------------------------|
 | `test_script` | is the generated script for testing. If you think the notebook should not crash, check the file, there could be a generation error. |
 | `stderr`      | Error logs of process ran. Print this to easily read                                                                                |
-| `stderr`      | Standard Print logs of process ran. Print this to easily read                                                                       |
+| `stdout`      | Standard Print logs of process ran. Print this to easily read                                                                       |
 | `success`     | True if script ran successfully from top to bottom                                                                                  |
 | `notebook`    | The Source notebook for testing                                                                                                     |
 

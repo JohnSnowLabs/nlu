@@ -26,18 +26,14 @@ To quickly test the installation, you can run in your Shell:
 ```shell
 python -c "from johnsnowlabs import *;print(nlu.load('emotion').predict('Wow that easy!'))"
 ```
-
 or in Python:
-
 ```python
 from johnsnowlabs import *
 jsl.load('emotion').predict('Wow that easy!')
 ```
-
 The quickest way to get access to **licensed libraries** like 
 [Finance NLP, Legal NLP, Healthcare NLP](https://nlp.johnsnowlabs.com/docs/en/licensed_install) or
 [Visual NLP](https://nlp.johnsnowlabs.com/docs/en/ocr) is to run the following in python:
-
 ```python
 from johnsnowlabs import *
 jsl.install()
@@ -74,8 +70,7 @@ The following is a more detailed overview of the alternative installation method
 The parameters of `jsl.install()`parameters fall into 3 categories:
 
 - **Authorization Flow Choice & Auth Flow Tweaks**
-- **Installation Target** such as `Airgap Offline`, `Databricks`, `new Pytho Venv`
-  ,  `Currently running Python Enviroment`,
+- **Installation Targets** such as `Airgap Offline`, `Databricks`, `new Pytho Venv`,  `Currently running Python Enviroment`,
   or `target Python Environment`
 - **Installation process tweaks**
 
@@ -95,20 +90,20 @@ libraries.
 Once access to your license is provided, it is cached locally `~/.johnsnowlabs/licenses` and re-used when
 calling `jst.start()` and `jsl.install()`, so you don't need to authorize again.          
 Only 1 licenses can be provided and will be cached during authorization flows.           
-If you have multiple licenses you can re-run an authorization method and use the `license_number` parameter choose
+If you have multiple licenses you can re-run an authorization method and use the `local_license_number` and `remote_license_number` parameter choose
 between licenses you have access to.      
 Licenses are locally numbered in order they have been provided, for more info see [License Caching](https://nlu.johnsnowlabs.com/docs/en/install#storage-of-license-data-and-license-search-behaviour).
 
-| Auth Flow Method                                             | Description                                                                                                                                                                                                 | Python `jsl.install()` usage                                                                                                                               |
-|--------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Browser Based Login (OAuth) Localhost                        | Browser window will pop up, where you can give access to your license                                                                                                                                       | `jsl.install()`                                                                                                                                            |
-| Browser Based Login (OAuth) on Google Colab                  | A button is displayed in your notebook, click it and visit new page to give access to your license                                                                                                         | `jsl.install()`                                                                                                                                            |
-| Access Token                                                 | Vist [my.johnsnowlabs.com](https://my.johnsnowlabs.com/) to extract a token which you can provide to enable license access. See [Access Token Example](https://nlu.johnsnowlabs.com/docs/en/install#via-access-token) for more details                             | `jsl.install(access_token=my_token)`                                                                                                                       |
-| License JSON file path                                       | Define JSON license file with keys  defined by [License Variable Overview](https://nlu.johnsnowlabs.com/docs/en/install#license-variables-names-for-json-and-os-variables) and provide file path                                                                                                      | `jsl.install(json_license_path=path)`                                                                                                                      |
-| **Auto-Detect** License JSON file from `os.getcwd()`         | `os.getcwd()` directory is scanned for a `.json` file containing license keys defined by [License Variable Overview](https://nlu.johnsnowlabs.com/docs/en/install#license-variables-names-for-json-and-os-variables)                                                                                  | `jsl.install()`                                                                                                                                            |
-| **Auto-Detect** OS Environment Variables                     | Environment Variables are scanned for license variables defined by [License Variable Overview](https://nlu.johnsnowlabs.com/docs/en/install#license-variables-names-for-json-and-os-variables)                                                                                                        | `jsl.install()`                                                                                                                                            |
-| **Auto-Detect** Cached License in `~/.johnsnowlabs/licenses` | If you already have provided a license previously, it is cached in `~/.johnsnowlabs/licenses` and automatically loaded.<br/> Use `license_number` parameter to choose between licenses if you have multiple | `jsl.install()`                                                                                                                                            |
-| Manually specify license data                                | Set each license value as python parameter, defined by  [License Variable Overview](https://nlu.johnsnowlabs.com/docs/en/install#license-variables-names-for-json-and-os-variables)                                                                                                                   | `jsl.install(hc_license=hc_license enterprise_nlp_secret=enterprise_nlp_secret ocr_secret=ocr_secret ocr_license=ocr_license aws_access_key=aws_access_key aws_key_id=aws_key_id)` |
+| Auth Flow Method                                             | Description                                                                                                                                                                                                                            | Python `jsl.install()` usage                                                                                                                                                       |
+|--------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Browser Based Login (OAuth) Localhost                        | Browser window will pop up, where you can give access to your license. Use `remote_license_number` parameter to choose between licenses. Use `remote_license_number` parameter to choose between licenses                              | `jsl.install()`                                                                                                                                                                    |
+| Browser Based Login (OAuth) on Google Colab                  | A button is displayed in your notebook, click it and visit new page to give access to your license. Use `remote_license_number` parameter to choose between licenses                                                                   | `jsl.install()`                                                                                                                                                                    |
+| Access Token                                                 | Vist [my.johnsnowlabs.com](https://my.johnsnowlabs.com/) to extract a token which you can provide to enable license access. See [Access Token Example](https://nlu.johnsnowlabs.com/docs/en/install#via-access-token) for more details | `jsl.install(access_token=my_token)`                                                                                                                                               |
+| License JSON file path                                       | Define JSON license file with keys  defined by [License Variable Overview](https://nlu.johnsnowlabs.com/docs/en/install#license-variables-names-for-json-and-os-variables) and provide file path                                       | `jsl.install(json_license_path=path)`                                                                                                                                              |
+| **Auto-Detect** License JSON file from `os.getcwd()`         | `os.getcwd()` directory is scanned for a `.json` file containing license keys defined by [License Variable Overview](https://nlu.johnsnowlabs.com/docs/en/install#license-variables-names-for-json-and-os-variables)                   | `jsl.install()`                                                                                                                                                                    |
+| **Auto-Detect** OS Environment Variables                     | Environment Variables are scanned for license variables defined by [License Variable Overview](https://nlu.johnsnowlabs.com/docs/en/install#license-variables-names-for-json-and-os-variables)                                         | `jsl.install()`                                                                                                                                                                    |
+| **Auto-Detect** Cached License in `~/.johnsnowlabs/licenses` | If you already have provided a license previously, it is cached in `~/.johnsnowlabs/licenses` and automatically loaded.<br/> Use `local_license_number` parameter to choose between licenses if you have multiple                      | `jsl.install()`                                                                                                                                                                    |
+| Manually specify license data                                | Set each license value as python parameter, defined by  [License Variable Overview](https://nlu.johnsnowlabs.com/docs/en/install#license-variables-names-for-json-and-os-variables)                                                    | `jsl.install(hc_license=hc_license enterprise_nlp_secret=enterprise_nlp_secret ocr_secret=ocr_secret ocr_license=ocr_license aws_access_key=aws_access_key aws_key_id=aws_key_id)` |
 
 </div><div class="h3-box" markdown="1">
 
@@ -116,13 +111,14 @@ Licenses are locally numbered in order they have been provided, for more info se
 
 Use these parameters to configure **the preferred authorization flow**.
 
-| Parameter                  | description                                                                                                                                                                                                                                                                      |
-|----------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `browser_login`            | Enable or disable browser based login and pop up if no license is provided or automatically detected. Defaults to `True`.                                                                                                                                                         |
-| `force_browser_login`      | If a cached license if found, no browser pop up occurs. Set `True` to force the browser pop up, so that you can download different license, if you have several ones.                                                                                                                |
-| `license_number`           | Specify the license number to use with OAuth based approaches or when loading a cached license from jsl home and multiple licenses have been cached. Defaults to `0` which will use your 0th license from my.johnsnowlabs.com.                                                       |
+| Parameter                  | description                                                                                                                                                                                                                                                       |
+|----------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `browser_login`            | Enable or disable browser based login and pop up if no license is provided or automatically detected. Defaults to `True`.                                                                                                                                         |
+| `force_browser_login`      | If a cached license if found, no browser pop up occurs. Set `True` to force the browser pop up, so that you can download different license, if you have several ones.                                                                                             |
+| `local_license_number`     | Specify the license number when loading a cached license from jsl home and multiple licenses have been cached. Defaults to `0` which will use the very first license every provided to the johnsnowlabs library.                                                  |
+| `remote_license_number`    | Specify the license number to use with OAuth based approaches.    Defaults to `0` which will use your first license from my.johnsnowlabs.com.                                                                                                                     |
 | `store_in_jsl_home`        | By default license data and Jars/Wheels are stored in JSL home directory. <br/> This enables `jsl.start()` and `jsl.install()` to re-use your information and you don't have to specify on every run.<br/> Set to `False` to disable this caching behaviour.<br/> |
-| `only_refresh_credentials` | Set to `True` if you don't want to install anything and just need to refresh or index a new license. Defaults to `False`.                                                                                                                                                         |
+| `only_refresh_credentials` | Set to `True` if you don't want to install anything and just need to refresh or index a new license. Defaults to `False`.                                                                                                                                         |
 
 </div><div class="h3-box" markdown="1">
 
@@ -173,8 +169,6 @@ Where to find your Databricks Access Token:
 ![databricks_access_token.png](/assets/images/jsl_lib/install/databricks_access_token.png)
 
 </div><div class="h3-box" markdown="1">
-
-
 #### Databricks Cluster Creation Parameters
 
 You can set the following parameters on the `jsl.install()` function to define properties of the cluster which will be created.  
@@ -226,14 +220,11 @@ You can find all of your license information on [https://my.johnsnowlabs.com/sub
 
 NOTE: Instead of `JSL_LEGAL_LICENSE`, `HC_LICENSE` and `JSL_FINANCE_LICENSE` you may have 1 generic `SPARK_NLP_LICENSE`.
 
-</div><div class="h3-box" markdown="1">
-
 {:.h2-select}
 ## Installation Examples
 
-### Auth Flow Examples
-
-#### Via Auto Detection & Browser Login
+</div><div class="h3-box" markdown="1">
+### Via Auto Detection & Browser Login
 
 All [default search locations ]() are searched, if any credentials are found they will be used.
 If no credentials are auto-detected, a Browser Window will pop up, asking to authorize access to https://my.johnsnowlabs.com/
@@ -244,8 +235,7 @@ jsl.install()
 ``` 
 
 </div><div class="h3-box" markdown="1">
-
-#### Via Access Token
+### Via Access Token
 
 Get your License Token from [My John Snow Labs](https://my.johnsnowlabs.com/)
 
@@ -257,8 +247,7 @@ Where you find the license
 ![access_token1.png](/assets/images/jsl_lib/install/access_token1.png)
 
 </div><div class="h3-box" markdown="1">
-
-#### Via Json Secrets file
+### Via Json Secrets file
 
 Path to a JSON containing secrets, see [License Variable Names](https://nlu.johnsnowlabs.com/docs/en/install#license-variables-names-for-json-and-os-variables) for more details.
 
@@ -267,8 +256,7 @@ jsl.install(json_file_path='my/secret.json')
 ``` 
 
 </div><div class="h3-box" markdown="1">
-
-#### Via Manually defining Secrets
+### Via Manually defining Secrets
 
 Manually specify all secrets. Some of these can be omitted, see [License Variable Names](https://nlu.johnsnowlabs.com/docs/en/install#license-variables-names-for-json-and-os-variables) for more details.
 
@@ -286,8 +274,6 @@ jsl.install(
 ```
 
 </div><div class="h3-box" markdown="1">
-
-## Installation Target Examples
 
 ### Into Current Python Process
 
@@ -418,8 +404,11 @@ you must install the `johnsnowlabs_for_databricks` pypi package instead of `john
 
 The John Snow Labs library caches license data in `~/.johnsnowlabs/licenses` whenever a new one is provided .
 After having provided license data once, you don't need to specify it again since the cached licensed will be used.
-Use the `license_number` parameter to switch between multiple licenses.  
-`Note: Locally cached licenses are numbered in the order they have been provided, starting at 0.`
+Use the `local_license_number` and `remote_license_number` parameters to switch between multiple licenses.  
+**Note:** Locally cached licenses are numbered in the order they have been provided, starting at 0.            
+`remote_license_number=0` might not be the same as `local_license_number=0`.           
+Use the following functions to see all your avaiable licenses.     
+
 
 </div><div class="h3-box" markdown="1">
 
