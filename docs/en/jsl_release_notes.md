@@ -1,7 +1,7 @@
 ---
 layout: docs
 seotitle: NLU | John Snow Labs
-title: Utilities for Databricks
+title: John Snow Labs Release Notes
 permalink: /docs/en/jsl-release-notes
 key: docs-install
 modify_date: "2020-05-26"
