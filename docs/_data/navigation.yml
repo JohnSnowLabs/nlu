@@ -32,9 +32,16 @@ docs-en:
         url:    /docs/en/start-a-sparksession
       - title:  John Snow Labs Usage & Overview
         url:    /docs/en/import-structure
+      - title:  Utilities for Databricks
+        url:    /docs/en/databricks-utils
       - title:  Settings & Cache Folder
         url:    /docs/en/john-snow-labs-home
-
+      - title:  Utilities for Testing Notebooks
+        url:    /docs/en/testing-utils-notebooks
+      - title:  Utilities for Testing NLP Models & Modelhub
+        url:    /docs/en/testing-utils-modelshub
+      - title:  John Snow Labs Release Notes
+        url:    /docs/en/jsl-release-notes
   - title:     NLU
     children:
       - title:  NLU Usage
@@ -58,7 +65,7 @@ docs-en:
         key: streamlit_viz
       - title:  Spellbook
         url:    /docs/en/spellbook
-      - title:  Utils for Spark NLP
+      - title:  Utilities for Spark NLP
         url:    /docs/en/utils_for_spark_nlp
 
 
@@ -72,7 +79,7 @@ docs-en:
 
 #      - title: Pydocs
 #        url: /api/
-      - title: Release Notes
+      - title: NLU Release Notes
         url: /docs/en/release_notes
 
 

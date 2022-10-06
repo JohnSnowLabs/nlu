@@ -8,7 +8,7 @@ permalink: /docs/en/streamlit_viz_examples
 modify_date: "2019-05-16"
 ---
 
-<div class="main-docs" markdown="1">
+<div class="main-docs" markdown="1"><div class="h3-box" markdown="1">
 
 
 This page contains examples and tutorials on how to visualize the 1000+ state-of-the-art NLP models provided by NLU in *just 1 line of code* in `streamlit`.
@@ -21,6 +21,8 @@ Besides that, you can also compare the results of the 200+ NER models John Snow 
 
 <img src="https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/streamlit_docs_assets/gif/start.gif">
 
+</div><div class="h3-box" markdown="1">
+
 ## Install
 [For detailed instructions refer to the NLU install documentation here](https://nlu.johnsnowlabs.com/docs/en/install)   
 You need `Open JDK 8` installed and the following python packages
@@ -28,17 +30,22 @@ You need `Open JDK 8` installed and the following python packages
 pip install nlu streamlit pyspark==3.0.1 sklearn plotly 
 ```
 Problems? [Connect with us on Slack!](https://join.slack.com/t/spark-nlp/shared_invite/zt-lutct9gm-kuUazcyFKhuGY3_0AMkxqA)
-z
+
+</div><div class="h3-box" markdown="1">
+
 ## Impatient and want some action?
 Just run this Streamlit app, you can use it to generate python code for each NLU-Streamlit building block
 ```shell
 streamlit run https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/examples/streamlit/01_dashboard.py
 ```
 
+</div><div class="h3-box" markdown="1">
+
 ## Quick Starter cheat sheet - All you need to know in 1 picture for NLU + Streamlit
 For NLU models to load, see [the NLU spellbook](https://nlu.johnsnowlabs.com/docs/en/spellbook) or the [John Snow Labs Modelshub](https://modelshub.johnsnowlabs.com/models)  or go [straight to the source](https://github.com/JohnSnowLabs/nlu/blob/master/nlu/spellbook.py).
 ![NLU Streamlit Cheatsheet](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/streamlit_docs_assets/img/NLU_Streamlit_Cheetsheet.png)
 
+</div><div class="h3-box" markdown="1">
 
 ## Examples
 Just try out any of these.
@@ -57,6 +64,7 @@ streamlit run https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/examples
 streamlit run https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/examples/streamlit/03_text_similarity_matrix.py
 ```
 
+</div><div class="h3-box" markdown="1">
 
 ### Example:  [`04_dependency_tree`](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/examples/streamlit/04_dependency_tree.py)
 ```shell
@@ -88,15 +96,14 @@ streamlit run https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/examples
 streamlit run https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/examples/streamlit/09_entity_embedding_manifolds.py
 ```
 
+</div><div class="h3-box" markdown="1">
 
 ## How to use NLU?
 All you need to know about NLU is that there is the [`nlu.load()`](https://nlu.johnsnowlabs.com/docs/en/load_api) method which returns a `NLUPipeline` object
 which has a [`.predict()`](https://nlu.johnsnowlabs.com/docs/en/predict_api) that works on most [common data types in the pydata stack like Pandas dataframes](https://nlu.johnsnowlabs.com/docs/en/predict_api#supported-data-types) .     
 Ontop of that, there are various visualization methods a NLUPipeline provides easily integrate in Streamlit as re-usable components. [`viz() method`](https://nlu.johnsnowlabs.com/docs/en/viz_examples)
 
-
-
-
+</div><div class="h3-box" markdown="1">
 
 ### Overview of NLU + Streamlit buildingblocks
 
@@ -113,10 +120,12 @@ Ontop of that, there are various visualization methods a NLUPipeline provides ea
 | [`nlu.load('<Model>').viz(data, write_to_streamlit=True)`](TODO.com)                | Display the raw visualization without any UI elements. See [viz docs for more info](https://nlu.johnsnowlabs.com/docs/en/viz_examples). By default all aplicable nlu model references will be shown. |
 | [`nlu.enable_streamlit_caching()`](#test)  | Enable caching the `nlu.load()` call. Once enabled, the `nlu.load()` method will automatically cached. **This is recommended** to run first and for large peformance gans |
 
+</div><div class="h3-box" markdown="1">
 
-# Detailed visualizer information and API docs
+{:.h2-select}
+## Detailed visualizer information and API docs
 
-## <kbd>function</kbd> `pipe.viz_streamlit`
+### <kbd>function</kbd> `pipe.viz_streamlit`
 
 
 Display a highly configurable UI that showcases almost every feature available for Streamlit visualization with model selection dropdowns in your applications.   
@@ -137,8 +146,9 @@ nlu.load('ner').viz_streamlit(['I love NLU and Streamlit!','I hate buggy softwar
 ```
 
 
-
 ![NLU Streamlit UI Overview](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/streamlit_docs_assets/gif/ui.gif)
+
+</div><div class="h3-box" markdown="1">
 
 ### <kbd>function parameters</kbd> `pipe.viz_streamlit`
 
@@ -161,7 +171,7 @@ nlu.load('ner').viz_streamlit(['I love NLU and Streamlit!','I hate buggy softwar
 | `show_code_snippets`      |  `bool`                                                             |  `False`                                                                                 | Display Python code snippets above visualizations that can be used to re-create the visualization
 |`num_similarity_cols`                               | `int`               |  `2`                            |  How many columns should for the layout in Streamlit when rendering the similarity matrixes.
 
-
+</div><div class="h3-box" markdown="1">
 
 ## <kbd>function</kbd> `pipe.viz_streamlit_classes`
 
@@ -173,6 +183,7 @@ nlu.load('sentiment').viz_streamlit_classes(['I love NLU and Streamlit!','I love
 ```
 ![text_class1](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/streamlit_docs_assets/gif/class.gif)
 
+</div><div class="h3-box" markdown="1">
 
 ### <kbd>function parameters</kbd> `pipe.viz_streamlit_classes`
 
@@ -192,7 +203,7 @@ nlu.load('sentiment').viz_streamlit_classes(['I love NLU and Streamlit!','I love
 | `show_logo`             |  `bool`                                            | `True`                                                                                   | Show logo
 | `display_infos`         |  `bool`                                            | `False`                                                                                  | Display additonal information about ISO codes and the NLU spellbook structure.
 
-
+</div><div class="h3-box" markdown="1">
 
 ## <kbd>function</kbd> `pipe.viz_streamlit_ner`
 Visualize the predicted classes and their confidences and additional metadata to Streamlit.
@@ -212,6 +223,8 @@ Example for coloring
 nlu.load('ner').viz_streamlit_ner('Donald Trump from America and Angela Merkel from Germany dont share many views',colors={'PERSON':'#6e992e', 'GPE':'#000000'})
 ```
 ![NER coloring](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/streamlit_docs_assets/img/NER_colored.png)
+
+</div><div class="h3-box" markdown="1">
 
 ### <kbd>function parameters</kbd> `pipe.viz_streamlit_ner`
 
@@ -233,8 +246,7 @@ nlu.load('ner').viz_streamlit_ner('Donald Trump from America and Angela Merkel f
 | `show_logo`             |  `bool`                                            | `True`                                                                                   | Show logo
 | `display_infos`         |  `bool`                                            | `False`                                                                                  | Display additonal information about ISO codes and the NLU spellbook structure.
 
-
-
+</div><div class="h3-box" markdown="1">
 
 ## <kbd>function</kbd> `pipe.viz_streamlit_dep_tree`
 Visualize a typed dependency tree, the relations between tokens and part of speech tags predicted.
@@ -244,6 +256,8 @@ Aplicable with [any of the 100+ Part of Speech(POS) models and dep tree model](h
 nlu.load('dep.typed').viz_streamlit_dep_tree('POS tags define a grammatical label for each token and the Dependency Tree classifies Relations between the tokens')
 ```
 ![Dependency Tree](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/streamlit_docs_assets/img/DEP.png)
+
+</div><div class="h3-box" markdown="1">
 
 ### <kbd>function parameters</kbd> `pipe.viz_streamlit_dep_tree`
 
@@ -262,9 +276,7 @@ nlu.load('dep.typed').viz_streamlit_dep_tree('POS tags define a grammatical labe
 | `show_logo`             |  `bool`                                            | `True`                                                                                   | Show logo
 | `display_infos`         |  `bool`                                            | `False`                                                                                  | Display additonal information about ISO codes and the NLU spellbook structure.
 
-
-
-
+</div><div class="h3-box" markdown="1">
 
 ## <kbd>function</kbd> `pipe.viz_streamlit_token`
 Visualize predicted token and text features for every model loaded.
@@ -275,6 +287,7 @@ nlu.load('stemm pos spell').viz_streamlit_token('I liek pentut buttr and jelly !
 ```
 ![text_class1](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/streamlit_docs_assets/gif/token.gif)
 
+</div><div class="h3-box" markdown="1">
 
 ### <kbd>function parameters</kbd> `pipe.viz_streamlit_token`
 
@@ -295,8 +308,7 @@ nlu.load('stemm pos spell').viz_streamlit_token('I liek pentut buttr and jelly !
 | `show_logo`             |  `bool`                                            | `True`                                                                                   | Show logo
 | `display_infos`         |  `bool`                                            | `False`                                                                                  | Display additonal information about ISO codes and the NLU spellbook structure.
 
-
-
+</div><div class="h3-box" markdown="1">
 
 ## <kbd>function</kbd> `pipe.viz_streamlit_similarity`
 
@@ -313,6 +325,8 @@ nlu.load('stemm pos spell').viz_streamlit_token('I liek pentut buttr and jelly !
 nlu.load('bert').viz_streamlit_word_similarity(['I love love loooove NLU! <3','I also love love looove  Streamlit! <3'])
 ```
 ![text_class1](https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/streamlit_docs_assets/gif/SIM.gif)
+
+</div><div class="h3-box" markdown="1">
 
 ### <kbd>function parameters</kbd> `pipe.viz_streamlit_similarity`
 
@@ -338,11 +352,12 @@ nlu.load('bert').viz_streamlit_word_similarity(['I love love loooove NLU! <3','I
 | `show_logo`             |  `bool`                             | `True`                                                                                   | Show logo
 | `display_infos`         |  `bool`                             | `False`                                                                                  | Display additonal information about ISO codes and the NLU spellbook structure.
 
+</div><div class="h3-box" markdown="1">
 
+{:.h2-select}
+## Embedding visualization via Manifold and Matrix Decomposition algorithms
 
-# Embedding visualization via Manifold and Matrix Decomposition algorithms
-
-## <kbd>function</kbd> `pipe.viz_streamlit_word_embed_manifold`
+### <kbd>function</kbd> `pipe.viz_streamlit_word_embed_manifold`
 
 Visualize Word Embeddings in `1-D`, `2-D`, or `3-D` by `Reducing Dimensionality` via 11 Supported methods from  [Manifold Algorithms](https://scikit-learn.org/stable/modules/classes.html#module-sklearn.manifold)
 and [Matrix Decomposition Algorithms](https://scikit-learn.org/stable/modules/classes.html#module-sklearn.decomposition).
@@ -361,8 +376,7 @@ nlu.load('bert',verbose=True).viz_streamlit_word_embed_manifold(default_texts=['
 
 <img  src="https://github.com/JohnSnowLabs/nlu/blob/master/docs/assets/streamlit_docs_assets/gif/word_embed_dimension_reduction/manifold_intro.gif?raw=true">
 
-
-
+</div><div class="h3-box" markdown="1">
 
 ### <kbd>function parameters</kbd> `pipe.viz_streamlit_word_embed_manifold`
 
@@ -388,15 +402,13 @@ nlu.load('bert',verbose=True).viz_streamlit_word_embed_manifold(default_texts=['
 | `display_infos`                                |  `bool`                                            | `False`                                                                                  | Display additonal information about ISO codes and the NLU namespace structure.|  
 | `n_jobs`                                       |          `Optional[int]` | `3`|   `False` | How many cores to use for paralellzing when using Sklearn Dimension Reduction algorithms.  |  
 
-
-
+</div><div class="h3-box" markdown="1">
 
 ### Larger Example showcasing more dimension reduction techniques on a larger corpus :
 
 <img  src="https://github.com/JohnSnowLabs/nlu/blob/master/docs/assets/streamlit_docs_assets/gif/word_embed_dimension_reduction/big_example_word_embedding_dimension_reduction.gif?raw=true">
 
-
-
+</div><div class="h3-box" markdown="1">
 
 ## <kbd>function</kbd> `pipe.viz_streamlit_sentence_embed_manifold`
 
@@ -415,6 +427,8 @@ nlu.load('embed_sentence.bert').viz_streamlit_sentence_embed_manifold(['text1','
 ```
 
 <img  src="https://github.com/JohnSnowLabs/nlu/blob/master/docs/assets/streamlit_docs_assets/gif/sentence_embedding_dimension_reduction/sentence_manifold_low_qual.gif?raw=true">
+
+</div><div class="h3-box" markdown="1">
 
 ### <kbd>function parameters</kbd> `pipe.viz_streamlit_sentence_embed_manifold`
 
@@ -439,9 +453,7 @@ nlu.load('embed_sentence.bert').viz_streamlit_sentence_embed_manifold(['text1','
 | `display_infos`                                |  `bool`                                            | `False`                                                                                  | Display additonal information about ISO codes and the NLU namespace structure.|  
 | `n_jobs`                                       |          `Optional[int]` | `3`|   `False` | How many cores to use for paralellzing when using Sklearn Dimension Reduction algorithms.  |  
 
-
-
-
+</div><div class="h3-box" markdown="1">
 
 ## Streamlit Entity Manifold visualization
 ## <kbd>function</kbd> `pipe.viz_streamlit_entity_embed_manifold`
@@ -459,6 +471,8 @@ nlu.load('ner').viz_streamlit_sentence_embed_manifold(['Hello From John Snow Lab
 ```
 <img  src="https://github.com/JohnSnowLabs/nlu/blob/master/docs/assets/streamlit_docs_assets/gif/entity_embedding_dimension_reduction/low_quality.gif?raw=true">
 
+</div><div class="h3-box" markdown="1">
+
 ### <kbd>function parameters</kbd> `pipe.viz_streamlit_sentence_embed_manifold`
 | Argument    | Type        |                                                            Default         |Description |
 |----------------------------|------------|-----------------------------------------------------------|---------------------------------------------------------|
@@ -474,9 +488,6 @@ nlu.load('ner').viz_streamlit_sentence_embed_manifold(['Hello From John Snow Lab
 | `show_logo`                                    |  `bool`                                            | `True`                                                                                   | Show logo  |
 | `display_infos`                                |  `bool`                                            | `False`                                                                                  | Display additonal information about ISO codes and the NLU namespace structure.|  
 | `n_jobs`                                       |          `Optional[int]` | `3`|   `False` | How many cores to use for paralellzing when using Sklearn Dimension Reduction algorithms.  |  
-
-
-
 
 
 ### [Supported Manifold Algorithms for Word, Sentence, and Entity Embeddings](https://scikit-learn.org/stable/modules/classes.html#module-sklearn.manifold)
@@ -496,5 +507,4 @@ nlu.load('ner').viz_streamlit_sentence_embed_manifold(['Hello From John Snow Lab
 - [Latent Dirichlet Allocation](https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.LatentDirichletAllocation.html)
 
 
-</div>
-
+</div></div>

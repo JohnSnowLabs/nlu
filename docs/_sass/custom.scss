@@ -344,6 +344,7 @@ header {
 			li {
 				margin: 0 0 10px;
 				white-space: normal;
+				overflow: visible;
 				&.toc-h3 {
 					margin-bottom: 10px;
 					position: relative;
@@ -359,6 +360,7 @@ header {
 					font-size: 15px;
 					line-height: 20px;
 					margin: 0;
+					position: relative;
 					font-weight: normal;
 					color: $color-darkblue;	
 					border: none;
@@ -369,6 +371,19 @@ header {
 				&.active a {
 					color: $color-blue;
 					font-weight: bold;
+				}
+				&.h2-select a {
+					font-size: 16px;
+					&:before {
+						content: '';
+						position: absolute;
+						width: 100%;
+						height: 1px;
+						left: 0;
+						bottom: -3px;
+						background: #536b76;
+						display: block;
+					}
 				}
 			}
 		}

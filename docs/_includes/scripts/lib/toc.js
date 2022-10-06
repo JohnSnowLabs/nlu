@@ -47,7 +47,7 @@
           $root.append($tocUl);
           $headings.each(function() {
             var $this = $(this);
-            $tocUl.append($('<li style="white-space: normal !important;" ></li>').addClass('toc-' + $this.prop('tagName').toLowerCase())
+            $tocUl.append($('<li style="white-space: normal !important;" ></li>').addClass('toc-' + $this.prop('tagName').toLowerCase() + ' ' + $this.prop('className'))
             .css("white-space", "normal !important")
               .append($('<a></a>').text($this.text()).attr('href', '#' + $this.prop('id'))));
           });
