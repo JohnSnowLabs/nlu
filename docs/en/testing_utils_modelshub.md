@@ -54,7 +54,7 @@ test_markdown('https://nlp.johnsnowlabs.com/2022/08/31/legpipe_deid_en.html')
 This will scan the folder for all files ending with `.md` , test them and generate a report
 ```python
 from johnsnowlabs.utils.modelhub_markdown import test_markdown
-test_ipynb('my/markdown/folder')
+test_markdown('my/markdown/folder')
 ```
 
 ### Test a List of Markdown References
@@ -63,7 +63,7 @@ Can be mixed with Urls and paths, will generate a report
 from johnsnowlabs.utils.notebooks import test_ipynb
 md_to_test = ['legpipe_deid_en.html',
   'path/to/local/markdown_snippet.md',]
-test_ipynb(md_to_test)
+test_markdown(md_to_test)
 ```
 
 
