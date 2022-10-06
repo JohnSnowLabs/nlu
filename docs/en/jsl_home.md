@@ -24,7 +24,7 @@ This will ignore bad secret versions.
 ```python
 from johnsnowlabs import *
 jsl.settings.enforce_versions=False
-jsl.install(secret='1.2.3-My.Custom.Secret')
+jsl.install(secret='1.2.3-My.Custom.or.Outdated.Secret')
 ```
 
 

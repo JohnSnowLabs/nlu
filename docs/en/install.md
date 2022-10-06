@@ -144,7 +144,7 @@ Use these parameters to configure **what should** be installed to the target
 | `py_install_type`      | Specify Python installation type to use, either `tar.gz` or `whl`, defaults to whl                                                                                                                                   |
 | `refresh_install`      | Delete any cached files before installing by removing John Snow Labs home folder. **This will delete your locally cached licenses**                                                                                  |
 
-### Automatic Databricks Installation
+### Automatic Databricks Installation 
 
 Use any of the databricks auth flows to enable the `johnsnowlabs` library to automatically install   
 all open source and licensed features into a Databricks cluster.   
@@ -152,14 +152,46 @@ You additionally must use one of the [John Snow Labs License Authorization Flows
 Labs license,which will be installed to your Databricks cluster.        
 A John Snow Labs Home directory is constructed in the distributed Databricks File System`/dbfs/johnsnowlabs` which has
 all Jars, Wheels and License Information to run all features in a Databricks cluster.
-**Only Licensed Libraries and Spark NLP** will be installed to your cluster, without the 
 
-| Databricks Auth Flow Method | Description                                                                                                                                                                                                                 | Python `jsl.install()` usage                                                                                                        | 
-|-----------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------|
+| Databricks Auth Flow Method | Description                                                                                                                                                                                                                                                                                           | Python `jsl.install()` usage                                                                                                        | 
+|-----------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------|
 | `Access Token`              | See [Databricks Documentation](https://docs.databricks.com/dev-tools/api/latest/authentication.html) for  extracting a token which you can provide to databricks access, see [Databricks Install Section](https://nlu.johnsnowlabs.com/docs/en/install#automatic-databricks-installation) for details | `jsl.install(databricks_cluster_id=my_cluster_id, databricks_host=my_databricks_host, databricks_token=my_access_databricks_token)` |
 
 Where to find your Databricks Access Token:
 ![databricks_access_token.png](/assets/images/jsl_lib/install/databricks_access_token.png)
+
+
+#### Databricks Cluster Creation Parameters
+
+You can set the following parameters on the `jsl.install()` function to define properties of the cluster which will be created.  
+See [Databricks Cluster Creation](https://docs.databricks.com/dev-tools/api/latest/clusters.html#create) for a detailed description of all parameters.
+
+| Cluster creation Parameter | Default Value                              | 
+|----------------------------|--------------------------------------------|
+| block_till_cluster_ready   | `True`                                     | 
+| num_workers                | `1`                                        | 
+| cluster_name               | `John-Snow-Labs-Databricks-Auto-Cluster🚀` | 
+| node_type_id               | `i3.xlarge`                                | 
+| driver_node_type_id        | `i3.xlarge`                                | 
+| spark_env_vars             | `None`                                     | 
+| autotermination_minutes    | `60`                                       | 
+| spark_version              | `10.5.x-scala2.12`                         | 
+| spark_conf                 | `None`                                     | 
+| auto_scale                 | `None`                                     | 
+| aws_attributes             | `None`                                     | 
+| ssh_public_keys            | `None`                                     | 
+| custom_tags                | `None`                                     | 
+| cluster_log_conf           | `None`                                     | 
+| enable_elastic_disk        | `None`                                     | 
+| cluster_source             | `None`                                     | 
+| instance_pool_id           | `None`                                     | 
+| headers                    | `None`                                     | 
+
+
+The created cluster
+![databricks_cluster.png](/assets/images/jsl_lib/install/databricks_cluster.png)
+
+
 
 ### License Variables Names for JSON and OS variables
 
@@ -330,7 +362,7 @@ I.e. provide the files somehow on your offline machine.
 jsl.install(offline=True)
 ```
 
-### Into a freshly created Databricks cluster
+### Into a freshly created Databricks cluster automatically
 
 To install in databricks you must provide your `accessToken` and `hostUrl`.
 You can provide the secrets to the install function with any of the methods listed above, i.e. using `access_token`
@@ -341,6 +373,11 @@ Your can get it from
 # Create a new Cluster with Spark NLP and all licensed libraries ready to go
 jsl.install(databricks_host='https://your_host.cloud.databricks.com', databricks_token = 'dbapi_token123',)
 ```
+
+### Into Existing Databricks cluster Manual
+If you do not wish to use the recommended **automatic installation** but instead want to install manually
+you must install the `johnsnowlabs_for_databricks` pypi package instead of `johnsnowlabs` via the UI or any method of your choice.
+![databricks_manual.png](/assets/images/jsl_lib/install/databricks_manual.png)
 
 
 # Storage of License Data and License Search behaviour
