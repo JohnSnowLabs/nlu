@@ -25,13 +25,12 @@ class FeatureResolutions:
     # TODO use lang families, i.e. en.tokenize works for all Latin style languages but not Chinese, I.e. not actually multi lingual
 
     default_OS_resolutions = {
-        NLP_FEATURES.DOCUMENT_QUESTION: ResolvedFeature('multi_document_assembler', 'multi_document_assembler', 'xx', False,
-                                               ComponentUniverse.components[NLP_NODE_IDS.MULTI_DOCUMENT_ASSEMBLER]),
+        NLP_FEATURES.DOCUMENT_QUESTION: ResolvedFeature('multi_document_assembler', 'multi_document_assembler', 'xx',
+                                                        False,
+                                                        ComponentUniverse.components[
+                                                            NLP_NODE_IDS.MULTI_DOCUMENT_ASSEMBLER]),
         # NLP_FEATURES.DOCUMENT_QUESTION_CONTEXT: ResolvedFeature('multi_document_assembler', 'multi_document_assembler', 'xx', False,
         #                                        ComponentUniverse.components[NLP_NODE_IDS.MULTI_DOCUMENT_ASSEMBLER]),
-
-
-
 
         NLP_FEATURES.DOCUMENT: ResolvedFeature('document_assembler', 'document_assembler', 'xx', False,
                                                ComponentUniverse.components[NLP_NODE_IDS.DOCUMENT_ASSEMBLER]),
@@ -69,9 +68,10 @@ class FeatureResolutions:
         NLP_FEATURES.CHUNK_EMBEDDINGS: ResolvedFeature('en.embed_chunk', 'chunk_embeddings', 'xx', False,
                                                        ComponentUniverse.components[
                                                            NLP_NODE_IDS.CHUNK_EMBEDDINGS_CONVERTER]),
+
         NLP_FEATURES.IMAGE: ResolvedFeature('image_assembler', 'image_assembler', 'xx', False,
-                                                       ComponentUniverse.components[
-                                                           NLP_NODE_IDS.IMAGE_ASSEMBLER]),
+                                            ComponentUniverse.components[
+                                                NLP_NODE_IDS.IMAGE_ASSEMBLER]),
 
     }
 

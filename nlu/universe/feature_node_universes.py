@@ -51,7 +51,7 @@ class EXTERNAL_NODES():
     """
     RAW_TEXT = ExternalFeature('text')
     NON_WHITESPACED_TEXT = ExternalFeature('non_whitespaced_text')  # i.e. Chinese, Russian, etc..
-
+    SPARK_IMAGE = JslFeature('spark_image')
     # TODO define how its derivable, i.e Accepted input types that can be converted to spark DF types
     # str_array = 'str_array'
     #
@@ -109,7 +109,7 @@ class NLP_FEATURE_NODES:  # or Mode Node?
 
 
         A.DOCUMENT_ASSEMBLER: NlpFeatureNode(A.DOCUMENT_ASSEMBLER, [E.RAW_TEXT], [F.DOCUMENT]),
-        A.IMAGE_ASSEMBLER: NlpFeatureNode(A.IMAGE_ASSEMBLER,[F.SPARK_IMAGE],[F.IMAGE]),
+        A.IMAGE_ASSEMBLER: NlpFeatureNode(A.IMAGE_ASSEMBLER,[E.SPARK_IMAGE],[F.IMAGE]),
         A.DOCUMENT_NORMALIZER: NlpFeatureNode(A.DOCUMENT_NORMALIZER, [F.DOCUMENT], [F.DOCUMENT_GENERATED]),
         A.EMBEDDINGS_FINISHER: NlpFeatureNode(A.EMBEDDINGS_FINISHER, [F.ANY_EMBEDDINGS], [F.FINISHED_EMBEDDINGS]),
         # A.# ENTITY_RULER : NlpFeatureNode(A.ENTITY_RULER, [F.], [F.]) # TODO? ,

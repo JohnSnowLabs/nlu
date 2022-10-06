@@ -73,7 +73,7 @@ class NLP_FEATURES(JslFeature):
     DUMMY = JslFeature("dummy")
     IMAGE = JslFeature("image")
     CLASSIFIED_IMAGE = JslFeature('classified_image')
-    SPARK_IMAGE = JslFeature('spark_image')
+    
 class OCR_FEATURES(JslFeature):
     """
     OCR Features
