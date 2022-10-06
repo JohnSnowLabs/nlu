@@ -8,9 +8,7 @@ key: docs-concepts
 modify_date: "2020-05-08"
 ---
 
-<div class="main-docs" markdown="1">
-
-<div class="h3-box" markdown="1">
+<div class="main-docs" markdown="1"><div class="h3-box" markdown="1">
 
 The NLU library provides 2 simple methods with which most NLU tasks can be solved while achieving state of the art results.   
 The **load** and **predict** method.    

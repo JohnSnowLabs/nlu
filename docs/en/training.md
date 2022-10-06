@@ -8,13 +8,11 @@ key: docs-developers
 modify_date: "2020-05-08"
 ---
 
-<div class="main-docs" markdown="1">
-
-<div class="h3-box" markdown="1">
+<div class="main-docs" markdown="1"><div class="h3-box" markdown="1">
 
 You can fit load a trainable NLU pipeline via ```nlu.load('train.<model>')``` 
 
-# Binary Text Classifier Training
+## Binary Text Classifier Training
 [Sentiment classification training demo](https://colab.research.google.com/drive/1f-EORjO3IpvwRAktuL4EvZPqPr2IZ_g8?usp=sharing)        
 To train the a Sentiment classifier model, you must pass a dataframe with a ```text``` column and a ```y``` column for the label.
 Uses a Deep Neural Network built in Tensorflow.       
@@ -38,7 +36,9 @@ fitted_pipe = nlu.load('embed_sentence.electra train.classifier').fit(train_df)
 preds = fitted_pipe.predict(train_df)
 ```
 
-# Multi Class Text Classifier Training
+</div><div class="h3-box" markdown="1">
+
+## Multi Class Text Classifier Training
 [Multi Class Text Classifier Training Demo](https://colab.research.google.com/drive/12FA2TVvvRWw4pRhxDnK32WAzl9dbF6Qw?usp=sharing)         
 To train the Multi Class text classifier model, you must pass a dataframe with a ```text``` column and a ```y``` column for the label.        
 By default *Universal Sentence Encoder Embeddings (USE)* are used as sentence embeddings. 
@@ -56,7 +56,9 @@ fitted_pipe = nlu.load('embed_sentence.bert train.classifier').fit(train_df)
 preds = fitted_pipe.predict(train_df)
 ```
 
-# Multi Label Classifier training
+</div><div class="h3-box" markdown="1">
+
+## Multi Label Classifier training
 [ Train Multi Label Classifier on E2E dataset](https://colab.research.google.com/drive/15ZqfNUqliRKP4UgaFcRg5KOSTkqrtDXy?usp=sharing)       
 [Train Multi Label  Classifier on Stack Overflow Question Tags dataset](https://drive.google.com/file/d/1Nmrncn-y559od3AKJglwfJ0VmZKjtMAF/view?usp=sharing)       
 This model can predict multiple labels for one sentence.     
@@ -87,9 +89,7 @@ fitted_pipe = nlu.load('embed_sentence.electra train.multi_classifier').fit(trai
 preds = fitted_pipe.predict(train_df)
 ```
 
-
-
-# Part of Speech (POS) Training
+## Part of Speech (POS) Training
 
 Your dataset must be in the form of universal dependencies [Universal Dependencies](https://universaldependencies.org/).
 You must configure the dataset_path in the ```fit()``` method to point to the universal dependencies you wish to train on.       
@@ -101,9 +101,10 @@ fitted_pipe = nlu.load('train.pos').fit(dataset_path=train_path, label_seperator
 preds = fitted_pipe.predict(train_df)
 ```
 
+</div><div class="h3-box" markdown="1">
 
+## Named Entity Recognizer (NER) Training
 
-# Named Entity Recognizer (NER) Training
 [NER training demo](https://colab.research.google.com/drive/1_GwhdXULq45GZkw3157fAOx4Wqo-fmFV?usp=sharing)        
 You can train your own custom NER model with an [CoNLL 20003 IOB](https://www.aclweb.org/anthology/W03-0419.pdf) formatted dataset.      
 By default *Glove 100d Token Embeddings* are used as features for the classifier.
@@ -121,8 +122,9 @@ train_path = '/content/eng.train'
 fitted_pipe = nlu.load('bert train.ner').fit(dataset_path=train_path)
 ```
 
+</div><div class="h3-box" markdown="1">
 
-# Chunk Entity Resolver Training
+## Chunk Entity Resolver Training
 [Chunk Entity Resolver Training Tutorial Notebook]()
 Named Entities are sub pieces in textual data which are labled with classes.    
 These classes and strings are still ambious though and it is not possible to group semantically identically entities withouth any definition of `terminology`.
@@ -151,6 +153,7 @@ fitted_pipe.predict(["Peter told me to buy Tesla ", 'I have money to loose, is T
 | '1.0000'                     | '23]                   | 'TESLA'           | Peter told me to buy Tesla                    |
 | '1.0000'                     | '23]                   | 'TESLA'           | I have money to loose, is TSLA a good option? |
 
+</div><div class="h3-box" markdown="1">
 
 ### Train with default glove embeddings
 ```python
@@ -158,6 +161,8 @@ untrained_chunk_resolver = nlu.load('train.resolve_chunks')
 trained_chunk_resolver  =  untrained_chunk_resolver.fit(df)
 trained_chunk_resolver.predict(df)
 ```
+
+</div><div class="h3-box" markdown="1">
 
 ### Train with custom embeddings
 ```python
@@ -167,9 +172,9 @@ trained_chunk_resolver  =  untrained_chunk_resolver.fit(df)
 trained_chunk_resolver.predict(df)
  ```
 
+</div><div class="h3-box" markdown="1">
 
-
-# Rule based NER with Context Matcher
+## Rule based NER with Context Matcher
 [Rule based NER with context matching tutorial notebook](https://github.com/JohnSnowLabs/nlu/blob/master/examples/colab/Training/rule_based_named_entity_recognition_and_resolution/rule_based_NER_and_resolution_with_context_matching.ipynb)    
 Define a rule based NER algorithm by providing Regex Patterns and resolution mappings.
 The confidence value is computed  using a heuristic approach based on how many matches it has.    
@@ -221,6 +226,8 @@ gender_NER_pipe.predict(sample_text)
 | girl          |                     0.13 |
 | girl          |                     0.13 |
 
+</div><div class="h3-box" markdown="1">
+
 ### Context Matcher Parameters
 You can define the following parameters in your rules.json file to define the entities to be matched
 
@@ -241,17 +248,20 @@ You can define the following parameters in your rules.json file to define the en
 | completeMatchRegex    | `Optional[str]`         | Wether to use complete or partial matching, either `"true"` or `"false"` |
 | ruleScope             | `str`                   | currently only `sentence` supported                          |
 
-# Saving a NLU pipeline to disk
+</div><div class="h3-box" markdown="1">
+
+## Saving a NLU pipeline to disk
 
 ```python
 train_path = '/content/eng.train'
 fitted_pipe = nlu.load('train.ner').fit(dataset_path=train_path)
 stored_model_path = './models/classifier_dl_trained' 
 fitted_pipe.save(stored_model_path)
-
 ```
 
-# Loading a NLU pipeline from disk
+</div><div class="h3-box" markdown="1">
+
+## Loading a NLU pipeline from disk
 
 ```python
 train_path = '/content/eng.train'
@@ -261,9 +271,9 @@ fitted_pipe.save(stored_model_path)
 hdd_pipe = nlu.load(path=stored_model_path)
 ```
 
+</div><div class="h3-box" markdown="1">
 
-
-# Loading a NLU pipeline as pyspark.ml.PipelineModel
+## Loading a NLU pipeline as pyspark.ml.PipelineModel
 ```python
 import pyspark
 # load the NLU pipeline as pyspark pipeline

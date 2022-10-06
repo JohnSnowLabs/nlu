@@ -8,7 +8,7 @@ modify_date: "2020-05-26"
 header: true
 ---
 
-<div class="main-docs" markdown="1">
+<div class="main-docs" markdown="1"><div class="h3-box" markdown="1">
 
 
 
@@ -27,6 +27,7 @@ jsl.settings.enforce_versions=False
 jsl.install(secret='1.2.3-My.Custom.or.Outdated.Secret')
 ```
 
+</div><div class="h3-box" markdown="1">
 
 ## John Snow Labs Home Cache Folder
 The John Snow Labs library maintains a home folder in `~/.johnsnowlabs` which contains all your Licenses, Jars for Java and Wheels for Python to install and run any feature.
@@ -50,4 +51,4 @@ Additionally, each directory has an `info.json` file, telling you more about Spa
    ├─ info.json
 
 ```
-</div>
+</div></div>

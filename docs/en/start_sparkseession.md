@@ -8,7 +8,7 @@ modify_date: "2020-05-26"
 header: true
 ---
 
-<div class="main-docs" markdown="1">
+<div class="main-docs" markdown="1"><div class="h3-box" markdown="1">
 
 To use most features you must start a Spark Session with `jsl.start()`first.        
 This will launch a [Java Virtual Machine(JVM)](https://en.wikipedia.org/wiki/Java_virtual_machine) process on your machine
@@ -21,7 +21,7 @@ If you **disabled license caching** while installing or if you want to **tweak s
 Outputs of running `jsl.start()` tell you which jars are loaded and versions of all relevant libraries.  
 ![access_token1.png](/assets/images/jsl_lib/start/start.png)
 
-
+</div><div class="h3-box" markdown="1">
 
 ## Authorization Flow Parameters 
 Most of the authorization Flows and Parameters of `jsl.install()` are supported.                 
@@ -36,6 +36,7 @@ Review detailed [docs here](https://nlu.johnsnowlabs.com/docs/en/install#authori
 | `store_in_jsl_home` | Disable caching of new licenses to `~./jsl_home`                                                                                                                                                                     | `jsl.start(store_in_jsl_home=False)`             | `True`  |
 | `license_number`    | Specify which license to use, if you have access to multiple locally cached or are loading one from  [my.jsl.com](https://my.johnsnowlabs.com/)                                                                      | `jsl.start(license_number=5)`                    | `0`     |
 
+</div><div class="h3-box" markdown="1">
 
 ### Manually specify License Parameters 
 These can be omitted according to the [License Variable Overview](https://nlu.johnsnowlabs.com/docs/en/install#license-variables-names-for-json-and-os-variables)
@@ -50,6 +51,8 @@ These can be omitted according to the [License Variable Overview](https://nlu.jo
 | `ocr_license`           | Corresponds to `OCR_LICENSE`           |
 | `fin_license`           | Corresponds to `JSL_LEGAL_LICENSE`     |
 | `leg_license`           | Corresponds to `JSL_FINANCE_LICENSE`   |
+
+</div><div class="h3-box" markdown="1">
 
 ## Sparksession Parameters
 These parameters configure how your spark Session is started up.        
@@ -66,8 +69,4 @@ See [Spark Configuration](https://spark.apache.org/docs/latest/configuration.htm
 | `hardware_target`    | `cpu`      | Specify for which hardware Jar should be optimized. Valid values are `gpu`,`cpu`,`m1`,`aarch`                                                                      | `jsl.start(hardware_target='m1')`                                           |
 | `model_cache_folder` | `None`     | Specify where models should be downloaded to when using `model.pretrained()`                                                                                       | `jsl.start(model_cache_folder=True)`                                        |
 
-
-
-
-
-</div>
+</div></div>

@@ -8,9 +8,7 @@ permalink: /docs/en/under_the_hood
 modify_date: "2019-05-16"
 ---
 
-<div class="main-docs" markdown="1">
-
-<div class="h3-box" markdown="1">
+<div class="main-docs" markdown="1"><div class="h3-box" markdown="1">
 
 This page acts as reference on the internal working and implementation of NLU.
 It acts as a reference for internal development and open source contributers.
