@@ -34,12 +34,12 @@ docs-en:
         url:    /docs/en/import-structure
       - title:  Utilities for Databricks
         url:    /docs/en/databricks-utils
+      - title:  Settings & Cache Folder
+        url:    /docs/en/john-snow-labs-home
       - title:  Utilities for Testing Notebooks
         url:    /docs/en/testing-utils-notebooks
       - title:  Utilities for Testing NLP Models & Modelhub
         url:    /docs/en/testing-utils-modelshub
-      - title:  Settings & Cache Folder
-        url:    /docs/en/john-snow-labs-home
       - title:  John Snow Labs Release Notes
         url:    /docs/en/jsl-release-notes
   - title:     NLU

@@ -416,10 +416,11 @@ If you do not wish to use the recommended **automatic installation** but instead
 you must install the `johnsnowlabs_for_databricks` pypi package instead of `johnsnowlabs` via the UI or any method of your choice.
 ![databricks_manual.png](/assets/images/jsl_lib/install/databricks_manual.png)
 
-</div><div class="h3-box" markdown="1">
 
 {:.h2-select}
-# Storage of License Data and License Search behaviour
+## License Management & Caching
+
+## Storage of License Data and License Search behaviour
 
 The John Snow Labs library caches license data in `~/.johnsnowlabs/licenses` whenever a new one is provided .
 After having provided license data once, you don't need to specify it again since the cached licensed will be used.
@@ -468,11 +469,26 @@ Name of the json file does not matter, file just needs to end with .json
 
 ## Upgrade Flow
 
-The John Snow Labs Teams are working early to push out new Releases and Features each week!
-Simply run `pip install johnsnowlabs --upgrade` to get the latest open **source libraries** updated.
+**Step 1:** Upgrade the johnsnowlabs library. 
+```shell
+pip install johnsnowlabs --upgrade
+```
+**Step 2:** Run install again, while using one [Authorization Flows](https://nlu.johnsnowlabs.com/docs/en/install#authorization-flows-overview). 
+```python
+jsl.install()
+```
 
-For updating **licensed libraries** you must in addition also run one of the [Authorization Flows](https://nlu.johnsnowlabs.com/docs/en/install#authorization-flows-overview) again.
-They will be used to fetch the latest licensed library and install them to your target
+
+
+The John Snow Labs Teams are working early to push out new Releases and Features each week!       
+Simply run `pip install johnsnowlabs --upgrade` to get the latest open **source libraries** updated.
+Once the johnsnowlabs library is upgraded, it will detect any out-dated libraries any inform you
+that you can upgrade them by running `jsl.install()` again.
+You must run one of the [Authorization Flows](https://nlu.johnsnowlabs.com/docs/en/install#authorization-flows-overview) again,
+to gian access to the latest enterprise libraries.
+
+{:.h2-select}
+## Next Steps & Frequently Asked Questions
 
 </div><div class="h3-box" markdown="1">
 
@@ -484,7 +500,7 @@ They will be used to fetch the latest licensed library and install them to your 
 
 </div><div class="h3-box" markdown="1">
 
-### Join our Slack channel
+## Join our Slack channel
 
 Join our channel, to ask for help and share your feedback. Developers and users can help each other get started here.
 
@@ -492,7 +508,7 @@ Join our channel, to ask for help and share your feedback. Developers and users 
 
 </div><div class="h3-box" markdown="1">
 
-### Where to go next
+## Where to go next
 
 If you want to get your hands dirty with any of the features check out the [NLU examples page](examples),
 or [Licensed Annotators Overview](https://nlp.johnsnowlabs.com/docs/en/licensed_annotators)
