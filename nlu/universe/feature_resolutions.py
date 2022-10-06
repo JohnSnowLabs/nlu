@@ -69,6 +69,10 @@ class FeatureResolutions:
         NLP_FEATURES.CHUNK_EMBEDDINGS: ResolvedFeature('en.embed_chunk', 'chunk_embeddings', 'xx', False,
                                                        ComponentUniverse.components[
                                                            NLP_NODE_IDS.CHUNK_EMBEDDINGS_CONVERTER]),
+        NLP_FEATURES.IMAGE: ResolvedFeature('image_assembler', 'image_assembler', 'xx', False,
+                                                       ComponentUniverse.components[
+                                                           NLP_NODE_IDS.IMAGE_ASSEMBLER]),
+
     }
 
     default_HC_resolutions = {
