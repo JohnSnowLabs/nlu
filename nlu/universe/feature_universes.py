@@ -74,6 +74,7 @@ class NLP_FEATURES(JslFeature):
     IMAGE = JslFeature("image")
     CLASSIFIED_IMAGE = JslFeature('classified_image')
     SPARK_IMAGE = JslFeature('spark_image')
+    FILE_PATH = JslFeature('path')
 
 class OCR_FEATURES(JslFeature):
     """
