@@ -12,7 +12,7 @@ modify_date: "2019-05-16"
 
 You can see all features showcased in the demo notebook [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/JohnSnowLabs/nlu/blob/master/examples/colab/spark_nlp_utilities/NLU_utils_for_Spark_NLP.ipynb)
 
-## nlu.viz(pipe,data)
+## nlp.viz(pipe,data)
 Visualize input data with an already configured Spark NLP pipeline,  
 for Algorithms of type (Ner,Assertion, Relation, Resolution, Dependency)  
 using [Spark NLP Display](https://nlp.johnsnowlabs.com/docs/en/display)  
@@ -26,7 +26,7 @@ text = """I have an allergic reaction to vancomycin.
 My skin has be itchy, sore throat/burning/itchy, and numbness in tongue and gums.
 I would not recommend this drug to anyone, especially since I have never had such an adverse reaction to any other medication."""
 
-nlu.viz(ade_pipeline, text)
+nlp.viz(ade_pipeline, text)
 
 ```
 returns:
@@ -45,9 +45,9 @@ corresponding ner_col, pos_col, dep_untyped_col, dep_typed_col, resolution_col, 
 
 </div><div class="h3-box" markdown="1">
 
-## nlu.autocomplete_pipeline(pipe)
+## nlp.autocomplete_pipeline(pipe)
 Auto-Complete a pipeline or single annotator into a runnable pipeline by harnessing NLU's DAG Autocompletion algorithm and returns it as NLU pipeline.
-The standard Spark pipeline is avaiable on the `.vanilla_transformer_pipe` attribute of the returned nlu pipe
+The standard Spark pipeline is avaiable on the `.vanilla_transformer_pipe` attribute of the returned nlp pipe
 
 Every Annotator and Pipeline of Annotators defines a `DAG` of tasks, with various dependencies that must be satisfied in `topoligical order`.
 NLU enables the completion of an incomplete DAG by finding or creating a path between
@@ -65,7 +65,7 @@ text = """I have an allergic reaction to vancomycin.
 My skin has be itchy, sore throat/burning/itchy, and numbness in tongue and gums.
 I would not recommend this drug to anyone, especially since I have never had such an adverse reaction to any other medication."""
 
-nlu_pipe = nlu.autocomplete_pipeline(re_model)
+nlu_pipe = nlp.autocomplete_pipeline(re_model)
 nlu_pipe.predict(text)
 ```
 
@@ -105,8 +105,8 @@ text = """I have an allergic reaction to vancomycin.
 My skin has be itchy, sore throat/burning/itchy, and numbness in tongue and gums.
 I would not recommend this drug to anyone, especially since I have never had such an adverse reaction to any other medication."""
 
-# output is same as nlu.autocomplete_pipeline(re_model).nlu_pipe.predict(text)
-nlu.to_pretty_df(ade_pipeline,text)
+# output is same as nlp.autocomplete_pipeline(re_model).nlp_pipe.predict(text)
+nlp.to_pretty_df(ade_pipeline,text)
 ```
 returns :
 
@@ -117,17 +117,17 @@ returns :
 | present     | sore throat/burning/itchy           | ADE                                       |                                        0.9019  |
 | present     | numbness in tongue and gums         | ADE                                       |                                        0.9991  |
 
-Annotators are grouped internally by NLU into output levels `token`,`sentence`, `document`,`chunk` and `relation`
+Annotators are grouped internally by NLP into output levels `token`,`sentence`, `document`,`chunk` and `relation`
 Same level annotators output columns are zipped and exploded together to create  the final output df.
 Additionally, most keys from the metadata dictionary in the result annotations will be collected and expanded into their own columns in the resulting Dataframe, with special handling for Annotators that encode multiple metadata fields inside of one, seperated by strings like `|||`   or `:::`.
 Some columns are omitted from metadata to reduce total amount of output columns, these can be re-enabled by setting `metadata=True`
 
-For a given pipeline output level is automatically set to the last anntators output level by default.
+For a given pipeline output level is automatically set to the last annotators output level by default.
 This can be changed by defining `to_preddty_df(pipe,text,output_level='my_level'` for levels `token`,`sentence`, `document`,`chunk` and `relation` .
 
 </div><div class="h3-box" markdown="1">
 
-## nlu.to_nlu_pipe(pipe)
+## nlp.to_nlu_pipe(pipe)
 Convert a pipeline or list of annotators into a NLU pipeline making `.predict()` and `.viz()` avaiable for every Spark NLP pipeline.
 Assumes the pipeline is already runnable.
 
@@ -139,7 +139,7 @@ text = """I have an allergic reaction to vancomycin.
 My skin has be itchy, sore throat/burning/itchy, and numbness in tongue and gums.
 I would not recommend this drug to anyone, especially since I have never had such an adverse reaction to any other medication."""
 
-nlu_pipe = nlu.to_nlu_pipe(ade_pipeline)
+nlu_pipe = nlp.to_nlu_pipe(ade_pipeline)
 
 # Same output as nlu.to_pretty_df(pipe,text) 
 nlu_pipe.predict(text)

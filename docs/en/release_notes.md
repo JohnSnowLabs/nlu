@@ -255,7 +255,7 @@ returns :
 </div><div class="h3-box" markdown="1">
 
 #### New NLU helper Methods
-You can see all features showcased in the [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/JohnSnowLabs/nlu/blob/master/examples/colab/spark_nlp_utilities/NLU_utils_for_Spark_NLP.ipynb)  notebook or on [the new docs page for Spark NLP utils](https://nlu.johnsnowlabs.com/docs/en/spellbook/utils_for_spark_nlp)
+You can see all features showcased in the [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/JohnSnowLabs/nlu/blob/master/examples/colab/spark_nlp_utilities/NLU_utils_for_Spark_NLP.ipynb)  notebook or on [the new docs page for Spark NLP utils](https://nlu.johnsnowlabs.com/docs/en/namespace/utils_for_spark_nlp)
 
 </div><div class="h3-box" markdown="1">
 
@@ -8183,7 +8183,7 @@ NLU 1.1.0 has over 720+ new pretrained models and pipelines while extending the 
 
 
 #### NLU 1.1.0  New Features
-* **720+** new models you can find an overview of all NLU models [here](https://nlu.johnsnowlabs.com/docs/en/spellbook) and further documentation in the [models hub](https://nlp.johnsnowlabs.com/models)
+* **720+** new models you can find an overview of all NLU models [here](https://nlu.johnsnowlabs.com/docs/en/namespace) and further documentation in the [models hub](https://nlp.johnsnowlabs.com/models)
 * **NEW:** Introducing MarianTransformer annotator for machine translation based on MarianNMT models. Marian is an efficient, free Neural Machine Translation framework mainly being developed by the Microsoft Translator team (646+ pretrained models & pipelines in 192+ languages)
 * **NEW:** Introducing T5Transformer annotator for Text-To-Text Transfer Transformer (Google T5) models to achieve state-of-the-art results on multiple NLP tasks such as Translation, Summarization, Question Answering, Sentence Similarity, and so on
 * **NEW:** Introducing brand new and refactored language detection and identification models. The new LanguageDetectorDL is faster, more accurate, and supports up to 375 languages

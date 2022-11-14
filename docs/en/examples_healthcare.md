@@ -14,7 +14,7 @@ The following examples demonstrate how to use nlu's load api accompanied by the 
 It enables loading any model or pipeline in one line          
 You need to pass one NLU reference to the load method.      
 You can also pass multiple whitespace separated references.      
-[You can find all NLU references here](https://nlu.johnsnowlabs.com/docs/en/spellbook)
+[You can find all NLU references here](https://nlu.johnsnowlabs.com/docs/en/namespace)
 
 </div><div class="h3-box" markdown="1">
 

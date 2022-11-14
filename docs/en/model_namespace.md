@@ -3,7 +3,7 @@ layout: docs
 header: true
 seotitle: NLU | John Snow Labs
 title: Spellbook
-permalink: /docs/en/spellbook
+permalink: /docs/en/namespace
 key: docs-spellbook
 modify_date: "2020-05-08"
 ---
@@ -15,15 +15,15 @@ modify_date: "2020-05-08"
 See  and also
  [the John Snow Labs Modelhub](https://nlp.johnsnowlabs.com/models)
   and also [the John Snow Labs Model Repository](https://github.com/JohnSnowLabs/spark-nlp-models#english---models\) 
-  for fruther information about the models and pipelines.   
+  for further information about the models and pipelines.   
 
-Each String in the NLU reference column can be passed to nlu.load() to get the corresponding model
-wrapped inside of a NLU Pipeline.
+Each String in the NLP reference column can be passed to nlp.load() to get the corresponding model
+wrapped inside a NLP Pipeline.
 
 <div class="table-wrapper"><div class="table-inner" markdown="1">
 
 {:.table-model-big.mb0}
-| Language                                   | NLU Reference                       | Spark NLP  Reference            | Component Type   |
+| Language                                   | nlp.load() Reference                       | Spark NLP  Reference            | Component Type   |
 |:------------------------------------------------------------------------------------|:-----------------------------------------------------------------------------|:-------------------------------------------------------------------------|:----------------------------------------------------------|
 |[English](https://iso639-3.sil.org/code/eng)| yake                                | yake                            | pipe             |
 |[English](https://iso639-3.sil.org/code/eng)| xlnet                               | xlnet_base_cased                | pipe             |
@@ -155,7 +155,7 @@ wrapped inside of a NLU Pipeline.
 <div class="table-wrapper"><div class="table-inner" markdown="1">
 
 {:.table-model-big.mb0}
-| Language Name(s)                                                                                                      | NLU Reference                                                                                                                                                                                                                                      | Spark NLP  Reference                                                                                                                                                                                                                                                   |
+| Language Name(s)                                                                                                      | nlp.load() Reference                                                                                                                                                                                                                                      | Spark NLP  Reference                                                                                                                                                                                                                                                   |
 |:----------------------------------------------------------------------------------------------------------------------|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | [Aequian](https://iso639-3.sil.org/code/xae)                                                                          | [vn.answer_question.xlm_roberta.base](https://nlp.johnsnowlabs.com/2022/06/23/xlm_roberta_qa_xlm_roberta_base_vietnamese_vn_3_0.html)                                                                                                              | [xlm_roberta_qa_xlm_roberta_base_vietnamese](https://nlp.johnsnowlabs.com/2022/06/23/xlm_roberta_qa_xlm_roberta_base_vietnamese_vn_3_0.html)                                                                                                                           |
 | [Aequian](https://iso639-3.sil.org/code/xae)                                                                          | [roberta](https://nlp.johnsnowlabs.com)                                                                                                                                                                                                            | [distilroberta_base](https://nlp.johnsnowlabs.com)                                                                                                                                                                                                                     |
@@ -260,7 +260,7 @@ wrapped inside of a NLU Pipeline.
 <div class="table-wrapper"><div class="table-inner" markdown="1">
 
 {:.table-model-big.mb0}
-| Language Name(s)                                                          | NLU Reference                                                                                                         | Spark NLP  Reference                                                                                                           |
+| Language Name(s)                                                          | nlp.load() Reference                                                                                                         | Spark NLP  Reference                                                                                                           |
 |:--------------------------------------------------------------------------|:----------------------------------------------------------------------------------------------------------------------|:-------------------------------------------------------------------------------------------------------------------------------|
 | [Aequian](https://iso639-3.sil.org/code/xae)                              | [lang](https://nlp.johnsnowlabs.com)                                                                                  | [detect_language_375](https://nlp.johnsnowlabs.com)                                                                            |
 | [Aequian](https://iso639-3.sil.org/code/xae)                              | [lang.bigru](https://nlp.johnsnowlabs.com)                                                                            | [detect_language_bigru_21](https://nlp.johnsnowlabs.com)                                                                       |
@@ -2056,7 +2056,7 @@ wrapped inside of a NLU Pipeline.
 ## Healthcare Pipeline references
 
 {:.table-model-big.mb0}
-| Language Name(s)                                                   | NLU Reference                                                                                                                           | Spark NLP  Reference                                                                                                                 |
+| Language Name(s)                                                   | nlp.load() Reference                                                                                                                           | Spark NLP  Reference                                                                                                                 |
 |:-------------------------------------------------------------------|:----------------------------------------------------------------------------------------------------------------------------------------|:-------------------------------------------------------------------------------------------------------------------------------------|
 | [English](https://iso639-3.sil.org/code/eng)                       | [en.snomed.umls.mapping](https://nlp.johnsnowlabs.com/2022/06/27/snomed_umls_mapping_en_3_0.html)                                       | [snomed_umls_mapping](https://nlp.johnsnowlabs.com/2022/06/27/snomed_umls_mapping_en_3_0.html)                                       |
 | [English](https://iso639-3.sil.org/code/eng)                       | [en.rxnorm.umls.mapping](https://nlp.johnsnowlabs.com/2022/06/27/rxnorm_umls_mapping_en_3_0.html)                                       | [rxnorm_umls_mapping](https://nlp.johnsnowlabs.com/2022/06/27/rxnorm_umls_mapping_en_3_0.html)                                       |
