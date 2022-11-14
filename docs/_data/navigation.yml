@@ -17,70 +17,86 @@ header:
     url:    /docs/en/notebooks
     key: tutorial_notebooks
   - title: Spellbook
-    url:    /docs/en/spellbook
+    url:    /docs/en/namespace
     key: tutorial_notebooks
   - title: '<span style="color: #FF8A00;"><i class="fab fa-github fa-2x"></i></span>'
     url: https://github.com/JohnSnowLabs/nlu
   - title: '<span style="color: #FF8A00;"><i class="fab fa-slack-hash fa-2x"></i></span>'
     url: https://join.slack.com/t/spark-nlp/shared_invite/zt-lutct9gm-kuUazcyFKhuGY3_0AMkxqA
 docs-en:
-  - title:     John Snow Labs
+  - title: Open Source NLP
     children:
       - title:  Installation
         url:    /docs/en/install
-      - title:  Starting a Spark Session
-        url:    /docs/en/start-a-sparksession
-      - title:  John Snow Labs Usage & Overview
-        url:    /docs/en/import-structure
-      - title:  Utilities for Databricks
-        url:    /docs/en/databricks-utils
-      - title:  Settings & Cache Folder
-        url:    /docs/en/john-snow-labs-home
-      - title:  Utilities for Testing Notebooks
-        url:    /docs/en/testing-utils-notebooks
-      - title:  Utilities for Testing NLP Models & Modelhub
-        url:    /docs/en/testing-utils-modelshub
-      - title:  John Snow Labs Release Notes
-        url:    /docs/en/jsl-release-notes
-  - title:     NLU
-    children:
-      - title:  NLU Usage
+      - title:  Quick Start
         url:    /docs/en/concepts
-      - title:  General NLU Examples
-        url:    /docs/en/examples
-      - title:  NLU for Healthcare
-        url:    /docs/en/nlu_for_healthcare
-      - title:  NLU for Healthcare Examples
-        url:    /docs/en/examples_hc
-      - title:  NLU for OCR
-        url:    /docs/en/nlu_for_ocr
-      - title:  Training Models
+      - title:  nlp.load()
+        url:    /docs/en/load_api
+      - title:  predict()
+        url:    /docs/en/predict_api
+      - title:  fit()
         url:    /docs/en/training
-      - title:  Tutorial Notebooks
-        url:    /docs/en/notebooks
-      - title:  Visualization Examples
+      - title:  viz()
         url:    /docs/en/viz_examples
-      - title: Streamlit Visualizations
+      - title: dashboard()
         url: /docs/en/streamlit_viz_examples
         key: streamlit_viz
-      - title:  Spellbook
-        url:    /docs/en/spellbook
-      - title:  Utilities for Spark NLP
+      - title:  1-liner Tutorial Notebooks
+        url:    /docs/en/notebooks
+      - title:  1-liners Reference
+        url:    /docs/en/examples
+      - title: NLP Pipelines
+        url: /docs/en/nlp_pipes
+        key: nlp_pipes
+      - title: NLP Display
+        url: https://nlp.johnsnowlabs.com/docs/en/display
+        key: nlp_display
+      - title: Annotation Lab
+        url: https://nlp.johnsnowlabs.com/docs/en/utility_helper_modules
+        key: nlp_display
+      - title: NLP Utilities
         url:    /docs/en/utils_for_spark_nlp
-
-
-  - title:      Documentation
-    children:
-      - title:  NLU Load Function
-        url:    /docs/en/load_api
-      - title:  NLU Predict Function
-        url:    /docs/en/predict_api
-
-
-#      - title: Pydocs
-#        url: /api/
+      - title:  Models Namespace
+        url:    /docs/en/namespace
       - title: NLU Release Notes
         url: /docs/en/release_notes
+      - title: Release Notes
+        url:    /docs/en/jsl-release-notes
+  - title: Licensed NLP
+    children:
+      - title:  Installation
+        url:    /docs/en/install_licensed_quick
+      - title:  Visual NLP
+        url:    /docs/en/quickstart_visual
+      - title:  Medical NLP
+        url:    /docs/en/quickstart_medical
+      - title:  Finance NLP
+        url:    /docs/en/quickstart_finance
+      - title:  Legal NLP
+        url:    /docs/en/quickstart_legal
+      - title:  Visual NLP 1-Liners
+        url:    /docs/en/nlu_for_ocr
+      - title:  Medical NLP 1-Liners
+        url:    /docs/en/examples_hc
+      - title:  Medical NLP 1-Liners Reference
+        url:    /docs/en/nlu_for_healthcare
+
+  - title: Advanced Topics
+    children:
+      - title:  Custom Installation
+        url:    /docs/en/install_advanced
+      - title:  License Management
+        url:    /docs/en/license_management
+      - title:  Configuring Session
+        url:    /docs/en/start-a-sparksession
+      - title:  Settings & Cache Folder
+        url:    /docs/en/john-snow-labs-home
+      - title:  Utilities for Databricks
+        url:    /docs/en/databricks-utils
+      - title:  Release Testing Utilities
+        url:    /docs/en/testing-utils
+      - title:  Module Structure
+        url:    /docs/en/import-structure
 
 
 extras:

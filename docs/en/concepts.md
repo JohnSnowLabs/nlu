@@ -2,7 +2,7 @@
 layout: docs
 header: true
 seotitle: NLU | John Snow Labs
-title: NLU Concepts
+title: Quick Start
 permalink: /docs/en/concepts
 key: docs-concepts
 modify_date: "2020-05-08"
@@ -10,109 +10,228 @@ modify_date: "2020-05-08"
 
 <div class="main-docs" markdown="1"><div class="h3-box" markdown="1">
 
-The NLU library provides 2 simple methods with which most NLU tasks can be solved while achieving state of the art results.   
-The **load** and **predict** method.    
+## Load & Predict 1 liner
 
-When building a NLU programm you will usually go through the following steps : 
+The `johnsnowlabs` library provides 2 simple methods with which most NLP tasks can be solved while achieving state-of-the-art
+results.   
+The **load** and **predict** method.
 
-1. Pick a model/pipeline/component you want to create from the [NLU spellbook](/docs/en/spellbook)
-2. Call the nlu.load(component) method which returns a NLU model pipeline object
-3. Call model.predict() on some String input
+when building a `load&predict` based model you will follow these steps:
 
-These 3 steps have been boiled down to **just 1 line**
+1. Pick a model/pipeline/component you want to create from the [Namespace](/docs/en/namespace)
+2. Call the `model = nlp.load(component)` method which will return an auto-completed pipeline 
+3. Call `model.predict('that was easy')` on some String input
+
+These 3 steps can be boiled down to **just 1 line**
+
 ```python
-import nlu
-nlu.load('sentiment').predict('How does this witchcraft work?')
+from johnsnowlabs import nlp
+nlp.load('sentiment').predict('How does this witchcraft work?')
 ```
 
 </div><div class="h3-box" markdown="1">
 
-## NLU components
-NLU defines a universe of NLU components which can be viewed as stackable and interchangeable parts, inspired by methodology of category theory.         
-Inside of this NLU universe, arbitrary machine learning pipelines can be constructed from its elements.     
+`jsl.load()` defines **18 components types** usable in 1-liners, some can be prefixed with `.train` for [training models](/docs/en/training)
 
-NLU currently defines **18 components types** in its universe.    
-Each component type embelishes one of many **component kinds**.  
-Each component kind embelished one of many **NLU algorithms**.        
-NLU algorithms are represented by pretrained models or pipelines.     
-A **pretrained model** could be a Deep Neural Network or a simple word matcher.   
-A **pipeline** consists of a stack of pretrained models.    
 
-</div><div class="h3-box" markdown="1">
-
-### NLU component types
-
-Any of the actions for the component types can be passed as a string to nlu.load() and will return you the default model for that component type for the English language. 
+Any of the actions for the component types can be passed as a string to nlp.load() and will return you the default model
+for that component type for the English language.
 You can further specify your model selection by placing a '.' behind your component selection.        
 After the '.' you can specify the model you want via specifying a dataset or model version.   
-See [the NLU components spellbook](https://nlu.johnsnowlabs.com/docs/en/spellbook) and [The load function](https://nlu.johnsnowlabs.com/docs/en/load_api)
+See [the Models Hub](https://nlp.johnsnowlabs.com/models),  [the Components Namespace](https://nlp.johnsnowlabs.com/docs/en/namespace)
+and [The load function](https://nlp.johnsnowlabs.com/docs/en/load_api) for more infos.
 
+</div><div class="h3-box" markdown="1">
 {:.table-model-big}
-|Component type|  nlu.load() action reference  |
-|--------------|--------------------------------|
-|Named Entity Recognition(NER) | ner |
-|Part of Speech (POS) | pos |
-|Classifiers | classify |
-|Word embeddings| embed|
-|Sentence embeddings| embed_sentence|
-|Chunk embeddings| embed_chunk|
-|Labeled dependency parsers| dep
-|Unlabeled dependency parsers| dep.untyped
-|Lemmatizers| lemma|
-|Matchers| match|
-|Normalizers| norm|
-|Sentence detectors| sentence_detector |
-|Chunkers| chunk |
-|Spell checkers|  spell |
-|Stemmers|stem |
-|Stopwords cleaners| stopwords |
-|Cleaner| clean |
-|N-Grams| ngram |
-|Tokenizers| tokenize |
+| Component type                | nlp.load() base   |
+|-------------------------------|-------------------------------|
+| Named Entity Recognition(NER) | `nlp.load('ner')`               |
+| Part of Speech (POS)          | `nlp.load('pos')`               |
+| Classifiers                   | `nlp.load('classify')`          |
+| Word embeddings               | `nlp.load('embed')`             |
+| Sentence embeddings           | `nlp.load('embed_sentence')`    |
+| Chunk embeddings              | `nlp.load('embed_chunk')`       |
+| Labeled dependency parsers    | `nlp.load('dep')`               |
+| Unlabeled dependency parsers  | `nlp.load('dep.untyped')`       |
+| Legitimatizes                 | `nlp.load('lemma')`             |
+| Matchers                      | `nlp.load('match')`             |
+| Normalizers                   | `nlp.load('norm')`              |
+| Sentence detectors            | `nlp.load('sentence_detector')` |
+| Chunkers                      | `nlp.load('chunk')`             |
+| Spell checkers                | `nlp.load('spell')`             |
+| Stemmers                      | `nlp.load('stem')`              |
+| Stopwords cleaners            | `nlp.load('stopwords')`         |
+| Cleaner                       | `nlp.load('clean')`             |
+| N-Grams                       | `nlp.load('ngram')`             |
+| Tokenizers                    | `nlp.load('tokenize')`          |
 
-</div><div class="h3-box" markdown="1">
+## Annotator & PretrainedPipeline based pipelines
+You can create [Annotator & PretrainedPipeline based pipelines](https://nlp.johnsnowlabs.com/docs/en/concepts) using all the classes 
+attached to the `nlp` module.
 
-## Specify language for an action
 
-### Print all supported languages
-Any of these are partial NLU references which can be prefixed to a request to specify a language
+`nlp.PretrainedPipeline('pipe_name')` gives access to [Pretrained Pipelines](https://nlp.johnsnowlabs.com/models?type=pipeline)
+
 ```python
-nlu.languages()
+from johnsnowlabs import nlp
+from pprint import pprint
+
+nlp.start()
+explain_document_pipeline = nlp.PretrainedPipeline("explain_document_ml")
+annotations = explain_document_pipeline.annotate("We are very happy about SparkNLP")
+pprint(annotations)
+
+OUTPUT:
+{
+  'stem': ['we', 'ar', 'veri', 'happi', 'about', 'sparknlp'],
+  'checked': ['We', 'are', 'very', 'happy', 'about', 'SparkNLP'],
+  'lemma': ['We', 'be', 'very', 'happy', 'about', 'SparkNLP'],
+  'document': ['We are very happy about SparkNLP'],
+  'pos': ['PRP', 'VBP', 'RB', 'JJ', 'IN', 'NNP'],
+  'token': ['We', 'are', 'very', 'happy', 'about', 'SparkNLP'],
+  'sentence': ['We are very happy about SparkNLP']
+}
+
 ```
 
-</div><div class="h3-box" markdown="1">
 
-### Print every component for one specific language
-These are complete NLU references and can be passed to the nlu.load() method right away
+### Custom Pipes
+Alternatively you can compose [Annotators](https://nlp.johnsnowlabs.com/docs/en/annotators) into a pipeline which offers the highest degree of customization 
 ```python
-# Print every German NLU component
-nlu.print_components(lang='de')
+from johnsnowlabs import nlp
+spark = nlp.start(nlp=False)
+pipe = nlp.Pipeline(stages=
+[
+    nlp.DocumentAssembler().setInputCol('text').setOutputCol('doc'),
+    nlp.Tokenizer().setInputCols('doc').setOutputCol('tok')
+])
+spark_df = spark.createDataFrame([['Hello NLP World']]).toDF("text")
+pipe.fit(spark_df).transform(spark_df).show()
 ```
 
-</div><div class="h3-box" markdown="1">
 
-### Print every model for an action
-These are complete NLU references and can be passed to the nlu.load() method right away
-```python
-# Print every lemmatizer for every language
-nlu.print_components(action='lemma')
-```
 
-</div><div class="h3-box" markdown="1">
+[//]: # (</div><div class="h3-box" markdown="1">)
 
-### Print every model kind for an action and a language
-These are complete NLU references and can be passed to the nlu.load() method right away
-```python
-# Print all english classifiers
-nlu.print_components(lang='en', action='classify')
-```
 
-</div><div class="h3-box" markdown="1">
 
-### Print the entire NLU spellbook offering
-These are complete NLU references and can be passed to the nlu.load() method right away
-```python
-nlu.print_components()
-```
+[//]: # ()
+[//]: # ()
+[//]: # (## Specify language for an action)
+
+[//]: # ()
+[//]: # ()
+[//]: # (### Print all supported languages)
+
+[//]: # ()
+[//]: # ()
+[//]: # (Any of these are partial NLU references which can be prefixed to a request to specify a language)
+
+[//]: # ()
+[//]: # ()
+[//]: # (```python)
+
+[//]: # ()
+[//]: # (nlp.languages&#40;&#41;)
+
+[//]: # ()
+[//]: # (```)
+
+[//]: # ()
+[//]: # ()
+[//]: # (</div><div class="h3-box" markdown="1">)
+
+[//]: # ()
+[//]: # ()
+[//]: # (### Print every component for one specific language)
+
+[//]: # ()
+[//]: # ()
+[//]: # (These are complete NLU references and can be passed to the nlp.load&#40;&#41; method right away)
+
+[//]: # ()
+[//]: # ()
+[//]: # (```python)
+
+[//]: # ()
+[//]: # (# Print every German NLU component)
+
+[//]: # ()
+[//]: # (nlp.print_components&#40;lang='de'&#41;)
+
+[//]: # ()
+[//]: # (```)
+
+[//]: # ()
+[//]: # ()
+[//]: # (</div><div class="h3-box" markdown="1">)
+
+[//]: # ()
+[//]: # ()
+[//]: # (### Print every model for an action)
+
+[//]: # ()
+[//]: # ()
+[//]: # (These are complete NLU references and can be passed to the nlp.load&#40;&#41; method right away)
+
+[//]: # ()
+[//]: # ()
+[//]: # (```python)
+
+[//]: # ()
+[//]: # (# Print every lemmatizer for every language)
+
+[//]: # ()
+[//]: # (nlp.print_components&#40;action='lemma'&#41;)
+
+[//]: # ()
+[//]: # (```)
+
+[//]: # ()
+[//]: # ()
+[//]: # (</div><div class="h3-box" markdown="1">)
+
+[//]: # ()
+[//]: # ()
+[//]: # (### Print every model kind for an action and a language)
+
+[//]: # ()
+[//]: # ()
+[//]: # (These are complete NLU references and can be passed to the nlp.load&#40;&#41; method right away)
+
+[//]: # ()
+[//]: # ()
+[//]: # (```python)
+
+[//]: # ()
+[//]: # (# Print all english classifiers)
+
+[//]: # ()
+[//]: # (nlp.print_components&#40;lang='en', action='classify'&#41;)
+
+[//]: # ()
+[//]: # (```)
+
+[//]: # ()
+[//]: # ()
+[//]: # (</div><div class="h3-box" markdown="1">)
+
+[//]: # ()
+[//]: # ()
+[//]: # (### Print the entire NLU spellbook offering)
+
+[//]: # ()
+[//]: # ()
+[//]: # (These are complete NLU references and can be passed to the nlp.load&#40;&#41; method right away)
+
+[//]: # ()
+[//]: # ()
+[//]: # (```python)
+
+[//]: # ()
+[//]: # (nlp.print_components&#40;&#41;)
+
+[//]: # ()
+[//]: # (```)
 
 </div></div>
