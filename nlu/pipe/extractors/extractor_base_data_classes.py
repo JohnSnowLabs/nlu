@@ -128,7 +128,7 @@ class SparkNLPExtractorConfig:
     description: str = field(default='')
     name: str = field(default='')
 
-
+@dataclass
 class SparkOCRExtractorConfig(SparkNLPExtractorConfig):
     get_text: bool = field(default=False)
     # Image struct fields

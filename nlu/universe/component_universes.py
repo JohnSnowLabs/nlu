@@ -1426,7 +1426,7 @@ class ComponentUniverse:
                                       type=T.HELPER_ANNO,
                                       get_default_model=SparkNlpDocumentAssembler.get_default_model,
                                       pdf_extractor_methods={'default': default_document_config,
-                                                             'default_full': default_full_config, },
+                                                             'default_full': default_full_config },
                                       pdf_col_name_substitutor=substitute_doc_assembler_cols,
                                       output_level=L.DOCUMENT,
                                       node=NLP_FEATURE_NODES.nodes[A.DOCUMENT_ASSEMBLER],
@@ -2972,10 +2972,8 @@ class ComponentUniverse:
                                             name=A.MULTI_DOCUMENT_ASSEMBLER,
                                             type=T.HELPER_ANNO,
                                             get_default_model=SparkNlpMultiDocumentAssembler.get_default_model,
-                                            pdf_extractor_methods={
-                                                'default': default_document_config,
-                                                'default_full': default_document_config, },
-                                            pdf_col_name_substitutor=substitute_multi_doc_span_assembler_cols,
+                                            pdf_extractor_methods={'default': default_binary_to_image_config},
+                                            pdf_col_name_substitutor=substitute_recognized_text_cols,
                                             output_level=L.DOCUMENT,
                                             node=NLP_FEATURE_NODES.nodes[
                                                 A.MULTI_DOCUMENT_ASSEMBLER],
@@ -2994,10 +2992,9 @@ class ComponentUniverse:
                                             name=A.VIT_IMAGE_CLASSIFICATION ,
                                             type=T.IMAGE_CLASSIFICATION,
                                             get_default_model=VitImageClassifier.get_default_model,
-                                            pdf_extractor_methods={
-                                                'default': default_document_config,
-                                                'default_full': default_document_config },
-                                            pdf_col_name_substitutor=substitute_multi_doc_span_assembler_cols,
+                                            pdf_extractor_methods={'default': default_document_config,
+                                                                   'default_full': default_full_config },
+                                            pdf_col_name_substitutor=substitute_recognized_text_cols,
                                             output_level=L.DOCUMENT,
                                             node=NLP_FEATURE_NODES.nodes[
                                                 A.VIT_IMAGE_CLASSIFICATION],
@@ -3018,7 +3015,7 @@ class ComponentUniverse:
                                       type=T.HELPER_ANNO,
                                       get_default_model=SparkNlpImageAssembler.get_default_model,
                                       pdf_extractor_methods={'default': default_document_config,
-                                                             'default_full': default_full_config, },
+                                                          'default_full': default_full_config },
                                       pdf_col_name_substitutor=substitute_doc_assembler_cols,
                                       output_level=L.DOCUMENT,
                                       node=NLP_FEATURE_NODES.nodes[A.IMAGE_ASSEMBLER],
@@ -3029,6 +3026,7 @@ class ComponentUniverse:
                                       output_context=ComputeContexts.spark,
                                       jsl_anno_class_id=A.IMAGE_ASSEMBLER,
                                       jsl_anno_py_class=ACR.JSL_anno2_py_class[A.IMAGE_ASSEMBLER],
+                                      applicable_file_types=['JPEG', 'PNG', 'BMP', 'WBMP', 'GIF', 'JPG', 'TIFF']
                                       ),
 
 

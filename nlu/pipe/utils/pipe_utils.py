@@ -658,9 +658,12 @@ class PipeUtils:
             if c.type == AnnoTypes.QUESTION_SPAN_CLASSIFIER:
                 pipe.has_span_classifiers = True
 
+
             if c.type == AnnoTypes.IMAGE_CLASSIFICATION:
                 pipe.contains_ocr_components = True
-
+                pipe.has_nlp_components = False
+            if c.jsl_anno_py_class == 'ImageAssembler':
+                pipe.contains_ocr_components = True
 
 
         return pipe
