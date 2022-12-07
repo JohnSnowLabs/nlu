@@ -1,5 +1,6 @@
 import glob
 import logging
+import typing
 from typing import List
 import os
 import numpy as np
@@ -7,6 +8,7 @@ import pyspark
 import sparknlp
 from pyspark.sql.functions import monotonically_increasing_id
 
+from nlu.pipe.utils.audio_data_conversion_utils import AudioDataConversionUtils
 from nlu.pipe.utils.ocr_data_conversion_utils import OcrDataConversionUtils
 
 logger = logging.getLogger('nlu')
@@ -18,13 +20,14 @@ from nlu.pipe.utils.data_conversion_utils import DataConversionUtils
 def __predict_standard_spark(pipe, data, output_level, positions, keep_stranger_features, metadata,
                              drop_irrelevant_cols, return_spark_df, get_embeddings):
     # 1. Convert data to Spark DF
-    data, stranger_features, output_datatype = DataConversionUtils.to_spark_df(data, pipe.spark, pipe.raw_text_column, pipe.has_span_classifiers)
+    data, stranger_features, output_datatype = DataConversionUtils.to_spark_df(data, pipe.spark, pipe.raw_text_column,
+                                                                               pipe.has_span_classifiers)
 
     # 3. Apply Spark Pipeline
     data = pipe.vanilla_transformer_pipe.transform(data)
 
     # 4. Convert resulting spark DF into nicer format and by default into pandas.
-    if return_spark_df: return data   # Returns RAW  Spark Dataframe result of component_list prediction
+    if return_spark_df: return data  # Returns RAW  Spark Dataframe result of component_list prediction
     return pipe.pythonify_spark_dataframe(data,
                                           keep_stranger_features=keep_stranger_features,
                                           stranger_features=stranger_features,
@@ -85,6 +88,39 @@ def __predict_ocr_spark(pipe, data, output_level, positions, keep_stranger_featu
                                           )
 
 
+def __predict_audio_spark(pipe, data, output_level, positions, keep_stranger_features, metadata,
+                          drop_irrelevant_cols, get_embeddings):
+    """
+        Check if there are any OCR components in the Pipe.
+        If yes, we verify data contains pointer to jsl_folder or image files.
+        If yes, df = spark.read.format("binaryFile").load(imagePath)
+        Run OCR pipe on df and pythonify procedure afterwards
+
+    """
+    pipe.fit()
+
+    # TODO GET SAMPLERATE DYNAMICLY!??!
+    #TODO VALIDATE LIBROSA INSTALLED!>?
+    sample_rate = 16000
+    AudioDataConversionUtils.validate_paths(data)
+    paths = AudioDataConversionUtils.extract_iterable_paths_from_data(data)
+    accepted_file_types = AudioDataConversionUtils.get_accepted_audio_file_types(pipe)
+    file_paths = AudioDataConversionUtils.glob_files_of_accepted_type(paths, accepted_file_types)
+    data = AudioDataConversionUtils.data_to_spark_audio_df(data=file_paths, sample_rate=sample_rate,
+                                                           spark=sparknlp.start())
+    data = pipe.vanilla_transformer_pipe.transform(data).withColumn(
+        'origin_index', monotonically_increasing_id().alias('origin_index'))
+
+    return pipe.pythonify_spark_dataframe(data,
+                                          keep_stranger_features=keep_stranger_features,
+                                          output_metadata=metadata,
+                                          drop_irrelevant_cols=drop_irrelevant_cols,
+                                          positions=positions,
+                                          output_level=output_level,
+                                          get_embeddings=get_embeddings
+                                          )
+
+
 def __predict__(pipe, data, output_level, positions, keep_stranger_features, metadata, multithread,
                 drop_irrelevant_cols, return_spark_df, get_embeddings):
     '''
@@ -102,7 +138,8 @@ def __predict__(pipe, data, output_level, positions, keep_stranger_features, met
 
     if output_level == '':
         # Default sentence level for all components
-        if pipe.has_nlp_components and not PipeUtils.contains_T5_or_GPT_transformer(pipe) and not pipe.has_span_classifiers:
+        if pipe.has_nlp_components and not PipeUtils.contains_T5_or_GPT_transformer(
+                pipe) and not pipe.has_span_classifiers:
             pipe.component_output_level = 'sentence'
             pipe.components = PipeUtils.configure_component_output_levels(pipe, 'sentence')
     else:
@@ -129,6 +166,17 @@ def __predict__(pipe, data, output_level, positions, keep_stranger_features, met
 
     # configure Lightpipline usage
     pipe.configure_light_pipe_usage(DataConversionUtils.size_of(data), multithread)
+
+    if pipe.contains_ocr_components and pipe.contains_audio_components:
+        """ Idea:
+        Expect Array of Paths 
+        For every path classify file ending and use it to correctly handle Img or Audio stuff 
+        """
+        raise Exception('Cannot mix Audio and OCR components in a Pipe?')
+
+    if pipe.contains_audio_components:
+        return __predict_audio_spark(pipe, data, output_level, positions, keep_stranger_features,
+                                     metadata, drop_irrelevant_cols, get_embeddings=get_embeddings)
 
     if pipe.contains_ocr_components:
         # Ocr processing
@@ -180,4 +228,3 @@ def __predict__(pipe, data, output_level, positions, keep_stranger_features, met
 def debug_print_pipe_cols(pipe):
     for c in pipe.components:
         print(f'{c.spark_input_column_names}->{c.name}->{c.spark_output_column_names}')
-

@@ -526,6 +526,11 @@ class PipelineQueryVerifier:
             # if OCR we must take text sorting into account. Non-OCR pipes get text provided externalyl
             provided_features.append('text')
 
+        if pipe.contains_audio_components:
+            provided_features.append(NLP_FEATURES.RAW_AUDIO)
+
+
+
         loop_count = 0
         max_loop_count = 10*len(pipe.components)
         last_correct_order_component_pipeline = []

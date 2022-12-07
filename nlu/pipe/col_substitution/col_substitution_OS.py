@@ -138,6 +138,52 @@ def substitute_doc_assembler_cols(c, cols, nlu_identifier=True):
     return new_cols
 
 
+def audio_assembler_cols(c, cols, nlu_identifier=True):
+    """
+    Sent detector is always unique
+    """
+    new_cols = {}
+    new_base_name = 'audio_series' if nlu_identifier == 'UNIQUE' else f'audio_series_'
+    for col in cols:
+        if '_results' in col:
+            new_cols[col] = new_base_name
+        elif '_beginnings' in col:
+            new_cols[col] = f'{new_base_name}_begin'
+        elif '_endings' in col:
+            new_cols[col] = f'{new_base_name}_end'
+        elif '_embeddings' in col:
+            continue  # Sentence never stores Embeddings  new_cols[col] = f'{new_base_name}_embedding'
+        elif '_types' in col:
+            continue  # new_cols[col] = f'{new_base_name}_type'
+        elif 'meta' in col:
+            logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
+        # new_cols[col]= f"{new_base_name}_confidence"
+    return new_cols
+
+
+def substitute_wav2vec_cols(c, cols, nlu_identifier=True):
+    """
+    Sent detector is always unique
+    """
+    new_cols = {}
+    new_base_name = 'text' if nlu_identifier == 'UNIQUE' else f'asr_text'
+    for col in cols:
+        if '_results' in col:
+            new_cols[col] = new_base_name
+        elif '_beginnings' in col:
+            new_cols[col] = f'{new_base_name}_begin'
+        elif '_endings' in col:
+            new_cols[col] = f'{new_base_name}_end'
+        elif '_embeddings' in col:
+            continue  # Sentence never stores Embeddings  new_cols[col] = f'{new_base_name}_embedding'
+        elif '_types' in col:
+            continue  # new_cols[col] = f'{new_base_name}_type'
+        elif 'meta' in col:
+                logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
+            # new_cols[col]= f"{new_base_name}_confidence"
+    return new_cols
+
+
 def substitute_sentence_detector_dl_cols(c, cols, nlu_identifier=True):
     """
     Sent detector is always unique

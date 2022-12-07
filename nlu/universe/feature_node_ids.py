@@ -23,6 +23,8 @@ class NLP_NODE_IDS:
     DOC2VEC = JslAnnoId('doc2vec')
     TRAIANBLE_DOC2VEC = JslAnnoId('trainable_doc2vec')
     DOCUMENT_ASSEMBLER = JslAnnoId('document_assembler')
+    AUDIO_ASSEMBLER = JslAnnoId('audio_assembler')
+    WAV2VEC_FOR_CTC = JslAnnoId('wav2vec_for_ctc')
     MULTI_DOCUMENT_ASSEMBLER = JslAnnoId('multi_document_assembler')
 
     ALBERT_FOR_QUESTION_ANSWERING = JslAnnoId('albert_for_question_answering')

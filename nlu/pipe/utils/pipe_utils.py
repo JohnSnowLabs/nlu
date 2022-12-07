@@ -219,7 +219,8 @@ class PipeUtils:
             # TRANSFORMER_TOKEN_CLASSIFIER might be a NER provider. Regardless, No ner-Conversion will be performed
             # because it will not return NER IOB
             if ComponentUtils.is_NER_provider(c):
-                if c.type == AnnoTypes.TRANSFORMER_TOKEN_CLASSIFIER and not ComponentUtils.is_NER_IOB_token_classifier(c):
+                if c.type == AnnoTypes.TRANSFORMER_TOKEN_CLASSIFIER and not ComponentUtils.is_NER_IOB_token_classifier(
+                        c):
                     continue
                 output_NER_col = ComponentUtils.extract_NER_col(c, 'output')
                 converter_to_update = None
@@ -328,7 +329,7 @@ class PipeUtils:
 
             if hasattr(c.model, 'setOutputCol'):
                 c.model.setOutputCol(c.spark_output_column_names[0])
-            else :
+            else:
                 c.model.setOutputCols(c.spark_output_column_names)
 
             if hasattr(c.model, 'setInputCols'):
@@ -650,7 +651,10 @@ class PipeUtils:
             if c.license in [Licenses.ocr, Licenses.hc]:
                 pipe.has_licensed_components = True
             # Check for NLP Component, which is any open source
-            if c.license == Licenses.open_source:
+            if c.license == Licenses.open_source \
+                    and c.name != NLP_NODE_IDS.WAV2VEC_FOR_CTC \
+                    and c.name != NLP_NODE_IDS.AUDIO_ASSEMBLER:
+                # TODO Table Assembler/VIT/ Other non txt open soruce
                 pipe.has_nlp_components = True
             if c.type == AnnoTypes.CHUNK_MAPPER:
                 pipe.prefer_light = True
@@ -658,6 +662,8 @@ class PipeUtils:
             if c.type == AnnoTypes.QUESTION_SPAN_CLASSIFIER:
                 pipe.has_span_classifiers = True
 
+            if c.type == AnnoTypes.SPEECH_RECOGNIZER:
+                pipe.contains_audio_components = True
 
         return pipe
 

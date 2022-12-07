@@ -36,6 +36,7 @@ class NLUPipeline(dict):
         self.failed_pyarrow_conversion = False
         self.anno2final_cols = []  # Maps Anno to output pandas col
         self.contains_ocr_components = False
+        self.contains_audio_components = False
         self.has_nlp_components = False
         self.nlu_ref = ''
         self.raw_text_column = 'text'

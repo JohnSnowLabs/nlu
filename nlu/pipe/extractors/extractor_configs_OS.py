@@ -103,6 +103,19 @@ def default_only_result_config(output_col_prefix):
         name                = 'Default result extractor',
         description         = 'Just gets the result field'
     )
+
+
+def default_only_result_popped_config(output_col_prefix):
+    return SparkNLPExtractorConfig(
+        output_col_prefix   = output_col_prefix,
+        get_result          = True,
+        name                = 'Default result extractor',
+        description         = 'Just gets the result field',
+        pop_result_list=True,
+
+    )
+
+
 def default_only_embedding_config(output_col_prefix):
     return SparkNLPExtractorConfig(
         output_col_prefix   = output_col_prefix,

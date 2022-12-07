@@ -20,6 +20,11 @@ class NLP_FEATURES(JslFeature):
     DOCUMENT_NORMALIZED = JslFeature("document_normalized")
     DOCUMENT_TRANSLATED = JslFeature("document_translated")
 
+
+    RAW_AUDIO = JslFeature("raw_audio")
+    AUDIO = JslFeature("audio")
+    RECOGNIZED_SPEECH_TEXT = JslFeature("recognized_speech_text")
+
     RAW_QUESTION = JslFeature("question")
     RAW_QUESTION_CONTEXT = JslFeature("context")
     DOCUMENT_QUESTION = JslFeature("document_question")
