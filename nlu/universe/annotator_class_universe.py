@@ -13,6 +13,9 @@ class AnnoClassRef:
     HC_A_N = NLP_HC_NODE_IDS
     # Map AnnoID to PyCLass
     JSL_anno2_py_class: Dict[JslAnnoId, JslAnnoPyClass] = {
+        A_N.TAPAS_FOR_QA: 'TapasForQuestionAnswering',
+        A_N.TABLE_ASSEMBLER: 'TableAssembler',
+
         A_N.COREF_SPAN_BERT: 'SpanBertCorefModel',
         A_N.PARTIALLY_IMPLEMENTED: 'PartiallyIntegrated',
 

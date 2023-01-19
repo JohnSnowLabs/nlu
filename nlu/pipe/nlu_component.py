@@ -155,6 +155,33 @@ class NluComponent:
 
         return self
 
+    def set_input(self, input_cols: Union[str, List[str]]):
+        if hasattr(self.model, 'setInputCol'):
+            self.model.setInputCol(input_cols)
+        elif hasattr(self.model, 'setInputCols'):
+            self.model.setInputCols(input_cols)
+        else:
+            raise Exception(f'Cannot set input cols on {self.model}')
+        if isinstance(input_cols, str):
+            self.spark_input_column_names = [input_cols]
+        elif isinstance(input_cols, list):
+            self.spark_input_column_names = input_cols
+        return self
+
+    def set_output(self, output_cols: Union[str, List[str]]):
+        if hasattr(self.model, 'setOutputCol'):
+            self.model.setOutputCol(output_cols)
+        elif hasattr(self.model, 'setOutputCols'):
+            self.model.setOutputCols(output_cols)
+        else:
+            raise Exception(f'Cannot set output cols on {self.model}')
+
+        if isinstance(output_cols, str):
+            self.spark_output_column_names = [output_cols]
+        elif isinstance(output_cols, list):
+            self.spark_output_column_names = output_cols
+        return self
+
     def __str__(self):
         return f'Component(ID={self.name}, NLU_REF={self.nlu_ref} NLP_REF={self.nlp_ref})'
 

@@ -83,6 +83,7 @@ from nlu.components.sentence_detectors.pragmatic_sentence_detector.sentence_dete
 from nlu.components.seq2seqs.gpt2.gpt2 import GPT2
 from nlu.components.seq2seqs.marian.marian import Marian
 from nlu.components.seq2seqs.t5.t5 import T5
+from nlu.components.seq2seqs.tapas_qa.tapas_qa import TapasQA
 from nlu.components.spell_checkers.context_spell.context_spell_checker import ContextSpellChecker
 from nlu.components.spell_checkers.norvig_spell.norvig_spell_checker import NorvigSpellChecker
 from nlu.components.spell_checkers.symmetric_spell.symmetric_spell_checker import SymmetricSpellChecker
@@ -102,6 +103,7 @@ from nlu.components.utils.ner_to_chunk_converter_licensed.ner_to_chunk_converter
     NerToChunkConverterLicensed
 from nlu.components.utils.sdf_finisher.sdf_finisher import SdfFinisher
 from nlu.components.utils.sentence_embeddings.spark_nlp_sentence_embedding import SparkNLPSentenceEmbeddings
+from nlu.components.utils.table_assembler.spark_nlp_multi_document_assembler import SparkNlpTableAssembler
 from nlu.ocr_components.table_extractors.doc_table_extractor.doc2table import Doc2TextTable
 from nlu.ocr_components.table_extractors.pdf_table_extractor.pdf2table import PDF2TextTable
 from nlu.ocr_components.table_extractors.ppt_table_extractor.ppt2table import PPT2TextTable
@@ -1458,6 +1460,46 @@ class ComponentUniverse:
                                    applicable_file_types=['wav', 'mp3', 'flac', 'aiff', 'aifc', 'ogg', 'aflac', 'alac',
                                                           'dsd', 'pcm', ]
                                    ),
+        A.TAPAS_FOR_QA: partial(NluComponent,
+                                name=A.TAPAS_FOR_QA,
+                                type=T.QUESTION_TABLE_ANSWERER,
+                                get_default_model=TapasQA.get_default_model,
+                                get_pretrained_model=TapasQA.get_pretrained_model,
+                                pdf_extractor_methods={
+                                    'default': default_tapas_config,
+                                    'default_full': default_full_config, },
+                                pdf_col_name_substitutor=substitute_tapas_qa_cols,
+                                output_level=L.INPUT_DEPENDENT_DOCUMENT_CLASSIFIER,
+                                node=NLP_FEATURE_NODES.nodes[A.TAPAS_FOR_QA],
+                                description='todo',
+                                provider=ComponentBackends.open_source,
+                                license=Licenses.open_source,
+                                computation_context=ComputeContexts.spark,
+                                output_context=ComputeContexts.spark,
+                                jsl_anno_class_id=A.TAPAS_FOR_QA,
+                                jsl_anno_py_class=ACR.JSL_anno2_py_class[A.TAPAS_FOR_QA],
+                                ),
+
+        A.TABLE_ASSEMBLER: partial(NluComponent,
+                         name=A.TABLE_ASSEMBLER,
+                         type=T.HELPER_ANNO,
+                         get_default_model=SparkNlpTableAssembler.get_default_model,
+                         pdf_extractor_methods={'default': default_only_result_config, # TODO
+                                                'default_full': default_full_config, },
+                         pdf_col_name_substitutor=substitute_wav2vec_cols, # TODO
+                         output_level=L.DOCUMENT,
+                         node=NLP_FEATURE_NODES.nodes[A.TABLE_ASSEMBLER],
+                         description='todo',
+                         provider=ComponentBackends.open_source,
+                         license=Licenses.open_source,
+                         computation_context=ComputeContexts.spark,
+                         output_context=ComputeContexts.spark,
+                         jsl_anno_class_id=A.TABLE_ASSEMBLER,
+                         jsl_anno_py_class=ACR.JSL_anno2_py_class[A.TABLE_ASSEMBLER],
+                         applicable_file_types=['csv', 'json'] # or str/pd format
+                         ),
+
+
 
         A.DOCUMENT_NORMALIZER: partial(NluComponent,
                                        name=A.DOCUMENT_NORMALIZER,

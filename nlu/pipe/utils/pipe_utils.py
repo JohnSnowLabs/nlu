@@ -6,6 +6,7 @@ import nlu
 from nlu import Licenses
 from nlu.pipe.nlu_component import NluComponent
 from nlu.pipe.utils.resolution.storage_ref_utils import StorageRefUtils
+from nlu.universe.atoms import JslAnnoId
 from nlu.universe.component_universes import ComponentUniverse, jsl_id_to_empty_component
 from nlu.universe.feature_node_ids import NLP_NODE_IDS, NLP_HC_NODE_IDS, OCR_NODE_IDS
 from nlu.universe.feature_universes import NLP_FEATURES
@@ -424,15 +425,15 @@ class PipeUtils:
         return False
 
     @staticmethod
-    def find_doc_assembler_idx_in_pipe(pipe):
-        """Find idx of document assembler in list of nlu components
+    def get_component_idx_by_id(pipe, node_id: JslAnnoId):
+        """Find first occurrence of component in pipe and returns index
         :param pipe:  pipe
-        :return: idx of Document Assembler in list of components. If none present, returns -1
+        :return: idx of anno_id in list of components. If none present, returns -1
         """
         for i, c in enumerate(pipe.components):
-            if c.name == NLP_NODE_IDS.DOCUMENT_ASSEMBLER:
+            if c.name == node_id:
                 return i
-        return -1
+        raise Exception(f'Could not find component {node_id} in pipe {pipe}')
 
     @staticmethod
     def add_tokenizer_to_pipe_if_missing(pipe):
@@ -493,7 +494,7 @@ class PipeUtils:
                 sentence_detector = ComponentUniverse.components[NLP_NODE_IDS.SENTENCE_DETECTOR_DL]()
                 sentence_detector.set_metadata(sentence_detector.get_default_model(), 'detect_sentence',
                                                'sentence_detector_dl', 'en', False, Licenses.open_source)
-                insert_idx = PipeUtils.find_doc_assembler_idx_in_pipe(pipe)
+                insert_idx = PipeUtils.get_component_idx_by_id(pipe, NLP_NODE_IDS.DOCUMENT_ASSEMBLER)
                 # insert After doc assembler
                 pipe.components.insert(insert_idx + 1, sentence_detector)
             return PipeUtils.configure_component_output_levels_to_sentence(pipe)
@@ -654,8 +655,11 @@ class PipeUtils:
             if c.license == Licenses.open_source \
                     and c.name != NLP_NODE_IDS.WAV2VEC_FOR_CTC \
                     and c.name != NLP_NODE_IDS.AUDIO_ASSEMBLER:
-                # TODO Table Assembler/VIT/ Other non txt open soruce
+                # TODO Table Assembler/VIT/ Other non txt open source
                 pipe.has_nlp_components = True
+            if c.type == AnnoTypes.QUESTION_TABLE_ANSWERER:
+                pipe.has_table_qa_models = True
+
             if c.type == AnnoTypes.CHUNK_MAPPER:
                 pipe.prefer_light = True
 
@@ -728,7 +732,44 @@ class PipeUtils:
         raise ValueError(f"Could not find model_anno_obj of requested class = {class_name}")
 
     @staticmethod
-    def contains_T5_or_GPT_transformer(pipe):
+    def contains_component_by_id(pipe, c_id: JslAnnoId):
         for c in pipe.components:
-            if c.name in [NLP_NODE_IDS.GPT2, NLP_NODE_IDS.T5_TRANSFORMER]:
+            if c.name == c_id:
                 return True
+        return False
+
+
+    @staticmethod
+    def contains_t5_or_gpt(pipe):
+        return PipeUtils.contains_component_by_id(pipe, [NLP_NODE_IDS.GPT2, NLP_NODE_IDS.T5_TRANSFORMER])
+
+    @staticmethod
+    def add_sentence_detector_to_pipe_if_required(pipe):
+        """
+        1. For Tabla-QA the Question Tapas Col should originate from a doc type
+                                          -> doc_question -> sent_question    |
+        (Context/Questions) -> Multi-Doc -                                    => TAPAS
+                                          -> doc_context  -> assembled_table  |
+
+
+        right after the Multi-Doc-assembler we add a sentence Detector.
+        Sentence Detectors Input is doc_question
+        and we update TAPAS to take sent_question instead of doc_question
+        :param pipe:
+        """
+        if not pipe.has_table_qa_models:
+            return pipe
+        PipeUtils.has_sentence_detector(pipe)
+
+        # Create Sentence Detector & Set inputs to Document_question
+        sent_detector = ComponentUniverse.components[NLP_NODE_IDS.SENTENCE_DETECTOR_DL]()
+        sent_detector.set_metadata(sent_detector.get_default_model(), 'detect_sentence',
+                                   'sentence_detector_dl', 'en', False, Licenses.open_source)
+        sent_detector.set_input(str(NLP_FEATURES.DOCUMENT_QUESTION))
+        # Insert Sentence Detector right after Multi-Doc
+        multi_doc_idx = PipeUtils.get_component_idx_by_id(pipe, NLP_NODE_IDS.MULTI_DOCUMENT_ASSEMBLER)
+        pipe.components.insert(multi_doc_idx + 1, sent_detector)
+        # Update Tapas to use sentence_detector_question instead of doc_quesiton
+        pipe.components[PipeUtils.get_component_idx_by_id(pipe, NLP_NODE_IDS.TAPAS_FOR_QA)].set_input(
+            [str(NLP_FEATURES.ASSEMBLED_TABULAR_DATA), str(NLP_FEATURES.SENTENCE)])
+        return pipe

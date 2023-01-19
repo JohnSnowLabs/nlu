@@ -51,6 +51,7 @@ class AnnoTypes:
     TOKENIZER = 'tokenizer'
     TOKEN_CLASSIFIER = 'token_classifier'
     QUESTION_SPAN_CLASSIFIER = 'span_classifier'
+    QUESTION_TABLE_ANSWERER = 'question_table_answerer'
     TRANSFORMER_TOKEN_CLASSIFIER = 'transformer_token_classifier'  # Can be token level but also NER level
     TRANSFORMER_SEQUENCE_CLASSIFIER = 'transformer_sequence_classifier'  # Can be token level but also NER level
     CHUNK_CLASSIFIER = 'chunk_classifier'  # ASSERTION/ NER GENERATES/CONTEXT_PARSER THESE but DOES NOT TAKE THEM IN!!! Split into NER-CHUNK Classifier, etc..?

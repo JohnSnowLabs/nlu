@@ -179,8 +179,8 @@ def substitute_wav2vec_cols(c, cols, nlu_identifier=True):
         elif '_types' in col:
             continue  # new_cols[col] = f'{new_base_name}_type'
         elif 'meta' in col:
-                logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
-            # new_cols[col]= f"{new_base_name}_confidence"
+            logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
+        # new_cols[col]= f"{new_base_name}_confidence"
     return new_cols
 
 
@@ -404,6 +404,31 @@ def substitute_multi_doc_span_assembler_cols(c, cols, nlu_identifier=True):
             new_cols[col] = f'context'
     return new_cols
 
+
+def substitute_tapas_qa_cols(c, cols, nlu_identifier=True):
+    new_cols = {}
+    new_base_name = f'tapas_qa_{nlu_identifier}' if 'tapas_qa_' not in nlu_identifier else nlu_identifier
+    for col in cols:
+        if '_results' in col:
+            new_cols[col] = f'{new_base_name}_answer'
+        elif '_beginnings' in col:
+            new_cols[col] = f'{new_base_name}_begin'
+        elif '_endings' in col:
+            new_cols[col] = f'{new_base_name}_end'
+        elif '_types' in col:
+            continue  # new_cols[col] = f'{new_base_name}_type'
+        elif 'meta' in col:
+            if 'question' in col:
+                new_cols[col] = f'{new_base_name}_origin_question'
+            elif 'aggregation' in col:
+                new_cols[col] = f'{new_base_name}_aggregation'
+            elif 'cell_positions' in col:
+                new_cols[col] = f'{new_base_name}_cell_positions'
+            elif 'cell_scores' in col:
+                new_cols[col] = f'{new_base_name}_cell_scores'
+            else:
+                logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
+    return new_cols
 
 def substitute_word_embed_cols(c, cols, nlu_identifier=True):
     """

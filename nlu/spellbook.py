@@ -1986,6 +1986,8 @@ class Spellbook:
                                     'eml': {'eml.embed.w2v_cc_300d': 'w2v_cc_300d'},
                                     'en': {
                                         'en.wav2vec.wip': 'asr_wav2vec2_base_960h',
+                                        'en.tapas.wip': 'table_qa_tapas_base_finetuned_wtq',
+
                                         'en.coreference.spanbert': 'spanbert_base_coref',
 
                                         'en.albert': 'albert_base_uncased',
@@ -10301,5 +10303,6 @@ class Spellbook:
         'xlm_roberta_qa_xlmroberta_large_tweetqa': 'XlmRoBertaForQuestionAnswering',
         'xlmroberta_qa_ukrainian': 'XlmRoBertaForQuestionAnswering',
         'xlmroberta_qa_xlmr_large': 'XlmRoBertaForQuestionAnswering',
+        'table_qa_tapas_base_finetuned_wtq':'TapasForQuestionAnswering',
 
     }

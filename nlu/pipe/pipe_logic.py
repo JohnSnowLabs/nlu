@@ -502,6 +502,9 @@ class PipelineQueryVerifier:
         # 8. Write additional metadata to the pipe post pipe construction
         pipe = PipeUtils.add_metadata_to_pipe(pipe)
 
+        # 9. For Table-QA based Pipes, we Inject a SetenceDetector for tokenizing the questions
+        pipe = PipeUtils.add_sentence_detector_to_pipe_if_required(pipe)
+
         logger.info('Done with component_list optimizing')
 
         return pipe

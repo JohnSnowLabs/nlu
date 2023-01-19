@@ -41,6 +41,8 @@ class OutputLevelUtils:
             return NLP_LEVELS.DOCUMENT
         if NLP_FEATURES.SENTENCE in component_to_resolve.spark_input_column_names:
             return NLP_LEVELS.SENTENCE
+        if NLP_FEATURES.DOCUMENT_QUESTION_CONTEXT in component_to_resolve.spark_input_column_names:
+            return NLP_LEVELS.DOCUMENT
 
         # (2.) A model_anno_obj which is input dependent and not using document/sentence cols
         # We iterator over components and see which is feeding this input dependent component_to_resolve

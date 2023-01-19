@@ -21,7 +21,9 @@ def __predict_standard_spark(pipe, data, output_level, positions, keep_stranger_
                              drop_irrelevant_cols, return_spark_df, get_embeddings):
     # 1. Convert data to Spark DF
     data, stranger_features, output_datatype = DataConversionUtils.to_spark_df(data, pipe.spark, pipe.raw_text_column,
-                                                                               pipe.has_span_classifiers)
+                                                                               is_span_data=pipe.has_span_classifiers,
+                                                                               is_tabular_qa_data=pipe.has_table_qa_models,
+                                                                               )
 
     # 3. Apply Spark Pipeline
     data = pipe.vanilla_transformer_pipe.transform(data)
@@ -136,9 +138,10 @@ def __predict__(pipe, data, output_level, positions, keep_stranger_features, met
     :return:
     '''
 
-    if output_level == '':
+
+    if output_level == '' and not pipe.has_table_qa_models:
         # Default sentence level for all components
-        if pipe.has_nlp_components and not PipeUtils.contains_T5_or_GPT_transformer(
+        if pipe.has_nlp_components and not PipeUtils.contains_t5_or_gpt(
                 pipe) and not pipe.has_span_classifiers:
             pipe.component_output_level = 'sentence'
             pipe.components = PipeUtils.configure_component_output_levels(pipe, 'sentence')

@@ -24,8 +24,11 @@ class NLP_FEATURES(JslFeature):
     RAW_AUDIO = JslFeature("raw_audio")
     AUDIO = JslFeature("audio")
     RECOGNIZED_SPEECH_TEXT = JslFeature("recognized_speech_text")
+    ASSEMBLED_TABULAR_DATA = JslFeature("assembled_tabular_data")
 
+    TABULAR_ANSWER = JslFeature("tabular_answer")
     RAW_QUESTION = JslFeature("question")
+    # RAW_TABULAR_DATA = JslFeature("tabular_data") # Json or csv
     RAW_QUESTION_CONTEXT = JslFeature("context")
     DOCUMENT_QUESTION = JslFeature("document_question")
     DOCUMENT_QUESTION_CONTEXT = JslFeature("document_question_context")
@@ -38,6 +41,9 @@ class NLP_FEATURES(JslFeature):
     DOCUMENT_GENERATED = JslFeature("document_generated")
 
     SENTENCE = JslFeature("sentence")
+    QUESTION_SENTENCES = JslFeature("question_sentences")
+
+
     TOKEN = JslFeature("token")
     COREF_TOKEN = JslFeature("coref_token")
 
