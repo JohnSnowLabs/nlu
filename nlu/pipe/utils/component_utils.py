@@ -59,7 +59,13 @@ class ComponentUtils:
             feature_list.remove(NLP_FEATURES.RAW_QUESTION)
         if NLP_FEATURES.RAW_QUESTION_CONTEXT in feature_list:
             feature_list.remove(NLP_FEATURES.RAW_QUESTION_CONTEXT)
+        if NLP_FEATURES.SPARK_NLP_FILE_PATH in feature_list:
+            feature_list.remove(NLP_FEATURES.SPARK_NLP_FILE_PATH)
+        if NLP_FEATURES.SPARK_NLP_IMAGE in feature_list:
+            feature_list.remove(NLP_FEATURES.SPARK_NLP_IMAGE)
 
+        if OCR_FEATURES.BINARY_IMG in feature_list:
+            feature_list.remove(OCR_FEATURES.BINARY_IMG)
         if OCR_FEATURES.BINARY_IMG in feature_list:
             feature_list.remove(OCR_FEATURES.BINARY_IMG)
         if OCR_FEATURES.FILE_PATH in feature_list:

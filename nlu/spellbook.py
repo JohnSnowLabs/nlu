@@ -1988,6 +1988,8 @@ class Spellbook:
                                         'en.wav2vec.wip': 'asr_wav2vec2_base_960h',
                                         'en.tapas.wip': 'table_qa_tapas_base_finetuned_wtq',
 
+                                        'en.vit':'image_classifier_vit_base_patch16_224',
+
                                         'en.coreference.spanbert': 'spanbert_base_coref',
 
                                         'en.albert': 'albert_base_uncased',
@@ -10304,5 +10306,9 @@ class Spellbook:
         'xlmroberta_qa_ukrainian': 'XlmRoBertaForQuestionAnswering',
         'xlmroberta_qa_xlmr_large': 'XlmRoBertaForQuestionAnswering',
         'table_qa_tapas_base_finetuned_wtq':'TapasForQuestionAnswering',
+
+
+
+        'image_classifier_vit_base_patch16_224':'ViTForImageClassification'
 
     }

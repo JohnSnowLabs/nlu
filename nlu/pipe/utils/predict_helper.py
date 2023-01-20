@@ -78,7 +78,8 @@ def __predict_ocr_spark(pipe, data, output_level, positions, keep_stranger_featu
     accepted_file_types = OcrDataConversionUtils.get_accepted_ocr_file_types(pipe)
     file_paths = OcrDataConversionUtils.glob_files_of_accepted_type(paths, accepted_file_types)
     spark = sparknlp.start()  # Fetches Spark Session that has already been licensed
-    data = pipe.vanilla_transformer_pipe.transform(spark.read.format("binaryFile").load(file_paths)).withColumn(
+
+    data = pipe.vanilla_transformer_pipe.transform(spark.read.format("image").load(file_paths)).withColumn(
         'origin_index', monotonically_increasing_id().alias('origin_index'))
     return pipe.pythonify_spark_dataframe(data,
                                           keep_stranger_features=keep_stranger_features,

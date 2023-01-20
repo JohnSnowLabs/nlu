@@ -82,7 +82,10 @@ class NLP_FEATURES(JslFeature):
     LANGUAGE = JslFeature("language")
     NODE = JslFeature("node")
     DUMMY = JslFeature("dummy")
-
+    IMAGE = JslFeature("spark_nlp_image")
+    CLASSIFIED_IMAGE = JslFeature('classified_image')
+    SPARK_NLP_IMAGE = JslFeature('image')
+    SPARK_NLP_FILE_PATH = JslFeature('path')
 
 class OCR_FEATURES(JslFeature):
     """

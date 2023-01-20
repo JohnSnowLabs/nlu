@@ -45,6 +45,7 @@ class AnnoClassRef:
         A_N.AUDIO_ASSEMBLER: 'AudioAssembler',
         A_N.WAV2VEC_FOR_CTC: 'Wav2Vec2ForCTC',
         A_N.DOCUMENT_ASSEMBLER: 'DocumentAssembler',
+        A_N.IMAGE_ASSEMBLER: 'ImageAssembler',
         A_N.DOCUMENT_NORMALIZER: 'DocumentNormalizer',
         A_N.EMBEDDINGS_FINISHER: 'EmbeddingsFinisher',
         A_N.ENTITY_RULER: 'EntityRulerModel',
@@ -220,6 +221,7 @@ class AnnoClassRef:
         A_N.PARTIAL_GraphExtraction: 'GraphExtraction',
         A_N.PARTIAL_Lemmatizer: 'Lemmatizer',
         A_N.PARTIAL_Normalizer: 'Normalizer',
+        A_N.VIT_IMAGE_CLASSIFICATION:'ViTForImageClassification',
 
     }
     JSL_anno_HC_ref_2_py_class: Dict[JslAnnoId, JslAnnoPyClass] = {
@@ -285,6 +287,8 @@ class AnnoClassRef:
 
     }
 
+
+
     @staticmethod
     def get_os_pyclass_2_anno_id_dict():
         # Flipped, maps PyClass to AnnoID
@@ -309,11 +313,8 @@ class AnnoClassRef:
 
 
 # Flipped, maps PyClass to AnnoID
-AnnoClassRef.JSL_OS_py_class_2_anno_id: Dict[JslAnnoPyClass, JslAnnoId] = {AnnoClassRef.JSL_anno2_py_class[k]: k for k
-                                                                           in AnnoClassRef.JSL_anno2_py_class}
-AnnoClassRef.JSL_HC_py_class_2_anno_id: Dict[JslAnnoId, JslAnnoPyClass] = {AnnoClassRef.JSL_anno_HC_ref_2_py_class[k]: k
-                                                                           for k in
+AnnoClassRef.JSL_OS_py_class_2_anno_id: Dict[JslAnnoPyClass, JslAnnoId] = {AnnoClassRef.JSL_anno2_py_class[k]: k for k in AnnoClassRef.JSL_anno2_py_class}
+AnnoClassRef.JSL_HC_py_class_2_anno_id: Dict[JslAnnoId, JslAnnoPyClass] = {AnnoClassRef.JSL_anno_HC_ref_2_py_class[k]: k for k in
                                                                            AnnoClassRef.JSL_anno_HC_ref_2_py_class}
-AnnoClassRef.JSL_OCR_py_class_2_anno_id: Dict[JslAnnoId, JslAnnoPyClass] = {
-    AnnoClassRef.JSL_anno_OCR_ref_2_py_class[k]: k for k in
-    AnnoClassRef.JSL_anno_OCR_ref_2_py_class}
+AnnoClassRef.JSL_OCR_py_class_2_anno_id: Dict[JslAnnoId, JslAnnoPyClass] = {AnnoClassRef.JSL_anno_OCR_ref_2_py_class[k]: k for k in
+                                                                            AnnoClassRef.JSL_anno_OCR_ref_2_py_class}

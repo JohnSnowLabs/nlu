@@ -51,7 +51,6 @@ class EXTERNAL_NODES():
     """
     RAW_TEXT = ExternalFeature('text')
     NON_WHITESPACED_TEXT = ExternalFeature('non_whitespaced_text')  # i.e. Chinese, Russian, etc..
-
     # TODO define how its derivable, i.e Accepted input types that can be converted to spark DF types
     # str_array = 'str_array'
     #
@@ -118,6 +117,7 @@ class NLP_FEATURE_NODES:  # or Mode Node?
         A.WAV2VEC_FOR_CTC: NlpFeatureNode(A.PARTIALLY_IMPLEMENTED, [F.AUDIO], [E.RAW_TEXT]),
 
 
+        A.IMAGE_ASSEMBLER: NlpFeatureNode(A.IMAGE_ASSEMBLER,[F.SPARK_NLP_IMAGE,F.SPARK_NLP_FILE_PATH],[F.IMAGE]),
         A.DOCUMENT_NORMALIZER: NlpFeatureNode(A.DOCUMENT_NORMALIZER, [F.DOCUMENT], [F.DOCUMENT_GENERATED]),
         A.EMBEDDINGS_FINISHER: NlpFeatureNode(A.EMBEDDINGS_FINISHER, [F.ANY_EMBEDDINGS], [F.FINISHED_EMBEDDINGS]),
         # A.# ENTITY_RULER : NlpFeatureNode(A.ENTITY_RULER, [F.], [F.]) # TODO? ,
@@ -236,7 +236,12 @@ class NLP_FEATURE_NODES:  # or Mode Node?
         A.BERT_SENTENCE_CHUNK_EMBEDDINGS: NlpFeatureNode(A.BERT_SENTENCE_CHUNK_EMBEDDINGS, [F.DOCUMENT],
                                                          [F.NAMED_ENTITY_CONVERTED]),
 
-    }
+        A.VIT_IMAGE_CLASSIFICATION: NlpFeatureNode(A.VIT_IMAGE_CLASSIFICATION, [F.IMAGE], [F.CLASSIFIED_IMAGE]),
+
+
+
+
+            }
 
 
 @dataclass
@@ -332,6 +337,7 @@ class OCR_FEATURE_NODES:
                                                        [F.JSON_FOUNDATION_ONE_REPORT]),
         # HOCR
         A.HOCR_DOCUMENT_ASSEMBLER: OcrFeatureNode(A.HOCR_TOKENIZER, [F.HOCR], [F.TEXT_DOCUMENT]),
+
         A.HOCR_TOKENIZER: OcrFeatureNode(A.HOCR_TOKENIZER, [F.HOCR], [F.TEXT_DOCUMENT_TOKENIZED]),
     }
 

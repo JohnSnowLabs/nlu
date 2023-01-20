@@ -669,6 +669,13 @@ class PipeUtils:
             if c.type == AnnoTypes.SPEECH_RECOGNIZER:
                 pipe.contains_audio_components = True
 
+            if c.type == AnnoTypes.IMAGE_CLASSIFICATION:
+                pipe.contains_ocr_components = True
+                pipe.has_nlp_components = False
+            if c.jsl_anno_py_class == 'ImageAssembler':
+                pipe.contains_ocr_components = True
+
+
         return pipe
 
     @staticmethod
