@@ -51,6 +51,8 @@ class ComponentUtils:
             feature_list.remove('sentiment_label')
         if '%%%feature_elements%%%' in feature_list:
             feature_list.remove('%%%feature_elements%%%')
+        if NLP_FEATURES.RAW_AUDIO in feature_list:
+            feature_list.remove(NLP_FEATURES.RAW_AUDIO)
         if NLP_FEATURES.ANY in feature_list:
             feature_list.remove(NLP_FEATURES.ANY)
         if NLP_FEATURES.RAW_QUESTION in feature_list:

@@ -1985,6 +1985,8 @@ class Spellbook:
                                            'el.stopwords.iso': 'stopwords_iso'},
                                     'eml': {'eml.embed.w2v_cc_300d': 'w2v_cc_300d'},
                                     'en': {
+                                        'en.wav2vec.wip': 'asr_wav2vec2_base_960h',
+                                        'en.tapas.wip': 'table_qa_tapas_base_finetuned_wtq',
 
                                         'en.coreference.spanbert': 'spanbert_base_coref',
 
@@ -5710,8 +5712,8 @@ class Spellbook:
             {
 
                 # 4.0.0
-                # 
-                'en.rxnorm_to_ndc' : 'rxnorm_ndc_mapper',
+                #
+                'en.rxnorm_to_ndc': 'rxnorm_ndc_mapper',
                 'en.map_entity.section_headers_normalized': 'normalized_section_header_mapper',
                 'en.icd10cm_to_snomed': 'icd10cm_snomed_mapper',
                 'en.icd10cm_to_umls': 'icd10cm_umls_mapper',
@@ -6456,6 +6458,8 @@ class Spellbook:
         # HC
         # NLP_HC_NODE_IDS.DE_IDENTIFICATION: 'DeIdentification',
         # # OCR
+        'asr_wav2vec2_base_960h': 'Wav2Vec2ForCTC',
+
         'spanbert_base_coref': 'SpanBertCorefModel',
 
         'albert_base_qa_squad2': 'AlbertForQuestionAnswering',
@@ -10299,5 +10303,6 @@ class Spellbook:
         'xlm_roberta_qa_xlmroberta_large_tweetqa': 'XlmRoBertaForQuestionAnswering',
         'xlmroberta_qa_ukrainian': 'XlmRoBertaForQuestionAnswering',
         'xlmroberta_qa_xlmr_large': 'XlmRoBertaForQuestionAnswering',
+        'table_qa_tapas_base_finetuned_wtq':'TapasForQuestionAnswering',
 
     }

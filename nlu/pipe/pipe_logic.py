@@ -502,6 +502,9 @@ class PipelineQueryVerifier:
         # 8. Write additional metadata to the pipe post pipe construction
         pipe = PipeUtils.add_metadata_to_pipe(pipe)
 
+        # 9. For Table-QA based Pipes, we Inject a SetenceDetector for tokenizing the questions
+        pipe = PipeUtils.add_sentence_detector_to_pipe_if_required(pipe)
+
         logger.info('Done with component_list optimizing')
 
         return pipe
@@ -525,6 +528,11 @@ class PipelineQueryVerifier:
         if not pipe.contains_ocr_components:
             # if OCR we must take text sorting into account. Non-OCR pipes get text provided externalyl
             provided_features.append('text')
+
+        if pipe.contains_audio_components:
+            provided_features.append(NLP_FEATURES.RAW_AUDIO)
+
+
 
         loop_count = 0
         max_loop_count = 10*len(pipe.components)

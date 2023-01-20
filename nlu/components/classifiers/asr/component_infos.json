@@ -1,0 +1,23 @@
+{
+  "name": "classifier_dl",
+  "output_level": "sentence",
+  "description": "todo",
+  "trainable": true,
+  "outputs": [
+    "category"
+  ],
+  "inputs": [
+    "sentence_embeddings"
+  ],
+  "type": "classifier",
+  "spark_input_column_names": [
+    "sentence_embeddings"
+  ],
+  "spark_output_column_names": [
+    "category"
+  ],
+  "provider": "sparknlp",
+  "license": "open source",
+  "computation_context": "spark",
+  "output_context": "spark"
+}

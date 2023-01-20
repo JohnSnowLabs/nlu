@@ -1,0 +1,23 @@
+{
+  "name": "document_assembler",
+  "description": "todo",
+  "trainable": false,
+  "output_level": "document",
+  "outputs": [
+    "document"
+  ],
+  "inputs": [
+    "text"
+  ],
+  "type": "util",
+  "spark_input_column_names": [
+    "text"
+  ],
+  "spark_output_column_names": [
+    "document"
+  ],
+  "provider": "sparknlp",
+  "license": "open source",
+  "computation_context": "spark",
+  "output_context": "spark"
+}

@@ -18,10 +18,12 @@ class NLP_LEVELS(NlpLevel):
     RELATION = NlpLevel('relation')
     MULTI_TOKEN_CLASSIFIER = NlpLevel('multi_token_classifier')
 
+    AUDIO_SERIES = NlpLevel('audio_series')
+
     INPUT_DEPENDENT_DOCUMENT_CLASSIFIER = NlpLevel('input_dependent_document_classifier')
     INPUT_DEPENDENT_DOCUMENT_EMBEDDING = NlpLevel('input_dependent_document_embedding')
 
-    # Not used for nwo
+    # Not used for now
     # NGRAM_CHUNK = NlpLevel('NGRAM_CHUNK')
     # SUB_TOKEN = NlpLevel('sub_token')
     # SUPER_TOKEN = NlpLevel('super_token')
@@ -49,6 +51,7 @@ class AnnoTypes:
     TOKENIZER = 'tokenizer'
     TOKEN_CLASSIFIER = 'token_classifier'
     QUESTION_SPAN_CLASSIFIER = 'span_classifier'
+    QUESTION_TABLE_ANSWERER = 'question_table_answerer'
     TRANSFORMER_TOKEN_CLASSIFIER = 'transformer_token_classifier'  # Can be token level but also NER level
     TRANSFORMER_SEQUENCE_CLASSIFIER = 'transformer_sequence_classifier'  # Can be token level but also NER level
     CHUNK_CLASSIFIER = 'chunk_classifier'  # ASSERTION/ NER GENERATES/CONTEXT_PARSER THESE but DOES NOT TAKE THEM IN!!! Split into NER-CHUNK Classifier, etc..?
@@ -62,6 +65,7 @@ class AnnoTypes:
 
     SPELL_CHECKER = 'spell_checker'
     HELPER_ANNO = 'helper_anno'
+    SPEECH_RECOGNIZER = 'speech_recognizer'
     TEXT_NORMALIZER = 'text_normalizer'
     TOKEN_NORMALIZER = 'token_normalizer'
     # TODO chunk sub-classes? I.e. POS-CHUNKS, NER-CHUNKS, KEYWORD-CHUNKS, RESOLUTION-CHUNKS, etc??

@@ -1,12 +1,13 @@
 import streamlit as st
 from sparknlp.annotator import *
+
+from nlu.universe.component_universes import jsl_id_to_empty_component
 from nlu.universe.feature_node_ids import NLP_NODE_IDS, NLP_HC_NODE_IDS
 from nlu.universe.logic_universes import AnnoTypes
-from nlu.universe.component_universes import ComponentUniverse, jsl_id_to_empty_component
 from nlu.universe.universes import Licenses
 
 
-class EntityManifoldUtils():
+class EntityManifoldUtils:
     classifers_OS = [ClassifierDLModel, LanguageDetectorDL, MultiClassifierDLModel, NerDLModel, NerCrfModel,
                      YakeKeywordExtraction, PerceptronModel, SentimentDLModel,
                      SentimentDetectorModel, ViveknSentimentModel, DependencyParserModel, TypedDependencyParserModel,

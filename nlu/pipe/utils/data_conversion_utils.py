@@ -1,5 +1,7 @@
 """Get data into JVM for prediction and out again as Spark Dataframe"""
 import logging
+from io import StringIO
+from typing import Iterable
 
 from nlu.universe.feature_universes import NLP_FEATURES
 
@@ -25,7 +27,7 @@ class DataConversionUtils:
         raise ValueError(
             f'You input data format is invalid for question answering with span classification.'
             f'Make sure you have at least 2 columns in you dataset, named context/question  for pandas Dataframes'
-            f'For Strings/Iterables/Tuples make sure to use the format `question|||context` or (question,context) ' )
+            f'For Strings/Iterables/Tuples make sure to use the format `question|||context` or (question,context) ')
 
     @staticmethod
     def sdf_to_sdf(data, spark_sess, raw_text_column='text'):
@@ -43,6 +45,36 @@ class DataConversionUtils:
         return data, stranger_features, output_datatype
 
     @staticmethod
+    def table_question_str_to_sdf(data, spark_sess):
+
+        # Its JSON or CSV but as Raw string, validate with json.loads or pd.read_csv()
+        try:
+            # Validate JSON
+            # For now no csv validation because we dont have validator. We let Spark-NLP Pipe validate the date
+            return spark_sess.createDataFrame(
+                [[data[0], " ".join([[data[1]] if isinstance(data[1], str) else data[1]])]]
+            ).toDF(NLP_FEATURES.RAW_QUESTION_CONTEXT, NLP_FEATURES.RAW_QUESTION), [], 'pandas'
+        except Exception as err:
+            # TODO PARSE FAIl
+            raise err
+
+    @staticmethod
+    def table_question_pdf_to_sdf(data, spark_sess):
+        # For now no csv validation because we dont have delimitor. We let Spark-NLP Pipe validate the date
+        # pd.read_csv(StringIO(data[0]))
+        header = '"header": ['+",  ".join((list(map(lambda x : f'"{x}"' , data[0].columns))))+ ']'
+        json_data_str = '{' +f'''{header}, "rows" : {data[0].to_json(orient='values')} ''' + '}'
+        # data[0].to_json()
+        try:
+            return spark_sess.createDataFrame(
+                [[json_data_str, data[1] if isinstance(data[1], str) else ' '.join(data[1])]]
+            ).toDF(NLP_FEATURES.RAW_QUESTION_CONTEXT, NLP_FEATURES.RAW_QUESTION).withColumn('origin_index', monotonically_increasing_id().alias('origin_index')), [], 'pandas'
+        except Exception as err:
+            # TODO PARSE FAIl
+            raise err
+
+
+    @staticmethod
     def question_sdf_to_sdf(data, spark_sess):
         """Casting question pandas to spark and add index col"""
         logger.info(f"Casting Pandas DF to Spark DF")
@@ -58,6 +90,7 @@ class DataConversionUtils:
         stranger_features = list(set(data.columns) - {NLP_FEATURES.RAW_QUESTION, NLP_FEATURES.RAW_QUESTION_CONTEXT})
         return data, stranger_features, output_datatype
 
+
     @staticmethod
     def question_str_to_sdf(data, spark_sess):
         """Casting str  to spark and add index col. This is a bit inefficient. Casting follow  # inefficient, str->pd->spark->pd , we can could first pd"""
@@ -70,6 +103,7 @@ class DataConversionUtils:
                                                        'origin_index': [0]}, index=[0]))
         return sdf, [], output_datatype
 
+
     @staticmethod
     def question_tuple_to_sdf(data, spark_sess):
         """Casting str  to spark and add index col. This is a bit inefficient. Casting follow  # inefficient, str->pd->spark->pd , we can could first pd"""
@@ -79,6 +113,7 @@ class DataConversionUtils:
                                                        NLP_FEATURES.RAW_QUESTION_CONTEXT: context,
                                                        'origin_index': [0]}, index=[0]))
         return sdf, [], output_datatype
+
 
     @staticmethod
     def question_tuple_iterable_to_sdf(data, spark_sess):
@@ -97,6 +132,7 @@ class DataConversionUtils:
                                                        'origin_index': [0]}, index=list(range(len(question)))))
         return sdf, [], output_datatype
 
+
     @staticmethod
     def question_str_iterable_to_sdf(data, spark_sess):
         """Casting str  to spark and add index col. This is a bit inefficient. Casting follow  # inefficient, str->pd->spark->pd , we can could first pd"""
@@ -110,6 +146,7 @@ class DataConversionUtils:
                                                        NLP_FEATURES.RAW_QUESTION_CONTEXT: context,
                                                        'origin_index': list(range(len(question)))}))
         return sdf, [], output_datatype
+
 
     @staticmethod
     def pdf_to_sdf(data, spark_sess, raw_text_column='text'):
@@ -132,6 +169,7 @@ class DataConversionUtils:
             DataConversionUtils.except_text_col_not_found(data.columns)
         return sdf, stranger_features, output_datatype
 
+
     @staticmethod
     def question_pdf_to_sdf(data, spark_sess):
         """Casting question pandas to spark and add index col"""
@@ -152,6 +190,7 @@ class DataConversionUtils:
         stranger_features = list(set(data.columns) - {NLP_FEATURES.RAW_QUESTION, NLP_FEATURES.RAW_QUESTION_CONTEXT})
         sdf = spark_sess.createDataFrame(data)
         return sdf, stranger_features, output_datatype
+
 
     @staticmethod
     def pds_to_sdf(data, spark_sess, raw_text_column='text'):
@@ -178,6 +217,7 @@ class DataConversionUtils:
             sdf = sdf.withColumn('origin_index', monotonically_increasing_id().alias('origin_index'))
         return sdf, [], output_datatype
 
+
     @staticmethod
     def np_to_sdf(data, spark_sess, raw_text_column='text'):
         """Casting numpy array to spark and add index col. This is a bit inefficient. Casting follow  np->pd->spark->pd. We could cut out the first pd step   """
@@ -188,6 +228,7 @@ class DataConversionUtils:
         sdf = spark_sess.createDataFrame(pd.DataFrame({raw_text_column: data, 'origin_index': list(range(len(data)))}))
         return sdf, [], output_datatype
 
+
     @staticmethod
     def str_to_sdf(data, spark_sess, raw_text_column='text'):
         """Casting str  to spark and add index col. This is a bit inefficient. Casting follow  # inefficient, str->pd->spark->pd , we can could first pd"""
@@ -195,6 +236,7 @@ class DataConversionUtils:
         output_datatype = 'string'
         sdf = spark_sess.createDataFrame(pd.DataFrame({raw_text_column: data, 'origin_index': [0]}, index=[0]))
         return sdf, [], output_datatype
+
 
     @staticmethod
     def str_list_to_sdf(data, spark_sess, raw_text_column='text'):
@@ -207,6 +249,7 @@ class DataConversionUtils:
         else:
             ValueError("Exception: Not all elements in input list are of type string.")
         return sdf, [], output_datatype
+
 
     @staticmethod
     def fallback_modin_to_sdf(data, spark_sess, raw_text_column='text'):
@@ -243,9 +286,26 @@ class DataConversionUtils:
                 "If you use Modin, make sure you have installed 'pip install modin[ray]' or 'pip install modin[dask]' backend for Modin ")
         return sdf, [], output_datatype
 
+
     @staticmethod
-    def to_spark_df(data, spark_sess, raw_text_column='text', is_span_data=False):
+    def to_spark_df(data, spark_sess, raw_text_column='text', is_span_data=False, is_tabular_qa_data=False):
         """Convert supported datatypes to SparkDF and extract extra data for prediction later on."""
+        if is_tabular_qa_data:
+            if not isinstance(data, Iterable):
+                # TODO invalid Table Data Format Exception
+                pass
+            if not isinstance(data[0], (pd.DataFrame, str)):
+                # TODO invalid Table Data Format Exception
+                pass
+            if not isinstance(data[1], Iterable):
+                # TODO invalid Table Data Format Exception
+                pass
+            if isinstance(data[0], str):
+
+                return DataConversionUtils.table_question_str_to_sdf(data, spark_sess)
+            if isinstance(data[0], pd.DataFrame):
+                return DataConversionUtils.table_question_pdf_to_sdf(data, spark_sess)
+
         if is_span_data:
             try:
                 if isinstance(data, pyspark.sql.dataframe.DataFrame):
@@ -283,11 +343,13 @@ class DataConversionUtils:
                 ValueError("Data could not be converted to Spark Dataframe for internal conversion.")
         raise TypeError(f"Invalid datatype = {type(data)}")
 
+
     @staticmethod
     def str_to_pdf(data, raw_text_column):
         logger.info(f"Casting String to Pandas DF")
         return pd.DataFrame({raw_text_column: [data]}).reset_index().rename(
             columns={'index': 'origin_index'}), [], 'string'
+
 
     @staticmethod
     def str_list_to_pdf(data, raw_text_column):
@@ -295,16 +357,19 @@ class DataConversionUtils:
         return pd.DataFrame({raw_text_column: data}).reset_index().rename(
             columns={'index': 'origin_index'}), [], 'string_list'
 
+
     @staticmethod
     def np_to_pdf(data, raw_text_column):
         logger.info(f"Casting Numpy Array to Pandas DF")
         return pd.DataFrame({raw_text_column: data}).reset_index().rename(
             columns={'index': 'origin_index'}), [], 'string_list'
 
+
     @staticmethod
     def pds_to_pdf(data, raw_text_column):
         return pd.DataFrame({raw_text_column: data}).reset_index().rename(
             columns={'index': 'origin_index'}), [], 'string_list'
+
 
     @staticmethod
     def pdf_to_pdf(data, raw_text_column):
@@ -319,6 +384,7 @@ class DataConversionUtils:
 
         return data, stranger_features, 'pandas'
 
+
     @staticmethod
     def sdf_to_pdf(data, raw_text_column):
         logger.info(f"Casting Spark DF to Pandas DF")
@@ -331,6 +397,7 @@ class DataConversionUtils:
         stranger_features.remove('origin_index')
 
         return data, stranger_features, 'spark'
+
 
     @staticmethod
     def to_pandas_df(data, raw_text_column='text'):
@@ -357,6 +424,7 @@ class DataConversionUtils:
                 return DataConversionUtils.fallback_modin_to_pdf(data, raw_text_column)
         except:
             ValueError("Data could not be converted to Spark Dataframe for internal conversion.")
+
 
     @staticmethod
     def size_of(data):

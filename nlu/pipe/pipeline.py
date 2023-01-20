@@ -36,6 +36,7 @@ class NLUPipeline(dict):
         self.failed_pyarrow_conversion = False
         self.anno2final_cols = []  # Maps Anno to output pandas col
         self.contains_ocr_components = False
+        self.contains_audio_components = False
         self.has_nlp_components = False
         self.nlu_ref = ''
         self.raw_text_column = 'text'
@@ -58,13 +59,14 @@ class NLUPipeline(dict):
         self.has_licensed_components = False
         self.has_span_classifiers = False
         self.prefer_light = False
+        self.has_table_qa_models = False
 
     def add(self, component: NluComponent, nlu_reference=None, pretrained_pipe_component=False,
             name_to_add='', idx=None):
         '''
 
         :param component:
-        :return:
+        :return: None
         '''
         if idx:
             self.components.insert(idx, component)
@@ -390,6 +392,7 @@ class NLUPipeline(dict):
         :param cols:  list of column names in the df
         :return: list of columns with the irrelevant names removed
         '''
+        if 'doc2chunk' in cols: cols.remove('doc2chunk')
         if 'doc2chunk' in cols: cols.remove('doc2chunk')
 
         if self.prediction_output_level == 'token':

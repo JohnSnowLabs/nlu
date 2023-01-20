@@ -25,13 +25,18 @@ class FeatureResolutions:
     # TODO use lang families, i.e. en.tokenize works for all Latin style languages but not Chinese, I.e. not actually multi lingual
 
     default_OS_resolutions = {
-        NLP_FEATURES.DOCUMENT_QUESTION: ResolvedFeature('multi_document_assembler', 'multi_document_assembler', 'xx', False,
-                                               ComponentUniverse.components[NLP_NODE_IDS.MULTI_DOCUMENT_ASSEMBLER]),
+        NLP_FEATURES.DOCUMENT_QUESTION: ResolvedFeature('multi_document_assembler', 'multi_document_assembler', 'xx',
+                                                        False,
+                                                        ComponentUniverse.components[
+                                                            NLP_NODE_IDS.MULTI_DOCUMENT_ASSEMBLER]),
+        NLP_FEATURES.AUDIO: ResolvedFeature('audio_assembler', 'audio_assembler', 'xx', False,
+                                            ComponentUniverse.components[NLP_NODE_IDS.AUDIO_ASSEMBLER]),
+
+        NLP_FEATURES.ASSEMBLED_TABULAR_DATA: ResolvedFeature('table_assembler', 'table_assembler', 'xx', False,
+                                            ComponentUniverse.components[NLP_NODE_IDS.TABLE_ASSEMBLER]),
+
         # NLP_FEATURES.DOCUMENT_QUESTION_CONTEXT: ResolvedFeature('multi_document_assembler', 'multi_document_assembler', 'xx', False,
         #                                        ComponentUniverse.components[NLP_NODE_IDS.MULTI_DOCUMENT_ASSEMBLER]),
-
-
-
 
         NLP_FEATURES.DOCUMENT: ResolvedFeature('document_assembler', 'document_assembler', 'xx', False,
                                                ComponentUniverse.components[NLP_NODE_IDS.DOCUMENT_ASSEMBLER]),
