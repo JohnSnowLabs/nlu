@@ -1,7 +1,6 @@
 import logging
 from typing import Union
 
-import pyspark
 import sparknlp
 from pyspark.sql.types import StructType, StructField, StringType
 from sparknlp.base import *
@@ -12,14 +11,12 @@ from nlu.pipe.extractors.extractor_configs_HC import default_full_config
 from nlu.pipe.extractors.extractor_methods.base_extractor_methods import *
 from nlu.pipe.extractors.extractor_methods.ocr_extractors import extract_tables
 from nlu.pipe.nlu_component import NluComponent
-from nlu.pipe.pipe_logic import PipeUtils
 from nlu.pipe.utils.component_utils import ComponentUtils
 from nlu.pipe.utils.data_conversion_utils import DataConversionUtils
 from nlu.pipe.utils.output_level_resolution_utils import OutputLevelUtils
 from nlu.pipe.utils.resolution.storage_ref_utils import StorageRefUtils
 from nlu.universe.universes import Licenses
-from nlu.utils.environment.env_utils import is_running_in_databricks, try_import_pyspark_in_streamlit, \
-    try_import_streamlit
+from nlu.utils.environment.env_utils import is_running_in_databricks, try_import_streamlit
 
 logger = logging.getLogger('nlu')
 
@@ -115,6 +112,8 @@ class NLUPipeline(dict):
         :param label_seperator: If multi_classifier is trained, this seperator is used to split the elements into an Array column for Pyspark
         :return: A nlu pipeline with models fitted.
         '''
+        from nlu.pipe.pipe_logic import PipeUtils
+
         stages = []
         for component in self.components:
             stages.append(component.model)
@@ -309,6 +308,7 @@ class NLUPipeline(dict):
         :param output_metadata: Whether to keep or drop additional metadata or predictions, like prediction confidence
         :return: Pandas dataframe which easy accessible features
         '''
+        from nlu.pipe.pipe_logic import PipeUtils
 
         if PipeUtils.has_table_extractor(self):
             # If pipe has table extractors, we return list of tables or table itself if only one detected
@@ -417,20 +417,6 @@ class NLUPipeline(dict):
             if 'sentence' in cols: cols.remove('sentence')
         if keep_origin_index == False and 'origin_index' in cols: cols.remove('origin_index')
         return cols
-
-    def configure_light_pipe_usage(self, data_instances, use_multi=True, force=False):
-        logger.info("Configuring Light Pipeline Usage")
-        if data_instances > 50 or use_multi is False:
-            logger.info("Disabling light pipeline")
-            if not self.is_fitted:
-                self.fit()
-        else:
-            if not self.light_transformer_pipe or force:
-                if not self.is_fitted:
-                    self.fit()
-                self.light_pipe_configured = True
-                logger.info("Enabling light pipeline")
-                self.light_transformer_pipe = LightPipeline(self.vanilla_transformer_pipe, parse_embeddings=True)
 
     def save(self, path, component='entire_pipeline', overwrite=False):
         from nlu.utils.environment.env_utils import is_running_in_databricks
@@ -945,3 +931,17 @@ class NLUPipeline(dict):
                                                                      show_infos,
                                                                      show_logo,
                                                                      n_jobs)
+
+    def __configure_light_pipe_usage__(self, data_instances, use_multi=True, force=False):
+        logger.info("Configuring Light Pipeline Usage")
+        if data_instances > 50 or use_multi is False:
+            logger.info("Disabling light pipeline")
+            if not self.is_fitted:
+                self.fit()
+        else:
+            if not self.light_transformer_pipe or force:
+                if not self.is_fitted:
+                    self.fit()
+                self.light_pipe_configured = True
+                logger.info("Enabling light pipeline")
+                self.light_transformer_pipe = LightPipeline(self.vanilla_transformer_pipe, parse_embeddings=True)

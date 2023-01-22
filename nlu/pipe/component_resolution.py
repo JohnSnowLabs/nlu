@@ -119,7 +119,7 @@ def resolve_feature(missing_feature_type: Union[NLP_FEATURES, OCR_FEATURES, NLP_
         return nlu_component
 
 
-def nlu_ref_to_component(nlu_ref, detect_lang=False, authenticated=False) -> NluComponent:
+def nlu_ref_to_component(nlu_ref, detect_lang=False, authenticated=False) -> Union[NluComponent, List[NluComponent]]:
     '''
     This method implements the main namespace for all component_to_resolve names. It parses the input request and passes
     the data to a resolver method which searches the namespace for a Component for the input request

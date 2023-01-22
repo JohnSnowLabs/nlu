@@ -5,6 +5,7 @@ from sparknlp.annotator import *
 import nlu
 from nlu import Licenses
 from nlu.pipe.nlu_component import NluComponent
+from nlu.pipe.pipeline import NLUPipeline
 from nlu.pipe.utils.resolution.storage_ref_utils import StorageRefUtils
 from nlu.universe.atoms import JslAnnoId
 from nlu.universe.component_universes import ComponentUniverse, jsl_id_to_empty_component
@@ -14,7 +15,7 @@ from nlu.universe.logic_universes import NLP_LEVELS, AnnoTypes
 
 logger = logging.getLogger('nlu')
 from nlu.pipe.utils.component_utils import ComponentUtils
-from typing import List
+from typing import List, Union
 from nlu.universe.annotator_class_universe import AnnoClassRef
 from nlu.utils.environment.env_utils import is_running_in_databricks
 import os
@@ -26,7 +27,7 @@ class PipeUtils:
     """Pipe Level logic operations and utils"""
 
     @staticmethod
-    def update_bad_storage_refs(pipe):
+    def update_bad_storage_refs(pipe: NLUPipeline):
         """
         Some models have bad storage refs. The list of these bad models is defined by nlu.spellbook.Spellbook.bad_storage_refs.
         The correct storage ref is given by the resolving moels storage ref defined by nlu.Spellbook.licensed_storage_ref_2_nlu_ref[pipe.lang][storage_ref].
@@ -56,7 +57,7 @@ class PipeUtils:
         return pipe
 
     @staticmethod
-    def update_relation_extractor_models_storage_ref(pipe):
+    def update_relation_extractor_models_storage_ref(pipe: NLUPipeline):
         # if provided, because the sometimes have unresolvable storage refs
         # we can find the actual storage ref only after its mapped is sresolved to an model_anno_obj defined by an nlp ref
         # If RelationExtractor is not loaded from a pretrained pipe we update its storage ref to the resolving models storage ref
@@ -169,14 +170,14 @@ class PipeUtils:
         return component_list
 
     @staticmethod
-    def is_trainable_pipe(pipe):
+    def is_trainable_pipe(pipe: NLUPipeline):
         """Check if component_list is trainable"""
         for c in pipe.components:
             if c.trainable: return True
         return False
 
     @staticmethod
-    def enforece_AT_embedding_provider_output_col_name_schema_for_list_of_components(pipe_list):
+    def enforece_AT_embedding_provider_output_col_name_schema_for_list_of_components(pipe_list: List[NluComponent]):
         """For every embedding provider, enforce that their output col is named <pipe_prediction_output_level>@storage_ref for
         output_levels word,chunk,sentence aka document , TODO update the classifier models swell i.e.
         word_embed@elmo or sentence_embed@elmo etc. """
@@ -189,13 +190,13 @@ class PipeUtils:
         return pipe_list
 
     @staticmethod
-    def enforce_AT_schema_on_pipeline_and_add_NER_converter(pipe):
+    def enforce_AT_schema_on_pipeline_and_add_NER_converter(pipe: NLUPipeline):
         """Enforces the AT naming schema on all column names and add missing NER converters"""
         return PipeUtils.enforce_AT_schema_on_NER_processors_and_add_missing_NER_converters(
             PipeUtils.enforce_AT_schema_on_embedding_processors(pipe))
 
     @staticmethod
-    def enforce_AT_schema_on_NER_processors_and_add_missing_NER_converters(pipe):
+    def enforce_AT_schema_on_NER_processors_and_add_missing_NER_converters(pipe: NLUPipeline):
         """For every NER provider and consumer, enforce that their output col is named <pipe_prediction_output_level>@storage_ref for
         output_levels word,chunk,sentence aka document , i.e. word_embed@elmo or sentence_embed@elmo etc. We also
         add NER converters for every NER model_anno_obj that no Converter converting its inputs In addition, returns the
@@ -290,7 +291,7 @@ class PipeUtils:
         return pipe
 
     @staticmethod
-    def enforce_AT_schema_on_embedding_processors(pipe):
+    def enforce_AT_schema_on_embedding_processors(pipe: NLUPipeline):
         """For every embedding provider and consumer, enforce that their output col is named
         <pipe_prediction_output_level>@storage_ref for output_levels word,chunk,sentence aka document , i.e. word_embed@elmo or
         sentence_embed@elmo etc. """
@@ -314,7 +315,7 @@ class PipeUtils:
         return pipe
 
     @staticmethod
-    def enforce_NLU_columns_to_NLP_columns(pipe):
+    def enforce_NLU_columns_to_NLP_columns(pipe: NLUPipeline):
         """for every component_to_resolve, set its inputs and outputs to the ones configured on the NLU component_to_resolve."""
         # These anno have no standardized setInputCol or it should not be configured
         blacklisted = [NLP_NODE_IDS.DOCUMENT_ASSEMBLER]
@@ -347,7 +348,7 @@ class PipeUtils:
             return True
 
     @staticmethod
-    def configure_component_output_levels_to_sentence(pipe):
+    def configure_component_output_levels_to_sentence(pipe: NLUPipeline):
         '''
         Configure component_list components to output level document. Substitute every occurrence of <document> to
         <sentence> for every component_to_resolve that feeds from <document
@@ -373,7 +374,7 @@ class PipeUtils:
         return pipe.components
 
     @staticmethod
-    def configure_component_output_levels_to_document(pipe):
+    def configure_component_output_levels_to_document(pipe: NLUPipeline):
         '''
         Configure component_list components to output level document. Substitute every occurence of <sentence> to <document> for every component_to_resolve that feeds from <sentence>
         :param pipe: component_list to be configured
@@ -398,55 +399,54 @@ class PipeUtils:
         return pipe.components
 
     @staticmethod
-    def has_sentence_detector(pipe):
-        """Check for NLUPipieline if it contains sentence detector"""
+    def has_component_with_id(pipe: NLUPipeline, ids: Union[JslAnnoId, List[JslAnnoId]]):
+        """Check for NLUPipeline if it contains component with id """
+        ids = ids if isinstance(ids, list) else [ids]
+        for c in pipe.components:
+            if c.name in ids:
+                return True
+        return False
+
+    @staticmethod
+    def has_sentence_detector(pipe: NLUPipeline):
+        """Check for NLUPipeline if it contains sentence detector"""
         for c in pipe.components:
             if isinstance(c.model, (SentenceDetectorDLModel, SentenceDetector, SentenceDetectorDLApproach)): return True
         return False
 
     @staticmethod
-    def has_document_assembler(pipe):
-        """Check for NLUPipieline if it contains sentence detector"""
-        for c in pipe.components:
-            if c.name == NLP_NODE_IDS.DOCUMENT_ASSEMBLER:
-                return True
-        return False
+    def has_document_assembler(pipe: NLUPipeline):
+        return PipeUtils.has_component_with_id(pipe, NLP_NODE_IDS.DOCUMENT_ASSEMBLER)
 
     @staticmethod
-    def has_table_extractor(pipe):
+    def has_table_extractor(pipe: NLUPipeline):
         """Check for NLUPipieline if it contains any table extracting OCR component"""
-        for c in pipe.components:
-            if c.name in [OCR_NODE_IDS.PDF2TEXT_TABLE,
-                          OCR_NODE_IDS.PPT2TEXT_TABLE,
-                          OCR_NODE_IDS.DOC2TEXT_TABLE,
-                          OCR_NODE_IDS.IMAGE_TABLE_DETECTOR,
-                          ]:
-                return True
-        return False
+        return PipeUtils.has_component_with_id(pipe, [OCR_NODE_IDS.PDF2TEXT_TABLE,
+                                                      OCR_NODE_IDS.PPT2TEXT_TABLE,
+                                                      OCR_NODE_IDS.DOC2TEXT_TABLE,
+                                                      OCR_NODE_IDS.IMAGE_TABLE_DETECTOR,
+                                                      ])
 
     @staticmethod
-    def get_component_idx_by_id(pipe, node_id: JslAnnoId):
-        """Find first occurrence of component in pipe and returns index
-        :param pipe:  pipe
-        :return: idx of anno_id in list of components. If none present, returns -1
-        """
+    def get_component_idx_by_id(pipe: NLUPipeline, node_id: JslAnnoId):
+        """Find first occurrence of component in pipe by ID and returns index """
         for i, c in enumerate(pipe.components):
             if c.name == node_id:
                 return i
         raise Exception(f'Could not find component {node_id} in pipe {pipe}')
 
     @staticmethod
-    def add_tokenizer_to_pipe_if_missing(pipe):
+    def add_tokenizer_to_pipe_if_missing(pipe: NLUPipeline):
         """add tokenizer to pipe if it is missing
         :param pipe:  pipe
         :return: Pipe with tokenizer if missing
         """
-        for c in pipe.components:
-            if c.name in [NLP_NODE_IDS.TOKENIZER, NLP_NODE_IDS.TOKEN_ASSEMBLER, NLP_NODE_IDS.REGEX_TOKENIZER,
-                          NLP_NODE_IDS.RECURISVE_TOKENIZER, NLP_NODE_IDS.WORD_SEGMENTER]:
-                return pipe
 
-        # No tokenizer found, so we add one which either feeds from document or sentences, depending on pipe.prediction_output_level
+        if PipeUtils.has_component_with_id(pipe, [NLP_NODE_IDS.TOKENIZER, NLP_NODE_IDS.TOKEN_ASSEMBLER,
+                                                  NLP_NODE_IDS.REGEX_TOKENIZER,
+                                                  NLP_NODE_IDS.RECURISVE_TOKENIZER, NLP_NODE_IDS.WORD_SEGMENTER]):
+            return pipe
+
         from nlu.pipe.component_resolution import resolve_feature
         tokenizer = resolve_feature(NLP_FEATURES.TOKEN)
         tokenizer.spark_input_column_names = [pipe.component_output_level]
@@ -462,7 +462,7 @@ class PipeUtils:
         return pipe
 
     @staticmethod
-    def configure_component_output_levels(pipe, new_output_level=''):
+    def configure_component_output_levels(pipe: NLUPipeline, new_output_level=''):
         '''
         This method configures sentenceEmbeddings and Classifier components to output at a specific level.
         Generally this substitutes all `sentence` columns to `document` and vice versa.
@@ -502,7 +502,7 @@ class PipeUtils:
             return PipeUtils.configure_component_output_levels_to_document(pipe)
 
     @staticmethod
-    def check_if_component_is_in_pipe(pipe, component_name_to_check, check_strong=True):
+    def check_if_component_is_in_pipe(pipe: NLUPipeline, component_name_to_check, check_strong=True):
         """Check if a component_to_resolve with a given name is already in a component_list """
         for c in pipe.components:
             if check_strong and component_name_to_check == c.info.name:
@@ -524,7 +524,7 @@ class PipeUtils:
         return False
 
     @staticmethod
-    def is_leaf_node(c, pipe) -> bool:
+    def is_leaf_node(c, pipe: NLUPipeline) -> bool:
         """Check if a component_to_resolve is a leaf in the DAG.
         We verify by checking if any other_c is feeding from os_components.
         If yes, it is not a leaf. If nobody feeds from os_components, it's a leaf.
@@ -537,7 +537,7 @@ class PipeUtils:
         return False
 
     @staticmethod
-    def clean_AT_storage_refs(pipe):
+    def clean_AT_storage_refs(pipe: NLUPipeline):
         """Removes AT notation from all columns. Useful to reset component_list back to default state"""
         for c in pipe.components:
             if c.info.loaded_from_pretrained_pipe:
@@ -552,7 +552,7 @@ class PipeUtils:
         return pipe
 
     @staticmethod
-    def rename_duplicate_cols(pipe):
+    def rename_duplicate_cols(pipe: NLUPipeline):
         """Rename cols with duplicate names"""
         for i, c in enumerate(pipe.components):
             for other_c in pipe.components:
@@ -565,7 +565,7 @@ class PipeUtils:
         return pipe
 
     @staticmethod
-    def find_trainable_embed_consumer(pipe):
+    def find_trainable_embed_consumer(pipe: NLUPipeline):
         """Find traianble component_to_resolve which consumes emeddings.
         Returns index of component_to_resolve and type of embedding if found, otherwise returns -1 and None"""
         for i, c in enumerate(pipe.components):
@@ -600,7 +600,7 @@ class PipeUtils:
         return required_features_ref, conversion_candidates
 
     @staticmethod
-    def update_converter_storage_refs_and_cols(pipe, provided_features_ref, required_features_ref):
+    def update_converter_storage_refs_and_cols(pipe: NLUPipeline, provided_features_ref, required_features_ref):
         """Storage ref of converters is initially empty string, i.e. '' .
         This method checks if  any convertable embeddings are provided, if yes it will update storage ref of converter
         , update the input/output columns with colname@storage_ref notation and mark it as resolved
@@ -638,7 +638,7 @@ class PipeUtils:
         return provided_features_ref, required_features_ref
 
     @staticmethod
-    def add_metadata_to_pipe(pipe):
+    def add_metadata_to_pipe(pipe: NLUPipeline):
         """Write metadata fields to pipeline, for now only whether it contains
         OCR components or not. To be extended in the future
         """
@@ -675,11 +675,10 @@ class PipeUtils:
             if c.jsl_anno_py_class == 'ImageAssembler':
                 pipe.contains_ocr_components = True
 
-
         return pipe
 
     @staticmethod
-    def replace_untrained_component_with_trained(nlu_pipe, spark_transformer_pipe):
+    def replace_untrained_component_with_trained(nlu_pipe: NLUPipeline, spark_transformer_pipe):
         """Write metadata fields to pipeline, for now only whether it contains
         OCR components or not. To be extended in the future
         :return:
@@ -739,19 +738,11 @@ class PipeUtils:
         raise ValueError(f"Could not find model_anno_obj of requested class = {class_name}")
 
     @staticmethod
-    def contains_component_by_id(pipe, c_id: JslAnnoId):
-        for c in pipe.components:
-            if c.name == c_id:
-                return True
-        return False
-
+    def contains_t5_or_gpt(pipe: NLUPipeline):
+        return PipeUtils.has_component_with_id(pipe, [NLP_NODE_IDS.GPT2, NLP_NODE_IDS.T5_TRANSFORMER])
 
     @staticmethod
-    def contains_t5_or_gpt(pipe):
-        return PipeUtils.contains_component_by_id(pipe, [NLP_NODE_IDS.GPT2, NLP_NODE_IDS.T5_TRANSFORMER])
-
-    @staticmethod
-    def add_sentence_detector_to_pipe_if_required(pipe):
+    def add_sentence_detector_to_pipe_if_required(pipe: NLUPipeline):
         """
         1. For Tabla-QA the Question Tapas Col should originate from a doc type
                                           -> doc_question -> sent_question    |

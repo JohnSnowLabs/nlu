@@ -7,7 +7,6 @@ if not env_utils.try_import_pyspark_in_streamlit():
 if not env_utils.try_import_spark_nlp():
     raise ImportError("You need Spark NLP to run NLU. run pip install spark-nlp")
 
-import json
 import sparknlp
 import warnings
 import nlu.utils.environment.authentication as auth_utils
@@ -15,7 +14,7 @@ import nlu.utils.environment.offline_load_utils as offline_utils
 from nlu.universe.universes import Licenses
 from nlu.utils.environment.authentication import *
 from nlu.pipe.pipeline import NLUPipeline
-from nlu.pipe.pipe_logic import PipelineQueryVerifier
+from nlu.pipe.pipe_logic import PipelineCompleter
 from nlu.discovery import Discoverer
 from nlu.pipe.component_resolution import *
 
@@ -37,10 +36,8 @@ slack_link = 'https://join.slack.com/t/spark-nlp/shared_invite/zt-lutct9gm-kuUaz
 github_issues_link = 'https://github.com/JohnSnowLabs/nlu/issues'
 
 
-
-
 def viz(nlp_pipe: Union[Pipeline, LightPipeline, PipelineModel, List],
-        data:str, viz_type: str = '',
+        data: str, viz_type: str = '',
         labels_to_viz=None,
         viz_colors={},
         return_html=False,
@@ -102,17 +99,17 @@ corresponding ner_col, pos_col, dep_untyped_col, dep_typed_col, resolution_col, 
                                            assertion_col=assertion_col, )
 
 
-def autocomplete_pipeline(pipe:Union[Pipeline, LightPipeline, PipelineModel, List], lang='en'):
+def autocomplete_pipeline(pipe: Union[Pipeline, LightPipeline, PipelineModel, List], lang='en'):
     """
 Auto-Complete a pipeline or single annotator into a runnable pipeline by harnessing NLU's DAG Autocompletion algorithm
 and returns it as NLU pipeline.
-The standard Spark pipeline is avaiable on the `.vanilla_transformer_pipe` attribute of the returned nlu pipe
+The standard Spark pipeline is available on the `.vanilla_transformer_pipe` attribute of the returned nlu pipe
 
 Every Annotator and Pipeline of Annotators defines a `DAG` of tasks, with various
-dependencies that must be satisfied in `topoligical order`.
+dependencies that must be satisfied in `topological order`.
 NLU enables the completion of an incomplete DAG by finding or creating a path between
 the very first input node which is almost always is `DocumentAssembler/MultiDocumentAssembler`
-and the very last node(s), which is given by the `topoligical sorting` the iterable annotators parameter.
+and the very last node(s), which is given by the `topological sorting` the iterable annotators' parameter.
 Paths are created by resolving input features of
  annotators to the corresponding providers with matching storage references.
 
@@ -128,7 +125,7 @@ Paths are created by resolving input features of
         pipe = to_nlu_pipe(pipe, is_pre_configured=False)
     else:
         pipe = to_nlu_pipe([pipe], is_pre_configured=False)
-    pipe = PipelineQueryVerifier.check_and_fix_nlu_pipeline(pipe)
+    pipe = PipelineCompleter.check_and_fix_nlu_pipeline(pipe)
     return pipe
 
 
@@ -212,10 +209,7 @@ def load(request: str = 'from_disk', path: Optional[str] = None, verbose: bool =
             return pipe
     except Exception as err:
         if verbose:
-            e = sys.exc_info()
-            print(e[0])
-            print(e[1])
-            print(err)
+            log_verbose_error(err)
         raise Exception(
             f"Something while loading the pipe in {path}. Is the path correct? use nlu.load(verbose=True) for more info.")
 
@@ -233,7 +227,7 @@ def load(request: str = 'from_disk', path: Optional[str] = None, verbose: bool =
                 continue
             nlu_component = nlu_ref_to_component(nlu_ref)
             # if we get a list of components, then the NLU reference is a pipeline, we do not need to check order
-            if type(nlu_component) == type([]):
+            if isinstance(nlu_component, list):
                 # lists are parsed down to multiple components, result of pipeline request (stack of components)
                 for c in nlu_component:
                     pipe.add(c, nlu_ref, pretrained_pipe_component=True)
@@ -242,15 +236,13 @@ def load(request: str = 'from_disk', path: Optional[str] = None, verbose: bool =
                 pipe.add(nlu_component, nlu_ref)
     except Exception as err:
         if verbose:
-            e = sys.exc_info()
-            print(e[0])
-            print(e[1])
-            print(err)
+            log_verbose_error(err)
         raise Exception(
-            f"Something went wrong during creating the Spark NLP model_anno_obj for your request =  {request} Did you use a NLU Spell?")
+            f"Something went wrong during creating the Spark NLP model_anno_obj for your request = {request}"
+            f"Did you use a NLU Spell?")
     # Complete Spark NLP Pipeline, which is defined as a DAG given by the starting Annotators
     try:
-        pipe = PipelineQueryVerifier.check_and_fix_nlu_pipeline(pipe)
+        pipe = PipelineCompleter.check_and_fix_nlu_pipeline(pipe)
         pipe.nlu_ref = request
         return pipe
     except:
@@ -265,67 +257,17 @@ def load(request: str = 'from_disk', path: Optional[str] = None, verbose: bool =
 
 def auth(HEALTHCARE_LICENSE_OR_JSON_PATH='/content/spark_nlp_for_healthcare.json', AWS_ACCESS_KEY_ID='',
          AWS_SECRET_ACCESS_KEY='', HEALTHCARE_SECRET='', OCR_LICENSE='', OCR_SECRET='', gpu=False):
-    """ Authenticate enviroment for JSL Liscensed models.mm
+    """ Authenticate environment for JSL Licensed models
     Installs NLP-Healthcare if not in environment detected
     Either provide path to spark_nlp_for_healthcare.json file as first param or manually enter them,
     HEALTHCARE_LICENSE_OR_JSON_PATH,AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY,HEALTHCARE_SECRET .
     Set gpu=true if you want to enable GPU mode
     """
-
-    def has_empty_strings(iterable):
-        """Check for a given list of strings, whether it has any empty strings or not"""
-        return all(x == '' for x in iterable)
-
-    hc_creds = [HEALTHCARE_LICENSE_OR_JSON_PATH, HEALTHCARE_SECRET]
-    ocr_creds = [OCR_LICENSE, OCR_SECRET]
-    aws_creds = [AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY]
-
-    if os.path.exists(HEALTHCARE_LICENSE_OR_JSON_PATH):
-        # Credentials provided via JSON file
-        with open(HEALTHCARE_LICENSE_OR_JSON_PATH) as json_file:
-            j = json.load(json_file)
-            if 'SPARK_NLP_LICENSE' in j.keys() and 'SPARK_OCR_LICENSE' in j.keys():
-                # HC and OCR creds provided
-                auth_utils.get_authenticated_spark_HC_and_OCR(j['SPARK_NLP_LICENSE'], j['SECRET'],
-                                                              j['SPARK_OCR_LICENSE'], j['SPARK_OCR_SECRET'],
-                                                              j['AWS_ACCESS_KEY_ID'], j['AWS_SECRET_ACCESS_KEY'], gpu)
-
-                return nlu
-
-            if 'SPARK_NLP_LICENSE' in j.keys() and 'SPARK_OCR_LICENSE' not in j.keys():
-                # HC creds provided but no OCR
-                auth_utils.get_authenticated_spark_HC(j['SPARK_NLP_LICENSE'], j['SECRET'], j['AWS_ACCESS_KEY_ID'],
-                                                      j['AWS_SECRET_ACCESS_KEY'], gpu)
-                return nlu
-
-            if 'SPARK_NLP_LICENSE' not in j.keys() and 'SPARK_OCR_LICENSE' in j.keys():
-                # OCR creds provided but no HC
-                auth_utils.get_authenticated_spark_OCR(j['SPARK_OCR_LICENSE'], j['SPARK_OCR_SECRET'],
-                                                       j['AWS_ACCESS_KEY_ID'], j['AWS_SECRET_ACCESS_KEY'], gpu)
-                return nlu
-
-            auth_utils.get_authenticated_spark(gpu)
-        return nlu
-    else:
-        # Credentials provided as parameter
-        if not has_empty_strings(hc_creds) and not has_empty_strings(ocr_creds) and not has_empty_strings(aws_creds):
-            # HC + OCR credentials provided
-            auth_utils.get_authenticated_spark_HC_and_OCR(HEALTHCARE_LICENSE_OR_JSON_PATH, HEALTHCARE_SECRET,
-                                                          OCR_LICENSE,
-                                                          OCR_SECRET, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, gpu)
-            return nlu
-
-        elif not has_empty_strings(hc_creds) and has_empty_strings(ocr_creds) and not has_empty_strings(aws_creds):
-            # HC creds provided, but no HC
-            auth_utils.get_authenticated_spark_HC(HEALTHCARE_LICENSE_OR_JSON_PATH, HEALTHCARE_SECRET, AWS_ACCESS_KEY_ID,
-                                                  AWS_SECRET_ACCESS_KEY, gpu)
-            return nlu
-        elif has_empty_strings(hc_creds) and not has_empty_strings(ocr_creds) and not has_empty_strings(aws_creds):
-            # OCR creds provided but no HC
-            auth_utils.get_authenticated_spark_OCR(OCR_LICENSE, OCR_SECRET, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY,
-                                                   gpu)
-            return nlu
-
+    auth_utils.auth(HEALTHCARE_LICENSE_OR_JSON_PATH=HEALTHCARE_LICENSE_OR_JSON_PATH,
+                    AWS_SECRET_ACCESS_KEY=AWS_SECRET_ACCESS_KEY,
+                    AWS_ACCESS_KEY_ID=AWS_ACCESS_KEY_ID, HEALTHCARE_SECRET=HEALTHCARE_SECRET,
+                    OCR_LICENSE=OCR_LICENSE,
+                    OCR_SECRET=OCR_SECRET, gpu=gpu)
     return nlu
 
 
@@ -338,7 +280,7 @@ def load_nlu_pipe_from_hdd(pipe_path, request) -> NLUPipeline:
     nlu_ref = request  # pipe_path
     if os.path.exists(pipe_path):
 
-        # Ressource in path is a pipeline
+        # Resource in path is a pipeline
         if offline_utils.is_pipe(pipe_path):
             # language, nlp_ref, nlu_ref,path=None, is_licensed=False
             # todo deduct lang and if Licensed or not
@@ -348,7 +290,7 @@ def load_nlu_pipe_from_hdd(pipe_path, request) -> NLUPipeline:
             c = offline_utils.verify_and_create_model(pipe_path)
             c.nlu_ref = nlu_ref
             pipe.add(c, nlu_ref, pretrained_pipe_component=True)
-            return PipelineQueryVerifier.check_and_fix_nlu_pipeline(pipe)
+            return PipelineCompleter.check_and_fix_nlu_pipeline(pipe)
         else:
             print(
                 f"Could not load model_anno_obj in path {pipe_path}. Make sure the jsl_folder contains either a stages subfolder or a metadata subfolder.")
@@ -397,7 +339,7 @@ def enable_streamlit_caching():
 #     if hasattr(nlu, 'non_caching_load') : nlu.load = nlu.non_caching_load
 #     else : print("Could not disable caching.")
 
-# TODO EXPORT
+
 def wrap_with_st_cache_if_available_and_set_layout_to_wide(f):
     """Wrap function with ST cache method if streamlit is importable"""
     try:
@@ -450,4 +392,8 @@ def print_trainable_components():
 def get_components(m_type='', include_pipes=False, lang='', licensed=False, get_all=False):
     return discoverer.get_components(m_type, include_pipes, lang, licensed, get_all)
 
-# https://forms.gle/VZeJRLBDM6m9fhF68
+
+def log_verbose_error(err):
+    import traceback
+    print(traceback.format_exc())
+    print(err)

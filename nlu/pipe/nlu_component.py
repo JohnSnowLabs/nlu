@@ -24,8 +24,8 @@ class NluComponent:
                  pdf_extractor_methods: Dict[str, Callable[[], any]],
                  pdf_col_name_substitutor: Callable[[], any],
                  # substitution method for renaming final cols to somthing redable
-                 # sdf_extractor_methods : Dict[str,Callable[[],any]] # Extractor method applicable to Spark  DF for getting pretty outputs # TODO NOT IN BUILD
-                 # sdf_col_name_substitutor : Optional[Callable[[],any]] # substitution method for renaming final cols to somthing redable # TODO NOT IN BUILD
+                 # sdf_extractor_methods : Dict[str,Callable[[],any]] # Extractor method applicable to Spark  DF for getting pretty outputs # TODO
+                 # sdf_col_name_substitutor : Optional[Callable[[],any]] # substitution method for renaming final cols to somthing redable # TODO
                  output_level: NlpLevel,
                  # Output level of the component_to_resolve for data transformation logic or call it putput mapping??
                  node: NlpFeatureNode,  # Graph node
@@ -55,15 +55,12 @@ class NluComponent:
                  out_types_default: List[JslFeature] = None,
                  spark_input_column_names: List[str] = None,
                  spark_output_column_names: List[str] = None,
-                 paramMap: Dict[Any, Any] = None,
-                 paramSetterMap: Dict[Any, Any] = None,
-                 paramGetterMap: Dict[Any, Any] = None,
                  # Any anno class. Needs to be Any, so we can cover unimported HC models
                  model: Union[AnnotatorApproach, AnnotatorModel] = None,
                  storage_ref: Optional[str] = None,
                  storage_ref_nlu_ref_resolution: Optional[str] = None,  # nlu_ref corresponding to storage_ref
                  loaded_from_pretrained_pipe: bool = False,
-                 # If this component_to_resolve was derived from a pre-build SparkNLP pipeline or from NLU
+                 # If this component_to_resolve was derived from a pre-built SparkNLP pipeline or from NLU
                  has_storage_ref: bool = False,
                  is_storage_ref_consumer: bool = False,
                  # # Whether this anno takes in some features that are storage ref based
@@ -102,9 +99,6 @@ class NluComponent:
         self.out_types_default = out_types_default
         self.spark_input_column_names = spark_input_column_names
         self.spark_output_column_names = spark_output_column_names
-        self.paramMap = paramMap
-        self.paramSetterMap = paramSetterMap
-        self.paramGetterMap = paramGetterMap
         self.model = model
         self.storage_ref = storage_ref
         self.storage_ref_nlu_ref_resolution = storage_ref_nlu_ref_resolution
