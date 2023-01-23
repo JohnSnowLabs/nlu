@@ -13,9 +13,10 @@ class AnnoClassRef:
     HC_A_N = NLP_HC_NODE_IDS
     # Map AnnoID to PyCLass
     JSL_anno2_py_class: Dict[JslAnnoId, JslAnnoPyClass] = {
+        A_N.CAMEMBERT_FOR_SEQUENCE_CLASSIFICATION: 'CamemBertForSequenceClassification',
         A_N.TAPAS_FOR_QA: 'TapasForQuestionAnswering',
         A_N.TABLE_ASSEMBLER: 'TableAssembler',
-
+        A_N.CAMEMBERT_FOR_TOKEN_CLASSIFICATION: 'CamemBertForTokenClassification',
         A_N.COREF_SPAN_BERT: 'SpanBertCorefModel',
         A_N.PARTIALLY_IMPLEMENTED: 'PartiallyIntegrated',
 
@@ -114,7 +115,7 @@ class AnnoClassRef:
         A_N.GPT2: 'GPT2Transformer',
         A_N.DEBERTA_WORD_EMBEDDINGS: 'DeBertaEmbeddings',
         A_N.DEBERTA_FOR_TOKEN_CLASSIFICATION: 'DeBertaForTokenClassification',
-        A_N.CAMENBERT_EMBEDDINGS: 'CamemBertEmbeddings',
+        A_N.CAMEMBERT_EMBEDDINGS: 'CamemBertEmbeddings',
 
         A_N.TRAINABLE_VIVEKN_SENTIMENT: 'ViveknSentimentApproach',
         A_N.TRAINABLE_SENTIMENT: 'SentimentDetector',
@@ -221,7 +222,7 @@ class AnnoClassRef:
         A_N.PARTIAL_GraphExtraction: 'GraphExtraction',
         A_N.PARTIAL_Lemmatizer: 'Lemmatizer',
         A_N.PARTIAL_Normalizer: 'Normalizer',
-        A_N.VIT_IMAGE_CLASSIFICATION:'ViTForImageClassification',
+        A_N.VIT_IMAGE_CLASSIFICATION: 'ViTForImageClassification',
 
     }
     JSL_anno_HC_ref_2_py_class: Dict[JslAnnoId, JslAnnoPyClass] = {
@@ -287,8 +288,6 @@ class AnnoClassRef:
 
     }
 
-
-
     @staticmethod
     def get_os_pyclass_2_anno_id_dict():
         # Flipped, maps PyClass to AnnoID
@@ -313,8 +312,11 @@ class AnnoClassRef:
 
 
 # Flipped, maps PyClass to AnnoID
-AnnoClassRef.JSL_OS_py_class_2_anno_id: Dict[JslAnnoPyClass, JslAnnoId] = {AnnoClassRef.JSL_anno2_py_class[k]: k for k in AnnoClassRef.JSL_anno2_py_class}
-AnnoClassRef.JSL_HC_py_class_2_anno_id: Dict[JslAnnoId, JslAnnoPyClass] = {AnnoClassRef.JSL_anno_HC_ref_2_py_class[k]: k for k in
+AnnoClassRef.JSL_OS_py_class_2_anno_id: Dict[JslAnnoPyClass, JslAnnoId] = {AnnoClassRef.JSL_anno2_py_class[k]: k for k
+                                                                           in AnnoClassRef.JSL_anno2_py_class}
+AnnoClassRef.JSL_HC_py_class_2_anno_id: Dict[JslAnnoId, JslAnnoPyClass] = {AnnoClassRef.JSL_anno_HC_ref_2_py_class[k]: k
+                                                                           for k in
                                                                            AnnoClassRef.JSL_anno_HC_ref_2_py_class}
-AnnoClassRef.JSL_OCR_py_class_2_anno_id: Dict[JslAnnoId, JslAnnoPyClass] = {AnnoClassRef.JSL_anno_OCR_ref_2_py_class[k]: k for k in
-                                                                            AnnoClassRef.JSL_anno_OCR_ref_2_py_class}
+AnnoClassRef.JSL_OCR_py_class_2_anno_id: Dict[JslAnnoId, JslAnnoPyClass] = {
+    AnnoClassRef.JSL_anno_OCR_ref_2_py_class[k]: k for k in
+    AnnoClassRef.JSL_anno_OCR_ref_2_py_class}

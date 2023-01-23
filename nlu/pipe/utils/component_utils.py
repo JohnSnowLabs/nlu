@@ -2,12 +2,12 @@ import logging
 from typing import List
 
 from nlu.pipe.nlu_component import NluComponent
+from nlu.pipe.utils.resolution.storage_ref_utils import StorageRefUtils
 from nlu.universe.feature_node_ids import NLP_NODE_IDS, NLP_HC_NODE_IDS
+from nlu.universe.feature_universes import NLP_FEATURES, OCR_FEATURES
 from nlu.universe.logic_universes import AnnoTypes
 
 logger = logging.getLogger('nlu')
-from nlu.pipe.utils.resolution.storage_ref_utils import StorageRefUtils
-from nlu.universe.feature_universes import NLP_FEATURES, OCR_FEATURES
 
 
 class ComponentUtils:
@@ -131,12 +131,10 @@ class ComponentUtils:
                               NLP_NODE_IDS.NER_CRF]: return True
         if component.type == AnnoTypes.TRANSFORMER_TOKEN_CLASSIFIER: return True
 
-
-
     @staticmethod
     def is_NER_IOB_token_classifier(component: NluComponent) -> bool:
         """Check if a Token Classifier uses IOB PRediction format"""
-        if not hasattr(component.model,'getClasses'):
+        if not hasattr(component.model, 'getClasses'):
             return False
         return any(['-' in label for label in component.model.getClasses()])
 
@@ -197,7 +195,7 @@ class ComponentUtils:
         return pipe_list
 
     @staticmethod
-    def extract_embed_level_identity(component, col='input'):
+    def extract_embed_level_identity(component: NluComponent, col='input'):
         """Figure out if component_to_resolve feeds on chunk/sent aka doc/word emb for either nput or output cols"""
         if col == 'input':
             if any(filter(lambda s: 'document_embed' in s, component.info.inputs)): return 'document_embeddings'

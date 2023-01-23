@@ -1,4 +1,5 @@
 import importlib
+import json
 import site
 from importlib import reload
 
@@ -234,3 +235,72 @@ def is_authorized_environment():
     AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
     AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
     return None not in [SPARK_NLP_LICENSE, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY]
+
+
+
+
+
+def auth(HEALTHCARE_LICENSE_OR_JSON_PATH='/content/spark_nlp_for_healthcare.json', AWS_ACCESS_KEY_ID='',
+         AWS_SECRET_ACCESS_KEY='', HEALTHCARE_SECRET='', OCR_LICENSE='', OCR_SECRET='', gpu=False):
+    """ Authenticate environment for JSL Licensed models
+    Installs NLP-Healthcare if not in environment detected
+    Either provide path to spark_nlp_for_healthcare.json file as first param or manually enter them,
+    HEALTHCARE_LICENSE_OR_JSON_PATH,AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY,HEALTHCARE_SECRET .
+    Set gpu=true if you want to enable GPU mode
+    """
+
+    def has_empty_strings(iterable):
+        """Check for a given list of strings, whether it has any empty strings or not"""
+        return all(x == '' for x in iterable)
+
+    hc_creds = [HEALTHCARE_LICENSE_OR_JSON_PATH, HEALTHCARE_SECRET]
+    ocr_creds = [OCR_LICENSE, OCR_SECRET]
+    aws_creds = [AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY]
+
+    if os.path.exists(HEALTHCARE_LICENSE_OR_JSON_PATH):
+        # Credentials provided via JSON file
+        with open(HEALTHCARE_LICENSE_OR_JSON_PATH) as json_file:
+            j = json.load(json_file)
+            if 'SPARK_NLP_LICENSE' in j.keys() and 'SPARK_OCR_LICENSE' in j.keys():
+                # HC and OCR creds provided
+                get_authenticated_spark_HC_and_OCR(j['SPARK_NLP_LICENSE'], j['SECRET'],
+                                                              j['SPARK_OCR_LICENSE'], j['SPARK_OCR_SECRET'],
+                                                              j['AWS_ACCESS_KEY_ID'], j['AWS_SECRET_ACCESS_KEY'], gpu)
+
+                return True
+
+            if 'SPARK_NLP_LICENSE' in j.keys() and 'SPARK_OCR_LICENSE' not in j.keys():
+                # HC creds provided but no OCR
+                get_authenticated_spark_HC(j['SPARK_NLP_LICENSE'], j['SECRET'], j['AWS_ACCESS_KEY_ID'],
+                                                      j['AWS_SECRET_ACCESS_KEY'], gpu)
+                return True
+
+            if 'SPARK_NLP_LICENSE' not in j.keys() and 'SPARK_OCR_LICENSE' in j.keys():
+                # OCR creds provided but no HC
+                get_authenticated_spark_OCR(j['SPARK_OCR_LICENSE'], j['SPARK_OCR_SECRET'],
+                                                       j['AWS_ACCESS_KEY_ID'], j['AWS_SECRET_ACCESS_KEY'], gpu)
+                return True
+
+            get_authenticated_spark(gpu)
+        return True
+    else:
+        # Credentials provided as parameter
+        if not has_empty_strings(hc_creds) and not has_empty_strings(ocr_creds) and not has_empty_strings(aws_creds):
+            # HC + OCR credentials provided
+            get_authenticated_spark_HC_and_OCR(HEALTHCARE_LICENSE_OR_JSON_PATH, HEALTHCARE_SECRET,
+                                                          OCR_LICENSE,
+                                                          OCR_SECRET, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, gpu)
+            return True
+
+        elif not has_empty_strings(hc_creds) and has_empty_strings(ocr_creds) and not has_empty_strings(aws_creds):
+            # HC creds provided, but no HC
+            get_authenticated_spark_HC(HEALTHCARE_LICENSE_OR_JSON_PATH, HEALTHCARE_SECRET, AWS_ACCESS_KEY_ID,
+                                                  AWS_SECRET_ACCESS_KEY, gpu)
+            return True
+        elif has_empty_strings(hc_creds) and not has_empty_strings(ocr_creds) and not has_empty_strings(aws_creds):
+            # OCR creds provided but no HC
+            get_authenticated_spark_OCR(OCR_LICENSE, OCR_SECRET, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY,
+                                                   gpu)
+            return True
+
+    return False
