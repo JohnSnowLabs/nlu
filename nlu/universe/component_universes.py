@@ -18,6 +18,7 @@ from nlu.components.classifiers.sentiment_dl.sentiment_dl import SentimentDl
 from nlu.components.classifiers.seq_albert.seq_albert import SeqAlbertClassifier
 from nlu.components.classifiers.seq_bert.seq_bert_classifier import SeqBertClassifier
 from nlu.components.classifiers.seq_bert_medical.seq_bert_medical_classifier import SeqBertMedicalClassifier
+from nlu.components.classifiers.seq_camembert.seq_camembert import SeqCamembertClassifier
 from nlu.components.classifiers.seq_deberta.seq_deberta_classifier import SeqDebertaClassifier
 from nlu.components.classifiers.seq_distilbert.seq_distilbert_classifier import SeqDilstilBertClassifier
 from nlu.components.classifiers.seq_distilbert_medical.seq_distilbert_medical_classifier import \
@@ -36,6 +37,7 @@ from nlu.components.classifiers.span_xlm_roberta.span_xlm_roberta import SpanXlm
 from nlu.components.classifiers.token_albert.token_albert import TokenAlbert
 from nlu.components.classifiers.token_bert.token_bert import TokenBert
 from nlu.components.classifiers.token_bert_healthcare.token_bert_healthcare import TokenBertHealthcare
+from nlu.components.classifiers.token_camembert.token_camembert import TokenCamembert
 from nlu.components.classifiers.token_deberta.token_deberta import TokenDeBerta
 from nlu.components.classifiers.token_distilbert.token_distilbert import TokenDistilBert
 from nlu.components.classifiers.token_longformer.token_longformer import TokenLongFormer
@@ -2232,6 +2234,28 @@ class ComponentUniverse:
                                                         A.DEBERTA_FOR_TOKEN_CLASSIFICATION],
                                                     ),
 
+
+        A.CAMEMBERT_FOR_TOKEN_CLASSIFICATION: partial(NluComponent,
+                                                      name=A.CAMEMBERT_FOR_TOKEN_CLASSIFICATION,
+                                                      type=T.TRANSFORMER_TOKEN_CLASSIFIER,
+                                                      get_default_model=TokenCamembert.get_default_model,
+                                                      get_pretrained_model=TokenCamembert.get_pretrained_model,
+                                                      pdf_extractor_methods={'default': default_token_classifier_config,
+                                                                          'default_full': default_full_config, },
+                                                      pdf_col_name_substitutor=substitute_transformer_token_classifier_cols,
+                                                      output_level=L.TOKEN,  # Handled like NER model_anno_obj
+                                                      node=NLP_FEATURE_NODES.nodes[A.CAMEMBERT_FOR_TOKEN_CLASSIFICATION],
+                                                      description='CamemBertForTokenClassification can load ALBERT Models with a token classification head on top (a linear layer on top of the hidden-states output) e.g. for Named-Entity-Recognition (NER) tasks.',
+                                                      provider=ComponentBackends.open_source,
+                                                      license=Licenses.open_source,
+                                                      computation_context=ComputeContexts.spark,
+                                                      output_context=ComputeContexts.spark,
+                                                      jsl_anno_class_id=A.CAMEMBERT_FOR_TOKEN_CLASSIFICATION,
+                                                      jsl_anno_py_class=ACR.JSL_anno2_py_class[
+                                                       A.CAMEMBERT_FOR_TOKEN_CLASSIFICATION],
+                                                      ),
+
+
         A.ALBERT_FOR_TOKEN_CLASSIFICATION: partial(NluComponent,
                                                    name=A.ALBERT_FOR_TOKEN_CLASSIFICATION,
                                                    type=T.TRANSFORMER_TOKEN_CLASSIFIER,
@@ -2252,8 +2276,8 @@ class ComponentUniverse:
                                                        A.ALBERT_FOR_TOKEN_CLASSIFICATION],
                                                    ),  #
 
-        A.CAMENBERT_EMBEDDINGS: partial(NluComponent,
-                                        name=A.CAMENBERT_EMBEDDINGS,
+        A.CAMEMBERT_EMBEDDINGS: partial(NluComponent,
+                                        name=A.CAMEMBERT_EMBEDDINGS,
                                         type=T.TOKEN_EMBEDDING,
                                         get_default_model=CamemBert.get_default_model,
                                         get_pretrained_model=CamemBert.get_pretrained_model,
@@ -2261,14 +2285,14 @@ class ComponentUniverse:
                                                                'default_full': default_full_config, },
                                         pdf_col_name_substitutor=substitute_word_embed_cols,
                                         output_level=L.TOKEN,
-                                        node=NLP_FEATURE_NODES.nodes[A.CAMENBERT_EMBEDDINGS],
+                                        node=NLP_FEATURE_NODES.nodes[A.CAMEMBERT_EMBEDDINGS],
                                         description='Token-level embeddings using CAMEN-BERT',
                                         provider=ComponentBackends.open_source,
                                         license=Licenses.open_source,
                                         computation_context=ComputeContexts.spark,
                                         output_context=ComputeContexts.spark,
-                                        jsl_anno_class_id=A.CAMENBERT_EMBEDDINGS,
-                                        jsl_anno_py_class=ACR.JSL_anno2_py_class[A.CAMENBERT_EMBEDDINGS],
+                                        jsl_anno_class_id=A.CAMEMBERT_EMBEDDINGS,
+                                        jsl_anno_py_class=ACR.JSL_anno2_py_class[A.CAMEMBERT_EMBEDDINGS],
                                         has_storage_ref=True,
                                         is_storage_ref_producer=True,
                                         ),
@@ -2352,6 +2376,26 @@ class ComponentUniverse:
                                                     jsl_anno_py_class=ACR.JSL_anno2_py_class[
                                                         A.BERT_FOR_SEQUENCE_CLASSIFICATION],
                                                     ),
+        A.CAMEMBERT_FOR_SEQUENCE_CLASSIFICATION: partial(NluComponent,
+                                                    name=A.CAMEMBERT_FOR_SEQUENCE_CLASSIFICATION,
+                                                    type=T.TRANSFORMER_SEQUENCE_CLASSIFIER,
+                                                    get_default_model=SeqCamembertClassifier.get_default_model,
+                                                    get_pretrained_model=SeqCamembertClassifier.get_pretrained_model,
+                                                    pdf_extractor_methods={'default': default_classifier_dl_config,
+                                                                           'default_full': default_full_config, },
+                                                    pdf_col_name_substitutor=substitute_seq_bert_classifier_cols,
+                                                    output_level=L.INPUT_DEPENDENT_DOCUMENT_CLASSIFIER,
+                                                    node=NLP_FEATURE_NODES.nodes[A.CAMEMBERT_FOR_SEQUENCE_CLASSIFICATION],
+                                                    description='BertForSequenceClassification can load Bert Models with sequence classification/regression head on top (a linear layer on top of the pooled output) e.g. for multi-class document classification tasks.',
+                                                    provider=ComponentBackends.open_source,
+                                                    license=Licenses.open_source,
+                                                    computation_context=ComputeContexts.spark,
+                                                    output_context=ComputeContexts.spark,
+                                                    jsl_anno_class_id=A.CAMEMBERT_FOR_SEQUENCE_CLASSIFICATION,
+                                                    jsl_anno_py_class=ACR.JSL_anno2_py_class[
+                                                        A.CAMEMBERT_FOR_SEQUENCE_CLASSIFICATION],
+                                                    ),
+
         A.DISTIL_BERT_EMBEDDINGS: partial(NluComponent,
                                           name=A.DISTIL_BERT_EMBEDDINGS,
                                           type=T.TOKEN_EMBEDDING,

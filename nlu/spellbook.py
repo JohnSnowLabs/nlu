@@ -3272,7 +3272,11 @@ class Spellbook:
                                         'en.use': 'tfhub_use',
                                         'en.xlnet': 'xlnet_base_cased',
                                         'en.yake': 'yake',
-                                        'roberta': 'distilroberta_base'},
+                                        'roberta': 'distilroberta_base',
+
+                                        'en.ner.camembert_TEST' : 'camembert_base_token_classifier_wikiner',
+
+                                        },
                                     'eo': {'eo.embed.w2v_cc_300d': 'w2v_cc_300d', 'eo.stopwords': 'stopwords_eo'},
                                     'es': {
                                         'es.answer_question.distil_bert.base_uncased': 'distilbert_qa_distillbert_base_spanish_uncased_finetuned_qa_tar',
@@ -3431,6 +3435,7 @@ class Spellbook:
                                            'fo.lemma.farpahc': 'lemma_farpahc',
                                            'fo.pos': 'pos_farpahc'},
                                     'fr': {
+                                        'fr.camembert_base_sequence_classifier_allocine_TEST' : 'camembert_base_sequence_classifier_allocine',
                                         'fr.answer_question.squad.xlmr_roberta.base': 'xlm_roberta_qa_xlmr_base_texas_squad_fr_fr_saattrupdan',
                                         'fr.classify.allocine': 'mdeberta_v3_base_sequence_classifier_allocine',
                                         'fr.classify.distilbert_sequence.allocine': 'distilbert_multilingual_sequence_classifier_allocine',
@@ -6460,6 +6465,8 @@ class Spellbook:
         # HC
         # NLP_HC_NODE_IDS.DE_IDENTIFICATION: 'DeIdentification',
         # # OCR
+        'camembert_base_sequence_classifier_allocine' : 'CamemBertForSequenceClassification',
+        'camembert_base_token_classifier_wikiner': 'CamemBertForTokenClassification',
         'asr_wav2vec2_base_960h': 'Wav2Vec2ForCTC',
 
         'spanbert_base_coref': 'SpanBertCorefModel',
