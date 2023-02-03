@@ -259,7 +259,7 @@ def auth(HEALTHCARE_LICENSE_OR_JSON_PATH='/content/spark_nlp_for_healthcare.json
 
     if os.path.exists(HEALTHCARE_LICENSE_OR_JSON_PATH):
         # Credentials provided via JSON file
-        with open(HEALTHCARE_LICENSE_OR_JSON_PATH) as json_file:
+        with open(HEALTHCARE_LICENSE_OR_JSON_PATH, encoding="utf8") as json_file:
             j = json.load(json_file)
             if 'SPARK_NLP_LICENSE' in j.keys() and 'SPARK_OCR_LICENSE' in j.keys():
                 # HC and OCR creds provided

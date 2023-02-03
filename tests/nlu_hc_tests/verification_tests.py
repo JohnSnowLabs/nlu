@@ -42,7 +42,7 @@ class TestAuthentification(unittest.TestCase):
     def test_auth_via_file(self):
         secrets_json_path = os.path.join(os.path.abspath("./"), "license.json")
         print("license path:", secrets_json_path)
-        with open(secrets_json_path, "w") as file:
+        with open(secrets_json_path, "w", encoding="utf8") as file:
             json.dump(sct.license_dict, file)
         res = (
             nlu.auth(secrets_json_path)

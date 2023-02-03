@@ -26,7 +26,7 @@ class posTrainingTests(unittest.TestCase):
         print(df.columns)
         for c in df.columns:
             print(df[c])
-        p = "saved_test_models/pos_training"
+        p = os.path.join("saved_test_models", "pos_training")
         pipe.save(p)
         # component_list = nlu.load(path=p)
         # df = component_list.predict('Test 123 ')

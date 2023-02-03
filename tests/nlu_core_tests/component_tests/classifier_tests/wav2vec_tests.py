@@ -24,7 +24,7 @@ class Wav2VecCase(unittest.TestCase):
     def test_wav2vec(self):
         import nlu
         p = nlu.load('en.wav2vec.wip',verbose=True)
-        FILE_PATH = "tests/datasets/audio/asr/ngm_12484_01067234848.wav"
+        FILE_PATH = os.path.normpath(r"tests/datasets/audio/asr/ngm_12484_01067234848.wav")
 
         print("Got p ",p)
         df = p.predict(FILE_PATH)
@@ -34,4 +34,3 @@ class Wav2VecCase(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-

@@ -120,11 +120,11 @@ class SparkNLPExtractorConfig:
     pop_never: bool = field(default=False)  # never ever pop
     meta_black_list: List[str] = field(default=list)
     meta_white_list: List[str] = field(default=list)
-    meta_data_extractor: SparkNLPExtractor = field(default=SparkNLPExtractor())
-    begin_extractor: SparkNLPExtractor = field(default=SparkNLPExtractor())
-    end_extractor: SparkNLPExtractor = field(default=SparkNLPExtractor())
-    result_extractor: SparkNLPExtractor = field(default=SparkNLPExtractor())
-    embedding_extractor: SparkNLPExtractor = field(default=SparkNLPExtractor())
+    meta_data_extractor: SparkNLPExtractor = field(default_factory=SparkNLPExtractor)
+    begin_extractor: SparkNLPExtractor = field(default_factory=SparkNLPExtractor)
+    end_extractor: SparkNLPExtractor = field(default_factory=SparkNLPExtractor)
+    result_extractor: SparkNLPExtractor = field(default_factory=SparkNLPExtractor)
+    embedding_extractor: SparkNLPExtractor = field(default_factory=SparkNLPExtractor)
     description: str = field(default='')
     name: str = field(default='')
 

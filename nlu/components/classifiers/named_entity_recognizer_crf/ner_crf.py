@@ -1,4 +1,5 @@
 from sparknlp.annotator import *
+import os
 
 
 class NERDLCRF:
@@ -23,7 +24,7 @@ class NERDLCRF:
             .setMinEpochs(1) \
             .setMaxEpochs(20) \
             .setLossEps(1e-3) \
-            .setDicts(["ner-corpus/dict.txt"]) \
+            .setDicts([os.path.join("ner-corpus", "dict.txt")]) \
             .setL2(1) \
             .setC0(1250000) \
             .setRandomSeed(0) \
