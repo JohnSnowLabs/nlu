@@ -1,1 +1,0 @@
-{"name": "stemmer", "output_level": "token", "description": "todo", "trainable": false, "outputs": ["stem"], "inputs": ["token"], "type": "stemmer", "spark_input_column_names": ["token"], "spark_output_column_names": ["token"], "provider": "sparknlp", "license": "open source", "computation_context": "spark", "output_context": "spark"}

@@ -1,1 +1,0 @@
-{"name": "stopwordcleaner", "output_level": "token", "description": "todo", "trainable": false, "outputs": ["stopword_less"], "inputs": ["token"], "type": "cleaner", "spark_input_column_names": ["token"], "spark_output_column_names": ["stopword_less"], "provider": "sparknlp", "license": "open source", "computation_context": "spark", "output_context": "spark"}
