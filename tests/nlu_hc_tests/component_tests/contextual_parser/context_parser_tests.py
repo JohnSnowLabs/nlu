@@ -79,7 +79,7 @@ class ContextParserTests(unittest.TestCase):
         """Generate json with dict contexts at target path"""
         import json
 
-        with open(os.path.join(os.path.abspath("./"), path), "w") as f:
+        with open(os.path.join(os.path.abspath("./"), path), "w", encoding="utf8") as f:
             json.dump(dict, f)
 
     def test_dict_dump(self):
@@ -103,6 +103,7 @@ class ContextParserTests(unittest.TestCase):
         with open(
             "gender.csv",
             "w",
+            encoding="utf8",
         ) as f:
             f.write(gender)
 
@@ -116,7 +117,7 @@ class ContextParserTests(unittest.TestCase):
 
         with open(
             "gender.json",
-            "w",
+            "w", encoding="utf8",
         ) as f:
             json.dump(gender, f)
 
@@ -154,7 +155,7 @@ class ContextParserTests(unittest.TestCase):
         contex_pipe["context_matcher"].setJsonPath("gender.json")
         contex_pipe["context_matcher"].setDictionary(
             "gender.csv",
-            read_as=ReadAs.TEXT,
+            read_as="TEXT",
             options={"delimiter": ","},
         )
 

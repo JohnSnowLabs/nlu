@@ -24,7 +24,7 @@ def is_model(model_path):
 
 def get_model_class(model_path):
     """Extract class from a model_anno_obj saved in model_path"""
-    with open(model_path + '/stages/part-00000') as json_file:
+    with open(model_path + '/stages/part-00000', encoding="utf8") as json_file:
         java_class = json.load(json_file)['class']
         pyth_class = java_class.split('.')[-1]
     return java_class, pyth_class
@@ -36,7 +36,7 @@ def verify_and_create_model(model_path: str):
      Figures out class name by checking metadata json file
      assumes metadata is always called part-00000
     """
-    with open(model_path + '/metadata/' + 'part-00000') as json_f:
+    with open(model_path + '/metadata/' + 'part-00000', encoding="utf8") as json_f:
         class_name = json.load(json_f)['class'].split('.')[-1]
         # The last element in the Class name can be used to just load the model_anno_obj from disk!
         # Just call eval on it, which will give you the actual Python class reference which should have a .load() method
@@ -80,7 +80,7 @@ def test_check_if_string_in_file(file_name, string_to_search, regex=False):
     # print('reading ', file_name)
     import re
 
-    with open(file_name, 'r') as read_obj:
+    with open(file_name, 'r', encoding="utf8") as read_obj:
         # Read all lines in the file one by one
         for line in read_obj:
             # For each line, check if line contains the string

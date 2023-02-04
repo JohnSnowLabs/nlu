@@ -85,7 +85,7 @@ class PipeUtils:
         """Gets the json metadata from a model_anno_obj for a given base path at a specific stage index"""
         c_metadata_path = f'{pipe_path}/stages/{stage_number_as_string}_*/metadata/part-00000'
         c_metadata_path = glob.glob(f'{c_metadata_path}*')[0]
-        with open(c_metadata_path, "r") as f:
+        with open(c_metadata_path, "r", encoding="utf8") as f:
             data = json.load(f)
         return data
 

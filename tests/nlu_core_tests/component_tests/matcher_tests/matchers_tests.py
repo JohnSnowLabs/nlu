@@ -24,7 +24,7 @@ class MatchTests(unittest.TestCase):
         response = urllib2.urlopen("https://wordpress.org/plugins/about/readme.txt")
         data = response.read()
         filename = "readme.txt"
-        file_ = open(filename, "w")
+        file_ = open(filename, "w", encoding="utf8")
         file_.write(data)
         file_.close()
 

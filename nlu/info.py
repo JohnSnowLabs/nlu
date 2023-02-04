@@ -125,7 +125,7 @@ class ComponentInfo:
         if not component_info_dir:
             raise ValueError("Calling DatasetInfo.from_directory() with undefined dataset_info_dir.")
         component_info_dir = component_info_dir.replace('//', '/')
-        with open(os.path.join(component_info_dir, COMPONENT_INFO_FILE_NAME), "r") as f:
+        with open(os.path.join(component_info_dir, COMPONENT_INFO_FILE_NAME), "r", encoding="utf8") as f:
             dataset_info_dict = json.load(f)
 
         try:
