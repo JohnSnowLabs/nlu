@@ -128,7 +128,7 @@ class ComponentUtils:
 
         if component.name in [NLP_HC_NODE_IDS.MEDICAL_NER, NLP_HC_NODE_IDS.TRAINABLE_MEDICAL_NER, NLP_NODE_IDS.NER_DL,
                               NLP_NODE_IDS.TRAINABLE_NER_DL, NLP_NODE_IDS.TRAINABLE_NER_CRF,
-                              NLP_NODE_IDS.NER_CRF]: return True
+                              NLP_NODE_IDS.NER_CRF, NLP_HC_NODE_IDS.ZERO_SHOT_NER]: return True
         if component.type == AnnoTypes.TRANSFORMER_TOKEN_CLASSIFIER: return True
 
     @staticmethod

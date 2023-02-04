@@ -226,7 +226,7 @@ class AnnoClassRef:
 
     }
     JSL_anno_HC_ref_2_py_class: Dict[JslAnnoId, JslAnnoPyClass] = {
-
+        HC_A_N.ZERO_SHOT_NER: 'ZeroShotNerModel',
         HC_A_N.CHUNK_MAPPER_MODEL: 'ChunkMapperModel',
         HC_A_N.ASSERTION_DL: 'AssertionDLModel',
         HC_A_N.TRAINABLE_ASSERTION_DL: 'AssertionDLApproach',
