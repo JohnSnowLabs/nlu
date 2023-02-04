@@ -12,6 +12,7 @@ from nlu.components.classifiers.multi_classifier.multi_classifier import MultiCl
 from nlu.components.classifiers.named_entity_recognizer_crf.ner_crf import NERDLCRF
 from nlu.components.classifiers.ner.ner_dl import NERDL
 from nlu.components.classifiers.ner_healthcare.ner_dl_healthcare import NERDLHealthcare
+from nlu.components.classifiers.ner_zero_shot.ner_zero_shot import ZeroShotNer
 from nlu.components.classifiers.pos.part_of_speech_jsl import PartOfSpeechJsl
 from nlu.components.classifiers.sentiment_detector.sentiment_detector import Sentiment
 from nlu.components.classifiers.sentiment_dl.sentiment_dl import SentimentDl
@@ -1100,24 +1101,6 @@ class ComponentUniverse:
                                        computation_context=ComputeContexts.spark,
                                        output_context=ComputeContexts.spark,
                                        ),
-
-        A.PARTIAL_WordSegmenterApproach: partial(NluComponent,
-                                                 name=A.PARTIAL_ChunkMergeApproach,
-                                                 jsl_anno_class_id=A.PARTIAL_WordSegmenterApproach,
-                                                 jsl_anno_py_class=ACR.JSL_anno2_py_class[
-                                                     A.PARTIAL_WordSegmenterApproach],
-                                                 node=NLP_FEATURE_NODES.nodes[A.PARTIALLY_IMPLEMENTED],
-                                                 type=T.PARTIALLY_READY,
-                                                 pdf_extractor_methods={'default': default_partial_implement_config,
-                                                                        'default_full': default_full_config, },
-                                                 pdf_col_name_substitutor=partially_implemented_substitutor,
-                                                 output_level=L.DOCUMENT,
-                                                 description='Not fully integrated',
-                                                 provider=ComponentBackends.open_source,
-                                                 license=Licenses.open_source,
-                                                 computation_context=ComputeContexts.spark,
-                                                 output_context=ComputeContexts.spark,
-                                                 ),
 
         A.PARTIAL_WordSegmenterApproach: partial(NluComponent,
                                                  name=A.PARTIAL_ChunkMergeApproach,
@@ -3563,6 +3546,12 @@ class ComponentUniverse:
                                                    is_storage_ref_consumer=True
                                                    ),
 
+
+
+
+
+
+
         H_A.ZERO_SHOT_RELATION_EXTRACTION: partial(NluComponent,
                                                    name=H_A.ZERO_SHOT_RELATION_EXTRACTION,
                                                    type=T.RELATION_CLASSIFIER,
@@ -3585,6 +3574,25 @@ class ComponentUniverse:
                                                        H_A.ZERO_SHOT_RELATION_EXTRACTION],
                                                    trained_mirror_anno=H_A.RELATION_EXTRACTION,
                                                    ),
+        H_A.ZERO_SHOT_NER: partial(NluComponent,
+                                 name=H_A.ZERO_SHOT_NER,
+                                 type=T.CHUNK_CLASSIFIER,
+                                 get_default_model=ZeroShotNer.get_default_model,
+                                  get_pretrained_model=ZeroShotNer.get_pretrained_model,
+                                 pdf_extractor_methods={'default': default_ner_config,
+                                                        'default_full': default_full_config, },
+                                 pdf_col_name_substitutor=substitute_ner_dl_cols,
+                                 output_level=L.TOKEN,
+                                 node=NLP_HC_FEATURE_NODES.nodes[H_A.ZERO_SHOT_NER],
+                                 description='Deep Learning based Zero SHot Named Entity Recognizer (NER)',
+                                 provider=ComponentBackends.hc,
+                                 license=Licenses.hc,
+                                 computation_context=ComputeContexts.spark,
+                                 output_context=ComputeContexts.spark,
+                                 jsl_anno_class_id=H_A.ZERO_SHOT_NER,
+                                 jsl_anno_py_class=ACR.JSL_anno_HC_ref_2_py_class[H_A.ZERO_SHOT_NER],
+                                 ),
+
 
         H_A.RELATION_EXTRACTION_DL: partial(NluComponent,
                                             name=H_A.RELATION_EXTRACTION_DL,

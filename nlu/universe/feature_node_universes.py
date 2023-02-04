@@ -369,7 +369,8 @@ class NLP_HC_FEATURE_NODES():
     H_F = NLP_HC_FEATURES
     # HC Feature Nodes
     nodes = {
-
+        A.ZERO_SHOT_NER : NlpHcFeatureNode(A.ZERO_SHOT_NER, [F.TOKEN, F.DOCUMENT],
+                                           [F.NAMED_ENTITY_IOB]),
         A.CHUNK_MAPPER_MODEL: NlpHcFeatureNode(A.CHUNK_MAPPER_MODEL, [F.NAMED_ENTITY_CONVERTED],
                                                [H_F.MAPPED_CHUNK]),
 
