@@ -20,10 +20,22 @@ os.environ['PYSPARK_DRIVER_PYTHON'] = '/home/ckl/anaconda3/bin/python3'
 
 
 
-class Wav2VecCase(unittest.TestCase):
+class AsrTestCase(unittest.TestCase):
     def test_wav2vec(self):
         import nlu
         p = nlu.load('en.wav2vec.wip',verbose=True)
+        FILE_PATH = os.path.normpath(r"tests/datasets/audio/asr/ngm_12484_01067234848.wav")
+
+        print("Got p ",p)
+        df = p.predict(FILE_PATH)
+        print(df)
+        df = p.predict([FILE_PATH,FILE_PATH])
+        print(df)
+
+
+    def test_hubert(self):
+        import nlu
+        p = nlu.load('en.asr_hubert_large_ls960',verbose=True)
         FILE_PATH = os.path.normpath(r"tests/datasets/audio/asr/ngm_12484_01067234848.wav")
 
         print("Got p ",p)

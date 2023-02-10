@@ -5,6 +5,7 @@ from nlu.components.chunkers.contextual_parser.contextual_parser import Contextu
 from nlu.components.chunkers.default_chunker.default_chunker import DefaultChunker
 from nlu.components.chunkers.ngram.ngram import NGram
 from nlu.components.classifiers.asr.wav2Vec import Wav2Vec
+from nlu.components.classifiers.asr_hubert.hubert import Hubert
 from nlu.components.classifiers.classifier_dl.classifier_dl import ClassifierDl
 from nlu.components.classifiers.generic_classifier.generic_classifier import GenericClassifier
 from nlu.components.classifiers.language_detector.language_detector import LanguageDetector
@@ -1447,6 +1448,29 @@ class ComponentUniverse:
                                    applicable_file_types=['wav', 'mp3', 'flac', 'aiff', 'aifc', 'ogg', 'aflac', 'alac',
                                                           'dsd', 'pcm', ]
                                    ),
+
+        A.HUBERT_FOR_CTC: partial(NluComponent,
+                                   name=A.HUBERT_FOR_CTC,
+                                   type=T.SPEECH_RECOGNIZER,
+                                   get_default_model=Hubert.get_default_model,
+                                   get_pretrained_model=Hubert.get_pretrained_model,
+                                   pdf_extractor_methods={'default': default_only_result_config,
+                                                          'default_full': default_full_config, },
+                                   pdf_col_name_substitutor=substitute_wav2vec_cols,
+                                   output_level=L.DOCUMENT,
+                                   node=NLP_FEATURE_NODES.nodes[A.HUBERT_FOR_CTC],
+                                   description='todo',
+                                   provider=ComponentBackends.open_source,
+                                   license=Licenses.open_source,
+                                   computation_context=ComputeContexts.spark,
+                                   output_context=ComputeContexts.spark,
+                                   jsl_anno_class_id=A.HUBERT_FOR_CTC,
+                                   jsl_anno_py_class=ACR.JSL_anno2_py_class[A.HUBERT_FOR_CTC],
+                                   # Bas on Librosa which uses http://www.mega-nerd.com/libsndfile/
+                                   applicable_file_types=['wav', 'mp3', 'flac', 'aiff', 'aifc', 'ogg', 'aflac', 'alac',
+                                                          'dsd', 'pcm', ]
+                                   ),
+
         A.TAPAS_FOR_QA: partial(NluComponent,
                                 name=A.TAPAS_FOR_QA,
                                 type=T.QUESTION_TABLE_ANSWERER,
