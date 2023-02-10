@@ -6616,7 +6616,9 @@ class Spellbook:
                                            'fo.pos': 'pos_farpahc'},
                                     'fon': {'fon.speech2text.wav2vec_xlsr': 'asr_fonxlsr',
                                             'fon.speech2text.wav2vec_xlsr.gpu': 'asr_fonxlsr_gpu'},
-                                    'fr': {'fr.answer_question.roberta': 'roberta_qa_addi_fr_roberta',
+                                    'fr': {
+                                    'fr.answer_question.camembert.fquad':'camembert_base_qa_fquad',
+                                    'fr.answer_question.roberta': 'roberta_qa_addi_fr_roberta',
                                            'fr.answer_question.roberta.by_gantenbein': 'roberta_qa_addi_fr_xlm_r',
                                            'fr.answer_question.squad.xlmr_roberta.base': 'xlm_roberta_qa_xlmr_base_texas_squad_fr_fr_saattrupdan',
                                            'fr.classify.allocine': 'mdeberta_v3_base_sequence_classifier_allocine',
@@ -18928,4 +18930,5 @@ class Spellbook:
 
                              'asr_hubert_large_ls960': 'HubertForCTC',
                              'image_classifier_swin_tiny_patch4_window7_224':'SwinForImageClassification',
+                             'camembert_base_qa_fquad':  'CamemBertForQuestionAnswering',
                              }

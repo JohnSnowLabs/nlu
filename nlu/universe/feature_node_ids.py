@@ -32,6 +32,7 @@ class NLP_NODE_IDS:
     IMAGE_ASSEMBLER = JslAnnoId("image_assembler")
 
     ALBERT_FOR_QUESTION_ANSWERING = JslAnnoId('albert_for_question_answering')
+    CAMEMBERT_FOR_QUESTION_ANSWERING = JslAnnoId('camembert_for_question_answering')
     BERT_FOR_QUESTION_ANSWERING = JslAnnoId('bert_for_question_answering')
     DE_BERTA_FOR_QUESTION_ANSWERING = JslAnnoId('de_berta_for_question_answering')
     DISTIL_BERT_FOR_QUESTION_ANSWERING = JslAnnoId('distil_bert_for_question_answering')

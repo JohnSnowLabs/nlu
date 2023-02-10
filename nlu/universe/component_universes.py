@@ -1,5 +1,3 @@
-from transformers import SwinForImageClassification
-
 from nlu.components.assertions.assertion_dl.assertion_dl import AssertionDL
 from nlu.components.assertions.assertion_log_reg.assertion_log_reg import AssertionLogReg
 from nlu.components.chunkers.chunk_mapper.chunk_mapper import ChunkMapper
@@ -32,12 +30,13 @@ from nlu.components.classifiers.seq_longformer.seq_longformer import SeqLongform
 from nlu.components.classifiers.seq_roberta.seq_roberta import SeqRobertaClassifier
 from nlu.components.classifiers.seq_xlm_roberta.seq_xlm_roberta import SeqXlmRobertaClassifier
 from nlu.components.classifiers.seq_xlnet.seq_xlnet import SeqXlnetClassifier
-from nlu.components.classifiers.span_albert.span_albert import SpanAlbertClassifier
 from nlu.components.classifiers.span_bert.span_bert import SpanBertClassifier
 from nlu.components.classifiers.span_deberta.span_deberta import SpanDeBertaClassifier
 from nlu.components.classifiers.span_distilbert.span_distilbert import SpanDistilBertClassifier
 from nlu.components.classifiers.span_longformer.span_longformer import SpanLongFormerClassifier
 from nlu.components.classifiers.span_roberta.span_roberta import SpanRobertaClassifier
+
+from nlu.components.classifiers.span_camembert.span_camembert import SpanCamemBert
 from nlu.components.classifiers.span_xlm_roberta.span_xlm_roberta import SpanXlmRobertaClassifier
 from nlu.components.classifiers.token_albert.token_albert import TokenAlbert
 from nlu.components.classifiers.token_bert.token_bert import TokenBert
@@ -127,8 +126,7 @@ from nlu.pipe.col_substitution.col_substitution_HC import *
 from nlu.pipe.col_substitution.col_substitution_OCR import substitute_recognized_text_cols
 from nlu.pipe.col_substitution.col_substitution_OS import *
 from nlu.pipe.extractors.extractor_configs_HC import *
-from nlu.pipe.extractors.extractor_configs_OCR import default_text_recognizer_config, default_binary_to_image_config, \
-    default_visual_classifier_config
+from nlu.pipe.extractors.extractor_configs_OCR import default_text_recognizer_config, default_binary_to_image_config
 from nlu.pipe.extractors.extractor_configs_OS import *
 from nlu.pipe.nlu_component import NluComponent
 from nlu.universe.annotator_class_universe import AnnoClassRef
@@ -2940,14 +2938,14 @@ class ComponentUniverse:
                                                            A.DEBERTA_FOR_SEQUENCE_CLASSIFICATION],
                                                        ),
 
-        A.ALBERT_FOR_QUESTION_ANSWERING: partial(NluComponent,
-                                                 name=A.ALBERT_FOR_QUESTION_ANSWERING,
-                                                 jsl_anno_class_id=A.ALBERT_FOR_QUESTION_ANSWERING,
+        A.CAMEMBERT_FOR_QUESTION_ANSWERING: partial(NluComponent,
+                                                 name=A.CAMEMBERT_FOR_QUESTION_ANSWERING,
+                                                 jsl_anno_class_id=A.CAMEMBERT_FOR_QUESTION_ANSWERING,
                                                  jsl_anno_py_class=ACR.JSL_anno2_py_class[
-                                                     A.ALBERT_FOR_QUESTION_ANSWERING],
-                                                 node=NLP_FEATURE_NODES.nodes[A.ALBERT_FOR_QUESTION_ANSWERING],
-                                                 get_default_model=SpanAlbertClassifier.get_default_model,
-                                                 get_pretrained_model=SpanAlbertClassifier.get_pretrained_model,
+                                                     A.CAMEMBERT_FOR_QUESTION_ANSWERING],
+                                                 node=NLP_FEATURE_NODES.nodes[A.CAMEMBERT_FOR_QUESTION_ANSWERING],
+                                                 get_default_model=SpanCamemBert.get_default_model,
+                                                 get_pretrained_model=SpanCamemBert.get_pretrained_model,
                                                  type=T.QUESTION_SPAN_CLASSIFIER,
                                                  pdf_extractor_methods={
                                                      'default': default_span_classifier_config,

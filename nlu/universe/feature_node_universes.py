@@ -102,6 +102,11 @@ class NLP_FEATURE_NODES:  # or Mode Node?
         A.ALBERT_FOR_QUESTION_ANSWERING: NlpFeatureNode(A.ALBERT_FOR_QUESTION_ANSWERING,
                                                         [F.DOCUMENT_QUESTION, F.DOCUMENT_QUESTION_CONTEXT],
                                                         [F.CLASSIFIED_SPAN]),
+
+        A.CAMEMBERT_FOR_QUESTION_ANSWERING: NlpFeatureNode(A.CAMEMBERT_FOR_QUESTION_ANSWERING,
+                                                        [F.DOCUMENT_QUESTION, F.DOCUMENT_QUESTION_CONTEXT],
+                                                        [F.CLASSIFIED_SPAN]),
+
         A.BERT_FOR_QUESTION_ANSWERING: NlpFeatureNode(A.BERT_FOR_QUESTION_ANSWERING,
                                                       [F.DOCUMENT_QUESTION, F.DOCUMENT_QUESTION_CONTEXT],
                                                       [F.CLASSIFIED_SPAN]),
