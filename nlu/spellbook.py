@@ -10760,154 +10760,82 @@ class Spellbook:
         'en.classify_image.tabacco': 'visual_document_classifier_tobacco3482'
     }
     # map storage ref to nlu refner_jsl
-    storage_ref_2_nlu_ref = {
-    'it': {
-        'glove_6B_300': 'xx.embed.glove.6B_300',
-
-    },
-
-    'nl': {
-        'glove_6B_300': 'xx.embed.glove.6B_300',
-        'glove_840B_300': 'xx.embed.glove.840B_300',
-
-    },
-
-    'en': {
-        'tfhub_use': 'en.embed_sentence.use',
-        'glove_100d': 'en.embed.glove.100d',
-        'xlm_roberta_base': 'xx.embed.xlm',
-        'glove_6B_300': 'xx.embed.glove.6B_300',
-        'glove_840B_300': 'xx.embed.glove.840B_300',
-        'bert_large_cased': "en.embed.bert.large_cased",
-        'albert_base_uncased': 'en.embed_sentence.albert',
-        'small_bert_L2_128': 'en.embed.bert.small_L2_128',
-        'elmo': 'en.embed.elmo',
-        'distilbert_base_cased': 'en.embed.distilbert.base',
-        'electra_base_uncased': 'en.embed.electra.base_uncased',
-
-        'roberta_large': 'en.embed.roberta.large',
-        'roberta_base': 'en.embed.roberta.base',
-
-        'small_bert_L4_256': 'en.embed.bert.small_L4_256',
-        'small_bert_L4_512': 'en.embed.bert.small_L4_512',
-        'small_bert_L8_512': 'en.embed.bert.small_L8_512',
-
-        'albert_large_uncased': 'en.embed.albert.large_uncased',
-
-        'electra_small_uncased': 'en.embed.electra.small_uncased',
-        'xlnet_base_cased': 'en.embed.xlnet_base_cased',
-
-        'longformer_large_4096': 'en.embed.longformer.large',
-        'electra_large_uncased': 'en.embed.electra.large_uncased',
-        'xlm_roberta_xtreme_base': 'xx.embed.xlm_roberta_xtreme_base',
-
-    },
-    'zh': {
-        'bert_base_chinese': 'zh.embed',
-        'glove_6B_300': 'xx.embed.glove.6B_300',
-    },
-    'th': {
-        'tfhub_use_multi_lg': 'xx.use.multi',
-        'labse': 'xx.embed_sentence.labse',
-
-    },
-    'ur': {
-        'glove_300d': 'ur.embed',
-        'labse': 'xx.embed_sentence.labse',
-    },
-    'fr':
-        {
-            'labse': 'xx.embed_sentence.labse',
-            'glove_840B_300': 'xx.embed.glove.840B_300',
-            'glove_6B_300': 'xx.embed.glove.6B_300',
-
-        },
-    'tr':
-        {'bert_multi_cased': 'xx.embed.bert',
-         'labse': 'xx.embed_sentence.labse',
-         'glove_840B_300': 'xx.embed.glove.840B_300',
-         'bert_base_turkish_uncased': 'tr.embed.bert.uncased',
-         },
-    'sv':
-        {
-            'glove_100d': 'xx.embed.glove.glove_6B_100',
-            'glove_6B_300': 'xx.embed.glove.6B_300',
-
-        },
-    'fa':
-        {'glove_300d': 'fa.embed',
-         },
-    'he':
-        {'glove_300d': 'he.embed',
-         },
-    'fi':
-        {
-
-            'glove_100d': 'xx.embed.glove.glove_6B_100',
-            'glove_840B_300': 'xx.embed.glove.840B_300',
-            'glove_6B_300': 'xx.embed.glove.6B_300',
-
-        },
-    'bn':
-        {
-            'glove_840B_300': 'xx.embed.glove.840B_300',
-            'bengali_cc_300d': 'bn.embed.glove',
-        },
-    'ar':
-        {'glove_300d': 'ar.embed',
-         },
-    'de':
-        {
-            'sent_bert_multi_cased': 'xx.embed_sentence',
-            'labse': 'xx.embed_sentence.labse',
-            'clinical': 'de.embed_sentence.bert.base_cased',
-            'glove_840B_300': 'xx.embed.glove.840B_300',
-            'glove_6B_300': 'xx.embed.glove.6B_300',
-            'w2v_cc_300d': 'de.embed.w2v',
-            'sent_bert_base_cased': 'de.embed_sentence.bert.base_cased',
-
-        },
-    'ja':
-        {
-            'fasttext_300_ja': 'ja.embed.glove.cc_300d',
-            'xlm_roberta_base': 'xx.embed.xlm',
-            'glove_840B_300': 'xx.embed.glove.840B_300',
-
-        },
-    'no': {
-        'glove_100d': 'xx.embed.glove.glove_6B_100',
-        'glove_6B_300': 'xx.embed.glove.6B_300',
-        'glove_840B_300': 'xx.embed.glove.840B_300',
-    },
-    'pl': {
-        'glove_100d': 'xx.embed.glove.glove_6B_100',
-
-    },
-    'pt': {
-        'glove_100d': 'xx.embed.glove.glove_6B_100',
-        'glove_840B_300': 'xx.embed.glove.840B_300',
-
-    },
-    'ru': {
-        'glove_100d': 'xx.embed.glove.glove_6B_100',
-        'glove_840B_300': 'xx.embed.glove.840B_300',
-
-    },
-    'es': {
-        'glove_100d': 'xx.embed.glove.glove_6B_100',
-        'es.ner': 'roberta_token_classifier_bne_capitel_ner',
-        'glove_840B_300': 'xx.embed.glove.840B_300',
-        'glove_6B_300': 'xx.embed.glove.6B_300',
-        'embeddings_scielo300': 'es.embed.scielo300',
-        'w2v_cc_300d_es': 'es.embed.w2v_cc_300d',
-
-    },
-
-    'da': {
-        'glove_100d': 'xx.embed.glove.glove_6B_100',
-    },
-
-}  #
+    storage_ref_2_nlu_ref ={'ar': {'glove_300d': 'ar.embed'},
+                            'bn': {'bengali_cc_300d': 'bn.embed.glove',
+                                   'glove_840B_300': 'xx.embed.glove.840B_300'},
+                            'da': {'glove_100d': 'xx.embed.glove.glove_6B_100'},
+                            'de': {'clinical': 'de.embed_sentence.bert.base_cased',
+                                   'glove_6B_300': 'xx.embed.glove.6B_300',
+                                   'glove_840B_300': 'xx.embed.glove.840B_300',
+                                   'labse': 'xx.embed_sentence.labse',
+                                   'sent_bert_base_cased': 'de.embed_sentence.bert.base_cased',
+                                   'sent_bert_multi_cased': 'xx.embed_sentence',
+                                   'w2v_cc_300d': 'de.embed.w2v'},
+                            'en': {'albert_base_uncased': 'en.embed_sentence.albert',
+                                   'albert_large_uncased': 'en.embed.albert.large_uncased',
+                                   'bert_large_cased': 'en.embed.bert.large_cased',
+                                   'biobert_pubmed_base_cased': 'en.embed.biobert',
+                                   'distilbert_base_cased': 'en.embed.distilbert.base',
+                                   'electra_base_uncased': 'en.embed.electra.base_uncased',
+                                   'electra_large_uncased': 'en.embed.electra.large_uncased',
+                                   'electra_small_uncased': 'en.embed.electra.small_uncased',
+                                   'elmo': 'en.embed.elmo',
+                                   'glove_100d': 'en.embed.glove.100d',
+                                   'glove_6B_300': 'xx.embed.glove.6B_300',
+                                   'glove_840B_300': 'xx.embed.glove.840B_300',
+                                   'longformer_large_4096': 'en.embed.longformer.large',
+                                   'roberta_base': 'en.embed.roberta.base',
+                                   'roberta_large': 'en.embed.roberta.large',
+                                   'sent_biobert_pubmed_base_cased': 'en.embed_sentence.biobert.pubmed_base_cased',
+                                   'small_bert_L2_128': 'en.embed.bert.small_L2_128',
+                                   'small_bert_L4_256': 'en.embed.bert.small_L4_256',
+                                   'small_bert_L4_512': 'en.embed.bert.small_L4_512',
+                                   'small_bert_L8_512': 'en.embed.bert.small_L8_512',
+                                   'tfhub_use': 'en.embed_sentence.use',
+                                   'xlm_roberta_base': 'xx.embed.xlm',
+                                   'xlm_roberta_xtreme_base': 'xx.embed.xlm_roberta_xtreme_base',
+                                   'xlnet_base_cased': 'en.embed.xlnet_base_cased'},
+                            'es': {'embeddings_scielo300': 'es.embed.scielo300',
+                                   'es.ner': 'roberta_token_classifier_bne_capitel_ner',
+                                   'glove_100d': 'xx.embed.glove.glove_6B_100',
+                                   'glove_6B_300': 'xx.embed.glove.6B_300',
+                                   'glove_840B_300': 'xx.embed.glove.840B_300',
+                                   'w2v_cc_300d_es': 'es.embed.w2v_cc_300d'},
+                            'fa': {'glove_300d': 'fa.embed'},
+                            'fi': {'glove_100d': 'xx.embed.glove.glove_6B_100',
+                                   'glove_6B_300': 'xx.embed.glove.6B_300',
+                                   'glove_840B_300': 'xx.embed.glove.840B_300'},
+                            'fr': {'glove_6B_300': 'xx.embed.glove.6B_300',
+                                   'glove_840B_300': 'xx.embed.glove.840B_300',
+                                   'labse': 'xx.embed_sentence.labse'},
+                            'he': {'glove_300d': 'he.embed'},
+                            'it': {'glove_6B_300': 'xx.embed.glove.6B_300'},
+                            'ja': {'fasttext_300_ja': 'ja.embed.glove.cc_300d',
+                                   'glove_840B_300': 'xx.embed.glove.840B_300',
+                                   'xlm_roberta_base': 'xx.embed.xlm'},
+                            'nl': {'glove_6B_300': 'xx.embed.glove.6B_300',
+                                   'glove_840B_300': 'xx.embed.glove.840B_300'},
+                            'no': {'glove_100d': 'xx.embed.glove.glove_6B_100',
+                                   'glove_6B_300': 'xx.embed.glove.6B_300',
+                                   'glove_840B_300': 'xx.embed.glove.840B_300'},
+                            'pl': {'glove_100d': 'xx.embed.glove.glove_6B_100'},
+                            'pt': {'glove_100d': 'xx.embed.glove.glove_6B_100',
+                                   'glove_840B_300': 'xx.embed.glove.840B_300'},
+                            'ro': {'bert_base_cased_v1': 'ro.embed.bert.cased_base',
+                                   'w2v_cc_300d_ro': 'ro.embed.w2v_cc_300d'},
+                            'ru': {'glove_100d': 'xx.embed.glove.glove_6B_100',
+                                   'glove_840B_300': 'xx.embed.glove.840B_300'},
+                            'sv': {'glove_100d': 'xx.embed.glove.glove_6B_100',
+                                   'glove_6B_300': 'xx.embed.glove.6B_300'},
+                            'th': {'labse': 'xx.embed_sentence.labse',
+                                   'tfhub_use_multi_lg': 'xx.use.multi'},
+                            'tr': {'bert_base_turkish_uncased': 'tr.embed.bert.uncased',
+                                   'bert_multi_cased': 'xx.embed.bert',
+                                   'glove_840B_300': 'xx.embed.glove.840B_300',
+                                   'labse': 'xx.embed_sentence.labse'},
+                            'ur': {'glove_300d': 'ur.embed', 'labse': 'xx.embed_sentence.labse'},
+                            'zh': {'bert_base_chinese': 'zh.embed',
+                                   'glove_6B_300': 'xx.embed.glove.6B_300'}}
 
     bad_storage_refs = [
 
@@ -10926,76 +10854,56 @@ class Spellbook:
     'ROBERTA_EMBEDDINGS_39f3e48e5c3f',
 
 ]
-    licensed_storage_ref_2_nlu_ref = {
-    'en': {
-        'clinical': 'en.embed.glove.clinical',
-        'biobert_pubmed_base_cased': 'en.embed.biobert',
-        'embeddings_healthcare100': 'en.embed.glove.healthcare_100d',
-        'bert_base_cased': 'en.embed.bert.base_cased',
-        'sent_bluebert_base_uncased_mednli': 'en.embed_sentence.bluebert.mli',
-        'bert_embeddings_PHS_BERT':'en.embed.bert_phs',
-        'BERT_SENTENCE_EMBEDDINGS_c7e5b6a772f5': 'en.embed_sentence.bert.jsl_medium_uncased',
-        'RelationExtractionModel_ce79d77d1bf1': 'en.embed.glove.clinical',
-        'RelationExtractionModel_1fb1dfa024c7': 'en.embed.glove.clinical',
-        'RelationExtractionModel_6a65c9992836': 'en.embed.biobert',
-        'BERT_SENTENCE_EMBEDDINGS_0bee53f1b2cc': 'en.embed_sentence.biobert.mli',
-        'BERT_SENTENCE_EMBEDDINGS_59c3cd1e17c4': 'en.embed_sentence.bluebert.mli',
-        'RelationExtractionModel_3ab4750ad5b6': 'en.embed.glove.clinical',
-        'RelationExtractionModel_6b61602c8303': 'en.embed.glove.clinical',
-        'RelationExtractionModel_9c255241fec3': 'en.embed.glove.clinical',
-        'ROBERTA_EMBEDDINGS_39f3e48e5c3f': 'en.embed_sentence.biobert.clinical_base_cased',
-        'RelationExtractionModel_14b00157fc1a': 'en.embed.glove.clinical',
-        'RelationExtractionModel_53a12cc975cb': 'en.embed.glove.clinical',
-        'biobert_clinical_base_cased': 'en.embed.biobert.clinical_base_cased',
-        'sent_biobert_clinical_base_cased': 'en.embed_sentence.biobert.clinical_base_cased',
-        'RelationExtractionModel_723addf4b6aa':'en.embed.glove.clinical'
-
-    },
-    'es': {
-        'embeddings_scielowiki300': 'es.embed.scielowiki.300d',
-        'embeddings_wiki300': 'es.embed.sciwiki_300d',
-        'ROBERTA_EMBEDDINGS_39f3e48e5c3f': 'es.embed.roberta_base_biomedical',
-        'clinical': 'es.embed.roberta_base_biomedical',
-        'bert_base_cased_es': 'es.embed.bert.base_cased',
-        'embeddings_scielo300': 'es.embed.scielo300',
-        # 'clinical' : 'es.embed.roberta_base_biomedical',
-
-    },
-    'de': {
-        'clinical': 'de.embed_sentence.bert.base_cased',
-
-    },
-    'fr': {
-        'WordEmbeddings_b266d1e5126a': 'fr.embed.w2v_cc_300d',
-        'bert_embeddings_bert_base_fr_cased_fr': 'fr.embed.bert_base_fr_cased'
-
-    },
-    'it': {
-        'w2v_cc_300d_it': 'it.embed.word2vec',
-        'bert_embeddings_bert_base_italian_xxl_cased_it': 'it.embed.bert_base_italian_xxl_cased',
-
-    },
-
-    'pt': {
-        'w2v_cc_300d_pt': 'pt.embed.w2v_cc_300d',
-        'biobert_embeddings_biomedical_pt': 'pt.embed.gs_biomedical',
-        'roberta_embeddings_BR_BERTo_pt': 'pt.embed.BR_BERTo'
-
-    },
-    'ro': {
-
-        'bert_base_cased_v1': 'ro.embed.bert.base_cased',
-        'w2v_cc_300d_ro': 'ro.embed.w2v_cc_300d'
-    },
-    'ca': {
-        'w2v_cc_300d_ca': 'ca.embed.w2v_cc_300d'
-    },
-
-    'gl': {
-        'w2v_cc_300d_gl': 'gl.embed.w2v_cc_300d'
-    }
-
-}
+    licensed_storage_ref_2_nlu_ref ={'ca': {'w2v_cc_300d_ca': 'ca.embed.w2v_cc_300d'},
+                                     'de': {'clinical': 'de.embed_sentence.bert.base_cased',
+                                            'w2v_cc_300d': 'de.embed'},
+                                     'en': {'BERT_SENTENCE_EMBEDDINGS_0bee53f1b2cc': 'en.embed_sentence.biobert.mli',
+                                            'BERT_SENTENCE_EMBEDDINGS_33904e9f754a': 'en.embed_sentence.bert_uncased.rxnorm',
+                                            'BERT_SENTENCE_EMBEDDINGS_59c3cd1e17c4': 'en.embed_sentence.bluebert.mli',
+                                            'BERT_SENTENCE_EMBEDDINGS_76a84231a63f': 'en.embed_sentence.biobert.rxnorm',
+                                            'BERT_SENTENCE_EMBEDDINGS_c7e5b6a772f5': 'en.embed_sentence.bert.jsl_medium_uncased',
+                                            'BERT_SENTENCE_EMBEDDINGS_f67c6fa21fe5': 'en.embed_sentence.biobert.jsl_cased',
+                                            'ROBERTA_EMBEDDINGS_39f3e48e5c3f': 'en.embed_sentence.biobert.clinical_base_cased',
+                                            'RelationExtractionModel_14b00157fc1a': 'en.embed.glove.clinical',
+                                            'RelationExtractionModel_189543bacd6e': 'en.embed.glove.clinical',
+                                            'RelationExtractionModel_1fb1dfa024c7': 'en.embed.glove.clinical',
+                                            'RelationExtractionModel_3ab4750ad5b6': 'en.embed.glove.clinical',
+                                            'RelationExtractionModel_513eb6317779': 'en.embed.glove.clinical',
+                                            'RelationExtractionModel_53a12cc975cb': 'en.embed.glove.clinical',
+                                            'RelationExtractionModel_68ebe11369b6': 'en.embed.glove.clinical',
+                                            'RelationExtractionModel_6a65c9992836': 'en.embed.biobert',
+                                            'RelationExtractionModel_6b61602c8303': 'en.embed.glove.clinical',
+                                            'RelationExtractionModel_723addf4b6aa': 'en.embed.glove.clinical',
+                                            'RelationExtractionModel_7bb24c4f22d1': 'en.embed.glove.clinical',
+                                            'RelationExtractionModel_9c255241fec3': 'en.embed.glove.clinical',
+                                            'RelationExtractionModel_ab6e5ebef610': 'en.embed.glove.clinical',
+                                            'RelationExtractionModel_bc96a0f8b566': 'en.embed.glove.clinical',
+                                            'RelationExtractionModel_ce79d77d1bf1': 'en.embed.glove.clinical',
+                                            'RelationExtractionModel_d0af74510daa': 'en.embed.glove.clinical',
+                                            'bert_base_cased': 'en.embed.bert.base_cased',
+                                            'bert_embeddings_PHS_BERT': 'en.embed.bert_phs',
+                                            'biobert_clinical_base_cased': 'en.embed.biobert.clinical_base_cased',
+                                            'biobert_pubmed_base_cased': 'en.embed.biobert',
+                                            'clinical': 'en.embed.glove.clinical',
+                                            'embeddings_healthcare100': 'en.embed.glove.healthcare_100d',
+                                            'sent_biobert_clinical_base_cased': 'en.embed_sentence.biobert.clinical_base_cased',
+                                            'sent_bluebert_base_uncased_mednli': 'en.embed_sentence.bluebert.mli'},
+                                     'es': {'ROBERTA_EMBEDDINGS_39f3e48e5c3f': 'es.embed.roberta_base_biomedical',
+                                            'bert_base_cased_es': 'es.embed.bert.base_cased',
+                                            'clinical': 'es.embed.roberta_base_biomedical',
+                                            'embeddings_scielo300': 'es.embed.scielo300',
+                                            'embeddings_scielowiki300': 'es.embed.scielowiki.300d',
+                                            'embeddings_wiki300': 'es.embed.sciwiki_300d'},
+                                     'fr': {'WordEmbeddings_b266d1e5126a': 'fr.embed.w2v_cc_300d',
+                                            'bert_embeddings_bert_base_fr_cased_fr': 'fr.embed.bert_base_fr_cased'},
+                                     'gl': {'w2v_cc_300d_gl': 'gl.embed.w2v_cc_300d'},
+                                     'it': {'bert_embeddings_bert_base_italian_xxl_cased_it': 'it.embed.bert_base_italian_xxl_cased',
+                                            'w2v_cc_300d_it': 'it.embed.word2vec'},
+                                     'pt': {'biobert_embeddings_biomedical_pt': 'pt.embed.gs_biomedical',
+                                            'roberta_embeddings_BR_BERTo_pt': 'pt.embed.BR_BERTo',
+                                            'w2v_cc_300d_pt': 'pt.embed.w2v_cc_300d'},
+                                     'ro': {'bert_base_cased_v1': 'ro.embed.bert.base_cased',
+                                            'w2v_cc_300d_ro': 'ro.embed.w2v_cc_300d'}}
 
     # Map NLU train references to JSL Anno IDs
     traianble_nlu_ref_to_jsl_anno_id = {
