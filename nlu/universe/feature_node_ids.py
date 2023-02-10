@@ -25,12 +25,14 @@ class NLP_NODE_IDS:
     DOCUMENT_ASSEMBLER = JslAnnoId('document_assembler')
     AUDIO_ASSEMBLER = JslAnnoId('audio_assembler')
     WAV2VEC_FOR_CTC = JslAnnoId('wav2vec_for_ctc')
+    HUBERT_FOR_CTC = JslAnnoId('hubert_for_ctc')
     TABLE_ASSEMBLER = JslAnnoId('table_assembler')
     TAPAS_FOR_QA = JslAnnoId('tapas')
     MULTI_DOCUMENT_ASSEMBLER = JslAnnoId('multi_document_assembler')
     IMAGE_ASSEMBLER = JslAnnoId("image_assembler")
 
     ALBERT_FOR_QUESTION_ANSWERING = JslAnnoId('albert_for_question_answering')
+    CAMEMBERT_FOR_QUESTION_ANSWERING = JslAnnoId('camembert_for_question_answering')
     BERT_FOR_QUESTION_ANSWERING = JslAnnoId('bert_for_question_answering')
     DE_BERTA_FOR_QUESTION_ANSWERING = JslAnnoId('de_berta_for_question_answering')
     DISTIL_BERT_FOR_QUESTION_ANSWERING = JslAnnoId('distil_bert_for_question_answering')
@@ -100,6 +102,7 @@ class NLP_NODE_IDS:
     ROBERTA_SENTENCE_EMBEDDINGS = JslAnnoId('roberta_sentence_embeddings')
     T5_TRANSFORMER = JslAnnoId('t5_transformer')
     VIT_IMAGE_CLASSIFICATION = JslAnnoId("vit_image_classification")
+    SWIN_IMAGE_CLASSIFICATION = JslAnnoId("swin_image_classification")
 
 
 

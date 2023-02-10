@@ -30,7 +30,7 @@ class PipeUtils:
     def update_bad_storage_refs(pipe: NLUPipeline):
         """
         Some models have bad storage refs. The list of these bad models is defined by nlu.spellbook.Spellbook.bad_storage_refs.
-        The correct storage ref is given by the resolving moels storage ref defined by nlu.Spellbook.licensed_storage_ref_2_nlu_ref[pipe.lang][storage_ref].
+        The correct storage ref is given by the resolving models storage ref defined by nlu.Spellbook.licensed_storage_ref_2_nlu_ref[pipe.lang][storage_ref].
         Once the resolving model_anno_obj is loaded in the pipe, this method will take its storage ref and write it to the bad_storage_ref model_anno_obj defined by nlu.spellbook.Spellbook.bad_storage_refs.
         If storage ref is already updated, this method will leave the pipe unchanged.
         We only check for healthcare storage refs

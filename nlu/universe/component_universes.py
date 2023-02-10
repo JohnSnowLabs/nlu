@@ -5,8 +5,10 @@ from nlu.components.chunkers.contextual_parser.contextual_parser import Contextu
 from nlu.components.chunkers.default_chunker.default_chunker import DefaultChunker
 from nlu.components.chunkers.ngram.ngram import NGram
 from nlu.components.classifiers.asr.wav2Vec import Wav2Vec
+from nlu.components.classifiers.asr_hubert.hubert import Hubert
 from nlu.components.classifiers.classifier_dl.classifier_dl import ClassifierDl
 from nlu.components.classifiers.generic_classifier.generic_classifier import GenericClassifier
+from nlu.components.classifiers.image_classification_swin.swin import SwinImageClassifier
 from nlu.components.classifiers.language_detector.language_detector import LanguageDetector
 from nlu.components.classifiers.multi_classifier.multi_classifier import MultiClassifier
 from nlu.components.classifiers.named_entity_recognizer_crf.ner_crf import NERDLCRF
@@ -28,12 +30,13 @@ from nlu.components.classifiers.seq_longformer.seq_longformer import SeqLongform
 from nlu.components.classifiers.seq_roberta.seq_roberta import SeqRobertaClassifier
 from nlu.components.classifiers.seq_xlm_roberta.seq_xlm_roberta import SeqXlmRobertaClassifier
 from nlu.components.classifiers.seq_xlnet.seq_xlnet import SeqXlnetClassifier
-from nlu.components.classifiers.span_albert.span_albert import SpanAlbertClassifier
 from nlu.components.classifiers.span_bert.span_bert import SpanBertClassifier
 from nlu.components.classifiers.span_deberta.span_deberta import SpanDeBertaClassifier
 from nlu.components.classifiers.span_distilbert.span_distilbert import SpanDistilBertClassifier
 from nlu.components.classifiers.span_longformer.span_longformer import SpanLongFormerClassifier
 from nlu.components.classifiers.span_roberta.span_roberta import SpanRobertaClassifier
+
+from nlu.components.classifiers.span_camembert.span_camembert import SpanCamemBert
 from nlu.components.classifiers.span_xlm_roberta.span_xlm_roberta import SpanXlmRobertaClassifier
 from nlu.components.classifiers.token_albert.token_albert import TokenAlbert
 from nlu.components.classifiers.token_bert.token_bert import TokenBert
@@ -123,8 +126,7 @@ from nlu.pipe.col_substitution.col_substitution_HC import *
 from nlu.pipe.col_substitution.col_substitution_OCR import substitute_recognized_text_cols
 from nlu.pipe.col_substitution.col_substitution_OS import *
 from nlu.pipe.extractors.extractor_configs_HC import *
-from nlu.pipe.extractors.extractor_configs_OCR import default_text_recognizer_config, default_binary_to_image_config, \
-    default_visual_classifier_config
+from nlu.pipe.extractors.extractor_configs_OCR import default_text_recognizer_config, default_binary_to_image_config
 from nlu.pipe.extractors.extractor_configs_OS import *
 from nlu.pipe.nlu_component import NluComponent
 from nlu.universe.annotator_class_universe import AnnoClassRef
@@ -1447,6 +1449,29 @@ class ComponentUniverse:
                                    applicable_file_types=['wav', 'mp3', 'flac', 'aiff', 'aifc', 'ogg', 'aflac', 'alac',
                                                           'dsd', 'pcm', ]
                                    ),
+
+        A.HUBERT_FOR_CTC: partial(NluComponent,
+                                   name=A.HUBERT_FOR_CTC,
+                                   type=T.SPEECH_RECOGNIZER,
+                                   get_default_model=Hubert.get_default_model,
+                                   get_pretrained_model=Hubert.get_pretrained_model,
+                                   pdf_extractor_methods={'default': default_only_result_config,
+                                                          'default_full': default_full_config, },
+                                   pdf_col_name_substitutor=substitute_wav2vec_cols,
+                                   output_level=L.DOCUMENT,
+                                   node=NLP_FEATURE_NODES.nodes[A.HUBERT_FOR_CTC],
+                                   description='todo',
+                                   provider=ComponentBackends.open_source,
+                                   license=Licenses.open_source,
+                                   computation_context=ComputeContexts.spark,
+                                   output_context=ComputeContexts.spark,
+                                   jsl_anno_class_id=A.HUBERT_FOR_CTC,
+                                   jsl_anno_py_class=ACR.JSL_anno2_py_class[A.HUBERT_FOR_CTC],
+                                   # Bas on Librosa which uses http://www.mega-nerd.com/libsndfile/
+                                   applicable_file_types=['wav', 'mp3', 'flac', 'aiff', 'aifc', 'ogg', 'aflac', 'alac',
+                                                          'dsd', 'pcm', ]
+                                   ),
+
         A.TAPAS_FOR_QA: partial(NluComponent,
                                 name=A.TAPAS_FOR_QA,
                                 type=T.QUESTION_TABLE_ANSWERER,
@@ -2913,14 +2938,14 @@ class ComponentUniverse:
                                                            A.DEBERTA_FOR_SEQUENCE_CLASSIFICATION],
                                                        ),
 
-        A.ALBERT_FOR_QUESTION_ANSWERING: partial(NluComponent,
-                                                 name=A.ALBERT_FOR_QUESTION_ANSWERING,
-                                                 jsl_anno_class_id=A.ALBERT_FOR_QUESTION_ANSWERING,
+        A.CAMEMBERT_FOR_QUESTION_ANSWERING: partial(NluComponent,
+                                                 name=A.CAMEMBERT_FOR_QUESTION_ANSWERING,
+                                                 jsl_anno_class_id=A.CAMEMBERT_FOR_QUESTION_ANSWERING,
                                                  jsl_anno_py_class=ACR.JSL_anno2_py_class[
-                                                     A.ALBERT_FOR_QUESTION_ANSWERING],
-                                                 node=NLP_FEATURE_NODES.nodes[A.ALBERT_FOR_QUESTION_ANSWERING],
-                                                 get_default_model=SpanAlbertClassifier.get_default_model,
-                                                 get_pretrained_model=SpanAlbertClassifier.get_pretrained_model,
+                                                     A.CAMEMBERT_FOR_QUESTION_ANSWERING],
+                                                 node=NLP_FEATURE_NODES.nodes[A.CAMEMBERT_FOR_QUESTION_ANSWERING],
+                                                 get_default_model=SpanCamemBert.get_default_model,
+                                                 get_pretrained_model=SpanCamemBert.get_pretrained_model,
                                                  type=T.QUESTION_SPAN_CLASSIFIER,
                                                  pdf_extractor_methods={
                                                      'default': default_span_classifier_config,
@@ -3085,6 +3110,7 @@ class ComponentUniverse:
                                             name=A.VIT_IMAGE_CLASSIFICATION ,
                                             type=T.IMAGE_CLASSIFICATION,
                                             get_default_model=VitImageClassifier.get_default_model,
+                                            get_pretrained_model=VitImageClassifier.get_pretrained_model,
                                             pdf_extractor_methods={'default': default_document_config,
                                                                    'default_full': default_full_config },
                                             pdf_col_name_substitutor=substitute_recognized_text_cols,
@@ -3101,6 +3127,30 @@ class ComponentUniverse:
                                             jsl_anno_py_class=ACR.JSL_anno2_py_class[
                                                 A.VIT_IMAGE_CLASSIFICATION],
                                             ),
+
+
+        A.SWIN_IMAGE_CLASSIFICATION: partial(NluComponent,
+                                            name=A.SWIN_IMAGE_CLASSIFICATION ,
+                                            type=T.IMAGE_CLASSIFICATION,
+                                            get_default_model=SwinImageClassifier.get_default_model,
+                                            get_pretrained_model=SwinImageClassifier.get_pretrained_model,
+                                            pdf_extractor_methods={'default': default_document_config,
+                                                                   'default_full': default_full_config },
+                                            pdf_col_name_substitutor=substitute_recognized_text_cols,
+                                            output_level=L.DOCUMENT,
+                                            node=NLP_FEATURE_NODES.nodes[
+                                                A.SWIN_IMAGE_CLASSIFICATION],
+                                            description='TODO',
+                                            provider=ComponentBackends.open_source,
+
+                                            license=Licenses.open_source,
+                                            computation_context=ComputeContexts.spark,
+                                            output_context=ComputeContexts.spark,
+                                            jsl_anno_class_id=A.SWIN_IMAGE_CLASSIFICATION,
+                                            jsl_anno_py_class=ACR.JSL_anno2_py_class[
+                                                A.SWIN_IMAGE_CLASSIFICATION],
+                                            ),
+
 
 
         A.IMAGE_ASSEMBLER: partial(NluComponent,

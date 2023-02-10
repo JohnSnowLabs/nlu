@@ -102,6 +102,11 @@ class NLP_FEATURE_NODES:  # or Mode Node?
         A.ALBERT_FOR_QUESTION_ANSWERING: NlpFeatureNode(A.ALBERT_FOR_QUESTION_ANSWERING,
                                                         [F.DOCUMENT_QUESTION, F.DOCUMENT_QUESTION_CONTEXT],
                                                         [F.CLASSIFIED_SPAN]),
+
+        A.CAMEMBERT_FOR_QUESTION_ANSWERING: NlpFeatureNode(A.CAMEMBERT_FOR_QUESTION_ANSWERING,
+                                                        [F.DOCUMENT_QUESTION, F.DOCUMENT_QUESTION_CONTEXT],
+                                                        [F.CLASSIFIED_SPAN]),
+
         A.BERT_FOR_QUESTION_ANSWERING: NlpFeatureNode(A.BERT_FOR_QUESTION_ANSWERING,
                                                       [F.DOCUMENT_QUESTION, F.DOCUMENT_QUESTION_CONTEXT],
                                                       [F.CLASSIFIED_SPAN]),
@@ -122,9 +127,10 @@ class NLP_FEATURE_NODES:  # or Mode Node?
                                                              [F.CLASSIFIED_SPAN]),
 
         A.DOCUMENT_ASSEMBLER: NlpFeatureNode(A.DOCUMENT_ASSEMBLER, [E.RAW_TEXT], [F.DOCUMENT]),
-        A.AUDIO_ASSEMBLER: NlpFeatureNode(A.PARTIALLY_IMPLEMENTED, [F.RAW_AUDIO], [F.AUDIO]),
+        A.AUDIO_ASSEMBLER: NlpFeatureNode(A.AUDIO_ASSEMBLER, [F.RAW_AUDIO], [F.AUDIO]),
         # A.WAV2VEC_FOR_CTC: NlpFeatureNode(A.PARTIALLY_IMPLEMENTED, [F.AUDIO], [F.RECOGNIZED_SPEECH_TEXT]),
-        A.WAV2VEC_FOR_CTC: NlpFeatureNode(A.PARTIALLY_IMPLEMENTED, [F.AUDIO], [E.RAW_TEXT]),
+        A.WAV2VEC_FOR_CTC: NlpFeatureNode(A.WAV2VEC_FOR_CTC, [F.AUDIO], [E.RAW_TEXT]),
+        A.HUBERT_FOR_CTC: NlpFeatureNode(A.HUBERT_FOR_CTC, [F.AUDIO], [E.RAW_TEXT]),
 
         A.IMAGE_ASSEMBLER: NlpFeatureNode(A.IMAGE_ASSEMBLER, [F.SPARK_NLP_IMAGE, F.SPARK_NLP_FILE_PATH], [F.IMAGE]),
         A.DOCUMENT_NORMALIZER: NlpFeatureNode(A.DOCUMENT_NORMALIZER, [F.DOCUMENT], [F.DOCUMENT_GENERATED]),
@@ -255,6 +261,7 @@ class NLP_FEATURE_NODES:  # or Mode Node?
                                                          [F.NAMED_ENTITY_CONVERTED]),
 
         A.VIT_IMAGE_CLASSIFICATION: NlpFeatureNode(A.VIT_IMAGE_CLASSIFICATION, [F.IMAGE], [F.CLASSIFIED_IMAGE]),
+        A.SWIN_IMAGE_CLASSIFICATION: NlpFeatureNode(A.SWIN_IMAGE_CLASSIFICATION, [F.IMAGE], [F.CLASSIFIED_IMAGE]),
 
     }
 

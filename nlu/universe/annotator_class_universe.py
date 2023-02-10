@@ -13,6 +13,9 @@ class AnnoClassRef:
     HC_A_N = NLP_HC_NODE_IDS
     # Map AnnoID to PyCLass
     JSL_anno2_py_class: Dict[JslAnnoId, JslAnnoPyClass] = {
+        A_N.HUBERT_FOR_CTC: 'HubertForCTC',
+        A_N.CAMEMBERT_FOR_QUESTION_ANSWERING: 'CamemBertForQuestionAnswering',
+        A_N.SWIN_IMAGE_CLASSIFICATION: 'SwinForImageClassification',
         A_N.CAMEMBERT_FOR_SEQUENCE_CLASSIFICATION: 'CamemBertForSequenceClassification',
         A_N.TAPAS_FOR_QA: 'TapasForQuestionAnswering',
         A_N.TABLE_ASSEMBLER: 'TableAssembler',
