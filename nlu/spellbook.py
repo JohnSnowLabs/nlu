@@ -2426,6 +2426,7 @@ class Spellbook:
                                            'el.stopwords.iso': 'stopwords_iso'},
                                     'eml': {'eml.embed.w2v_cc_300d': 'w2v_cc_300d'},
                                     'en': {
+                                            'en.classify_image.swin.tiny':'image_classifier_swin_tiny_patch4_window7_224',
                                         'en.speech2text.hubert': 'asr_hubert_large_ls960',
                                         'en.speech2text.hubert.large_ls960': 'asr_hubert_large_ls960',
                                         'en.albert': 'albert_base_uncased',
@@ -18926,4 +18927,5 @@ class Spellbook:
                              'zero_shot_re': 'ZeroShotRelationExtractionModel',
 
                              'asr_hubert_large_ls960': 'HubertForCTC',
+                             'image_classifier_swin_tiny_patch4_window7_224':'SwinForImageClassification',
                              }
