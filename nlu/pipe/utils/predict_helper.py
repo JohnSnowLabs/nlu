@@ -102,8 +102,7 @@ def __predict_audio_spark(pipe, data, output_level, positions, keep_stranger_fea
     """
     pipe.fit()
 
-    # TODO GET SAMPLERATE DYNAMICLY!??!
-    #TODO VALIDATE LIBROSA INSTALLED!>?
+    # TODO VALIDATE LIBROSA INSTALLED
     sample_rate = 16000
     AudioDataConversionUtils.validate_paths(data)
     paths = AudioDataConversionUtils.extract_iterable_paths_from_data(data)
