@@ -52,7 +52,7 @@ Where the Pop-Up leads you to:
 ![install_pop_up.png](/assets/images/jsl_lib/install/install_pop_up.png)
 
 After clicking **Authorize**:
-![install_logs_colab.png](/assets/images/jsl_lib/install/install_logs_colab.png)
+![install_logs_colab.png](/assets/images/jsl_lib/install/install_logs_colab_new.png)
 
 **Additional Requirements**
 
