@@ -138,6 +138,23 @@ def substitute_doc_assembler_cols(c, cols, nlu_identifier=True):
     return new_cols
 
 
+def substitute_img_assembler_cols(c, cols, nlu_identifier=True):
+    """
+    Doc assember is always unique
+    Fetched fields are:
+    - entities@<storage_ref>_results
+    - entities@<storage_ref>_<metadata>
+        - entities@<storage_ref>_entity
+        - entities@<storage_ref>_confidence
+    """
+    new_cols = {}
+    new_base_name = 'image_origin' if nlu_identifier == 'UNIQUE' else f'image_origin{nlu_identifier}'
+    for col in cols:
+        if 'origin' in col:
+            new_cols[col] = new_base_name
+    return new_cols
+
+
 def audio_assembler_cols(c, cols, nlu_identifier=True):
     """
     Sent detector is always unique
@@ -429,6 +446,7 @@ def substitute_tapas_qa_cols(c, cols, nlu_identifier=True):
             else:
                 logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
     return new_cols
+
 
 def substitute_word_embed_cols(c, cols, nlu_identifier=True):
     """

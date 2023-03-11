@@ -106,6 +106,7 @@ class SparkNLPExtractorConfig:
     get_begin: bool = field(default=False)
     get_end: bool = field(default=False)
     get_embeds: bool = field(default=False)
+    get_origin: bool = field(default=False)
     get_result: bool = field(default=False)
     get_meta: bool = field(default=False)
     get_sentence_origin: bool = field(

@@ -1,3 +1,5 @@
+from functools import partial
+
 from nlu.components.assertions.assertion_dl.assertion_dl import AssertionDL
 from nlu.components.assertions.assertion_log_reg.assertion_log_reg import AssertionLogReg
 from nlu.components.chunkers.chunk_mapper.chunk_mapper import ChunkMapper
@@ -3157,9 +3159,9 @@ class ComponentUniverse:
                                       name=A.IMAGE_ASSEMBLER,
                                       type=T.HELPER_ANNO,
                                       get_default_model=SparkNlpImageAssembler.get_default_model,
-                                      pdf_extractor_methods={'default': default_document_config,
+                                      pdf_extractor_methods={'default': default_image_assembler_config,
                                                           'default_full': default_full_config },
-                                      pdf_col_name_substitutor=substitute_doc_assembler_cols,
+                                      pdf_col_name_substitutor=substitute_img_assembler_cols,
                                       output_level=L.DOCUMENT,
                                       node=NLP_FEATURE_NODES.nodes[A.IMAGE_ASSEMBLER],
                                       description='todo',

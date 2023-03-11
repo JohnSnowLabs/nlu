@@ -49,6 +49,14 @@ def default_document_config(output_col_prefix='document'):
         get_result=True,
     )
 
+def default_image_assembler_config(output_col_prefix='image_assembler'):
+    return SparkNLPExtractorConfig(
+        output_col_prefix=output_col_prefix,
+        pop_result_list=True,
+        get_result=False,
+        get_origin=True
+    )
+
 
 def default_tapas_config(output_col_prefix='tapas_qa'):
     """Extracts TAPAS  QA, excluding potions """
