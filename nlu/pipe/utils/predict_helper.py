@@ -1,10 +1,5 @@
-import glob
 import logging
-import typing
-from typing import List
-import os
-import numpy as np
-import pyspark
+
 import sparknlp
 from pyspark.sql.functions import monotonically_increasing_id
 
@@ -102,7 +97,11 @@ def __predict_audio_spark(pipe, data, output_level, positions, keep_stranger_fea
     """
     pipe.fit()
 
-    # TODO VALIDATE LIBROSA INSTALLED
+    try:
+        import librosa
+    except:
+        raise ImportError('The librosa library is not installed and required for audio features! '
+                          'Run pip install librosa ')
     sample_rate = 16000
     AudioDataConversionUtils.validate_paths(data)
     paths = AudioDataConversionUtils.extract_iterable_paths_from_data(data)
@@ -137,7 +136,6 @@ def __predict__(pipe, data, output_level, positions, keep_stranger_features, met
     :param return_spark_df: Prediction results will be returned right after transforming with the Spark NLP pipeline
     :return:
     '''
-
 
     if output_level == '' and not pipe.has_table_qa_models:
         # Default sentence level for all components
