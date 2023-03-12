@@ -1,50 +1,44 @@
 ---
 layout: docs
 header: true
-seotitle: NLU | John Snow Labs
-title: The NLU predict function
+seotitle: predict | John Snow Labs
+title: The predict() function
 key: predict-api
 permalink: /docs/en/predict_api
 modify_date: "2019-05-16"
 ---
-
-<div class="main-docs" markdown="1">
-
-<div class="h3-box" markdown="1">
-
-## The predict function
-NLU expects either a column named 'text' in the dataframe passed to it or alternatively it will assume the first column of the dataframe passed to it as the column it should predict for.
+<div class="main-docs" markdown="1"><div class="h3-box" markdown="1">
+`predict()` expects either a column named 'text' in the dataframe passed to it,
+or alternatively it will assume the first column of the dataframe passed to it as the column it should predict for.
 
 </div><div class="h3-box" markdown="1">
-
 ## Predict method Parameters
 
 ### Output metadata
-The NLU predict method has a boolean metadata parameter.    
-When it is set to True, NLU will output the confidence and additional metadata for each prediction.
+The NLP predict method has a boolean metadata parameter.    
+When it is set to `True`, it output the confidence and additional metadata for each prediction.
 Its default value is False.
-
 ```python
-nlu.load('lang').predict('What a wonderful day!')
+nlp.load('lang').predict('What a wonderful day!')
 ```
 
 </div><div class="h3-box" markdown="1">
 
 ### Output Level parameter
-NLU defines 4 output levels for the generated predictions.    
-The output levels define how granular the predictions and outputs of NLU will be.    
-Depending on what downstream tasks NLU will be used for the output level should be adjusted.     
-
+`predict()` defines 4 output levels for the generated predictions.    
+The output levels define how granular the predictions and outputs will be.    
+Depending on your goal, may need to be output level should be adjusted.
 
 1. Token level: Outputs one row for every token in the input. **One to many mapping.**
 2. Chunk level: Outputs one row for every chunk in the input. **One to many mapping.**
 3. Sentence level: Outputs one row for every sentence the input. **One to many mapping.**
-4. Document level output: Outputs one row for every document in the input. **One to one mapping.**
+4. Relation level output: Outputs one row for every relation predicted, i.e. . **One to many.**
+5. Document level output: Outputs one row for every document in the input. **One to one mapping.**
 
-NLU will try to infer the most useful output level automatically if an output level is not specified.    
+`predict()` will try to infer the most useful output level automatically if an output level is not specified.    
 The inferred output level will usually define the last element of the pipeline.     
 
-Take a look at the [NLU different output levels Demo](https://colab.research.google.com/drive/1C4N3wpC17YzZf9fXHDNAJ5JvSmfbq7zT?usp=sharing) which goes over all the output levels.
+Take a look at the [different output levels Demo](https://colab.research.google.com/drive/1C4N3wpC17YzZf9fXHDNAJ5JvSmfbq7zT?usp=sharing) which goes over all the output levels.
 
 </div><div class="h3-box" markdown="1">
 
@@ -52,8 +46,8 @@ Take a look at the [NLU different output levels Demo](https://colab.research.goo
 Every row in the input data frame will be mapped to **one row** in the output dataframe.
 
 ```python
-# NLU outputs 1 row for 1 input document
-nlu.load('sentiment').predict(['I love data science! It is so much fun! It can also be quite helpful to people.', 'I love the city New-York'], output_level='document')
+# outputs 1 row for 1 input document
+nlp.load('sentiment').predict(['I love data science! It is so much fun! It can also be quite helpful to people.', 'I love the city New-York'], output_level='document')
 ```
 
 <div class="table-wrapper"><div class="table-inner" markdown="1">
@@ -71,9 +65,8 @@ nlu.load('sentiment').predict(['I love data science! It is so much fun! It can a
 Every sentence in each row becomes a new row in the output dataframe.
 
 ```python
-import nlu
-# NLU will detect the 2 sentences and output 2 rows, one for each of the sentences.
-nlu.load('sentiment').predict(['I love data science! It is so much fun! It can also be quite helpful to people.', 'I love the city New-York'], output_level='sentence')
+# will detect the 2 sentences and output 2 rows, one for each of the sentences.
+nlp.load('sentiment').predict(['I love data science! It is so much fun! It can also be quite helpful to people.', 'I love the city New-York'], output_level='sentence')
 ```
 
 <div class="table-wrapper"><div class="table-inner" markdown="1">
@@ -96,8 +89,8 @@ By setting output level to chunk, you will ensure ever Named Entity becomes one 
 Named Entities are chunks.
 
 ```python
-# 'New York' is a Chunk. A chunk is an object that consists of multiple tokens but it's not a sentence.
-nlu.load('ner').predict(['Angela Merkel and Donald Trump dont share many oppinions', "Ashley wants to visit the Brandenburger Tor in Berlin"], output_level='chunk',)
+# 'New York' is a Chunk. A chunk is an object that consists of multiple tokens, but it's not a sentence.
+nlp.load('ner').predict(['Angela Merkel and Donald Trump dont share many opinions', "Ashley wants to visit the Brandenburger Tor in Berlin"], output_level='chunk',)
 ```
 
 <div class="table-wrapper"><div class="table-inner" markdown="1">
@@ -119,7 +112,7 @@ Every token in each input row becomes a new row in the output dataframe.
 
 ```python
 # Every token in our sentence will become a row
-nlu.load('sentiment').predict(['I love data science! It is so much fun! It can also be quite helpful to people.', 'I love the city New-York'], output_level='token')
+nlp.load('sentiment').predict(['I love data science! It is so much fun! It can also be quite helpful to people.', 'I love the city New-York'], output_level='token')
 ```
 
 <div class="table-wrapper"><div class="table-inner" markdown="1">
@@ -156,18 +149,18 @@ nlu.load('sentiment').predict(['I love data science! It is so much fun! It can a
 </div></div></div><div class="h3-box" markdown="1">
 
 ## Output positions parameter
-By setting *output_positions=True*, the Dataframe generated by NLU will contain additional columns which describe the beginning and end of each feature inside of the original document.
+By setting *output_positions=True*, the Dataframe generated  will contain additional columns which describe the beginning and end of each feature inside of the original document.
 These additional *_begining* and *_end* columns let you infer the piece of the original input string that has been used to generate the output.
 
-- If the NLU output level is set to a **different output level** than some features output level, the resulting features will be inside of lists
-- If the NLU output level is set to the **same output level** as some feature, the generated positional features will be single integers
+- If output level is set to a **different output level** than some features output level, the resulting features will be inside of lists
+- If output level is set to the **same output level** as some feature, the generated positional features will be single integers
 - positional :
-- For token based components the positional features refer to the beginning and the end of the token inside of the original document the text originates from.
+- For token based components the positional features refer to the beginning and the end of the token inside the original document the text originates from.
 - For sentence based components like sentence embeddings and different sentence classifiers the output of positional will describe the beginning and the end of the sentence that was used to generate the output.
 
 
 ```python
-nlu.load('sentiment').predict('I love data science!', output_level='token', output_positions=True)
+nlp.load('sentiment').predict('I love data science!', output_level='token', output_positions=True)
 ```
 
 <div class="table-wrapper"><div class="table-inner" markdown="1">
@@ -184,28 +177,28 @@ nlu.load('sentiment').predict('I love data science!', output_level='token', outp
 </div></div></div><div class="h3-box" markdown="1">
 
 ## Row origin inference for one to many mappings
-NLU will recycle the Pandas index from the input Dataframe.     
+`predict()` will recycle the Pandas index from the input Dataframe.     
 The index is useful if one row is mapped to many rows during prediction.     
 The new rows which are generated from the input row will all have the same index as the original source row.    
-I.e. if one sentence row gets split into many token rows,  each token row will have the same index as the sentence row.
+I.e. if one sentence row gets split into many token rows, each token row will have the same index as the sentence row.
 
 </div><div class="h3-box" markdown="1">
 
-## NLU NaN Handling
-- NLU will convert every NaN value to a Python None variable which is reflected in the final dataframe
-- If a column contains **only** NaN or None, NLU will drop these columns for the output df.
+## NaN Handling
+- Every NaN value is converted to a Python None variable which is reflected in the final dataframe
+- If a column contains **only** NaN or None, it will be dropped
 
 </div><div class="h3-box" markdown="1">
 
 ## Memory optimization recommendations
-Instead of passing your entire Pandas Dataframe to NLU you can pass only the columns which you need for later tasks.       
+Instead of passing your entire Pandas Dataframe to `predict()` you can pass only the columns which you need for later tasks.       
 This saves memory and computation time and can be achieved like in the following example, which assumes latitude and longitude are irrelevant for later tasks.    
 
 ```python
-import nlu
+from johnsnowlabs import nlp
 import pandas as pd
 data = {
-   'tweet': ['@CKL-IT NLU ROCKS!', '@MaziyarPanahi NLU is pretty cool', '@JohnSnowLabs Try out NLU!'],
+   'tweet': ['@CKL-IT the john snow labs library is awesome!', '@MaziyarPanahi johnsnowlabs library is pretty cool', '@JohnSnowLabs Try out the johnsnowlabs library!'],
    'tweet_location': ['Berlin', 'Paris', 'United States'],
    'tweet_lattitude' : ['52.55035', '48.858093', '40.689247'],
    'tweet_longtitude' : ['13.39139', '2.294694','-74.044502']
@@ -213,28 +206,36 @@ data = {
 
   
 text_df = pd.DataFrame(data)
-nlu.load('sentiment').predict(text_df[['tweet','tweet_location']])
+nlp.load('sentiment').predict(text_df[['tweet','tweet_location']])
 ```
 
 </div><div class="h3-box" markdown="1">
 
 ## Supported data types
-NLU supports all of the common Python data types and formats
+`predict()` supports all of the common Python data types and formats
+- Pandas Dataframes
+- Spark Dataframes
+- Modin with Dask backend
+- Modin with Ray backend
+- 1-D Numpy arrays of Strings
+- Strings
+- Arrays of Strings
+
 
 </div><div class="h3-box" markdown="1">
 
 ### Single strings
 ```python
-import nlu
-nlu.load('sentiment').predict('This is just one string')
+from johnsnowlabs import nlp 
+nlp.load('sentiment').predict('This is just one string')
 ```
 
 </div><div class="h3-box" markdown="1">
 
 ### Lists of strings
 ```python
-import nlu
-nlu.load('sentiment').predict(['This is an array', ' Of strings!'])
+from johnsnowlabs import nlp
+nlp.load('sentiment').predict(['This is an array', ' Of strings!'])
 ```
 
 </div><div class="h3-box" markdown="1">
@@ -247,11 +248,11 @@ It  is recommended to only pass the columns required for further downstream task
 
 
 ```python
-import nlu
+from johnsnowlabs import nlp
 import pandas as pd
 data = {"text": ['This day sucks', 'I love this day', 'I dont like Sami']}
 text_df = pd.DataFrame(data)
-nlu.load('sentiment').predict(text_df)
+nlp.load('sentiment').predict(text_df)
 ```
 
 </div><div class="h3-box" markdown="1">
@@ -262,11 +263,11 @@ One column must be named text and of object/string type
 **note** : This way is the most memory efficient way
 
 ```python
-import nlu
+from johnsnowlabs import nlp
 import pandas as pd
 data = {"text": ['This day sucks', 'I love this day', 'I dont like Sami']}
 text_df = pd.DataFrame(data)
-nlu.load('sentiment').predict(text_df['text'])
+nlp.load('sentiment').predict(text_df['text'])
 ```
 
 </div><div class="h3-box" markdown="1">
@@ -276,12 +277,12 @@ nlu.load('sentiment').predict(text_df['text'])
 One column must be named text and of string type or the first column will be used instead if no column named 'text' exists
 
 ```python
-import nlu
+from johnsnowlabs import nlp
 import pandas as pd
 data = {"text": ['This day sucks', 'I love this day', 'I dont like Sami']}
 text_pdf = pd.DataFrame(data)
-text_sdf = nlu.spark.createDataFrame(text_pdf)
-nlu.load('sentiment').predict(text_sdf)
+text_sdf = nlp.spark.createDataFrame(text_pdf)
+nlp.load('sentiment').predict(text_sdf)
 ```
 
 </div><div class="h3-box" markdown="1">
@@ -291,11 +292,11 @@ Supports Ray Dask backends
 One column must be named text and of string type or the first column will be used instead if no column named 'text' exists
 
 ```python
-import nlu
+from johnsnowlabs import nlp
 import modin.pandas as pd
 data = {"text": ['This day sucks', 'I love this day', 'I don't like Sami']}
 text_pdf = pd.DataFrame(data)
-nlu.load('sentiment').predict(text_pdf)
+nlp.load('sentiment').predict(text_pdf)
 ```
 
 </div></div>

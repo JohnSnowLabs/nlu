@@ -8,154 +8,36 @@ modify_date: "2020-05-26"
 header: true
 ---
 
-<div class="main-docs" markdown="1">
+<div class="main-docs" markdown="1"><div class="h3-box" markdown="1">
 
-<div class="h3-box" markdown="1">
+To install the **johnsnowlabs Python library** and all of John Snow Labs open **source libraries**, just run
 
-## 0. Super Quickstart on Google Colab or Kaggle
+```shell 
+pip install johnsnowlabs
+```
 
-If you work on a fresh Notebook on Kaggle or Google colab, you can just copy paste the following commands into your first cell which 
-will automatically setup Java, nlu and import nlu, so you are good to go right away!
+To quickly test the installation, you can run in your **Shell**:
 
-
-### 1 line Install NLU on Google Colab
-```!wget https://setup.johnsnowlabs.com/nlu/colab.sh  -O - | bash```
-### 1 line Install NLU on Kaggle
-```!wget https://setup.johnsnowlabs.com/nlu/kaggle.sh  -O - | bash```
-### Install via PIP
-```! pip install nlu pyspark==3.0.1```
-
-You can test it out right away with :
+```shell
+python -c "from johnsnowlabs import nlp;print(nlp.load('emotion').predict('Wow that easy!'))"
+```
+or in **Python**:
 ```python
-nlu.load('emotion').predict('wow that was easy')
+from  johnsnowlabs import nlp
+nlp.load('emotion').predict('Wow that easy!')
 ```
 
-</div><div class="h3-box" markdown="1">
-
-# 1. Get Prerequisites (Java 8)
-
-You only need to configure Java 8 on your machine and are good to go! 
-Unless you are on Windows, which requires 1 additional step.
-
-
-- [Setup Java 8 on Windows](https://access.redhat.com/documentation/en-us/openjdk/8/html/openjdk_8_for_windows_getting_started_guide/getting_started_with_openjdk_for_windows)
-- [Setup Java 8 on Linux](https://openjdk.java.net/install/)
-- [Setup Java 8 on Mac](https://docs.oracle.com/javase/8/docs/technotes/guides/install/mac_jdk.html)
-
-</div><div class="h3-box" markdown="1">
-
-### Setup Java in Google Collab or Kaggle
-If you work in a Kaggle or Collab Notebook you can simply configure Java by running the following code in a cell
-
-```bash
-import os
-! apt-get update -qq > /dev/null   
-# Install java
-! apt-get install -y openjdk-8-jdk-headless -qq > /dev/null
-os.environ["JAVA_HOME"] = "/usr/lib/jvm/java-8-openjdk-amd64"
-os.environ["PATH"] = os.environ["JAVA_HOME"] + "/bin:" + os.environ["PATH"]
-```
-
-</div><div class="h3-box" markdown="1">
-
-## Verify Java 8 works
-```bash
-# should be Java 8 (Oracle or OpenJDK)
-java -version
-```
-
-</div><div class="h3-box" markdown="1">
-
-## 1.1 Get Windows Specific Prerequisites (winutils.exe)
-# 1.1 Get Windows Specific Prerequisites (winutils.exe)
-
-This is only required for Windows usesr.
-1. Download [winutils.exe](https://github.com/steveloughran/winutils/blob/master/hadoop-2.7.1/bin/winutils.exe)
-2. Create folder C:\winutils\bin
-3. Copy winutils.exe inside C:\winutils\bin
-4. Set environment variable HADOOP_HOME to C:\winutils
-
-</div><div class="h3-box" markdown="1">
-
-## 2. Install NLU package
-
-```bash
-# Install Spark NLU from PyPI
-pip install nlu pyspark==2.4.7
-```
-
-</div><div class="h3-box" markdown="1">
-
-## 3. Verify that NLU is working properly
-Launch a Python shell an run a simple script.         
-**On Windows you need to launch your shell as admim**
-
+when using **Annotator based pipelines**, use `nlp.start()` to start up your session 
 ```python
-import nlu
-nlu.load('sentiment').predict('Why is NLU so awesome? Because of the sauce!')
-
-# 3. Verify that NLU is working properly
-Launch a Python shell an run a simple script.         
-**On Windows you need to launch your shell as admim**
-
-```python
-import nlu
-nlu.load('sentiment').predict('Why is NLU is awesome? Because of the sauce!')
+from johnsnowlabs import nlp
+nlp.start()
+pipe = nlp.Pipeline(stages=
+[
+    nlp.DocumentAssembler().setInputCol('text').setOutputCol('doc'),
+    nlp.Tokenizer().setInputCols('doc').setOutputCol('tok')
+])
+nlp.to_nlu_pipe(pipe).predict('That was easy')
 ```
 
-</div><div class="h3-box" markdown="1">
 
-# Supported data types
-
-NLU supports currently the following data formats :
-- Pandas Dataframes 
-- Spark Dataframes 
-- Modin with Dask backend
-- Modin with Ray backend
-- 1-D Numpy arrays of Strings
-- Strings
-- Arrays of Strings
-
-
-## Compatibility with Spark NLP and Spark NLP for Healthcare
-
-NLU 3.X  is compatible with all Spark NLP 3.X versions.
-NOTE : If Spark NLP releases 3.X+1 and NLU is still on 3.X, then NLU will throw errors.
-
-
-
-</div><div class="block-wrapper"><div class="block-box" markdown="1">
-
-
-
-### Troubleshoot
-
-
-
-# Troubleshoot
-
-- On Arch based distributions like Manjaro you might encounter an error because of missing libffi.so.6.      
-With *yay libffi6* you can resolve this error.
-
-</div><div class="block-box" markdown="1">
-
-### Join our Slack channel
-
-Join our channel, to ask for help and share your feedback. Developers and users can help each other get started here.
-
-[NLU Slack](https://spark-nlp.slack.com/archives/C0196BQCDPY){:.button.button--info.button--rounded.button--md}
-
-</div></div><div class="h3-box" markdown="1">
-
-### Where to go next
-
-If you want to get your hands dirty with some NLU work, check out the [Examples page](examples)
-Detailed information about NLU APIs, concepts, components and more can be found on the following pages :
-
-{:.list4}
-- [The NLU load function](load_api)
-- [The NLU predict function](predict_api)
-- [The NLU components spellbook](https://nlu.johnsnowlabs.com/docs/en/spellbook)
-- [NLU Notebooks](notebooks)
-
-</div></div>
+for alternative installation options see [Custom Installation](/docs/en/install_advanced)

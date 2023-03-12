@@ -6,7 +6,7 @@ key: docs-nlu-for-ocr
 permalink: /docs/en/nlu_for_ocr
 modify_date: "2019-05-16"
 ---
-<div class="main-docs" markdown="1">
+<div class="main-docs" markdown="1"><div class="h3-box" markdown="1">
 
 
 This page gives you an overview of every OCR model in NLU which are provided by [Spark
@@ -19,33 +19,31 @@ Additionally you can refer to the OCR tutorial Notebooks
 - [OCR Tutorial for extracting `Tables` from Image/PDF/DOC(X) files ](https://colab.research.google.com/github/JohnSnowLabs/nlu/blob/master/examples/colab/ocr/table_extraction.ipynb.ipynb) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/JohnSnowLabs/nlu/blob/master/examples/colab/ocr/table_extraction.ipynb)
 
 
-<div class="h3-box" markdown="1">
-
-<br>
+</div><div class="h3-box" markdown="1">
 
 ## Overview of all OCR features
 
 **Overview of OCR Text Extractors**        
 These models grab the text directly from your input file and returns it as a Pandas DataFrame
 
-| NLU Spell | Transformer Class |
+| NLU Spell            | Transformer Class                                                                       |
 |----------------------|-----------------------------------------------------------------------------------------|
-| nlu.load(`img2text`) | [ImageToText](https://nlp.johnsnowlabs.com/docs/en/ocr_pipeline_components#imagetotext) |
-| nlu.load(`pdf2text`) | [PdfToText](https://nlp.johnsnowlabs.com/docs/en/ocr_pipeline_components#pdftotext) |
-| nlu.load(`doc2text`) | [DocToText](https://nlp.johnsnowlabs.com/docs/en/ocr_pipeline_components#doctotext) |
+| nlp.load(`img2text`) | [ImageToText](https://nlp.johnsnowlabs.com/docs/en/ocr_pipeline_components#imagetotext) |
+| nlp.load(`pdf2text`) | [PdfToText](https://nlp.johnsnowlabs.com/docs/en/ocr_pipeline_components#pdftotext)     |
+| nlp.load(`doc2text`) | [DocToText](https://nlp.johnsnowlabs.com/docs/en/ocr_pipeline_components#doctotext)     |
 
 
 **Overview of OCR Table Extractors**          
 These models grab all Table data from the files detected and return a `list of Pandas DataFrames`,
 containing Pandas DataFrame for every table detected
 
-| NLU Spell            | Transformer Class                                                                       |
-|----------------------|-----------------------------------------------------------------------------------------|
-| nlu.load(`pdf2table`) | [PdfToTextTable](https://nlp.johnsnowlabs.com/docs/en/ocr_pipeline_components#pdftotexttable) |              
-| nlu.load(`ppt2table`) | [PptToTextTable](https://nlp.johnsnowlabs.com/docs/en/ocr_pipeline_components#ppttotexttable)     |              
-| nlu.load(`doc2table`) | [DocToTextTable](https://nlp.johnsnowlabs.com/docs/en/ocr_pipeline_components#doctotexttable)     |              
+| NLU Spell             | Transformer Class                                                                             |
+|-----------------------|-----------------------------------------------------------------------------------------------|
+| nlp.load(`pdf2table`) | [PdfToTextTable](https://nlp.johnsnowlabs.com/docs/en/ocr_pipeline_components#pdftotexttable) |              
+| nlp.load(`ppt2table`) | [PptToTextTable](https://nlp.johnsnowlabs.com/docs/en/ocr_pipeline_components#ppttotexttable) |              
+| nlp.load(`doc2table`) | [DocToTextTable](https://nlp.johnsnowlabs.com/docs/en/ocr_pipeline_components#doctotexttable) |              
 
-
+</div><div class="h3-box" markdown="1">
 
 ## File Path handling for OCR Models
 
@@ -65,6 +63,7 @@ have file types which are applicable with the loaded OCR pipeline.
 NLU checks the file endings to determine whether the OCR models can be applied or not, i.e. `.pdf`, `.img` etc..
 If your files lack these endings, NLU will not process them.
 
+</div><div class="h3-box" markdown="1">
 
 ## Image to Text
 Sample image:
@@ -83,6 +82,8 @@ nlu.load('img2text').predict('path/to/haiku.png')
 | A frog jumps into the pond—    |
 | Splash! Silence again.         |
 
+</div><div class="h3-box" markdown="1">
+
 ## PDF to Text
 Sample PDF:
 ![MarineGEO circle logo](/assets/images/ocr/nlu_ocr/haiku_pdf.png )
@@ -98,6 +99,8 @@ nlu.load('pdf2text').predict('path/to/haiku.pdf')
 | The light of a candle               |
 | Is transferred to another candle—   |
 | Spring twilight                     |
+
+</div><div class="h3-box" markdown="1">
 
 ## DOCX to text
 Sample DOCX:
@@ -115,6 +118,7 @@ nlu.load('doc2text').predict('path/to/haiku.docx')
 | The apparition of these faces in the crowd; |
 | Petals on a wet, black bough.               |
 
+</div><div class="h3-box" markdown="1">
 
 ## PDF with Tables
 
@@ -143,6 +147,8 @@ nlu.load('pdf2table').predict('/path/to/sample.pdf')
 |  15   |     8 |  301   |  335 |   3.54 | 3.57  |  14.6  |    0 |    1 |      5 |
 |  21.4 |     4 |  121   |  109 |   4.11 | 2.78  |  18.6  |    1 |    1 |      4 |
 
+</div><div class="h3-box" markdown="1">
+
 ## DOCX with Tables
 
 Sample DOCX: ![Sample DOCX](/assets/images/ocr/nlu_ocr/tables/doc.png )
@@ -161,9 +167,7 @@ nlu.load('doc2table').predict('/path/to/sample.docx')
 | System Access   |         181 | 10%     |
 | VoiceOver       |         159 | 9%      |
 
-
-
-
+</div><div class="h3-box" markdown="1">
 
 ## PPT with Tables
 
@@ -196,8 +200,7 @@ and
 |            6.2 |           3.4 |            5.4 |           2.3 | virginica |
 |            5.9 |           3   |            5.1 |           1.8 | virginica |
 
-
-
+</div><div class="h3-box" markdown="1">
 
 ## Combine OCR and NLP models
 
@@ -232,10 +235,13 @@ nlu.load('img2text ner').predict('path/to/presidents.png')
 | Nelson Rockefeller                           | PERSON               |                  0.98615  |
 | 1967                                         | DATE                 |                  0.589    |
 
+</div><div class="h3-box" markdown="1">
+
 ## Authorize NLU for OCR
 You need a set of **credentials** to access the licensed OCR features.
 [You can grab one here](https://www.johnsnowlabs.com/spark-nlp-try-free/)
 
+</div><div class="h3-box" markdown="1">
 
 ### Authorize anywhere via providing via JSON file
 If you provide a JSON file with credentials, nlu will check whether there are only OCR or also Healthcare secrets.
@@ -246,6 +252,8 @@ You can specify the location of your `secrets.json` like this :
 path = '/path/to/secrets.json'
 nlu.auth(path).load('licensed_model').predict(data)
 ```
+
+</div><div class="h3-box" markdown="1">
 
 ### Authorize via providing String parameters
 You can manually enter your secrets and authorize nlu for OCR and Healthcare features
@@ -261,7 +269,4 @@ SPARK_NLP_LICENSE = 'YOUR_SECRETS'
 nlu.auth(SPARK_NLP_LICENSE,AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY,JSL_SECRET, OCR_LICENSE, OCR_SECRET)
 ```
 
-
-
-</div>
-</div>
+</div></div>
