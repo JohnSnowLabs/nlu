@@ -18,7 +18,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 REQUIRED_PKGS = [
-    'spark-nlp>=4.0.0,<4.1.0',
+    'spark-nlp>=4.2.0',
     'numpy',
     'pyarrow>=0.16.0',
     'pandas>=1.3.5',
