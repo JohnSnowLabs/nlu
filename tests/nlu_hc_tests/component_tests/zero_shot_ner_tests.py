@@ -1,6 +1,7 @@
 import unittest
 
-from sparknlp_jsl.annotator import ZeroShotNerModel
+from johnsnowlabs import nlp
+
 
 import nlu
 import tests.secrets as sct
@@ -16,7 +17,7 @@ class ZeroShotNerTests(unittest.TestCase):
             SPARK_NLP_LICENSE, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, JSL_SECRET
         )
 
-        pipe = nlu.load('en.zero_shot_test')
+        pipe = nlu.load('en.zero_shot.ner_roberta')
         print(pipe)
         pipe['zero_shot_ner'].setEntityDefinitions(
             {

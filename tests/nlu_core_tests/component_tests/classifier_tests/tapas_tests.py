@@ -47,10 +47,6 @@ class TapasCase(unittest.TestCase):
 }
 """
 
-# {"header": ["name","money","age"], "rows": [["Donald Trump","$100,1000,000","75"],["Elon Musk","$100,1000,000,000","55"]] }
-# {"header": ["name","money","age"], "rows": [["Donald Trump","$100,000,000","75"],["Elon Musk", "$20,000,000,000,000", "55"]]}
-
-
         queries = [
     "Who earns less than 200,000,000?",
     "Who earns 100,000,000?",
@@ -146,7 +142,7 @@ class TapasCase(unittest.TestCase):
 
         tapas_data = (data_df, questions)
         import nlu
-        p = nlu.load('en.tapas.wip')
+        p = nlu.load('en.answer_question.tapas.wikisql.base_finetuned')
         res = p.predict(tapas_data)
         print(p)
         for c in res.columns:

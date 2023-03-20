@@ -23,6 +23,7 @@ class SentenceResolutionTests(unittest.TestCase):
         data = [s1, s2, s3]
         # en.resolve_sentence.icd10cm
         resolver_ref = "en.resolve.icd10cm.augmented_billable"
+        resolver_ref = 'en.resolve.umls'
         res = nlu.load(f"en.med_ner.diseases {resolver_ref}", verbose=True).predict(
             data, drop_irrelevant_cols=False, metadata=True,
             positions=True,
