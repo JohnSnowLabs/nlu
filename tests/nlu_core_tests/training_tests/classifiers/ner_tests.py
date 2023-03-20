@@ -2,6 +2,7 @@ import unittest
 
 import tests.test_utils as t
 from nlu import *
+import os
 
 
 class NerTrainingTests(unittest.TestCase):
@@ -11,7 +12,7 @@ class NerTrainingTests(unittest.TestCase):
         pipe = nlu.load("train.ner", verbose=True)
         pipe = pipe.fit(dataset_path=train_path)
         df = pipe.predict(" Hello Donald Trump and Hello Angela Merkel")
-        pipe.save("saved_test_models/ner_training")
+        pipe.save(os.path.join("saved_test_models", "ner_training"))
         for c in df.columns:
             print(df[c])
 

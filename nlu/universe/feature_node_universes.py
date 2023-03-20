@@ -51,7 +51,6 @@ class EXTERNAL_NODES():
     """
     RAW_TEXT = ExternalFeature('text')
     NON_WHITESPACED_TEXT = ExternalFeature('non_whitespaced_text')  # i.e. Chinese, Russian, etc..
-
     # TODO define how its derivable, i.e Accepted input types that can be converted to spark DF types
     # str_array = 'str_array'
     #
@@ -74,10 +73,10 @@ class NLP_FEATURE_NODES:  # or Mode Node?
     A = NLP_NODE_IDS
     F = NLP_FEATURES
     nodes = {
+
         A.PARTIALLY_IMPLEMENTED: NlpFeatureNode(A.PARTIALLY_IMPLEMENTED, [F.UNKOWN], [F.UNKOWN]),
 
         A.COREF_SPAN_BERT: NlpFeatureNode(A.COREF_SPAN_BERT, [F.DOCUMENT, F.TOKEN], [F.COREF_TOKEN]),
-
 
         A.BIG_TEXT_MATCHER: NlpFeatureNode(A.BIG_TEXT_MATCHER, [F.DOCUMENT, F.TOKEN], [F.CHUNK]),
         A.CHUNK2DOC: NlpFeatureNode(A.CHUNK2DOC, [F.NAMED_ENTITY_CONVERTED], [F.DOCUMENT_FROM_CHUNK]),
@@ -95,20 +94,45 @@ class NLP_FEATURE_NODES:  # or Mode Node?
                                                   [F.LABELED_DEPENDENCY]),
         A.DOC2CHUNK: NlpFeatureNode(A.DOC2CHUNK, [F.DOCUMENT], [F.DOCUMENT_FROM_CHUNK]),
 
+        A.MULTI_DOCUMENT_ASSEMBLER: NlpFeatureNode(A.MULTI_DOCUMENT_ASSEMBLER, [F.RAW_QUESTION, F.RAW_QUESTION_CONTEXT],
+                                                   [F.DOCUMENT_QUESTION, F.DOCUMENT_QUESTION_CONTEXT]),
+        A.TABLE_ASSEMBLER: NlpFeatureNode(A.TABLE_ASSEMBLER, [F.DOCUMENT_QUESTION_CONTEXT], [F.ASSEMBLED_TABULAR_DATA]),
+        A.TAPAS_FOR_QA: NlpFeatureNode(A.TAPAS_FOR_QA, [F.DOCUMENT_QUESTION, F.ASSEMBLED_TABULAR_DATA, ],
+                                       [F.TABULAR_ANSWER]),
+        A.ALBERT_FOR_QUESTION_ANSWERING: NlpFeatureNode(A.ALBERT_FOR_QUESTION_ANSWERING,
+                                                        [F.DOCUMENT_QUESTION, F.DOCUMENT_QUESTION_CONTEXT],
+                                                        [F.CLASSIFIED_SPAN]),
 
-        A.MULTI_DOCUMENT_ASSEMBLER: NlpFeatureNode(A.MULTI_DOCUMENT_ASSEMBLER, [F.RAW_QUESTION, F.RAW_QUESTION_CONTEXT], [F.DOCUMENT_QUESTION, F.DOCUMENT_QUESTION_CONTEXT]),
-        A.ALBERT_FOR_QUESTION_ANSWERING: NlpFeatureNode(A.ALBERT_FOR_QUESTION_ANSWERING, [F.DOCUMENT_QUESTION, F.DOCUMENT_QUESTION_CONTEXT], [F.CLASSIFIED_SPAN]),
-        A.BERT_FOR_QUESTION_ANSWERING: NlpFeatureNode(A.BERT_FOR_QUESTION_ANSWERING, [F.DOCUMENT_QUESTION, F.DOCUMENT_QUESTION_CONTEXT], [F.CLASSIFIED_SPAN]),
-        A.DE_BERTA_FOR_QUESTION_ANSWERING: NlpFeatureNode(A.DE_BERTA_FOR_QUESTION_ANSWERING, [F.DOCUMENT_QUESTION, F.DOCUMENT_QUESTION_CONTEXT], [F.CLASSIFIED_SPAN]),
-        A.DISTIL_BERT_FOR_QUESTION_ANSWERING: NlpFeatureNode(A.DISTIL_BERT_FOR_QUESTION_ANSWERING, [F.DOCUMENT_QUESTION, F.DOCUMENT_QUESTION_CONTEXT], [F.CLASSIFIED_SPAN]),
-        A.LONGFORMER_FOR_QUESTION_ANSWERING: NlpFeatureNode(A.LONGFORMER_FOR_QUESTION_ANSWERING, [F.DOCUMENT_QUESTION, F.DOCUMENT_QUESTION_CONTEXT], [F.CLASSIFIED_SPAN]),
-        A.ROBERTA_FOR_QUESTION_ANSWERING: NlpFeatureNode(A.ROBERTA_FOR_QUESTION_ANSWERING, [F.DOCUMENT_QUESTION, F.DOCUMENT_QUESTION_CONTEXT], [F.CLASSIFIED_SPAN]),
-        A.XLM_ROBERTA_FOR_QUESTION_ANSWERING: NlpFeatureNode(A.XLM_ROBERTA_FOR_QUESTION_ANSWERING, [F.DOCUMENT_QUESTION, F.DOCUMENT_QUESTION_CONTEXT], [F.CLASSIFIED_SPAN]),
+        A.CAMEMBERT_FOR_QUESTION_ANSWERING: NlpFeatureNode(A.CAMEMBERT_FOR_QUESTION_ANSWERING,
+                                                        [F.DOCUMENT_QUESTION, F.DOCUMENT_QUESTION_CONTEXT],
+                                                        [F.CLASSIFIED_SPAN]),
 
-
-
+        A.BERT_FOR_QUESTION_ANSWERING: NlpFeatureNode(A.BERT_FOR_QUESTION_ANSWERING,
+                                                      [F.DOCUMENT_QUESTION, F.DOCUMENT_QUESTION_CONTEXT],
+                                                      [F.CLASSIFIED_SPAN]),
+        A.DE_BERTA_FOR_QUESTION_ANSWERING: NlpFeatureNode(A.DE_BERTA_FOR_QUESTION_ANSWERING,
+                                                          [F.DOCUMENT_QUESTION, F.DOCUMENT_QUESTION_CONTEXT],
+                                                          [F.CLASSIFIED_SPAN]),
+        A.DISTIL_BERT_FOR_QUESTION_ANSWERING: NlpFeatureNode(A.DISTIL_BERT_FOR_QUESTION_ANSWERING,
+                                                             [F.DOCUMENT_QUESTION, F.DOCUMENT_QUESTION_CONTEXT],
+                                                             [F.CLASSIFIED_SPAN]),
+        A.LONGFORMER_FOR_QUESTION_ANSWERING: NlpFeatureNode(A.LONGFORMER_FOR_QUESTION_ANSWERING,
+                                                            [F.DOCUMENT_QUESTION, F.DOCUMENT_QUESTION_CONTEXT],
+                                                            [F.CLASSIFIED_SPAN]),
+        A.ROBERTA_FOR_QUESTION_ANSWERING: NlpFeatureNode(A.ROBERTA_FOR_QUESTION_ANSWERING,
+                                                         [F.DOCUMENT_QUESTION, F.DOCUMENT_QUESTION_CONTEXT],
+                                                         [F.CLASSIFIED_SPAN]),
+        A.XLM_ROBERTA_FOR_QUESTION_ANSWERING: NlpFeatureNode(A.XLM_ROBERTA_FOR_QUESTION_ANSWERING,
+                                                             [F.DOCUMENT_QUESTION, F.DOCUMENT_QUESTION_CONTEXT],
+                                                             [F.CLASSIFIED_SPAN]),
 
         A.DOCUMENT_ASSEMBLER: NlpFeatureNode(A.DOCUMENT_ASSEMBLER, [E.RAW_TEXT], [F.DOCUMENT]),
+        A.AUDIO_ASSEMBLER: NlpFeatureNode(A.AUDIO_ASSEMBLER, [F.RAW_AUDIO], [F.AUDIO]),
+        # A.WAV2VEC_FOR_CTC: NlpFeatureNode(A.PARTIALLY_IMPLEMENTED, [F.AUDIO], [F.RECOGNIZED_SPEECH_TEXT]),
+        A.WAV2VEC_FOR_CTC: NlpFeatureNode(A.WAV2VEC_FOR_CTC, [F.AUDIO], [E.RAW_TEXT]),
+        A.HUBERT_FOR_CTC: NlpFeatureNode(A.HUBERT_FOR_CTC, [F.AUDIO], [E.RAW_TEXT]),
+
+        A.IMAGE_ASSEMBLER: NlpFeatureNode(A.IMAGE_ASSEMBLER, [F.SPARK_NLP_IMAGE, F.SPARK_NLP_FILE_PATH], [F.IMAGE]),
         A.DOCUMENT_NORMALIZER: NlpFeatureNode(A.DOCUMENT_NORMALIZER, [F.DOCUMENT], [F.DOCUMENT_GENERATED]),
         A.EMBEDDINGS_FINISHER: NlpFeatureNode(A.EMBEDDINGS_FINISHER, [F.ANY_EMBEDDINGS], [F.FINISHED_EMBEDDINGS]),
         # A.# ENTITY_RULER : NlpFeatureNode(A.ENTITY_RULER, [F.], [F.]) # TODO? ,
@@ -160,12 +184,17 @@ class NLP_FEATURE_NODES:  # or Mode Node?
         A.WORD_SEGMENTER: NlpFeatureNode(A.WORD_SEGMENTER, [F.DOCUMENT], [F.TOKEN]),
         A.YAKE_KEYWORD_EXTRACTION: NlpFeatureNode(A.YAKE_KEYWORD_EXTRACTION, [F.TOKEN], [F.CHUNK]),
         A.ALBERT_EMBEDDINGS: NlpFeatureNode(A.ALBERT_EMBEDDINGS, [F.DOCUMENT, F.TOKEN], [F.WORD_EMBEDDINGS]),
+
+
+        A.CAMEMBERT_FOR_TOKEN_CLASSIFICATION: NlpFeatureNode(A.CAMEMBERT_FOR_TOKEN_CLASSIFICATION,
+                                                             [F.DOCUMENT, F.TOKEN],
+                                                             [F.TOKEN_CLASSIFICATION]),
         A.DEBERTA_FOR_TOKEN_CLASSIFICATION: NlpFeatureNode(A.DEBERTA_FOR_TOKEN_CLASSIFICATION, [F.DOCUMENT, F.TOKEN],
                                                            [F.TOKEN_CLASSIFICATION]),
         A.ALBERT_FOR_TOKEN_CLASSIFICATION: NlpFeatureNode(A.ALBERT_FOR_TOKEN_CLASSIFICATION, [F.DOCUMENT, F.TOKEN],
                                                           [F.TOKEN_CLASSIFICATION]),
         A.BERT_EMBEDDINGS: NlpFeatureNode(A.BERT_EMBEDDINGS, [F.DOCUMENT, F.TOKEN], [F.WORD_EMBEDDINGS]),
-        A.CAMENBERT_EMBEDDINGS: NlpFeatureNode(A.CAMENBERT_EMBEDDINGS, [F.DOCUMENT, F.TOKEN], [F.WORD_EMBEDDINGS]),
+        A.CAMEMBERT_EMBEDDINGS: NlpFeatureNode(A.CAMEMBERT_EMBEDDINGS, [F.DOCUMENT, F.TOKEN], [F.WORD_EMBEDDINGS]),
         A.DEBERTA_WORD_EMBEDDINGS: NlpFeatureNode(A.BERT_EMBEDDINGS, [F.DOCUMENT, F.TOKEN], [F.WORD_EMBEDDINGS]),
         A.BERT_FOR_TOKEN_CLASSIFICATION: NlpFeatureNode(A.BERT_FOR_TOKEN_CLASSIFICATION, [F.DOCUMENT, F.TOKEN],
                                                         [F.TOKEN_CLASSIFICATION]),
@@ -200,7 +229,11 @@ class NLP_FEATURE_NODES:  # or Mode Node?
 
         A.BERT_FOR_SEQUENCE_CLASSIFICATION: NlpFeatureNode(A.BERT_FOR_SEQUENCE_CLASSIFICATION, [F.DOCUMENT, F.TOKEN],
                                                            [F.SEQUENCE_CLASSIFICATION]),
-        A.DEBERTA_FOR_SEQUENCE_CLASSIFICATION: NlpFeatureNode(A.BERT_FOR_SEQUENCE_CLASSIFICATION, [F.DOCUMENT, F.TOKEN],
+
+        A.CAMEMBERT_FOR_SEQUENCE_CLASSIFICATION : NlpFeatureNode(A.CAMEMBERT_FOR_SEQUENCE_CLASSIFICATION, [F.DOCUMENT, F.TOKEN],
+                                                                 [F.SEQUENCE_CLASSIFICATION]),
+
+            A.DEBERTA_FOR_SEQUENCE_CLASSIFICATION: NlpFeatureNode(A.BERT_FOR_SEQUENCE_CLASSIFICATION, [F.DOCUMENT, F.TOKEN],
                                                               [F.SEQUENCE_CLASSIFICATION]),
 
         A.DISTIL_BERT_FOR_SEQUENCE_CLASSIFICATION: NlpFeatureNode(A.DISTIL_BERT_FOR_SEQUENCE_CLASSIFICATION,
@@ -226,6 +259,9 @@ class NLP_FEATURE_NODES:  # or Mode Node?
         A.WORD_2_VEC: NlpFeatureNode(A.WORD_2_VEC, [F.TOKEN], [F.WORD_EMBEDDINGS]),
         A.BERT_SENTENCE_CHUNK_EMBEDDINGS: NlpFeatureNode(A.BERT_SENTENCE_CHUNK_EMBEDDINGS, [F.DOCUMENT],
                                                          [F.NAMED_ENTITY_CONVERTED]),
+
+        A.VIT_IMAGE_CLASSIFICATION: NlpFeatureNode(A.VIT_IMAGE_CLASSIFICATION, [F.IMAGE], [F.CLASSIFIED_IMAGE]),
+        A.SWIN_IMAGE_CLASSIFICATION: NlpFeatureNode(A.SWIN_IMAGE_CLASSIFICATION, [F.IMAGE], [F.CLASSIFIED_IMAGE]),
 
     }
 
@@ -323,6 +359,7 @@ class OCR_FEATURE_NODES:
                                                        [F.JSON_FOUNDATION_ONE_REPORT]),
         # HOCR
         A.HOCR_DOCUMENT_ASSEMBLER: OcrFeatureNode(A.HOCR_TOKENIZER, [F.HOCR], [F.TEXT_DOCUMENT]),
+
         A.HOCR_TOKENIZER: OcrFeatureNode(A.HOCR_TOKENIZER, [F.HOCR], [F.TEXT_DOCUMENT_TOKENIZED]),
     }
 
@@ -339,7 +376,8 @@ class NLP_HC_FEATURE_NODES():
     H_F = NLP_HC_FEATURES
     # HC Feature Nodes
     nodes = {
-
+        A.ZERO_SHOT_NER : NlpHcFeatureNode(A.ZERO_SHOT_NER, [F.TOKEN, F.DOCUMENT],
+                                           [F.NAMED_ENTITY_IOB]),
         A.CHUNK_MAPPER_MODEL: NlpHcFeatureNode(A.CHUNK_MAPPER_MODEL, [F.NAMED_ENTITY_CONVERTED],
                                                [H_F.MAPPED_CHUNK]),
 

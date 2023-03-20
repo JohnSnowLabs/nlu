@@ -61,7 +61,7 @@ class OcrDataConversionUtils:
                     if p.lower().split('.')[-1] == t:
                         accepted_file_paths.append(p)
                 elif os.path.isdir(p):
-                    accepted_file_paths += glob.glob(p + f'/**/*.{t}', recursive=True)
+                    accepted_file_paths += glob.glob(p + f'/*.{t.upper()}', recursive=True) + glob.glob(p + f'/*.{t}', recursive=True)
                 else:
                     print(f"Invalid path = {p} pointing neither to file or jsl_folder on this machine")
         return accepted_file_paths

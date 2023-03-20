@@ -106,6 +106,7 @@ class SparkNLPExtractorConfig:
     get_begin: bool = field(default=False)
     get_end: bool = field(default=False)
     get_embeds: bool = field(default=False)
+    get_origin: bool = field(default=False)
     get_result: bool = field(default=False)
     get_meta: bool = field(default=False)
     get_sentence_origin: bool = field(
@@ -120,15 +121,15 @@ class SparkNLPExtractorConfig:
     pop_never: bool = field(default=False)  # never ever pop
     meta_black_list: List[str] = field(default=list)
     meta_white_list: List[str] = field(default=list)
-    meta_data_extractor: SparkNLPExtractor = field(default=SparkNLPExtractor())
-    begin_extractor: SparkNLPExtractor = field(default=SparkNLPExtractor())
-    end_extractor: SparkNLPExtractor = field(default=SparkNLPExtractor())
-    result_extractor: SparkNLPExtractor = field(default=SparkNLPExtractor())
-    embedding_extractor: SparkNLPExtractor = field(default=SparkNLPExtractor())
+    meta_data_extractor: SparkNLPExtractor = field(default_factory=SparkNLPExtractor)
+    begin_extractor: SparkNLPExtractor = field(default_factory=SparkNLPExtractor)
+    end_extractor: SparkNLPExtractor = field(default_factory=SparkNLPExtractor)
+    result_extractor: SparkNLPExtractor = field(default_factory=SparkNLPExtractor)
+    embedding_extractor: SparkNLPExtractor = field(default_factory=SparkNLPExtractor)
     description: str = field(default='')
     name: str = field(default='')
 
-
+@dataclass
 class SparkOCRExtractorConfig(SparkNLPExtractorConfig):
     get_text: bool = field(default=False)
     # Image struct fields

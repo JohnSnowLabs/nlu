@@ -1,1 +1,0 @@
-{"name": "lemmatizer", "output_level": "token", "description": "todo", "trainable": false, "outputs": ["lemma"], "inputs": ["token"], "type": "lemmatizer", "spark_input_column_names": ["token"], "spark_output_column_names": ["lemma"], "provider": "sparknlp", "license": "open source", "computation_context": "spark", "output_context": "spark"}

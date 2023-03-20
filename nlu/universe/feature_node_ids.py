@@ -23,9 +23,16 @@ class NLP_NODE_IDS:
     DOC2VEC = JslAnnoId('doc2vec')
     TRAIANBLE_DOC2VEC = JslAnnoId('trainable_doc2vec')
     DOCUMENT_ASSEMBLER = JslAnnoId('document_assembler')
+    AUDIO_ASSEMBLER = JslAnnoId('audio_assembler')
+    WAV2VEC_FOR_CTC = JslAnnoId('wav2vec_for_ctc')
+    HUBERT_FOR_CTC = JslAnnoId('hubert_for_ctc')
+    TABLE_ASSEMBLER = JslAnnoId('table_assembler')
+    TAPAS_FOR_QA = JslAnnoId('tapas')
     MULTI_DOCUMENT_ASSEMBLER = JslAnnoId('multi_document_assembler')
+    IMAGE_ASSEMBLER = JslAnnoId("image_assembler")
 
     ALBERT_FOR_QUESTION_ANSWERING = JslAnnoId('albert_for_question_answering')
+    CAMEMBERT_FOR_QUESTION_ANSWERING = JslAnnoId('camembert_for_question_answering')
     BERT_FOR_QUESTION_ANSWERING = JslAnnoId('bert_for_question_answering')
     DE_BERTA_FOR_QUESTION_ANSWERING = JslAnnoId('de_berta_for_question_answering')
     DISTIL_BERT_FOR_QUESTION_ANSWERING = JslAnnoId('distil_bert_for_question_answering')
@@ -77,8 +84,10 @@ class NLP_NODE_IDS:
     ALBERT_EMBEDDINGS = JslAnnoId('albert_embeddings')
     ALBERT_FOR_TOKEN_CLASSIFICATION = JslAnnoId('albert_for_token_classification')
     BERT_EMBEDDINGS = JslAnnoId('bert_embeddings')
-    CAMENBERT_EMBEDDINGS = JslAnnoId('camenbert_embeddings')
+    CAMEMBERT_EMBEDDINGS = JslAnnoId('camenbert_embeddings')
     BERT_FOR_TOKEN_CLASSIFICATION = JslAnnoId('bert_for_token_classification')
+    CAMEMBERT_FOR_TOKEN_CLASSIFICATION = JslAnnoId('camenbert_for_token_classification')
+    CAMEMBERT_FOR_SEQUENCE_CLASSIFICATION = JslAnnoId('camenbert_for_sequence_classification')
     BERT_SENTENCE_EMBEDDINGS = JslAnnoId('bert_sentence_embeddings')
     DISTIL_BERT_EMBEDDINGS = JslAnnoId('distil_bert_embeddings')
     DISTIL_BERT_FOR_TOKEN_CLASSIFICATION = JslAnnoId('distil_bert_for_token_classification')
@@ -92,8 +101,8 @@ class NLP_NODE_IDS:
     ROBERTA_FOR_TOKEN_CLASSIFICATION = JslAnnoId('roberta_for_token_classification')
     ROBERTA_SENTENCE_EMBEDDINGS = JslAnnoId('roberta_sentence_embeddings')
     T5_TRANSFORMER = JslAnnoId('t5_transformer')
-
-
+    VIT_IMAGE_CLASSIFICATION = JslAnnoId("vit_image_classification")
+    SWIN_IMAGE_CLASSIFICATION = JslAnnoId("swin_image_classification")
 
 
 
@@ -178,7 +187,6 @@ class NLP_NODE_IDS:
     PARTIAL_ResolverMerger = JslAnnoId('PARTIAL_ResolverMerger')
     PARTIAL_AnnotationMerger = JslAnnoId('PARTIAL_AnnotationMerger')
     PARTIAL_Router = JslAnnoId('PARTIAL_Router')
-    PARTIAL_RoBertaSentenceEmbeddings = JslAnnoId('PARTIAL_RoBertaSentenceEmbeddings')
     PARTIAL_Word2VecApproach = JslAnnoId('PARTIAL_Word2VecApproach')
     PARTIAL_Word2VecApproach = JslAnnoId('PARTIAL_Word2VecApproach')
     PARTIAL_WordEmbeddings = JslAnnoId('PARTIAL_WordEmbeddings')
@@ -229,6 +237,7 @@ class NLP_NODE_IDS:
 
 
 
+
 class NLP_HC_NODE_IDS:  # or Mode Node?
     """All avaiable Feature nodes in Healthcare Library.
     Defines High Level Identifiers
@@ -270,6 +279,7 @@ class NLP_HC_NODE_IDS:  # or Mode Node?
     RELATION_EXTRACTION = JslAnnoId('relation_extraction')
     TRAINABLE_RELATION_EXTRACTION = JslAnnoId('trainable_relation_extraction')
     ZERO_SHOT_RELATION_EXTRACTION = JslAnnoId('zero_shot_relation_extraction')
+    ZERO_SHOT_NER = JslAnnoId('zero_shot_ner')
     RELATION_EXTRACTION_DL = JslAnnoId('relation_extraction_dl')
     CHUNK_MAPPER_MODEL = JslAnnoId('chunk_mapper_model')
 

@@ -1,18 +1,19 @@
 import logging
+from dataclasses import dataclass
 
 from nlu import Licenses
+from nlu.pipe.component_resolution import resolve_feature
 from nlu.pipe.nlu_component import NluComponent
+from nlu.pipe.pipeline import NLUPipeline
+from nlu.pipe.utils.component_utils import ComponentUtils
+from nlu.pipe.utils.pipe_utils import PipeUtils
+from nlu.pipe.utils.resolution.storage_ref_utils import StorageRefUtils
 from nlu.universe.component_universes import jsl_id_to_empty_component
 from nlu.universe.feature_node_ids import NLP_NODE_IDS, NLP_HC_NODE_IDS
 from nlu.universe.feature_universes import NLP_FEATURES
 from nlu.universe.logic_universes import AnnoTypes
 
 logger = logging.getLogger('nlu')
-from nlu.pipe.utils.pipe_utils import PipeUtils
-from nlu.pipe.utils.component_utils import ComponentUtils
-from nlu.pipe.utils.resolution.storage_ref_utils import StorageRefUtils
-from dataclasses import dataclass
-from nlu.pipe.component_resolution import resolve_feature
 
 
 @dataclass
@@ -23,7 +24,7 @@ class StorageRefConversionResolutionData:
     type: str  # what kind of conversion, either word2chunk or word2sentence
 
 
-class PipelineQueryVerifier:
+class PipelineCompleter:
     '''
         Pass a list of NLU components to the pipeline (or a NLU pipeline)
         For every component_to_resolve, it checks if all requirements are met.
@@ -35,7 +36,8 @@ class PipelineQueryVerifier:
     '''
 
     @staticmethod
-    def check_if_storage_ref_is_satisfied_or_get_conversion_candidate(component_to_check: NluComponent, pipe,
+    def check_if_storage_ref_is_satisfied_or_get_conversion_candidate(component_to_check: NluComponent,
+                                                                      pipe: NLUPipeline,
                                                                       storage_ref_to_find: str):
         """Check if any other component_to_resolve in the pipeline has same storage ref as the input component_to_resolve.
         Returns 1. If there is a candidate, but it has different level, it will be returned as candidate
@@ -83,7 +85,7 @@ class PipelineQueryVerifier:
         return True, StorageRefConversionResolutionData(storage_ref_to_find, conversion_candidate, conversion_type)
 
     @staticmethod
-    def extract_required_features_refless_from_pipe(pipe):
+    def extract_required_features_refless_from_pipe(pipe: NLUPipeline):
         """Extract provided features from component_list, which have no storage ref"""
         provided_features_no_ref = []
         for c in pipe.components:
@@ -94,7 +96,7 @@ class PipelineQueryVerifier:
         return ComponentUtils.clean_irrelevant_features(provided_features_no_ref)
 
     @staticmethod
-    def extract_provided_features_refless_from_pipe(pipe):
+    def extract_provided_features_refless_from_pipe(pipe: NLUPipeline):
         """Extract provided features from component_list, which have no storage ref"""
         provided_features_no_ref = []
         for c in pipe.components:
@@ -103,7 +105,7 @@ class PipelineQueryVerifier:
         return ComponentUtils.clean_irrelevant_features(provided_features_no_ref)
 
     @staticmethod
-    def extract_provided_features_ref_from_pipe(pipe):
+    def extract_provided_features_ref_from_pipe(pipe: NLUPipeline):
         """Extract provided features from component_list, which have  storage ref.
         """
         provided_features_ref = []
@@ -117,7 +119,7 @@ class PipelineQueryVerifier:
         return ComponentUtils.clean_irrelevant_features(provided_features_ref)
 
     @staticmethod
-    def extract_required_features_ref_from_pipe(pipe):
+    def extract_required_features_ref_from_pipe(pipe: NLUPipeline):
         """Extract provided features from component_list, which have  storage ref"""
         provided_features_ref = []
         for c in pipe.components:
@@ -135,32 +137,32 @@ class PipelineQueryVerifier:
         return ComponentUtils.clean_irrelevant_features(provided_features_ref)
 
     @staticmethod
-    def extract_sentence_embedding_conversion_candidates(pipe):
+    def extract_sentence_embedding_conversion_candidates(pipe: NLUPipeline):
         """Extract information about embedding conversion candidates"""
         conversion_candidates_data = []
         for c in pipe.components:
             if ComponentUtils.component_has_embeddings_requirement(c) and not PipeUtils.is_trainable_pipe(pipe):
                 storage_ref = StorageRefUtils.extract_storage_ref(c)
-                conversion_applicable, conversion_data = PipelineQueryVerifier.check_if_storage_ref_is_satisfied_or_get_conversion_candidate(
+                conversion_applicable, conversion_data = PipelineCompleter.check_if_storage_ref_is_satisfied_or_get_conversion_candidate(
                     c, pipe, storage_ref)
                 if conversion_applicable: conversion_candidates_data.append(conversion_data)
 
         return conversion_candidates_data
 
     @staticmethod
-    def get_missing_required_features(pipe):
+    def get_missing_required_features(pipe: NLUPipeline):
         """For every component_to_resolve in the pipeline"""
         provided_features_no_ref = ComponentUtils.clean_irrelevant_features(
-            PipelineQueryVerifier.extract_provided_features_refless_from_pipe(pipe))
+            PipelineCompleter.extract_provided_features_refless_from_pipe(pipe))
         required_features_no_ref = ComponentUtils.clean_irrelevant_features(
-            PipelineQueryVerifier.extract_required_features_refless_from_pipe(pipe))
+            PipelineCompleter.extract_required_features_refless_from_pipe(pipe))
         provided_features_ref = ComponentUtils.clean_irrelevant_features(
-            PipelineQueryVerifier.extract_provided_features_ref_from_pipe(pipe))
+            PipelineCompleter.extract_provided_features_ref_from_pipe(pipe))
         required_features_ref = ComponentUtils.clean_irrelevant_features(
-            PipelineQueryVerifier.extract_required_features_ref_from_pipe(pipe))
+            PipelineCompleter.extract_required_features_ref_from_pipe(pipe))
 
         is_trainable = PipeUtils.is_trainable_pipe(pipe)
-        conversion_candidates = PipelineQueryVerifier.extract_sentence_embedding_conversion_candidates(
+        conversion_candidates = PipelineCompleter.extract_sentence_embedding_conversion_candidates(
             pipe)
         pipe.has_trainable_components = is_trainable
 
@@ -196,10 +198,10 @@ class PipelineQueryVerifier:
             provided_features_no_ref)  # - set(['text','label'])
         missing_features_ref = set(required_features_ref) - set(provided_features_ref)
 
-        PipelineQueryVerifier.log_resolution_status(provided_features_no_ref, required_features_no_ref,
-                                                    provided_features_ref, required_features_ref, is_trainable,
-                                                    conversion_candidates, missing_features_no_ref,
-                                                    missing_features_ref, )
+        PipelineCompleter.log_resolution_status(provided_features_no_ref, required_features_no_ref,
+                                                provided_features_ref, required_features_ref, is_trainable,
+                                                conversion_candidates, missing_features_no_ref,
+                                                missing_features_ref, )
         return missing_features_no_ref, missing_features_ref, conversion_candidates
 
     @staticmethod
@@ -267,11 +269,11 @@ class PipelineQueryVerifier:
                                      components_for_embedding_conversion):
         """Check if all dependencies are satisfied."""
         return len(missing_components) == 0 and len(
-            missing_storage_refs) == 0 and PipelineQueryVerifier.check_if_all_conversions_satisfied(
+            missing_storage_refs) == 0 and PipelineCompleter.check_if_all_conversions_satisfied(
             components_for_embedding_conversion)
 
     @staticmethod
-    def has_licensed_components(pipe) -> bool:
+    def has_licensed_components(pipe: NLUPipeline) -> bool:
         """Check if any licensed components in component_list"""
         for c in pipe.components:
             if c.license == Licenses.hc or c.license == Licenses.ocr:
@@ -283,12 +285,13 @@ class PipelineQueryVerifier:
                                      last_components_for_embedding_conversion, missing_components, missing_storage_refs,
                                      components_for_embedding_conversion):
         return last_missing_components == missing_components and last_missing_storage_refs == missing_storage_refs and last_components_for_embedding_conversion == components_for_embedding_conversion
+
     @staticmethod
     def except_infinity_loop(reason):
         raise Exception(f"Sorry, nlu has problems building this spell, please report this issue. Problem={reason}")
 
     @staticmethod
-    def satisfy_dependencies(pipe):
+    def satisfy_dependencies(pipe: NLUPipeline):
         """Feature Dependency Resolution Algorithm.
          For a given pipeline with N components, builds a DAG in reverse and satisfy each of their dependencies and child dependencies
          with a BFS approach and returns the resulting pipeline
@@ -296,7 +299,7 @@ class PipelineQueryVerifier:
          :return: Nlu pipe with dependencies satisfied
          """
         all_features_provided = False
-        is_licensed = PipelineQueryVerifier.has_licensed_components(pipe)
+        is_licensed = PipelineCompleter.has_licensed_components(pipe)
         pipe.has_licensed_components = is_licensed
         is_trainable = PipeUtils.is_trainable_pipe(pipe)
 
@@ -304,12 +307,12 @@ class PipelineQueryVerifier:
         max_loop_count = 5
 
         while all_features_provided == False:
-            # After new components have been added, check again for the new components if requriements are met
+            # After new components have been added, check again for the new components if requirements are met
             components_to_add = []
             missing_components, missing_storage_refs, components_for_embedding_conversion = \
-                PipelineQueryVerifier.get_missing_required_features(pipe)
-            if PipelineQueryVerifier.check_dependencies_satisfied(missing_components, missing_storage_refs,
-                                                                  components_for_embedding_conversion):
+                PipelineCompleter.get_missing_required_features(pipe)
+            if PipelineCompleter.check_dependencies_satisfied(missing_components, missing_storage_refs,
+                                                              components_for_embedding_conversion):
                 # Now all features are provided
                 break
 
@@ -336,9 +339,9 @@ class PipelineQueryVerifier:
             for resolution_info in components_for_embedding_conversion:
                 converter = None
                 if 'word2chunk' == resolution_info.type:
-                    converter = PipelineQueryVerifier.add_chunk_embedding_converter(resolution_info)
+                    converter = PipelineCompleter.add_chunk_embedding_converter(resolution_info)
                 elif 'word2sentence' == resolution_info.type:
-                    converter = PipelineQueryVerifier.add_sentence_embedding_converter(resolution_info)
+                    converter = PipelineCompleter.add_sentence_embedding_converter(resolution_info)
                 if converter is not None:
                     components_to_add.append(converter)
 
@@ -346,7 +349,7 @@ class PipelineQueryVerifier:
 
             # Add missing components
             for new_component in components_to_add:
-                if  new_component:
+                if new_component:
                     logger.info(f'adding {new_component.name}')
                     pipe.add(new_component)
 
@@ -355,22 +358,20 @@ class PipelineQueryVerifier:
             pipe = PipeUtils.update_bad_storage_refs(pipe)
 
             # Check if we are in an infinity loop
-            if PipelineQueryVerifier.check_same_as_last_iteration(last_missing_components, last_missing_storage_refs,
-                                                                  last_components_for_embedding_conversion,
-                                                                  missing_components, missing_storage_refs,
-                                                                  components_for_embedding_conversion):
+            if PipelineCompleter.check_same_as_last_iteration(last_missing_components, last_missing_storage_refs,
+                                                              last_components_for_embedding_conversion,
+                                                              missing_components, missing_storage_refs,
+                                                              components_for_embedding_conversion):
                 loop_count += 1
             else:
                 loop_count = 0
             if loop_count > max_loop_count:
-                PipelineQueryVerifier.except_infinity_loop('Failure resolving feature dependencies')
-
-        logger.info(f"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-        logger.info(f"ALL DEPENDENCIES SATISFIED")
+                PipelineCompleter.except_infinity_loop('Failure resolving feature dependencies')
+        logger.info(f"{'!*'*20} ALL DEPENDENCIES SATISFIED {'!*'*20}")
         return pipe
 
     @staticmethod
-    def check_and_fix_component_output_column_name_satisfaction(pipe):
+    def check_and_fix_component_output_column_name_satisfaction(pipe: NLUPipeline):
         '''
         This function verifies that every input and output column name of a component_to_resolve is satisfied.
         If some output names are missing, it will be added by this method.
@@ -447,7 +448,7 @@ class PipelineQueryVerifier:
         return pipe
 
     @staticmethod
-    def check_and_fix_nlu_pipeline(pipe):
+    def check_and_fix_nlu_pipeline(pipe: NLUPipeline):
         """Check if the NLU pipeline is ready to transform data and return it.
         If all dependencies not satisfied, returns a new NLU pipeline where dependencies and sub-dependencies are satisfied.
         Checks and resolves in the following order :
@@ -472,25 +473,25 @@ class PipelineQueryVerifier:
         pipe = PipeUtils.add_metadata_to_pipe(pipe)
 
         logger.info('Satisfying dependencies')
-        pipe = PipelineQueryVerifier.satisfy_dependencies(pipe)
+        pipe = PipelineCompleter.satisfy_dependencies(pipe)
 
         # 2. Enforce naming schema <col_name>@<storage_ref> for storage_ref consumers and producers and <entity@nlu_ref> and <ner@nlu_ref> for NER and NER-Converters
         # and add NER-IOB to NER-Pretty converters for every NER model_anno_obj that is not already feeding a NER converter
         pipe = PipeUtils.enforce_AT_schema_on_pipeline_and_add_NER_converter(pipe)
 
         # 2.1 If Sentence Resolvers are in pipeline, all Sentence-Embeddings must feed from Chunk2Doc which stems from the entities column to resolve
-        pipe = PipelineQueryVerifier.enforce_chunk2doc_on_sentence_embeddings(pipe)
+        pipe = PipelineCompleter.enforce_chunk2doc_on_sentence_embeddings(pipe)
 
         # 3. Validate naming of output columns is correct and no error will be thrown in spark
         logger.info('Fixing column names')
-        pipe = PipelineQueryVerifier.check_and_fix_component_output_column_name_satisfaction(pipe)
+        pipe = PipelineCompleter.check_and_fix_component_output_column_name_satisfaction(pipe)
 
         # 4. Set on every NLP Annotator the output columns
         pipe = PipeUtils.enforce_NLU_columns_to_NLP_columns(pipe)
 
         # 5. fix order
         logger.info('Optimizing component_list component_to_resolve order')
-        pipe = PipelineQueryVerifier.check_and_fix_component_order(pipe)
+        pipe = PipelineCompleter.check_and_fix_component_order(pipe)
 
         # 6. Rename overlapping/duplicate leaf columns in the DAG
         logger.info('Renaming duplicates cols')
@@ -502,12 +503,15 @@ class PipelineQueryVerifier:
         # 8. Write additional metadata to the pipe post pipe construction
         pipe = PipeUtils.add_metadata_to_pipe(pipe)
 
+        # 9. For Table-QA based Pipes, we Inject a SetenceDetector for tokenizing the questions
+        pipe = PipeUtils.add_sentence_detector_to_pipe_if_required(pipe)
+
         logger.info('Done with component_list optimizing')
 
         return pipe
 
     @staticmethod
-    def check_and_fix_component_order(pipe):
+    def check_and_fix_component_order(pipe: NLUPipeline):
         '''
         This method takes care that the order of components is the correct in such a way,that the pipeline can be iteratively processed by spark NLP.
         Column Names will not be touched. DAG Task Sort basically.
@@ -526,8 +530,11 @@ class PipelineQueryVerifier:
             # if OCR we must take text sorting into account. Non-OCR pipes get text provided externalyl
             provided_features.append('text')
 
+        if pipe.contains_audio_components:
+            provided_features.append(NLP_FEATURES.RAW_AUDIO)
+
         loop_count = 0
-        max_loop_count = 10*len(pipe.components)
+        max_loop_count = 10 * len(pipe.components)
         last_correct_order_component_pipeline = []
         last_provided_features = []
 
@@ -599,23 +606,22 @@ class PipelineQueryVerifier:
                         trainable_updated = True
 
             # detect endless loop
-            if last_correct_order_component_pipeline == correct_order_component_pipeline and last_provided_features == provided_features :
-                loop_count +=1
+            if last_correct_order_component_pipeline == correct_order_component_pipeline and last_provided_features == provided_features:
+                loop_count += 1
             else:
                 loop_count = 0
             if loop_count > max_loop_count:
-                PipelineQueryVerifier.except_infinity_loop('Failure sorting dependencies')
+                PipelineCompleter.except_infinity_loop('Failure sorting dependencies')
             last_provided_features = provided_features.copy()
             # correct_order_component_pipeline = last_correct_order_component_pipeline.copy()
             last_correct_order_component_pipeline = correct_order_component_pipeline.copy()
 
         pipe.components = correct_order_component_pipeline
 
-
         return pipe
 
     @staticmethod
-    def is_storage_ref_match(embedding_consumer, embedding_provider, pipe):
+    def is_storage_ref_match(embedding_consumer, embedding_provider, pipe: NLUPipeline):
         """Check for 2 components, if one provides the embeddings for the other. Makes sure that pipe_prediction_output_level matches up (chunk/sent/tok/embeds)"""
         consumer_AT_ref = ComponentUtils.extract_storage_ref_AT_notation_for_embeds(embedding_consumer, 'input')
         provider_AT_rev = ComponentUtils.extract_storage_ref_AT_notation_for_embeds(embedding_provider, 'output')
@@ -640,8 +646,8 @@ class PipelineQueryVerifier:
         # if embedding_provider
         if embedding_provider.info.name in ["chunk_embedding_converter",
                                             'sentence_embedding_converter']:  # TODO FOR RESOLUTION
-            nlu_ref, conv_prov_storage_ref = PipelineQueryVerifier.get_converters_provider_info(embedding_provider,
-                                                                                                pipe)
+            nlu_ref, conv_prov_storage_ref = PipelineCompleter.get_converters_provider_info(embedding_provider,
+                                                                                            pipe)
 
         return False
 
@@ -651,11 +657,11 @@ class PipelineQueryVerifier:
         """
 
     @staticmethod
-    def get_converters_provider_info(embedding_provider, pipe):
+    def get_converters_provider_info(embedding_provider, pipe: NLUPipeline):
         """For a component_to_resolve and a component_list, find storage_ref and """
 
     @staticmethod
-    def enforce_chunk2doc_on_sentence_embeddings(pipe):
+    def enforce_chunk2doc_on_sentence_embeddings(pipe: NLUPipeline):
         """
         #If Sentence Resolvers are in pipeline, all Sentence-Embeddings must feed from Chunk2Doc which stems from
         the entities column to resolve We need to update input/output types of sentence Resolver, to the component_to_resolve
@@ -708,7 +714,7 @@ class PipelineQueryVerifier:
         chunk2doc.spark_input_column_names = ner_converters[0].spark_output_column_names
         pipe.components.append(chunk2doc)
         # this will add a entity converter and a NER model_anno_obj if none provided
-        pipe = PipelineQueryVerifier.satisfy_dependencies(pipe)
+        pipe = PipelineCompleter.satisfy_dependencies(pipe)
 
         return pipe
 

@@ -13,6 +13,13 @@ class AnnoClassRef:
     HC_A_N = NLP_HC_NODE_IDS
     # Map AnnoID to PyCLass
     JSL_anno2_py_class: Dict[JslAnnoId, JslAnnoPyClass] = {
+        A_N.HUBERT_FOR_CTC: 'HubertForCTC',
+        A_N.CAMEMBERT_FOR_QUESTION_ANSWERING: 'CamemBertForQuestionAnswering',
+        A_N.SWIN_IMAGE_CLASSIFICATION: 'SwinForImageClassification',
+        A_N.CAMEMBERT_FOR_SEQUENCE_CLASSIFICATION: 'CamemBertForSequenceClassification',
+        A_N.TAPAS_FOR_QA: 'TapasForQuestionAnswering',
+        A_N.TABLE_ASSEMBLER: 'TableAssembler',
+        A_N.CAMEMBERT_FOR_TOKEN_CLASSIFICATION: 'CamemBertForTokenClassification',
         A_N.COREF_SPAN_BERT: 'SpanBertCorefModel',
         A_N.PARTIALLY_IMPLEMENTED: 'PartiallyIntegrated',
 
@@ -30,19 +37,19 @@ class AnnoClassRef:
         A_N.DOC2VEC: 'Doc2VecModel',
         A_N.TRAIANBLE_DOC2VEC: 'Doc2VecApproach',
 
-        A_N.MULTI_DOCUMENT_ASSEMBLER : 'MultiDocumentAssembler',
-        A_N.ALBERT_FOR_QUESTION_ANSWERING : 'AlbertForQuestionAnswering',
-        A_N.BERT_FOR_QUESTION_ANSWERING : 'BertForQuestionAnswering',
-        A_N.DE_BERTA_FOR_QUESTION_ANSWERING : 'DeBertaForQuestionAnswering',
-        A_N.DISTIL_BERT_FOR_QUESTION_ANSWERING : 'DistilBertForQuestionAnswering',
-        A_N.LONGFORMER_FOR_QUESTION_ANSWERING : 'LongformerForQuestionAnswering',
-        A_N.ROBERTA_FOR_QUESTION_ANSWERING : 'RoBertaForQuestionAnswering',
-        A_N.XLM_ROBERTA_FOR_QUESTION_ANSWERING : 'XlmRoBertaForQuestionAnswering',
+        A_N.MULTI_DOCUMENT_ASSEMBLER: 'MultiDocumentAssembler',
+        A_N.ALBERT_FOR_QUESTION_ANSWERING: 'AlbertForQuestionAnswering',
+        A_N.BERT_FOR_QUESTION_ANSWERING: 'BertForQuestionAnswering',
+        A_N.DE_BERTA_FOR_QUESTION_ANSWERING: 'DeBertaForQuestionAnswering',
+        A_N.DISTIL_BERT_FOR_QUESTION_ANSWERING: 'DistilBertForQuestionAnswering',
+        A_N.LONGFORMER_FOR_QUESTION_ANSWERING: 'LongformerForQuestionAnswering',
+        A_N.ROBERTA_FOR_QUESTION_ANSWERING: 'RoBertaForQuestionAnswering',
+        A_N.XLM_ROBERTA_FOR_QUESTION_ANSWERING: 'XlmRoBertaForQuestionAnswering',
 
-
-
-
+        A_N.AUDIO_ASSEMBLER: 'AudioAssembler',
+        A_N.WAV2VEC_FOR_CTC: 'Wav2Vec2ForCTC',
         A_N.DOCUMENT_ASSEMBLER: 'DocumentAssembler',
+        A_N.IMAGE_ASSEMBLER: 'ImageAssembler',
         A_N.DOCUMENT_NORMALIZER: 'DocumentNormalizer',
         A_N.EMBEDDINGS_FINISHER: 'EmbeddingsFinisher',
         A_N.ENTITY_RULER: 'EntityRulerModel',
@@ -110,8 +117,8 @@ class AnnoClassRef:
         A_N.XLNET_FOR_SEQUENCE_CLASSIFICATION: 'XlnetForSequenceClassification',
         A_N.GPT2: 'GPT2Transformer',
         A_N.DEBERTA_WORD_EMBEDDINGS: 'DeBertaEmbeddings',
-        A_N.DEBERTA_FOR_TOKEN_CLASSIFICATION : 'DeBertaForTokenClassification',
-        A_N.CAMENBERT_EMBEDDINGS : 'CamemBertEmbeddings',
+        A_N.DEBERTA_FOR_TOKEN_CLASSIFICATION: 'DeBertaForTokenClassification',
+        A_N.CAMEMBERT_EMBEDDINGS: 'CamemBertEmbeddings',
 
         A_N.TRAINABLE_VIVEKN_SENTIMENT: 'ViveknSentimentApproach',
         A_N.TRAINABLE_SENTIMENT: 'SentimentDetector',
@@ -142,121 +149,87 @@ class AnnoClassRef:
         A_N.WORD_2_VEC: 'Word2VecModel',
         A_N.DEBERTA_FOR_SEQUENCE_CLASSIFICATION: 'DeBertaForSequenceClassification',
 
-        A_N.BERT_SENTENCE_CHUNK_EMBEDDINGS : 'BertSentenceChunkEmbeddings',
+        A_N.BERT_SENTENCE_CHUNK_EMBEDDINGS: 'BertSentenceChunkEmbeddings',
 
-
-        A_N.PARTIAL_AssertionFilterer : 'AssertionFilterer',
-        A_N.PARTIAL_ChunkConverter : 'ChunkConverter',
-        A_N.PARTIAL_ChunkKeyPhraseExtraction : 'ChunkKeyPhraseExtraction',
-        A_N.PARTIAL_ChunkSentenceSplitter : 'ChunkSentenceSplitter',
-        A_N.PARTIAL_ChunkFiltererApproach : 'ChunkFiltererApproach',
-        A_N.PARTIAL_ChunkFiltererApproach : 'ChunkFiltererApproach',
-        A_N.PARTIAL_ChunkFilterer : 'ChunkFilterer',
-        A_N.PARTIAL_ChunkMapperApproach : 'ChunkMapperApproach',
-        A_N.PARTIAL_ChunkMapperApproach : 'ChunkMapperApproach',
-        A_N.PARTIAL_ChunkMapperFilterer : 'ChunkMapperFilterer',
-        A_N.PARTIAL_DocumentLogRegClassifierApproach : 'DocumentLogRegClassifierApproach',
-        A_N.PARTIAL_DocumentLogRegClassifierApproach : 'DocumentLogRegClassifierApproach',
-        A_N.PARTIAL_DocumentLogRegClassifierModel : 'DocumentLogRegClassifierModel',
-        A_N.PARTIAL_ContextualParserApproach : 'ContextualParserApproach',
-        A_N.PARTIAL_ContextualParserApproach : 'ContextualParserApproach',
-        A_N.PARTIAL_ReIdentification : 'ReIdentification',
-        A_N.PARTIAL_NerDisambiguator : 'NerDisambiguator',
-        A_N.PARTIAL_NerDisambiguatorModel : 'NerDisambiguatorModel',
-        A_N.PARTIAL_AverageEmbeddings : 'AverageEmbeddings',
-        A_N.PARTIAL_EntityChunkEmbeddings : 'EntityChunkEmbeddings',
-        A_N.PARTIAL_ChunkMergeApproach : 'ChunkMergeApproach',
-        A_N.PARTIAL_ChunkMergeApproach : 'ChunkMergeApproach',
-        A_N.PARTIAL_IOBTagger : 'IOBTagger',
-        A_N.PARTIAL_NerChunker : 'NerChunker',
-        A_N.PARTIAL_NerConverterInternalModel : 'NerConverterInternalModel',
-        A_N.PARTIAL_DateNormalizer : 'DateNormalizer',
-        A_N.PARTIAL_PosologyREModel : 'PosologyREModel',
-        A_N.PARTIAL_RENerChunksFilter : 'RENerChunksFilter',
-        A_N.PARTIAL_ResolverMerger : 'ResolverMerger',
-        A_N.PARTIAL_AnnotationMerger : 'AnnotationMerger',
-        A_N.PARTIAL_Router : 'Router',
-        A_N.PARTIAL_Word2VecApproach : 'Word2VecApproach',
-        A_N.PARTIAL_Word2VecApproach : 'Word2VecApproach',
-        A_N.PARTIAL_WordEmbeddings : 'WordEmbeddings',
-        A_N.PARTIAL_EntityRulerApproach : 'EntityRulerApproach',
-        A_N.PARTIAL_EntityRulerApproach : 'EntityRulerApproach',
-        A_N.PARTIAL_EntityRulerModel : 'EntityRulerModel',
-        A_N.PARTIAL_TextMatcherModel : 'TextMatcherModel',
-        A_N.PARTIAL_BigTextMatcher : 'BigTextMatcher',
-        A_N.PARTIAL_BigTextMatcherModel : 'BigTextMatcherModel',
-        A_N.PARTIAL_DateMatcher : 'DateMatcher',
-        A_N.PARTIAL_MultiDateMatcher : 'MultiDateMatcher',
-        A_N.PARTIAL_RegexMatcher : 'RegexMatcher',
-        A_N.PARTIAL_TextMatcher : 'TextMatcher',
-        A_N.PARTIAL_NerApproach : 'NerApproach',
-        A_N.PARTIAL_NerCrfApproach : 'NerCrfApproach',
-        A_N.PARTIAL_NerCrfApproach : 'NerCrfApproach',
-        A_N.PARTIAL_NerCrfApproach : 'NerCrfApproach',
-        A_N.PARTIAL_NerOverwriter : 'NerOverwriter',
-        A_N.PARTIAL_DependencyParserApproach : 'DependencyParserApproach',
-        A_N.PARTIAL_DependencyParserApproach : 'DependencyParserApproach',
-        A_N.PARTIAL_TypedDependencyParserApproach : 'TypedDependencyParserApproach',
-        A_N.PARTIAL_TypedDependencyParserApproach : 'TypedDependencyParserApproach',
-        A_N.PARTIAL_SentenceDetectorDLApproach : 'SentenceDetectorDLApproach',
-        A_N.PARTIAL_SentenceDetectorDLApproach : 'SentenceDetectorDLApproach',
-        A_N.PARTIAL_SentimentDetector : 'SentimentDetector',
-        A_N.PARTIAL_ViveknSentimentApproach : 'ViveknSentimentApproach',
-        A_N.PARTIAL_ViveknSentimentApproach : 'ViveknSentimentApproach',
-        A_N.PARTIAL_ContextSpellCheckerApproach : 'ContextSpellCheckerApproach',
-        A_N.PARTIAL_ContextSpellCheckerApproach : 'ContextSpellCheckerApproach',
-        A_N.PARTIAL_NorvigSweetingApproach : 'NorvigSweetingApproach',
-        A_N.PARTIAL_NorvigSweetingApproach : 'NorvigSweetingApproach',
-        A_N.PARTIAL_SymmetricDeleteApproach : 'SymmetricDeleteApproach',
-        A_N.PARTIAL_SymmetricDeleteApproach : 'SymmetricDeleteApproach',
-        A_N.PARTIAL_ChunkTokenizer : 'ChunkTokenizer',
-        A_N.PARTIAL_ChunkTokenizerModel : 'ChunkTokenizerModel',
-        A_N.PARTIAL_RecursiveTokenizer : 'RecursiveTokenizer',
-        A_N.PARTIAL_RecursiveTokenizerModel : 'RecursiveTokenizerModel',
-        A_N.PARTIAL_Token2Chunk : 'Token2Chunk',
-        A_N.PARTIAL_WordSegmenterApproach : 'WordSegmenterApproach',
-        A_N.PARTIAL_WordSegmenterApproach : 'WordSegmenterApproach',
-        A_N.PARTIAL_GraphExtraction : 'GraphExtraction',
-        A_N.PARTIAL_Lemmatizer : 'Lemmatizer',
-        A_N.PARTIAL_Normalizer : 'Normalizer',
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        A_N.PARTIAL_AssertionFilterer: 'AssertionFilterer',
+        A_N.PARTIAL_ChunkConverter: 'ChunkConverter',
+        A_N.PARTIAL_ChunkKeyPhraseExtraction: 'ChunkKeyPhraseExtraction',
+        A_N.PARTIAL_ChunkSentenceSplitter: 'ChunkSentenceSplitter',
+        A_N.PARTIAL_ChunkFiltererApproach: 'ChunkFiltererApproach',
+        A_N.PARTIAL_ChunkFiltererApproach: 'ChunkFiltererApproach',
+        A_N.PARTIAL_ChunkFilterer: 'ChunkFilterer',
+        A_N.PARTIAL_ChunkMapperApproach: 'ChunkMapperApproach',
+        A_N.PARTIAL_ChunkMapperApproach: 'ChunkMapperApproach',
+        A_N.PARTIAL_ChunkMapperFilterer: 'ChunkMapperFilterer',
+        A_N.PARTIAL_DocumentLogRegClassifierApproach: 'DocumentLogRegClassifierApproach',
+        A_N.PARTIAL_DocumentLogRegClassifierApproach: 'DocumentLogRegClassifierApproach',
+        A_N.PARTIAL_DocumentLogRegClassifierModel: 'DocumentLogRegClassifierModel',
+        A_N.PARTIAL_ContextualParserApproach: 'ContextualParserApproach',
+        A_N.PARTIAL_ContextualParserApproach: 'ContextualParserApproach',
+        A_N.PARTIAL_ReIdentification: 'ReIdentification',
+        A_N.PARTIAL_NerDisambiguator: 'NerDisambiguator',
+        A_N.PARTIAL_NerDisambiguatorModel: 'NerDisambiguatorModel',
+        A_N.PARTIAL_AverageEmbeddings: 'AverageEmbeddings',
+        A_N.PARTIAL_EntityChunkEmbeddings: 'EntityChunkEmbeddings',
+        A_N.PARTIAL_ChunkMergeApproach: 'ChunkMergeApproach',
+        A_N.PARTIAL_ChunkMergeApproach: 'ChunkMergeApproach',
+        A_N.PARTIAL_IOBTagger: 'IOBTagger',
+        A_N.PARTIAL_NerChunker: 'NerChunker',
+        A_N.PARTIAL_NerConverterInternalModel: 'NerConverterInternalModel',
+        A_N.PARTIAL_DateNormalizer: 'DateNormalizer',
+        A_N.PARTIAL_PosologyREModel: 'PosologyREModel',
+        A_N.PARTIAL_RENerChunksFilter: 'RENerChunksFilter',
+        A_N.PARTIAL_ResolverMerger: 'ResolverMerger',
+        A_N.PARTIAL_AnnotationMerger: 'AnnotationMerger',
+        A_N.PARTIAL_Router: 'Router',
+        A_N.PARTIAL_Word2VecApproach: 'Word2VecApproach',
+        A_N.PARTIAL_Word2VecApproach: 'Word2VecApproach',
+        A_N.PARTIAL_WordEmbeddings: 'WordEmbeddings',
+        A_N.PARTIAL_EntityRulerApproach: 'EntityRulerApproach',
+        A_N.PARTIAL_EntityRulerApproach: 'EntityRulerApproach',
+        A_N.PARTIAL_EntityRulerModel: 'EntityRulerModel',
+        A_N.PARTIAL_TextMatcherModel: 'TextMatcherModel',
+        A_N.PARTIAL_BigTextMatcher: 'BigTextMatcher',
+        A_N.PARTIAL_BigTextMatcherModel: 'BigTextMatcherModel',
+        A_N.PARTIAL_DateMatcher: 'DateMatcher',
+        A_N.PARTIAL_MultiDateMatcher: 'MultiDateMatcher',
+        A_N.PARTIAL_RegexMatcher: 'RegexMatcher',
+        A_N.PARTIAL_TextMatcher: 'TextMatcher',
+        A_N.PARTIAL_NerApproach: 'NerApproach',
+        A_N.PARTIAL_NerCrfApproach: 'NerCrfApproach',
+        A_N.PARTIAL_NerCrfApproach: 'NerCrfApproach',
+        A_N.PARTIAL_NerCrfApproach: 'NerCrfApproach',
+        A_N.PARTIAL_NerOverwriter: 'NerOverwriter',
+        A_N.PARTIAL_DependencyParserApproach: 'DependencyParserApproach',
+        A_N.PARTIAL_DependencyParserApproach: 'DependencyParserApproach',
+        A_N.PARTIAL_TypedDependencyParserApproach: 'TypedDependencyParserApproach',
+        A_N.PARTIAL_TypedDependencyParserApproach: 'TypedDependencyParserApproach',
+        A_N.PARTIAL_SentenceDetectorDLApproach: 'SentenceDetectorDLApproach',
+        A_N.PARTIAL_SentenceDetectorDLApproach: 'SentenceDetectorDLApproach',
+        A_N.PARTIAL_SentimentDetector: 'SentimentDetector',
+        A_N.PARTIAL_ViveknSentimentApproach: 'ViveknSentimentApproach',
+        A_N.PARTIAL_ViveknSentimentApproach: 'ViveknSentimentApproach',
+        A_N.PARTIAL_ContextSpellCheckerApproach: 'ContextSpellCheckerApproach',
+        A_N.PARTIAL_ContextSpellCheckerApproach: 'ContextSpellCheckerApproach',
+        A_N.PARTIAL_NorvigSweetingApproach: 'NorvigSweetingApproach',
+        A_N.PARTIAL_NorvigSweetingApproach: 'NorvigSweetingApproach',
+        A_N.PARTIAL_SymmetricDeleteApproach: 'SymmetricDeleteApproach',
+        A_N.PARTIAL_SymmetricDeleteApproach: 'SymmetricDeleteApproach',
+        A_N.PARTIAL_ChunkTokenizer: 'ChunkTokenizer',
+        A_N.PARTIAL_ChunkTokenizerModel: 'ChunkTokenizerModel',
+        A_N.PARTIAL_RecursiveTokenizer: 'RecursiveTokenizer',
+        A_N.PARTIAL_RecursiveTokenizerModel: 'RecursiveTokenizerModel',
+        A_N.PARTIAL_Token2Chunk: 'Token2Chunk',
+        A_N.PARTIAL_WordSegmenterApproach: 'WordSegmenterApproach',
+        A_N.PARTIAL_WordSegmenterApproach: 'WordSegmenterApproach',
+        A_N.PARTIAL_GraphExtraction: 'GraphExtraction',
+        A_N.PARTIAL_Lemmatizer: 'Lemmatizer',
+        A_N.PARTIAL_Normalizer: 'Normalizer',
+        A_N.VIT_IMAGE_CLASSIFICATION: 'ViTForImageClassification',
 
     }
     JSL_anno_HC_ref_2_py_class: Dict[JslAnnoId, JslAnnoPyClass] = {
-
+        HC_A_N.ZERO_SHOT_NER: 'ZeroShotNerModel',
         HC_A_N.CHUNK_MAPPER_MODEL: 'ChunkMapperModel',
         HC_A_N.ASSERTION_DL: 'AssertionDLModel',
         HC_A_N.TRAINABLE_ASSERTION_DL: 'AssertionDLApproach',
@@ -318,8 +291,6 @@ class AnnoClassRef:
 
     }
 
-
-
     @staticmethod
     def get_os_pyclass_2_anno_id_dict():
         # Flipped, maps PyClass to AnnoID
@@ -344,8 +315,11 @@ class AnnoClassRef:
 
 
 # Flipped, maps PyClass to AnnoID
-AnnoClassRef.JSL_OS_py_class_2_anno_id: Dict[JslAnnoPyClass, JslAnnoId] = {AnnoClassRef.JSL_anno2_py_class[k]: k for k in AnnoClassRef.JSL_anno2_py_class}
-AnnoClassRef.JSL_HC_py_class_2_anno_id: Dict[JslAnnoId, JslAnnoPyClass] = {AnnoClassRef.JSL_anno_HC_ref_2_py_class[k]: k for k in
+AnnoClassRef.JSL_OS_py_class_2_anno_id: Dict[JslAnnoPyClass, JslAnnoId] = {AnnoClassRef.JSL_anno2_py_class[k]: k for k
+                                                                           in AnnoClassRef.JSL_anno2_py_class}
+AnnoClassRef.JSL_HC_py_class_2_anno_id: Dict[JslAnnoId, JslAnnoPyClass] = {AnnoClassRef.JSL_anno_HC_ref_2_py_class[k]: k
+                                                                           for k in
                                                                            AnnoClassRef.JSL_anno_HC_ref_2_py_class}
-AnnoClassRef.JSL_OCR_py_class_2_anno_id: Dict[JslAnnoId, JslAnnoPyClass] = {AnnoClassRef.JSL_anno_OCR_ref_2_py_class[k]: k for k in
-                                                                            AnnoClassRef.JSL_anno_OCR_ref_2_py_class}
+AnnoClassRef.JSL_OCR_py_class_2_anno_id: Dict[JslAnnoId, JslAnnoPyClass] = {
+    AnnoClassRef.JSL_anno_OCR_ref_2_py_class[k]: k for k in
+    AnnoClassRef.JSL_anno_OCR_ref_2_py_class}

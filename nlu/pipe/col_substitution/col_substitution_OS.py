@@ -138,6 +138,69 @@ def substitute_doc_assembler_cols(c, cols, nlu_identifier=True):
     return new_cols
 
 
+def substitute_img_assembler_cols(c, cols, nlu_identifier=True):
+    """
+    Doc assember is always unique
+    Fetched fields are:
+    - entities@<storage_ref>_results
+    - entities@<storage_ref>_<metadata>
+        - entities@<storage_ref>_entity
+        - entities@<storage_ref>_confidence
+    """
+    new_cols = {}
+    new_base_name = 'image_origin' if nlu_identifier == 'UNIQUE' else f'image_origin{nlu_identifier}'
+    for col in cols:
+        if 'origin' in col:
+            new_cols[col] = new_base_name
+    return new_cols
+
+
+def audio_assembler_cols(c, cols, nlu_identifier=True):
+    """
+    Sent detector is always unique
+    """
+    new_cols = {}
+    new_base_name = 'audio_series' if nlu_identifier == 'UNIQUE' else f'audio_series_'
+    for col in cols:
+        if '_results' in col:
+            new_cols[col] = new_base_name
+        elif '_beginnings' in col:
+            new_cols[col] = f'{new_base_name}_begin'
+        elif '_endings' in col:
+            new_cols[col] = f'{new_base_name}_end'
+        elif '_embeddings' in col:
+            continue  # Sentence never stores Embeddings  new_cols[col] = f'{new_base_name}_embedding'
+        elif '_types' in col:
+            continue  # new_cols[col] = f'{new_base_name}_type'
+        elif 'meta' in col:
+            logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
+        # new_cols[col]= f"{new_base_name}_confidence"
+    return new_cols
+
+
+def substitute_wav2vec_cols(c, cols, nlu_identifier=True):
+    """
+    Sent detector is always unique
+    """
+    new_cols = {}
+    new_base_name = 'text' if nlu_identifier == 'UNIQUE' else f'asr_text'
+    for col in cols:
+        if '_results' in col:
+            new_cols[col] = new_base_name
+        elif '_beginnings' in col:
+            new_cols[col] = f'{new_base_name}_begin'
+        elif '_endings' in col:
+            new_cols[col] = f'{new_base_name}_end'
+        elif '_embeddings' in col:
+            continue  # Sentence never stores Embeddings  new_cols[col] = f'{new_base_name}_embedding'
+        elif '_types' in col:
+            continue  # new_cols[col] = f'{new_base_name}_type'
+        elif 'meta' in col:
+            logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
+        # new_cols[col]= f"{new_base_name}_confidence"
+    return new_cols
+
+
 def substitute_sentence_detector_dl_cols(c, cols, nlu_identifier=True):
     """
     Sent detector is always unique
@@ -356,6 +419,32 @@ def substitute_multi_doc_span_assembler_cols(c, cols, nlu_identifier=True):
             new_cols[col] = f'question'
         elif 'context' in col:
             new_cols[col] = f'context'
+    return new_cols
+
+
+def substitute_tapas_qa_cols(c, cols, nlu_identifier=True):
+    new_cols = {}
+    new_base_name = f'tapas_qa_{nlu_identifier}' if 'tapas_qa_' not in nlu_identifier else nlu_identifier
+    for col in cols:
+        if '_results' in col:
+            new_cols[col] = f'{new_base_name}_answer'
+        elif '_beginnings' in col:
+            new_cols[col] = f'{new_base_name}_begin'
+        elif '_endings' in col:
+            new_cols[col] = f'{new_base_name}_end'
+        elif '_types' in col:
+            continue  # new_cols[col] = f'{new_base_name}_type'
+        elif 'meta' in col:
+            if 'question' in col:
+                new_cols[col] = f'{new_base_name}_origin_question'
+            elif 'aggregation' in col:
+                new_cols[col] = f'{new_base_name}_aggregation'
+            elif 'cell_positions' in col:
+                new_cols[col] = f'{new_base_name}_cell_positions'
+            elif 'cell_scores' in col:
+                new_cols[col] = f'{new_base_name}_cell_scores'
+            else:
+                logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
     return new_cols
 
 

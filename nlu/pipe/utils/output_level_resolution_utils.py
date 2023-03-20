@@ -41,6 +41,8 @@ class OutputLevelUtils:
             return NLP_LEVELS.DOCUMENT
         if NLP_FEATURES.SENTENCE in component_to_resolve.spark_input_column_names:
             return NLP_LEVELS.SENTENCE
+        if NLP_FEATURES.DOCUMENT_QUESTION_CONTEXT in component_to_resolve.spark_input_column_names:
+            return NLP_LEVELS.DOCUMENT
 
         # (2.) A model_anno_obj which is input dependent and not using document/sentence cols
         # We iterator over components and see which is feeding this input dependent component_to_resolve
@@ -89,9 +91,9 @@ class OutputLevelUtils:
             if output_level == pipe.prediction_output_level:
                 generated_cols = ColSubstitutionUtils.get_final_output_cols_of_component(c, df, anno_2_ex_config)
                 for generated_col in generated_cols:
-                    # if '_k_' in generated_col and c.jsl_anno_class_id == NLP_HC_NODE_IDS.SENTENCE_ENTITY_RESOLVER:
-                    #     # all _k_ fields of resolver may never be viewed as any common outputlevel and thus never be zipped.
-                    #     continue
+                    if '_k_' in generated_col and c.jsl_anno_class_id == NLP_HC_NODE_IDS.SENTENCE_ENTITY_RESOLVER:
+                        # all _k_ fields of resolver may never be viewed as any common outputlevel and thus never be zipped.
+                        continue
                     same_output_level_cols.append(generated_col)
         return list(set(same_output_level_cols))
 

@@ -7,14 +7,15 @@ They expect dictionaries which represent the metadata field extracted from Spark
 
 
 """
+from functools import reduce
+
 import numpy as np
+import pandas as pd
 import pyspark
 from pyspark.sql import Row as PysparkRow
-from nlu.pipe.extractors.extractor_base_data_classes import *
-from functools import reduce, partial
-import pandas as pd
-
 from sparknlp.annotation import Annotation
+
+from nlu.pipe.extractors.extractor_base_data_classes import *
 
 
 def extract_light_pipe_rows(df):
@@ -169,11 +170,15 @@ def extract_base_sparknlp_features(row: pd.Series, configs: SparkNLPExtractorCon
     unpack_annotator_type = lambda x: unpack_dict_list(x, 'annotatorType')
     unpack_result = lambda x: unpack_dict_list(x, 'result')
     unpack_embeddings = lambda x: unpack_dict_list(x, 'embeddings')
+    unpack_origin = lambda x: unpack_dict_list(x, 'origin')
 
     # Either extract list of anno results and put them in a dict with corrosponding key name or return empty dict {} for easy merge in return
     annotator_types = {configs.output_col_prefix + '_types': list(
         map(unpack_annotator_type, row))} if configs.get_annotator_type else {}
     # Same logic as above, but we check wether to pop or not and either evaluate the map result with list() or just next()
+
+    origins = {configs.output_col_prefix + '_origin': next(map(unpack_origin, row))} if configs.get_origin else {}
+
     if configs.pop_result_list:
         results = {configs.output_col_prefix + '_results': next(map(unpack_result, row))} if configs.get_result else {}
     else:
@@ -199,7 +204,7 @@ def extract_base_sparknlp_features(row: pd.Series, configs: SparkNLPExtractorCon
         embeddings = {
             configs.output_col_prefix + '_embeddings': list(map(unpack_embeddings, row))} if configs.get_embeds else {}
 
-    return {**beginnings, **endings, **results, **annotator_types, **embeddings}  # Merge dicts NLP output
+    return {**beginnings, **endings, **results, **annotator_types, **embeddings, **origins}  # Merge dicts NLP output
 
 
 def extract_sparknlp_metadata(row: pd.Series, configs: SparkNLPExtractorConfig) -> dict:

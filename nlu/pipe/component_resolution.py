@@ -27,12 +27,12 @@ def init_component(component):
         component = component()
     return component
 
+
 def is_produced_by_multi_output_component(missing_feature_type: Union[NLP_FEATURES, OCR_FEATURES, NLP_HC_FEATURES]):
     """For these components we resolve to None,
     because they are already beeign satisfied by another component that outputs multiple features
     including the ones coverd here """
     return missing_feature_type == NLP_FEATURES.DOCUMENT_QUESTION_CONTEXT
-
 
 
 def resolve_feature(missing_feature_type: Union[NLP_FEATURES, OCR_FEATURES, NLP_HC_FEATURES], language='en',
@@ -49,7 +49,8 @@ def resolve_feature(missing_feature_type: Union[NLP_FEATURES, OCR_FEATURES, NLP_
     missing_component_type or a default component_to_resolve for that particular type
     '''
     logger.info(f'Getting default for missing_feature_type={missing_feature_type}')
-    if is_produced_by_multi_output_component(missing_feature_type) :
+    if is_produced_by_multi_output_component(missing_feature_type):
+        # Special Edge Case for QA annotators
         return None
     if '@' not in missing_feature_type:
         # Resolve feature which has no storage ref or if storage ref is irrelevant at this point
@@ -118,7 +119,7 @@ def resolve_feature(missing_feature_type: Union[NLP_FEATURES, OCR_FEATURES, NLP_
         return nlu_component
 
 
-def nlu_ref_to_component(nlu_ref, detect_lang=False, authenticated=False) -> NluComponent:
+def nlu_ref_to_component(nlu_ref, detect_lang=False, authenticated=False) -> Union[NluComponent, List[NluComponent]]:
     '''
     This method implements the main namespace for all component_to_resolve names. It parses the input request and passes
     the data to a resolver method which searches the namespace for a Component for the input request
@@ -171,7 +172,7 @@ def get_trainable_component_for_nlu_ref(nlu_ref) -> NluComponent:
         raise ValueError(f'Could not find trainable Model for nlu_spell ={nlu_ref}')
     if anno_id in ComponentUniverse.components:
         component = ComponentUniverse.components[anno_id]()
-        return component.set_metadata(component.get_trainable_model(), nlu_ref, '', 'xx', False )
+        return component.set_metadata(component.get_trainable_model(), nlu_ref, '', 'xx', False)
     else:
         raise ValueError(f'Could not find trainable Model for anno_id ={anno_id}')
 
