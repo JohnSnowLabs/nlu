@@ -46,12 +46,12 @@ setup(
     # For a discussion on single-sourcing the version across setup.py and the
     # project code, see
     # https://packaging.python.org/en/latest/single_source_version.html
-    version='4.0.0',  # Required
+    version='4.2.0',  # Required
 
     # This is a one-line description or tagline of what your project does. This
     # corresponds to the "Summary" metadata field:
     # https://packaging.python.org/specifications/core-metadata/#summary
-    description='John Snow Labs NLU provides state of the art algorithms for NLP&NLU with 5000+ of pretrained models in 200+ languages. It enables swift and simple development and research with its powerful Pythonic and Keras inspired API. It is powerd by John Snow Labs powerful Spark NLP library.',
+    description='John Snow Labs NLU provides state of the art algorithms for NLP&NLU with 10000+ of pretrained models in 200+ languages. It enables swift and simple development and research with its powerful Pythonic and Keras inspired API. It is powerd by John Snow Labs powerful Spark NLP library.',
 
     # This is an optional longer description of your project that represents
     # the body of text which users will see when they visit PyPI.
