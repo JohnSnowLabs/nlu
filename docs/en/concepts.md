@@ -38,8 +38,8 @@ Any of the actions for the component types can be passed as a string to nlp.load
 for that component type for the English language.
 You can further specify your model selection by placing a '.' behind your component selection.        
 After the '.' you can specify the model you want via specifying a dataset or model version.   
-See [the Models Hub](https://nlp.johnsnowlabs.com/models),  [the Components Namespace](https://nlp.johnsnowlabs.com/docs/en/namespace)
-and [The load function](https://nlp.johnsnowlabs.com/docs/en/load_api) for more infos.
+See [the Models Hub](https://nlp.johnsnowlabs.com/models),  [the Components Namespace](https://nlp.johnsnowlabs.com/docs/en/jsl/namespace)
+and [The load function](https://nlp.johnsnowlabs.com/docs/en/jsl/load_api) for more infos.
 
 </div><div class="h3-box" markdown="1">
 {:.table-model-big}
