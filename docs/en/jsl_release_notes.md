@@ -18,7 +18,7 @@ The John Snow Labs 4.3.3 Library released with the following pre-installed and r
 
 | Library                                                                     | Version    |
 |-----------------------------------------------------------------------------|------------|
-| [Visual NLP](https://nlp.johnsnowlabs.com/docs/en/ocr_release_notes)        | `4.3.1`    |
+| [Visual NLP](https://nlp.johnsnowlabs.com/docs/en/spark_ocr_versions/ocr_release_notes)        | `4.3.1`    |
 | [Enterprise NLP](https://nlp.johnsnowlabs.com/docs/en/licensed_annotators)  | `4.3.0`    |
 | [Finance NLP](https://nlp.johnsnowlabs.com/docs/en/financial_release_notes) | `1.X.X`    |
 | [Legal NLP](https://nlp.johnsnowlabs.com/docs/en/legal_release_notes)       | `1.X.X`    |
@@ -34,7 +34,7 @@ The John Snow Labs 4.3.2 Library released with the following pre-installed and r
 
 | Library                                                                     | Version    |
 |-----------------------------------------------------------------------------|------------|
-| [Visual NLP](https://nlp.johnsnowlabs.com/docs/en/ocr_release_notes)        | `4.3.0`    |
+| [Visual NLP](https://nlp.johnsnowlabs.com/docs/en/spark_ocr_versions/ocr_release_notes)        | `4.3.0`    |
 | [Enterprise NLP](https://nlp.johnsnowlabs.com/docs/en/licensed_annotators)  | `4.3.0`    |
 | [Finance NLP](https://nlp.johnsnowlabs.com/docs/en/financial_release_notes) | `1.X.X`    |
 | [Legal NLP](https://nlp.johnsnowlabs.com/docs/en/legal_release_notes)       | `1.X.X`    |
@@ -50,7 +50,7 @@ The John Snow Labs 4.3.1 Library released with the following pre-installed and r
 
 | Library                                                                     | Version    |
 |-----------------------------------------------------------------------------|------------|
-| [Visual NLP](https://nlp.johnsnowlabs.com/docs/en/ocr_release_notes)        | `4.3.0`    |
+| [Visual NLP](https://nlp.johnsnowlabs.com/docs/en/spark_ocr_versions/ocr_release_notes)        | `4.3.0`    |
 | [Enterprise NLP](https://nlp.johnsnowlabs.com/docs/en/licensed_annotators)  | `4.3.0`    |
 | [Finance NLP](https://nlp.johnsnowlabs.com/docs/en/financial_release_notes) | `1.X.X`    |
 | [Legal NLP](https://nlp.johnsnowlabs.com/docs/en/legal_release_notes)       | `1.X.X`    |
@@ -66,7 +66,7 @@ The John Snow Labs 4.3.0 Library released with the following pre-installed and r
 
 | Library                                                                     | Version    |
 |-----------------------------------------------------------------------------|------------|
-| [Visual NLP](https://nlp.johnsnowlabs.com/docs/en/ocr_release_notes)        | `4.3.0`    |
+| [Visual NLP](https://nlp.johnsnowlabs.com/docs/en/spark_ocr_versions/ocr_release_notes)        | `4.3.0`    |
 | [Enterprise NLP](https://nlp.johnsnowlabs.com/docs/en/licensed_annotators)  | `4.3.0`    |
 | [Finance NLP](https://nlp.johnsnowlabs.com/docs/en/financial_release_notes) | `1.X.X`    |
 | [Legal NLP](https://nlp.johnsnowlabs.com/docs/en/legal_release_notes)       | `1.X.X`    |
@@ -82,7 +82,7 @@ The John Snow Labs 4.2.9 Library released with the following pre-installed and r
 
 | Library                                                                     | Version    |
 |-----------------------------------------------------------------------------|------------|
-| [Visual NLP](https://nlp.johnsnowlabs.com/docs/en/ocr_release_notes)        | `4.3.0`    |
+| [Visual NLP](https://nlp.johnsnowlabs.com/docs/en/spark_ocr_versions/ocr_release_notes)        | `4.3.0`    |
 | [Enterprise NLP](https://nlp.johnsnowlabs.com/docs/en/licensed_annotators)  | `4.2.8`    |
 | [Finance NLP](https://nlp.johnsnowlabs.com/docs/en/financial_release_notes) | `1.X.X`    |
 | [Legal NLP](https://nlp.johnsnowlabs.com/docs/en/legal_release_notes)       | `1.X.X`    |
@@ -98,7 +98,7 @@ The John Snow Labs 4.2.8 Library released with the following pre-installed and r
 
 | Library                                                                     | Version    |
 |-----------------------------------------------------------------------------|------------|
-| [Visual NLP](https://nlp.johnsnowlabs.com/docs/en/ocr_release_notes)        | `4.3.0`    |
+| [Visual NLP](https://nlp.johnsnowlabs.com/docs/en/spark_ocr_versions/ocr_release_notes)        | `4.3.0`    |
 | [Enterprise NLP](https://nlp.johnsnowlabs.com/docs/en/licensed_annotators)  | `4.2.8`    |
 | [Finance NLP](https://nlp.johnsnowlabs.com/docs/en/financial_release_notes) | `1.X.X`    |
 | [Legal NLP](https://nlp.johnsnowlabs.com/docs/en/legal_release_notes)       | `1.X.X`    |
@@ -114,7 +114,7 @@ The John Snow Labs 4.2.5 Library released with the following pre-installed and r
 
 | Library                                                                     | Version    |
 |-----------------------------------------------------------------------------|------------|
-| [Visual NLP](https://nlp.johnsnowlabs.com/docs/en/ocr_release_notes)        | `4.2.4`    |
+| [Visual NLP](https://nlp.johnsnowlabs.com/docs/en/spark_ocr_versions/ocr_release_notes)        | `4.2.4`    |
 | [Enterprise NLP](https://nlp.johnsnowlabs.com/docs/en/licensed_annotators)  | `4.2.4`    |
 | [Finance NLP](https://nlp.johnsnowlabs.com/docs/en/financial_release_notes) | `1.X.X`    |
 | [Legal NLP](https://nlp.johnsnowlabs.com/docs/en/legal_release_notes)       | `1.X.X`    |
@@ -131,7 +131,7 @@ The John Snow Labs 4.2.4 Library released with the following pre-installed and r
 
 | Library                                                                     | Version    |
 |-----------------------------------------------------------------------------|------------|
-| [Visual NLP](https://nlp.johnsnowlabs.com/docs/en/ocr_release_notes)        | `4.2.1`    |
+| [Visual NLP](https://nlp.johnsnowlabs.com/docs/en/spark_ocr_versions/ocr_release_notes)        | `4.2.1`    |
 | [Enterprise NLP](https://nlp.johnsnowlabs.com/docs/en/licensed_annotators)  | `4.2.4`    |
 | [Finance NLP](https://nlp.johnsnowlabs.com/docs/en/financial_release_notes) | `1.X.X`    |
 | [Legal NLP](https://nlp.johnsnowlabs.com/docs/en/legal_release_notes)       | `1.X.X`    |
@@ -148,7 +148,7 @@ The John Snow Labs 4.2.3 Library released with the following pre-installed and r
 
 | Library                                                                     | Version    |
 |-----------------------------------------------------------------------------|------------|
-| [Visual NLP](https://nlp.johnsnowlabs.com/docs/en/ocr_release_notes)        | `4.2.1`    |
+| [Visual NLP](https://nlp.johnsnowlabs.com/docs/en/spark_ocr_versions/ocr_release_notes)        | `4.2.1`    |
 | [Enterprise NLP](https://nlp.johnsnowlabs.com/docs/en/licensed_annotators)  | `4.2.3`    |
 | [Finance NLP](https://nlp.johnsnowlabs.com/docs/en/financial_release_notes) | `1.X.X`    |
 | [Legal NLP](https://nlp.johnsnowlabs.com/docs/en/legal_release_notes)       | `1.X.X`    |
@@ -165,7 +165,7 @@ The John Snow Labs 4.2.2 Library released with the following pre-installed and r
 
 | Library                                                                     | Version    |
 |-----------------------------------------------------------------------------|------------|
-| [Visual NLP](https://nlp.johnsnowlabs.com/docs/en/ocr_release_notes)        | `4.2.0`    |
+| [Visual NLP](https://nlp.johnsnowlabs.com/docs/en/spark_ocr_versions/ocr_release_notes)        | `4.2.0`    |
 | [Enterprise NLP](https://nlp.johnsnowlabs.com/docs/en/licensed_annotators)  | `4.2.2`    |
 | [Finance NLP](https://nlp.johnsnowlabs.com/docs/en/financial_release_notes) | `1.X.X`    |
 | [Legal NLP](https://nlp.johnsnowlabs.com/docs/en/legal_release_notes)       | `1.X.X`    |
@@ -182,7 +182,7 @@ The John Snow Labs 4.2.1 Library released with the following pre-installed and r
 
 | Library                                                                     | Version    |
 |-----------------------------------------------------------------------------|------------|
-| [Visual NLP](https://nlp.johnsnowlabs.com/docs/en/ocr_release_notes)        | `4.1.0`    |
+| [Visual NLP](https://nlp.johnsnowlabs.com/docs/en/spark_ocr_versions/ocr_release_notes)        | `4.1.0`    |
 | [Enterprise NLP](https://nlp.johnsnowlabs.com/docs/en/licensed_annotators)  | `4.2.0`    |
 | [Finance NLP](https://nlp.johnsnowlabs.com/docs/en/financial_release_notes) | `1.X.X`    |
 | [Legal NLP](https://nlp.johnsnowlabs.com/docs/en/legal_release_notes)       | `1.X.X`    |
@@ -200,7 +200,7 @@ The John Snow Labs 4.2.0 Library released with the following pre-installed and r
 
 | Library                                                                     | Version    |
 |-----------------------------------------------------------------------------|------------|
-| [Visual NLP](https://nlp.johnsnowlabs.com/docs/en/ocr_release_notes)        | `4.0.0`    |
+| [Visual NLP](https://nlp.johnsnowlabs.com/docs/en/spark_ocr_versions/ocr_release_notes)        | `4.0.0`    |
 | [Enterprise NLP](https://nlp.johnsnowlabs.com/docs/en/licensed_annotators)  | `4.2.0`    |
 | [Finance NLP](https://nlp.johnsnowlabs.com/docs/en/financial_release_notes) | `1.X.X`    |
 | [Legal NLP](https://nlp.johnsnowlabs.com/docs/en/legal_release_notes)       | `1.X.X`    |
