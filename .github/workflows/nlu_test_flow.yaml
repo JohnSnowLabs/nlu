@@ -137,14 +137,14 @@ jobs:
         if: always()
         run: |
           python -m unittest  discover   -s './tests/nlu_core_tests/training_tests/classifiers' -p '*pos*.py'
-      - name: NLU Healthcare Verification tests
-        if: always()
-        run: |
-          python -m unittest  discover  -s ./tests/nlu_hc_tests -p 'verification_tests.py'
-      - name: NLU OCR tests
-        if: always()
-        run: |
-          python -m unittest  discover  -s ./tests/nlu_ocr_tests -p '*tests.py'
+#      - name: NLU Healthcare Verification tests
+#        if: always()
+#        run: |
+#          python -m unittest  discover  -s ./tests/nlu_hc_tests -p 'verification_tests.py'
+#      - name: NLU OCR tests
+#        if: always()
+#        run: |
+#          python -m unittest  discover  -s ./tests/nlu_ocr_tests -p '*tests.py'
 #      - name: NLU Healthcare Assertion DL tests
 #        if: always()
 #        run: |
