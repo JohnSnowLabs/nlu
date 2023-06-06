@@ -207,7 +207,10 @@ def get_trained_component_list_for_nlp_pipe_ref(language, nlp_ref, nlu_ref, path
         iterable_stages = pipe.pipeline_model.stages
     constructed_components = get_component_list_for_iterable_stages(iterable_stages, language, nlp_ref, nlu_ref,
                                                                     license_type)
-    return ComponentUtils.set_storage_ref_attribute_of_embedding_converters(constructed_components)
+    return ComponentUtils.set_storage_ref_attribute_of_embedding_converters(
+        PipeUtils.set_column_values_on_components_from_pretrained_pipe(constructed_components))
+
+
 
 def get_nlu_pipe_for_nlp_pipe(pipe: Union[Pipeline, LightPipeline, PipelineModel, List], is_pre_configured=True):
     """Get a list of NLU components wrapping each Annotator in pipe.
