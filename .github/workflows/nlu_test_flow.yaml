@@ -27,7 +27,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install pypandoc sklearn
+          pip install pypandoc scikit-learn
           pip install  wheel  dataclasses pandas numpy pytest modin[ray] pyspark==3.2.0 spark-nlp
           java -version
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
