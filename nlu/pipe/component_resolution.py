@@ -178,8 +178,8 @@ def get_trainable_component_for_nlu_ref(nlu_ref) -> NluComponent:
 
 
 def get_trained_component_list_for_nlp_pipe_ref(language, nlp_ref, nlu_ref, path=None,
-                                                license_type: LicenseType = Licenses.open_source,
-                                                ) -> List[NluComponent]:
+                                                      license_type: LicenseType = Licenses.open_source,
+                                                      ) -> List[NluComponent]:
     """
     creates a list of components from a Spark NLP Pipeline reference
     1. download pipeline
@@ -208,7 +208,8 @@ def get_trained_component_list_for_nlp_pipe_ref(language, nlp_ref, nlu_ref, path
     constructed_components = get_component_list_for_iterable_stages(iterable_stages, language, nlp_ref, nlu_ref,
                                                                     license_type)
     return ComponentUtils.set_storage_ref_attribute_of_embedding_converters(
-        PipeUtils.set_column_values_on_components_from_pretrained_pipe(constructed_components, nlp_ref, language, path))
+        PipeUtils.set_column_values_on_components_from_pretrained_pipe(constructed_components))
+
 
 
 def get_nlu_pipe_for_nlp_pipe(pipe: Union[Pipeline, LightPipeline, PipelineModel, List], is_pre_configured=True):

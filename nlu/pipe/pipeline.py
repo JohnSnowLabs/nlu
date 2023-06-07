@@ -419,41 +419,20 @@ class NLUPipeline(dict):
         return cols
 
     def save(self, path, component='entire_pipeline', overwrite=False):
-        from nlu.utils.environment.env_utils import is_running_in_databricks
-        if is_running_in_databricks():
-            if path.startswith('/dbfs/') or path.startswith('dbfs/'):
-                nlu_path = path
-                if path.startswith('/dbfs/'):
-                    nlp_path = path.replace('/dbfs', '')
-                else:
-                    nlp_path = path.replace('dbfs', '')
-            else:
-                nlu_path = 'dbfs/' + path
-                if path.startswith('/'):
-                    nlp_path = path
-                else:
-                    nlp_path = '/' + path
-
-            if not self.is_fitted and self.has_trainable_components:
-                self.fit()
-                self.is_fitted = True
-            if component == 'entire_pipeline':
-                self.vanilla_transformer_pipe.save(nlp_path)
-        if overwrite and not is_running_in_databricks():
-            import shutil
-            shutil.rmtree(path, ignore_errors=True)
-        if not self.is_fitted:
+        if not self.is_fitted or not hasattr(self, 'vanilla_transformer_pipe'):
             self.fit()
             self.is_fitted = True
+
         if component == 'entire_pipeline':
-            if isinstance(self.vanilla_transformer_pipe, LightPipeline):
-                self.vanilla_transformer_pipe.pipeline_model.save(path)
+            if overwrite:
+                self.vanilla_transformer_pipe.write().overwrite().save(path)
             else:
                 self.vanilla_transformer_pipe.save(path)
         else:
-            if component in self.keys():
+            if overwrite:
+                self[component].write().overwrite().save(path)
+            else:
                 self[component].save(path)
-        print(f'Stored model_anno_obj in {path}')
 
     def predict(self,
                 data,

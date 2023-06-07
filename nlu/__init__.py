@@ -271,11 +271,53 @@ def auth(HEALTHCARE_LICENSE_OR_JSON_PATH='/content/spark_nlp_for_healthcare.json
     return nlu
 
 
+def load_nlu_pipe_from_hdd_in_databricks(pipe_path, request) -> NLUPipeline:
+    """Either there is a pipeline of models in the path or just one singular model_anno_obj.
+    If it is a component_list,  load the component_list and return it.
+    If it is a singular model_anno_obj, load it to the correct AnnotatorClass and NLU component_to_resolve and then generate pipeline for it
+    """
+
+    # def dbfs_path_exist(path):
+    #     try:
+    #         dbutils.fs.ls(path)
+    #         return True
+    #     except:
+    #         return False
+    from pyspark.dbutils import DBUtils
+    dbutils = DBUtils(sparknlp.start())
+    dbutils.fs
+
+    is_pipe = lambda path: any([f.name == 'stages/' for f in dbutils.fs.ls(path)])
+    is_model = lambda path: any([f.name == 'metadata/' for f in dbutils.fs.ls(path)])
+
+    pipe = NLUPipeline()
+    nlu_ref = request  # pipe_path
+    # if dbfs_path_exist(pipe_path):
+    # Resource in path is a pipeline
+    if is_pipe(pipe_path):
+        pipe_components = get_trained_component_list_for_nlp_pipe_ref('en', nlu_ref, nlu_ref, pipe_path, False)
+    # Resource in path is a single model_anno_obj
+    elif is_model(pipe_path):
+        c = offline_utils.verify_and_create_model(pipe_path)
+        c.nlu_ref = nlu_ref
+        pipe.add(c, nlu_ref, pretrained_pipe_component=True)
+        return PipelineCompleter.check_and_fix_nlu_pipeline(pipe)
+
+    else:
+        #fallback pipe
+        pipe_components = get_trained_component_list_for_nlp_pipe_ref('en', nlu_ref, nlu_ref, pipe_path, False)
+    for c in pipe_components: pipe.add(c, nlu_ref, pretrained_pipe_component=True)
+    return pipe
+
+
+
 def load_nlu_pipe_from_hdd(pipe_path, request) -> NLUPipeline:
     """Either there is a pipeline of models in the path or just one singular model_anno_obj.
     If it is a component_list,  load the component_list and return it.
     If it is a singular model_anno_obj, load it to the correct AnnotatorClass and NLU component_to_resolve and then generate pipeline for it
     """
+    if is_running_in_databricks():
+        return load_nlu_pipe_from_hdd_in_databricks(pipe_path, request)
     pipe = NLUPipeline()
     nlu_ref = request  # pipe_path
     if os.path.exists(pipe_path):

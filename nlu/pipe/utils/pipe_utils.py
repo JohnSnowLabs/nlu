@@ -103,8 +103,29 @@ class PipeUtils:
         data
         return data
 
+
     @staticmethod
-    def set_column_values_on_components_from_pretrained_pipe(component_list: List[NluComponent], nlp_ref, lang, path):
+    def set_column_values_on_components_from_pretrained_pipe(component_list: List[NluComponent]):
+        """Set output/input cols on Nlu Components loaded from a pipeline
+        """
+
+        for c in component_list:
+            if hasattr(c.model,'inputCols') :
+                inp = c.model.getInputCols()
+            else:
+                inp = c.model.getInputCol()
+
+            if hasattr(c.model,'outputCols') :
+                out = c.model.getOutputCols()
+            else:
+                out = c.model.getOutputCol()
+            c.spark_input_column_names = inp if isinstance(inp, List) else [inp]
+            c.spark_output_column_names = out if isinstance(out, List) else [out]
+
+        return component_list
+
+    @staticmethod
+    def set_column_values_on_components_from_pretrained_pipe_from_disk_data(component_list: List[NluComponent], nlp_ref, lang, path):
         """Since output/input cols cannot be fetched from Annotators via get input/output col reliably, we must check
         annotator data to find them Expects a list of NLU Component objects which all stem from the same pipeline
         defined by nlp_ref
@@ -161,7 +182,7 @@ class PipeUtils:
             c.spark_output_column_names = [out]
 
             if model_name != 'Finisher':
-                # finisher dynamically generates cols from input cols 4
+                # finisher dynamically generates cols from input cols
                 c.model.setOutputCol(out) if hasattr(c.model, 'setOutputCol') else c.model.setOutputCols(out)
             digit_cur += 1
             digit_str = str(digit_cur)

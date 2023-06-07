@@ -1,5 +1,4 @@
-from sparknlp.base import *
-
+from sparknlp.annotator import Chunk2Doc
 
 class Chunk_2_Doc:
     @staticmethod
