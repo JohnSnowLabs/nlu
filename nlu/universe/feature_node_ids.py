@@ -291,6 +291,7 @@ class NLP_HC_NODE_IDS:  # or Mode Node?
     MEDICAL_BERT_FOR_SEQUENCE_CLASSIFICATION = JslAnnoId('medical_bert_for_sequence_classification')
     MEDICAL_DISTILBERT_FOR_SEQUENCE_CLASSIFICATION = JslAnnoId('medical_distilbert_for_sequence_classification')
     ENTITY_CHUNK_EMBEDDING = JslAnnoId('entity_chunk_embedding')
+    MEDICAL_SUMMARIZER = JslAnnoId('med_summarizer')
 
 
 class OCR_NODE_IDS:

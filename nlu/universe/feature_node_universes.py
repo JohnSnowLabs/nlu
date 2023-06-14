@@ -104,8 +104,8 @@ class NLP_FEATURE_NODES:  # or Mode Node?
                                                         [F.CLASSIFIED_SPAN]),
 
         A.CAMEMBERT_FOR_QUESTION_ANSWERING: NlpFeatureNode(A.CAMEMBERT_FOR_QUESTION_ANSWERING,
-                                                        [F.DOCUMENT_QUESTION, F.DOCUMENT_QUESTION_CONTEXT],
-                                                        [F.CLASSIFIED_SPAN]),
+                                                           [F.DOCUMENT_QUESTION, F.DOCUMENT_QUESTION_CONTEXT],
+                                                           [F.CLASSIFIED_SPAN]),
 
         A.BERT_FOR_QUESTION_ANSWERING: NlpFeatureNode(A.BERT_FOR_QUESTION_ANSWERING,
                                                       [F.DOCUMENT_QUESTION, F.DOCUMENT_QUESTION_CONTEXT],
@@ -185,7 +185,6 @@ class NLP_FEATURE_NODES:  # or Mode Node?
         A.YAKE_KEYWORD_EXTRACTION: NlpFeatureNode(A.YAKE_KEYWORD_EXTRACTION, [F.TOKEN], [F.CHUNK]),
         A.ALBERT_EMBEDDINGS: NlpFeatureNode(A.ALBERT_EMBEDDINGS, [F.DOCUMENT, F.TOKEN], [F.WORD_EMBEDDINGS]),
 
-
         A.CAMEMBERT_FOR_TOKEN_CLASSIFICATION: NlpFeatureNode(A.CAMEMBERT_FOR_TOKEN_CLASSIFICATION,
                                                              [F.DOCUMENT, F.TOKEN],
                                                              [F.TOKEN_CLASSIFICATION]),
@@ -230,10 +229,11 @@ class NLP_FEATURE_NODES:  # or Mode Node?
         A.BERT_FOR_SEQUENCE_CLASSIFICATION: NlpFeatureNode(A.BERT_FOR_SEQUENCE_CLASSIFICATION, [F.DOCUMENT, F.TOKEN],
                                                            [F.SEQUENCE_CLASSIFICATION]),
 
-        A.CAMEMBERT_FOR_SEQUENCE_CLASSIFICATION : NlpFeatureNode(A.CAMEMBERT_FOR_SEQUENCE_CLASSIFICATION, [F.DOCUMENT, F.TOKEN],
-                                                                 [F.SEQUENCE_CLASSIFICATION]),
+        A.CAMEMBERT_FOR_SEQUENCE_CLASSIFICATION: NlpFeatureNode(A.CAMEMBERT_FOR_SEQUENCE_CLASSIFICATION,
+                                                                [F.DOCUMENT, F.TOKEN],
+                                                                [F.SEQUENCE_CLASSIFICATION]),
 
-            A.DEBERTA_FOR_SEQUENCE_CLASSIFICATION: NlpFeatureNode(A.BERT_FOR_SEQUENCE_CLASSIFICATION, [F.DOCUMENT, F.TOKEN],
+        A.DEBERTA_FOR_SEQUENCE_CLASSIFICATION: NlpFeatureNode(A.BERT_FOR_SEQUENCE_CLASSIFICATION, [F.DOCUMENT, F.TOKEN],
                                                               [F.SEQUENCE_CLASSIFICATION]),
 
         A.DISTIL_BERT_FOR_SEQUENCE_CLASSIFICATION: NlpFeatureNode(A.DISTIL_BERT_FOR_SEQUENCE_CLASSIFICATION,
@@ -376,8 +376,10 @@ class NLP_HC_FEATURE_NODES():
     H_F = NLP_HC_FEATURES
     # HC Feature Nodes
     nodes = {
-        A.ZERO_SHOT_NER : NlpHcFeatureNode(A.ZERO_SHOT_NER, [F.TOKEN, F.DOCUMENT],
-                                           [F.NAMED_ENTITY_IOB]),
+        A.MEDICAL_SUMMARIZER: NlpFeatureNode(A.MEDICAL_SUMMARIZER, [F.DOCUMENT], [F.DOCUMENT_GENERATED]),
+
+        A.ZERO_SHOT_NER: NlpHcFeatureNode(A.ZERO_SHOT_NER, [F.TOKEN, F.DOCUMENT],
+                                          [F.NAMED_ENTITY_IOB]),
         A.CHUNK_MAPPER_MODEL: NlpHcFeatureNode(A.CHUNK_MAPPER_MODEL, [F.NAMED_ENTITY_CONVERTED],
                                                [H_F.MAPPED_CHUNK]),
 
