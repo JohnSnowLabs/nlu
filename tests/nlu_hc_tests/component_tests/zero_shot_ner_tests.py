@@ -64,4 +64,4 @@ class ZeroShotNerTests(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    ZeroShotNerTests().test_entities_config()
+    ZeroShotNerTests().test_zero_shot_relation_model()
