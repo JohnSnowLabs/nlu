@@ -9,14 +9,14 @@ os.environ['PYSPARK_PYTHON'] = sys.executable
 os.environ['PYSPARK_DRIVER_PYTHON'] = sys.executable
 
 summarizer_spells = [
-    'en.summarizer_clinical_jsl',
-    'en.summarizer_clinical_jsl_augmented',
-    'en.summarizer_biomedical_pubmed',
-    'en.summarizer_generic_jsl',
-    'en.summarizer_clinical_questions',
-    'en.summarizer_radiology',
-    'en.summarizer_clinical_guidelines_large',
-    'en.summarizer_clinical_laymen',
+    'en.summarize.clinical_jsl',
+    'en.summarize.clinical_jsl_augmented',
+    'en.summarize.biomedical_pubmed',
+    'en.summarize.generic_jsl',
+    'en.summarize.clinical_questions',
+    'en.summarize.radiology',
+    'en.summarize.clinical_guidelines_large',
+    'en.summarize.clinical_laymen',
 ]
 
 
@@ -46,4 +46,4 @@ class MedicalSummarizerTests(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    MedicalSummarizerTests().test_entities_config()
+    MedicalSummarizerTests().test_medical_summarizer()
