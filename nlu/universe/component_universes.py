@@ -88,6 +88,7 @@ from nlu.components.relation_extractors.zero_shot_relation_extractor.zero_shot_r
 from nlu.components.resolutions.sentence_entity_resolver.sentence_resolver import SentenceResolver
 from nlu.components.sentence_detectors.deep_sentence_detector.deep_sentence_detector import SentenceDetectorDeep
 from nlu.components.sentence_detectors.pragmatic_sentence_detector.sentence_detector import PragmaticSentenceDetector
+from nlu.components.seq2seqs.bart_transformer.bart_transformer import SparkNLPBartTransformer
 from nlu.components.seq2seqs.gpt2.gpt2 import GPT2
 from nlu.components.seq2seqs.marian.marian import Marian
 from nlu.components.seq2seqs.t5.t5 import T5
@@ -2529,6 +2530,7 @@ class ComponentUniverse:
                                                        jsl_anno_py_class=ACR.JSL_anno2_py_class[
                                                            A.LONGFORMER_FOR_TOKEN_CLASSIFICATION],
                                                        ),
+
         A.MARIAN_TRANSFORMER: partial(NluComponent,
                                       name=A.MARIAN_TRANSFORMER,
                                       type=T.DOCUMENT_CLASSIFIER,
@@ -2547,6 +2549,7 @@ class ComponentUniverse:
                                       jsl_anno_class_id=A.MARIAN_TRANSFORMER,
                                       jsl_anno_py_class=ACR.JSL_anno2_py_class[A.MARIAN_TRANSFORMER],
                                       ),
+
         A.ROBERTA_EMBEDDINGS: partial(NluComponent,
                                       name=A.ROBERTA_EMBEDDINGS,
                                       type=T.TOKEN_EMBEDDING,
@@ -2587,6 +2590,7 @@ class ComponentUniverse:
                                                     jsl_anno_py_class=ACR.JSL_anno2_py_class[
                                                         A.ROBERTA_FOR_TOKEN_CLASSIFICATION],
                                                     ),
+
         A.ROBERTA_SENTENCE_EMBEDDINGS: partial(NluComponent,
                                                name=A.ROBERTA_SENTENCE_EMBEDDINGS,
                                                type=T.DOCUMENT_EMBEDDING,
@@ -2646,6 +2650,25 @@ class ComponentUniverse:
                                         jsl_anno_class_id=H_A.MEDICAL_SUMMARIZER,
                                         jsl_anno_py_class=ACR.JSL_anno_HC_ref_2_py_class[H_A.MEDICAL_SUMMARIZER],
                                         ),
+
+        A.BART_TRANSFORMER: partial(NluComponent,
+                                    name=A.BART_TRANSFORMER,
+                                    type=T.DOCUMENT_CLASSIFIER,
+                                    get_default_model=SparkNLPBartTransformer.get_default_model,
+                                    get_pretrained_model=SparkNLPBartTransformer.get_pretrained_model,
+                                    pdf_extractor_methods={'default': default_T5_config,
+                                                           'default_full': default_full_config, },
+                                    pdf_col_name_substitutor=substitute_summarizer_cols,
+                                    output_level=L.INPUT_DEPENDENT_DOCUMENT_CLASSIFIER,
+                                    node=NLP_FEATURE_NODES.nodes[A.BART_TRANSFORMER],
+                                    description='Bart Transformer',
+                                    provider=ComponentBackends.open_source,
+                                    license=Licenses.open_source,
+                                    computation_context=ComputeContexts.spark,
+                                    output_context=ComputeContexts.spark,
+                                    jsl_anno_class_id=A.BART_TRANSFORMER,
+                                    jsl_anno_py_class=ACR.JSL_anno2_py_class[A.BART_TRANSFORMER],
+                                    ),
 
         A.UNIVERSAL_SENTENCE_ENCODER: partial(NluComponent,
                                               name=A.UNIVERSAL_SENTENCE_ENCODER,

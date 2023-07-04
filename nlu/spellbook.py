@@ -1731,7 +1731,8 @@ class Spellbook:
         },
 
     }
-    pretrained_models_references = {'ab': {'ab.speech2text.wav2vec2': 'asr_hf_challenge_test',
+    pretrained_models_references = {
+        'ab': {'ab.speech2text.wav2vec2': 'asr_hf_challenge_test',
                                            'ab.speech2text.wav2vec2.base': 'asr_baseline',
                                            'ab.speech2text.wav2vec2.base_gpu': 'asr_baseline_gpu',
                                            'ab.speech2text.wav2vec2.by_mofe': 'asr_speech_sprint_test',
@@ -2426,6 +2427,7 @@ class Spellbook:
                                            'el.stopwords.iso': 'stopwords_iso'},
                                     'eml': {'eml.embed.w2v_cc_300d': 'w2v_cc_300d'},
                                     'en': {
+                                        'en.summarize_distilbart.cnn_.6.6':'distilbart_cnn_6_6',
                                         'en.classify_image.swin.tiny': 'image_classifier_swin_tiny_patch4_window7_224',
                                         'en.speech2text.hubert': 'asr_hubert_large_ls960',
                                         'en.speech2text.hubert.large_ls960': 'asr_hubert_large_ls960',
@@ -10108,7 +10110,8 @@ class Spellbook:
                                            'zu.stopwords': 'stopwords_zu'}}
 
     healthcare_component_alias_references = {}
-    pretrained_healthcare_pipe_references = {'de': {'de.deid.clinical': 'clinical_deidentification',
+    pretrained_healthcare_pipe_references = {
+        'de': {'de.deid.clinical': 'clinical_deidentification',
                                                     'de.deid.ner_subentity.pipeline': 'ner_deid_subentity_pipeline',
                                                     'de.deid.pipeline': 'german_deid_pipeline_spark24',
                                                     'de.med_ner.deid_generic.pipeline': 'ner_deid_generic_pipeline'},
@@ -14908,6 +14911,7 @@ class Spellbook:
                              'distilbert_qa_Adrian_base_uncased_finetuned_squad': 'DistilBertForQuestionAnswering',
                              'distilbert_qa_Ayoola_base_uncased_finetuned_squad': 'DistilBertForQuestionAnswering',
                              'distilbert_qa_BERT': 'DistilBertForQuestionAnswering',
+                             'distilbart_cnn_6_6':'BartTransformer',
                              'distilbert_qa_BERT_ClinicalQA': 'DistilBertForQuestionAnswering',
                              'distilbert_qa_COVID_DistilBERTa': 'DistilBertForQuestionAnswering',
                              'distilbert_qa_COVID_DistilBERTb': 'DistilBertForQuestionAnswering',
