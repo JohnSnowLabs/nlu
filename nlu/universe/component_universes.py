@@ -90,6 +90,7 @@ from nlu.components.sentence_detectors.deep_sentence_detector.deep_sentence_dete
 from nlu.components.sentence_detectors.pragmatic_sentence_detector.sentence_detector import PragmaticSentenceDetector
 from nlu.components.seq2seqs.gpt2.gpt2 import GPT2
 from nlu.components.seq2seqs.marian.marian import Marian
+from nlu.components.seq2seqs.med_text_generator.med_text_generator import MedTextGenerator
 from nlu.components.seq2seqs.t5.t5 import T5
 from nlu.components.seq2seqs.med_summarizer.med_summarizer import  MedSummarizer
 from nlu.components.seq2seqs.tapas_qa.tapas_qa import TapasQA
@@ -2647,6 +2648,26 @@ class ComponentUniverse:
                                         jsl_anno_py_class=ACR.JSL_anno_HC_ref_2_py_class[H_A.MEDICAL_SUMMARIZER],
                                         ),
 
+        H_A.MEDICAL_TEXT_GENERATOR: partial(NluComponent,
+                                            name=H_A.MEDICAL_TEXT_GENERATOR,
+                                            type=T.DOCUMENT_CLASSIFIER,
+                                            get_default_model=MedTextGenerator.get_default_model,
+                                            get_pretrained_model=MedTextGenerator.get_pretrained_model,
+                                            pdf_extractor_methods={'default': default_T5_config,
+                                                                   'default_full': default_full_config, },
+                                            pdf_col_name_substitutor=substitute_text_generator_cols,
+                                            output_level=L.INPUT_DEPENDENT_DOCUMENT_CLASSIFIER,
+                                            node=NLP_HC_FEATURE_NODES.nodes[H_A.MEDICAL_TEXT_GENERATOR],
+                                            description='Medical Text Generator',
+                                            provider=ComponentBackends.open_source,
+                                            license=Licenses.open_source,
+                                            computation_context=ComputeContexts.spark,
+                                            output_context=ComputeContexts.spark,
+                                            jsl_anno_class_id=H_A.MEDICAL_TEXT_GENERATOR,
+                                            jsl_anno_py_class=ACR.JSL_anno_HC_ref_2_py_class[
+                                                H_A.MEDICAL_TEXT_GENERATOR],
+                                            ),
+
         A.UNIVERSAL_SENTENCE_ENCODER: partial(NluComponent,
                                               name=A.UNIVERSAL_SENTENCE_ENCODER,
                                               type=T.DOCUMENT_EMBEDDING,
@@ -2792,6 +2813,8 @@ class ComponentUniverse:
                                                            jsl_anno_py_class=ACR.JSL_anno2_py_class[
                                                                A.XLM_ROBERTA_FOR_SEQUENCE_CLASSIFICATION],
                                                            ),
+
+
         A.ROBERTA_FOR_SEQUENCE_CLASSIFICATION: partial(NluComponent,
                                                        name=A.ROBERTA_FOR_SEQUENCE_CLASSIFICATION,
                                                        type=T.TRANSFORMER_SEQUENCE_CLASSIFIER,

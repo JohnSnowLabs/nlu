@@ -10113,6 +10113,7 @@ class Spellbook:
                                                     'de.deid.pipeline': 'german_deid_pipeline_spark24',
                                                     'de.med_ner.deid_generic.pipeline': 'ner_deid_generic_pipeline'},
                                              'en': {
+
                                                  'en.classify.bert_sequence.binary_rct_biobert.pipeline': 'bert_sequence_classifier_binary_rct_biobert_pipeline',
                                                  'en.classify.bert_token_ner_jsl.pipeline': 'bert_token_classifier_ner_jsl_pipeline',
                                                  'en.classify.rct_binary_biobert.pipeline': 'rct_binary_classifier_biobert_pipeline',
@@ -10284,8 +10285,8 @@ class Spellbook:
                                                   'de.resolve.icd10gm': 'sbertresolve_icd10gm',
                                                   'de.resolve.snomed': 'sbertresolve_snomed'},
                                               'en': {
+                                                  'en.text_generator.biomedical_biogpt_base': 'text_generator_biomedical_biogpt_base',
                                                   'en.summarizer_generic_jsl': 'summarizer_generic_jsl',
-
                                                   'en.summarize.clinical_jsl': 'summarizer_clinical_jsl',
                                                   'en.summarize.clinical_jsl_augmented': 'summarizer_clinical_jsl_augmented',
                                                   'en.summarize.biomedical_pubmed': 'summarizer_biomedical_pubmed',
@@ -18957,4 +18958,5 @@ class Spellbook:
                              'summarizer_radiology': 'MedicalSummarizer',
                              'summarizer_clinical_guidelines_large': 'MedicalSummarizer',
                              'summarizer_clinical_laymen': 'MedicalSummarizer',
+                             'text_generator_biomedical_biogpt_base': 'MedicalTextGenerator'
                              }

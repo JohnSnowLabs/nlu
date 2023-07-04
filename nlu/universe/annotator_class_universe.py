@@ -229,6 +229,7 @@ class AnnoClassRef:
 
     }
     JSL_anno_HC_ref_2_py_class: Dict[JslAnnoId, JslAnnoPyClass] = {
+        HC_A_N.MEDICAL_TEXT_GENERATOR: 'MedicalTextGenerator',
         HC_A_N.MEDICAL_SUMMARIZER:'MedicalSummarizer',
         HC_A_N.ZERO_SHOT_NER: 'ZeroShotNerModel',
         HC_A_N.CHUNK_MAPPER_MODEL: 'ChunkMapperModel',
