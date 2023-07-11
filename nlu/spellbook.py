@@ -2425,8 +2425,11 @@ class Spellbook:
                                            'el.stopwords': 'stopwords_iso',
                                            'el.stopwords.iso': 'stopwords_iso'},
                                     'eml': {'eml.embed.w2v_cc_300d': 'w2v_cc_300d'},
-                                    'en': {
-                                            'en.classify_image.swin.tiny':'image_classifier_swin_tiny_patch4_window7_224',
+                                    'en': {'en.bert_base_cased_zero_shot_classifier_xnli' : 'bert_base_cased_zero_shot_classifier_xnli',
+                                           'en.distilbert_base_zero_shot_classifier_uncased_mnli': 'distilbert_base_zero_shot_classifier_uncased_mnli',
+                                           'en.roberta_base_zero_shot_classifier_nli': 'roberta_base_zero_shot_classifier_nli',
+
+                                        'en.classify_image.swin.tiny':'image_classifier_swin_tiny_patch4_window7_224',
                                         'en.speech2text.hubert': 'asr_hubert_large_ls960',
                                         'en.speech2text.hubert.large_ls960': 'asr_hubert_large_ls960',
                                         'en.albert': 'albert_base_uncased',
@@ -10673,7 +10676,8 @@ class Spellbook:
                                                      'en.zero_shot.ner_roberta': 'zero_shot_ner_roberta',
                                                      'es.embed.roberta_base_biomedical': 'roberta_base_biomedical',
                                                      'es.med_ner.roberta_ner_diag_proc': 'roberta_ner_diag_proc',
-                                                     'es.resolve.snomed': 'robertaresolve_snomed'},
+                                                     'es.resolve.snomed': 'robertaresolve_snomed'
+                                                     },
                                               'es': {'es.classify.bert_token.clinical_trials_abstract': 'bert_token_classifier_ner_clinical_trials_abstracts',
                                                      'es.classify.bert_token.negation_uncertainty': 'bert_token_classifier_negation_uncertainty',
                                                      'es.classify.bert_token.ner_living_species': 'bert_token_classifier_ner_living_species',
@@ -10777,7 +10781,8 @@ class Spellbook:
                                     'sent_bert_base_cased': 'de.embed_sentence.bert.base_cased',
                                     'sent_bert_multi_cased': 'xx.embed_sentence',
                                     'w2v_cc_300d': 'de.embed.w2v'},
-                             'en': {'albert_base_uncased': 'en.embed_sentence.albert',
+                             'en': {
+                                    'albert_base_uncased': 'en.embed_sentence.albert',
                                     'albert_large_uncased': 'en.embed.albert.large_uncased',
                                     'bert_large_cased': 'en.embed.bert.large_cased',
                                     'biobert_pubmed_base_cased': 'en.embed.biobert',
@@ -12183,6 +12188,9 @@ class Spellbook:
                              'bert_biolink_base': 'BertEmbeddings',
                              'bert_biolink_large': 'BertEmbeddings',
                              'bert_biomed_pubmed_uncased': 'BertEmbeddings',
+                             'bert_base_cased_zero_shot_classifier_xnli': 'BertForZeroShotClassification',
+                             'distilbert_base_zero_shot_classifier_uncased_mnli': 'DistilBertForZeroShotClassification',
+                             'roberta_base_zero_shot_classifier_nli': 'RoBertaForZeroShotClassification',
                              'bert_classifier_2ch_text_classification': 'BertForSequenceClassification',
                              'bert_classifier_amazon_review_sentiment_analysis': 'BertForSequenceClassification',
                              'bert_classifier_amitkayal_finetuned_sem_eval_english': 'BertForSequenceClassification',
