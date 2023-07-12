@@ -9,6 +9,8 @@ summarizer_spells = [
     'en.summarize_distilbart.cnn_.6.6'
 ]
 
+os.environ['PYSPARK_PYTHON'] = sys.executable
+os.environ['PYSPARK_DRIVER_PYTHON'] = sys.executable
 
 class BartTransformerTests(unittest.TestCase):
     def test_bart_transformer(self):
@@ -18,7 +20,7 @@ class BartTransformerTests(unittest.TestCase):
             pipe = nlu.load(s)
             # Configure relations to extract
             print("TESTING: ", s)
-            df = pipe.predict("Paracetamol can alleviate headache or sickness. An MRI test can be used to find cancer.")
+            df = pipe.predict("Paracetamol can alleviate headache or")
             print(df.columns)
             for c in df:
                 print(c)
