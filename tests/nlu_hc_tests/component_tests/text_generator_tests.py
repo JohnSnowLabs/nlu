@@ -3,7 +3,7 @@ import sys
 import unittest
 
 import nlu
-import tests.secrets as sct
+import secrets as sct
 
 os.environ['PYSPARK_PYTHON'] = sys.executable
 os.environ['PYSPARK_DRIVER_PYTHON'] = sys.executable

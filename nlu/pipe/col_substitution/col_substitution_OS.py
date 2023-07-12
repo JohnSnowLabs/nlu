@@ -1085,30 +1085,6 @@ def substitute_summarizer_cols(c, cols, nlu_identifier=True):
             # new_cols[col]= f"{new_base_name}_confidence"
     return new_cols
 
-def substitute_text_generator_cols(c, cols, nlu_identifier=True):
-    """
-    rename cols with base name either <t5> or if not unique <t5_<task>>
-    """
-    new_cols = {}
-    new_base_name = 'text generated' if nlu_identifier == 'UNIQUE' else f'text generated_{nlu_identifier}'
-    for col in cols:
-        if '_results' in col:
-            new_cols[col] = new_base_name
-        elif '_beginnings' in col:
-            new_cols[col] = f'{new_base_name}_begin'
-        elif '_endings' in col:
-            new_cols[col] = f'{new_base_name}_end'
-        elif '_embeddings' in col:
-            continue  # Token never stores Embeddings  new_cols[col] = f'{new_base_name}_embedding'
-        elif '_types' in col:
-            continue  # new_cols[col] = f'{new_base_name}_type'
-        elif 'meta' in col:
-            if '_sentence' in col:
-                new_cols[col] = f'{new_base_name}_origin_sentence'
-            else:
-                logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
-            # new_cols[col]= f"{new_base_name}_confidence"
-    return new_cols
 
 def substitute_sentiment_vivk_cols(c, cols, nlu_identifier=True):
     new_cols = {}
