@@ -1,12 +1,15 @@
 import os
 import sys
 import unittest
-
 from nlu import *
 
 
+os.environ['PYSPARK_PYTHON'] = sys.executable
+os.environ['PYSPARK_DRIVER_PYTHON'] = sys.executable
+
 summarizer_spells = [
-    'en.summarize_distilbart.cnn_.6.6'
+    
+    'en.seq2seq.distilbart_xsum_12_6'
 ]
 
 class BartTransformerTests(unittest.TestCase):
