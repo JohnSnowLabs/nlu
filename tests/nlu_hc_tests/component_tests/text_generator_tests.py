@@ -9,7 +9,8 @@ os.environ['PYSPARK_PYTHON'] = sys.executable
 os.environ['PYSPARK_DRIVER_PYTHON'] = sys.executable
 
 text_generator_spells = [
-    'en.text_generator.biomedical_biogpt_base'
+    'en.text_generator.biomedical_biogpt_base',
+    'en.text_generator.biogpt_chat_jsl_conversational'
 ]
 
 

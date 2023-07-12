@@ -10286,6 +10286,12 @@ class Spellbook:
                                                   'de.resolve.snomed': 'sbertresolve_snomed'},
                                               'en': {
                                                   'en.text_generator.biomedical_biogpt_base': 'text_generator_biomedical_biogpt_base',
+                                                  'en.text_generator.generic_flan_base': 'text_generator_generic_flan_base',
+                                                  'en.text_generator.generic_jsl_base': 'text_generator_generic_jsl_base',
+                                                  'en.text_generator.generic_flan_t5_large': 'text_generator_generic_flan_t5_large',
+                                                  'en.text_generator.biogpt_chat_jsl': 'biogpt_chat_jsl',
+                                                  'en.text_generator.biogpt_chat_jsl_conversational': 'biogpt_chat_jsl_conversational',
+                                                  'en.text_generator.biogpt_chat_jsl_conditions': 'biogpt_chat_jsl_conditions',
                                                   'en.summarizer_generic_jsl': 'summarizer_generic_jsl',
                                                   'en.summarize.clinical_jsl': 'summarizer_clinical_jsl',
                                                   'en.summarize.clinical_jsl_augmented': 'summarizer_clinical_jsl_augmented',
@@ -18958,5 +18964,11 @@ class Spellbook:
                              'summarizer_radiology': 'MedicalSummarizer',
                              'summarizer_clinical_guidelines_large': 'MedicalSummarizer',
                              'summarizer_clinical_laymen': 'MedicalSummarizer',
-                             'text_generator_biomedical_biogpt_base': 'MedicalTextGenerator'
+                             'text_generator_biomedical_biogpt_base': 'MedicalTextGenerator',
+                             'text_generator_generic_flan_base': 'MedicalTextGenerator',
+                             'text_generator_generic_jsl_base': 'MedicalTextGenerator',
+                             'text_generator_generic_flan_t5_large': 'MedicalTextGenerator',
+                             'biogpt_chat_jsl': 'MedicalTextGenerator',
+                             'biogpt_chat_jsl_conversational': 'MedicalTextGenerator',
+                             'biogpt_chat_jsl_conditions': 'MedicalTextGenerator'
                              }
