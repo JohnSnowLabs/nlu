@@ -4,11 +4,8 @@ import unittest
 from nlu import *
 
 
-os.environ['PYSPARK_PYTHON'] = sys.executable
-os.environ['PYSPARK_DRIVER_PYTHON'] = sys.executable
-
 summarizer_spells = [
-    
+    'en.seq2seq.distilbart_cnn_6_6',
     'en.seq2seq.distilbart_xsum_12_6'
 ]
 
