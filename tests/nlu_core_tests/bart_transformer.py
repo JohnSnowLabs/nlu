@@ -9,9 +9,6 @@ summarizer_spells = [
     'en.summarize_distilbart.cnn_.6.6'
 ]
 
-os.environ['PYSPARK_PYTHON'] = sys.executable
-os.environ['PYSPARK_DRIVER_PYTHON'] = sys.executable
-
 class BartTransformerTests(unittest.TestCase):
     def test_bart_transformer(self):
 
