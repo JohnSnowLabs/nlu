@@ -226,6 +226,7 @@ class AnnoClassRef:
         A_N.PARTIAL_Lemmatizer: 'Lemmatizer',
         A_N.PARTIAL_Normalizer: 'Normalizer',
         A_N.VIT_IMAGE_CLASSIFICATION: 'ViTForImageClassification',
+        A_N.CONVNEXT_IMAGE_CLASSIFICATION: 'ConvNextImageClassifier',
 
     }
     JSL_anno_HC_ref_2_py_class: Dict[JslAnnoId, JslAnnoPyClass] = {

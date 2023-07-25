@@ -11,6 +11,7 @@ from nlu.components.classifiers.asr_hubert.hubert import Hubert
 from nlu.components.classifiers.classifier_dl.classifier_dl import ClassifierDl
 from nlu.components.classifiers.generic_classifier.generic_classifier import GenericClassifier
 from nlu.components.classifiers.image_classification_swin.swin import SwinImageClassifier
+from nlu.components.classifiers.image_classification_vit.convnext_image_classification import ConvNextImageClassifier
 from nlu.components.classifiers.image_classification_vit.vit_image_classifier import VitImageClassifier
 from nlu.components.classifiers.language_detector.language_detector import LanguageDetector
 from nlu.components.classifiers.multi_classifier.multi_classifier import MultiClassifier
@@ -3147,6 +3148,28 @@ class ComponentUniverse:
                                             jsl_anno_class_id=A.VIT_IMAGE_CLASSIFICATION,
                                             jsl_anno_py_class=ACR.JSL_anno2_py_class[
                                                 A.VIT_IMAGE_CLASSIFICATION],
+                                            ),
+
+        A.CONVNEXT_IMAGE_CLASSIFICATION: partial(NluComponent,
+                                            name=A.CONVNEXT_IMAGE_CLASSIFICATION,
+                                            type=T.IMAGE_CLASSIFICATION,
+                                            get_default_model=ConvNextImageClassifier.get_default_model,
+                                            get_pretrained_model=ConvNextImageClassifier.get_pretrained_model,
+                                            pdf_extractor_methods={'default': default_document_config,
+                                                                   'default_full': default_full_config},
+                                            pdf_col_name_substitutor=substitute_recognized_text_cols,
+                                            output_level=L.DOCUMENT,
+                                            node=NLP_FEATURE_NODES.nodes[
+                                                A.CONVNEXT_IMAGE_CLASSIFICATION],
+                                            description='TODO',
+                                            provider=ComponentBackends.open_source,
+
+                                            license=Licenses.open_source,
+                                            computation_context=ComputeContexts.spark,
+                                            output_context=ComputeContexts.spark,
+                                            jsl_anno_class_id=A.CONVNEXT_IMAGE_CLASSIFICATION,
+                                            jsl_anno_py_class=ACR.JSL_anno2_py_class[
+                                                A.CONVNEXT_IMAGE_CLASSIFICATION],
                                             ),
 
         A.SWIN_IMAGE_CLASSIFICATION: partial(NluComponent,
