@@ -241,7 +241,7 @@ def default_seq_classifier_config(output_col_prefix='classified_sequence '):
     return SparkNLPExtractorConfig(
         output_col_prefix=output_col_prefix,
         get_result=True,
-        get_full_meta=False,
+        get_full_meta=True,
         name='default_seq_classifier',
         description='Get max predicted confidence and label',
         meta_data_extractor=SparkNLPExtractor(extract_maximum_confidence,

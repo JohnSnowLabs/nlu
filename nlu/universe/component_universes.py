@@ -2849,7 +2849,7 @@ class ComponentUniverse:
                                                      output_level=L.INPUT_DEPENDENT_DOCUMENT_CLASSIFIER,
                                                      node=NLP_FEATURE_NODES.nodes[
                                                          A.BERT_FOR_ZERO_SHOT_CLASSIFICATION],
-                                                     description='AlbertForSequenceClassification can load ALBERT Models with sequence classification/regression head on top (a linear layer on top of the pooled output) e.g. for multi-class document classification tasks.',
+                                                     description='Bert Zero Shot Classifier.',
                                                      provider=ComponentBackends.open_source,
                                                      license=Licenses.open_source,
                                                      computation_context=ComputeContexts.spark,
@@ -2870,7 +2870,7 @@ class ComponentUniverse:
                                                             output_level=L.INPUT_DEPENDENT_DOCUMENT_CLASSIFIER,
                                                             node=NLP_FEATURE_NODES.nodes[
                                                                 A.DISTIL_BERT_FOR_ZERO_SHOT_CLASSIFICATION],
-                                                            description='AlbertForSequenceClassification can load ALBERT Models with sequence classification/regression head on top (a linear layer on top of the pooled output) e.g. for multi-class document classification tasks.',
+                                                            description='Distil Bert Zero Shot Classifier.',
                                                             provider=ComponentBackends.open_source,
                                                             license=Licenses.open_source,
                                                             computation_context=ComputeContexts.spark,
@@ -2891,7 +2891,7 @@ class ComponentUniverse:
                                                         output_level=L.INPUT_DEPENDENT_DOCUMENT_CLASSIFIER,
                                                         node=NLP_FEATURE_NODES.nodes[
                                                             A.ROBERTA_FOR_ZERO_SHOT_CLASSIFICATION],
-                                                        description='AlbertForSequenceClassification can load ALBERT Models with sequence classification/regression head on top (a linear layer on top of the pooled output) e.g. for multi-class document classification tasks.',
+                                                        description='Roberta Zero shot Classifier.',
                                                         provider=ComponentBackends.open_source,
                                                         license=Licenses.open_source,
                                                         computation_context=ComputeContexts.spark,
