@@ -98,6 +98,7 @@ class AnnoClassRef:
         A_N.BERT_FOR_SEQUENCE_CLASSIFICATION: 'BertForSequenceClassification',
         A_N.ELMO_EMBEDDINGS: 'ElmoEmbeddings',
         A_N.LONGFORMER_EMBEDDINGS: 'LongformerEmbeddings',
+        A_N.ROBERTA_FOR_ZERO_SHOT_CLASSIFICATION: 'RoBertaForZeroShotClassification',
         A_N.LONGFORMER_FOR_TOKEN_CLASSIFICATION: 'LongformerForTokenClassification',
         A_N.MARIAN_TRANSFORMER: 'MarianTransformer',
         A_N.ROBERTA_EMBEDDINGS: 'RoBertaEmbeddings',
