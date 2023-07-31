@@ -96,6 +96,7 @@ class AnnoClassRef:
         A_N.DISTIL_BERT_EMBEDDINGS: 'DistilBertEmbeddings',
         A_N.DISTIL_BERT_FOR_SEQUENCE_CLASSIFICATION: 'DistilBertForSequenceClassification',
         A_N.BERT_FOR_SEQUENCE_CLASSIFICATION: 'BertForSequenceClassification',
+        A_N.BERT_FOR_ZERO_SHOT_CLASSIFICATION: 'BertForZeroShotClassification',
         A_N.ELMO_EMBEDDINGS: 'ElmoEmbeddings',
         A_N.LONGFORMER_EMBEDDINGS: 'LongformerEmbeddings',
         A_N.LONGFORMER_FOR_TOKEN_CLASSIFICATION: 'LongformerForTokenClassification',

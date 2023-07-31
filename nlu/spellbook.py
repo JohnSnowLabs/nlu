@@ -2426,6 +2426,7 @@ class Spellbook:
                                            'el.stopwords.iso': 'stopwords_iso'},
                                     'eml': {'eml.embed.w2v_cc_300d': 'w2v_cc_300d'},
                                     'en': {
+                                        'en.bert.zero_shot_classifier': 'bert_base_cased_zero_shot_classifier_xnli',
                                         'en.classify_image.swin.tiny': 'image_classifier_swin_tiny_patch4_window7_224',
                                         'en.speech2text.hubert': 'asr_hubert_large_ls960',
                                         'en.speech2text.hubert.large_ls960': 'asr_hubert_large_ls960',
@@ -12192,6 +12193,7 @@ class Spellbook:
                              'bert_base_token_classifier_conll03': 'BertForTokenClassification',
                              'bert_base_token_classifier_few_nerd': 'BertForTokenClassification',
                              'bert_base_token_classifier_ontonote': 'BertForTokenClassification',
+                             'bert_base_cased_zero_shot_classifier_xnli': 'BertForZeroShotClassification',
                              'bert_base_turkish_cased': 'BertEmbeddings',
                              'bert_base_turkish_uncased': 'BertEmbeddings',
                              'bert_base_uncased': 'BertEmbeddings',
