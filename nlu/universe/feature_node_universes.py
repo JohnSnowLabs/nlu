@@ -239,6 +239,9 @@ class NLP_FEATURE_NODES:  # or Mode Node?
         A.DISTIL_BERT_FOR_SEQUENCE_CLASSIFICATION: NlpFeatureNode(A.DISTIL_BERT_FOR_SEQUENCE_CLASSIFICATION,
                                                                   [F.DOCUMENT, F.TOKEN],
                                                                   [F.SEQUENCE_CLASSIFICATION]),
+        A.DISTIL_BERT_FOR_ZERO_SHOT_CLASSIFICATION: NlpFeatureNode(A.DISTIL_BERT_FOR_ZERO_SHOT_CLASSIFICATION,
+                                                                   [F.DOCUMENT, F.TOKEN],
+                                                                   [F.SEQUENCE_CLASSIFICATION]),
 
         A.XLM_ROBERTA_FOR_SEQUENCE_CLASSIFICATION: NlpFeatureNode(A.XLM_ROBERTA_FOR_SEQUENCE_CLASSIFICATION,
                                                                   [F.DOCUMENT, F.TOKEN],
