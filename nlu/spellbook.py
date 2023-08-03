@@ -10124,6 +10124,7 @@ class Spellbook:
                                                     'de.deid.pipeline': 'german_deid_pipeline_spark24',
                                                     'de.med_ner.deid_generic.pipeline': 'ner_deid_generic_pipeline'},
                                              'en': {
+
                                                  'en.classify.bert_sequence.binary_rct_biobert.pipeline': 'bert_sequence_classifier_binary_rct_biobert_pipeline',
                                                  'en.classify.bert_token_ner_jsl.pipeline': 'bert_token_classifier_ner_jsl_pipeline',
                                                  'en.classify.rct_binary_biobert.pipeline': 'rct_binary_classifier_biobert_pipeline',
@@ -10295,8 +10296,14 @@ class Spellbook:
                                                   'de.resolve.icd10gm': 'sbertresolve_icd10gm',
                                                   'de.resolve.snomed': 'sbertresolve_snomed'},
                                               'en': {
+                                                  'en.generate.biomedical_biogpt_base': 'text_generator_biomedical_biogpt_base',
+                                                  'en.generate.generic_flan_base': 'text_generator_generic_flan_base',
+                                                  'en.generate.generic_jsl_base': 'text_generator_generic_jsl_base',
+                                                  'en.generate.generic_flan_t5_large': 'text_generator_generic_flan_t5_large',
+                                                  'en.generate.biogpt_chat_jsl': 'biogpt_chat_jsl',
+                                                  'en.generate.biogpt_chat_jsl_conversational': 'biogpt_chat_jsl_conversational',
+                                                  'en.generate.biogpt_chat_jsl_conditions': 'biogpt_chat_jsl_conditions',
                                                   'en.summarizer_generic_jsl': 'summarizer_generic_jsl',
-
                                                   'en.summarize.clinical_jsl': 'summarizer_clinical_jsl',
                                                   'en.summarize.clinical_jsl_augmented': 'summarizer_clinical_jsl_augmented',
                                                   'en.summarize.biomedical_pubmed': 'summarizer_biomedical_pubmed',
@@ -14919,11 +14926,6 @@ class Spellbook:
                              'distilbert_qa_Adrian_base_uncased_finetuned_squad': 'DistilBertForQuestionAnswering',
                              'distilbert_qa_Ayoola_base_uncased_finetuned_squad': 'DistilBertForQuestionAnswering',
                              'distilbert_qa_BERT': 'DistilBertForQuestionAnswering',
-                             'distilbart_xsum_12_6': 'BartTransformer',
-                             'bart_large_cnn':'BartTransformer',
-                             'distilbart_cnn_6_6': 'BartTransformer',
-                             'distilbart_cnn_12_6':'BartTransformer',
-                             'distilbart_xsum_6_6': 'BartTransformer',
                              'distilbert_qa_BERT_ClinicalQA': 'DistilBertForQuestionAnswering',
                              'distilbert_qa_COVID_DistilBERTa': 'DistilBertForQuestionAnswering',
                              'distilbert_qa_COVID_DistilBERTb': 'DistilBertForQuestionAnswering',
@@ -18973,4 +18975,11 @@ class Spellbook:
                              'summarizer_radiology': 'MedicalSummarizer',
                              'summarizer_clinical_guidelines_large': 'MedicalSummarizer',
                              'summarizer_clinical_laymen': 'MedicalSummarizer',
+                             'text_generator_biomedical_biogpt_base': 'MedicalTextGenerator',
+                             'text_generator_generic_flan_base': 'MedicalTextGenerator',
+                             'text_generator_generic_jsl_base': 'MedicalTextGenerator',
+                             'text_generator_generic_flan_t5_large': 'MedicalTextGenerator',
+                             'biogpt_chat_jsl': 'MedicalTextGenerator',
+                             'biogpt_chat_jsl_conversational': 'MedicalTextGenerator',
+                             'biogpt_chat_jsl_conditions': 'MedicalTextGenerator'
                              }
