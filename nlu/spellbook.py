@@ -1731,7 +1731,8 @@ class Spellbook:
         },
 
     }
-    pretrained_models_references = {'ab': {'ab.speech2text.wav2vec2': 'asr_hf_challenge_test',
+    pretrained_models_references = {
+        'ab': {'ab.speech2text.wav2vec2': 'asr_hf_challenge_test',
                                            'ab.speech2text.wav2vec2.base': 'asr_baseline',
                                            'ab.speech2text.wav2vec2.base_gpu': 'asr_baseline_gpu',
                                            'ab.speech2text.wav2vec2.by_mofe': 'asr_speech_sprint_test',
@@ -2430,6 +2431,11 @@ class Spellbook:
                                         'en.classify_image.convnext.tiny':'image_classifier_convnext_tiny_224_local',
                                         'en.bert.zero_shot_classifier': 'bert_base_cased_zero_shot_classifier_xnli',
                                         'en.roberta.zero_shot_classifier': 'roberta_base_zero_shot_classifier_nli',
+                                        'en.seq2seq.distilbart_xsum_12_6': 'distilbart_xsum_12_6',
+                                        'en.seq2seq.bart_large_cnn': 'bart_large_cnn',
+                                        'en.seq2seq.distilbart_cnn_6_6': 'distilbart_cnn_6_6',
+                                        'en.seq2seq.distilbart_cnn_12_6': 'distilbart_cnn_12_6',
+                                        'en.seq2seq.distilbart_xsum_6_6': 'distilbart_xsum_6_6',
                                         'en.classify_image.swin.tiny': 'image_classifier_swin_tiny_patch4_window7_224',
                                         'en.speech2text.hubert': 'asr_hubert_large_ls960',
                                         'en.speech2text.hubert.large_ls960': 'asr_hubert_large_ls960',
@@ -10112,7 +10118,8 @@ class Spellbook:
                                            'zu.stopwords': 'stopwords_zu'}}
 
     healthcare_component_alias_references = {}
-    pretrained_healthcare_pipe_references = {'de': {'de.deid.clinical': 'clinical_deidentification',
+    pretrained_healthcare_pipe_references = {
+        'de': {'de.deid.clinical': 'clinical_deidentification',
                                                     'de.deid.ner_subentity.pipeline': 'ner_deid_subentity_pipeline',
                                                     'de.deid.pipeline': 'german_deid_pipeline_spark24',
                                                     'de.med_ner.deid_generic.pipeline': 'ner_deid_generic_pipeline'},
@@ -12196,13 +12203,11 @@ class Spellbook:
                              'bert_base_token_classifier_conll03': 'BertForTokenClassification',
                              'bert_base_token_classifier_few_nerd': 'BertForTokenClassification',
                              'bert_base_token_classifier_ontonote': 'BertForTokenClassification',
-                             'bert_base_cased_zero_shot_classifier_xnli': 'BertForZeroShotClassification',
                              'bert_base_turkish_cased': 'BertEmbeddings',
                              'bert_base_turkish_uncased': 'BertEmbeddings',
                              'bert_base_uncased': 'BertEmbeddings',
                              'bert_base_uncased_contracts': 'BertEmbeddings',
                              'bert_base_uncased_legal': 'BertEmbeddings',
-                             'roberta_base_zero_shot_classifier_nli': 'RoBertaForZeroShotClassification',
                              'bert_biolink_base': 'BertEmbeddings',
                              'bert_biolink_large': 'BertEmbeddings',
                              'bert_biomed_pubmed_uncased': 'BertEmbeddings',
@@ -14914,6 +14919,11 @@ class Spellbook:
                              'distilbert_qa_Adrian_base_uncased_finetuned_squad': 'DistilBertForQuestionAnswering',
                              'distilbert_qa_Ayoola_base_uncased_finetuned_squad': 'DistilBertForQuestionAnswering',
                              'distilbert_qa_BERT': 'DistilBertForQuestionAnswering',
+                             'distilbart_xsum_12_6': 'BartTransformer',
+                             'bart_large_cnn':'BartTransformer',
+                             'distilbart_cnn_6_6': 'BartTransformer',
+                             'distilbart_cnn_12_6':'BartTransformer',
+                             'distilbart_xsum_6_6': 'BartTransformer',
                              'distilbert_qa_BERT_ClinicalQA': 'DistilBertForQuestionAnswering',
                              'distilbert_qa_COVID_DistilBERTa': 'DistilBertForQuestionAnswering',
                              'distilbert_qa_COVID_DistilBERTb': 'DistilBertForQuestionAnswering',

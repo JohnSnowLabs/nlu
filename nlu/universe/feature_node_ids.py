@@ -104,6 +104,13 @@ class NLP_NODE_IDS:
     VIT_IMAGE_CLASSIFICATION = JslAnnoId("vit_image_classification")
     CONVNEXT_IMAGE_CLASSIFICATION = JslAnnoId("convnext_image_classification")
     SWIN_IMAGE_CLASSIFICATION = JslAnnoId("swin_image_classification")
+    BART_TRANSFORMER = JslAnnoId("bart_transformer")
+
+
+
+
+
+
     DISTIL_BERT_FOR_ZERO_SHOT_CLASSIFICATION = JslAnnoId('distil_bert_zero_shot')
     BERT_FOR_ZERO_SHOT_CLASSIFICATION = JslAnnoId('bert_zero_shot')
     ROBERTA_FOR_ZERO_SHOT_CLASSIFICATION = JslAnnoId('roberta_zero_shot')
