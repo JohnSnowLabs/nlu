@@ -2426,6 +2426,7 @@ class Spellbook:
                                            'el.stopwords.iso': 'stopwords_iso'},
                                     'eml': {'eml.embed.w2v_cc_300d': 'w2v_cc_300d'},
                                     'en': {
+                                        'en.distilbert.zero_shot_classifier': 'distilbert_base_zero_shot_classifier_uncased_mnli',
                                         'en.classify_image.convnext.tiny':'image_classifier_convnext_tiny_224_local',
                                         'en.classify_image.swin.tiny': 'image_classifier_swin_tiny_patch4_window7_224',
                                         'en.speech2text.hubert': 'asr_hubert_large_ls960',
@@ -15558,7 +15559,7 @@ class Spellbook:
                              'jsl_ner_wip_modifier_clinical': 'MedicalNerModel',
                              'jsl_rd_ner_wip_greedy_biobert': 'MedicalNerModel',
                              'jsl_rd_ner_wip_greedy_clinical': 'MedicalNerModel',
-                             'jsl_sbert_medium_rxnorm': 'BertSentenimage_classifier_convnext_tiny_224_localceEmbeddings',
+                             'jsl_sbert_medium_rxnorm': 'BertSentenceEmbeddings',
                              'kegg_disease_mapper': 'ChunkMapperModel',
                              'kegg_drug_mapper': 'ChunkMapperModel',
                              'labse': 'BertSentenceEmbeddings',

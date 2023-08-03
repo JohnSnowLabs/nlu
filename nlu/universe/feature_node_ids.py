@@ -104,12 +104,7 @@ class NLP_NODE_IDS:
     VIT_IMAGE_CLASSIFICATION = JslAnnoId("vit_image_classification")
     CONVNEXT_IMAGE_CLASSIFICATION = JslAnnoId("convnext_image_classification")
     SWIN_IMAGE_CLASSIFICATION = JslAnnoId("swin_image_classification")
-
-
-
-
-
-
+    DISTIL_BERT_FOR_ZERO_SHOT_CLASSIFICATION = JslAnnoId('distil_bert_zero_shot')
     UNIVERSAL_SENTENCE_ENCODER = JslAnnoId('universal_sentence_encoder')
     XLM_ROBERTA_EMBEDDINGS = JslAnnoId('xlm_roberta_embeddings')
     XLM_ROBERTA_FOR_TOKEN_CLASSIFICATION = JslAnnoId('xlm_roberta_for_token_classification')
