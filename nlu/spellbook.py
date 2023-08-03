@@ -2428,6 +2428,7 @@ class Spellbook:
                                     'en': {
                                         'en.distilbert.zero_shot_classifier': 'distilbert_base_zero_shot_classifier_uncased_mnli',
                                         'en.classify_image.convnext.tiny':'image_classifier_convnext_tiny_224_local',
+                                        'en.bert.zero_shot_classifier': 'bert_base_cased_zero_shot_classifier_xnli',
                                         'en.classify_image.swin.tiny': 'image_classifier_swin_tiny_patch4_window7_224',
                                         'en.speech2text.hubert': 'asr_hubert_large_ls960',
                                         'en.speech2text.hubert.large_ls960': 'asr_hubert_large_ls960',
@@ -12194,6 +12195,7 @@ class Spellbook:
                              'bert_base_token_classifier_conll03': 'BertForTokenClassification',
                              'bert_base_token_classifier_few_nerd': 'BertForTokenClassification',
                              'bert_base_token_classifier_ontonote': 'BertForTokenClassification',
+                             'bert_base_cased_zero_shot_classifier_xnli': 'BertForZeroShotClassification',
                              'bert_base_turkish_cased': 'BertEmbeddings',
                              'bert_base_turkish_uncased': 'BertEmbeddings',
                              'bert_base_uncased': 'BertEmbeddings',
@@ -15552,7 +15554,6 @@ class Spellbook:
                              'image_classifier_vit_where_am_I_hospital_balcony_hallway_airport_coffee_house': 'ViTForImageClassification',
                              'image_classifier_vit_where_am_I_hospital_balcony_hallway_airport_coffee_house_apartment_office': 'ViTForImageClassification',
                              'image_classifier_vit_world_landmarks': 'ViTForImageClassification',
-                             'image_classifier_convnext_tiny_224_local':'ConvNextImageClassifier',
                              'japanese_cc_300d': 'WordEmbeddingsModel',
                              'jsl_ner_wip_clinical': 'MedicalNerModel',
                              'jsl_ner_wip_greedy_clinical': 'MedicalNerModel',
