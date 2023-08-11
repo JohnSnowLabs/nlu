@@ -232,6 +232,8 @@ class NLP_FEATURE_NODES:  # or Mode Node?
         A.CAMEMBERT_FOR_SEQUENCE_CLASSIFICATION: NlpFeatureNode(A.CAMEMBERT_FOR_SEQUENCE_CLASSIFICATION,
                                                                 [F.DOCUMENT, F.TOKEN],
                                                                 [F.SEQUENCE_CLASSIFICATION]),
+        A.BERT_FOR_ZERO_SHOT_CLASSIFICATION: NlpFeatureNode(A.BERT_FOR_ZERO_SHOT_CLASSIFICATION, [F.DOCUMENT, F.TOKEN],
+                                                            [F.SEQUENCE_CLASSIFICATION]),
 
         A.DEBERTA_FOR_SEQUENCE_CLASSIFICATION: NlpFeatureNode(A.BERT_FOR_SEQUENCE_CLASSIFICATION, [F.DOCUMENT, F.TOKEN],
                                                               [F.SEQUENCE_CLASSIFICATION]),
@@ -239,6 +241,9 @@ class NLP_FEATURE_NODES:  # or Mode Node?
         A.DISTIL_BERT_FOR_SEQUENCE_CLASSIFICATION: NlpFeatureNode(A.DISTIL_BERT_FOR_SEQUENCE_CLASSIFICATION,
                                                                   [F.DOCUMENT, F.TOKEN],
                                                                   [F.SEQUENCE_CLASSIFICATION]),
+        A.DISTIL_BERT_FOR_ZERO_SHOT_CLASSIFICATION: NlpFeatureNode(A.DISTIL_BERT_FOR_ZERO_SHOT_CLASSIFICATION,
+                                                                   [F.DOCUMENT, F.TOKEN],
+                                                                   [F.SEQUENCE_CLASSIFICATION]),
 
         A.XLM_ROBERTA_FOR_SEQUENCE_CLASSIFICATION: NlpFeatureNode(A.XLM_ROBERTA_FOR_SEQUENCE_CLASSIFICATION,
                                                                   [F.DOCUMENT, F.TOKEN],
@@ -255,16 +260,20 @@ class NLP_FEATURE_NODES:  # or Mode Node?
         A.XLNET_FOR_SEQUENCE_CLASSIFICATION: NlpFeatureNode(A.XLNET_FOR_SEQUENCE_CLASSIFICATION,
                                                             [F.DOCUMENT, F.TOKEN],
                                                             [F.SEQUENCE_CLASSIFICATION]),
+        A.ROBERTA_FOR_ZERO_SHOT_CLASSIFICATION: NlpFeatureNode(A.ROBERTA_FOR_ZERO_SHOT_CLASSIFICATION,
+                                                               [F.DOCUMENT, F.TOKEN],
+                                                               [F.SEQUENCE_CLASSIFICATION]),
         A.GPT2: NlpFeatureNode(A.GPT2, [F.DOCUMENT], [F.DOCUMENT_GENERATED]),
         A.WORD_2_VEC: NlpFeatureNode(A.WORD_2_VEC, [F.TOKEN], [F.WORD_EMBEDDINGS]),
         A.BERT_SENTENCE_CHUNK_EMBEDDINGS: NlpFeatureNode(A.BERT_SENTENCE_CHUNK_EMBEDDINGS, [F.DOCUMENT],
                                                          [F.NAMED_ENTITY_CONVERTED]),
 
         A.VIT_IMAGE_CLASSIFICATION: NlpFeatureNode(A.VIT_IMAGE_CLASSIFICATION, [F.IMAGE], [F.CLASSIFIED_IMAGE]),
+        A.CONVNEXT_IMAGE_CLASSIFICATION: NlpFeatureNode(A.CONVNEXT_IMAGE_CLASSIFICATION, [F.IMAGE], [F.CLASSIFIED_IMAGE]),
         A.SWIN_IMAGE_CLASSIFICATION: NlpFeatureNode(A.SWIN_IMAGE_CLASSIFICATION, [F.IMAGE], [F.CLASSIFIED_IMAGE]),
+        A.BART_TRANSFORMER: NlpFeatureNode(A.BART_TRANSFORMER, [F.DOCUMENT], [F.DOCUMENT_GENERATED]),
 
     }
-
 
 @dataclass
 class OCR_FEATURE_NODES:
@@ -376,6 +385,8 @@ class NLP_HC_FEATURE_NODES():
     H_F = NLP_HC_FEATURES
     # HC Feature Nodes
     nodes = {
+        A.MEDICAL_TEXT_GENERATOR: NlpFeatureNode(A.MEDICAL_TEXT_GENERATOR, [F.DOCUMENT], [F.DOCUMENT_GENERATED]),
+
         A.MEDICAL_SUMMARIZER: NlpFeatureNode(A.MEDICAL_SUMMARIZER, [F.DOCUMENT], [F.DOCUMENT_GENERATED]),
 
         A.ZERO_SHOT_NER: NlpHcFeatureNode(A.ZERO_SHOT_NER, [F.TOKEN, F.DOCUMENT],

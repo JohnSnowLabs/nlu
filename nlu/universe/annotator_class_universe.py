@@ -95,9 +95,12 @@ class AnnoClassRef:
         A_N.BERT_SENTENCE_EMBEDDINGS: 'BertSentenceEmbeddings',
         A_N.DISTIL_BERT_EMBEDDINGS: 'DistilBertEmbeddings',
         A_N.DISTIL_BERT_FOR_SEQUENCE_CLASSIFICATION: 'DistilBertForSequenceClassification',
+        A_N.DISTIL_BERT_FOR_ZERO_SHOT_CLASSIFICATION: 'DistilBertForZeroShotClassification',
         A_N.BERT_FOR_SEQUENCE_CLASSIFICATION: 'BertForSequenceClassification',
+        A_N.BERT_FOR_ZERO_SHOT_CLASSIFICATION: 'BertForZeroShotClassification',
         A_N.ELMO_EMBEDDINGS: 'ElmoEmbeddings',
         A_N.LONGFORMER_EMBEDDINGS: 'LongformerEmbeddings',
+        A_N.ROBERTA_FOR_ZERO_SHOT_CLASSIFICATION: 'RoBertaForZeroShotClassification',
         A_N.LONGFORMER_FOR_TOKEN_CLASSIFICATION: 'LongformerForTokenClassification',
         A_N.MARIAN_TRANSFORMER: 'MarianTransformer',
         A_N.ROBERTA_EMBEDDINGS: 'RoBertaEmbeddings',
@@ -119,6 +122,7 @@ class AnnoClassRef:
         A_N.DEBERTA_WORD_EMBEDDINGS: 'DeBertaEmbeddings',
         A_N.DEBERTA_FOR_TOKEN_CLASSIFICATION: 'DeBertaForTokenClassification',
         A_N.CAMEMBERT_EMBEDDINGS: 'CamemBertEmbeddings',
+        A_N.BART_TRANSFORMER: 'BartTransformer',
 
         A_N.TRAINABLE_VIVEKN_SENTIMENT: 'ViveknSentimentApproach',
         A_N.TRAINABLE_SENTIMENT: 'SentimentDetector',
@@ -226,9 +230,11 @@ class AnnoClassRef:
         A_N.PARTIAL_Lemmatizer: 'Lemmatizer',
         A_N.PARTIAL_Normalizer: 'Normalizer',
         A_N.VIT_IMAGE_CLASSIFICATION: 'ViTForImageClassification',
+        A_N.CONVNEXT_IMAGE_CLASSIFICATION: 'ConvNextImageClassifier',
 
     }
     JSL_anno_HC_ref_2_py_class: Dict[JslAnnoId, JslAnnoPyClass] = {
+        HC_A_N.MEDICAL_TEXT_GENERATOR: 'MedicalTextGenerator',
         HC_A_N.MEDICAL_SUMMARIZER:'MedicalSummarizer',
         HC_A_N.ZERO_SHOT_NER: 'ZeroShotNerModel',
         HC_A_N.CHUNK_MAPPER_MODEL: 'ChunkMapperModel',

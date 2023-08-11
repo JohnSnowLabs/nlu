@@ -33,4 +33,4 @@ class ZeroShotRelationTests(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    SentenceResolutionTests().test_entities_config()
+    ZeroShotRelationTests().test_zero_shot_relation_model()

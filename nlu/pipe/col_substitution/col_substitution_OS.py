@@ -1085,6 +1085,7 @@ def substitute_summarizer_cols(c, cols, nlu_identifier=True):
             # new_cols[col]= f"{new_base_name}_confidence"
     return new_cols
 
+
 def substitute_sentiment_vivk_cols(c, cols, nlu_identifier=True):
     new_cols = {}
     new_base_name = 'sentiment' if nlu_identifier == 'UNIQUE' else f'sentiment_{nlu_identifier}'

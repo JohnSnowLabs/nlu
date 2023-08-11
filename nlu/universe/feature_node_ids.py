@@ -102,13 +102,18 @@ class NLP_NODE_IDS:
     ROBERTA_SENTENCE_EMBEDDINGS = JslAnnoId('roberta_sentence_embeddings')
     T5_TRANSFORMER = JslAnnoId('t5_transformer')
     VIT_IMAGE_CLASSIFICATION = JslAnnoId("vit_image_classification")
+    CONVNEXT_IMAGE_CLASSIFICATION = JslAnnoId("convnext_image_classification")
     SWIN_IMAGE_CLASSIFICATION = JslAnnoId("swin_image_classification")
+    BART_TRANSFORMER = JslAnnoId("bart_transformer")
 
 
 
 
 
 
+    DISTIL_BERT_FOR_ZERO_SHOT_CLASSIFICATION = JslAnnoId('distil_bert_zero_shot')
+    BERT_FOR_ZERO_SHOT_CLASSIFICATION = JslAnnoId('bert_zero_shot')
+    ROBERTA_FOR_ZERO_SHOT_CLASSIFICATION = JslAnnoId('roberta_zero_shot')
     UNIVERSAL_SENTENCE_ENCODER = JslAnnoId('universal_sentence_encoder')
     XLM_ROBERTA_EMBEDDINGS = JslAnnoId('xlm_roberta_embeddings')
     XLM_ROBERTA_FOR_TOKEN_CLASSIFICATION = JslAnnoId('xlm_roberta_for_token_classification')
@@ -292,7 +297,7 @@ class NLP_HC_NODE_IDS:  # or Mode Node?
     MEDICAL_DISTILBERT_FOR_SEQUENCE_CLASSIFICATION = JslAnnoId('medical_distilbert_for_sequence_classification')
     ENTITY_CHUNK_EMBEDDING = JslAnnoId('entity_chunk_embedding')
     MEDICAL_SUMMARIZER = JslAnnoId('med_summarizer')
-
+    MEDICAL_TEXT_GENERATOR = JslAnnoId('med_text_generator')
 
 class OCR_NODE_IDS:
     """All available Feature nodes in OCR
