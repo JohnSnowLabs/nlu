@@ -1,3 +1,4 @@
+import json
 import logging
 from typing import Union
 
@@ -418,11 +419,26 @@ class NLUPipeline(dict):
         if keep_origin_index == False and 'origin_index' in cols: cols.remove('origin_index')
         return cols
 
-    def save(self, path, component='entire_pipeline', overwrite=False):
+    def save(self, path, component='entire_pipeline', overwrite=True):
+        # serialize data
+        data = {}
+        data[0] = {'nlu_ref': self.nlu_ref}
+        data['is_nlu_pipe'] = True
+        for i, c in enumerate(self.components):
+            data[i + 1] = {'nlu_ref': c.nlu_ref, 'nlp_ref': c.nlp_ref,
+                           'loaded_from_pretrained_pipe': c.loaded_from_pretrained_pipe}
+
+        data = json.dumps(data)
         if not self.is_fitted or not hasattr(self, 'vanilla_transformer_pipe'):
             self.fit()
             self.is_fitted = True
-
+        # self.vanilla_transformer_pipe.extractParamMap()
+        if hasattr(self, 'nlu_ref'):
+            """ ATTRS TO SAVE FOR EACH COMPONENT / PIPELINE: 
+            - nlp ref/nlu ref
+            - is loaded_form_pipe
+            """
+            self.vanilla_transformer_pipe._resetUid(data)
         if component == 'entire_pipeline':
             if overwrite:
                 self.vanilla_transformer_pipe.write().overwrite().save(path)
