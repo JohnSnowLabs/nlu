@@ -72,6 +72,9 @@ class NluComponent:
                  trained_mirror_anno: Optional[JslAnnoId] = None,
                  applicable_file_types: List[str] = None,  # Used for OCR annotators to deduct applicable file types
                  is_trained: bool = True,  # Set to true for trainable annotators
+                 requires_binary_format: bool = False,  # Set to true for OCR annotators that require binary image format
+                 requires_image_format: bool = False,  # Set to true for OCR annotators that require image format
+                 is_visual_annotator: bool = False,  # Set to true for OCR annotators that require image format
                  ):
         self.name = name
         self.type = type
@@ -110,6 +113,9 @@ class NluComponent:
         self.trained_mirror_anno = trained_mirror_anno
         self.applicable_file_types = applicable_file_types
         self.is_trained = is_trained
+        self.requires_binary_format = requires_binary_format
+        self.requires_image_format = requires_image_format
+        self.is_visual_annotator = is_visual_annotator
 
     def set_metadata(self, jsl_anno_object: Union[AnnotatorApproach, AnnotatorModel],
                      nlu_ref: str,

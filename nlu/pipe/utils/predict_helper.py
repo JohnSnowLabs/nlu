@@ -74,8 +74,31 @@ def __predict_ocr_spark(pipe, data, output_level, positions, keep_stranger_featu
     file_paths = OcrDataConversionUtils.glob_files_of_accepted_type(paths, accepted_file_types)
     spark = sparknlp.start()  # Fetches Spark Session that has already been licensed
 
-    data = pipe.vanilla_transformer_pipe.transform(spark.read.format("image").load(file_paths)).withColumn(
-        'origin_index', monotonically_increasing_id().alias('origin_index'))
+    # Some annos require `image` format, some will require `binary` format. We need to figure out which one is needed possible provide both
+    if pipe.requires_image_format and pipe.requires_binary_format:
+        from pyspark.sql.functions import regexp_replace
+        # Image & Binary formats required. We read as both and join the dfs
+        img_df = spark.read.format("image").load(file_paths).withColumn("modified_origin",
+                                                                        regexp_replace("image.origin", ":/{1,}", ":"))
+
+        # Read the files in binaryFile format
+        binary_df = spark.read.format("binaryFile").load(file_paths).withColumn("modified_path",
+                                                                                regexp_replace("path", ":/{1,}", ":"))
+
+        data = img_df.join(binary_df, img_df["modified_origin"] == binary_df["modified_path"]).drop('modified_path')
+
+    elif pipe.requires_image_format:
+        # only image format required
+        data = spark.read.format("image").load(file_paths)
+    elif pipe.requires_binary_format:
+        # only binary required
+        data = spark.read.format("binaryFile").load(file_paths)
+    else:
+        # fallback default
+        data = spark.read.format("binaryFile").load(file_paths)
+    data = data.withColumn('origin_index', monotonically_increasing_id().alias('origin_index'))
+
+    data = pipe.vanilla_transformer_pipe.transform(data)
     return pipe.pythonify_spark_dataframe(data,
                                           keep_stranger_features=keep_stranger_features,
                                           output_metadata=metadata,
