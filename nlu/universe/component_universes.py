@@ -3232,6 +3232,8 @@ class ComponentUniverse:
                                             jsl_anno_class_id=A.VIT_IMAGE_CLASSIFICATION,
                                             jsl_anno_py_class=ACR.JSL_anno2_py_class[
                                                 A.VIT_IMAGE_CLASSIFICATION],
+                                            requires_image_format=True,
+                                            is_visual_annotator=True,
                                             ),
 
         A.CONVNEXT_IMAGE_CLASSIFICATION: partial(NluComponent,
@@ -3279,6 +3281,8 @@ class ComponentUniverse:
                                              jsl_anno_class_id=A.SWIN_IMAGE_CLASSIFICATION,
                                              jsl_anno_py_class=ACR.JSL_anno2_py_class[
                                                  A.SWIN_IMAGE_CLASSIFICATION],
+                                             requires_image_format=True,
+                                             is_visual_annotator=True,
                                              ),
 
         A.IMAGE_ASSEMBLER: partial(NluComponent,
