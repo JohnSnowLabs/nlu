@@ -58,7 +58,8 @@ class NLUPipeline(dict):
         self.has_span_classifiers = False
         self.prefer_light = False
         self.has_table_qa_models = False
-
+        self.requires_image_format = False
+        self.requires_binary_format = False
     def add(self, component: NluComponent, nlu_reference=None, pretrained_pipe_component=False,
             name_to_add='', idx=None):
         '''
