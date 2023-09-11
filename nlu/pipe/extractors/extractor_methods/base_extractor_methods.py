@@ -206,7 +206,6 @@ def extract_base_sparknlp_features(row: pd.Series, configs: SparkNLPExtractorCon
 
     return {**beginnings, **endings, **results, **annotator_types, **embeddings, **origins}  # Merge dicts NLP output
 
-
 def extract_sparknlp_metadata(row: pd.Series, configs: SparkNLPExtractorConfig) -> dict:
     """
     Extract base features common in all saprk NLP annotators

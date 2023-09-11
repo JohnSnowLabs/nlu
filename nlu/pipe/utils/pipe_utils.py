@@ -667,8 +667,13 @@ class PipeUtils:
 
         for c in pipe.components:
             # Check for OCR componments
-            if c.jsl_anno_py_class in py_class_to_anno_id.keys():
+            if c.jsl_anno_py_class in py_class_to_anno_id.keys() or c.is_visual_annotator:
                 pipe.contains_ocr_components = True
+                if c.requires_image_format:
+                    pipe.requires_image_format = True
+                if c.requires_binary_format:
+                    pipe.requires_binary_format = True
+
             # Check for licensed components
             if c.license in [Licenses.ocr, Licenses.hc]:
                 pipe.has_licensed_components = True

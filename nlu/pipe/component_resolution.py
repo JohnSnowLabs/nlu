@@ -2,7 +2,7 @@
 Contains methods used to resolve a NLU reference to a NLU component_to_resolve.
 Handler for getting default components, etc.
 '''
-from typing import Dict, List, Union, Optional, Callable
+from typing import Dict, List, Union, Optional, Callable, Tuple
 
 from pyspark.ml import PipelineModel, Pipeline
 from sparknlp.pretrained import PretrainedPipeline, LightPipeline
@@ -155,7 +155,7 @@ def nlu_ref_to_component(nlu_ref, detect_lang=False, authenticated=False) -> Uni
     lang, nlu_ref, nlp_ref, license_type, is_pipe, model_params = nlu_ref_to_nlp_metadata(nlu_ref)
 
     if is_pipe:
-        resolved_component = get_trained_component_list_for_nlp_pipe_ref(lang, nlp_ref, nlu_ref,
+        resolved_component, _ = get_trained_component_list_for_nlp_pipe_ref(lang, nlp_ref, nlu_ref,
                                                                          license_type=license_type)
     else:
         resolved_component = get_trained_component_for_nlp_model_ref(lang, nlu_ref, nlp_ref, license_type, model_params)
@@ -179,7 +179,7 @@ def get_trainable_component_for_nlu_ref(nlu_ref) -> NluComponent:
 
 def get_trained_component_list_for_nlp_pipe_ref(language, nlp_ref, nlu_ref, path=None,
                                                       license_type: LicenseType = Licenses.open_source,
-                                                      ) -> List[NluComponent]:
+                                                      ) -> Tuple[List[NluComponent],str]:
     """
     creates a list of components from a Spark NLP Pipeline reference
     1. download pipeline
@@ -190,7 +190,9 @@ def get_trained_component_list_for_nlp_pipe_ref(language, nlp_ref, nlu_ref, path
     :param language: language of the pipeline
     :param nlp_ref: Reference to a spark nlp pretrained pipeline
     :param path: Load component_list from HDD
-    :return: Each element of the Spark NLP pipeline wrapped as a NLU component_to_resolve inside a list
+    :return: Tuple,
+                first element List of each element of the Spark NLP pipeline wrapped as a NLU component_to_resolve inside a list
+                second element UUID of the pipeline
     """
     logger.info(f'Building pretrained pipe for nlu_ref={nlu_ref} nlp_ref={nlp_ref}')
     if 'language' in nlp_ref:
@@ -199,16 +201,20 @@ def get_trained_component_list_for_nlp_pipe_ref(language, nlp_ref, nlu_ref, path
     if path is None:
         if license_type != Licenses.open_source:
             pipe = PretrainedPipeline(nlp_ref, lang=language, remote_loc='clinical/models')
+            uid = pipe.model.uid
+
         else:
             pipe = PretrainedPipeline(nlp_ref, lang=language)
+            uid = pipe.model.uid
         iterable_stages = pipe.light_model.pipeline_model.stages
     else:
         pipe = LightPipeline(PipelineModel.load(path=path))
+        uid = pipe.pipeline_model.uid
         iterable_stages = pipe.pipeline_model.stages
     constructed_components = get_component_list_for_iterable_stages(iterable_stages, language, nlp_ref, nlu_ref,
                                                                     license_type)
     return ComponentUtils.set_storage_ref_attribute_of_embedding_converters(
-        PipeUtils.set_column_values_on_components_from_pretrained_pipe(constructed_components))
+        PipeUtils.set_column_values_on_components_from_pretrained_pipe(constructed_components)), uid
 
 
 
