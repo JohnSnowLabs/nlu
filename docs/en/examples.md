@@ -441,7 +441,7 @@ nlp.load('lang').predict(['NLU is an open-source text processing library for adv
 ## E2E Classifier
 [E2E Classifier example](https://colab.research.google.com/drive/1OSkiXGEpKlm9HWDoVb42uLNQQgb7nqNZ?usp=sharing)     
 
-This is a multi class classifier trained on the E2E [dataset for Natural language generation](http://www.macs.hw.ac.uk/InteractionLab/E2E/#)
+This is a multi class classifier trained on the E2E [dataset for Natural language generation](https://www.macs.hw.ac.uk/InteractionLab/E2E/#)
 
 ```python
 nlp.load('e2e').predict('E2E is a dataset for training generative models')

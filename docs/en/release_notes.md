@@ -177,7 +177,7 @@ If multiple datasets or tune parameters are defined , they are connected with  a
 
 These substrings define up the `<domain>` part of the NLU reference
 - Legal [cuad](https://arxiv.org/abs/2103.06268)
-- COVID 19 Biomedical [biosaq](http://bioasq.org/)
+- COVID 19 Biomedical [biosaq](https://bioasq.org/)
 - Biomedical Literature [pubmed](https://pubmed.ncbi.nlm.nih.gov/)
 - Twitter [tweet](https://aclanthology.org/P19-1496.pdf)
 - Wikipedia [wiki](https://www.wikipedia.org/)
@@ -8782,7 +8782,7 @@ We are glad to announce nlu 1.0.2 is released!
 - Integration of CI pipeline with Github Actions
 
 #### New Documentation is out!
-Check it out here :  http://nlu.johnsnowlabs.com/
+Check it out here :  [https://nlu.johnsnowlabs.com/](https://nlu.johnsnowlabs.com/)
 
 
 ## NLU Version 1.0.1
@@ -8818,7 +8818,7 @@ A picture says more than a 1000 words, so here is a demo clip of the 12 coolest 
 </div><div class="h3-box" markdown="1">
 
 #### NLU in action
-<img src="http://ckl-it.de/wp-content/uploads/2020/08/My-Video6.gif" width="1800" height="500"/>
+<img src="https://ckl-it.de/wp-content/uploads/2020/08/My-Video6.gif" width="1800" height="500"/>
 
 </div><div class="h3-box" markdown="1">
 
