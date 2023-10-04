@@ -109,6 +109,7 @@ class OCR_FEATURES(JslFeature):
     TEXT_DOCUMENT = JslFeature("text_document")  # TODO should be same class as the spark NLP ones
     TEXT_DOCUMENT_TOKENIZED = JslFeature("text_tokenized")  # TODO should be same class as the spark NLP ones
     HOCR = JslFeature("hocr")  # img -
+    IMG_SPLIT_REGIONS = JslFeature("table_image")
 
     # All OCR_* features are structs generated from OCR lib
     FALL_BACK = JslFeature("fall_back")  #

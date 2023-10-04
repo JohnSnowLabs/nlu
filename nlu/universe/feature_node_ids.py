@@ -349,7 +349,7 @@ class OCR_NODE_IDS:
     IMAGE_MORPHOLOGY_OPERATION = JslAnnoId('image_morphology_operation')
     IMAGE_CROPPER = JslAnnoId('image_cropper')
     IMAGE2REGION = JslAnnoId('image2region')
-    IMAGE_LAYOUT_ANALZYER = JslAnnoId('image_layout_analyzer')
+    # IMAGE_LAYOUT_ANALZYER = JslAnnoId('image_layout_analyzer')
     IMAGE_SPLIT_REGIONS = JslAnnoId('image_split_regions')
     IMAGE_DRAW_REGIONS = JslAnnoId('image_draw_regions')
 

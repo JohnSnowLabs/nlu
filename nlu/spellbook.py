@@ -10782,7 +10782,9 @@ class Spellbook:
         'jpg2text': OCR_NODE_IDS.IMAGE2TEXT,  # Alias for img2text
         'pdf2text': OCR_NODE_IDS.PDF2TEXT,
         'doc2text': OCR_NODE_IDS.DOC2TEXT,
-
+        'image_table_detector': OCR_NODE_IDS.IMAGE_TABLE_DETECTOR,
+        'image_table_cell_detector': OCR_NODE_IDS.IMAGE_TABLE_CELL_DETECTOR,
+        'image_table_cell2text_table': OCR_NODE_IDS.IMAGE_TABLE_CELL2TEXT_TABLE,
         'pdf2table': OCR_NODE_IDS.PDF2TEXT_TABLE,
         'doc2table': OCR_NODE_IDS.DOC2TEXT_TABLE,
         'ppt2table': OCR_NODE_IDS.PPT2TEXT_TABLE,
@@ -10790,19 +10792,19 @@ class Spellbook:
         'en.classify_image.tabacco': 'visual_document_classifier_tobacco3482'
     }
 
-    ocr_model_references = {
-        'img2text': OCR_NODE_IDS.IMAGE2TEXT,
-        'png2text': OCR_NODE_IDS.IMAGE2TEXT,  # Alias for img2text
-        'jpg2text': OCR_NODE_IDS.IMAGE2TEXT,  # Alias for img2text
-        'pdf2text': OCR_NODE_IDS.PDF2TEXT,
-        'doc2text': OCR_NODE_IDS.DOC2TEXT,
-
-        'pdf2table': OCR_NODE_IDS.PDF2TEXT_TABLE,
-        'doc2table': OCR_NODE_IDS.DOC2TEXT_TABLE,
-        'ppt2table': OCR_NODE_IDS.PPT2TEXT_TABLE,
-        'classify.image': OCR_NODE_IDS.VISUAL_DOCUMENT_CLASSIFIER,
-        'en.classify_image.tabacco': 'visual_document_classifier_tobacco3482'
-    }
+    # ocr_model_references = {
+    #     'img2text': OCR_NODE_IDS.IMAGE2TEXT,
+    #     'png2text': OCR_NODE_IDS.IMAGE2TEXT,  # Alias for img2text
+    #     'jpg2text': OCR_NODE_IDS.IMAGE2TEXT,  # Alias for img2text
+    #     'pdf2text': OCR_NODE_IDS.PDF2TEXT,
+    #     'doc2text': OCR_NODE_IDS.DOC2TEXT,
+    #
+    #     'pdf2table': OCR_NODE_IDS.PDF2TEXT_TABLE,
+    #     'doc2table': OCR_NODE_IDS.DOC2TEXT_TABLE,
+    #     'ppt2table': OCR_NODE_IDS.PPT2TEXT_TABLE,
+    #     'classify.image': OCR_NODE_IDS.VISUAL_DOCUMENT_CLASSIFIER,
+    #     'en.classify_image.tabacco': 'visual_document_classifier_tobacco3482'
+    # }
     # map storage ref to nlu refner_jsl
     storage_ref_2_nlu_ref = {'ar': {'glove_300d': 'ar.embed'},
                              'bn': {'bengali_cc_300d': 'bn.embed.glove',
@@ -15158,6 +15160,9 @@ class Spellbook:
                              'distilroberta_base': 'RoBertaEmbeddings',
                              'distilroberta_base_token_classifier_ontonotes': 'RoBertaForTokenClassification',
                              'doc2text': 'DocToText',
+                             'image_table_detector': 'ImageTableDetector',
+                             'image_table_cell_detector': 'ImageTableCellDetector',
+                             'image_table_cell2text_table': 'ImageCellsToTextTable',
                              'doc2text_table': 'DocToTextTable',
                              'doc2vec_gigaword_300': 'Doc2VecModel',
                              'doc2vec_gigaword_wiki_300': 'Doc2VecModel',

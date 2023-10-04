@@ -121,6 +121,10 @@ from nlu.components.utils.sdf_finisher.sdf_finisher import SdfFinisher
 from nlu.components.utils.sentence_embeddings.spark_nlp_sentence_embedding import SparkNLPSentenceEmbeddings
 from nlu.components.utils.table_assembler.spark_nlp_multi_document_assembler import SparkNlpTableAssembler
 from nlu.ocr_components.table_extractors.doc_table_extractor.doc2table import Doc2TextTable
+from nlu.ocr_components.table_extractors.image2table.image2table import IMAGE_TABLE_DETECTOR
+from nlu.ocr_components.table_extractors.image2table_cell.image2table_cell import ImageTableCellDetector
+from nlu.ocr_components.table_extractors.image_table_cell2text.image_table_cell2text import ImageTable2Cell2TextTable
+from nlu.ocr_components.utils.image_split_regions.image_split_regions import ImageSplitRegions
 from nlu.ocr_components.table_extractors.pdf_table_extractor.pdf2table import PDF2TextTable
 from nlu.ocr_components.table_extractors.ppt_table_extractor.ppt2table import PPT2TextTable
 from nlu.ocr_components.text_recognizers.doc2text.doc2text import Doc2Text
@@ -4079,6 +4083,78 @@ class ComponentUniverse:
                                     jsl_anno_py_class=ACR.JSL_anno_OCR_ref_2_py_class[O_A.DOC2TEXT_TABLE],
                                     applicable_file_types=['DOCX', 'DOC']
                                     ),
+        O_A.IMAGE2TEXT: partial(NluComponent,
+                                name=O_A.IMAGE2TEXT,
+                                type=T.TEXT_RECOGNIZER,
+                                get_default_model=Img2Text.get_default_model,
+                                pdf_extractor_methods={'default': default_text_recognizer_config},
+                                pdf_col_name_substitutor=substitute_recognized_text_cols,  # TODO substitor
+                                output_level=L.DOCUMENT,  # TODO new output level IMG? Or treat as DOC?
+                                node=OCR_FEATURE_NODES.nodes[O_A.IMAGE2TEXT],
+                                description='Recognize text from image files',
+                                provider=ComponentBackends.ocr,
+                                license=Licenses.ocr,
+                                computation_context=ComputeContexts.spark,
+                                output_context=ComputeContexts.spark,
+                                jsl_anno_class_id=O_A.IMAGE2TEXT,
+                                jsl_anno_py_class=ACR.JSL_anno_OCR_ref_2_py_class[O_A.IMAGE2TEXT],
+
+                                applicable_file_types=['JPEG', 'PNG', 'BMP', 'WBMP', 'GIF', 'JPG', '.TIFF']
+                                ),
+
+        O_A.IMAGE_TABLE_CELL_DETECTOR: partial(NluComponent,
+                                name=O_A.IMAGE_TABLE_CELL_DETECTOR,
+                                type=T.TEXT_RECOGNIZER,
+                                get_default_model= ImageTableCellDetector.get_default_model,
+                                pdf_extractor_methods={'default': default_text_recognizer_config},
+                                pdf_col_name_substitutor=substitute_recognized_text_cols,  # TODO substitor
+                                output_level=L.DOCUMENT,  # TODO new output level IMG? Or treat as DOC?
+                                node=OCR_FEATURE_NODES.nodes[O_A.IMAGE_TABLE_CELL_DETECTOR],
+                                description='Recognize text from image files',
+                                provider=ComponentBackends.ocr,
+                                license=Licenses.ocr,
+                                computation_context=ComputeContexts.spark,
+                                output_context=ComputeContexts.spark,
+                                jsl_anno_class_id=O_A.IMAGE_TABLE_CELL_DETECTOR,
+                                jsl_anno_py_class=ACR.JSL_anno_OCR_ref_2_py_class[O_A.IMAGE_TABLE_CELL_DETECTOR],
+                                applicable_file_types=['JPEG', 'PNG', 'BMP', 'WBMP', 'GIF', 'JPG', '.TIFF']
+                                ),
+
+        O_A.IMAGE_TABLE_CELL2TEXT_TABLE: partial(NluComponent,
+                                name=O_A.IMAGE_TABLE_CELL2TEXT_TABLE,
+                                type=T.TEXT_RECOGNIZER,
+                                get_default_model=ImageTable2Cell2TextTable.get_default_model,
+                                pdf_extractor_methods={'default': default_text_recognizer_config},
+                                pdf_col_name_substitutor=substitute_recognized_text_cols,  # TODO substitor
+                                output_level=L.DOCUMENT,  # TODO new output level IMG? Or treat as DOC?
+                                node=OCR_FEATURE_NODES.nodes[O_A.IMAGE_TABLE_CELL2TEXT_TABLE],
+                                description='Recognize text from image files',
+                                provider=ComponentBackends.ocr,
+                                license=Licenses.ocr,
+                                computation_context=ComputeContexts.spark,
+                                output_context=ComputeContexts.spark,
+                                jsl_anno_class_id=O_A.IMAGE_TABLE_CELL2TEXT_TABLE,
+                                jsl_anno_py_class=ACR.JSL_anno_OCR_ref_2_py_class[O_A.IMAGE_TABLE_CELL2TEXT_TABLE],
+                                applicable_file_types=['JPEG', 'PNG', 'BMP', 'WBMP', 'GIF', 'JPG', '.TIFF']
+                                ),
+
+        O_A.IMAGE_TABLE_DETECTOR: partial(NluComponent,
+                                          name=O_A.IMAGE_TABLE_DETECTOR,
+                                          type=T.TABLE_RECOGNIZER,
+                                          get_default_model=IMAGE_TABLE_DETECTOR.get_default_model,
+                                          pdf_extractor_methods={'default': default_binary_to_image_config},
+                                          pdf_col_name_substitutor=substitute_recognized_text_cols,
+                                          output_level=L.DOCUMENT,
+                                          node=OCR_FEATURE_NODES.nodes[O_A.IMAGE_TABLE_DETECTOR],
+                                          description='Detect Tables from Images',
+                                          provider=ComponentBackends.ocr,
+                                          license=Licenses.ocr,
+                                          computation_context=ComputeContexts.spark,
+                                          output_context=ComputeContexts.spark,
+                                          jsl_anno_class_id=O_A.IMAGE_TABLE_DETECTOR,
+                                          jsl_anno_py_class=ACR.JSL_anno_OCR_ref_2_py_class[O_A.IMAGE_TABLE_DETECTOR],
+                                          applicable_file_types=['PDF','JPEG', 'PNG']
+                                          ),
 
         # O_A.VISUAL_DOCUMENT_CLASSIFIER: partial(NluComponent,
         #                                         name=O_A.VISUAL_DOCUMENT_CLASSIFIER,
@@ -4103,6 +4179,25 @@ class ComponentUniverse:
         #                                         applicable_file_types=['JPG', 'JPEG']
         #                                         ),
         #
+        O_A.IMAGE_SPLIT_REGIONS: partial(NluComponent,
+                                         name=O_A.IMAGE_SPLIT_REGIONS,
+                                         type=T.OCR_UTIL,
+                                         get_default_model=ImageSplitRegions.get_default_model,
+                                         pdf_extractor_methods={'default': default_binary_to_image_config},
+                                         pdf_col_name_substitutor=substitute_recognized_text_cols,
+                                         output_level=L.DOCUMENT,
+                                         node=OCR_FEATURE_NODES.nodes[O_A.IMAGE_SPLIT_REGIONS],
+                                         description='Convert Image to split regions',
+                                         provider=ComponentBackends.ocr,
+                                         license=Licenses.ocr,
+                                         computation_context=ComputeContexts.spark,
+                                         output_context=ComputeContexts.spark,
+                                         jsl_anno_class_id=O_A.IMAGE_SPLIT_REGIONS,
+                                         jsl_anno_py_class=ACR.JSL_anno_OCR_ref_2_py_class[
+                                             O_A.IMAGE_SPLIT_REGIONS],
+                                         applicable_file_types=['DOCX', 'DOC', 'JPEG', 'PNG']
+                                         ),
+
         O_A.IMAGE2HOCR: partial(NluComponent,
                                 name=O_A.IMAGE2HOCR,
                                 type=T.OCR_UTIL,

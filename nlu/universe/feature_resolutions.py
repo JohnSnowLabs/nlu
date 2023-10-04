@@ -106,5 +106,7 @@ class FeatureResolutions:
                                                 ComponentUniverse.components[OCR_NODE_IDS.BINARY2IMAGE]),
         OCR_FEATURES.HOCR: ResolvedFeature(OCR_NODE_IDS.IMAGE2HOCR, OCR_NODE_IDS.IMAGE2HOCR, 'xx', False,
                                            ComponentUniverse.components[OCR_NODE_IDS.IMAGE2HOCR]),
+        OCR_FEATURES.IMG_SPLIT_REGIONS: ResolvedFeature(OCR_NODE_IDS.IMAGE_SPLIT_REGIONS, OCR_NODE_IDS.IMAGE_SPLIT_REGIONS, 'xx', False,
+                                           ComponentUniverse.components[OCR_NODE_IDS.IMAGE_SPLIT_REGIONS]),
 
     }

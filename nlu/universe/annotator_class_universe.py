@@ -295,6 +295,10 @@ class AnnoClassRef:
         OCR_NODE_IDS.TEXT2PDF: 'TextToPdf',
         OCR_NODE_IDS.VISUAL_DOCUMENT_CLASSIFIER: 'VisualDocumentClassifier',
         OCR_NODE_IDS.IMAGE2HOCR: 'ImageToHocr',
+        OCR_NODE_IDS.IMAGE_TABLE_DETECTOR: 'ImageTableDetector',
+        OCR_NODE_IDS.IMAGE_TABLE_CELL_DETECTOR: 'ImageTableCellDetector',
+        OCR_NODE_IDS.IMAGE_TABLE_CELL2TEXT_TABLE: 'ImageCellsToTextTable',
+        OCR_NODE_IDS.IMAGE_SPLIT_REGIONS: 'ImageSplitRegions',
 
     }
 
