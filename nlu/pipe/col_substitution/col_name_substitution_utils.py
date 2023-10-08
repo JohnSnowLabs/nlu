@@ -104,7 +104,7 @@ class ColSubstitutionUtils:
         for k in cols_to_rename:
             # some cols might not exist because no annotations generated, so we need to double check it really exists
             if k not in df.columns: del new_cols[k]
-        return df.rename(columns=new_cols)[set(new_cols.values()).union(set(stranger_cols))] if drop_debug_cols else \
+        return df.rename(columns=new_cols)[list(set(new_cols.values()).union(set(stranger_cols)))] if drop_debug_cols else \
             df.rename(columns=new_cols)
 
     @staticmethod

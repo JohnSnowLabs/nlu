@@ -1,4 +1,5 @@
-__version__ = '5.0.1'
+__version__ = '5.0.2'
+
 
 import nlu.utils.environment.env_utils as env_utils
 
@@ -18,6 +19,9 @@ from nlu.pipe.pipe_logic import PipelineCompleter
 from nlu.discovery import Discoverer
 from nlu.pipe.component_resolution import *
 
+# apply hotfix
+import pandas as pd
+pd.DataFrame.iteritems = pd.DataFrame.items
 
 def version(): return __version__
 
