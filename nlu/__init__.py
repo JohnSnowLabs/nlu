@@ -1,5 +1,6 @@
 __version__ = '5.0.2'
 
+
 import nlu.utils.environment.env_utils as env_utils
 
 if not env_utils.try_import_pyspark_in_streamlit():
@@ -208,7 +209,6 @@ def load(request: str = 'from_disk', path: Optional[str] = None, verbose: bool =
         if path is not None:
             logger.info(f'Trying to load nlu pipeline from local hard drive, located at {path}')
             pipe = load_nlu_pipe_from_hdd(path, request)
-            pipe.nlu_ref = request
             return pipe
     except Exception as err:
         if verbose:
@@ -274,6 +274,10 @@ def auth(HEALTHCARE_LICENSE_OR_JSON_PATH='/content/spark_nlp_for_healthcare.json
     return nlu
 
 
+def is_nlu_uid(uid: str):
+    return 'is_nlu_pipe' in uid
+
+
 def load_nlu_pipe_from_hdd_in_databricks(pipe_path, request) -> NLUPipeline:
     """Either there is a pipeline of models in the path or just one singular model_anno_obj.
     If it is a component_list,  load the component_list and return it.
@@ -298,7 +302,7 @@ def load_nlu_pipe_from_hdd_in_databricks(pipe_path, request) -> NLUPipeline:
     # if dbfs_path_exist(pipe_path):
     # Resource in path is a pipeline
     if is_pipe(pipe_path):
-        pipe_components = get_trained_component_list_for_nlp_pipe_ref('en', nlu_ref, nlu_ref, pipe_path, False)
+        pipe_components, uid = get_trained_component_list_for_nlp_pipe_ref('en', nlu_ref, nlu_ref, pipe_path, False)
     # Resource in path is a single model_anno_obj
     elif is_model(pipe_path):
         c = offline_utils.verify_and_create_model(pipe_path)
@@ -307,11 +311,10 @@ def load_nlu_pipe_from_hdd_in_databricks(pipe_path, request) -> NLUPipeline:
         return PipelineCompleter.check_and_fix_nlu_pipeline(pipe)
 
     else:
-        #fallback pipe
-        pipe_components = get_trained_component_list_for_nlp_pipe_ref('en', nlu_ref, nlu_ref, pipe_path, False)
+        # fallback pipe
+        pipe_components, uid = get_trained_component_list_for_nlp_pipe_ref('en', nlu_ref, nlu_ref, pipe_path, False)
     for c in pipe_components: pipe.add(c, nlu_ref, pretrained_pipe_component=True)
     return pipe
-
 
 
 def load_nlu_pipe_from_hdd(pipe_path, request) -> NLUPipeline:
@@ -322,6 +325,7 @@ def load_nlu_pipe_from_hdd(pipe_path, request) -> NLUPipeline:
     if is_running_in_databricks():
         return load_nlu_pipe_from_hdd_in_databricks(pipe_path, request)
     pipe = NLUPipeline()
+    pipe.nlu_ref = request
     nlu_ref = request  # pipe_path
     if os.path.exists(pipe_path):
 
@@ -329,7 +333,7 @@ def load_nlu_pipe_from_hdd(pipe_path, request) -> NLUPipeline:
         if offline_utils.is_pipe(pipe_path):
             # language, nlp_ref, nlu_ref,path=None, is_licensed=False
             # todo deduct lang and if Licensed or not
-            pipe_components = get_trained_component_list_for_nlp_pipe_ref('en', nlu_ref, nlu_ref, pipe_path, False)
+            pipe_components, uid = get_trained_component_list_for_nlp_pipe_ref('en', nlu_ref, nlu_ref, pipe_path, False)
         # Resource in path is a single model_anno_obj
         elif offline_utils.is_model(pipe_path):
             c = offline_utils.verify_and_create_model(pipe_path)
@@ -340,7 +344,16 @@ def load_nlu_pipe_from_hdd(pipe_path, request) -> NLUPipeline:
             print(
                 f"Could not load model_anno_obj in path {pipe_path}. Make sure the jsl_folder contains either a stages subfolder or a metadata subfolder.")
             raise ValueError
-        for c in pipe_components: pipe.add(c, nlu_ref, pretrained_pipe_component=True)
+        for c in pipe_components:
+            pipe.add(c, nlu_ref, pretrained_pipe_component=True)
+        if is_nlu_uid(uid):
+            data = json.loads(uid)
+            print(data)
+            pipe.nlu_ref = data['0']['nlu_ref']
+            for i, c in enumerate(pipe.components):
+                c.nlu_ref = data[str(i + 1)]['nlu_ref']
+                c.nlp_ref = data[str(i + 1)]['nlp_ref']
+                c.loaded_from_pretrained_pipe = data[str(i + 1)]['loaded_from_pretrained_pipe']
         return pipe
 
     else:
