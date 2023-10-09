@@ -4,7 +4,7 @@ class ImageSplitRegions:
         from sparkocr.transformers import ImageSplitRegions
         return ImageSplitRegions() \
             .setInputCol("ocr_image") \
-            .setInputRegionsCol("region") \
+            .setInputRegionsCol("ocr_table_1") \
             .setOutputCol("table_image")
 
 # .setInputRegionsCol("ocr_table_1") \
