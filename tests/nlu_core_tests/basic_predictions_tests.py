@@ -8,6 +8,10 @@ from tests.test_utils import (
     get_sample_spark_dataframe,
 )
 
+import os
+import sys
+os.environ['PYSPARK_PYTHON'] = sys.executable
+os.environ['PYSPARK_DRIVER_PYTHON'] = sys.executable
 
 class TestNameSpace(unittest.TestCase):
     def test_pdf_column_prediction(self):
@@ -91,6 +95,22 @@ class TestNameSpace(unittest.TestCase):
 
         print(res)
 
+    def test_vector_embedding(self):
+        pdf = get_sample_pdf()
+        vector_dim = 768
+        p = nlu.load("en.embed_sentence.bert_base_cased")
+        v = p.predict_embeds(['Hello World', 'How are you', 'I love banas. And Apples!'])
+        assert len(v) == 3
+        assert len(v[0]) == vector_dim
+
+        v = p.predict_embeds(['Hello World','Foo Bar Zar Har Tar Mar'])
+        assert len(v) == 2
+        assert len(v[0]) == vector_dim
+        print('lol')
+
+        v = p.predict_embeds('hello world')
+        assert len(v) == 1
+        assert len(v[0]) == vector_dim
 
 if __name__ == "__main__":
     unittest.main()
