@@ -1,16 +1,69 @@
 import logging
-
+import os
+from typing import Optional
+from typing import Optional
+import os
 import sparknlp
 from pyspark.sql.functions import monotonically_increasing_id
 from sparknlp.common import AnnotatorType
 
 from nlu.pipe.utils.audio_data_conversion_utils import AudioDataConversionUtils
+from nlu.pipe.utils.data_conversion_utils import DataConversionUtils
 from nlu.pipe.utils.ocr_data_conversion_utils import OcrDataConversionUtils
 
 logger = logging.getLogger('nlu')
 from nlu.pipe.pipe_logic import PipeUtils
+
 import pandas as pd
-from nlu.pipe.utils.data_conversion_utils import DataConversionUtils
+from pydantic import BaseModel
+
+
+def get_first_anno_with_output_type(pipe, out_type):
+    for s in pipe.vanilla_transformer_pipe.stages:
+        if hasattr(s, 'outputAnnotatorType') and s.outputAnnotatorType == out_type:
+            return s
+    return None
+
+
+def serialize(img_path):
+    with open(img_path, 'rb') as img_file:
+        return img_file.read()
+
+
+def deserialize(binary_image, path):
+    with open(path, 'wb') as img_file:
+        img_file.write(binary_image)
+
+
+class PredictParams(BaseModel):
+    output_level: Optional[str] = ''
+    positions: Optional[bool] = False
+    keep_stranger_features: Optional[bool] = True
+    metadata: Optional[bool] = False
+    multithread: Optional[bool] = True
+    drop_irrelevant_cols: Optional[bool] = True
+    return_spark_df: Optional[bool] = False
+    get_embeddings: Optional[bool] = True
+
+    @staticmethod
+    def has_param_cols(df: pd.DataFrame):
+        return all([c not in df.columns for c in PredictParams.__fields__.keys()])
+
+    @staticmethod
+    def maybe_from_pandas_df(df: pd.DataFrame):
+        # only first row is used
+        if df.shape[0] == 0:
+            return None
+        if PredictParams.has_param_cols(df):
+            # no params in df
+            return None
+        param_row = df.iloc[0].to_dict()
+        try:
+            return PredictParams(**param_row)
+        except Exception as e:
+            print(f'Exception trying to parse prediction parameters for param row:'
+                  f' \n{param_row} \n', e)
+            return None
 
 
 def get_first_anno_with_output_type(pipe, out_type):
@@ -82,8 +135,31 @@ def __predict_ocr_spark(pipe, data, output_level, positions, keep_stranger_featu
     file_paths = OcrDataConversionUtils.glob_files_of_accepted_type(paths, accepted_file_types)
     spark = sparknlp.start()  # Fetches Spark Session that has already been licensed
 
-    data = pipe.vanilla_transformer_pipe.transform(spark.read.format("image").load(file_paths)).withColumn(
-        'origin_index', monotonically_increasing_id().alias('origin_index'))
+    # Some annos require `image` format, some will require `binary` format. We need to figure out which one is needed possible provide both
+    if pipe.requires_image_format and pipe.requires_binary_format:
+        from pyspark.sql.functions import regexp_replace
+        # Image & Binary formats required. We read as both and join the dfs
+        img_df = spark.read.format("image").load(file_paths).withColumn("modified_origin",
+                                                                        regexp_replace("image.origin", ":/{1,}", ":"))
+
+        # Read the files in binaryFile format
+        binary_df = spark.read.format("binaryFile").load(file_paths).withColumn("modified_path",
+                                                                                regexp_replace("path", ":/{1,}", ":"))
+
+        data = img_df.join(binary_df, img_df["modified_origin"] == binary_df["modified_path"]).drop('modified_path')
+
+    elif pipe.requires_image_format:
+        # only image format required
+        data = spark.read.format("image").load(file_paths)
+    elif pipe.requires_binary_format:
+        # only binary required
+        data = spark.read.format("binaryFile").load(file_paths)
+    else:
+        # fallback default
+        data = spark.read.format("binaryFile").load(file_paths)
+    data = data.withColumn('origin_index', monotonically_increasing_id().alias('origin_index'))
+
+    data = pipe.vanilla_transformer_pipe.transform(data)
     return pipe.pythonify_spark_dataframe(data,
                                           keep_stranger_features=keep_stranger_features,
                                           output_metadata=metadata,
@@ -130,6 +206,38 @@ def __predict_audio_spark(pipe, data, output_level, positions, keep_stranger_fea
                                           )
 
 
+def __db_endpoint_predict__(pipe, data):
+    """
+    1) parse pred params from first row maybe
+    2) serialize/deserialize img
+    """
+    print("CUSOTM NLU MODE!")
+    print(data.columns)
+    params = PredictParams.maybe_from_pandas_df(data)
+    if params:
+        params = params.dict()
+    else:
+        params = {}
+    files = []
+    if 'file' in data.columns and 'file_type' in data.columns:
+        print("DETECTED FILE COLS")
+        skip_first = PredictParams.has_param_cols(data)
+        for i, row in data.iterrows():
+            print(f"DESERIALIZING {row.file_type} file {row.file}")
+            if i == 0 and skip_first:
+                continue
+            file_name = f'file{i}.{row.file_type}'
+            files.append(file_name)
+            deserialize(row.file, file_name)
+        data = files
+
+    if params:
+        return __predict__(pipe, data, **params, normal_pred_on_db=True)
+    else:
+        # no params detect, we call again with default params
+        return __predict__(pipe, data, **PredictParams().dict(), normal_pred_on_db=True)
+
+
 def __predict_standard_spark_only_embed(pipe, data, return_spark_df):
     # 1. Convert data to Spark DF
     data, stranger_features, output_datatype = DataConversionUtils.to_spark_df(data, pipe.spark, pipe.raw_text_column,
@@ -145,7 +253,6 @@ def __predict_standard_spark_only_embed(pipe, data, return_spark_df):
     if not sent_embedder or not hasattr(sent_embedder, 'getOutputCol', ):
         raise Exception('No Sentence Embedder found in pipeline')
 
-
     # 4. return embeds
     emb_col = sent_embedder.getOutputCol()
     if return_spark_df:
@@ -156,7 +263,7 @@ def __predict_standard_spark_only_embed(pipe, data, return_spark_df):
 
 
 def __predict__(pipe, data, output_level, positions, keep_stranger_features, metadata, multithread,
-                drop_irrelevant_cols, return_spark_df, get_embeddings, embed_only=False):
+                drop_irrelevant_cols, return_spark_df, get_embeddings, normal_pred_on_db=False, embed_only=False):
     '''
     Annotates a Pandas Dataframe/Pandas Series/Numpy Array/Spark DataFrame/Python List strings /Python String
     :param data: Data to predict on
@@ -172,6 +279,9 @@ def __predict__(pipe, data, output_level, positions, keep_stranger_features, met
     if embed_only:
         pipe.fit()
         return __predict_standard_spark_only_embed(pipe, data, return_spark_df)
+
+    if 'DB_ENDPOINT_ENV' in os.environ and not normal_pred_on_db:
+        return __db_endpoint_predict__(pipe,data)
 
     if output_level == '' and not pipe.has_table_qa_models:
         # Default sentence level for all components
@@ -201,7 +311,7 @@ def __predict__(pipe, data, output_level, positions, keep_stranger_features, met
         else:
             pipe.fit()
 
-    pipe.__configure_light_pipe_usage__(DataConversionUtils.size_of(data), multithread)
+        pipe.__configure_light_pipe_usage__(DataConversionUtils.size_of(data), multithread)
 
     if pipe.contains_ocr_components and pipe.contains_audio_components:
         """ Idea:
