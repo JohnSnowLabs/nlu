@@ -198,7 +198,7 @@ def load(request: str = 'from_disk', path: Optional[str] = None, verbose: bool =
     # check if secrets are in default loc, if yes load them and create licensed context automatically
     auth(gpu=gpu)
     spark = get_open_source_spark_context(gpu, m1_chip)
-    spark.catalog.clearCache()
+    # spark.catalog.clearCache()
 
     if verbose:
         enable_verbose()
