@@ -2,6 +2,7 @@ import logging
 
 import sparknlp
 from pyspark.sql.functions import monotonically_increasing_id
+from sparknlp.common import AnnotatorType
 
 from nlu.pipe.utils.audio_data_conversion_utils import AudioDataConversionUtils
 from nlu.pipe.utils.ocr_data_conversion_utils import OcrDataConversionUtils
@@ -10,6 +11,13 @@ logger = logging.getLogger('nlu')
 from nlu.pipe.pipe_logic import PipeUtils
 import pandas as pd
 from nlu.pipe.utils.data_conversion_utils import DataConversionUtils
+
+
+def get_first_anno_with_output_type(pipe, out_type):
+    for s in pipe.vanilla_transformer_pipe.stages:
+        if hasattr(s, 'outputAnnotatorType') and s.outputAnnotatorType == out_type:
+            return s
+    return None
 
 
 def __predict_standard_spark(pipe, data, output_level, positions, keep_stranger_features, metadata,
@@ -122,8 +130,33 @@ def __predict_audio_spark(pipe, data, output_level, positions, keep_stranger_fea
                                           )
 
 
+def __predict_standard_spark_only_embed(pipe, data, return_spark_df):
+    # 1. Convert data to Spark DF
+    data, stranger_features, output_datatype = DataConversionUtils.to_spark_df(data, pipe.spark, pipe.raw_text_column,
+                                                                               is_span_data=pipe.has_span_classifiers,
+                                                                               is_tabular_qa_data=pipe.has_table_qa_models,
+                                                                               )
+
+    # 2. Apply Spark Pipeline
+    data = pipe.vanilla_transformer_pipe.transform(data)
+
+    # 3. Validate data
+    sent_embedder = get_first_anno_with_output_type(pipe, AnnotatorType.SENTENCE_EMBEDDINGS)
+    if not sent_embedder or not hasattr(sent_embedder, 'getOutputCol', ):
+        raise Exception('No Sentence Embedder found in pipeline')
+
+
+    # 4. return embeds
+    emb_col = sent_embedder.getOutputCol()
+    if return_spark_df:
+        return data.select(f'{emb_col}.embeddings')
+
+    # Note, this is only document output level. If pipe has sentence detector, we will only keep first embed of every document.
+    return [r.embeddings[0] for r in data.select(f'{emb_col}.embeddings').collect()]
+
+
 def __predict__(pipe, data, output_level, positions, keep_stranger_features, metadata, multithread,
-                drop_irrelevant_cols, return_spark_df, get_embeddings):
+                drop_irrelevant_cols, return_spark_df, get_embeddings, embed_only=False):
     '''
     Annotates a Pandas Dataframe/Pandas Series/Numpy Array/Spark DataFrame/Python List strings /Python String
     :param data: Data to predict on
@@ -136,6 +169,9 @@ def __predict__(pipe, data, output_level, positions, keep_stranger_features, met
     :param return_spark_df: Prediction results will be returned right after transforming with the Spark NLP pipeline
     :return:
     '''
+    if embed_only:
+        pipe.fit()
+        return __predict_standard_spark_only_embed(pipe, data, return_spark_df)
 
     if output_level == '' and not pipe.has_table_qa_models:
         # Default sentence level for all components
