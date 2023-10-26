@@ -263,7 +263,7 @@ def __predict_standard_spark_only_embed(pipe, data, return_spark_df):
 
 
 def __predict__(pipe, data, output_level, positions, keep_stranger_features, metadata, multithread,
-                drop_irrelevant_cols, return_spark_df, get_embeddings, normal_pred_on_db=False, embed_only=False):
+                drop_irrelevant_cols, return_spark_df, get_embeddings, embed_only=False,normal_pred_on_db=False):
     '''
     Annotates a Pandas Dataframe/Pandas Series/Numpy Array/Spark DataFrame/Python List strings /Python String
     :param data: Data to predict on
