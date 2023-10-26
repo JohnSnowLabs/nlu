@@ -1,19 +1,28 @@
 import logging
 import os
 from typing import Optional
-
+from typing import Optional
+import os
 import sparknlp
 from pyspark.sql.functions import monotonically_increasing_id
+from sparknlp.common import AnnotatorType
 
 from nlu.pipe.utils.audio_data_conversion_utils import AudioDataConversionUtils
+from nlu.pipe.utils.data_conversion_utils import DataConversionUtils
 from nlu.pipe.utils.ocr_data_conversion_utils import OcrDataConversionUtils
 
 logger = logging.getLogger('nlu')
 from nlu.pipe.pipe_logic import PipeUtils
-from nlu.pipe.utils.data_conversion_utils import DataConversionUtils
 
 import pandas as pd
 from pydantic import BaseModel
+
+
+def get_first_anno_with_output_type(pipe, out_type):
+    for s in pipe.vanilla_transformer_pipe.stages:
+        if hasattr(s, 'outputAnnotatorType') and s.outputAnnotatorType == out_type:
+            return s
+    return None
 
 
 def serialize(img_path):
@@ -55,6 +64,13 @@ class PredictParams(BaseModel):
             print(f'Exception trying to parse prediction parameters for param row:'
                   f' \n{param_row} \n', e)
             return None
+
+
+def get_first_anno_with_output_type(pipe, out_type):
+    for s in pipe.vanilla_transformer_pipe.stages:
+        if hasattr(s, 'outputAnnotatorType') and s.outputAnnotatorType == out_type:
+            return s
+    return None
 
 
 def __predict_standard_spark(pipe, data, output_level, positions, keep_stranger_features, metadata,
@@ -189,39 +205,65 @@ def __predict_audio_spark(pipe, data, output_level, positions, keep_stranger_fea
                                           get_embeddings=get_embeddings
                                           )
 
-def __db_endpoint_predict__(pipe,data):
-        """
-        1) parse pred params from first row maybe
-        2) serialize/deserialize img 
-        """
-        print("CUSOTM NLU MODE!")
-        print(data.columns)
-        params = PredictParams.maybe_from_pandas_df(data)
-        if params:
-            params = params.dict()
-        else:
-            params = {}
-        files = []
-        if 'file' in data.columns and 'file_type' in data.columns:
-            print("DETECTED FILE COLS")
-            skip_first = PredictParams.has_param_cols(data)
-            for i, row in data.iterrows():
-                print(f"DESERIALIZING {row.file_type} file {row.file}")
-                if i == 0 and skip_first:
-                    continue
-                file_name = f'file{i}.{row.file_type}'
-                files.append(file_name)
-                deserialize(row.file, file_name)
-            data = files
 
-        if params:
-            return __predict__(pipe, data, **params, normal_pred_on_db=True)
-        else:
-            # no params detect, we call again with default params
-            return __predict__(pipe, data, **PredictParams().dict(),normal_pred_on_db=True)
+def __db_endpoint_predict__(pipe, data):
+    """
+    1) parse pred params from first row maybe
+    2) serialize/deserialize img
+    """
+    print("CUSOTM NLU MODE!")
+    print(data.columns)
+    params = PredictParams.maybe_from_pandas_df(data)
+    if params:
+        params = params.dict()
+    else:
+        params = {}
+    files = []
+    if 'file' in data.columns and 'file_type' in data.columns:
+        print("DETECTED FILE COLS")
+        skip_first = PredictParams.has_param_cols(data)
+        for i, row in data.iterrows():
+            print(f"DESERIALIZING {row.file_type} file {row.file}")
+            if i == 0 and skip_first:
+                continue
+            file_name = f'file{i}.{row.file_type}'
+            files.append(file_name)
+            deserialize(row.file, file_name)
+        data = files
+
+    if params:
+        return __predict__(pipe, data, **params, normal_pred_on_db=True)
+    else:
+        # no params detect, we call again with default params
+        return __predict__(pipe, data, **PredictParams().dict(), normal_pred_on_db=True)
+
+
+def __predict_standard_spark_only_embed(pipe, data, return_spark_df):
+    # 1. Convert data to Spark DF
+    data, stranger_features, output_datatype = DataConversionUtils.to_spark_df(data, pipe.spark, pipe.raw_text_column,
+                                                                               is_span_data=pipe.has_span_classifiers,
+                                                                               is_tabular_qa_data=pipe.has_table_qa_models,
+                                                                               )
+
+    # 2. Apply Spark Pipeline
+    data = pipe.vanilla_transformer_pipe.transform(data)
+
+    # 3. Validate data
+    sent_embedder = get_first_anno_with_output_type(pipe, AnnotatorType.SENTENCE_EMBEDDINGS)
+    if not sent_embedder or not hasattr(sent_embedder, 'getOutputCol', ):
+        raise Exception('No Sentence Embedder found in pipeline')
+
+    # 4. return embeds
+    emb_col = sent_embedder.getOutputCol()
+    if return_spark_df:
+        return data.select(f'{emb_col}.embeddings')
+
+    # Note, this is only document output level. If pipe has sentence detector, we will only keep first embed of every document.
+    return [r.embeddings[0] for r in data.select(f'{emb_col}.embeddings').collect()]
+
 
 def __predict__(pipe, data, output_level, positions, keep_stranger_features, metadata, multithread,
-                drop_irrelevant_cols, return_spark_df, get_embeddings, normal_pred_on_db=False):
+                drop_irrelevant_cols, return_spark_df, get_embeddings, embed_only=False,normal_pred_on_db=False):
     '''
     Annotates a Pandas Dataframe/Pandas Series/Numpy Array/Spark DataFrame/Python List strings /Python String
     :param data: Data to predict on
@@ -234,6 +276,9 @@ def __predict__(pipe, data, output_level, positions, keep_stranger_features, met
     :param return_spark_df: Prediction results will be returned right after transforming with the Spark NLP pipeline
     :return:
     '''
+    if embed_only:
+        pipe.fit()
+        return __predict_standard_spark_only_embed(pipe, data, return_spark_df)
 
     if 'DB_ENDPOINT_ENV' in os.environ and not normal_pred_on_db:
         return __db_endpoint_predict__(pipe,data)
@@ -268,56 +313,46 @@ def __predict__(pipe, data, output_level, positions, keep_stranger_features, met
 
         pipe.__configure_light_pipe_usage__(DataConversionUtils.size_of(data), multithread)
 
-        if pipe.contains_ocr_components and pipe.contains_audio_components:
-            """ Idea:
-            Expect Array of Paths 
-            For every path classify file ending and use it to correctly handle Img or Audio stuff 
-            """
-            raise Exception('Cannot mix Audio and OCR components in a Pipe?')
+    if pipe.contains_ocr_components and pipe.contains_audio_components:
+        """ Idea:
+        Expect Array of Paths 
+        For every path classify file ending and use it to correctly handle Img or Audio stuff 
+        """
+        raise Exception('Cannot mix Audio and OCR components in a Pipe?')
 
-        if pipe.contains_audio_components:
-            return __predict_audio_spark(pipe, data, output_level, positions, keep_stranger_features,
-                                         metadata, drop_irrelevant_cols, get_embeddings=get_embeddings)
+    if pipe.contains_audio_components:
+        return __predict_audio_spark(pipe, data, output_level, positions, keep_stranger_features,
+                                     metadata, drop_irrelevant_cols, get_embeddings=get_embeddings)
 
-        if pipe.contains_ocr_components:
-            # Ocr processing
-            try:
-                return __predict_ocr_spark(pipe, data, output_level, positions, keep_stranger_features,
-                                           metadata, drop_irrelevant_cols, get_embeddings=get_embeddings)
-            except Exception as err:
-                logger.warning(f"Predictions Failed={err}")
-                pipe.print_exception_err(err)
-                raise Exception("Failure to process data with NLU OCR pipe")
-        if return_spark_df:
-            try:
-                return __predict_standard_spark(pipe, data, output_level, positions, keep_stranger_features, metadata,
-                                                drop_irrelevant_cols, return_spark_df, get_embeddings)
-            except Exception as err:
-                logger.warning(f"Predictions Failed={err}")
-                pipe.print_exception_err(err)
-                raise Exception("Failure to process data with NLU")
-        elif not get_embeddings and multithread or pipe.prefer_light:
-            # In Some scenarios we prefer light, because Bugs in ChunkMapper...
-            # Try Multithreaded with Fallback vanilla as option. No Embeddings in this mode
-            try:
-                return predict_multi_threaded_light_pipe(pipe, data, output_level, positions, keep_stranger_features,
-                                                         metadata, drop_irrelevant_cols, get_embeddings=get_embeddings)
+    if pipe.contains_ocr_components:
+        # Ocr processing
+        try:
+            return __predict_ocr_spark(pipe, data, output_level, positions, keep_stranger_features,
+                                       metadata, drop_irrelevant_cols, get_embeddings=get_embeddings)
+        except Exception as err:
+            logger.warning(f"Predictions Failed={err}")
+            pipe.print_exception_err(err)
+            raise Exception("Failure to process data with NLU OCR pipe")
+    if return_spark_df:
+        try:
+            return __predict_standard_spark(pipe, data, output_level, positions, keep_stranger_features, metadata,
+                                            drop_irrelevant_cols, return_spark_df, get_embeddings)
+        except Exception as err:
+            logger.warning(f"Predictions Failed={err}")
+            pipe.print_exception_err(err)
+            raise Exception("Failure to process data with NLU")
+    elif not get_embeddings and multithread or pipe.prefer_light:
+        # In Some scenarios we prefer light, because Bugs in ChunkMapper...
+        # Try Multithreaded with Fallback vanilla as option. No Embeddings in this mode
+        try:
+            return predict_multi_threaded_light_pipe(pipe, data, output_level, positions, keep_stranger_features,
+                                                     metadata, drop_irrelevant_cols, get_embeddings=get_embeddings)
 
 
-            except Exception as err:
-                logger.warning(
-                    f"Multithreaded mode with Light pipeline failed. trying to predict again with non multithreaded mode, "
-                    f"err={err}")
-                try:
-                    return __predict_standard_spark(pipe, data, output_level, positions, keep_stranger_features,
-                                                    metadata,
-                                                    drop_irrelevant_cols, return_spark_df, get_embeddings)
-                except Exception as err:
-                    logger.warning(f"Predictions Failed={err}")
-                    pipe.print_exception_err(err)
-                    raise Exception("Failure to process data with NLU")
-        else:
-            # Standard predict with no fallback
+        except Exception as err:
+            logger.warning(
+                f"Multithreaded mode with Light pipeline failed. trying to predict again with non multithreaded mode, "
+                f"err={err}")
             try:
                 return __predict_standard_spark(pipe, data, output_level, positions, keep_stranger_features, metadata,
                                                 drop_irrelevant_cols, return_spark_df, get_embeddings)
@@ -325,7 +360,17 @@ def __predict__(pipe, data, output_level, positions, keep_stranger_features, met
                 logger.warning(f"Predictions Failed={err}")
                 pipe.print_exception_err(err)
                 raise Exception("Failure to process data with NLU")
+    else:
+        # Standard predict with no fallback
+        try:
+            return __predict_standard_spark(pipe, data, output_level, positions, keep_stranger_features, metadata,
+                                            drop_irrelevant_cols, return_spark_df, get_embeddings)
+        except Exception as err:
+            logger.warning(f"Predictions Failed={err}")
+            pipe.print_exception_err(err)
+            raise Exception("Failure to process data with NLU")
 
-    def debug_print_pipe_cols(pipe):
-        for c in pipe.components:
-            print(f'{c.spark_input_column_names}->{c.name}->{c.spark_output_column_names}')
+
+def debug_print_pipe_cols(pipe):
+    for c in pipe.components:
+        print(f'{c.spark_input_column_names}->{c.name}->{c.spark_output_column_names}')
