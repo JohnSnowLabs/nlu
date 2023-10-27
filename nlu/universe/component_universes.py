@@ -74,6 +74,7 @@ from nlu.components.embeddings.glove.glove import Glove
 from nlu.components.embeddings.longformer.longformer import Longformer
 from nlu.components.embeddings.roberta.roberta import Roberta
 from nlu.components.embeddings.sentence_bert.BertSentenceEmbedding import BertSentence
+from nlu.components.embeddings.instructor_sentence.InstructorEmbeddings import Instructor
 from nlu.components.embeddings.sentence_xlm.sentence_xlm import Sentence_XLM
 from nlu.components.embeddings.use.spark_nlp_use import SparkNLPUse
 from nlu.components.embeddings.word2vec.word2vec import Word2Vec
@@ -2329,6 +2330,27 @@ class ComponentUniverse:
                                    has_storage_ref=True,
                                    is_storage_ref_producer=True,
                                    ),
+        A.INSTRUCTOR_SENTENCE_EMBEDDINGS: partial(NluComponent,
+                                                  name=A.INSTRUCTOR_SENTENCE_EMBEDDINGS,
+                                                  type=T.DOCUMENT_EMBEDDING,
+                                                  get_default_model=Instructor.get_default_model,
+                                                  get_pretrained_model=Instructor.get_pretrained_model,
+                                                  pdf_extractor_methods={'default': default_sentence_embedding_config,
+                                                                         'default_full': default_full_config, },
+                                                  pdf_col_name_substitutor=substitute_sent_embed_cols,
+                                                  output_level=L.INPUT_DEPENDENT_DOCUMENT_EMBEDDING,
+                                                  node=NLP_FEATURE_NODES.nodes[A.INSTRUCTOR_SENTENCE_EMBEDDINGS],
+                                                  description='Sentence-level embeddings using Instructor. Instructor, an instruction-finetuned text embedding model that can generate text embeddings tailored to any task (e.g., classification, retrieval, clustering, text evaluation, etc.) and domains (e.g., science, finance, etc.) by simply providing the task instruction, without any finetuning.',
+                                                  provider=ComponentBackends.open_source,
+                                                  license=Licenses.open_source,
+                                                  computation_context=ComputeContexts.spark,
+                                                  output_context=ComputeContexts.spark,
+                                                  jsl_anno_class_id=A.INSTRUCTOR_SENTENCE_EMBEDDINGS,
+                                                  jsl_anno_py_class=ACR.JSL_anno2_py_class[
+                                                      A.INSTRUCTOR_SENTENCE_EMBEDDINGS],
+                                                  has_storage_ref=True,
+                                                  is_storage_ref_producer=True,
+                                                  ),
         A.BERT_SENTENCE_EMBEDDINGS: partial(NluComponent,
                                             name=A.BERT_SENTENCE_EMBEDDINGS,
                                             type=T.DOCUMENT_EMBEDDING,
