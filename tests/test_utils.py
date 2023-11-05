@@ -1,7 +1,31 @@
+import os
+import sys
+
 import pandas as pd
 import sparknlp
 
 import nlu
+from tests.test_data import get_test_data
+
+os.environ['PYSPARK_PYTHON'] = sys.executable
+os.environ['PYSPARK_DRIVER_PYTHON'] = sys.executable
+
+
+def log_df(df, test_group):
+    if df is None:
+        raise Exception('Cannot log Df which is none')
+    if test_group == 'table_extractor':
+        assert len(test_group) > 0, 'At least one table should have been extracted'
+        for extracted_df in df:
+            log_df(extracted_df, 'generic')
+        return
+    for c in df.columns:
+        print(df[c])
+
+
+def log_and_validate(df,test_group):
+    log_df(df,test_group)
+    validate_predictions(df)
 
 
 def get_sample_pdf():
@@ -80,16 +104,16 @@ from os.path import expanduser
 
 
 def download_dataset(
-    data_url,
-    output_file_name,
-    output_folder,
+        data_url,
+        output_file_name,
+        output_folder,
 ):
     import urllib.request
 
     download_path = (
-        create_dataset_dir_if_not_exist_and_get_path()
-        + output_folder
-        + output_file_name
+            create_dataset_dir_if_not_exist_and_get_path()
+            + output_folder
+            + output_file_name
     )
 
     # Check if dir exists, if not create it
@@ -133,3 +157,49 @@ def create_path_if_not_exist(path):
     if not os.path.exists(path):
         print("Creating dir", path)
         os.mkdir(path)
+
+
+def model_and_output_levels_test(nlu_ref, lang, test_group=None, output_levels=None, input_data_type='generic',
+                                 library='open_source'):
+    from johnsnowlabs import nlp
+    import tests.secrets as secrets
+    if library == 'open_source':
+        nlp.start()
+    elif library == 'healthcare':
+        nlp.start(json_license_path=secrets.JSON_LIC_PATH)
+    elif library == 'ocr':
+        nlp.start(json_license_path=secrets.JSON_LIC_PATH, visual=True)
+    else:
+        raise Exception(f'Library {library} is not supported')
+
+    if not output_levels:
+        # default everything except relation. Add it manually for RE models
+        output_levels = ['entities', 'tokens', 'embeddings', 'document']
+    for output_level in output_levels:
+        model_test(nlu_ref, output_level=output_level, lang=lang, test_group=test_group,
+                   input_data_type=input_data_type)
+
+
+def model_test(nlu_ref, output_level=None, drop_irrelevant_cols=False, metadata=True, positions=True,
+               test_group=None,
+               lang='en',
+               input_data_type='generic'):
+    print(f'Testing Model {nlu_ref} with output_level={output_level} test_group={test_group}')
+    pipe = nlu.load(nlu_ref, verbose=True)
+    data = get_test_data(lang, input_data_type=input_data_type)
+
+    df = pipe.predict(data, output_level=output_level,
+                      drop_irrelevant_cols=drop_irrelevant_cols, metadata=metadata,
+                      positions=positions)
+    log_and_validate(df,test_group)
+
+    if isinstance(data, list):
+        df = pipe.predict(data[0], output_level=output_level,
+                          drop_irrelevant_cols=drop_irrelevant_cols, metadata=metadata,
+                          positions=positions)
+        log_and_validate(df,test_group)
+
+
+def validate_predictions(df):
+    # TODO
+    return True
