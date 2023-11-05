@@ -39,6 +39,8 @@ medical_data = {
          Her family history is remarkable for Breast cancer (mother), 
         cervical cancer (maternal grandmother), heart disease (father), 
         COPD (Brother), dementia (Grandfather), diabetes (Grandfather), and CHF (Grandfather).""",
+        "The patient was prescribed 1 unit of Advil for 5 days after meals. The patient was also given 1 unit of Metformin daily. He was seen by the endocrinology service and she was discharged on 40 units of insulin glargine at night , 12 units of insulin lispro with meals , and metformin 1000 mg two times a day.",
+
 
     ])
 
