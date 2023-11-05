@@ -16,6 +16,10 @@ class NluTest:
     output_levels: Optional[List[str]] = None
 
 
+def model_id(model_to_test: NluTest) -> str:
+    return f"{model_to_test.test_group}_{model_to_test.nlu_ref}"
+
+
 models_to_test = [
     NluTest(nlu_ref="chunk", lang='en', test_group='chunker', input_data_type='generic', library='open_source'),
     NluTest(nlu_ref="ngram", lang='en', test_group='chunker', input_data_type='generic', library='open_source'),
@@ -38,7 +42,7 @@ models_to_test = [
 ]
 
 
-@pytest.mark.parametrize("model_to_test", models_to_test)
+@pytest.mark.parametrize("model_to_test", models_to_test, ids=model_id)
 def test_model(model_to_test: NluTest):
     model_and_output_levels_test(
         nlu_ref=model_to_test.nlu_ref,
