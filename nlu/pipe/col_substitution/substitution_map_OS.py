@@ -47,6 +47,9 @@ OS_anno2substitution_fn = {
     ElmoEmbeddings: {
         'default': substitute_word_embed_cols,
     },
+    E5Embeddings: {
+        'default': substitute_word_embed_cols,
+    },
     BertSentenceEmbeddings: {
         'default': substitute_sent_embed_cols,
     },
