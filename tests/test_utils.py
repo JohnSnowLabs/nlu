@@ -174,7 +174,7 @@ def model_and_output_levels_test(nlu_ref, lang, test_group=None, output_levels=N
 
     if not output_levels:
         # default everything except relation. Add it manually for RE models
-        output_levels = ['entities', 'tokens', 'embeddings', 'document']
+        output_levels = ['chunk', 'tokens', 'embeddings', 'document']
     for output_level in output_levels:
         model_test(nlu_ref, output_level=output_level, lang=lang, test_group=test_group,
                    input_data_type=input_data_type)
