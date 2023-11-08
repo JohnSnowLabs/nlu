@@ -9,6 +9,7 @@ class NLP_NODE_IDS:
     Used to cast the pipeline dependency resolution algorithm into an abstract graph
     """
     # Visual Document Understanding
+
     BIG_TEXT_MATCHER = JslAnnoId('big_text_matcher')
     CHUNK2DOC = JslAnnoId('chunk2doc')
     CHUNK_EMBEDDINGS_CONVERTER = JslAnnoId('chunk_embeddings_converter')
@@ -105,6 +106,7 @@ class NLP_NODE_IDS:
     CONVNEXT_IMAGE_CLASSIFICATION = JslAnnoId("convnext_image_classification")
     SWIN_IMAGE_CLASSIFICATION = JslAnnoId("swin_image_classification")
     BART_TRANSFORMER = JslAnnoId("bart_transformer")
+    INSTRUCTOR_SENTENCE_EMBEDDINGS = JslAnnoId('instructor_sentence_embeddings')
 
 
 
