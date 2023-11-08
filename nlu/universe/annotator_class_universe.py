@@ -13,6 +13,8 @@ class AnnoClassRef:
     HC_A_N = NLP_HC_NODE_IDS
     # Map AnnoID to PyCLass
     JSL_anno2_py_class: Dict[JslAnnoId, JslAnnoPyClass] = {
+
+        A_N.E5_SENTENCE_EMBEDDINGS: 'E5Embeddings',
         A_N.INSTRUCTOR_SENTENCE_EMBEDDINGS:'InstructorEmbeddings',
 
         A_N.HUBERT_FOR_CTC: 'HubertForCTC',

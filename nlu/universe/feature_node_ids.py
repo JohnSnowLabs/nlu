@@ -89,6 +89,7 @@ class NLP_NODE_IDS:
     BERT_FOR_TOKEN_CLASSIFICATION = JslAnnoId('bert_for_token_classification')
     CAMEMBERT_FOR_TOKEN_CLASSIFICATION = JslAnnoId('camenbert_for_token_classification')
     CAMEMBERT_FOR_SEQUENCE_CLASSIFICATION = JslAnnoId('camenbert_for_sequence_classification')
+    E5_SENTENCE_EMBEDDINGS = JslAnnoId('e5_sentence_embeddings')
     BERT_SENTENCE_EMBEDDINGS = JslAnnoId('bert_sentence_embeddings')
     DISTIL_BERT_EMBEDDINGS = JslAnnoId('distil_bert_embeddings')
     DISTIL_BERT_FOR_TOKEN_CLASSIFICATION = JslAnnoId('distil_bert_for_token_classification')
