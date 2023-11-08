@@ -341,6 +341,7 @@ def zip_and_explode(df: pd.DataFrame, cols_to_explode: List[str]) -> pd.DataFram
             Elements of columns which are not in cols_to_explode, will be in lists
     """
     # Check cols we want to explode actually exist, if no data extracted cols can be missing
+    print(df)
     missing = []
     for col in cols_to_explode:
         if col not in df.columns:

@@ -123,6 +123,7 @@ from nlu.components.utils.table_assembler.spark_nlp_multi_document_assembler imp
 from nlu.ocr_components.table_extractors.doc_table_extractor.doc2table import Doc2TextTable
 from nlu.ocr_components.table_extractors.pdf_table_extractor.pdf2table import PDF2TextTable
 from nlu.ocr_components.table_extractors.ppt_table_extractor.ppt2table import PPT2TextTable
+from nlu.ocr_components.visual_classifiers.visual_document_classifier.visual_document_classifier import VisualDocClassifier
 from nlu.ocr_components.text_recognizers.doc2text.doc2text import Doc2Text
 from nlu.ocr_components.text_recognizers.img2text.img2text import Img2Text
 from nlu.ocr_components.text_recognizers.pdf2text.pdf2text import Pdf2Text
@@ -133,7 +134,8 @@ from nlu.pipe.col_substitution.col_substitution_HC import *
 from nlu.pipe.col_substitution.col_substitution_OCR import substitute_recognized_text_cols
 from nlu.pipe.col_substitution.col_substitution_OS import *
 from nlu.pipe.extractors.extractor_configs_HC import *
-from nlu.pipe.extractors.extractor_configs_OCR import default_text_recognizer_config, default_binary_to_image_config
+from nlu.pipe.extractors.extractor_configs_OCR import default_text_recognizer_config, default_binary_to_image_config, \
+    default_visual_classifier_config
 from nlu.pipe.extractors.extractor_configs_OS import *
 from nlu.pipe.nlu_component import NluComponent
 from nlu.universe.annotator_class_universe import AnnoClassRef
@@ -4084,29 +4086,27 @@ class ComponentUniverse:
                                     applicable_file_types=['DOCX', 'DOC']
                                     ),
 
-        # O_A.VISUAL_DOCUMENT_CLASSIFIER: partial(NluComponent,
-        #                                         name=O_A.VISUAL_DOCUMENT_CLASSIFIER,
-        #                                         type=T.PDF_BUILDER,
-        #                                         get_default_model=VisualDocClassifier.get_default_model,
-        #                                         get_pretrained_model=VisualDocClassifier.get_pretrained_model,
-        #
-        #                                         pdf_extractor_methods={'default': default_visual_classifier_config},
-        #                                         # TODO EXtractor
-        #                                         pdf_col_name_substitutor=substitute_recognized_text_cols,
-        #                                         # TODO substitor
-        #                                         output_level=L.DOCUMENT,
-        #                                         node=OCR_FEATURE_NODES.nodes[O_A.VISUAL_DOCUMENT_CLASSIFIER],
-        #                                         description='Convert text to PDF file',
-        #                                         provider=ComponentBackends.ocr,
-        #                                         license=Licenses.ocr,
-        #                                         computation_context=ComputeContexts.spark,
-        #                                         output_context=ComputeContexts.spark,
-        #                                         jsl_anno_class_id=O_A.VISUAL_DOCUMENT_CLASSIFIER,
-        #                                         jsl_anno_py_class=ACR.JSL_anno_OCR_ref_2_py_class[
-        #                                             O_A.VISUAL_DOCUMENT_CLASSIFIER],
-        #                                         applicable_file_types=['JPG', 'JPEG']
-        #                                         ),
-        #
+        O_A.VISUAL_DOCUMENT_CLASSIFIER: partial(NluComponent,
+                                                name=O_A.VISUAL_DOCUMENT_CLASSIFIER,
+                                                type=T.PDF_BUILDER,
+                                                get_default_model=VisualDocClassifier.get_default_model,
+                                                pdf_extractor_methods={'default': default_visual_classifier_config},
+                                                # TODO EXtractor
+                                                pdf_col_name_substitutor=substitute_recognized_text_cols,
+                                                # TODO substitor
+                                                output_level=L.DOCUMENT,
+                                                node=OCR_FEATURE_NODES.nodes[O_A.VISUAL_DOCUMENT_CLASSIFIER],
+                                                description='Convert text to PDF file',
+                                                provider=ComponentBackends.ocr,
+                                                license=Licenses.ocr,
+                                                computation_context=ComputeContexts.spark,
+                                                output_context=ComputeContexts.spark,
+                                                jsl_anno_class_id=O_A.VISUAL_DOCUMENT_CLASSIFIER,
+                                                jsl_anno_py_class=ACR.JSL_anno_OCR_ref_2_py_class[
+                                                    O_A.VISUAL_DOCUMENT_CLASSIFIER],
+                                                applicable_file_types=['JPG', 'JPEG']
+                                                ),
+
         O_A.IMAGE2HOCR: partial(NluComponent,
                                 name=O_A.IMAGE2HOCR,
                                 type=T.OCR_UTIL,
