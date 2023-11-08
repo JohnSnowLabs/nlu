@@ -109,6 +109,7 @@ class NLP_NODE_IDS:
     BART_TRANSFORMER = JslAnnoId("bart_transformer")
     INSTRUCTOR_SENTENCE_EMBEDDINGS = JslAnnoId('instructor_sentence_embeddings')
 
+    MPNET_SENTENCE_EMBEDDINGS = JslAnnoId('mpnet_sentence_embeddings')
 
 
 

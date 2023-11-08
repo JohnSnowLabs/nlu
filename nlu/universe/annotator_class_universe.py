@@ -107,6 +107,7 @@ class AnnoClassRef:
         A_N.ROBERTA_FOR_ZERO_SHOT_CLASSIFICATION: 'RoBertaForZeroShotClassification',
         A_N.LONGFORMER_FOR_TOKEN_CLASSIFICATION: 'LongformerForTokenClassification',
         A_N.MARIAN_TRANSFORMER: 'MarianTransformer',
+        A_N.MPNET_SENTENCE_EMBEDDINGS: 'MPNetEmbeddings',
         A_N.ROBERTA_EMBEDDINGS: 'RoBertaEmbeddings',
         A_N.ROBERTA_FOR_TOKEN_CLASSIFICATION: 'RoBertaForTokenClassification',
         A_N.ROBERTA_SENTENCE_EMBEDDINGS: 'RoBertaSentenceEmbeddings',

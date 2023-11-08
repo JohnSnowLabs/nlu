@@ -75,6 +75,7 @@ from nlu.components.embeddings.longformer.longformer import Longformer
 from nlu.components.embeddings.roberta.roberta import Roberta
 from nlu.components.embeddings.sentence_e5.E5SentenceEmbedding import E5
 from nlu.components.embeddings.sentence_bert.BertSentenceEmbedding import BertSentence
+from nlu.components.embeddings.sentence_mpnet.MPNetSentenceEmbedding import MPNetSentence
 from nlu.components.embeddings.instructor_sentence.InstructorEmbeddings import Instructor
 from nlu.components.embeddings.sentence_xlm.sentence_xlm import Sentence_XLM
 from nlu.components.embeddings.use.spark_nlp_use import SparkNLPUse
