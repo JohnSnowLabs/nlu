@@ -9,6 +9,7 @@ class NLP_NODE_IDS:
     Used to cast the pipeline dependency resolution algorithm into an abstract graph
     """
     # Visual Document Understanding
+
     BIG_TEXT_MATCHER = JslAnnoId('big_text_matcher')
     CHUNK2DOC = JslAnnoId('chunk2doc')
     CHUNK_EMBEDDINGS_CONVERTER = JslAnnoId('chunk_embeddings_converter')
@@ -88,6 +89,7 @@ class NLP_NODE_IDS:
     BERT_FOR_TOKEN_CLASSIFICATION = JslAnnoId('bert_for_token_classification')
     CAMEMBERT_FOR_TOKEN_CLASSIFICATION = JslAnnoId('camenbert_for_token_classification')
     CAMEMBERT_FOR_SEQUENCE_CLASSIFICATION = JslAnnoId('camenbert_for_sequence_classification')
+    E5_SENTENCE_EMBEDDINGS = JslAnnoId('e5_sentence_embeddings')
     BERT_SENTENCE_EMBEDDINGS = JslAnnoId('bert_sentence_embeddings')
     DISTIL_BERT_EMBEDDINGS = JslAnnoId('distil_bert_embeddings')
     DISTIL_BERT_FOR_TOKEN_CLASSIFICATION = JslAnnoId('distil_bert_for_token_classification')
@@ -105,7 +107,9 @@ class NLP_NODE_IDS:
     CONVNEXT_IMAGE_CLASSIFICATION = JslAnnoId("convnext_image_classification")
     SWIN_IMAGE_CLASSIFICATION = JslAnnoId("swin_image_classification")
     BART_TRANSFORMER = JslAnnoId("bart_transformer")
+    INSTRUCTOR_SENTENCE_EMBEDDINGS = JslAnnoId('instructor_sentence_embeddings')
 
+    MPNET_SENTENCE_EMBEDDINGS = JslAnnoId('mpnet_sentence_embeddings')
 
 
 

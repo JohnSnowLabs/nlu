@@ -13,6 +13,10 @@ class AnnoClassRef:
     HC_A_N = NLP_HC_NODE_IDS
     # Map AnnoID to PyCLass
     JSL_anno2_py_class: Dict[JslAnnoId, JslAnnoPyClass] = {
+
+        A_N.E5_SENTENCE_EMBEDDINGS: 'E5Embeddings',
+        A_N.INSTRUCTOR_SENTENCE_EMBEDDINGS:'InstructorEmbeddings',
+
         A_N.HUBERT_FOR_CTC: 'HubertForCTC',
         A_N.CAMEMBERT_FOR_QUESTION_ANSWERING: 'CamemBertForQuestionAnswering',
         A_N.SWIN_IMAGE_CLASSIFICATION: 'SwinForImageClassification',
@@ -103,6 +107,7 @@ class AnnoClassRef:
         A_N.ROBERTA_FOR_ZERO_SHOT_CLASSIFICATION: 'RoBertaForZeroShotClassification',
         A_N.LONGFORMER_FOR_TOKEN_CLASSIFICATION: 'LongformerForTokenClassification',
         A_N.MARIAN_TRANSFORMER: 'MarianTransformer',
+        A_N.MPNET_SENTENCE_EMBEDDINGS: 'MPNetEmbeddings',
         A_N.ROBERTA_EMBEDDINGS: 'RoBertaEmbeddings',
         A_N.ROBERTA_FOR_TOKEN_CLASSIFICATION: 'RoBertaForTokenClassification',
         A_N.ROBERTA_SENTENCE_EMBEDDINGS: 'RoBertaSentenceEmbeddings',
