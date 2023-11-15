@@ -60,7 +60,6 @@ class NLUPipeline(dict):
         self.has_table_qa_models = False
         self.requires_image_format = False
         self.requires_binary_format = False
-
     def add(self, component: NluComponent, nlu_reference=None, pretrained_pipe_component=False,
             name_to_add='', idx=None):
         '''
@@ -126,13 +125,13 @@ class NLUPipeline(dict):
             from sparknlp.training import CoNLL
             s_df = CoNLL().readDataset(self.spark, path=dataset_path, )
             self.vanilla_transformer_pipe = self.spark_estimator_pipe.fit(s_df.withColumnRenamed('label', 'y'))
-            self.light_transformer_pipe = LightPipeline(self.vanilla_transformer_pipe)
+            # self.light_transformer_pipe = LightPipeline(self.vanilla_transformer_pipe)
         elif dataset_path != None and 'pos' in self.nlu_ref:
             from sparknlp.training import POS
             s_df = POS().readDataset(self.spark, path=dataset_path, delimiter=label_seperator, outputPosCol="y",
                                      outputDocumentCol="document", outputTextCol="text")
             self.vanilla_transformer_pipe = self.spark_estimator_pipe.fit(s_df)
-            self.light_transformer_pipe = LightPipeline(self.vanilla_transformer_pipe)
+            # self.light_transformer_pipe = LightPipeline(self.vanilla_transformer_pipe)
 
         elif isinstance(dataset, pd.DataFrame) and 'multi' in self.nlu_ref:
             schema = StructType([
@@ -144,7 +143,7 @@ class NLUPipeline(dict):
             # df = self.spark.createDataFrame(data=dataset, schema=schema).withColumn('y',F.split('y',label_seperator))
             # df = self.spark.createDataFrame(dataset)
             self.vanilla_transformer_pipe = self.spark_estimator_pipe.fit(df)
-            self.light_transformer_pipe = LightPipeline(self.vanilla_transformer_pipe)
+            # self.light_transformer_pipe = LightPipeline(self.vanilla_transformer_pipe)
 
         elif isinstance(dataset, pd.DataFrame):
             if not self.verify_all_labels_exist(dataset): raise ValueError(
@@ -188,14 +187,14 @@ class NLUPipeline(dict):
             self.spark_estimator_pipe = Pipeline(stages=stages)
             self.vanilla_transformer_pipe = self.spark_estimator_pipe.fit(
                 DataConversionUtils.pdf_to_sdf(dataset, self.spark)[0])
-            self.light_transformer_pipe = LightPipeline(self.vanilla_transformer_pipe)
+            # self.light_transformer_pipe = LightPipeline(self.vanilla_transformer_pipe)
 
         elif isinstance(dataset, pyspark.sql.DataFrame):
             if not self.verify_all_labels_exist(dataset): raise ValueError(
                 f"Could not detect label in provided columns={dataset.columns}\nMake sure a column named label, labels or y exists in your dataset.")
             self.vanilla_transformer_pipe = self.spark_estimator_pipe.fit(
                 DataConversionUtils.sdf_to_sdf(dataset, self.spark))
-            self.light_transformer_pipe = LightPipeline(self.vanilla_transformer_pipe)
+            # self.light_transformer_pipe = LightPipeline(self.vanilla_transformer_pipe)
 
         else:
             # fit on empty dataframe since no data provided
@@ -203,7 +202,7 @@ class NLUPipeline(dict):
                 logger.info(
                     'Fitting on empty Dataframe, could not infer correct training method. This is intended for non-trainable pipelines.')
                 self.vanilla_transformer_pipe = self.spark_estimator_pipe.fit(self.get_sample_spark_dataframe())
-                self.light_transformer_pipe = LightPipeline(self.vanilla_transformer_pipe)
+                # self.light_transformer_pipe = LightPipeline(self.vanilla_transformer_pipe)
 
         self.has_trainable_components = False
         self.is_fitted = True
@@ -452,35 +451,13 @@ class NLUPipeline(dict):
             else:
                 self[component].save(path)
 
-    def predict_embeds(self,
-                       data,
-                       multithread=True,
-                       return_spark_df=False,
-                       ):
-        '''
-        Annotates a Pandas Dataframe/Pandas Series/Numpy Array/Spark DataFrame/Python List strings /Python String abd returns List of Floats or Spark-Df, only with embeddings.
-        :param data: Data to predict on
-                and drop_irrelevant_cols = True then chunk, sentence and Doc will be dropped
-        :param return_spark_df: Prediction results will be returned right after transforming with the Spark NLP pipeline
-                                 This will run fully distributed in on the Spark Master, but not prettify the output dataframe
-        :param return_spark_df: return Spark-DF and not collect all data into driver instead of returning list of float
-        :param multithread: Use multithreaded Light-pipeline instead of spark-pipeline
-
-        :return:
-        '''
-        from nlu.pipe.utils.predict_helper import __predict__
-        return __predict__(self, data, output_level=None, positions=False, keep_stranger_features=False, metadata=False,
-                           multithread=multithread,
-                           drop_irrelevant_cols=True, return_spark_df=return_spark_df, get_embeddings=True,
-                           embed_only=True)
-
     def predict(self,
                 data,
                 output_level='',
                 positions=False,
                 keep_stranger_features=True,
                 metadata=False,
-                multithread=True,
+                multithread=False,
                 drop_irrelevant_cols=True,
                 return_spark_df=False,
                 get_embeddings=True

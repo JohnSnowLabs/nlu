@@ -11155,27 +11155,30 @@ class Spellbook:
         'jpg2text': OCR_NODE_IDS.IMAGE2TEXT,  # Alias for img2text
         'pdf2text': OCR_NODE_IDS.PDF2TEXT,
         'doc2text': OCR_NODE_IDS.DOC2TEXT,
-
+        #  'image_table_detector': OCR_NODE_IDS.IMAGE_TABLE_DETECTOR,
+        'image_table_cell_detector': OCR_NODE_IDS.IMAGE_TABLE_CELL_DETECTOR,
+        'image_table_cell2text_table': OCR_NODE_IDS.IMAGE_TABLE_CELL2TEXT_TABLE,
         'pdf2table': OCR_NODE_IDS.PDF2TEXT_TABLE,
         'doc2table': OCR_NODE_IDS.DOC2TEXT_TABLE,
         'ppt2table': OCR_NODE_IDS.PPT2TEXT_TABLE,
         'classify.image': OCR_NODE_IDS.VISUAL_DOCUMENT_CLASSIFIER,
-        'en.classify_image.tabacco': 'visual_document_classifier_tobacco3482'
+        'en.classify_image.tabacco': 'visual_document_classifier_tobacco3482',
+        'en.image_table_detector':'general_model_table_detection_v2'
     }
 
-    ocr_model_references = {
-        'img2text': OCR_NODE_IDS.IMAGE2TEXT,
-        'png2text': OCR_NODE_IDS.IMAGE2TEXT,  # Alias for img2text
-        'jpg2text': OCR_NODE_IDS.IMAGE2TEXT,  # Alias for img2text
-        'pdf2text': OCR_NODE_IDS.PDF2TEXT,
-        'doc2text': OCR_NODE_IDS.DOC2TEXT,
-
-        'pdf2table': OCR_NODE_IDS.PDF2TEXT_TABLE,
-        'doc2table': OCR_NODE_IDS.DOC2TEXT_TABLE,
-        'ppt2table': OCR_NODE_IDS.PPT2TEXT_TABLE,
-        'classify.image': OCR_NODE_IDS.VISUAL_DOCUMENT_CLASSIFIER,
-        'en.classify_image.tabacco': 'visual_document_classifier_tobacco3482'
-    }
+    # ocr_model_references = {
+    #     'img2text': OCR_NODE_IDS.IMAGE2TEXT,
+    #     'png2text': OCR_NODE_IDS.IMAGE2TEXT,  # Alias for img2text
+    #     'jpg2text': OCR_NODE_IDS.IMAGE2TEXT,  # Alias for img2text
+    #     'pdf2text': OCR_NODE_IDS.PDF2TEXT,
+    #     'doc2text': OCR_NODE_IDS.DOC2TEXT,
+    #
+    #     'pdf2table': OCR_NODE_IDS.PDF2TEXT_TABLE,
+    #     'doc2table': OCR_NODE_IDS.DOC2TEXT_TABLE,
+    #     'ppt2table': OCR_NODE_IDS.PPT2TEXT_TABLE,
+    #     'classify.image': OCR_NODE_IDS.VISUAL_DOCUMENT_CLASSIFIER,
+    #     'en.classify_image.tabacco': 'visual_document_classifier_tobacco3482'
+    # }
     # map storage ref to nlu refner_jsl
     storage_ref_2_nlu_ref = {'ar': {'glove_300d': 'ar.embed'},
                              'bn': {'bengali_cc_300d': 'bn.embed.glove',
@@ -16023,6 +16026,9 @@ class Spellbook:
                              'image_classifier_vit_where_am_I_hospital_balcony_hallway_airport_coffee_house_apartment_office': 'ViTForImageClassification',
                              'image_classifier_vit_world_landmarks': 'ViTForImageClassification',
                              'image_classifier_convnext_tiny_224_local':'ConvNextImageClassifier',
+                             'general_model_table_detection_v2': 'ImageTableDetector',
+                             'image_table_cell_detector': 'ImageTableCellDetector',
+                             'image_table_cell2text_table': 'ImageCellsToTextTable',
                              'instructor_large':'InstructorEmbeddings',
                              'instructor_base':'InstructorEmbeddings',
                              'initial_model': 'MPNetEmbeddings',

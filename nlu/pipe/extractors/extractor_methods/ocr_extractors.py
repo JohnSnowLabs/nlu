@@ -14,7 +14,7 @@ def extract_table(df):
     return exploded_results.toPandas()
 
 
-def extract_tables(df, rename_cols=True):
+def extract_tables(df, rename_cols=False):
     df = df.withColumn("table_index", df.ocr_table.area.index)
     # pagennum
     pandas_tables = []

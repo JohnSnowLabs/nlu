@@ -109,14 +109,14 @@ class OCR_FEATURES(JslFeature):
     TEXT_DOCUMENT = JslFeature("text_document")  # TODO should be same class as the spark NLP ones
     TEXT_DOCUMENT_TOKENIZED = JslFeature("text_tokenized")  # TODO should be same class as the spark NLP ones
     HOCR = JslFeature("hocr")  # img -
-
+    IMG_SPLIT_REGIONS = JslFeature("image_region")
     # All OCR_* features are structs generated from OCR lib
     FALL_BACK = JslFeature("fall_back")  #
     OCR_IMAGE = JslFeature("ocr_image")  # OCR struct image representation
     OCR_PAGE_MATRIX = JslFeature("ocr_page_matrix")  # OCR struct image representation
     OCR_POSITIONS = JslFeature(
         "ocr_positions")  # OCR struct POSITION representation # TODO is POSITIONS==COORDINATES???
-    OCR_REGION = JslFeature("ocr_region")  # OCR array of POSITION struct
+    OCR_REGION = JslFeature("region")  # OCR array of POSITION struct
     OCR_TEXT = JslFeature("ocr_text")  # raw text extracted by OCR anno like PDFtoImage
     OCR_TABLE = JslFeature("ocr_table")  # OCR extracted table TODO array of COORDINATES/POSITION?
     OCR_TABLE_CELLS = JslFeature("ocr_table_cells")  # OCR extracted table  TODO array of COORDINATES/POSITION??
