@@ -8,6 +8,7 @@ from nlu.components.chunkers.default_chunker.default_chunker import DefaultChunk
 from nlu.components.chunkers.ngram.ngram import NGram
 from nlu.components.classifiers.asr.wav2Vec import Wav2Vec
 from nlu.components.classifiers.asr_hubert.hubert import Hubert
+from nlu.components.classifiers.asr_whisper.whisper import Whisper
 from nlu.components.classifiers.bert_zero_shot_classification.bert_zero_shot import BertZeroShotClassifier
 from nlu.components.classifiers.classifier_dl.classifier_dl import ClassifierDl
 from nlu.components.classifiers.distil_bert_zero_shot_classification.distil_bert_zero_shot import \
@@ -1481,6 +1482,27 @@ class ComponentUniverse:
                                   applicable_file_types=['wav', 'mp3', 'flac', 'aiff', 'aifc', 'ogg', 'aflac', 'alac',
                                                          'dsd', 'pcm', ]
                                   ),
+        A.WHISPER_FOR_CTC: partial(NluComponent,
+                                   name=A.WHISPER_FOR_CTC,
+                                   type=T.SPEECH_RECOGNIZER,
+                                   get_default_model=Whisper.get_default_model,
+                                   get_pretrained_model=Whisper.get_pretrained_model,
+                                   pdf_extractor_methods={'default': default_only_result_config,
+                                                          'default_full': default_full_config, },
+                                   pdf_col_name_substitutor=substitute_wav2vec_cols,
+                                   output_level=L.DOCUMENT,
+                                   node=NLP_FEATURE_NODES.nodes[A.WHISPER_FOR_CTC],
+                                   description='Whisper is an automatic speech recognition (ASR) system trained on 680,000 hours of multilingual and multitask supervised data collected from the web. It transcribe in multiple languages, as well as translate from those languages into English.',
+                                   provider=ComponentBackends.open_source,
+                                   license=Licenses.open_source,
+                                   computation_context=ComputeContexts.spark,
+                                   output_context=ComputeContexts.spark,
+                                   jsl_anno_class_id=A.WHISPER_FOR_CTC,
+                                   jsl_anno_py_class=ACR.JSL_anno2_py_class[A.WHISPER_FOR_CTC],
+                                   # Bas on Librosa which uses http://www.mega-nerd.com/libsndfile/
+                                   applicable_file_types=['wav', 'mp3', 'flac', 'aiff', 'aifc', 'ogg', 'aflac', 'alac',
+                                                          'dsd', 'pcm', ]
+                                   ),
 
         A.TAPAS_FOR_QA: partial(NluComponent,
                                 name=A.TAPAS_FOR_QA,

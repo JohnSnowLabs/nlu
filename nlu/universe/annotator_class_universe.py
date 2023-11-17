@@ -17,6 +17,7 @@ class AnnoClassRef:
         A_N.E5_SENTENCE_EMBEDDINGS: 'E5Embeddings',
         A_N.INSTRUCTOR_SENTENCE_EMBEDDINGS:'InstructorEmbeddings',
 
+        A_N.WHISPER_FOR_CTC: 'WhisperForCTC',
         A_N.HUBERT_FOR_CTC: 'HubertForCTC',
         A_N.CAMEMBERT_FOR_QUESTION_ANSWERING: 'CamemBertForQuestionAnswering',
         A_N.SWIN_IMAGE_CLASSIFICATION: 'SwinForImageClassification',
