@@ -3,16 +3,16 @@
 import os
 import sys
 
-sys.path.append(os.getcwd())
+# sys.path.append(os.getcwd())
 import unittest
 import nlu
 
-os.environ["PYTHONPATH"] = "F:/Work/repos/nlu_new/nlu"
+# os.environ["PYTHONPATH"] = "F:/Work/repos/nlu_new/nlu"
 os.environ['PYSPARK_PYTHON'] = sys.executable
 os.environ['PYSPARK_DRIVER_PYTHON'] = sys.executable
 from johnsnowlabs import nlp, visual
 
-# nlp.install(visual=True,json_license_path='license.json')
+# nlp.install(visual=True,json_license_path="license.json")
 nlp.start(visual=True)
 
 class OCRTests(unittest.TestCase):

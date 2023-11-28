@@ -4192,7 +4192,8 @@ class ComponentUniverse:
                                                output_context=ComputeContexts.spark,
                                                jsl_anno_class_id=O_A.IMAGE_TABLE_CELL_DETECTOR,
                                                jsl_anno_py_class=ACR.JSL_anno_OCR_ref_2_py_class[O_A.IMAGE_TABLE_CELL_DETECTOR],
-                                               applicable_file_types=['JPEG', 'PNG', 'BMP', 'WBMP', 'GIF', 'JPG', '.TIFF']
+                                               applicable_file_types=['JPEG', 'PNG', 'BMP', 'WBMP', 'GIF', 'JPG', '.TIFF'],
+                                               is_light_pipe_incompatible=True
                                                ),
 
         O_A.IMAGE_TABLE_CELL2TEXT_TABLE: partial(NluComponent,
@@ -4210,7 +4211,8 @@ class ComponentUniverse:
                                                  output_context=ComputeContexts.spark,
                                                  jsl_anno_class_id=O_A.IMAGE_TABLE_CELL2TEXT_TABLE,
                                                  jsl_anno_py_class=ACR.JSL_anno_OCR_ref_2_py_class[O_A.IMAGE_TABLE_CELL2TEXT_TABLE],
-                                                 applicable_file_types=['JPEG', 'PNG', 'BMP', 'WBMP', 'GIF', 'JPG', '.TIFF']
+                                                 applicable_file_types=['JPEG', 'PNG', 'BMP', 'WBMP', 'GIF', 'JPG', '.TIFF'],
+                                                 is_light_pipe_incompatible=True
                                                  ),
 
         O_A.IMAGE_TABLE_DETECTOR: partial(NluComponent,
@@ -4228,7 +4230,8 @@ class ComponentUniverse:
                                           output_context=ComputeContexts.spark,
                                           jsl_anno_class_id=O_A.IMAGE_TABLE_DETECTOR,
                                           jsl_anno_py_class=ACR.JSL_anno_OCR_ref_2_py_class[O_A.IMAGE_TABLE_DETECTOR],
-                                          applicable_file_types=['PDF','JPEG', 'PNG']
+                                          applicable_file_types=['PDF','JPEG', 'PNG'],
+                                          is_light_pipe_incompatible=True
                                           ),
 
         O_A.IMAGE_SPLIT_REGIONS: partial(NluComponent,
@@ -4247,7 +4250,8 @@ class ComponentUniverse:
                                          jsl_anno_class_id=O_A.IMAGE_SPLIT_REGIONS,
                                          jsl_anno_py_class=ACR.JSL_anno_OCR_ref_2_py_class[
                                              O_A.IMAGE_SPLIT_REGIONS],
-                                         applicable_file_types=['DOCX', 'DOC', 'JPEG', 'PNG']
+                                         applicable_file_types=['DOCX', 'DOC', 'JPEG', 'PNG'],
+                                         is_light_pipe_incompatible=True
                                          ),
 
 
