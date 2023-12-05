@@ -75,6 +75,7 @@ from nlu.components.embeddings.longformer.longformer import Longformer
 from nlu.components.embeddings.roberta.roberta import Roberta
 from nlu.components.embeddings.sentence_e5.E5SentenceEmbedding import E5
 from nlu.components.embeddings.sentence_bert.BertSentenceEmbedding import BertSentence
+from nlu.components.embeddings.sentence_roberta.RobertaSentenceEmbedding import RobertaSentence
 from nlu.components.embeddings.sentence_mpnet.MPNetSentenceEmbedding import MPNetSentence
 from nlu.components.embeddings.instructor_sentence.InstructorEmbeddings import Instructor
 from nlu.components.embeddings.sentence_xlm.sentence_xlm import Sentence_XLM
@@ -2658,23 +2659,22 @@ class ComponentUniverse:
         A.ROBERTA_SENTENCE_EMBEDDINGS: partial(NluComponent,
                                                name=A.ROBERTA_SENTENCE_EMBEDDINGS,
                                                type=T.DOCUMENT_EMBEDDING,
-                                               get_default_model=BertSentence.get_default_model,
-                                               get_pretrained_model=BertSentence.get_pretrained_model,
+                                               get_default_model=RobertaSentence.get_default_model,
+                                               get_pretrained_model=RobertaSentence.get_pretrained_model,
                                                pdf_extractor_methods={'default': default_sentence_embedding_config,
                                                                       'default_full': default_full_config, },
                                                pdf_col_name_substitutor=substitute_sent_embed_cols,
-                                               pipe_prediction_output_level=L.INPUT_DEPENDENT_DOCUMENT_EMBEDDING,
+                                               output_level=L.INPUT_DEPENDENT_DOCUMENT_EMBEDDING,
                                                node=NLP_FEATURE_NODES.nodes[A.ROBERTA_SENTENCE_EMBEDDINGS],
                                                description='Sentence-level embeddings using BERT. BERT (Bidirectional Encoder Representations from Transformers) provides dense vector representations for natural language by using a deep, pre-trained neural network with the Transformer architecture.',
                                                provider=ComponentBackends.open_source,
                                                license=Licenses.open_source,
                                                computation_context=ComputeContexts.spark,
                                                output_context=ComputeContexts.spark,
-                                               jsl_anno_class_id_id=A.ROBERTA_SENTENCE_EMBEDDINGS,
+                                               jsl_anno_class_id=A.ROBERTA_SENTENCE_EMBEDDINGS,
                                                jsl_anno_py_class=ACR.JSL_anno2_py_class[A.ROBERTA_SENTENCE_EMBEDDINGS],
-
                                                has_storage_ref=True,
-                                               is_is_storage_ref_producer=True,
+                                               is_storage_ref_producer=True,
                                                ),
         A.T5_TRANSFORMER: partial(NluComponent,
                                   # TODO  task based construction, i.e. get_preconfigured_model
