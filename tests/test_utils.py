@@ -160,7 +160,7 @@ def create_path_if_not_exist(path):
 
 
 def model_and_output_levels_test(nlu_ref, lang, test_group=None, output_levels=None, input_data_type='generic',
-                                 library='open_source'):
+                                 library='open_source',pipe_params=None):
     from johnsnowlabs import nlp
     import tests.secrets as secrets
     if library == 'open_source':
@@ -177,16 +177,25 @@ def model_and_output_levels_test(nlu_ref, lang, test_group=None, output_levels=N
         output_levels = ['chunk', 'tokens', 'embeddings', 'document']
     for output_level in output_levels:
         model_test(nlu_ref, output_level=output_level, lang=lang, test_group=test_group,
-                   input_data_type=input_data_type)
+                   input_data_type=input_data_type, pipe_params=pipe_params)
 
 
 def model_test(nlu_ref, output_level=None, drop_irrelevant_cols=False, metadata=True, positions=True,
                test_group=None,
                lang='en',
-               input_data_type='generic'):
+               input_data_type='generic', pipe_params=None):
+
     print(f'Testing Model {nlu_ref} with output_level={output_level} test_group={test_group}')
     pipe = nlu.load(nlu_ref, verbose=True)
     data = get_test_data(lang, input_data_type=input_data_type)
+
+    if (input_data_type in ['asr','IMG_vit','IMG_classifier']):
+        metadata=False
+        positions=False
+
+    if pipe_params is not None:
+        for p in pipe_params:
+            getattr(pipe[p.pipe_key], p.param_setter)(p.param_val)
 
     df = pipe.predict(data, output_level=output_level,
                       drop_irrelevant_cols=drop_irrelevant_cols, metadata=metadata,
