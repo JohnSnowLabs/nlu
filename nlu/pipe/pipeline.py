@@ -203,7 +203,7 @@ class NLUPipeline(dict):
                 logger.info(
                     'Fitting on empty Dataframe, could not infer correct training method. This is intended for non-trainable pipelines.')
                 self.vanilla_transformer_pipe = self.spark_estimator_pipe.fit(self.get_sample_spark_dataframe())
-                if isinstance(self.is_light_pipe_incompatible,()):
+                if not self.is_light_pipe_incompatible:
                     self.light_transformer_pipe = LightPipeline(self.vanilla_transformer_pipe)
 
         self.has_trainable_components = False

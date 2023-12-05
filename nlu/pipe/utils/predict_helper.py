@@ -311,7 +311,7 @@ def __predict__(pipe, data, output_level, positions, keep_stranger_features, met
         else:
             pipe.fit()
 
-        if isinstance(pipe.is_light_pipe_incompatible,()):
+        if not pipe.is_light_pipe_incompatible:
             pipe.__configure_light_pipe_usage__(DataConversionUtils.size_of(data), multithread)
 
     if pipe.contains_ocr_components and pipe.contains_audio_components:
