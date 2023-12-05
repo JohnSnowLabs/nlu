@@ -681,6 +681,7 @@ class PipeUtils:
             if c.license == Licenses.open_source \
                     and c.name != NLP_NODE_IDS.WAV2VEC_FOR_CTC \
                     and c.name != NLP_NODE_IDS.HUBERT_FOR_CTC \
+                    and c.name != NLP_NODE_IDS.WHISPER_FOR_CTC \
                     and c.name != NLP_NODE_IDS.AUDIO_ASSEMBLER:
                 # TODO Table Assembler/VIT/ Other non txt open source
                 pipe.has_nlp_components = True

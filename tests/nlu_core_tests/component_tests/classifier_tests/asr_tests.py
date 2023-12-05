@@ -1,29 +1,16 @@
 import unittest
-import sparknlp
-import librosa as librosa
-from sparknlp.base import *
-from sparknlp.annotator import *
-import pandas as pd
-import pyspark.sql.functions as F
-from pyspark.sql.types import *
-import pyspark.sql.functions as F
-import sparknlp
-import sparknlp
-from pyspark.ml import Pipeline
-from sparknlp.annotator import *
-from sparknlp.base import *
 import os
 
 
-os.environ['PYSPARK_PYTHON'] = '/home/ckl/anaconda3/bin/python3'
-os.environ['PYSPARK_DRIVER_PYTHON'] = '/home/ckl/anaconda3/bin/python3'
+#os.environ['PYSPARK_PYTHON'] = '/home/ckl/anaconda3/bin/python3'
+#os.environ['PYSPARK_DRIVER_PYTHON'] = '/home/ckl/anaconda3/bin/python3'
 
 
 
 class AsrTestCase(unittest.TestCase):
     def test_wav2vec(self):
         import nlu
-        p = nlu.load('en.wav2vec.wip',verbose=True)
+        p = nlu.load('en.speech2text.wav2vec2.v2_base_960h',verbose=True)
         FILE_PATH = os.path.normpath(r"tests/datasets/audio/asr/ngm_12484_01067234848.wav")
 
         print("Got p ",p)
@@ -35,7 +22,17 @@ class AsrTestCase(unittest.TestCase):
 
     def test_hubert(self):
         import nlu
-        p = nlu.load('en.asr_hubert_large_ls960',verbose=True)
+        p = nlu.load('en.speech2text.hubert.large_ls960',verbose=True)
+        FILE_PATH = os.path.normpath(r"tests/datasets/audio/asr/ngm_12484_01067234848.wav")
+
+        print("Got p ",p)
+        df = p.predict(FILE_PATH)
+        print(df)
+        df = p.predict([FILE_PATH,FILE_PATH])
+        print(df)
+    def test_whisper(self):
+        import nlu
+        p = nlu.load('xx.speech2text.whisper.tiny',verbose=True)
         FILE_PATH = os.path.normpath(r"tests/datasets/audio/asr/ngm_12484_01067234848.wav")
 
         print("Got p ",p)
