@@ -38,6 +38,7 @@ from nlu.components.classifiers.seq_roberta.seq_roberta import SeqRobertaClassif
 from nlu.components.classifiers.seq_xlm_roberta.seq_xlm_roberta import SeqXlmRobertaClassifier
 from nlu.components.classifiers.seq_xlnet.seq_xlnet import SeqXlnetClassifier
 from nlu.components.classifiers.span_bert.span_bert import SpanBertClassifier
+from nlu.components.classifiers.span_albert.span_albert import SpanAlbertClassifier
 from nlu.components.classifiers.span_camembert.span_camembert import SpanCamemBert
 from nlu.components.classifiers.span_deberta.span_deberta import SpanDeBertaClassifier
 from nlu.components.classifiers.span_distilbert.span_distilbert import SpanDistilBertClassifier
@@ -3136,6 +3137,25 @@ class ComponentUniverse:
                                                node=NLP_FEATURE_NODES.nodes[A.BERT_FOR_QUESTION_ANSWERING],
                                                get_default_model=SpanBertClassifier.get_default_model,
                                                get_pretrained_model=SpanBertClassifier.get_pretrained_model,
+                                               type=T.QUESTION_SPAN_CLASSIFIER,
+                                               pdf_extractor_methods={
+                                                   'default': default_span_classifier_config,
+                                                   'default_full': default_full_span_classifier_config, },
+                                               pdf_col_name_substitutor=substitute_span_classifier_cols,
+                                               output_level=L.INPUT_DEPENDENT_DOCUMENT_CLASSIFIER,
+                                               description='TODO',
+                                               provider=ComponentBackends.open_source,
+                                               license=Licenses.open_source,
+                                               computation_context=ComputeContexts.spark,
+                                               output_context=ComputeContexts.spark,
+                                               ),
+        A.ALBERT_FOR_QUESTION_ANSWERING: partial(NluComponent,
+                                               name=A.ALBERT_FOR_QUESTION_ANSWERING,
+                                               jsl_anno_class_id=A.ALBERT_FOR_QUESTION_ANSWERING,
+                                               jsl_anno_py_class=ACR.JSL_anno2_py_class[A.ALBERT_FOR_QUESTION_ANSWERING],
+                                               node=NLP_FEATURE_NODES.nodes[A.ALBERT_FOR_QUESTION_ANSWERING],
+                                               get_default_model=SpanAlbertClassifier.get_default_model,
+                                               get_pretrained_model=SpanAlbertClassifier.get_pretrained_model,
                                                type=T.QUESTION_SPAN_CLASSIFIER,
                                                pdf_extractor_methods={
                                                    'default': default_span_classifier_config,
