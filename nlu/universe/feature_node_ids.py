@@ -117,6 +117,7 @@ class NLP_NODE_IDS:
 
     DISTIL_BERT_FOR_ZERO_SHOT_CLASSIFICATION = JslAnnoId('distil_bert_zero_shot')
     BERT_FOR_ZERO_SHOT_CLASSIFICATION = JslAnnoId('bert_zero_shot')
+    BART_FOR_ZERO_SHOT_CLASSIFICATION = JslAnnoId('bart_zero_shot')
     ROBERTA_FOR_ZERO_SHOT_CLASSIFICATION = JslAnnoId('roberta_zero_shot')
     UNIVERSAL_SENTENCE_ENCODER = JslAnnoId('universal_sentence_encoder')
     XLM_ROBERTA_EMBEDDINGS = JslAnnoId('xlm_roberta_embeddings')

@@ -9,6 +9,7 @@ from nlu.components.chunkers.ngram.ngram import NGram
 from nlu.components.classifiers.asr.wav2Vec import Wav2Vec
 from nlu.components.classifiers.asr_hubert.hubert import Hubert
 from nlu.components.classifiers.bert_zero_shot_classification.bert_zero_shot import BertZeroShotClassifier
+from nlu.components.classifiers.bart_zero_shot_classification.bart_zero_shot import BartZeroShotClassifier
 from nlu.components.classifiers.classifier_dl.classifier_dl import ClassifierDl
 from nlu.components.classifiers.distil_bert_zero_shot_classification.distil_bert_zero_shot import \
     DistilBertZeroShotClassifier
@@ -3024,7 +3025,26 @@ class ComponentUniverse:
                                                      jsl_anno_py_class=ACR.JSL_anno2_py_class[
                                                          A.BERT_FOR_ZERO_SHOT_CLASSIFICATION],
                                                      ),
-
+        A.BART_FOR_ZERO_SHOT_CLASSIFICATION: partial(NluComponent,
+                                                     name=A.BART_FOR_ZERO_SHOT_CLASSIFICATION,
+                                                     type=T.TRANSFORMER_SEQUENCE_CLASSIFIER,
+                                                     get_default_model=BartZeroShotClassifier.get_default_model,
+                                                     get_pretrained_model=BartZeroShotClassifier.get_pretrained_model,
+                                                     pdf_extractor_methods={'default': default_seq_classifier_config,
+                                                                            'default_full': default_full_config, },
+                                                     pdf_col_name_substitutor=substitute_seq_bert_classifier_cols,
+                                                     output_level=L.INPUT_DEPENDENT_DOCUMENT_CLASSIFIER,
+                                                     node=NLP_FEATURE_NODES.nodes[
+                                                         A.BART_FOR_ZERO_SHOT_CLASSIFICATION],
+                                                     description='Bart Zero Shot Classifier.',
+                                                     provider=ComponentBackends.open_source,
+                                                     license=Licenses.open_source,
+                                                     computation_context=ComputeContexts.spark,
+                                                     output_context=ComputeContexts.spark,
+                                                     jsl_anno_class_id=A.BART_FOR_ZERO_SHOT_CLASSIFICATION,
+                                                     jsl_anno_py_class=ACR.JSL_anno2_py_class[
+                                                         A.BART_FOR_ZERO_SHOT_CLASSIFICATION],
+                                                     ),
         A.GPT2: partial(NluComponent,
                         name=A.GPT2,
                         type=T.TRANSFORMER_SEQUENCE_CLASSIFIER,
