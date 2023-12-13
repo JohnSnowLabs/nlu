@@ -60,7 +60,7 @@ class NLUPipeline(dict):
         self.has_table_qa_models = False
         self.requires_image_format = False
         self.requires_binary_format = False
-
+        self.is_light_pipe_incompatible = False
     def add(self, component: NluComponent, nlu_reference=None, pretrained_pipe_component=False,
             name_to_add='', idx=None):
         '''
@@ -203,7 +203,8 @@ class NLUPipeline(dict):
                 logger.info(
                     'Fitting on empty Dataframe, could not infer correct training method. This is intended for non-trainable pipelines.')
                 self.vanilla_transformer_pipe = self.spark_estimator_pipe.fit(self.get_sample_spark_dataframe())
-                self.light_transformer_pipe = LightPipeline(self.vanilla_transformer_pipe)
+                if not self.is_light_pipe_incompatible:
+                    self.light_transformer_pipe = LightPipeline(self.vanilla_transformer_pipe)
 
         self.has_trainable_components = False
         self.is_fitted = True
@@ -451,28 +452,6 @@ class NLUPipeline(dict):
                 self[component].write().overwrite().save(path)
             else:
                 self[component].save(path)
-
-    def predict_embeds(self,
-                       data,
-                       multithread=True,
-                       return_spark_df=False,
-                       ):
-        '''
-        Annotates a Pandas Dataframe/Pandas Series/Numpy Array/Spark DataFrame/Python List strings /Python String abd returns List of Floats or Spark-Df, only with embeddings.
-        :param data: Data to predict on
-                and drop_irrelevant_cols = True then chunk, sentence and Doc will be dropped
-        :param return_spark_df: Prediction results will be returned right after transforming with the Spark NLP pipeline
-                                 This will run fully distributed in on the Spark Master, but not prettify the output dataframe
-        :param return_spark_df: return Spark-DF and not collect all data into driver instead of returning list of float
-        :param multithread: Use multithreaded Light-pipeline instead of spark-pipeline
-
-        :return:
-        '''
-        from nlu.pipe.utils.predict_helper import __predict__
-        return __predict__(self, data, output_level=None, positions=False, keep_stranger_features=False, metadata=False,
-                           multithread=multithread,
-                           drop_irrelevant_cols=True, return_spark_df=return_spark_df, get_embeddings=True,
-                           embed_only=True)
 
     def predict(self,
                 data,

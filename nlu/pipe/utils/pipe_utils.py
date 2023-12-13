@@ -702,6 +702,8 @@ class PipeUtils:
                 pipe.has_nlp_components = False
             if c.jsl_anno_py_class == 'ImageAssembler':
                 pipe.contains_ocr_components = True
+            if c.is_light_pipe_incompatible:
+                pipe.is_light_pipe_incompatible = True
 
         return pipe
 

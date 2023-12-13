@@ -298,18 +298,20 @@ class OCR_FEATURE_NODES:
         # VISUAL_DOCUMENT_NER : OcrFeatureNode(A.VISUAL_DOCUMENT_NER, [OcrFeature.HOCR, OcrFeature.FILE_PATH], [NlpFeature.NER_Annotation]), # TODO NlpFeature Space!
 
         # Object Detection
-        A.IMAGE_HANDWRITTEN_DETECTOR: OcrFeatureNode(A.IMAGE_HANDWRITTEN_DETECTOR, [F.OCR_IMAGE, ], [F.OCR_REGION]),
+        A.IMAGE_SPLIT_REGIONS: OcrFeatureNode(A.IMAGE_SPLIT_REGIONS, [F.OCR_IMAGE,F.OCR_REGION], [F.IMG_SPLIT_REGIONS]),
 
-        # TABLE Processors/Recognition TODO REGION::CELL>??
-        A.IMAGE_TABLE_DETECTOR: OcrFeatureNode(A.IMAGE_TABLE_DETECTOR, [F.OCR_IMAGE, ], [F.OCR_TABLE]),
-        # TODO REGION or TABLE??? IS IT THE SAME???
-        A.IMAGE_TABLE_CELL_DETECTOR: OcrFeatureNode(A.IMAGE_TABLE_CELL_DETECTOR, [F.OCR_IMAGE, ], [F.OCR_TABLE_CELLS]),
-        # TODO REGION or TABLE??? IS IT THE SAME???
-        A.IMAGE_TABLE_CELL2TEXT_TABLE: OcrFeatureNode(A.IMAGE_TABLE_CELL2TEXT_TABLE, [F.OCR_IMAGE, F.OCR_TABLE_CELLS],
+        # VISUAL_DOCUMENT_NER : OcrFeatureNode(A.VISUAL_DOCUMENT_NER, [OcrFeature.HOCR, OcrFeature.FILE_PATH], [NlpFeature.NER_Annotation]), # TODO NlpFeature Space!
+
+        # Object Detection
+        A.IMAGE_HANDWRITTEN_DETECTOR: OcrFeatureNode(A.IMAGE_HANDWRITTEN_DETECTOR, [F.OCR_IMAGE], [F.OCR_REGION]),
+
+        # TABLE Processors/Recognition
+        A.IMAGE_TABLE_DETECTOR: OcrFeatureNode(A.IMAGE_TABLE_DETECTOR, [F.OCR_IMAGE], [F.OCR_REGION]),
+        A.IMAGE_TABLE_CELL_DETECTOR: OcrFeatureNode(A.IMAGE_TABLE_CELL_DETECTOR, [F.IMG_SPLIT_REGIONS, F.OCR_REGION],
+                                                    [F.OCR_TABLE_CELLS]),
+        A.IMAGE_TABLE_CELL2TEXT_TABLE: OcrFeatureNode(A.IMAGE_TABLE_CELL2TEXT_TABLE, [F.IMG_SPLIT_REGIONS,
+                                                                                      F.OCR_TABLE_CELLS],
                                                       [F.OCR_TABLE]),
-        # TODO OUPUT!! REGION or TABLE??? IS IT THE SAME???
-
-        # TODO are POSITIOns  and REGIONS the same??? Regions is an ARRAY of PSOTISIONS. BUT is REGION::: TABLE??? Samefor CELLs
         # PDF Processing
         A.PDF2TEXT: OcrFeatureNode(A.PDF2TEXT, [F.BINARY_PDF, F.FILE_PATH], [F.TEXT, F.PAGE_NUM]),
         A.PDF2IMAGE: OcrFeatureNode(A.PDF2IMAGE, [F.BINARY_PDF, F.FILE_PATH, F.FALL_BACK], [F.OCR_IMAGE, F.PAGE_NUM]),
@@ -352,7 +354,7 @@ class OCR_FEATURE_NODES:
         A.IMAGE_CROPPER: OcrFeatureNode(A.IMAGE_CROPPER, [F.OCR_IMAGE], [F.OCR_IMAGE]),  # TODO
         A.IMAGE2REGION: OcrFeatureNode(A.IMAGE2PDF, [F.OCR_IMAGE], [F.OCR_IMAGE]),  # TODO
         A.IMAGE_LAYOUT_ANALZYER: OcrFeatureNode(A.IMAGE_LAYOUT_ANALZYER, [F.OCR_IMAGE], [F.OCR_IMAGE]),  # TODO
-        A.IMAGE_SPLIT_REGIONS: OcrFeatureNode(A.IMAGE_SPLIT_REGIONS, [F.OCR_IMAGE], [F.OCR_IMAGE]),  # TODO
+        # A.IMAGE_SPLIT_REGIONS: OcrFeatureNode(A.IMAGE_SPLIT_REGIONS, [F.OCR_IMAGE], [F.OCR_IMAGE]),  # TODO
         A.IMAGE_DRAW_REGIONS: OcrFeatureNode(A.IMAGE_DRAW_REGIONS, [F.OCR_IMAGE], [F.OCR_IMAGE]),  # TODO
 
         # Character Recognition .. TODO these should be correct but not 100% sure about the positions
