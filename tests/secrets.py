@@ -1,7 +1,14 @@
 import json
 import os
 
-license_dict = json.loads(os.getenv("JSL_LICENSE"))
+if os.path.exists('./tests/lic.json'):
+    with open('./tests/lic.json', 'r') as f:
+        license_dict = json.loads(f.read())
+elif 'JSL_LICENSE' in os.environ:
+    license_dict = json.loads(os.getenv("JOHNSNOWLABS_LICENSE_JSON"))
+else:
+    raise Exception("No license found")
+
 AWS_ACCESS_KEY_ID = license_dict.get("AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = license_dict.get("AWS_SECRET_ACCESS_KEY")
 JSL_SECRET = license_dict.get("SECRET")
