@@ -91,21 +91,21 @@ image_data = {
                            ]),
     'DOC_table': TestData(['tests/datasets/ocr/docx_with_table/doc2.docx',
                            ]),
-    'IMG_vit': TestData(['./datasets/ocr/vit/general_images/images/bluetick.jpg',
-                         './datasets/ocr/vit/general_images/images/chihuahua.jpg',
-                         './datasets/ocr/vit/general_images/images/egyptian_cat.jpeg',
-                         './datasets/ocr/vit/ox.jpg',
-                         './datasets/ocr/vit/general_images/images/hen.JPEG',
-                         './datasets/ocr/vit/general_images/images/hippopotamus.JPEG',
-                         './datasets/ocr/vit/general_images/images/junco.JPEG',
-                         './datasets/ocr/vit/general_images/images/palace.JPEG',
-                         './datasets/ocr/vit/general_images/images/tractor.JPEG'
+    'IMG_vit': TestData(['tests/datasets/ocr/vit/general_images/images/bluetick.jpg',
+                         'tests/datasets/ocr/vit/general_images/images/chihuahua.jpg',
+                         'tests/datasets/ocr/vit/general_images/images/egyptian_cat.jpeg',
+                         'tests/datasets/ocr/vit/ox.jpg',
+                         'tests/datasets/ocr/vit/general_images/images/hen.JPEG',
+                         'tests/datasets/ocr/vit/general_images/images/hippopotamus.JPEG',
+                         'tests/datasets/ocr/vit/general_images/images/junco.JPEG',
+                         'tests/datasets/ocr/vit/general_images/images/palace.JPEG',
+                         'tests/datasets/ocr/vit/general_images/images/tractor.JPEG'
                          ]),
-    'IMG_classifier': TestData(['./datasets/ocr/images/teapot.jpg']),
+    'IMG_classifier': TestData(['tests/datasets/ocr/images/teapot.jpg']),
 }
 
 audio_data = {
-    'asr': TestData(['./datasets/audio/asr/ngm_12484_01067234848.wav']),
+    'asr': TestData(['tests/datasets/audio/asr/ngm_12484_01067234848.wav']),
 }
 
 qa_data = {
