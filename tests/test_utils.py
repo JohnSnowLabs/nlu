@@ -50,7 +50,8 @@ def get_sample_pdf_with_labels():
 
 
 def get_sample_sdf():
-    nlu.spark = sparknlp.start()
+
+    nlu.spark = sparknlp.start(cache_folder='/home/ckl/dump/cache_pretrained/')
     nlu.spark_started = True
     return nlu.spark.createDataFrame(get_sample_pdf())
 
