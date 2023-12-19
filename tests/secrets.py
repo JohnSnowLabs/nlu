@@ -4,7 +4,7 @@ import os
 if os.path.exists('./tests/lic.json'):
     with open('./tests/lic.json', 'r') as f:
         license_dict = json.loads(f.read())
-elif 'JSL_LICENSE' in os.environ:
+elif 'JOHNSNOWLABS_LICENSE_JSON' in os.environ:
     license_dict = json.loads(os.getenv("JOHNSNOWLABS_LICENSE_JSON"))
 else:
     raise Exception("No license found")
