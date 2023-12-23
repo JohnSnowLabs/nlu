@@ -57,5 +57,5 @@ def use_first_row_as_column_names_for_list_of_dfs(pd_tables):
     new_tables = []
     for t in pd_tables:
         new_tables.append(use_first_row_as_column_names(t))
-    print(new_tables)
+    # print(new_tables)
     return new_tables
