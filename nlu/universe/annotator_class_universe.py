@@ -236,6 +236,7 @@ class AnnoClassRef:
         A_N.PARTIAL_Lemmatizer: 'Lemmatizer',
         A_N.PARTIAL_Normalizer: 'Normalizer',
         A_N.VIT_IMAGE_CLASSIFICATION: 'ViTForImageClassification',
+        A_N.CLIP_FOR_ZERO_SHOT_IMAGE_CLASSIFICATION: 'CLIPForZeroShotClassification',
         A_N.CONVNEXT_IMAGE_CLASSIFICATION: 'ConvNextImageClassifier',
 
     }

@@ -105,6 +105,7 @@ class NLP_NODE_IDS:
     ROBERTA_SENTENCE_EMBEDDINGS = JslAnnoId('roberta_sentence_embeddings')
     T5_TRANSFORMER = JslAnnoId('t5_transformer')
     VIT_IMAGE_CLASSIFICATION = JslAnnoId("vit_image_classification")
+    CLIP_FOR_ZERO_SHOT_IMAGE_CLASSIFICATION = JslAnnoId("clip_for_zero_shot_image_classification")
     CONVNEXT_IMAGE_CLASSIFICATION = JslAnnoId("convnext_image_classification")
     SWIN_IMAGE_CLASSIFICATION = JslAnnoId("swin_image_classification")
     BART_TRANSFORMER = JslAnnoId("bart_transformer")

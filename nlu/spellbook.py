@@ -2446,6 +2446,7 @@ class Spellbook:
             'en.seq2seq.distilbart_cnn_12_6': 'distilbart_cnn_12_6',
             'en.seq2seq.distilbart_xsum_6_6': 'distilbart_xsum_6_6',
             'en.classify_image.swin.tiny': 'image_classifier_swin_tiny_patch4_window7_224',
+            'en.classify_image.clip_zero_shot': 'zero_shot_classifier_clip_vit_base_patch32',
             'en.speech2text.hubert': 'asr_hubert_large_ls960',
             'en.speech2text.hubert.large_ls960': 'asr_hubert_large_ls960',
             'en.albert': 'albert_base_uncased',
@@ -19971,6 +19972,7 @@ class Spellbook:
                              'xlnet_large_cased': 'XlnetEmbeddings',
                              'xlnet_large_token_classifier_conll03': 'XlnetForTokenClassification',
                              'yake': 'YakeKeywordExtraction',
+                             'zero_shot_classifier_clip_vit_base_patch32': 'CLIPForZeroShotClassification',
                              'zero_shot_ner_roberta': 'ZeroShotNerModel',
                              'zero_shot_re': 'ZeroShotRelationExtractionModel',
 
