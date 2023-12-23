@@ -341,7 +341,7 @@ def zip_and_explode(df: pd.DataFrame, cols_to_explode: List[str]) -> pd.DataFram
             Elements of columns which are not in cols_to_explode, will be in lists
     """
     # Check cols we want to explode actually exist, if no data extracted cols can be missing
-    print(df)
+    # print(df)
     missing = []
     for col in cols_to_explode:
         if col not in df.columns:
@@ -349,7 +349,18 @@ def zip_and_explode(df: pd.DataFrame, cols_to_explode: List[str]) -> pd.DataFram
     for miss in missing:
         cols_to_explode.remove(miss)
     # Drop duplicate cols
-    df = df.loc[:, ~df.columns.duplicated()]
+    # df = df.loc[:, ~df.columns.duplicated()]
+    if df.columns.duplicated().any():
+        # If there are duplicate column names, append a suffix to make them unique
+        cols = pd.Series(df.columns)
+        for dup in cols[cols.duplicated()].unique():
+            cols[cols[cols == dup].index.values.tolist()] = [dup + '.' + str(i) if i != 0 else dup for i in
+                                                             range(sum(cols == dup))]
+        df.columns = cols
+    else:
+        # If there are no duplicate column names, remove duplicate columns
+        df = df.loc[:, ~df.columns.duplicated()]
+
     if len(cols_to_explode) > 0:
         # We must pad all cols we want to explode to the same length because pandas limitation.
         # Spark API does not require this since it handles cols with not same length by creating nan. We do it ourselves here manually

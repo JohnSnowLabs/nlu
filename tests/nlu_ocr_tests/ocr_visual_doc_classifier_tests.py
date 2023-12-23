@@ -11,9 +11,10 @@ os.environ['PYSPARK_PYTHON'] = sys.executable
 os.environ['PYSPARK_DRIVER_PYTHON'] = sys.executable
 from johnsnowlabs import nlp, visual
 
+# nlp.install(json_license_path='license.json',visual=True)
 nlp.start(visual=True)
 
-print('hi')
+# print('hi')
 class OcrTest(unittest.TestCase):
 
     def test_classify_document(self):
@@ -22,9 +23,11 @@ class OcrTest(unittest.TestCase):
         # We need convert text to img struct!
         p = nlu.load('en.classify_image.tabacco',verbose=True)
         res = p.predict('cv_test.png')
+        for i,j in res.iterrows():
+            print(i,j)
         print(res)
-        for r in res.columns:
-            print(r[res])
+        # for r in res.columns:
+        #     print(r[res])
 
 if __name__ == '__main__':
     unittest.main()

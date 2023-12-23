@@ -131,7 +131,8 @@ from nlu.ocr_components.utils.binary2image.binary2image import Binary2Image
 from nlu.ocr_components.utils.image2hocr.image2hocr import Image2Hocr
 # from nlu.ocr_components.visual_classifiers.visual_doc_classifier.visual_doc_classifier import VisualDocClassifier
 from nlu.pipe.col_substitution.col_substitution_HC import *
-from nlu.pipe.col_substitution.col_substitution_OCR import substitute_recognized_text_cols
+from nlu.pipe.col_substitution.col_substitution_OCR import substitute_recognized_text_cols, \
+    substitute_document_classifier_text_cols
 from nlu.pipe.col_substitution.col_substitution_OS import *
 from nlu.pipe.extractors.extractor_configs_HC import *
 from nlu.pipe.extractors.extractor_configs_OCR import default_text_recognizer_config, default_binary_to_image_config, \
@@ -4092,7 +4093,7 @@ class ComponentUniverse:
                                                 get_default_model=VisualDocClassifier.get_default_model,
                                                 pdf_extractor_methods={'default': default_visual_classifier_config},
                                                 # TODO EXtractor
-                                                pdf_col_name_substitutor=substitute_recognized_text_cols,
+                                                pdf_col_name_substitutor=substitute_document_classifier_text_cols,
                                                 # TODO substitor
                                                 output_level=L.DOCUMENT,
                                                 node=OCR_FEATURE_NODES.nodes[O_A.VISUAL_DOCUMENT_CLASSIFIER],

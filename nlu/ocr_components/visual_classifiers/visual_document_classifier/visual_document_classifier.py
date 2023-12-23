@@ -5,5 +5,5 @@ class VisualDocClassifier:
         return VisualDocumentClassifier.pretrained("visual_document_classifier_tobacco3482", "en", "clinical/ocr") \
             .setMaxSentenceLength(128) \
             .setInputCol("hocr") \
-            .setLabelCol("label") \
+            .setLabelCol("prediction") \
             .setConfidenceCol("conf")
