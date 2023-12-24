@@ -17,6 +17,7 @@ from nlu.components.classifiers.generic_classifier.generic_classifier import Gen
 from nlu.components.classifiers.image_classification_swin.swin import SwinImageClassifier
 from nlu.components.classifiers.image_classification_vit.convnext_image_classification import ConvNextImageClassifier
 from nlu.components.classifiers.image_classification_vit.vit_image_classifier import VitImageClassifier
+from nlu.components.classifiers.image_encoder_decoder.vision_encoder_decoder import VisionEncoderDecoder
 from nlu.components.classifiers.language_detector.language_detector import LanguageDetector
 from nlu.components.classifiers.multi_classifier.multi_classifier import MultiClassifier
 from nlu.components.classifiers.named_entity_recognizer_crf.ner_crf import NERDLCRF
@@ -3374,6 +3375,30 @@ class ComponentUniverse:
                                              requires_image_format=True,
                                              is_visual_annotator=True,
                                              ),
+        A.VISION_ENCODER_DECODER_FOR_IMAGE_CAPTIONING: partial(NluComponent,
+                                                                name=A.VISION_ENCODER_DECODER_FOR_IMAGE_CAPTIONING,
+                                                                type=T.IMAGE_CLASSIFICATION,
+                                                                get_default_model=VisionEncoderDecoder.get_default_model,
+                                                                get_pretrained_model=VisionEncoderDecoder.get_pretrained_model,
+                                                                pdf_extractor_methods={
+                                                                    'default': default_document_config,
+                                                                    'default_full': default_full_config},
+                                                                pdf_col_name_substitutor=substitute_recognized_text_cols,
+                                                                output_level=L.DOCUMENT,
+                                                                node=NLP_FEATURE_NODES.nodes[
+                                                                    A.VISION_ENCODER_DECODER_FOR_IMAGE_CAPTIONING],
+                                                                description='TODO',
+                                                                provider=ComponentBackends.open_source,
+
+                                                                license=Licenses.open_source,
+                                                                computation_context=ComputeContexts.spark,
+                                                                output_context=ComputeContexts.spark,
+                                                                jsl_anno_class_id=A.VISION_ENCODER_DECODER_FOR_IMAGE_CAPTIONING,
+                                                                jsl_anno_py_class=ACR.JSL_anno2_py_class[
+                                                                    A.VISION_ENCODER_DECODER_FOR_IMAGE_CAPTIONING],
+                                                                requires_image_format=True,
+                                                                is_visual_annotator=True,
+                                                                ),
 
         A.IMAGE_ASSEMBLER: partial(NluComponent,
                                    name=A.IMAGE_ASSEMBLER,
