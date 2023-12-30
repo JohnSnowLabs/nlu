@@ -131,6 +131,8 @@ class NLP_NODE_IDS:
     ALBERT_FOR_SEQUENCE_CLASSIFICATION = JslAnnoId('albert_for_sequence_classification')
     XLNET_FOR_SEQUENCE_CLASSIFICATION = JslAnnoId('xlnet_for_sequence_classification')
     GPT2 = JslAnnoId('gpt2')
+    OPENAI_COMPLETION = JslAnnoId('openai_completion')
+    OPENAI_EMBEDDINGS = JslAnnoId('openai_embeddings')
     WORD_2_VEC = JslAnnoId('word_2_vec')
     DEBERTA_WORD_EMBEDDINGS = JslAnnoId('deberta')
     DEBERTA_FOR_SEQUENCE_CLASSIFICATION = JslAnnoId('deberta_for_sequence_classification')

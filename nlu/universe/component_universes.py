@@ -99,6 +99,8 @@ from nlu.components.sentence_detectors.deep_sentence_detector.deep_sentence_dete
 from nlu.components.sentence_detectors.pragmatic_sentence_detector.sentence_detector import PragmaticSentenceDetector
 from nlu.components.seq2seqs.bart_transformer.bart_transformer import SparkNLPBartTransformer
 from nlu.components.seq2seqs.gpt2.gpt2 import GPT2
+from nlu.components.seq2seqs.openai_completion.openai_completion import OpenaiCompletion
+from nlu.components.embeddings.openai_embeddings.openai_embeddings import OpenaiEmbeddings
 from nlu.components.seq2seqs.marian.marian import Marian
 from nlu.components.seq2seqs.med_summarizer.med_summarizer import MedSummarizer
 from nlu.components.seq2seqs.med_text_generator.med_text_generator import MedTextGenerator
@@ -2420,6 +2422,28 @@ class ComponentUniverse:
                                             has_storage_ref=True,
                                             is_storage_ref_producer=True,
                                             ),
+
+        A.OPENAI_EMBEDDINGS: partial(NluComponent,
+                                            name=A.OPENAI_EMBEDDINGS,
+                                            type=T.DOCUMENT_EMBEDDING,
+                                            get_default_model=OpenaiEmbeddings.get_default_model,
+                                            get_pretrained_model=OpenaiEmbeddings.get_pretrained_model,
+                                            pdf_extractor_methods={'default': default_sentence_embedding_config,
+                                                                   'default_full': default_full_config, },
+                                            pdf_col_name_substitutor=substitute_sent_embed_cols,
+                                            output_level=L.INPUT_DEPENDENT_DOCUMENT_EMBEDDING,
+                                            node=NLP_FEATURE_NODES.nodes[A.OPENAI_EMBEDDINGS],
+                                            description='',
+                                            provider=ComponentBackends.open_source,
+                                            license=Licenses.open_source,
+                                            computation_context=ComputeContexts.spark,
+                                            output_context=ComputeContexts.spark,
+                                            jsl_anno_class_id=A.OPENAI_EMBEDDINGS,
+                                            jsl_anno_py_class=ACR.JSL_anno2_py_class[A.OPENAI_EMBEDDINGS],
+                                            has_storage_ref=True,
+                                            is_storage_ref_producer=True,
+                                            ),
+
         A.BERT_FOR_TOKEN_CLASSIFICATION: partial(NluComponent,
                                                  name=A.BERT_FOR_TOKEN_CLASSIFICATION,
                                                  type=T.TRANSFORMER_TOKEN_CLASSIFIER,
@@ -3066,6 +3090,24 @@ class ComponentUniverse:
                         output_context=ComputeContexts.spark,
                         jsl_anno_class_id=A.GPT2,
                         jsl_anno_py_class=ACR.JSL_anno2_py_class[A.GPT2],
+                        ),
+
+        A.OPENAI_COMPLETION: partial(NluComponent,
+                        name=A.OPENAI_COMPLETION,
+                        type=T.TRANSFORMER_SEQUENCE_CLASSIFIER,
+                        get_default_model=OpenaiCompletion.get_default_model,
+                        get_pretrained_model=OpenaiCompletion.get_pretrained_model,
+                        pdf_extractor_methods={'default': default_gpt2_config, 'default_full': default_full_config, },
+                        pdf_col_name_substitutor=substitute_gpt2_cols,  # TIODO TESt
+                        output_level=L.INPUT_DEPENDENT_DOCUMENT_CLASSIFIER,
+                        node=NLP_FEATURE_NODES.nodes[A.OPENAI_COMPLETION],
+                        description='',
+                        provider=ComponentBackends.open_source,
+                        license=Licenses.open_source,
+                        computation_context=ComputeContexts.spark,
+                        output_context=ComputeContexts.spark,
+                        jsl_anno_class_id=A.OPENAI_COMPLETION,
+                        jsl_anno_py_class=ACR.JSL_anno2_py_class[A.OPENAI_COMPLETION],
                         ),
 
         A.WORD_2_VEC: partial(NluComponent,  # TOOD

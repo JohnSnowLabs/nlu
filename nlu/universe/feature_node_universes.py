@@ -269,6 +269,8 @@ class NLP_FEATURE_NODES:  # or Mode Node?
                                                                [F.DOCUMENT, F.TOKEN],
                                                                [F.SEQUENCE_CLASSIFICATION]),
         A.GPT2: NlpFeatureNode(A.GPT2, [F.DOCUMENT], [F.DOCUMENT_GENERATED]),
+        A.OPENAI_COMPLETION: NlpFeatureNode(A.OPENAI_COMPLETION, [F.DOCUMENT], [F.DOCUMENT_GENERATED]),
+        A.OPENAI_EMBEDDINGS: NlpFeatureNode(A.OPENAI_EMBEDDINGS, [F.DOCUMENT], [F.SENTENCE_EMBEDDINGS]),
         A.WORD_2_VEC: NlpFeatureNode(A.WORD_2_VEC, [F.TOKEN], [F.WORD_EMBEDDINGS]),
         A.BERT_SENTENCE_CHUNK_EMBEDDINGS: NlpFeatureNode(A.BERT_SENTENCE_CHUNK_EMBEDDINGS, [F.DOCUMENT],
                                                          [F.NAMED_ENTITY_CONVERTED]),

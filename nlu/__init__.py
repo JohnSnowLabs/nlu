@@ -197,7 +197,10 @@ def load(request: str = 'from_disk', path: Optional[str] = None, verbose: bool =
         return nlu.load(request, path, verbose, gpu, streamlit_caching)
     # check if secrets are in default loc, if yes load them and create licensed context automatically
     auth(gpu=gpu)
-    spark = get_open_source_spark_context(gpu, m1_chip)
+    if request.startswith("openai"):
+        spark = get_open_source_spark_context_with_openai(gpu,m1_chip)
+    else:
+        spark = get_open_source_spark_context(gpu, m1_chip)
     # spark.catalog.clearCache()
 
     if verbose:
@@ -371,7 +374,22 @@ def get_open_source_spark_context(gpu, m1_chip):
     raise ValueError(f"Failure starting Spark Context! Current Spark version {get_pyspark_version()} not supported! "
                      f"Please install any of Pyspark 3.X versions.")
 
+def get_open_source_spark_context_with_openai(gpu, m1_chip):
 
+    if env_utils.is_env_pyspark_3_x():
+        OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
+
+        if OPENAI_API_KEY:
+            openai_params = {"spark.jsl.settings.openai.api.key": OPENAI_API_KEY}
+            if m1_chip:
+                return sparknlp.start(gpu=gpu, m1=True, params=openai_params)
+            else:
+                return sparknlp.start(gpu=gpu, params=openai_params)
+        else:
+            raise Exception("This feature requires OPEN_API_KEY env var to be present")
+
+    raise ValueError(f"Failure starting Spark Context! Current Spark version {get_pyspark_version()} not supported! "
+                     f"Please install any of Pyspark 3.X versions.")
 def enable_verbose() -> None:
     logger.setLevel(logging.INFO)
     ch = logging.StreamHandler()

@@ -197,6 +197,8 @@ class Spellbook:
         'grammar_correctness': ('t5_base', 'model_anno_obj', {'setTask': '"cola sentence: "'}),
         'answer_question': ('t5_base', 'model_anno_obj', {'setTask': '"question: "'}),
         'classify.sentiment_t5': ('t5_base', 'model_anno_obj', {'setTask': '"sst2 sentence: "'}),
+        'openai.completion': ('openai.completion', 'model_anno_obj'),
+        'openai.embeddings': ('openai.embeddings', 'model_anno_obj'),
 
     }
     # multi lang models
@@ -16841,6 +16843,8 @@ class Spellbook:
                              'onto_small_bert_L4_256': 'NerDLModel',
                              'onto_small_bert_L4_512': 'NerDLModel',
                              'onto_small_bert_L8_512': 'NerDLModel',
+                             'openai.completion': 'OpenAICompletion',
+                             'openai.embeddings': 'OpenAIEmbeddings',
                              'opus_mt_aav_en': 'MarianTransformer',
                              'opus_mt_aed_es': 'MarianTransformer',
                              'opus_mt_af_de': 'MarianTransformer',
