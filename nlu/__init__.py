@@ -386,7 +386,7 @@ def get_open_source_spark_context_with_openai(gpu, apple_silicon):
             else:
                 return sparknlp.start(gpu=gpu, params=openai_params)
         else:
-            raise Exception("This feature requires OPEN_API_KEY env var to be present")
+            raise Exception("This feature requires OPEN_API_KEY env var to be present!")
 
     raise ValueError(f"Failure starting Spark Context! Current Spark version {get_pyspark_version()} not supported! "
                      f"Please install any of Pyspark 3.X versions.")
