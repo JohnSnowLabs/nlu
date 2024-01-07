@@ -36,6 +36,4 @@ jobs:
       - name: Run all tests
         if: always()
         run: |
-          python -m pytest -n 1 --forked -s --capture=no ./tests/base_model_test.py
-#          python -m pytest -n 1  --dist=each --forked -s --capture=no ./tests/base_model_test.py
-          # python -m pytest -n 1  --dist=each --forked -s --capture=no ./tests/base_model_test.py
+          python tests/run_tests.py

@@ -4,8 +4,9 @@ import sys
 import pandas as pd
 import sparknlp
 
+import _secrets as secrets
 import nlu
-from tests.test_data import get_test_data
+from test_data import get_test_data
 
 os.environ['PYSPARK_PYTHON'] = sys.executable
 os.environ['PYSPARK_DRIVER_PYTHON'] = sys.executable
@@ -23,8 +24,8 @@ def log_df(df, test_group):
         print(df[c])
 
 
-def log_and_validate(df,test_group):
-    log_df(df,test_group)
+def log_and_validate(df, test_group):
+    log_df(df, test_group)
     validate_predictions(df)
 
 
@@ -50,8 +51,7 @@ def get_sample_pdf_with_labels():
 
 
 def get_sample_sdf():
-
-    nlu.spark = sparknlp.start(cache_folder='/home/ckl/dump/cache_pretrained/')
+    nlu.spark = sparknlp.start()
     nlu.spark_started = True
     return nlu.spark.createDataFrame(get_sample_pdf())
 
@@ -161,13 +161,12 @@ def create_path_if_not_exist(path):
 
 
 def model_and_output_levels_test(nlu_ref, lang, test_group=None, output_levels=None, input_data_type='generic',
-                                 library='open_source',pipe_params=None):
+                                 library='open_source', pipe_params=None):
     from johnsnowlabs import nlp
-    import tests.secrets as secrets
     if library == 'open_source':
         nlp.start()
     elif library == 'healthcare':
-        nlp.start(json_license_path=secrets.JSON_LIC_PATH)
+        nlp.start(json_license_path=secrets.JSON_LIC_PATH,)
     elif library == 'ocr':
         nlp.start(json_license_path=secrets.JSON_LIC_PATH, visual=True)
     else:
@@ -185,14 +184,13 @@ def model_test(nlu_ref, output_level=None, drop_irrelevant_cols=False, metadata=
                test_group=None,
                lang='en',
                input_data_type='generic', pipe_params=None):
-
     print(f'Testing Model {nlu_ref} with output_level={output_level} test_group={test_group}')
     pipe = nlu.load(nlu_ref, verbose=True)
     data = get_test_data(lang, input_data_type=input_data_type)
 
-    if (input_data_type in ['asr','IMG_vit','IMG_classifier']):
-        metadata=False
-        positions=False
+    if (input_data_type in ['asr', 'IMG_vit', 'IMG_classifier']):
+        metadata = False
+        positions = False
 
     if pipe_params is not None:
         for p in pipe_params:
@@ -201,13 +199,13 @@ def model_test(nlu_ref, output_level=None, drop_irrelevant_cols=False, metadata=
     df = pipe.predict(data, output_level=output_level,
                       drop_irrelevant_cols=drop_irrelevant_cols, metadata=metadata,
                       positions=positions)
-    log_and_validate(df,test_group)
+    log_and_validate(df, test_group)
 
     if isinstance(data, list):
         df = pipe.predict(data[0], output_level=output_level,
                           drop_irrelevant_cols=drop_irrelevant_cols, metadata=metadata,
                           positions=positions)
-        log_and_validate(df,test_group)
+        log_and_validate(df, test_group)
 
 
 def validate_predictions(df):
