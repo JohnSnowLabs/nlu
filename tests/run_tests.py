@@ -64,6 +64,9 @@ if __name__ == '__main__':
     logs = {}
     total_tests = len(all_tests)
     for i, test_params in enumerate(all_tests):
+        if i % 10 == 0:
+            # Delete models so we dont run out of diskspace
+            os.system('rm -r ~/cache_pretrained')
         print(f"{'#' * 10} Running test {i} of {total_tests}  with config {test_params} {'#' * 10}")
         logs[i] = {}
         logs[i]['test_data'] = test_params
