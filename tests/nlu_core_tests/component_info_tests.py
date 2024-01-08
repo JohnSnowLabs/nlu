@@ -9,7 +9,6 @@ class TestComponentInfo(unittest.TestCase):
     def test_list_all_names(self):
         a = nlu.AllComponentsInfo()
         a.list_all_components()
-        a.DEBUG_list_all_components()
 
     def test_print_all_default_components_as_markdown(self):
         d = nlu.Spellbook.component_alias_references
