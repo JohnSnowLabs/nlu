@@ -8,6 +8,7 @@ from nlu.components.chunkers.default_chunker.default_chunker import DefaultChunk
 from nlu.components.chunkers.ngram.ngram import NGram
 from nlu.components.classifiers.asr.wav2Vec import Wav2Vec
 from nlu.components.classifiers.asr_hubert.hubert import Hubert
+from nlu.components.classifiers.asr_whisper.whisper import Whisper
 from nlu.components.classifiers.bert_zero_shot_classification.bert_zero_shot import BertZeroShotClassifier
 from nlu.components.classifiers.classifier_dl.classifier_dl import ClassifierDl
 from nlu.components.classifiers.distil_bert_zero_shot_classification.distil_bert_zero_shot import \
@@ -75,6 +76,7 @@ from nlu.components.embeddings.longformer.longformer import Longformer
 from nlu.components.embeddings.roberta.roberta import Roberta
 from nlu.components.embeddings.sentence_e5.E5SentenceEmbedding import E5
 from nlu.components.embeddings.sentence_bert.BertSentenceEmbedding import BertSentence
+from nlu.components.embeddings.sentence_roberta.RobertaSentenceEmbedding import RobertaSentence
 from nlu.components.embeddings.sentence_mpnet.MPNetSentenceEmbedding import MPNetSentence
 from nlu.components.embeddings.instructor_sentence.InstructorEmbeddings import Instructor
 from nlu.components.embeddings.sentence_xlm.sentence_xlm import Sentence_XLM
@@ -131,6 +133,10 @@ from nlu.ocr_components.text_recognizers.img2text.img2text import Img2Text
 from nlu.ocr_components.text_recognizers.pdf2text.pdf2text import Pdf2Text
 from nlu.ocr_components.utils.binary2image.binary2image import Binary2Image
 from nlu.ocr_components.utils.image2hocr.image2hocr import Image2Hocr
+from nlu.ocr_components.table_extractors.image2table.image2table import IMAGE_TABLE_DETECTOR
+from nlu.ocr_components.table_extractors.image2table_cell.image2table_cell import ImageTableCellDetector
+from nlu.ocr_components.table_extractors.image_table_cell2text.image_table_cell2text import ImageTable2Cell2TextTable
+from nlu.ocr_components.utils.image_split_regions.image_split_regions import ImageSplitRegions
 # from nlu.ocr_components.visual_classifiers.visual_doc_classifier.visual_doc_classifier import VisualDocClassifier
 from nlu.pipe.col_substitution.col_substitution_HC import *
 from nlu.pipe.col_substitution.col_substitution_OCR import substitute_recognized_text_cols
@@ -1481,6 +1487,27 @@ class ComponentUniverse:
                                   applicable_file_types=['wav', 'mp3', 'flac', 'aiff', 'aifc', 'ogg', 'aflac', 'alac',
                                                          'dsd', 'pcm', ]
                                   ),
+        A.WHISPER_FOR_CTC: partial(NluComponent,
+                                   name=A.WHISPER_FOR_CTC,
+                                   type=T.SPEECH_RECOGNIZER,
+                                   get_default_model=Whisper.get_default_model,
+                                   get_pretrained_model=Whisper.get_pretrained_model,
+                                   pdf_extractor_methods={'default': default_only_result_config,
+                                                          'default_full': default_full_config, },
+                                   pdf_col_name_substitutor=substitute_wav2vec_cols,
+                                   output_level=L.DOCUMENT,
+                                   node=NLP_FEATURE_NODES.nodes[A.WHISPER_FOR_CTC],
+                                   description='Whisper is an automatic speech recognition (ASR) system trained on 680,000 hours of multilingual and multitask supervised data collected from the web. It transcribe in multiple languages, as well as translate from those languages into English.',
+                                   provider=ComponentBackends.open_source,
+                                   license=Licenses.open_source,
+                                   computation_context=ComputeContexts.spark,
+                                   output_context=ComputeContexts.spark,
+                                   jsl_anno_class_id=A.WHISPER_FOR_CTC,
+                                   jsl_anno_py_class=ACR.JSL_anno2_py_class[A.WHISPER_FOR_CTC],
+                                   # Bas on Librosa which uses http://www.mega-nerd.com/libsndfile/
+                                   applicable_file_types=['wav', 'mp3', 'flac', 'aiff', 'aifc', 'ogg', 'aflac', 'alac',
+                                                          'dsd', 'pcm', ]
+                                   ),
 
         A.TAPAS_FOR_QA: partial(NluComponent,
                                 name=A.TAPAS_FOR_QA,
@@ -2658,23 +2685,22 @@ class ComponentUniverse:
         A.ROBERTA_SENTENCE_EMBEDDINGS: partial(NluComponent,
                                                name=A.ROBERTA_SENTENCE_EMBEDDINGS,
                                                type=T.DOCUMENT_EMBEDDING,
-                                               get_default_model=BertSentence.get_default_model,
-                                               get_pretrained_model=BertSentence.get_pretrained_model,
+                                               get_default_model=RobertaSentence.get_default_model,
+                                               get_pretrained_model=RobertaSentence.get_pretrained_model,
                                                pdf_extractor_methods={'default': default_sentence_embedding_config,
                                                                       'default_full': default_full_config, },
                                                pdf_col_name_substitutor=substitute_sent_embed_cols,
-                                               pipe_prediction_output_level=L.INPUT_DEPENDENT_DOCUMENT_EMBEDDING,
+                                               output_level=L.INPUT_DEPENDENT_DOCUMENT_EMBEDDING,
                                                node=NLP_FEATURE_NODES.nodes[A.ROBERTA_SENTENCE_EMBEDDINGS],
                                                description='Sentence-level embeddings using BERT. BERT (Bidirectional Encoder Representations from Transformers) provides dense vector representations for natural language by using a deep, pre-trained neural network with the Transformer architecture.',
                                                provider=ComponentBackends.open_source,
                                                license=Licenses.open_source,
                                                computation_context=ComputeContexts.spark,
                                                output_context=ComputeContexts.spark,
-                                               jsl_anno_class_id_id=A.ROBERTA_SENTENCE_EMBEDDINGS,
+                                               jsl_anno_class_id=A.ROBERTA_SENTENCE_EMBEDDINGS,
                                                jsl_anno_py_class=ACR.JSL_anno2_py_class[A.ROBERTA_SENTENCE_EMBEDDINGS],
-
                                                has_storage_ref=True,
-                                               is_is_storage_ref_producer=True,
+                                               is_storage_ref_producer=True,
                                                ),
         A.T5_TRANSFORMER: partial(NluComponent,
                                   # TODO  task based construction, i.e. get_preconfigured_model
@@ -4171,6 +4197,86 @@ class ComponentUniverse:
         #                                         applicable_file_types=['JPG', 'JPEG']
         #                                         ),
         #
+
+
+        O_A.IMAGE_TABLE_CELL_DETECTOR: partial(NluComponent,
+                                               name=O_A.IMAGE_TABLE_CELL_DETECTOR,
+                                               type=T.TEXT_RECOGNIZER,
+                                               get_default_model= ImageTableCellDetector.get_default_model,
+                                               pdf_extractor_methods={'default': default_text_recognizer_config},
+                                               pdf_col_name_substitutor=substitute_recognized_text_cols,  # TODO substitor
+                                               output_level=L.DOCUMENT,  # TODO new output level IMG? Or treat as DOC?
+                                               node=OCR_FEATURE_NODES.nodes[O_A.IMAGE_TABLE_CELL_DETECTOR],
+                                               description='Recognize text from image files',
+                                               provider=ComponentBackends.ocr,
+                                               license=Licenses.ocr,
+                                               computation_context=ComputeContexts.spark,
+                                               output_context=ComputeContexts.spark,
+                                               jsl_anno_class_id=O_A.IMAGE_TABLE_CELL_DETECTOR,
+                                               jsl_anno_py_class=ACR.JSL_anno_OCR_ref_2_py_class[O_A.IMAGE_TABLE_CELL_DETECTOR],
+                                               applicable_file_types=['JPEG', 'PNG', 'BMP', 'WBMP', 'GIF', 'JPG', '.TIFF'],
+                                               is_light_pipe_incompatible=True
+                                               ),
+
+        O_A.IMAGE_TABLE_CELL2TEXT_TABLE: partial(NluComponent,
+                                                 name=O_A.IMAGE_TABLE_CELL2TEXT_TABLE,
+                                                 type=T.TEXT_RECOGNIZER,
+                                                 get_default_model=ImageTable2Cell2TextTable.get_default_model,
+                                                 pdf_extractor_methods={'default': default_text_recognizer_config},
+                                                 pdf_col_name_substitutor=substitute_recognized_text_cols,  # TODO substitor
+                                                 output_level=L.DOCUMENT,  # TODO new output level IMG? Or treat as DOC?
+                                                 node=OCR_FEATURE_NODES.nodes[O_A.IMAGE_TABLE_CELL2TEXT_TABLE],
+                                                 description='Recognize text from image files',
+                                                 provider=ComponentBackends.ocr,
+                                                 license=Licenses.ocr,
+                                                 computation_context=ComputeContexts.spark,
+                                                 output_context=ComputeContexts.spark,
+                                                 jsl_anno_class_id=O_A.IMAGE_TABLE_CELL2TEXT_TABLE,
+                                                 jsl_anno_py_class=ACR.JSL_anno_OCR_ref_2_py_class[O_A.IMAGE_TABLE_CELL2TEXT_TABLE],
+                                                 applicable_file_types=['JPEG', 'PNG', 'BMP', 'WBMP', 'GIF', 'JPG', '.TIFF'],
+                                                 is_light_pipe_incompatible=True
+                                                 ),
+
+        O_A.IMAGE_TABLE_DETECTOR: partial(NluComponent,
+                                          name=O_A.IMAGE_TABLE_DETECTOR,
+                                          type=T.TABLE_RECOGNIZER,
+                                          get_default_model=IMAGE_TABLE_DETECTOR.get_default_model,
+                                          pdf_extractor_methods={'default': default_binary_to_image_config},
+                                          pdf_col_name_substitutor=substitute_recognized_text_cols,
+                                          output_level=L.DOCUMENT,
+                                          node=OCR_FEATURE_NODES.nodes[O_A.IMAGE_TABLE_DETECTOR],
+                                          description='Detect Tables from Images',
+                                          provider=ComponentBackends.ocr,
+                                          license=Licenses.ocr,
+                                          computation_context=ComputeContexts.spark,
+                                          output_context=ComputeContexts.spark,
+                                          jsl_anno_class_id=O_A.IMAGE_TABLE_DETECTOR,
+                                          jsl_anno_py_class=ACR.JSL_anno_OCR_ref_2_py_class[O_A.IMAGE_TABLE_DETECTOR],
+                                          applicable_file_types=['PDF','JPEG', 'PNG'],
+                                          is_light_pipe_incompatible=True
+                                          ),
+
+        O_A.IMAGE_SPLIT_REGIONS: partial(NluComponent,
+                                         name=O_A.IMAGE_SPLIT_REGIONS,
+                                         type=T.OCR_UTIL,
+                                         get_default_model=ImageSplitRegions.get_default_model,
+                                         pdf_extractor_methods={'default': default_binary_to_image_config},
+                                         pdf_col_name_substitutor=substitute_recognized_text_cols,
+                                         output_level=L.DOCUMENT,
+                                         node=OCR_FEATURE_NODES.nodes[O_A.IMAGE_SPLIT_REGIONS],
+                                         description='Convert Image to split regions',
+                                         provider=ComponentBackends.ocr,
+                                         license=Licenses.ocr,
+                                         computation_context=ComputeContexts.spark,
+                                         output_context=ComputeContexts.spark,
+                                         jsl_anno_class_id=O_A.IMAGE_SPLIT_REGIONS,
+                                         jsl_anno_py_class=ACR.JSL_anno_OCR_ref_2_py_class[
+                                             O_A.IMAGE_SPLIT_REGIONS],
+                                         applicable_file_types=['DOCX', 'DOC', 'JPEG', 'PNG'],
+                                         is_light_pipe_incompatible=True
+                                         ),
+
+
         O_A.IMAGE2HOCR: partial(NluComponent,
                                 name=O_A.IMAGE2HOCR,
                                 type=T.OCR_UTIL,

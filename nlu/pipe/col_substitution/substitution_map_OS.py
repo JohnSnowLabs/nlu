@@ -53,6 +53,9 @@ OS_anno2substitution_fn = {
     BertSentenceEmbeddings: {
         'default': substitute_sent_embed_cols,
     },
+    RoBertaSentenceEmbeddings: {
+        'default': substitute_sent_embed_cols,
+    },
     InstructorEmbeddings: {
         'default': substitute_sent_embed_cols,
     },

@@ -135,6 +135,7 @@ class NLP_FEATURE_NODES:  # or Mode Node?
         # A.WAV2VEC_FOR_CTC: NlpFeatureNode(A.PARTIALLY_IMPLEMENTED, [F.AUDIO], [F.RECOGNIZED_SPEECH_TEXT]),
         A.WAV2VEC_FOR_CTC: NlpFeatureNode(A.WAV2VEC_FOR_CTC, [F.AUDIO], [E.RAW_TEXT]),
         A.HUBERT_FOR_CTC: NlpFeatureNode(A.HUBERT_FOR_CTC, [F.AUDIO], [E.RAW_TEXT]),
+        A.WHISPER_FOR_CTC: NlpFeatureNode(A.WHISPER_FOR_CTC, [F.AUDIO], [E.RAW_TEXT]),
 
         A.IMAGE_ASSEMBLER: NlpFeatureNode(A.IMAGE_ASSEMBLER, [F.SPARK_NLP_IMAGE, F.SPARK_NLP_FILE_PATH], [F.IMAGE]),
         A.DOCUMENT_NORMALIZER: NlpFeatureNode(A.DOCUMENT_NORMALIZER, [F.DOCUMENT], [F.DOCUMENT_GENERATED]),
@@ -213,8 +214,8 @@ class NLP_FEATURE_NODES:  # or Mode Node?
         A.ROBERTA_EMBEDDINGS: NlpFeatureNode(A.ROBERTA_EMBEDDINGS, [F.DOCUMENT, F.TOKEN], [F.WORD_EMBEDDINGS]),
         A.ROBERTA_FOR_TOKEN_CLASSIFICATION: NlpFeatureNode(A.ROBERTA_FOR_TOKEN_CLASSIFICATION, [F.DOCUMENT, F.TOKEN],
                                                            [F.TOKEN_CLASSIFICATION]),
-        A.ROBERTA_SENTENCE_EMBEDDINGS: NlpFeatureNode(A.ROBERTA_SENTENCE_EMBEDDINGS, [F.DOCUMENT],
-                                                      [F.SENTENCE_EMBEDDINGS]),
+        A.ROBERTA_SENTENCE_EMBEDDINGS: NlpFeatureNode(A.ROBERTA_SENTENCE_EMBEDDINGS, [F.DOCUMENT], [F.SENTENCE_EMBEDDINGS]),
+
         A.T5_TRANSFORMER: NlpFeatureNode(A.T5_TRANSFORMER, [F.DOCUMENT], [F.DOCUMENT_GENERATED]),
         A.UNIVERSAL_SENTENCE_ENCODER: NlpFeatureNode(A.UNIVERSAL_SENTENCE_ENCODER, [F.DOCUMENT],
                                                      [F.SENTENCE_EMBEDDINGS]),
@@ -297,18 +298,20 @@ class OCR_FEATURE_NODES:
         # VISUAL_DOCUMENT_NER : OcrFeatureNode(A.VISUAL_DOCUMENT_NER, [OcrFeature.HOCR, OcrFeature.FILE_PATH], [NlpFeature.NER_Annotation]), # TODO NlpFeature Space!
 
         # Object Detection
-        A.IMAGE_HANDWRITTEN_DETECTOR: OcrFeatureNode(A.IMAGE_HANDWRITTEN_DETECTOR, [F.OCR_IMAGE, ], [F.OCR_REGION]),
+        A.IMAGE_SPLIT_REGIONS: OcrFeatureNode(A.IMAGE_SPLIT_REGIONS, [F.OCR_IMAGE,F.OCR_REGION], [F.IMG_SPLIT_REGIONS]),
 
-        # TABLE Processors/Recognition TODO REGION::CELL>??
-        A.IMAGE_TABLE_DETECTOR: OcrFeatureNode(A.IMAGE_TABLE_DETECTOR, [F.OCR_IMAGE, ], [F.OCR_TABLE]),
-        # TODO REGION or TABLE??? IS IT THE SAME???
-        A.IMAGE_TABLE_CELL_DETECTOR: OcrFeatureNode(A.IMAGE_TABLE_CELL_DETECTOR, [F.OCR_IMAGE, ], [F.OCR_TABLE_CELLS]),
-        # TODO REGION or TABLE??? IS IT THE SAME???
-        A.IMAGE_TABLE_CELL2TEXT_TABLE: OcrFeatureNode(A.IMAGE_TABLE_CELL2TEXT_TABLE, [F.OCR_IMAGE, F.OCR_TABLE_CELLS],
+        # VISUAL_DOCUMENT_NER : OcrFeatureNode(A.VISUAL_DOCUMENT_NER, [OcrFeature.HOCR, OcrFeature.FILE_PATH], [NlpFeature.NER_Annotation]), # TODO NlpFeature Space!
+
+        # Object Detection
+        A.IMAGE_HANDWRITTEN_DETECTOR: OcrFeatureNode(A.IMAGE_HANDWRITTEN_DETECTOR, [F.OCR_IMAGE], [F.OCR_REGION]),
+
+        # TABLE Processors/Recognition
+        A.IMAGE_TABLE_DETECTOR: OcrFeatureNode(A.IMAGE_TABLE_DETECTOR, [F.OCR_IMAGE], [F.OCR_REGION]),
+        A.IMAGE_TABLE_CELL_DETECTOR: OcrFeatureNode(A.IMAGE_TABLE_CELL_DETECTOR, [F.IMG_SPLIT_REGIONS, F.OCR_REGION],
+                                                    [F.OCR_TABLE_CELLS]),
+        A.IMAGE_TABLE_CELL2TEXT_TABLE: OcrFeatureNode(A.IMAGE_TABLE_CELL2TEXT_TABLE, [F.IMG_SPLIT_REGIONS,
+                                                                                      F.OCR_TABLE_CELLS],
                                                       [F.OCR_TABLE]),
-        # TODO OUPUT!! REGION or TABLE??? IS IT THE SAME???
-
-        # TODO are POSITIOns  and REGIONS the same??? Regions is an ARRAY of PSOTISIONS. BUT is REGION::: TABLE??? Samefor CELLs
         # PDF Processing
         A.PDF2TEXT: OcrFeatureNode(A.PDF2TEXT, [F.BINARY_PDF, F.FILE_PATH], [F.TEXT, F.PAGE_NUM]),
         A.PDF2IMAGE: OcrFeatureNode(A.PDF2IMAGE, [F.BINARY_PDF, F.FILE_PATH, F.FALL_BACK], [F.OCR_IMAGE, F.PAGE_NUM]),
@@ -351,7 +354,7 @@ class OCR_FEATURE_NODES:
         A.IMAGE_CROPPER: OcrFeatureNode(A.IMAGE_CROPPER, [F.OCR_IMAGE], [F.OCR_IMAGE]),  # TODO
         A.IMAGE2REGION: OcrFeatureNode(A.IMAGE2PDF, [F.OCR_IMAGE], [F.OCR_IMAGE]),  # TODO
         A.IMAGE_LAYOUT_ANALZYER: OcrFeatureNode(A.IMAGE_LAYOUT_ANALZYER, [F.OCR_IMAGE], [F.OCR_IMAGE]),  # TODO
-        A.IMAGE_SPLIT_REGIONS: OcrFeatureNode(A.IMAGE_SPLIT_REGIONS, [F.OCR_IMAGE], [F.OCR_IMAGE]),  # TODO
+        # A.IMAGE_SPLIT_REGIONS: OcrFeatureNode(A.IMAGE_SPLIT_REGIONS, [F.OCR_IMAGE], [F.OCR_IMAGE]),  # TODO
         A.IMAGE_DRAW_REGIONS: OcrFeatureNode(A.IMAGE_DRAW_REGIONS, [F.OCR_IMAGE], [F.OCR_IMAGE]),  # TODO
 
         # Character Recognition .. TODO these should be correct but not 100% sure about the positions

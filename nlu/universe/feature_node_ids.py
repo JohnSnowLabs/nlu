@@ -27,6 +27,7 @@ class NLP_NODE_IDS:
     AUDIO_ASSEMBLER = JslAnnoId('audio_assembler')
     WAV2VEC_FOR_CTC = JslAnnoId('wav2vec_for_ctc')
     HUBERT_FOR_CTC = JslAnnoId('hubert_for_ctc')
+    WHISPER_FOR_CTC = JslAnnoId('whisper_for_ctc')
     TABLE_ASSEMBLER = JslAnnoId('table_assembler')
     TAPAS_FOR_QA = JslAnnoId('tapas')
     MULTI_DOCUMENT_ASSEMBLER = JslAnnoId('multi_document_assembler')

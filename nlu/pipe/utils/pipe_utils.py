@@ -681,6 +681,7 @@ class PipeUtils:
             if c.license == Licenses.open_source \
                     and c.name != NLP_NODE_IDS.WAV2VEC_FOR_CTC \
                     and c.name != NLP_NODE_IDS.HUBERT_FOR_CTC \
+                    and c.name != NLP_NODE_IDS.WHISPER_FOR_CTC \
                     and c.name != NLP_NODE_IDS.AUDIO_ASSEMBLER:
                 # TODO Table Assembler/VIT/ Other non txt open source
                 pipe.has_nlp_components = True
@@ -701,6 +702,8 @@ class PipeUtils:
                 pipe.has_nlp_components = False
             if c.jsl_anno_py_class == 'ImageAssembler':
                 pipe.contains_ocr_components = True
+            if c.is_light_pipe_incompatible:
+                pipe.is_light_pipe_incompatible = True
 
         return pipe
 
