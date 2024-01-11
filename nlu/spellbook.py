@@ -2446,6 +2446,7 @@ class Spellbook:
             'en.seq2seq.distilbart_cnn_12_6': 'distilbart_cnn_12_6',
             'en.seq2seq.distilbart_xsum_6_6': 'distilbart_xsum_6_6',
             'en.classify_image.swin.tiny': 'image_classifier_swin_tiny_patch4_window7_224',
+            'en.classify_image.image_captioning_vit_gpt2': 'image_captioning_vit_gpt2',
             'en.speech2text.hubert': 'asr_hubert_large_ls960',
             'en.speech2text.hubert.large_ls960': 'asr_hubert_large_ls960',
             'en.albert': 'albert_base_uncased',
@@ -19977,6 +19978,7 @@ class Spellbook:
                              'asr_hubert_large_ls960': 'HubertForCTC',
                              'image_classifier_swin_tiny_patch4_window7_224': 'SwinForImageClassification',
                              'camembert_base_qa_fquad': 'CamemBertForQuestionAnswering',
+                             'image_captioning_vit_gpt2': 'VisionEncoderDecoderForImageCaptioning',
 
                              'summarizer_clinical_jsl': 'MedicalSummarizer',
                              'summarizer_clinical_jsl_augmented': 'MedicalSummarizer',
