@@ -688,8 +688,8 @@ class PipeUtils:
             if c.type == AnnoTypes.QUESTION_TABLE_ANSWERER:
                 pipe.has_table_qa_models = True
 
-            if c.type == AnnoTypes.CHUNK_MAPPER:
-                pipe.prefer_light = True
+            # if c.type == AnnoTypes.CHUNK_MAPPER:
+            #     pipe.prefer_light = True
 
             if c.type == AnnoTypes.QUESTION_SPAN_CLASSIFIER:
                 pipe.has_span_classifiers = True
