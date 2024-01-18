@@ -206,6 +206,7 @@ def extract_base_sparknlp_features(row: pd.Series, configs: SparkNLPExtractorCon
 
     return {**beginnings, **endings, **results, **annotator_types, **embeddings, **origins}  # Merge dicts NLP output
 
+
 def extract_sparknlp_metadata(row: pd.Series, configs: SparkNLPExtractorConfig) -> dict:
     """
     Extract base features common in all saprk NLP annotators
@@ -267,7 +268,25 @@ def extract_master(row: pd.Series, configs: SparkNLPExtractorConfig) -> pd.Serie
     if isinstance(configs, SparkOCRExtractorConfig):
         base_annos = extract_base_sparkocr_features(row, configs)
     else:
-        base_annos = extract_base_sparknlp_features(row, configs)
+        if isinstance(configs, FinisherExtractorConfig):
+            # 1. if normal finisher col, just return val -> {finisher_col: [values]}
+            # 2. if meta finisher col, return grouped meta dict ->{m1: [v1,v2,..], m2: [v1,v2,..], ...}
+            # 3. double check with other anno behaviour
+            if configs.is_meta_field:
+                return pd.Series(
+                    {
+                        configs.source_col_name: row
+                    })
+            else:
+                return pd.Series(
+                    {
+                        configs.source_col_name: row
+                    })
+
+        else:
+            base_annos = extract_base_sparknlp_features(row, configs)
+
+    # TODO proper finsiher handling!
     # Get Metadata
     all_metas = extract_sparknlp_metadata(row, configs) if configs.get_meta or configs.get_full_meta else {}
 
