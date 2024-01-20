@@ -21,7 +21,8 @@ from nlu.pipe.extractors.extractor_base_data_classes import *
 def extract_light_pipe_rows(df):
     """Extract Annotations from Light Pipeline into same represenation as other extractors in thos module"""
     ff = lambda row: list(map(f, row)) if isinstance(row, List) else row
-    f = lambda anno: dict(annotatorType=anno.annotator_type,
+    f = lambda anno: dict(
+                # annotatorType=anno.annotator_type,
                           begin=anno.begin, end=anno.end,
                           result=anno.result,
                           metadata=anno.metadata,
