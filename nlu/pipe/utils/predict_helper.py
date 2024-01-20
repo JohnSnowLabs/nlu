@@ -105,7 +105,7 @@ def predict_multi_threaded_light_pipe(pipe, data, output_level, positions, keep_
     data, stranger_features, output_datatype = DataConversionUtils.to_pandas_df(data, pipe.raw_text_column)
 
     # Predict -> Cast to PDF -> Join with original inputs. It does NOT yield EMBEDDINGS.
-    data = data.join(pd.DataFrame(pipe.light_transformer_pipe.fullAnnotate(data.text.values)))
+    data = data.join(pd.DataFrame(pipe.light_transformer_pipe.fullAnnotate(data.text.values.tolist())))
 
     return pipe.pythonify_spark_dataframe(data,
                                           keep_stranger_features=keep_stranger_features,

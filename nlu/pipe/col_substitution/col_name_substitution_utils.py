@@ -113,8 +113,9 @@ class ColSubstitutionUtils:
         """Get's a list of all columns that have been derived in the pythonify procedure from the component_to_resolve
         os_components in dataframe df for anno_2_ex configs """
         og_output_col = c.spark_output_column_names[0]
+
         # may be missing because finisher cleaning
-        if og_output_col not in df.columns: return []
+        if og_output_col not in anno_2_ex: return []
         configs = anno_2_ex[og_output_col]
 
         if c.name == NLP_NODE_IDS.FINISHER:
