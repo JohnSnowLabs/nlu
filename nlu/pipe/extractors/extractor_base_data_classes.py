@@ -150,3 +150,14 @@ class SparkOCRExtractorConfig(SparkNLPExtractorConfig):
     get_exception: bool = field(default=False)
     # Position struct fields
     get_img_positions: bool = field(default=False)
+
+@dataclass
+class FinisherExtractorConfig:
+    """
+    Universal Configuration class for defining how to extract data from a Finisher
+    """
+    source_col_name: str
+    output_as_array: bool = field(default=True)
+    is_meta_field: bool = field(default=False)
+    annotation_split_symbol:Optional[bool]=field(default=None)
+    value_split_symbol:Optional[bool]=field(default=None)

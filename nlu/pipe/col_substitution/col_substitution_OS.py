@@ -744,6 +744,12 @@ def substitute_doc_norm_cols(c, cols, nlu_identifier=True):
     return new_cols
 
 
+def substitute_finisher_cols(c, cols, nlu_identifier=True):
+    """
+    Substitute col name finisher. For now keeps original name
+    """
+    return dict(zip(cols,cols))
+
 def substitute_spell_context_cols(c, cols, nlu_identifier=True):
     """
     Substitute col name for normalized,  <spell> will be new base col namem
