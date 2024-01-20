@@ -6,17 +6,16 @@ IF there is only 1 component_to_resolve of <type> in the component_list, the <ty
 - we remove all _<field> suffixex
 - replace all '@' with '_'
 """
+import logging
 from typing import List
 
+from nlu.universe.feature_node_ids import NLP_NODE_IDS
 from sparknlp.annotator import *
 
 import nlu
-from nlu.universe.feature_universes import NLP_FEATURES
 from nlu.pipe.col_substitution import substitution_map_OS
-from nlu.pipe.col_substitution import col_substitution_OS
-import logging
-
 from nlu.pipe.extractors.extractor_base_data_classes import SparkOCRExtractorConfig
+from nlu.universe.feature_universes import NLP_FEATURES
 from nlu.universe.logic_universes import AnnoTypes
 from nlu.universe.universes import Licenses
 
@@ -47,7 +46,6 @@ class ColSubstitutionUtils:
     """Utils for substituting col names in Pythonify to short and meaningful names.
     Uses custom rename methods for either PySpark or Pandas
     """
-    from sparknlp.annotator import MarianTransformer
     cleanable_splits = ['ner_converter', 'spell', 'ner_to_chunk_converter', 'train', 'classify', 'ner', 'med_ner', 'dl',
                         'match', 'clean', 'sentiment', 'embed', 'embed_sentence', 'embed_chunk', 'explain', 'pos',
                         'resolve_chunk', 'resolve', ]
@@ -66,7 +64,6 @@ class ColSubstitutionUtils:
         anno2final_cols = {}  # mapping of final col names to annotator class Key=AnnoModel, Value=List of Result cols
         new_cols = {}
         if pipe.has_licensed_components:
-            from nlu.pipe.col_substitution import col_substitution_HC
             from nlu.pipe.col_substitution import substitution_map_HC
         deducted_component_names = ColSubstitutionUtils.deduct_component_names(pipe)
         for c in pipe.components:
@@ -79,7 +76,9 @@ class ColSubstitutionUtils:
                 continue
             if 'embedding' in c.type and get_embeddings == False: continue
             cols_to_substitute = ColSubstitutionUtils.get_final_output_cols_of_component(c, df, anno_2_ex)
-
+            if len(cols_to_substitute) == 0:
+                # finisher cleaned components cols
+                continue
             if type(c.model) in substitution_map_OS.OS_anno2substitution_fn.keys():
                 substitution_fn = substitution_map_OS.OS_anno2substitution_fn[type(c.model)]['default']
             else:
@@ -104,7 +103,8 @@ class ColSubstitutionUtils:
         for k in cols_to_rename:
             # some cols might not exist because no annotations generated, so we need to double check it really exists
             if k not in df.columns: del new_cols[k]
-        return df.rename(columns=new_cols)[list(set(new_cols.values()).union(set(stranger_cols)))] if drop_debug_cols else \
+        return df.rename(columns=new_cols)[
+            list(set(new_cols.values()).union(set(stranger_cols)))] if drop_debug_cols else \
             df.rename(columns=new_cols)
 
     @staticmethod
@@ -113,8 +113,15 @@ class ColSubstitutionUtils:
         """Get's a list of all columns that have been derived in the pythonify procedure from the component_to_resolve
         os_components in dataframe df for anno_2_ex configs """
         og_output_col = c.spark_output_column_names[0]
-
+        # may be missing because finisher cleaning
+        if og_output_col not in df.columns: return []
         configs = anno_2_ex[og_output_col]
+
+        if c.name == NLP_NODE_IDS.FINISHER:
+            result_cols = c.model.getOutputCols()
+            if c.model.getIncludeMetadata():
+                result_cols = result_cols + [f'{col}_metadata' for col in result_cols]
+            return result_cols
         result_cols = []
         if isinstance(configs, SparkOCRExtractorConfig):
             # TODO better OCR-EX handling --> Col Name generator function which we use everywhere for unified col naming !!!!!
