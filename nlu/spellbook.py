@@ -10591,6 +10591,8 @@ class Spellbook:
 
     healthcare_component_alias_references = {}
     pretrained_healthcare_pipe_references = {
+        'ar': {'ar.deid.clinical': 'clinical_deidentification'
+               },
         'de': {'de.deid.clinical': 'clinical_deidentification',
                'de.deid.ner_subentity.pipeline': 'ner_deid_subentity_pipeline',
                'de.deid.pipeline': 'german_deid_pipeline_spark24',
@@ -10598,6 +10600,8 @@ class Spellbook:
         'en': {
 
             'en.classify.bert_sequence.binary_rct_biobert.pipeline': 'bert_sequence_classifier_binary_rct_biobert_pipeline',
+            'en.classify.bert_sequence.vop_hcp_consult.pipeline': 'bert_sequence_classifier_vop_hcp_consult_pipeline',
+            'en.classify.bert_sequence.vop_drug_side_effect.pipeline': 'bert_sequence_classifier_vop_drug_side_effect_pipeline',
             'en.classify.bert_token_ner_jsl.pipeline': 'bert_token_classifier_ner_jsl_pipeline',
             'en.classify.rct_binary_biobert.pipeline': 'rct_binary_classifier_biobert_pipeline',
             'en.classify.rct_binary_use.pipeline': 'rct_binary_classifier_use_pipeline',
@@ -10636,6 +10640,7 @@ class Spellbook:
             'en.map_entity.icd10cm_to_snomed.pipe': 'icd10cm_snomed_mapping',
             'en.map_entity.icdo_to_snomed.pipe': 'icdo_snomed_mapping',
             'en.map_entity.rxnorm_to_ndc.pipe': 'rxnorm_ndc_mapping',
+            'en.map_entity.rxnorm_resolver.pipe': 'rxnorm_resolver_pipeline',
             'en.map_entity.snomed_to_icd10cm.pipe': 'snomed_icd10cm_mapping',
             'en.map_entity.snomed_to_icdo.pipe': 'snomed_icdo_mapping',
             'en.map_entity.umls_clinical_findings_resolver': 'umls_clinical_findings_resolver_pipeline',
@@ -10729,9 +10734,15 @@ class Spellbook:
             'en.med_ner.wip_greedy_biobert.pipeline': 'jsl_rd_ner_wip_greedy_biobert_pipeline',
             'en.med_ner.wip_greedy_clinical.pipeline': 'jsl_ner_wip_greedy_clinical_pipeline',
             'en.med_ner.wip_modifier_clinical.pipeline': 'jsl_ner_wip_modifier_clinical_pipeline',
+            'en.med_ner.vop.pipeline': 'ner_vop_pipeline',
+            'en.med_ner.vop_demographic.pipeline': 'ner_vop_demographic_pipeline',
+            'en.med_ner.vop_treatment.pipeline': 'ner_vop_treatment_pipeline',
+            'en.med_ner.vop_problem.pipeline': 'ner_vop_problem_pipeline',
             'en.mesh.umls.mapping': 'mesh_umls_mapping',
             'en.ner.medication': 'ner_medication_pipeline',
             'en.ner.model_finder.pipeline': 'ner_model_finder',
+            'en.ner.oncology.pipeline': 'ner_oncology_pipeline',
+            'en.ner.oncology_response_to_treatment.pipeline': 'ner_oncology_response_to_treatment_pipeline',
             'en.oncology_biomarker.pipeline': 'oncology_biomarker_pipeline',
             'en.oncology_diagnosis.pipeline': 'oncology_diagnosis_pipeline',
             'en.oncology_general.pipeline': 'oncology_general_pipeline',
@@ -10752,6 +10763,7 @@ class Spellbook:
             'en.rxnorm.umls.mapping': 'rxnorm_umls_mapping',
             'en.snomed.umls.mapping': 'snomed_umls_mapping',
             'en.spell.clinical.pipeline': 'spellcheck_clinical_pipeline',
+            'en.summarize.biomedical_pubmed.pipeline':'summarizer_biomedical_pubmed_pipeline',
             'en.summarize.clinical_guidelines_large.pipeline': 'summarizer_clinical_guidelines_large_pipeline',
             'en.summarize.clinical_jsl_augmented.pipeline': 'summarizer_clinical_jsl_augmented_pipeline',
             'en.summarize.clinical_questions.pipeline': 'summarizer_clinical_questions_pipeline',

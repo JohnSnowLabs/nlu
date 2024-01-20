@@ -186,12 +186,11 @@ class ComponentUtils:
         for converter in pipe_list:
             if ComponentUtils.is_embedding_provider(converter) and ComponentUtils.is_embedding_converter(converter):
                 # First find the embed col of the converter
-                embed_col = ComponentUtils.extract_embed_col(converter)
+                embed_col = ComponentUtils.extract_embed_col(converter, column='input')
                 for provider in pipe_list:
                     # Now find the Embedding generator that is feeding the converter
-                    if embed_col in provider.spark_input_column_names:
-                        converter.storage_ref = StorageRefUtils.nlp_extract_storage_ref_nlp_model(provider.model)
-                        # converter.storage_ref = StorageRefUtils.extract_storage_ref(provider)
+                    if embed_col in provider.spark_output_column_names:
+                        converter.storage_ref = StorageRefUtils.nlp_extract_storage_ref_nlp_model(provider)
         return pipe_list
 
     @staticmethod
