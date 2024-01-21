@@ -245,7 +245,7 @@ def extract_sparknlp_metadata(row: pd.Series, configs: SparkNLPExtractorConfig) 
         result = dict(
             zip(map(lambda x: 'meta_' + configs.output_col_prefix + '_' + x, keys_in_metadata), metadata_scalars))
         return result
-    extract_val_from_dic_list_to_list = lambda key: lambda x, y: x + [y[key]]
+    extract_val_from_dic_list_to_list = lambda key: lambda x, y: x + [y[key]] if key in y else x + [None]
     # List of lambda expression, on for each Key to be extracted. (TODO balcklisting?)
     dict_value_extractors = list(map(extract_val_from_dic_list_to_list, keys_in_metadata))
     # reduce list of dicts with same struct and a common key to a list of values for thay key. Leveraging closuer for meta_dict_list
@@ -287,7 +287,6 @@ def extract_master(row: pd.Series, configs: SparkNLPExtractorConfig) -> pd.Serie
         else:
             base_annos = extract_base_sparknlp_features(row, configs)
 
-    # TODO proper finsiher handling!
     # Get Metadata
     all_metas = extract_sparknlp_metadata(row, configs) if configs.get_meta or configs.get_full_meta else {}
 
@@ -304,6 +303,8 @@ def extract_master(row: pd.Series, configs: SparkNLPExtractorConfig) -> pd.Serie
             **base_annos,
             **all_metas
         })
+
+
 
 
 def apply_extractors_and_merge(df, anno_2_ex_config, keep_stranger_features, stranger_features):
