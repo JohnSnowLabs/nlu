@@ -50,6 +50,9 @@ OS_anno2substitution_fn = {
     E5Embeddings: {
         'default': substitute_word_embed_cols,
     },
+    BGEEmbeddings: {
+        'default': substitute_sent_embed_cols,
+    },
     BertSentenceEmbeddings: {
         'default': substitute_sent_embed_cols,
     },
