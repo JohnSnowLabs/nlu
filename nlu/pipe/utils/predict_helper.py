@@ -211,8 +211,6 @@ def __db_endpoint_predict__(pipe, data):
     1) parse pred params from first row maybe
     2) serialize/deserialize img
     """
-    print("CUSOTM NLU MODE!")
-    print(data.columns)
     params = PredictParams.maybe_from_pandas_df(data)
     if params:
         params = params.dict()

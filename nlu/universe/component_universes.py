@@ -3883,6 +3883,7 @@ class ComponentUniverse:
                                             ),
 
         H_A.CHUNK_MAPPER_MODEL: partial(NluComponent,
+                                        prefer_light_pipe=True,
                                         name=H_A.CHUNK_MAPPER_MODEL,
                                         type=T.CHUNK_MAPPER,
                                         get_default_model=ChunkMapper.get_default_model,
