@@ -1,11 +1,13 @@
-from typing import Dict, Any, List
 import logging
-from nlu.universe.atoms import NlpLevel
-from nlu.universe.feature_node_ids import NLP_HC_NODE_IDS
-from nlu.universe.logic_universes import NLP_LEVELS
-from nlu.universe.feature_universes import NLP_FEATURES
-from nlu.universe.universes import Licenses
+from typing import Dict, Any, List
+
 from nlu.pipe.col_substitution.col_name_substitution_utils import ColSubstitutionUtils
+from nlu.universe.atoms import NlpLevel
+from nlu.universe.feature_node_ids import NLP_HC_NODE_IDS, NLP_NODE_IDS
+from nlu.universe.feature_universes import NLP_FEATURES
+from nlu.universe.logic_universes import NLP_LEVELS
+from nlu.universe.universes import Licenses
+
 logger = logging.getLogger('nlu')
 
 
@@ -84,8 +86,41 @@ class OutputLevelUtils:
                 at same output level as the pipe.prediction_output_level
         """
         same_output_level_cols = []
+        # if finisher exist, we must handle it first separately and blacklist all annos if it uses clean anno cols
+        cleaned_components = []
         for c in pipe.components:
+            if c.name == NLP_NODE_IDS.FINISHER:
+                """
+                Every col needs to have its own output level
+                for every input col of finisher:
+                1. Find provider component
+                2. Resolve output level of provider component
+                3. Use output level of provider component as output level of finisher col 
+                """
+                cleaned = c.model.getCleanAnnotations()
+                get_meta = c.model.getIncludeMetadata()
+                for col_in, col_out in zip(c.model.getInputCols(), c.model.getOutputCols()):
+                    for provider_component in pipe.components:
+                        if cleaned:
+                            cleaned_components.append(provider_component)
+
+                        m = provider_component.model
+                        single_out = hasattr(m, 'getOutputCol')
+                        if single_out and col_in in m.getOutputCol() or not single_out and col_in in m.getOutputCols():
+                            output_level = OutputLevelUtils.resolve_component_to_output_level(pipe, provider_component)
+                            if output_level == pipe.prediction_output_level:
+                                # Normally need to use generated col, but finisher cols are not generated except meta?!
+                                same_output_level_cols.append(col_out)
+                                if get_meta:
+                                    same_output_level_cols.append(col_out + '_metadata')
+                continue
+
+        for c in pipe.components:
+            if c in cleaned_components:
+                continue
             if 'embedding' in c.type and get_embeddings is False:
+                continue
+            if c.name == NLP_NODE_IDS.FINISHER:
                 continue
             output_level = OutputLevelUtils.resolve_component_to_output_level(pipe, c)
             if output_level == pipe.prediction_output_level:
