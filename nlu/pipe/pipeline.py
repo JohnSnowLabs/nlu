@@ -16,6 +16,7 @@ from nlu.pipe.utils.component_utils import ComponentUtils
 from nlu.pipe.utils.data_conversion_utils import DataConversionUtils
 from nlu.pipe.utils.output_level_resolution_utils import OutputLevelUtils
 from nlu.pipe.utils.resolution.storage_ref_utils import StorageRefUtils
+from nlu.universe.feature_node_ids import NLP_NODE_IDS
 from nlu.universe.universes import Licenses
 from nlu.utils.environment.env_utils import is_running_in_databricks, try_import_streamlit
 
@@ -230,6 +231,9 @@ class NLUPipeline(dict):
                 continue
             if 'embedding' in c.type and not get_embeddings:
                 continue
+            if c.name == NLP_NODE_IDS.FINISHER:
+                anno_2_ex_config = {**anno_2_ex_config, **self.__get_finisher_conf(c)}
+                continue
             for col in c.spark_output_column_names:
                 if 'default' in c.pdf_extractor_methods.keys() and not full_meta:
                     anno_2_ex_config[col] = c.pdf_extractor_methods['default'](output_col_prefix=col)
@@ -330,19 +334,19 @@ class NLUPipeline(dict):
             self.prediction_output_level = output_level
 
         # Get mapping from component to feature extractor method configs
-        anno_2_ex_config = self.get_extraction_configs(output_metadata, positions, get_embeddings, processed)
+        col_2_ex_config = self.get_extraction_configs(output_metadata, positions, get_embeddings, processed)
 
         # Processed becomes pandas after applying extractors
         processed = self.unpack_and_apply_extractors(processed, keep_stranger_features, stranger_features,
-                                                     anno_2_ex_config, self.light_pipe_configured, get_embeddings)
+                                                     col_2_ex_config, self.light_pipe_configured, get_embeddings)
 
         # Get mapping between column_name and pipe_prediction_output_level
-        same_level = OutputLevelUtils.get_columns_at_same_level_of_pipe(self, processed, anno_2_ex_config,
+        same_level = OutputLevelUtils.get_columns_at_same_level_of_pipe(self, processed, col_2_ex_config,
                                                                         get_embeddings)
         logger.info(f"Extracting for same_level_cols = {same_level}\n")
         processed = zip_and_explode(processed, same_level)
         processed = self.convert_embeddings_to_np(processed)
-        processed = ColSubstitutionUtils.substitute_col_names(processed, anno_2_ex_config, self, stranger_features,
+        processed = ColSubstitutionUtils.substitute_col_names(processed, col_2_ex_config, self, stranger_features,
                                                               get_embeddings)
         processed = processed.loc[:, ~processed.columns.duplicated()]
 
@@ -943,3 +947,23 @@ class NLUPipeline(dict):
                 self.light_pipe_configured = True
                 logger.info("Enabling light pipeline")
                 self.light_transformer_pipe = LightPipeline(self.vanilla_transformer_pipe, parse_embeddings=True)
+
+    @staticmethod
+    def __get_finisher_conf(finisher: NluComponent) -> Dict[str, FinisherExtractorConfig]:
+        """
+        returns a dict where key=col name and value=FinisherExtractorConfig for that col for pipe and finisher.
+        For finisher we need to know for each col: if its meta-field, out_put_as_arrr and if not what are sep symbols
+        """
+
+        confs = {}
+        m =  finisher.model
+        as_arr = m.getOutputAsArray()
+        for c in m.getOutputCols():
+            confs[c] = FinisherExtractorConfig(output_as_array=as_arr,
+                                               is_meta_field=True if c.endswith('_metadata') else False,
+                                               annotation_split_symbol=m.getAnnotationSplitSymbol(),
+                                               value_split_symbol=m.getValueSplitSymbol(),
+                                               source_col_name=c,
+                                               )
+
+        return confs

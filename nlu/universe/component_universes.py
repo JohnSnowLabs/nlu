@@ -1566,19 +1566,16 @@ class ComponentUniverse:
                                        jsl_anno_py_class=ACR.JSL_anno2_py_class[A.DOCUMENT_NORMALIZER],
                                        ),
 
-        A.FINISHER: partial(NluComponent,  # TODO WIP
+        A.FINISHER: partial(NluComponent,
                             name=A.FINISHER,
                             type=T.HELPER_ANNO,
                             get_default_model=SdfFinisher.get_default_model,
-                            # TODO EXTRACTOR
                             pdf_extractor_methods={'default': default_full_config,
                                                    'default_full': default_full_config, },
-                            # TODO SUBSTITOR
-                            pdf_col_name_substitutor=None,  # TODO no sub defined
+                            pdf_col_name_substitutor=substitute_finisher_cols,
                             output_level=L.DOCUMENT,
-                            # TODO sub-token actually(?)
                             node=NLP_FEATURE_NODES.nodes[A.FINISHER],
-                            description='Get lemmatized base version of tokens',
+                            description='Finisher transformer to output the results of a pipeline.',
                             provider=ComponentBackends.open_source,
                             license=Licenses.open_source,
                             computation_context=ComputeContexts.spark,
@@ -3549,7 +3546,7 @@ class ComponentUniverse:
                                        pdf_extractor_methods={'default': default_de_identification_config,
                                                               'default_full': default_full_config, },
                                        pdf_col_name_substitutor=substitute_de_identification_cols,
-                                       output_level=L.DOCUMENT,
+                                       output_level=L.INPUT_DEPENDENT_DOCUMENT_CLASSIFIER,
                                        node=NLP_HC_FEATURE_NODES.nodes[H_A.DE_IDENTIFICATION],
                                        description='De-Identify named entity according to various Healthcare Data Protection standards',
                                        provider=ComponentBackends.hc,

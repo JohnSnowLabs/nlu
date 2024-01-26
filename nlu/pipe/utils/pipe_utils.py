@@ -4,6 +4,7 @@ from sparknlp.annotator import *
 
 import nlu
 from nlu import Licenses
+from nlu.pipe.extractors.extractor_base_data_classes import FinisherExtractorConfig
 from nlu.pipe.nlu_component import NluComponent
 from nlu.pipe.pipeline import NLUPipeline
 from nlu.pipe.utils.resolution.storage_ref_utils import StorageRefUtils
@@ -15,7 +16,7 @@ from nlu.universe.logic_universes import NLP_LEVELS, AnnoTypes
 
 logger = logging.getLogger('nlu')
 from nlu.pipe.utils.component_utils import ComponentUtils
-from typing import List, Union
+from typing import List, Union, Dict
 from nlu.universe.annotator_class_universe import AnnoClassRef
 from nlu.utils.environment.env_utils import is_running_in_databricks
 import os
