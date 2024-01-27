@@ -303,6 +303,7 @@ class NLP_HC_NODE_IDS:  # or Mode Node?
     ENTITY_CHUNK_EMBEDDING = JslAnnoId('entity_chunk_embedding')
     MEDICAL_SUMMARIZER = JslAnnoId('med_summarizer')
     MEDICAL_TEXT_GENERATOR = JslAnnoId('med_text_generator')
+    MEDICAL_QUESTION_ANSWERING = JslAnnoId('med_question_answering')
 
 class OCR_NODE_IDS:
     """All available Feature nodes in OCR
