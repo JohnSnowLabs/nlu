@@ -395,3 +395,28 @@ def substitute_generic_classifier_parser_cols(c, cols, is_unique=True, nlu_ident
             logger.info(f'Dropping unmatched metadata_col={col} for c={c}')
         # new_cols[col]= f"{new_base_name}_confidence"
     return new_cols
+def substitute_hc_span_classifier_cols(c, cols, nlu_identifier=True):
+    """
+    QA classifier
+    """
+    new_cols = {}
+    #new_base_name = 'answer' if nlu_identifier == 'UNIQUE' else f'{nlu_identifier}_answer'
+    new_base_name = 'answer'
+    for col in cols:
+        if 'answer_results' in col:
+            new_cols[col] = f'{new_base_name}'
+        if 'answer_results_score' in col:
+            new_cols[col] = f'{new_base_name}_confidence'
+
+        elif 'span_start_score' in col:
+            new_cols[col] = f'{new_base_name}_start_confidence'
+        elif 'span_end_score' in col:
+            new_cols[col] = f'{new_base_name}_end_confidence'
+        elif 'start' in col and not 'score' in col:
+            new_cols[col] = f'{new_base_name}_start'
+        elif 'end' in col and not 'score' in col:
+            new_cols[col] = f'{new_base_name}_end'
+        elif 'sentence' in col:
+            new_cols[col] = f'{new_base_name}_sentence'
+
+    return new_cols

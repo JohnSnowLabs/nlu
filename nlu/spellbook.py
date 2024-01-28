@@ -10598,7 +10598,7 @@ class Spellbook:
                'de.deid.pipeline': 'german_deid_pipeline_spark24',
                'de.med_ner.deid_generic.pipeline': 'ner_deid_generic_pipeline'},
         'en': {
-
+            'en.answer_question.clinical_notes_onnx.pipeline': 'clinical_notes_qa_base_onnx_pipeline',
             'en.classify.bert_sequence.binary_rct_biobert.pipeline': 'bert_sequence_classifier_binary_rct_biobert_pipeline',
             'en.classify.bert_sequence.vop_hcp_consult.pipeline': 'bert_sequence_classifier_vop_hcp_consult_pipeline',
             'en.classify.bert_sequence.vop_drug_side_effect.pipeline': 'bert_sequence_classifier_vop_drug_side_effect_pipeline',
@@ -10634,6 +10634,7 @@ class Spellbook:
             'en.explain_doc.clinical_ade': 'explain_clinical_doc_ade',
             'en.explain_doc.clinical_radiology.pipeline': 'explain_clinical_doc_radiology',
             'en.explain_doc.era': 'explain_clinical_doc_era',
+            'en.explain_doc.clinical_granular': 'explain_clinical_doc_granular',
             'en.icd10_icd9.mapping': 'icd10_icd9_mapping',
             'en.icd10cm.umls.mapping': 'icd10cm_umls_mapping',
             'en.icd10cm_resolver.pipeline': 'icd10cm_resolver_pipeline',
@@ -10766,6 +10767,7 @@ class Spellbook:
             'en.spell.clinical.pipeline': 'spellcheck_clinical_pipeline',
             'en.summarize.biomedical_pubmed.pipeline':'summarizer_biomedical_pubmed_pipeline',
             'en.summarize.clinical_guidelines_large.pipeline': 'summarizer_clinical_guidelines_large_pipeline',
+            'en.summarize.clinical_laymen_onnx.pipeline': 'summarizer_clinical_laymen_onnx_pipeline',
             'en.summarize.clinical_jsl_augmented.pipeline': 'summarizer_clinical_jsl_augmented_pipeline',
             'en.summarize.clinical_questions.pipeline': 'summarizer_clinical_questions_pipeline',
             'en.summarize.generic_jsl.pipeline': 'summarizer_generic_jsl_pipeline',
