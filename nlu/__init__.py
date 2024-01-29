@@ -1,5 +1,4 @@
-__version__ = '5.1.3'
-
+__version__ = '5.1.4'
 
 
 import nlu.utils.environment.env_utils as env_utils
