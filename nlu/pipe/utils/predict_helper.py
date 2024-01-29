@@ -8,7 +8,7 @@ from pyspark.sql.functions import monotonically_increasing_id
 from sparknlp.common import AnnotatorType
 
 from nlu.pipe.utils.audio_data_conversion_utils import AudioDataConversionUtils
-from nlu.pipe.utils.data_conversion_utils import DataConversionUtils
+from nlu.pipe.utils.data_conversion_utils import DataConversionUtils, NluDataParseException
 from nlu.pipe.utils.ocr_data_conversion_utils import OcrDataConversionUtils
 
 logger = logging.getLogger('nlu')
@@ -364,11 +364,13 @@ def __predict__(pipe, data, output_level, positions, keep_stranger_features, met
         try:
             return __predict_standard_spark(pipe, data, output_level, positions, keep_stranger_features, metadata,
                                             drop_irrelevant_cols, return_spark_df, get_embeddings)
+        except NluDataParseException as err:
+            logger.warning(f"Predictions Failed={err}")
+            raise err
         except Exception as err:
             logger.warning(f"Predictions Failed={err}")
             pipe.print_exception_err(err)
             raise Exception("Failure to process data with NLU")
-
 
 def debug_print_pipe_cols(pipe):
     for c in pipe.components:
