@@ -13,18 +13,25 @@ import pandas as pd
 from pyspark.sql.types import StringType, StructType, StructField
 
 
+class NluDataParseException(Exception):
+    """Custom exception class"""
+
+    def __init__(self, message="An error occurred parsing data with NLU"):
+        self.message = message
+        super().__init__(self.message)
+
 class DataConversionUtils:
     # Modin aswell but optional, so we dont import the type yet
     supported_types = [pyspark.sql.DataFrame, pd.DataFrame, pd.Series, np.ndarray]
 
     @staticmethod
     def except_text_col_not_found(cols):
-        raise ValueError(
+        raise NluDataParseException(
             f'Could not find column named "text" in input Pandas Dataframe. Please ensure one column named such exists. Columns in DF are : {cols} ')
 
     @staticmethod
     def except_invalid_question_data_format(cols):
-        raise ValueError(
+        raise NluDataParseException(
             f'You input data format is invalid for question answering with span classification.'
             f'Make sure you have at least 2 columns in you dataset, named context/question  for pandas Dataframes'
             f'For Strings/Iterables/Tuples make sure to use the format `question|||context` or (question,context) ')
@@ -301,7 +308,6 @@ class DataConversionUtils:
                 # TODO invalid Table Data Format Exception
                 pass
             if isinstance(data[0], str):
-
                 return DataConversionUtils.table_question_str_to_sdf(data, spark_sess)
             if isinstance(data[0], pd.DataFrame):
                 return DataConversionUtils.table_question_pdf_to_sdf(data, spark_sess)
@@ -321,6 +327,8 @@ class DataConversionUtils:
                         return DataConversionUtils.question_tuple_iterable_to_sdf(data, spark_sess)
                     elif isinstance(data[0], str):
                         return DataConversionUtils.question_str_iterable_to_sdf(data, spark_sess)
+            except NluDataParseException as err :
+                raise err
             except:
                 ValueError("Data could not be converted to Spark Dataframe for internal conversion.")
         else:
