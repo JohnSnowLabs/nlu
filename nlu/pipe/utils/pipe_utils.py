@@ -668,6 +668,9 @@ class PipeUtils:
 
         for c in pipe.components:
             # Check for OCR componments
+            if c.prefer_light_pipe:
+                pipe.prefer_light = True
+
             if c.jsl_anno_py_class in py_class_to_anno_id.keys() or c.is_visual_annotator:
                 pipe.contains_ocr_components = True
                 if c.requires_image_format:

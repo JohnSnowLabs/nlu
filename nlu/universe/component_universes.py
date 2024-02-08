@@ -45,6 +45,7 @@ from nlu.components.classifiers.span_distilbert.span_distilbert import SpanDisti
 from nlu.components.classifiers.span_longformer.span_longformer import SpanLongFormerClassifier
 from nlu.components.classifiers.span_roberta.span_roberta import SpanRobertaClassifier
 from nlu.components.classifiers.span_xlm_roberta.span_xlm_roberta import SpanXlmRobertaClassifier
+from nlu.components.classifiers.span_medical.span_medical import SpanMedical
 from nlu.components.classifiers.token_albert.token_albert import TokenAlbert
 from nlu.components.classifiers.token_bert.token_bert import TokenBert
 from nlu.components.classifiers.token_bert_healthcare.token_bert_healthcare import TokenBertHealthcare
@@ -3278,6 +3279,27 @@ class ComponentUniverse:
                                                       computation_context=ComputeContexts.spark,
                                                       output_context=ComputeContexts.spark,
                                                       ),
+        H_A.MEDICAL_QUESTION_ANSWERING: partial(NluComponent,
+                                                      name=H_A.MEDICAL_QUESTION_ANSWERING,
+                                                      jsl_anno_class_id= H_A.MEDICAL_QUESTION_ANSWERING,
+                                                      jsl_anno_py_class= ACR.JSL_anno_HC_ref_2_py_class[
+                                                          H_A.MEDICAL_QUESTION_ANSWERING],
+                                                      node= NLP_HC_FEATURE_NODES.nodes[
+                                                          H_A.MEDICAL_QUESTION_ANSWERING],
+                                                      get_default_model= SpanMedical.get_default_model,
+                                                      get_pretrained_model= SpanMedical.get_pretrained_model,
+                                                      type= T.QUESTION_SPAN_CLASSIFIER,
+                                                      pdf_extractor_methods={
+                                                          'default': default_span_classifier_config,
+                                                          'default_full': default_full_span_classifier_config, },
+                                                      pdf_col_name_substitutor=substitute_hc_span_classifier_cols,
+                                                      output_level=L.INPUT_DEPENDENT_DOCUMENT_CLASSIFIER,
+                                                      description='TODO',
+                                                      provider=ComponentBackends.hc,
+                                                      license=Licenses.hc,
+                                                      computation_context=ComputeContexts.spark,
+                                                      output_context=ComputeContexts.spark,
+                                                      ),
 
         A.MULTI_DOCUMENT_ASSEMBLER: partial(NluComponent,
                                             name=A.MULTI_DOCUMENT_ASSEMBLER,
@@ -3880,6 +3902,7 @@ class ComponentUniverse:
                                             ),
 
         H_A.CHUNK_MAPPER_MODEL: partial(NluComponent,
+                                        prefer_light_pipe=True,
                                         name=H_A.CHUNK_MAPPER_MODEL,
                                         type=T.CHUNK_MAPPER,
                                         get_default_model=ChunkMapper.get_default_model,
