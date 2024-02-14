@@ -1,5 +1,8 @@
-import os, sys
 import logging
+import os
+import platform
+import subprocess
+import sys
 
 logger = logging.getLogger('nlu')
 
@@ -158,3 +161,25 @@ def try_import_spark_nlp():
         print("You need Spark NLP to run NLU. run pip install spark-nlp")
         return False
     return True
+
+
+def is_m1():
+    """Checks whether the current processor is an Apple M1 chip."""
+    platform_info = platform.uname()
+    if platform_info.system == "Darwin" and platform_info.machine == "arm64":
+        sys_info_query = "sysctl -n machdep.cpu.brand_string"
+        result = subprocess.run(sys_info_query.split(), capture_output=True)
+        cpu = result.stdout.decode().strip()
+        if cpu == "Apple M1":
+            return True
+        else:
+            logger.info(
+                (
+                    "Currently, only the standard M1 processor has experimental "
+                    "support.\nOther derivations like M1 Pro/Max/Ultra will be "
+                    "supported in the future."
+                )
+            )
+            return False
+    else:
+        return False
