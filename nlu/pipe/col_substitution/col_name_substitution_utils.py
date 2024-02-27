@@ -13,7 +13,7 @@ from nlu.universe.feature_node_ids import NLP_NODE_IDS
 from sparknlp.annotator import *
 
 import nlu
-from nlu.pipe.col_substitution import substitution_map_OS
+from nlu.pipe.col_substitution import substitution_map_OS, substitution_map_OCR
 from nlu.pipe.extractors.extractor_base_data_classes import SparkOCRExtractorConfig
 from nlu.universe.feature_universes import NLP_FEATURES
 from nlu.universe.logic_universes import AnnoTypes
@@ -73,7 +73,13 @@ class ColSubstitutionUtils:
                 anno2final_cols[c.model] = list(old2new_anno_cols.values())
                 new_cols.update(old2new_anno_cols)
                 new_cols = {**new_cols, **(old2new_anno_cols)}
-                continue
+                if type(c.model) in substitution_map_OCR.OCR_anno2substitution_fn.keys():
+                    cols = df.columns.tolist()
+                    substitution_fn = substitution_map_OCR.OCR_anno2substitution_fn[type(c.model)]['default']
+                    old2new_anno_cols = substitution_fn(c, cols, deducted_component_names[c])
+                    anno2final_cols[c.model] = list(old2new_anno_cols.values())
+                    new_cols = {**new_cols, **(old2new_anno_cols)}
+                    continue
             if 'embedding' in c.type and get_embeddings == False: continue
             cols_to_substitute = ColSubstitutionUtils.get_final_output_cols_of_component(c, df, anno_2_ex)
             if len(cols_to_substitute) == 0:
@@ -126,7 +132,26 @@ class ColSubstitutionUtils:
         result_cols = []
         if isinstance(configs, SparkOCRExtractorConfig):
             # TODO better OCR-EX handling --> Col Name generator function which we use everywhere for unified col naming !!!!!
-            return ['text']
+            # return ['text']
+            for col in df.columns:
+                if 'meta_' + configs.output_col_prefix in col:
+                    base_meta_prefix = 'meta_' + configs.output_col_prefix
+                    meta_col_name = base_meta_prefix + col.split(base_meta_prefix)[-1]
+                    if meta_col_name in df.columns:
+                        # special case for overlapping names with _
+                        if col.split(base_meta_prefix)[-1].split('_')[1].isnumeric() and not \
+                                c.spark_output_column_names[0].split('_')[-1].isnumeric(): continue
+                        if col.split(base_meta_prefix)[-1].split('_')[1].isnumeric() and \
+                                c.spark_output_column_names[0].split('_')[-1].isnumeric():
+                            id1 = int(col.split(base_meta_prefix)[-1].split('_')[1])
+                            id2 = int(c.spark_output_column_names.split('_')[-1])
+                            if id1 != id2: continue
+                        result_cols.append(meta_col_name)
+                    elif c.type == AnnoTypes.CHUNK_CLASSIFIER:
+                        result_cols.append(col)
+                    else:
+                        logger.info(f"Could not find meta col for os_components={c}, col={col}. Ommiting col..")
+            return result_cols
         if isinstance(c.model, MultiDocumentAssembler):
             return [f'{NLP_FEATURES.DOCUMENT_QUESTION}_results', f'{NLP_FEATURES.DOCUMENT_QUESTION_CONTEXT}_results']
 

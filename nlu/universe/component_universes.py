@@ -77,7 +77,7 @@ from nlu.components.embeddings.roberta.roberta import Roberta
 from nlu.components.embeddings.sentence_e5.E5SentenceEmbedding import E5
 from nlu.components.embeddings.sentence_bert.BertSentenceEmbedding import BertSentence
 from nlu.components.embeddings.sentence_roberta.RobertaSentenceEmbedding import RobertaSentence
-from nlu.components.embeddings.sentence_mpnet.MPNetSentenceEmbedding import MPNetSentence
+# from nlu.components.embeddings.sentence_mpnet.MPNetSentenceEmbedding import MPNetSentence
 from nlu.components.embeddings.instructor_sentence.InstructorEmbeddings import Instructor
 from nlu.components.embeddings.sentence_xlm.sentence_xlm import Sentence_XLM
 from nlu.components.embeddings.use.spark_nlp_use import SparkNLPUse
@@ -132,17 +132,19 @@ from nlu.ocr_components.text_recognizers.doc2text.doc2text import Doc2Text
 from nlu.ocr_components.text_recognizers.img2text.img2text import Img2Text
 from nlu.ocr_components.text_recognizers.pdf2text.pdf2text import Pdf2Text
 from nlu.ocr_components.utils.binary2image.binary2image import Binary2Image
+from nlu.ocr_components.utils.hocr_tokenizer.hocr_tokenizer import HocrTokenizer
 from nlu.ocr_components.utils.image2hocr.image2hocr import Image2Hocr
 from nlu.ocr_components.table_extractors.image2table.image2table import IMAGE_TABLE_DETECTOR
+from nlu.ocr_components.visual_ner.visual_document_ner.visual_document_ner import VisualDocumentNer
 from nlu.ocr_components.table_extractors.image2table_cell.image2table_cell import ImageTableCellDetector
 from nlu.ocr_components.table_extractors.image_table_cell2text.image_table_cell2text import ImageTable2Cell2TextTable
 from nlu.ocr_components.utils.image_split_regions.image_split_regions import ImageSplitRegions
 # from nlu.ocr_components.visual_classifiers.visual_doc_classifier.visual_doc_classifier import VisualDocClassifier
 from nlu.pipe.col_substitution.col_substitution_HC import *
-from nlu.pipe.col_substitution.col_substitution_OCR import substitute_recognized_text_cols
+from nlu.pipe.col_substitution.col_substitution_OCR import substitute_recognized_text_cols,substitute_document_ner_cols
 from nlu.pipe.col_substitution.col_substitution_OS import *
 from nlu.pipe.extractors.extractor_configs_HC import *
-from nlu.pipe.extractors.extractor_configs_OCR import default_text_recognizer_config, default_binary_to_image_config
+from nlu.pipe.extractors.extractor_configs_OCR import default_text_recognizer_config, default_binary_to_image_config, default_visual_ner_config
 from nlu.pipe.extractors.extractor_configs_OS import *
 from nlu.pipe.nlu_component import NluComponent
 from nlu.universe.annotator_class_universe import AnnoClassRef
@@ -2619,26 +2621,26 @@ class ComponentUniverse:
                                       jsl_anno_class_id=A.MARIAN_TRANSFORMER,
                                       jsl_anno_py_class=ACR.JSL_anno2_py_class[A.MARIAN_TRANSFORMER],
                                       ),
-        A.MPNET_SENTENCE_EMBEDDINGS: partial(NluComponent,
-                                            name=A.MPNET_SENTENCE_EMBEDDINGS,
-                                            type=T.DOCUMENT_EMBEDDING,
-                                            get_default_model=MPNetSentence.get_default_model,
-                                            get_pretrained_model=MPNetSentence.get_pretrained_model,
-                                            pdf_extractor_methods={'default': default_sentence_embedding_config,
-                                                                   'default_full': default_full_config, },
-                                            pdf_col_name_substitutor=substitute_sent_embed_cols,
-                                            output_level=L.INPUT_DEPENDENT_DOCUMENT_EMBEDDING,
-                                            node=NLP_FEATURE_NODES.nodes[A.MPNET_SENTENCE_EMBEDDINGS],
-                                            description='Sentence-level embeddings using BERT. BERT (Bidirectional Encoder Representations from Transformers) provides dense vector representations for natural language by using a deep, pre-trained neural network with the Transformer architecture.',
-                                            provider=ComponentBackends.open_source,
-                                            license=Licenses.open_source,
-                                            computation_context=ComputeContexts.spark,
-                                            output_context=ComputeContexts.spark,
-                                            jsl_anno_class_id=A.MPNET_SENTENCE_EMBEDDINGS,
-                                            jsl_anno_py_class=ACR.JSL_anno2_py_class[A.MPNET_SENTENCE_EMBEDDINGS],
-                                            has_storage_ref=True,
-                                            is_storage_ref_producer=True,
-                                            ),
+        # A.MPNET_SENTENCE_EMBEDDINGS: partial(NluComponent,
+        #                                     name=A.MPNET_SENTENCE_EMBEDDINGS,
+        #                                     type=T.DOCUMENT_EMBEDDING,
+        #                                     get_default_model=MPNetSentence.get_default_model,
+        #                                     get_pretrained_model=MPNetSentence.get_pretrained_model,
+        #                                     pdf_extractor_methods={'default': default_sentence_embedding_config,
+        #                                                            'default_full': default_full_config, },
+        #                                     pdf_col_name_substitutor=substitute_sent_embed_cols,
+        #                                     output_level=L.INPUT_DEPENDENT_DOCUMENT_EMBEDDING,
+        #                                     node=NLP_FEATURE_NODES.nodes[A.MPNET_SENTENCE_EMBEDDINGS],
+        #                                     description='Sentence-level embeddings using BERT. BERT (Bidirectional Encoder Representations from Transformers) provides dense vector representations for natural language by using a deep, pre-trained neural network with the Transformer architecture.',
+        #                                     provider=ComponentBackends.open_source,
+        #                                     license=Licenses.open_source,
+        #                                     computation_context=ComputeContexts.spark,
+        #                                     output_context=ComputeContexts.spark,
+        #                                     jsl_anno_class_id=A.MPNET_SENTENCE_EMBEDDINGS,
+        #                                     jsl_anno_py_class=ACR.JSL_anno2_py_class[A.MPNET_SENTENCE_EMBEDDINGS],
+        #                                     has_storage_ref=True,
+        #                                     is_storage_ref_producer=True,
+        #                                     ),
         A.ROBERTA_EMBEDDINGS: partial(NluComponent,
                                       name=A.ROBERTA_EMBEDDINGS,
                                       type=T.TOKEN_EMBEDDING,
@@ -4294,5 +4296,47 @@ class ComponentUniverse:
                                     O_A.IMAGE2HOCR],
                                 applicable_file_types=['DOCX', 'DOC'],
                                 ),
+
+        O_A.HOCR_TOKENIZER: partial(NluComponent,
+                                    name=O_A.HOCR_TOKENIZER,
+                                    type=T.OCR_UTIL,
+                                    get_default_model=HocrTokenizer.get_default_model,
+                                    # TODO EXtractor0
+                                    pdf_extractor_methods={'default': default_binary_to_image_config},
+                                    # TODO substitor
+                                    pdf_col_name_substitutor=substitute_recognized_text_cols,
+                                    output_level=L.DOCUMENT,
+                                    node=OCR_FEATURE_NODES.nodes[O_A.HOCR_TOKENIZER],
+                                    description='Convert text to PDF file',
+                                    provider=ComponentBackends.ocr,
+                                    license=Licenses.ocr,
+                                    computation_context=ComputeContexts.spark,
+                                    output_context=ComputeContexts.spark,
+                                    jsl_anno_class_id=O_A.HOCR_TOKENIZER,
+                                    jsl_anno_py_class=ACR.JSL_anno_OCR_ref_2_py_class[
+                                        O_A.HOCR_TOKENIZER],
+                                    applicable_file_types=['DOCX', 'DOC'],
+                                    ),
+
+        O_A.VISUAL_DOCUMENT_NER: partial(NluComponent,
+                                         name=O_A.VISUAL_DOCUMENT_NER,
+                                         type=T.PDF_BUILDER,
+                                         get_default_model=VisualDocumentNer.get_default_model,
+                                         pdf_extractor_methods={'default': default_visual_ner_config},
+                                         # TODO EXtractor
+                                         pdf_col_name_substitutor=substitute_document_ner_cols,
+                                         # TODO substitor
+                                         output_level=L.CHUNK,
+                                         node=OCR_FEATURE_NODES.nodes[O_A.VISUAL_DOCUMENT_NER],
+                                         description='Convert text to PDF file',
+                                         provider=ComponentBackends.ocr,
+                                         license=Licenses.ocr,
+                                         computation_context=ComputeContexts.spark,
+                                         output_context=ComputeContexts.spark,
+                                         jsl_anno_class_id=O_A.VISUAL_DOCUMENT_NER,
+                                         jsl_anno_py_class=ACR.JSL_anno_OCR_ref_2_py_class[
+                                             O_A.VISUAL_DOCUMENT_NER],
+                                         applicable_file_types=['JPG', 'JPEG']
+                                         ),
 
     }

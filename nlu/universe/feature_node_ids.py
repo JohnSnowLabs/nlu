@@ -310,7 +310,7 @@ class OCR_NODE_IDS:
     """
     # Visual Document Understanding
     VISUAL_DOCUMENT_CLASSIFIER = JslAnnoId('visual_document_classifier')
-    VISUAL_DOCUMENT_NER = JslAnnoId('visual_document_NER')
+    VISUAL_DOCUMENT_NER = JslAnnoId('visual_document_ner')
 
     # Object Detection
     IMAGE_HANDWRITTEN_DETECTOR = JslAnnoId('image_handwritten_detector')

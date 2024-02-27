@@ -296,6 +296,8 @@ class OCR_FEATURE_NODES:
         A.IMAGE2HOCR: OcrFeatureNode(A.IMAGE2HOCR, [F.OCR_IMAGE], [F.HOCR]),
 
         # VISUAL_DOCUMENT_NER : OcrFeatureNode(A.VISUAL_DOCUMENT_NER, [OcrFeature.HOCR, OcrFeature.FILE_PATH], [NlpFeature.NER_Annotation]), # TODO NlpFeature Space!
+        A.VISUAL_DOCUMENT_NER: OcrFeatureNode(A.VISUAL_DOCUMENT_NER, [F.TEXT_DOCUMENT_TOKENIZED, F.OCR_IMAGE],
+                                              [F.TEXT_ENTITY]),
 
         # Object Detection
         A.IMAGE_SPLIT_REGIONS: OcrFeatureNode(A.IMAGE_SPLIT_REGIONS, [F.OCR_IMAGE,F.OCR_REGION], [F.IMG_SPLIT_REGIONS]),
