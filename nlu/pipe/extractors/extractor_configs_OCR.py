@@ -28,6 +28,22 @@ def default_visual_classifier_config(output_col_prefix='visual_classifier'):
         description='Gets label and confidence of visual classifier',
     )
 
+def default_visual_ner_config(output_col_prefix='visual_ocr'):
+    return SparkOCRExtractorConfig(
+        get_text=True,
+        get_begin=True,
+        get_end=True,
+        get_result=True,
+        get_meta=True,
+        get_full_meta=True,
+        get_image_data=True,
+        get_path=True,
+        get_annotator_type=False,
+        output_col_prefix=output_col_prefix,
+        meta_white_list=['entity', 'confidence', 'sentence', 'chunk'],
+        name='visual_ner label, confidence and entities ',
+        description='Gets label, entities and confidence of visual ner',
+    )
 
 def default_binary_to_image_config(output_col_prefix='binary_image'):
     return SparkOCRExtractorConfig(

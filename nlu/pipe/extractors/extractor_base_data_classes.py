@@ -142,7 +142,7 @@ class SparkOCRExtractorConfig(SparkNLPExtractorConfig):
     get_image_resolution: bool = field(default=False)
     get_image_data: bool = field(default=False)
     # General OCR fields
-    # get_path          :bool              = field(default = False)# origin is path
+    get_path: bool = field(default=False)# origin is path
     get_modification_time: bool = field(default=False)
     get_length: bool = field(default=False)
     get_page_num: bool = field(default=False)

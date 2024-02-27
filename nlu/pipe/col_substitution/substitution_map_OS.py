@@ -73,9 +73,9 @@ OS_anno2substitution_fn = {
     SentenceEmbeddings: {
         'default': substitute_sent_embed_cols,
     },
-    MPNetEmbeddings: {
-        'default': substitute_sent_embed_cols,
-    },
+    # MPNetEmbeddings: {
+    #     'default': substitute_sent_embed_cols,
+    # },
     Tokenizer: {
         'default': substitute_tokenizer_cols,
     },
