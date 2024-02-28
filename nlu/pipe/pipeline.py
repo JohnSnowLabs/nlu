@@ -281,6 +281,12 @@ class NLUPipeline(dict):
 
            Can process Spark DF output from Vanilla pipes and Pandas Converts outputs of Lightpipeline
            """
+        if isinstance(pdf,pyspark.sql.dataframe.DataFrame):
+            if 'modificationTime' in pdf.columns:
+                # drop because of
+                # 'TypeError: Casting to unit-less dtype 'datetime64' is not supported.
+                # Pass e.g. 'datetime64[ns]' instead. processed'
+                pdf = pdf.drop('modificationTime')
         # Light pipe, does not fetch emebddings
         if light_pipe_enabled and not get_embeddings and not isinstance(pdf,
                                                                         pyspark.sql.dataframe.DataFrame) or self.prefer_light:
@@ -490,7 +496,27 @@ class NLUPipeline(dict):
         from nlu.pipe.utils.predict_helper import __predict__
         return __predict__(self, data, output_level, positions, keep_stranger_features, metadata, multithread,
                            drop_irrelevant_cols, return_spark_df, get_embeddings)
+    def predict_embeds(self,
+                       data,
+                       multithread=True,
+                       return_spark_df=False,
+                       ):
+        '''
+        Annotates a Pandas Dataframe/Pandas Series/Numpy Array/Spark DataFrame/Python List strings /Python String abd returns List of Floats or Spark-Df, only with embeddings.
+        :param data: Data to predict on
+                and drop_irrelevant_cols = True then chunk, sentence and Doc will be dropped
+        :param return_spark_df: Prediction results will be returned right after transforming with the Spark NLP pipeline
+                                 This will run fully distributed in on the Spark Master, but not prettify the output dataframe
+        :param return_spark_df: return Spark-DF and not collect all data into driver instead of returning list of float
+        :param multithread: Use multithreaded Light-pipeline instead of spark-pipeline
 
+        :return:
+        '''
+        from nlu.pipe.utils.predict_helper import __predict__
+        return __predict__(self, data, output_level=None, positions=False, keep_stranger_features=False, metadata=False,
+                           multithread=multithread,
+                           drop_irrelevant_cols=True, return_spark_df=return_spark_df, get_embeddings=True,
+                           embed_only=True)
     def print_info(self, minimal=True):
         '''
         Print out information about every component_to_resolve currently loaded in the component_list and their configurable parameters.
