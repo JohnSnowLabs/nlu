@@ -250,6 +250,10 @@ class NLP_FEATURE_NODES:  # or Mode Node?
                                                                    [F.DOCUMENT, F.TOKEN],
                                                                    [F.SEQUENCE_CLASSIFICATION]),
 
+        A.DEBERTA_FOR_ZERO_SHOT_CLASSIFICATION: NlpFeatureNode(A.DEBERTA_FOR_ZERO_SHOT_CLASSIFICATION,
+                                                                   [F.DOCUMENT, F.TOKEN],
+                                                                   [F.SEQUENCE_CLASSIFICATION]),
+
         A.XLM_ROBERTA_FOR_SEQUENCE_CLASSIFICATION: NlpFeatureNode(A.XLM_ROBERTA_FOR_SEQUENCE_CLASSIFICATION,
                                                                   [F.DOCUMENT, F.TOKEN],
                                                                   [F.SEQUENCE_CLASSIFICATION]),

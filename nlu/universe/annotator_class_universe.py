@@ -101,6 +101,9 @@ class AnnoClassRef:
         A_N.DISTIL_BERT_EMBEDDINGS: 'DistilBertEmbeddings',
         A_N.DISTIL_BERT_FOR_SEQUENCE_CLASSIFICATION: 'DistilBertForSequenceClassification',
         A_N.DISTIL_BERT_FOR_ZERO_SHOT_CLASSIFICATION: 'DistilBertForZeroShotClassification',
+
+        A_N.DEBERTA_FOR_ZERO_SHOT_CLASSIFICATION: 'DeBertaForZeroShotClassification',
+        
         A_N.BERT_FOR_SEQUENCE_CLASSIFICATION: 'BertForSequenceClassification',
         A_N.BERT_FOR_ZERO_SHOT_CLASSIFICATION: 'BertForZeroShotClassification',
         A_N.ELMO_EMBEDDINGS: 'ElmoEmbeddings',

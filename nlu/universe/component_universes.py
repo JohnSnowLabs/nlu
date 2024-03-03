@@ -13,6 +13,10 @@ from nlu.components.classifiers.bert_zero_shot_classification.bert_zero_shot imp
 from nlu.components.classifiers.classifier_dl.classifier_dl import ClassifierDl
 from nlu.components.classifiers.distil_bert_zero_shot_classification.distil_bert_zero_shot import \
     DistilBertZeroShotClassifier
+
+from nlu.components.classifiers.deberta_zero_shot.deberta_zero_shot import DeBertaZeroShotClassifier
+
+
 from nlu.components.classifiers.generic_classifier.generic_classifier import GenericClassifier
 from nlu.components.classifiers.image_classification_swin.swin import SwinImageClassifier
 from nlu.components.classifiers.image_classification_vit.convnext_image_classification import ConvNextImageClassifier
@@ -3027,6 +3031,36 @@ class ComponentUniverse:
                                                             jsl_anno_py_class=ACR.JSL_anno2_py_class[
                                                                 A.DISTIL_BERT_FOR_ZERO_SHOT_CLASSIFICATION],
                                                             ),
+
+
+        A.DEBERTA_FOR_ZERO_SHOT_CLASSIFICATION: partial(NluComponent,
+                                                            name=A.DEBERTA_FOR_ZERO_SHOT_CLASSIFICATION,
+                                                            type=T.TRANSFORMER_SEQUENCE_CLASSIFIER,
+                                                            get_default_model=DeBertaZeroShotClassifier.get_default_model,
+                                                            get_pretrained_model=DeBertaZeroShotClassifier.get_pretrained_model,
+                                                            pdf_extractor_methods={
+                                                                'default': default_seq_classifier_config,
+                                                                'default_full': default_full_config, },
+                                                            pdf_col_name_substitutor=substitute_seq_bert_classifier_cols,
+                                                            output_level=L.INPUT_DEPENDENT_DOCUMENT_CLASSIFIER,
+                                                            node=NLP_FEATURE_NODES.nodes[
+                                                                A.DEBERTA_FOR_ZERO_SHOT_CLASSIFICATION],
+                                                            description='DeBerta Zero Shot Classifier.',
+                                                            provider=ComponentBackends.open_source,
+                                                            license=Licenses.open_source,
+                                                            computation_context=ComputeContexts.spark,
+                                                            output_context=ComputeContexts.spark,
+                                                            jsl_anno_class_id=A.DEBERTA_FOR_ZERO_SHOT_CLASSIFICATION,
+                                                            jsl_anno_py_class=ACR.JSL_anno2_py_class[
+                                                                A.DEBERTA_FOR_ZERO_SHOT_CLASSIFICATION],
+                                                            ),
+
+
+
+
+
+
+
         A.BERT_FOR_ZERO_SHOT_CLASSIFICATION: partial(NluComponent,
                                                      name=A.BERT_FOR_ZERO_SHOT_CLASSIFICATION,
                                                      type=T.TRANSFORMER_SEQUENCE_CLASSIFIER,
