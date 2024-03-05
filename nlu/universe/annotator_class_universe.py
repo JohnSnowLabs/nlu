@@ -15,6 +15,7 @@ class AnnoClassRef:
     JSL_anno2_py_class: Dict[JslAnnoId, JslAnnoPyClass] = {
 
         A_N.E5_SENTENCE_EMBEDDINGS: 'E5Embeddings',
+        A_N.BGE_SENTENCE_EMBEDDINGS: 'BGEEmbeddings',
         A_N.INSTRUCTOR_SENTENCE_EMBEDDINGS: 'InstructorEmbeddings',
 
         A_N.WHISPER_FOR_CTC: 'WhisperForCTC',
