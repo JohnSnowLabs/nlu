@@ -128,6 +128,8 @@ class AnnoClassRef:
         A_N.ALBERT_FOR_SEQUENCE_CLASSIFICATION: 'AlbertForSequenceClassification',
         A_N.XLNET_FOR_SEQUENCE_CLASSIFICATION: 'XlnetForSequenceClassification',
         A_N.GPT2: 'GPT2Transformer',
+        A_N.OPENAI_COMPLETION : 'OpenAICompletion',
+        A_N.OPENAI_EMBEDDINGS: 'OpenAIEmbeddings',
         A_N.DEBERTA_WORD_EMBEDDINGS: 'DeBertaEmbeddings',
         A_N.DEBERTA_FOR_TOKEN_CLASSIFICATION: 'DeBertaForTokenClassification',
         A_N.CAMEMBERT_EMBEDDINGS: 'CamemBertEmbeddings',
