@@ -17,6 +17,28 @@ def substitute_recognized_text_cols(c, cols, is_unique=True, nlu_identifier=''):
     for c in cols:
         new_cols[c] = c
     return new_cols  # TODO
+
+def substitute_document_classifier_text_cols(c, cols, is_unique=True, nlu_identifier=''):
+        """
+        Drug Norm is always unique
+        Fetched fields are:
+        - entities@<storage_ref>_results
+        - entities@<storage_ref>_<metadata>
+            - entities@<storage_ref>_entity
+            - entities@<storage_ref>_confidence
+        """
+        new_cols = {}
+        for c in cols:
+            if 'visual_classifier_label.1' in cols:
+                new_cols['visual_classifier_label.1'] = 'file_path'
+            if 'visual_classifier_label' in cols:
+                new_cols['visual_classifier_label'] = 'visual_classifier_prediction'
+
+            new_cols[c] = c
+        return new_cols  # TODO
+
+
+
     # new_base_name = 'generic_classifier' if is_unique else f'generic_classification_{nlu_identifier}'
     # for col in cols :
     #     if '_results'    in col     : new_cols[col] = new_base_name
