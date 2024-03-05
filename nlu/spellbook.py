@@ -2439,6 +2439,7 @@ class Spellbook:
         'eml': {'eml.embed.w2v_cc_300d': 'w2v_cc_300d'},
         'en': {
             'en.distilbert.zero_shot_classifier': 'distilbert_base_zero_shot_classifier_uncased_mnli',
+            'en.deberta.zero_shot_classifier': 'deberta_base_zero_shot_classifier_mnli_anli_v3',
             'en.classify_image.convnext.tiny': 'image_classifier_convnext_tiny_224_local',
             'en.bert.zero_shot_classifier': 'bert_base_cased_zero_shot_classifier_xnli',
             'en.bart.zero_shot_classifier': 'bart_large_zero_shot_classifier_mnli',
@@ -12866,6 +12867,7 @@ class Spellbook:
                              'cpu_transport_ghg_classifier': 'MPNetEmbeddings',
                              'cross_all_mpnet_base_v2_finetuned_webnlg2020_metric_average': 'MPNetEmbeddings',
                              'distilbert_base_zero_shot_classifier_uncased_mnli': 'DistilBertForZeroShotClassification',
+                             'deberta_base_zero_shot_classifier_mnli_anli_v3': 'DeBertaForZeroShotClassification',
                              'distilbert_base_zero_shot_classifier_turkish_cased_multinli': 'DistilBertForZeroShotClassification',
                              'distilbert_base_zero_shot_classifier_turkish_cased_allnli': 'DistilBertForZeroShotClassification',
                              'distilbert_base_zero_shot_classifier_turkish_cased_snli': 'DistilBertForZeroShotClassification',
