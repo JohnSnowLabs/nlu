@@ -1,11 +1,13 @@
-from pyspark.sql.types import *
 import glob
 import logging
 import os
 from typing import List
-import pyspark
+
 import numpy as np
 import pandas as pd
+import pyspark
+from johnsnowlabs.utils.env_utils import is_running_in_databricks
+from pyspark.sql.types import *
 
 logger = logging.getLogger('nlu')
 
@@ -82,14 +84,16 @@ class AudioDataConversionUtils:
         1. paths point to a file which is suffixed with one of the accepted file_types, i.e. path/to/file.type
         2. path points to a jsl_folder, in this case jsl_folder is recursively searched for valid files and accepted paths will be in return result
         """
+        if is_running_in_databricks():
+            paths = [f'/dbfs{p}' for p in paths]
         accepted_file_paths = []
         for p in paths:
             for t in file_types:
                 t = t.lower()
-                if os.path.isfile(p):
+                if os.path.isfile(p) or is_running_in_databricks() and os.path.isfile(f'/dbfs{p}'):
                     if p.lower().split('.')[-1] == t:
                         accepted_file_paths.append(p)
-                elif os.path.isdir(p):
+                elif os.path.isdir(p) or is_running_in_databricks() and os.path.isdir(f'/dbfs{p}'):
                     accepted_file_paths += glob.glob(p + f'/**/*.{t}', recursive=True)
                 else:
                     print(f"Invalid path = {p} pointing neither to file or jsl_folder on this machine")
