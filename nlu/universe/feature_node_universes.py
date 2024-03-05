@@ -237,6 +237,8 @@ class NLP_FEATURE_NODES:  # or Mode Node?
         A.CAMEMBERT_FOR_SEQUENCE_CLASSIFICATION: NlpFeatureNode(A.CAMEMBERT_FOR_SEQUENCE_CLASSIFICATION,
                                                                 [F.DOCUMENT, F.TOKEN],
                                                                 [F.SEQUENCE_CLASSIFICATION]),
+        A.XLM_ROBERTA_FOR_ZERO_SHOT_CLASSIFICATION: NlpFeatureNode(A.XLM_ROBERTA_FOR_ZERO_SHOT_CLASSIFICATION, [F.DOCUMENT, F.TOKEN],
+                                                            [F.SEQUENCE_CLASSIFICATION]),
         A.BERT_FOR_ZERO_SHOT_CLASSIFICATION: NlpFeatureNode(A.BERT_FOR_ZERO_SHOT_CLASSIFICATION, [F.DOCUMENT, F.TOKEN],
                                                             [F.SEQUENCE_CLASSIFICATION]),
         A.BART_FOR_ZERO_SHOT_CLASSIFICATION: NlpFeatureNode(A.BART_FOR_ZERO_SHOT_CLASSIFICATION, [F.DOCUMENT, F.TOKEN],

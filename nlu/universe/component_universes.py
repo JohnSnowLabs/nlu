@@ -9,6 +9,7 @@ from nlu.components.chunkers.ngram.ngram import NGram
 from nlu.components.classifiers.asr.wav2Vec import Wav2Vec
 from nlu.components.classifiers.asr_hubert.hubert import Hubert
 from nlu.components.classifiers.asr_whisper.whisper import Whisper
+from nlu.components.classifiers.xlm_roberta_zero_shot_classification.xlm_roberta_zero_shot import XlmRobertaZeroShotClassifier
 from nlu.components.classifiers.bert_zero_shot_classification.bert_zero_shot import BertZeroShotClassifier
 from nlu.components.classifiers.bart_zero_shot_classification.bart_zero_shot import BartZeroShotClassifier
 from nlu.components.classifiers.classifier_dl.classifier_dl import ClassifierDl
