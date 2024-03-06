@@ -15,7 +15,7 @@ from sparknlp.annotator import *
 import nlu
 from nlu.pipe.col_substitution import substitution_map_OS
 from nlu.universe.feature_universes import NLP_FEATURES
-from nlu.pipe.col_substitution import substitution_map_OS, substitution_map_OCR
+from nlu.pipe.col_substitution import substitution_map_OS
 from nlu.pipe.col_substitution import col_substitution_OS
 import logging
 
@@ -73,6 +73,7 @@ class ColSubstitutionUtils:
         deducted_component_names = ColSubstitutionUtils.deduct_component_names(pipe)
         for c in pipe.components:
             if c.license == Licenses.ocr:
+                from nlu.pipe.col_substitution import substitution_map_OCR
                 # TODO better substitution
                 old2new_anno_cols = {k: k for k in c.spark_output_column_names}
                 anno2final_cols[c.model] = list(old2new_anno_cols.values())
