@@ -3,9 +3,10 @@ import glob
 import logging
 import os
 from typing import List
-import pyspark
+
 import numpy as np
 import pandas as pd
+import pyspark
 from johnsnowlabs.utils.env_utils import is_running_in_databricks
 
 logger = logging.getLogger('nlu')
@@ -31,6 +32,8 @@ class OcrDataConversionUtils:
     @staticmethod
     def check_iterable_paths_are_valid(iterable_paths):
         """Validate for iterable data input if all elements point to file or jsl_folder"""
+        if is_running_in_databricks():
+            iterable_paths = [f'/dbfs{p}' for p in iterable_paths]
         paths_validness = []
         for p in iterable_paths:
             if os.path.isdir(p) or os.path.isfile(p):
@@ -63,9 +66,12 @@ class OcrDataConversionUtils:
                 t = t.lower()
                 if os.path.isfile(p) or is_running_in_databricks() and os.path.isfile(f'/dbfs{p}'):
                     if p.lower().split('.')[-1] == t:
+                        if is_running_in_databricks():
+                            p = p.replace('/dbfs', '', 1)
                         accepted_file_paths.append(p)
                 elif os.path.isdir(p) or is_running_in_databricks() and os.path.isdir(f'/dbfs{p}'):
-                    accepted_file_paths += glob.glob(p + f'/*.{t.upper()}', recursive=True) + glob.glob(p + f'/*.{t}', recursive=True)
+                    accepted_file_paths += glob.glob(p + f'/*.{t.upper()}', recursive=True) + glob.glob(p + f'/*.{t}',
+                                                                                                        recursive=True)
                 else:
                     print(f"Invalid path = {p} pointing neither to file or jsl_folder on this machine")
         return accepted_file_paths
