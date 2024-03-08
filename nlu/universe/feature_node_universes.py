@@ -76,6 +76,7 @@ class NLP_FEATURE_NODES:  # or Mode Node?
         A.INSTRUCTOR_SENTENCE_EMBEDDINGS: NlpFeatureNode(A.INSTRUCTOR_SENTENCE_EMBEDDINGS, [F.DOCUMENT], [F.SENTENCE_EMBEDDINGS]),
 
         A.E5_SENTENCE_EMBEDDINGS: NlpFeatureNode(A.E5_SENTENCE_EMBEDDINGS, [F.DOCUMENT],[F.SENTENCE_EMBEDDINGS]),
+        A.BGE_SENTENCE_EMBEDDINGS: NlpFeatureNode(A.BGE_SENTENCE_EMBEDDINGS, [F.DOCUMENT], [F.SENTENCE_EMBEDDINGS]),
         A.MPNET_SENTENCE_EMBEDDINGS: NlpFeatureNode(A.MPNET_SENTENCE_EMBEDDINGS, [F.DOCUMENT], [F.SENTENCE_EMBEDDINGS]),
 
         A.PARTIALLY_IMPLEMENTED: NlpFeatureNode(A.PARTIALLY_IMPLEMENTED, [F.UNKOWN], [F.UNKOWN]),
@@ -237,7 +238,11 @@ class NLP_FEATURE_NODES:  # or Mode Node?
         A.CAMEMBERT_FOR_SEQUENCE_CLASSIFICATION: NlpFeatureNode(A.CAMEMBERT_FOR_SEQUENCE_CLASSIFICATION,
                                                                 [F.DOCUMENT, F.TOKEN],
                                                                 [F.SEQUENCE_CLASSIFICATION]),
+        A.XLM_ROBERTA_FOR_ZERO_SHOT_CLASSIFICATION: NlpFeatureNode(A.XLM_ROBERTA_FOR_ZERO_SHOT_CLASSIFICATION, [F.DOCUMENT, F.TOKEN],
+                                                            [F.SEQUENCE_CLASSIFICATION]),
         A.BERT_FOR_ZERO_SHOT_CLASSIFICATION: NlpFeatureNode(A.BERT_FOR_ZERO_SHOT_CLASSIFICATION, [F.DOCUMENT, F.TOKEN],
+                                                            [F.SEQUENCE_CLASSIFICATION]),
+        A.BART_FOR_ZERO_SHOT_CLASSIFICATION: NlpFeatureNode(A.BART_FOR_ZERO_SHOT_CLASSIFICATION, [F.DOCUMENT, F.TOKEN],
                                                             [F.SEQUENCE_CLASSIFICATION]),
 
         A.DEBERTA_FOR_SEQUENCE_CLASSIFICATION: NlpFeatureNode(A.BERT_FOR_SEQUENCE_CLASSIFICATION, [F.DOCUMENT, F.TOKEN],
@@ -247,6 +252,10 @@ class NLP_FEATURE_NODES:  # or Mode Node?
                                                                   [F.DOCUMENT, F.TOKEN],
                                                                   [F.SEQUENCE_CLASSIFICATION]),
         A.DISTIL_BERT_FOR_ZERO_SHOT_CLASSIFICATION: NlpFeatureNode(A.DISTIL_BERT_FOR_ZERO_SHOT_CLASSIFICATION,
+                                                                   [F.DOCUMENT, F.TOKEN],
+                                                                   [F.SEQUENCE_CLASSIFICATION]),
+
+        A.DEBERTA_FOR_ZERO_SHOT_CLASSIFICATION: NlpFeatureNode(A.DEBERTA_FOR_ZERO_SHOT_CLASSIFICATION,
                                                                    [F.DOCUMENT, F.TOKEN],
                                                                    [F.SEQUENCE_CLASSIFICATION]),
 
@@ -269,6 +278,8 @@ class NLP_FEATURE_NODES:  # or Mode Node?
                                                                [F.DOCUMENT, F.TOKEN],
                                                                [F.SEQUENCE_CLASSIFICATION]),
         A.GPT2: NlpFeatureNode(A.GPT2, [F.DOCUMENT], [F.DOCUMENT_GENERATED]),
+        A.OPENAI_COMPLETION: NlpFeatureNode(A.OPENAI_COMPLETION, [F.DOCUMENT], [F.DOCUMENT_GENERATED]),
+        A.OPENAI_EMBEDDINGS: NlpFeatureNode(A.OPENAI_EMBEDDINGS, [F.DOCUMENT], [F.SENTENCE_EMBEDDINGS]),
         A.WORD_2_VEC: NlpFeatureNode(A.WORD_2_VEC, [F.TOKEN], [F.WORD_EMBEDDINGS]),
         A.BERT_SENTENCE_CHUNK_EMBEDDINGS: NlpFeatureNode(A.BERT_SENTENCE_CHUNK_EMBEDDINGS, [F.DOCUMENT],
                                                          [F.NAMED_ENTITY_CONVERTED]),
@@ -291,7 +302,7 @@ class OCR_FEATURE_NODES:
     F = OCR_FEATURES
     nodes = {
         A.VISUAL_DOCUMENT_CLASSIFIER: OcrFeatureNode(A.VISUAL_DOCUMENT_CLASSIFIER, [F.HOCR],
-                                                     [F.VISUAL_CLASSIFIER_PREDICTION, F.VISUAL_CLASSIFIER_CONFIDENCE]),
+                                                     [F.VISUAL_CLASSIFIER_PREDICTION, F.VISUAL_CLASSIFIER_CONFIDENCE, F.FILE_PATH]),
 
         A.IMAGE2HOCR: OcrFeatureNode(A.IMAGE2HOCR, [F.OCR_IMAGE], [F.HOCR]),
 

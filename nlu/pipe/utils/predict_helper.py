@@ -217,18 +217,16 @@ def __db_endpoint_predict__(pipe, data):
     else:
         params = {}
     files = []
-    if 'file' in data.columns and 'file_type' in data.columns:
-        print("DETECTED FILE COLS")
-        skip_first = PredictParams.has_param_cols(data)
+    if 'binary_file' in data.columns and 'file_name' in data.columns:
+        # skip_first = PredictParams.has_param_cols(data)
         for i, row in data.iterrows():
-            print(f"DESERIALIZING {row.file_type} file {row.file}")
-            if i == 0 and skip_first:
-                continue
-            file_name = f'file{i}.{row.file_type}'
-            files.append(file_name)
-            deserialize(row.file, file_name)
+            # print(f"DESERIALIZING {row.file_type} file {row.file}")
+            # if i == 0 and skip_first:
+            #     continue
+            files.append(row.file_name)
+            deserialize(row.binary_file, row.file_name)
+        # data is now list of file path
         data = files
-
     if params:
         return __predict__(pipe, data, **params, normal_pred_on_db=True)
     else:
@@ -259,6 +257,15 @@ def __predict_standard_spark_only_embed(pipe, data, return_spark_df):
     # Note, this is only document output level. If pipe has sentence detector, we will only keep first embed of every document.
     return [r.embeddings[0] for r in data.select(f'{emb_col}.embeddings').collect()]
 
+def try_update_session():
+    try:
+        import sparknlp
+        spark = sparknlp.start()
+        spark._jvm.com.johnsnowlabs.license.LicenseValidator.meterServingUsage(
+            spark._jvm.scala.Option.apply(None)
+        )
+    except Exception as e:
+        print(f"Error updating session: {e}")
 
 def __predict__(pipe, data, output_level, positions, keep_stranger_features, metadata, multithread,
                 drop_irrelevant_cols, return_spark_df, get_embeddings, embed_only=False,normal_pred_on_db=False):
@@ -274,12 +281,21 @@ def __predict__(pipe, data, output_level, positions, keep_stranger_features, met
     :param return_spark_df: Prediction results will be returned right after transforming with the Spark NLP pipeline
     :return:
     '''
+
     if embed_only:
         pipe.fit()
         return __predict_standard_spark_only_embed(pipe, data, return_spark_df)
 
     if 'DB_ENDPOINT_ENV' in os.environ and not normal_pred_on_db:
-        return __db_endpoint_predict__(pipe,data)
+
+        try_update_session()
+        df = __db_endpoint_predict__(pipe,data)
+        if isinstance(df, pd.DataFrame):
+            if 'output_level' in df.columns:
+                df = df.drop(columns=['output_level'])
+        if PipeUtils.has_table_extractor(pipe):
+            return {'tables': df}
+        return df
 
     if output_level == '' and not pipe.has_table_qa_models:
         # Default sentence level for all components
@@ -294,8 +310,7 @@ def __predict__(pipe, data, output_level, positions, keep_stranger_features, met
             pipe.components = PipeUtils.configure_component_output_levels(pipe, output_level)
 
         elif pipe.has_nlp_components and output_level in ['token']:
-            # Add tokenizer if not in pipe, default its inputs to sentence
-            pipe.component_output_level = 'sentence'
+            # Add tokenizer if not iadel = 'sentence'
             pipe.components = PipeUtils.configure_component_output_levels(pipe, 'sentence')
             pipe = PipeUtils.add_tokenizer_to_pipe_if_missing(pipe)
 
