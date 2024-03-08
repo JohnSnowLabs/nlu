@@ -14,6 +14,11 @@ from sparknlp.annotator import *
 
 import nlu
 from nlu.pipe.col_substitution import substitution_map_OS
+from nlu.universe.feature_universes import NLP_FEATURES
+from nlu.pipe.col_substitution import substitution_map_OS
+from nlu.pipe.col_substitution import col_substitution_OS
+import logging
+
 from nlu.pipe.extractors.extractor_base_data_classes import SparkOCRExtractorConfig
 from nlu.universe.feature_universes import NLP_FEATURES
 from nlu.universe.logic_universes import AnnoTypes
@@ -68,12 +73,19 @@ class ColSubstitutionUtils:
         deducted_component_names = ColSubstitutionUtils.deduct_component_names(pipe)
         for c in pipe.components:
             if c.license == Licenses.ocr:
+                from nlu.pipe.col_substitution import substitution_map_OCR
                 # TODO better substitution
                 old2new_anno_cols = {k: k for k in c.spark_output_column_names}
                 anno2final_cols[c.model] = list(old2new_anno_cols.values())
                 new_cols.update(old2new_anno_cols)
                 new_cols = {**new_cols, **(old2new_anno_cols)}
-                continue
+                if type(c.model) in substitution_map_OCR.OCR_anno2substitution_fn.keys():
+                    cols = df.columns.tolist()
+                    substitution_fn = substitution_map_OCR.OCR_anno2substitution_fn[type(c.model)]['default']
+                    old2new_anno_cols = substitution_fn(c, cols, deducted_component_names[c])
+                    anno2final_cols[c.model] = list(old2new_anno_cols.values())
+                    new_cols = {**new_cols, **(old2new_anno_cols)}
+                    continue
             if 'embedding' in c.type and get_embeddings == False: continue
             cols_to_substitute = ColSubstitutionUtils.get_final_output_cols_of_component(c, df, anno_2_ex)
             if len(cols_to_substitute) == 0:
@@ -93,6 +105,7 @@ class ColSubstitutionUtils:
                 anno2final_cols[c.model] = list(old2new_anno_cols.values())
                 new_cols.update(old2new_anno_cols)
                 continue
+
             # dic, key=old_col, value=new_col. Some cols may be omitted and missing from the dic which are deemed irrelevant. Behaivour can be disabled by setting drop_debug_cols=False
             old2new_anno_cols = substitution_fn(c, cols_to_substitute, deducted_component_names[c])
             anno2final_cols[c.model] = list(old2new_anno_cols.values())

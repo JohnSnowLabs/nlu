@@ -1,9 +1,4 @@
-"""A setuptools based setup module.
-
-See:
-https://packaging.python.org/en/latest/distributing.html
-https://github.com/pypa/sampleproject
-"""
+import nlu
 
 from codecs import open
 from os import path
@@ -27,7 +22,7 @@ setup(
 
     name='nlu',
 
-    version='5.1.4',
+    version=nlu.version(),
 
     description='John Snow Labs NLU provides state of the art algorithms for NLP&NLU with 20000+ of pretrained models in 200+ languages. It enables swift and simple development and research with its powerful Pythonic and Keras inspired API. It is powerd by John Snow Labs powerful Spark NLP library.',
 
@@ -58,3 +53,4 @@ setup(
     packages=find_packages(exclude=['test*', 'tmp*']),
     include_package_data=True
 )
+

@@ -91,6 +91,7 @@ class NLP_NODE_IDS:
     CAMEMBERT_FOR_TOKEN_CLASSIFICATION = JslAnnoId('camenbert_for_token_classification')
     CAMEMBERT_FOR_SEQUENCE_CLASSIFICATION = JslAnnoId('camenbert_for_sequence_classification')
     E5_SENTENCE_EMBEDDINGS = JslAnnoId('e5_sentence_embeddings')
+    BGE_SENTENCE_EMBEDDINGS = JslAnnoId('bge_sentence_embeddings')
     BERT_SENTENCE_EMBEDDINGS = JslAnnoId('bert_sentence_embeddings')
     DISTIL_BERT_EMBEDDINGS = JslAnnoId('distil_bert_embeddings')
     DISTIL_BERT_FOR_TOKEN_CLASSIFICATION = JslAnnoId('distil_bert_for_token_classification')
@@ -117,7 +118,12 @@ class NLP_NODE_IDS:
 
 
     DISTIL_BERT_FOR_ZERO_SHOT_CLASSIFICATION = JslAnnoId('distil_bert_zero_shot')
+    XLM_ROBERTA_FOR_ZERO_SHOT_CLASSIFICATION = JslAnnoId('xlm_roberta_zero_shot')
+
+    DEBERTA_FOR_ZERO_SHOT_CLASSIFICATION = JslAnnoId('deberta_zero_shot')
+
     BERT_FOR_ZERO_SHOT_CLASSIFICATION = JslAnnoId('bert_zero_shot')
+    BART_FOR_ZERO_SHOT_CLASSIFICATION = JslAnnoId('bart_zero_shot')
     ROBERTA_FOR_ZERO_SHOT_CLASSIFICATION = JslAnnoId('roberta_zero_shot')
     UNIVERSAL_SENTENCE_ENCODER = JslAnnoId('universal_sentence_encoder')
     XLM_ROBERTA_EMBEDDINGS = JslAnnoId('xlm_roberta_embeddings')
@@ -131,6 +137,8 @@ class NLP_NODE_IDS:
     ALBERT_FOR_SEQUENCE_CLASSIFICATION = JslAnnoId('albert_for_sequence_classification')
     XLNET_FOR_SEQUENCE_CLASSIFICATION = JslAnnoId('xlnet_for_sequence_classification')
     GPT2 = JslAnnoId('gpt2')
+    OPENAI_COMPLETION = JslAnnoId('openai_completion')
+    OPENAI_EMBEDDINGS = JslAnnoId('openai_embeddings')
     WORD_2_VEC = JslAnnoId('word_2_vec')
     DEBERTA_WORD_EMBEDDINGS = JslAnnoId('deberta')
     DEBERTA_FOR_SEQUENCE_CLASSIFICATION = JslAnnoId('deberta_for_sequence_classification')

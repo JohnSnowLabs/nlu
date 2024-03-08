@@ -15,6 +15,7 @@ class AnnoClassRef:
     JSL_anno2_py_class: Dict[JslAnnoId, JslAnnoPyClass] = {
 
         A_N.E5_SENTENCE_EMBEDDINGS: 'E5Embeddings',
+        A_N.BGE_SENTENCE_EMBEDDINGS: 'BGEEmbeddings',
         A_N.INSTRUCTOR_SENTENCE_EMBEDDINGS: 'InstructorEmbeddings',
 
         A_N.WHISPER_FOR_CTC: 'WhisperForCTC',
@@ -101,8 +102,13 @@ class AnnoClassRef:
         A_N.DISTIL_BERT_EMBEDDINGS: 'DistilBertEmbeddings',
         A_N.DISTIL_BERT_FOR_SEQUENCE_CLASSIFICATION: 'DistilBertForSequenceClassification',
         A_N.DISTIL_BERT_FOR_ZERO_SHOT_CLASSIFICATION: 'DistilBertForZeroShotClassification',
+
+        A_N.DEBERTA_FOR_ZERO_SHOT_CLASSIFICATION: 'DeBertaForZeroShotClassification',
+        
         A_N.BERT_FOR_SEQUENCE_CLASSIFICATION: 'BertForSequenceClassification',
+        A_N.XLM_ROBERTA_FOR_ZERO_SHOT_CLASSIFICATION: 'XlmRoBertaForZeroShotClassification',
         A_N.BERT_FOR_ZERO_SHOT_CLASSIFICATION: 'BertForZeroShotClassification',
+        A_N.BART_FOR_ZERO_SHOT_CLASSIFICATION: 'BartForZeroShotClassification',
         A_N.ELMO_EMBEDDINGS: 'ElmoEmbeddings',
         A_N.LONGFORMER_EMBEDDINGS: 'LongformerEmbeddings',
         A_N.ROBERTA_FOR_ZERO_SHOT_CLASSIFICATION: 'RoBertaForZeroShotClassification',
@@ -125,6 +131,8 @@ class AnnoClassRef:
         A_N.ALBERT_FOR_SEQUENCE_CLASSIFICATION: 'AlbertForSequenceClassification',
         A_N.XLNET_FOR_SEQUENCE_CLASSIFICATION: 'XlnetForSequenceClassification',
         A_N.GPT2: 'GPT2Transformer',
+        A_N.OPENAI_COMPLETION : 'OpenAICompletion',
+        A_N.OPENAI_EMBEDDINGS: 'OpenAIEmbeddings',
         A_N.DEBERTA_WORD_EMBEDDINGS: 'DeBertaEmbeddings',
         A_N.DEBERTA_FOR_TOKEN_CLASSIFICATION: 'DeBertaForTokenClassification',
         A_N.CAMEMBERT_EMBEDDINGS: 'CamemBertEmbeddings',

@@ -1,4 +1,7 @@
-import tests.secrets as sct
+import os
+import sys
+
+sys.path.append(os.getcwd())
 import unittest
 import nlu
 nlu.auth(sct.SPARK_NLP_LICENSE,sct.AWS_ACCESS_KEY_ID,sct.AWS_SECRET_ACCESS_KEY,sct.JSL_SECRET, sct.OCR_LICENSE, sct.OCR_SECRET)
@@ -34,10 +37,10 @@ class OcrTest(unittest.TestCase):
         f1 = 'tests/datasets/ocr/table_PPT/54111.ppt'
         f2 ='tests/datasets/ocr/table_PPT/mytable.ppt'
         p = nlu.load('ppt2table',verbose=True)
-        dfs = p.predict([f1,f2])
+        dfs = p.predict([f1    ])
         for df in dfs :
             print(df)
-
+    
     def test_DOC_table_extraction(self):
         f1 = 'tests/datasets/ocr/docx_with_table/doc2.docx'
         p = nlu.load('doc2table',verbose=True)

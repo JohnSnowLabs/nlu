@@ -48,7 +48,13 @@ OS_anno2substitution_fn = {
         'default': substitute_word_embed_cols,
     },
     E5Embeddings: {
-        'default': substitute_word_embed_cols,
+        'default': substitute_sent_embed_cols,
+    },
+    OpenAIEmbeddings: {
+        'default': substitute_sent_embed_cols,
+    },
+    BGEEmbeddings: {
+        'default': substitute_sent_embed_cols,
     },
     BertSentenceEmbeddings: {
         'default': substitute_sent_embed_cols,
