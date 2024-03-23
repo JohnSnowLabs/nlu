@@ -137,7 +137,7 @@ class AnnoClassRef:
         A_N.DEBERTA_FOR_TOKEN_CLASSIFICATION: 'DeBertaForTokenClassification',
         A_N.CAMEMBERT_EMBEDDINGS: 'CamemBertEmbeddings',
         A_N.BART_TRANSFORMER: 'BartTransformer',
-
+        A_N.M2M100_TRANSFORMER: 'M2M100Transformer',
         A_N.TRAINABLE_VIVEKN_SENTIMENT: 'ViveknSentimentApproach',
         A_N.TRAINABLE_SENTIMENT: 'SentimentDetector',
         A_N.TRAINABLE_SENTIMENT_DL: 'SentimentDLApproach',
