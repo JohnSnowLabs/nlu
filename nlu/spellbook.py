@@ -10644,6 +10644,7 @@ class Spellbook:
             'en.explain_doc.clinical_radiology.pipeline': 'explain_clinical_doc_radiology',
             'en.explain_doc.era': 'explain_clinical_doc_era',
             'en.explain_doc.clinical_granular': 'explain_clinical_doc_granular',
+            'en.explain_doc.clinical_oncology.pipeline': 'explain_clinical_doc_oncology',
             'en.icd10_icd9.mapping': 'icd10_icd9_mapping',
             'en.icd10cm.umls.mapping': 'icd10cm_umls_mapping',
             'en.icd10cm_resolver.pipeline': 'icd10cm_resolver_pipeline',
