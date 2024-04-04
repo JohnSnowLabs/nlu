@@ -10651,6 +10651,7 @@ class Spellbook:
             'en.map_entity.icdo_to_snomed.pipe': 'icdo_snomed_mapping',
             'en.map_entity.rxnorm_to_ndc.pipe': 'rxnorm_ndc_mapping',
             'en.map_entity.rxnorm_resolver.pipe': 'rxnorm_resolver_pipeline',
+            'en.map_entity.hpo_resolver_pipe': 'hpo_resolver_pipeline',
             'en.map_entity.snomed_to_icd10cm.pipe': 'snomed_icd10cm_mapping',
             'en.map_entity.snomed_to_icdo.pipe': 'snomed_icdo_mapping',
             'en.map_entity.umls_clinical_findings_resolver': 'umls_clinical_findings_resolver_pipeline',
