@@ -10769,6 +10769,7 @@ class Spellbook:
             'en.resolve.cvx_pipeline': 'cvx_resolver_pipeline',
             'en.resolve.icd9.pipeline': 'icd9_resolver_pipeline',
             'en.resolve.medication': 'medication_resolver_pipeline',
+            'en.resolve.atc_pipeline': 'atc_resolver_pipeline',
             'en.resolve.medication_transform.pipeline': 'medication_resolver_transform_pipeline',
             'en.rxnorm.umls.mapping': 'rxnorm_umls_mapping',
             'en.rxnorm.mes.mapping': 'rxnorm_mesh_mapping',
