@@ -1,3 +1,4 @@
+import argparse
 import json
 import os
 import subprocess
@@ -6,10 +7,12 @@ from typing import List
 
 import colorama
 
+
 sys.path.append(os.getcwd())
 sys.path.append(os.getcwd() + '/tests')
 sys.path.append(os.getcwd() + '/tests/utils')
 from utils import all_tests
+from tests.utils import one_per_lib
 _TEST_TIMEOUT = 60*60*20
 
 def run_cmd_and_check_succ(
@@ -61,9 +64,21 @@ if __name__ == '__main__':
     # because we cannot de-allocate models from JVM from within a test
     # So to prevent JVM-OOM we need to run each test in a separate process
 
+    parser = argparse.ArgumentParser(description='Testing CLI')
+    parser.add_argument('test_type', choices=['all', 'one_per_lib'], default='all', help='Type of test to run')
+    args = parser.parse_args()
     logs = {}
-    total_tests = len(all_tests)
-    for i, test_params in enumerate(all_tests):
+    tests_to_execute = all_tests
+
+    if args.test_type == 'all':
+        tests_to_execute = all_tests
+    elif args.test_type == 'one_per_lib':
+        tests_to_execute = one_per_lib
+    total_tests = len(tests_to_execute)
+
+
+    print(f'Running Tests: {tests_to_execute}')
+    for i, test_params in enumerate(tests_to_execute):
         if i % 10 == 0:
             # Delete models so we dont run out of diskspace
             os.system('rm -r ~/cache_pretrained')
@@ -84,3 +99,4 @@ if __name__ == '__main__':
             failed += 1
             print(logs[test_idx])
     print(f"{'#' * 10} {failed} of {total_tests} failed {'#' * 10}")
+

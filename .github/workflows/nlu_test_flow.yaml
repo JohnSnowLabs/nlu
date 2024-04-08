@@ -33,6 +33,10 @@ jobs:
         if:
         run: |
           python -c 'from johnsnowlabs import nlp;nlp.install(browser_login = False, force_browser=False,visual=True)'
+      - name: Run one test per lib
+        if: always()
+        run: |
+          python tests/run_tests.py --test_type one_per_lib
       - name: Run all tests
         if: always()
         run: |
