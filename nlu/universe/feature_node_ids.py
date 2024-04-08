@@ -9,6 +9,7 @@ class NLP_NODE_IDS:
     Used to cast the pipeline dependency resolution algorithm into an abstract graph
     """
     # Visual Document Understanding
+
     BIG_TEXT_MATCHER = JslAnnoId('big_text_matcher')
     CHUNK2DOC = JslAnnoId('chunk2doc')
     CHUNK_EMBEDDINGS_CONVERTER = JslAnnoId('chunk_embeddings_converter')
@@ -26,6 +27,7 @@ class NLP_NODE_IDS:
     AUDIO_ASSEMBLER = JslAnnoId('audio_assembler')
     WAV2VEC_FOR_CTC = JslAnnoId('wav2vec_for_ctc')
     HUBERT_FOR_CTC = JslAnnoId('hubert_for_ctc')
+    WHISPER_FOR_CTC = JslAnnoId('whisper_for_ctc')
     TABLE_ASSEMBLER = JslAnnoId('table_assembler')
     TAPAS_FOR_QA = JslAnnoId('tapas')
     MULTI_DOCUMENT_ASSEMBLER = JslAnnoId('multi_document_assembler')
@@ -88,6 +90,8 @@ class NLP_NODE_IDS:
     BERT_FOR_TOKEN_CLASSIFICATION = JslAnnoId('bert_for_token_classification')
     CAMEMBERT_FOR_TOKEN_CLASSIFICATION = JslAnnoId('camenbert_for_token_classification')
     CAMEMBERT_FOR_SEQUENCE_CLASSIFICATION = JslAnnoId('camenbert_for_sequence_classification')
+    E5_SENTENCE_EMBEDDINGS = JslAnnoId('e5_sentence_embeddings')
+    BGE_SENTENCE_EMBEDDINGS = JslAnnoId('bge_sentence_embeddings')
     BERT_SENTENCE_EMBEDDINGS = JslAnnoId('bert_sentence_embeddings')
     DISTIL_BERT_EMBEDDINGS = JslAnnoId('distil_bert_embeddings')
     DISTIL_BERT_FOR_TOKEN_CLASSIFICATION = JslAnnoId('distil_bert_for_token_classification')
@@ -105,14 +109,21 @@ class NLP_NODE_IDS:
     CONVNEXT_IMAGE_CLASSIFICATION = JslAnnoId("convnext_image_classification")
     SWIN_IMAGE_CLASSIFICATION = JslAnnoId("swin_image_classification")
     BART_TRANSFORMER = JslAnnoId("bart_transformer")
+    INSTRUCTOR_SENTENCE_EMBEDDINGS = JslAnnoId('instructor_sentence_embeddings')
 
+    MPNET_SENTENCE_EMBEDDINGS = JslAnnoId('mpnet_sentence_embeddings')
 
 
 
 
 
     DISTIL_BERT_FOR_ZERO_SHOT_CLASSIFICATION = JslAnnoId('distil_bert_zero_shot')
+    XLM_ROBERTA_FOR_ZERO_SHOT_CLASSIFICATION = JslAnnoId('xlm_roberta_zero_shot')
+
+    DEBERTA_FOR_ZERO_SHOT_CLASSIFICATION = JslAnnoId('deberta_zero_shot')
+
     BERT_FOR_ZERO_SHOT_CLASSIFICATION = JslAnnoId('bert_zero_shot')
+    BART_FOR_ZERO_SHOT_CLASSIFICATION = JslAnnoId('bart_zero_shot')
     ROBERTA_FOR_ZERO_SHOT_CLASSIFICATION = JslAnnoId('roberta_zero_shot')
     UNIVERSAL_SENTENCE_ENCODER = JslAnnoId('universal_sentence_encoder')
     XLM_ROBERTA_EMBEDDINGS = JslAnnoId('xlm_roberta_embeddings')
@@ -126,6 +137,8 @@ class NLP_NODE_IDS:
     ALBERT_FOR_SEQUENCE_CLASSIFICATION = JslAnnoId('albert_for_sequence_classification')
     XLNET_FOR_SEQUENCE_CLASSIFICATION = JslAnnoId('xlnet_for_sequence_classification')
     GPT2 = JslAnnoId('gpt2')
+    OPENAI_COMPLETION = JslAnnoId('openai_completion')
+    OPENAI_EMBEDDINGS = JslAnnoId('openai_embeddings')
     WORD_2_VEC = JslAnnoId('word_2_vec')
     DEBERTA_WORD_EMBEDDINGS = JslAnnoId('deberta')
     DEBERTA_FOR_SEQUENCE_CLASSIFICATION = JslAnnoId('deberta_for_sequence_classification')
@@ -298,6 +311,7 @@ class NLP_HC_NODE_IDS:  # or Mode Node?
     ENTITY_CHUNK_EMBEDDING = JslAnnoId('entity_chunk_embedding')
     MEDICAL_SUMMARIZER = JslAnnoId('med_summarizer')
     MEDICAL_TEXT_GENERATOR = JslAnnoId('med_text_generator')
+    MEDICAL_QUESTION_ANSWERING = JslAnnoId('med_question_answering')
 
 class OCR_NODE_IDS:
     """All available Feature nodes in OCR

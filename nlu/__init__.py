@@ -1,4 +1,4 @@
-__version__ = '5.0.3'
+__version__ = '5.1.5rc19'
 
 
 import nlu.utils.environment.env_utils as env_utils
@@ -178,7 +178,7 @@ def to_nlu_pipe(nlp_pipe: Union[Pipeline, LightPipeline, PipelineModel, List], i
 
 def load(request: str = 'from_disk', path: Optional[str] = None, verbose: bool = False, gpu: bool = False,
          streamlit_caching: bool = False,
-         m1_chip: bool = False
+         apple_silicon: bool = False
          ) -> NLUPipeline:
     '''
     Load either a prebuild pipeline or a set of components identified by a whitespace seperated list of components
@@ -197,7 +197,10 @@ def load(request: str = 'from_disk', path: Optional[str] = None, verbose: bool =
         return nlu.load(request, path, verbose, gpu, streamlit_caching)
     # check if secrets are in default loc, if yes load them and create licensed context automatically
     auth(gpu=gpu)
-    spark = get_open_source_spark_context(gpu, m1_chip)
+    if request.startswith("openai"):
+        spark = get_open_source_spark_context_with_openai(gpu,apple_silicon)
+    else:
+        spark = get_open_source_spark_context(gpu, apple_silicon)
     # spark.catalog.clearCache()
 
     if verbose:
@@ -362,16 +365,31 @@ def load_nlu_pipe_from_hdd(pipe_path, request) -> NLUPipeline:
         raise ValueError
 
 
-def get_open_source_spark_context(gpu, m1_chip):
+def get_open_source_spark_context(gpu, apple_silicon):
     if env_utils.is_env_pyspark_3_x():
-        if m1_chip:
-            return sparknlp.start(gpu=gpu, m1=True)
+        if apple_silicon:
+            return sparknlp.start(gpu=gpu, apple_silicon=True)
         else:
             return sparknlp.start(gpu=gpu)
     raise ValueError(f"Failure starting Spark Context! Current Spark version {get_pyspark_version()} not supported! "
                      f"Please install any of Pyspark 3.X versions.")
 
+def get_open_source_spark_context_with_openai(gpu, apple_silicon):
 
+    if env_utils.is_env_pyspark_3_x():
+        OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
+
+        if OPENAI_API_KEY:
+            openai_params = {"spark.jsl.settings.openai.api.key": OPENAI_API_KEY}
+            if apple_silicon:
+                return sparknlp.start(gpu=gpu, apple_silicon=True, params=openai_params)
+            else:
+                return sparknlp.start(gpu=gpu, params=openai_params)
+        else:
+            raise Exception("This feature requires OPEN_API_KEY env var to be present!")
+
+    raise ValueError(f"Failure starting Spark Context! Current Spark version {get_pyspark_version()} not supported! "
+                     f"Please install any of Pyspark 3.X versions.")
 def enable_verbose() -> None:
     logger.setLevel(logging.INFO)
     ch = logging.StreamHandler()

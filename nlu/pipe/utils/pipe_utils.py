@@ -4,6 +4,7 @@ from sparknlp.annotator import *
 
 import nlu
 from nlu import Licenses
+from nlu.pipe.extractors.extractor_base_data_classes import FinisherExtractorConfig
 from nlu.pipe.nlu_component import NluComponent
 from nlu.pipe.pipeline import NLUPipeline
 from nlu.pipe.utils.resolution.storage_ref_utils import StorageRefUtils
@@ -15,7 +16,7 @@ from nlu.universe.logic_universes import NLP_LEVELS, AnnoTypes
 
 logger = logging.getLogger('nlu')
 from nlu.pipe.utils.component_utils import ComponentUtils
-from typing import List, Union
+from typing import List, Union, Dict
 from nlu.universe.annotator_class_universe import AnnoClassRef
 from nlu.utils.environment.env_utils import is_running_in_databricks
 import os
@@ -667,6 +668,9 @@ class PipeUtils:
 
         for c in pipe.components:
             # Check for OCR componments
+            if c.prefer_light_pipe:
+                pipe.prefer_light = True
+
             if c.jsl_anno_py_class in py_class_to_anno_id.keys() or c.is_visual_annotator:
                 pipe.contains_ocr_components = True
                 if c.requires_image_format:
@@ -681,14 +685,15 @@ class PipeUtils:
             if c.license == Licenses.open_source \
                     and c.name != NLP_NODE_IDS.WAV2VEC_FOR_CTC \
                     and c.name != NLP_NODE_IDS.HUBERT_FOR_CTC \
+                    and c.name != NLP_NODE_IDS.WHISPER_FOR_CTC \
                     and c.name != NLP_NODE_IDS.AUDIO_ASSEMBLER:
                 # TODO Table Assembler/VIT/ Other non txt open source
                 pipe.has_nlp_components = True
             if c.type == AnnoTypes.QUESTION_TABLE_ANSWERER:
                 pipe.has_table_qa_models = True
 
-            if c.type == AnnoTypes.CHUNK_MAPPER:
-                pipe.prefer_light = True
+            # if c.type == AnnoTypes.CHUNK_MAPPER:
+            #     pipe.prefer_light = True
 
             if c.type == AnnoTypes.QUESTION_SPAN_CLASSIFIER:
                 pipe.has_span_classifiers = True
@@ -701,6 +706,8 @@ class PipeUtils:
                 pipe.has_nlp_components = False
             if c.jsl_anno_py_class == 'ImageAssembler':
                 pipe.contains_ocr_components = True
+            if c.is_light_pipe_incompatible:
+                pipe.is_light_pipe_incompatible = True
 
         return pipe
 
