@@ -21,7 +21,87 @@ class NluTest(BaseModel):
     pipe_params: Optional[List[PipeParams]] = None
 
 
-all_tests = [
+ocr_tests = [
+    NluTest(nlu_ref="pdf2table", lang='en', test_group='table_extractor', input_data_type='PPT_table',
+            library='ocr'),
+    NluTest(nlu_ref="ppt2table", lang='en', test_group='table_extractor', input_data_type='PDF_table',
+            library='ocr'),
+    NluTest(nlu_ref="doc2table", lang='en', test_group='table_extractor', input_data_type='DOC_table',
+            library='ocr'),
+    NluTest(nlu_ref="en.classify_image.convnext.tiny", lang='en', test_group='img_classifier',
+            input_data_type='IMG_classifier', library='ocr'),
+]
+
+medical_tests = [
+    NluTest(nlu_ref="en.assert.biobert", lang='en', test_group='assertion', input_data_type='medical',
+            library='healthcare'),
+    NluTest(nlu_ref="relation.drug_drug_interaction", lang='en', test_group='relation', input_data_type='medical',
+            output_levels=['chunk', 'tokens', 'embeddings', 'document', 'relation'], library='healthcare'),
+    NluTest(nlu_ref="en.de_identify", lang='en', test_group='hc_deidentification', input_data_type='medical',
+            library='healthcare'),
+    NluTest(nlu_ref="en.norm_drugs", lang='en', test_group='hc_drugnormalizer', input_data_type='medical',
+            library='healthcare'),
+    NluTest(nlu_ref="bert elmo", lang='en', test_group='hc_genericclassifier', input_data_type='medical',
+            library='healthcare'),
+    NluTest(nlu_ref="en.classify.ade.conversational", lang='en', test_group='hc_licensedclassifier',
+            input_data_type='medical', library='healthcare'),
+    NluTest(nlu_ref="en.med_ner.tumour en.med_ner.radiology en.med_ner.diseases en.ner.onto", lang='en',
+            test_group='hc_pipeline', input_data_type='medical',
+            library='healthcare'),
+    NluTest(nlu_ref="en.explain_doc.era", lang='en', test_group='hc_pipeline', input_data_type='medical',
+            library='healthcare'),
+    NluTest(nlu_ref="en.med_ner.diseases en.resolve.icd10cm.augmented_billable", lang='en',
+            test_group='hc_resolver',
+            input_data_type='medical',
+            library='healthcare'),
+    NluTest(nlu_ref="en.summarize.clinical_jsl", lang='en', test_group='hc_summarizer', input_data_type='medical',
+            library='healthcare'),
+    NluTest(nlu_ref="en.generate.generic_flan_base", lang='en', test_group='hc_generation',
+            input_data_type='medical',
+            library='healthcare'),
+    NluTest(nlu_ref="en.zero_shot.ner_roberta", lang='en', test_group='hc_generation', input_data_type='medical',
+            library='healthcare',
+            output_levels=["sentence"],
+            pipe_params=[PipeParams(pipe_key='zero_shot_ner', param_setter='setEntityDefinitions', param_val={
+                "PROBLEM": [
+                    "What is the disease?",
+                    "What is his symptom?",
+                    "What is her disease?",
+                    "What is his disease?",
+                    "What is the problem?",
+                    "What does a patient suffer",
+                    "What was the reason that the patient is admitted to the clinic?",
+                ],
+                "DRUG": [
+                    "Which drug?",
+                    "Which is the drug?",
+                    "What is the drug?",
+                    "Which drug does he use?",
+                    "Which drug does she use?",
+                    "Which drug do I use?",
+                    "Which drug is prescribed for a symptom?",
+                ],
+                "ADMISSION_DATE": ["When did patient admitted to a clinic?"],
+                "PATIENT_AGE": [
+                    "How old is the patient?",
+                    "What is the gae of the patient?",
+                ],
+            })]),
+    NluTest(nlu_ref="en.med_ner.clinical en.relation.zeroshot_biobert", lang='en', test_group='hc_generation',
+            input_data_type='medical', library='healthcare',
+            pipe_params=[
+                PipeParams(pipe_key='zero_shot_relation_extraction', param_setter='setRelationalCategories',
+                           param_val={
+                               "CURE": ["{{TREATMENT}} cures {{PROBLEM}}."],
+                               "IMPROVE": ["{{TREATMENT}} improves {{PROBLEM}}.",
+                                           "{{TREATMENT}} cures {{PROBLEM}}."],
+                               "REVEAL": ["{{TEST}} reveals {{PROBLEM}}."]}),
+                PipeParams(pipe_key='zero_shot_relation_extraction', param_setter='setMultiLabel',
+                           param_val=False)]),
+
+]
+
+nlp_tests = [
     NluTest(nlu_ref="chunk", lang='en', test_group='chunker', input_data_type='generic', library='open_source'),
     NluTest(nlu_ref="ngram", lang='en', test_group='chunker', input_data_type='generic', library='open_source'),
     NluTest(nlu_ref="zh.segment_words", lang='zh', test_group='tokenizer', input_data_type='generic',
@@ -30,16 +110,7 @@ all_tests = [
             library='open_source'),
     NluTest(nlu_ref="tokenize", lang='en', test_group='tokenizer', input_data_type='generic',
             library='open_source'),
-    NluTest(nlu_ref="en.assert.biobert", lang='en', test_group='assertion', input_data_type='medical',
-            library='healthcare'),
-    NluTest(nlu_ref="relation.drug_drug_interaction", lang='en', test_group='relation', input_data_type='medical',
-            output_levels=['chunk', 'tokens', 'embeddings', 'document', 'relation'], library='healthcare'),
-    NluTest(nlu_ref="pdf2table", lang='en', test_group='table_extractor', input_data_type='PPT_table',
-            library='ocr'),
-    NluTest(nlu_ref="ppt2table", lang='en', test_group='table_extractor', input_data_type='PDF_table',
-            library='ocr'),
-    NluTest(nlu_ref="doc2table", lang='en', test_group='table_extractor', input_data_type='DOC_table',
-            library='ocr'),
+
     NluTest(nlu_ref="en.classify.albert.ag_news", lang='en', test_group='classifier', input_data_type='generic',
             library='open_source'),
     NluTest(nlu_ref="en.classify.albert.imdb", lang='en', test_group='classifier', input_data_type='generic',
@@ -193,69 +264,6 @@ all_tests = [
                                     param_val='translate English to French')]),
     NluTest(nlu_ref="match.chunks", lang='en', test_group='matcher', input_data_type='generic',
             library='open_source'),
-    NluTest(nlu_ref="en.de_identify", lang='en', test_group='hc_deidentification', input_data_type='medical',
-            library='healthcare'),
-    NluTest(nlu_ref="en.norm_drugs", lang='en', test_group='hc_drugnormalizer', input_data_type='medical',
-            library='healthcare'),
-    NluTest(nlu_ref="bert elmo", lang='en', test_group='hc_genericclassifier', input_data_type='medical',
-            library='healthcare'),
-    NluTest(nlu_ref="en.classify.ade.conversational", lang='en', test_group='hc_licensedclassifier',
-            input_data_type='medical', library='healthcare'),
-    NluTest(nlu_ref="en.med_ner.tumour en.med_ner.radiology en.med_ner.diseases en.ner.onto", lang='en',
-            test_group='hc_pipeline', input_data_type='medical',
-            library='healthcare'),
-    NluTest(nlu_ref="en.explain_doc.era", lang='en', test_group='hc_pipeline', input_data_type='medical',
-            library='healthcare'),
-    NluTest(nlu_ref="en.med_ner.diseases en.resolve.icd10cm.augmented_billable", lang='en',
-            test_group='hc_resolver',
-            input_data_type='medical',
-            library='healthcare'),
-    NluTest(nlu_ref="en.summarize.clinical_jsl", lang='en', test_group='hc_summarizer', input_data_type='medical',
-            library='healthcare'),
-    NluTest(nlu_ref="en.generate.generic_flan_base", lang='en', test_group='hc_generation',
-            input_data_type='medical',
-            library='healthcare'),
-    NluTest(nlu_ref="en.zero_shot.ner_roberta", lang='en', test_group='hc_generation', input_data_type='medical',
-            library='healthcare',
-            output_levels=["sentence"],
-            pipe_params=[PipeParams(pipe_key='zero_shot_ner', param_setter='setEntityDefinitions', param_val={
-                "PROBLEM": [
-                    "What is the disease?",
-                    "What is his symptom?",
-                    "What is her disease?",
-                    "What is his disease?",
-                    "What is the problem?",
-                    "What does a patient suffer",
-                    "What was the reason that the patient is admitted to the clinic?",
-                ],
-                "DRUG": [
-                    "Which drug?",
-                    "Which is the drug?",
-                    "What is the drug?",
-                    "Which drug does he use?",
-                    "Which drug does she use?",
-                    "Which drug do I use?",
-                    "Which drug is prescribed for a symptom?",
-                ],
-                "ADMISSION_DATE": ["When did patient admitted to a clinic?"],
-                "PATIENT_AGE": [
-                    "How old is the patient?",
-                    "What is the gae of the patient?",
-                ],
-            })]),
-    NluTest(nlu_ref="en.med_ner.clinical en.relation.zeroshot_biobert", lang='en', test_group='hc_generation',
-            input_data_type='medical', library='healthcare',
-            pipe_params=[
-                PipeParams(pipe_key='zero_shot_relation_extraction', param_setter='setRelationalCategories',
-                           param_val={
-                               "CURE": ["{{TREATMENT}} cures {{PROBLEM}}."],
-                               "IMPROVE": ["{{TREATMENT}} improves {{PROBLEM}}.",
-                                           "{{TREATMENT}} cures {{PROBLEM}}."],
-                               "REVEAL": ["{{TEST}} reveals {{PROBLEM}}."]}),
-                PipeParams(pipe_key='zero_shot_relation_extraction', param_setter='setMultiLabel',
-                           param_val=False)]),
-    NluTest(nlu_ref="en.classify_image.convnext.tiny", lang='en', test_group='img_classifier',
-            input_data_type='IMG_classifier', library='ocr'),
 
 ]
 
@@ -267,3 +275,6 @@ one_per_lib = [
     NluTest(nlu_ref="ppt2table", lang='en', test_group='table_extractor', input_data_type='PDF_table',
             library='ocr'),
 ]
+
+
+all_tests = ocr_tests + medical_tests + nlp_tests
