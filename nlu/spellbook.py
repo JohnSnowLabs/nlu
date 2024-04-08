@@ -11320,7 +11320,8 @@ class Spellbook:
         'ppt2table': OCR_NODE_IDS.PPT2TEXT_TABLE,
         'classify.image': OCR_NODE_IDS.VISUAL_DOCUMENT_CLASSIFIER,
         'en.classify_image.tabacco': 'visual_document_classifier_tobacco3482',
-        'en.image_table_detector':'general_model_table_detection_v2'
+        'en.image_table_detector':'general_model_table_detection_v2',
+        'en.lilt_roberta_funds.v1': 'lilt_roberta_funsd_v1',
     }
 
     # ocr_model_references = {
@@ -16296,6 +16297,7 @@ class Spellbook:
                              'general_model_table_detection_v2': 'ImageTableDetector',
                              'image_table_cell_detector': 'ImageTableCellDetector',
                              'image_table_cell2text_table': 'ImageCellsToTextTable',
+                            'lilt_roberta_funsd_v1': 'VisualDocumentNer',
                              'instructor_large':'InstructorEmbeddings',
                              'instructor_base':'InstructorEmbeddings',
                              'initial_model': 'MPNetEmbeddings',
