@@ -36,8 +36,8 @@ jobs:
       - name: Run one test per lib
         if: always()
         run: |
-          python tests/run_tests.py --test_type one_per_lib
+          python tests/run_tests.py one_per_lib
       - name: Run all tests
         if: always()
         run: |
-          python tests/run_tests.py
+          python tests/run_tests.py all
