@@ -7,13 +7,14 @@ from typing import List
 
 import colorama
 
-
 sys.path.append(os.getcwd())
 sys.path.append(os.getcwd() + '/tests')
 sys.path.append(os.getcwd() + '/tests/utils')
 from utils import all_tests
 from tests.utils import one_per_lib
-_TEST_TIMEOUT = 60*60*20
+
+_TEST_TIMEOUT = 60 * 60 * 20
+
 
 def run_cmd_and_check_succ(
         args: List[str],
@@ -76,10 +77,9 @@ if __name__ == '__main__':
         tests_to_execute = one_per_lib
     total_tests = len(tests_to_execute)
 
-
     print(f'Running Tests: {tests_to_execute}')
     for i, test_params in enumerate(tests_to_execute):
-        if i % 10 == 0:
+        if i % 3 == 0:
             # Delete models so we dont run out of diskspace
             os.system('rm -r ~/cache_pretrained')
         print(f"{'#' * 10} Running test {i} of {total_tests}  with config {test_params} {'#' * 10}")
@@ -99,4 +99,5 @@ if __name__ == '__main__':
             failed += 1
             print(logs[test_idx])
     print(f"{'#' * 10} {failed} of {total_tests} failed {'#' * 10}")
-
+    if failed > 0:
+        raise Exception('Tests Failed')
