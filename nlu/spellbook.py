@@ -10631,6 +10631,7 @@ class Spellbook:
             'en.deid.clinical_wip': 'clinical_deidentification_wip',
             'en.deid.glove_augmented.pipeline': 'clinical_deidentification_glove_augmented',
             'en.deid.glove_pipeline': 'clinical_deidentification_glove',
+            'en.deid.generic_optimized.pipeline': 'clinical_deidentification_generic_optimized',
             'en.deid.med_ner_large.pipeline': 'ner_deid_sd_large_pipeline',
             'en.deid.ner_augmented.pipeline': 'ner_deid_augmented_pipeline',
             'en.deid.ner_biobert.pipeline': 'ner_deid_biobert_pipeline',
