@@ -207,6 +207,7 @@ class AnnoClassRef:
         A_N.PARTIAL_EntityRulerApproach: 'EntityRulerApproach',
         A_N.PARTIAL_EntityRulerModel: 'EntityRulerModel',
         A_N.PARTIAL_TextMatcherModel: 'TextMatcherModel',
+        A_N.PARTIAL_TextMatcherInternalModel: 'TextMatcherInternalModel',
         A_N.PARTIAL_BigTextMatcher: 'BigTextMatcher',
         A_N.PARTIAL_BigTextMatcherModel: 'BigTextMatcherModel',
         A_N.PARTIAL_DateMatcher: 'DateMatcher',
