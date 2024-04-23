@@ -13,7 +13,7 @@ See how easy it is to use any of the **thousands** of models in 1 line of code, 
 This 1 line let's you visualize and play with **1000+ SOTA NLU & NLP models** in **200** languages 
 
 ```shell
-streamlit run https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/examples/streamlit/01_dashboard.py
+streamlit run https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/examples/streamlit/01_dashboard.py 
 ```
 <img  src="https://raw.githubusercontent.com/JohnSnowLabs/nlu/master/docs/assets/streamlit_docs_assets/gif/start.gif">
 
