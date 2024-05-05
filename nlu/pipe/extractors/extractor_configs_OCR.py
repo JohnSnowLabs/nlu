@@ -28,6 +28,16 @@ def default_visual_classifier_config(output_col_prefix='visual_classifier'):
         description='Gets label and confidence of visual classifier',
     )
 
+def default_form_relation_extractor_config(output_col_prefix='extracted_relations'):
+    return SparkOCRExtractorConfig(
+        output_col_prefix=output_col_prefix,
+        get_result=True,
+        get_full_meta=True,
+        name='full_relation_extraction',
+        description='Get relation extraction result and all metadata, with positions of entities',
+    )
+
+
 def default_visual_ner_config(output_col_prefix='visual_ocr'):
     return SparkOCRExtractorConfig(
         get_text=True,

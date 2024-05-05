@@ -96,3 +96,13 @@ def substitute_document_ner_cols(c, cols, nlu_identifier):
         # new_cols[c] = c
     return new_cols
 
+def substitute_form_extractor_text_cols(c, cols, is_unique=True, nlu_identifier=''):
+    new_cols = {}
+    for c in cols:
+        if 'meta_visual_classifier_prediction_entity1' in c:
+            new_cols['meta_visual_classifier_prediction_entity1'] = 'form_relation_prediction_key'
+        if 'meta_visual_classifier_prediction_entity2' in c:
+            new_cols['meta_visual_classifier_prediction_entity2'] = 'form_relation_prediction_value'
+        # if 'path' in c:
+        #     new_cols['path'] = 'file_path'
+    return new_cols

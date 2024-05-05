@@ -20,5 +20,8 @@ OCR_anno2substitution_fn = {
     VisualDocumentNerLilt : {
         'default': substitute_document_ner_cols,
     },
+    FormRelationExtractor : {
+        'default': substitute_form_extractor_text_cols,
+    }
 
 }

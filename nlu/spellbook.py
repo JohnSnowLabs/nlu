@@ -11324,6 +11324,7 @@ class Spellbook:
         'en.classify_image.tabacco': 'visual_document_classifier_tobacco3482',
         'en.image_table_detector':'general_model_table_detection_v2',
         'en.lilt_roberta_funds.v1': 'lilt_roberta_funsd_v1',
+        'visual_form_relation_extractor': OCR_NODE_IDS.FORM_RELATION_EXTRACTOR,
     }
 
     # ocr_model_references = {
@@ -16299,7 +16300,8 @@ class Spellbook:
                              'general_model_table_detection_v2': 'ImageTableDetector',
                              'image_table_cell_detector': 'ImageTableCellDetector',
                              'image_table_cell2text_table': 'ImageCellsToTextTable',
-                            'lilt_roberta_funsd_v1': 'VisualDocumentNer',
+                             'visual_form_relation_extractor':'FormRelationExtractor',
+                             'lilt_roberta_funsd_v1': 'VisualDocumentNer',
                              'instructor_large':'InstructorEmbeddings',
                              'instructor_base':'InstructorEmbeddings',
                              'initial_model': 'MPNetEmbeddings',

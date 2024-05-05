@@ -116,5 +116,6 @@ class FeatureResolutions:
                                                       ComponentUniverse.components[OCR_NODE_IDS.IMAGE_TABLE_CELL_DETECTOR]),
         OCR_FEATURES.TEXT_DOCUMENT_TOKENIZED: ResolvedFeature(OCR_NODE_IDS.HOCR_TOKENIZER, OCR_NODE_IDS.HOCR_TOKENIZER, 'xx', False,
                                            ComponentUniverse.components[OCR_NODE_IDS.HOCR_TOKENIZER]),
-
+        OCR_FEATURES.TEXT_ENTITY: ResolvedFeature(OCR_NODE_IDS.VISUAL_DOCUMENT_NER, OCR_NODE_IDS.VISUAL_DOCUMENT_NER,
+                                            'xx', False,ComponentUniverse.components[OCR_NODE_IDS.VISUAL_DOCUMENT_NER]),
     }

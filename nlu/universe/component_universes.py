@@ -149,17 +149,18 @@ from nlu.ocr_components.utils.image2hocr.image2hocr import Image2Hocr
 from nlu.ocr_components.table_extractors.image2table.image2table import IMAGE_TABLE_DETECTOR
 from nlu.ocr_components.visual_ner.visual_document_ner.visual_document_ner import VisualDocumentNer
 from nlu.ocr_components.table_extractors.image2table_cell.image2table_cell import ImageTableCellDetector
+from nlu.ocr_components.form_relation_extractor.form_relation_extractor import FormRelationExtractor
 from nlu.ocr_components.table_extractors.image_table_cell2text.image_table_cell2text import ImageTable2Cell2TextTable
 from nlu.ocr_components.utils.image_split_regions.image_split_regions import ImageSplitRegions
 # from nlu.ocr_components.visual_classifiers.visual_doc_classifier.visual_doc_classifier import VisualDocClassifier
 from nlu.pipe.col_substitution.col_substitution_HC import *
 from nlu.pipe.col_substitution.col_substitution_OCR import substitute_recognized_text_cols, \
-    substitute_document_classifier_text_cols
+    substitute_document_classifier_text_cols, substitute_form_extractor_text_cols
 from nlu.pipe.col_substitution.col_substitution_OCR import substitute_recognized_text_cols,substitute_document_ner_cols
 from nlu.pipe.col_substitution.col_substitution_OS import *
 from nlu.pipe.extractors.extractor_configs_HC import *
 from nlu.pipe.extractors.extractor_configs_OCR import default_text_recognizer_config, default_binary_to_image_config, \
-    default_visual_classifier_config
+    default_visual_classifier_config,default_form_relation_extractor_config
 from nlu.pipe.extractors.extractor_configs_OCR import default_text_recognizer_config, default_binary_to_image_config, default_visual_ner_config
 from nlu.pipe.extractors.extractor_configs_OS import *
 from nlu.pipe.nlu_component import NluComponent
@@ -4518,5 +4519,26 @@ class ComponentUniverse:
                                              O_A.VISUAL_DOCUMENT_NER],
                                          applicable_file_types=['JPG', 'JPEG']
                                          ),
+
+        O_A.FORM_RELATION_EXTRACTOR: partial(NluComponent,
+                                             name=O_A.FORM_RELATION_EXTRACTOR,
+                                             type=T.TEXT_RECOGNIZER,
+                                             get_default_model=FormRelationExtractor.get_default_model,
+                                             # TODO EXtractor0
+                                             pdf_extractor_methods={'default': default_form_relation_extractor_config},
+                                             # TODO substitor
+                                             pdf_col_name_substitutor=substitute_form_extractor_text_cols,
+                                             output_level=L.RELATION,
+                                             node=OCR_FEATURE_NODES.nodes[O_A.FORM_RELATION_EXTRACTOR],
+                                             description='Convert text to PDF file',
+                                             provider=ComponentBackends.ocr,
+                                             license=Licenses.ocr,
+                                             computation_context=ComputeContexts.spark,
+                                             output_context=ComputeContexts.spark,
+                                             jsl_anno_class_id=O_A.FORM_RELATION_EXTRACTOR,
+                                             jsl_anno_py_class=ACR.JSL_anno_OCR_ref_2_py_class[
+                                                 O_A.FORM_RELATION_EXTRACTOR],
+                                             applicable_file_types=['DOCX', 'DOC'],
+                                             ),
 
     }

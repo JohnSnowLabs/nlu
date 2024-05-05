@@ -301,6 +301,9 @@ class OCR_FEATURE_NODES:
     A = OCR_NODE_IDS
     F = OCR_FEATURES
     nodes = {
+        A.FORM_RELATION_EXTRACTOR: OcrFeatureNode(A.FORM_RELATION_EXTRACTOR, [F.TEXT_ENTITY],
+                                                  [F.VISUAL_RELATION]),
+
         A.VISUAL_DOCUMENT_CLASSIFIER: OcrFeatureNode(A.VISUAL_DOCUMENT_CLASSIFIER, [F.HOCR],
                                                      [F.VISUAL_CLASSIFIER_PREDICTION, F.VISUAL_CLASSIFIER_CONFIDENCE, F.FILE_PATH]),
 

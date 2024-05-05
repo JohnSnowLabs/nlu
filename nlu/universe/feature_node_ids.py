@@ -319,6 +319,8 @@ class OCR_NODE_IDS:
     """All available Feature nodes in OCR
     Used to cast the pipeline dependency resolution algorithm into an abstract graph
     """
+
+    FORM_RELATION_EXTRACTOR = JslAnnoId('visual_form_relation_extractor')
     # Visual Document Understanding
     VISUAL_DOCUMENT_CLASSIFIER = JslAnnoId('visual_document_classifier')
     VISUAL_DOCUMENT_NER = JslAnnoId('visual_document_ner')

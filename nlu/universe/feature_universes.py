@@ -129,7 +129,9 @@ class OCR_FEATURES(JslFeature):
     PREDICTION_CONFIDENCE = JslFeature("prediction_confidence")  # TODO is this just int or some struct?
     VISUAL_CLASSIFIER_CONFIDENCE = JslFeature("visual_classifier_confidence")
     VISUAL_CLASSIFIER_PREDICTION = JslFeature("visual_classifier_prediction")
+    VISUAL_RELATION = JslFeature("visual_classifier_prediction")
 
+    FORM_RELATION = JslFeature('ocr_relations')
 
 class NLP_HC_FEATURES(JslFeature):
     """
