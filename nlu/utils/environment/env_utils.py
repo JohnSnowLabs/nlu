@@ -86,10 +86,14 @@ def try_import_streamlit():
 
 def is_running_in_databricks():
     """ Check if the currently running Python Process is running in Databricks or not
-     If any Environment Variable name contains 'DATABRICKS' this will return True, otherwise False"""
-    for k in os.environ.keys():
-        if 'DATABRICKS' in k:
-            return True
+    """
+    if "IS_IN_DATABRICKS_MODEL_SERVING_ENV" in os.environ:
+        # Serving container installs apache/spark, not databricks runtime.
+        return False
+
+    if "DATABRICKS_RUNTIME_VERSION" in os.environ:
+        return True
+
     return False
 
 
