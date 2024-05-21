@@ -1,4 +1,4 @@
-__version__ = '5.3.1'
+__version__ = '5.3.2'
 
 
 import nlu.utils.environment.env_utils as env_utils
@@ -325,7 +325,7 @@ def load_nlu_pipe_from_hdd(pipe_path, request) -> NLUPipeline:
     If it is a component_list,  load the component_list and return it.
     If it is a singular model_anno_obj, load it to the correct AnnotatorClass and NLU component_to_resolve and then generate pipeline for it
     """
-    if is_running_in_databricks():
+    if is_running_in_databricks_runtime():
         return load_nlu_pipe_from_hdd_in_databricks(pipe_path, request)
     pipe = NLUPipeline()
     pipe.nlu_ref = request

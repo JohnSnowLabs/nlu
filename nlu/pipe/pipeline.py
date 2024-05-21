@@ -18,7 +18,7 @@ from nlu.pipe.utils.output_level_resolution_utils import OutputLevelUtils
 from nlu.pipe.utils.resolution.storage_ref_utils import StorageRefUtils
 from nlu.universe.feature_node_ids import NLP_NODE_IDS
 from nlu.universe.universes import Licenses
-from nlu.utils.environment.env_utils import is_running_in_databricks, try_import_streamlit
+from nlu.utils.environment.env_utils import is_running_in_databricks_runtime, try_import_streamlit
 
 logger = logging.getLogger('nlu')
 
@@ -608,7 +608,7 @@ class NLUPipeline(dict):
         from nlu.utils.environment.env_utils import install_and_import_package
         install_and_import_package('spark-nlp-display', import_name='sparknlp_display')
         if self.vanilla_transformer_pipe is None: self.fit()
-        is_databricks_env = is_running_in_databricks()
+        is_databricks_env = is_running_in_databricks_runtime()
         if return_html: is_databricks_env = True
         # self.configure_light_pipe_usage(1, force=True)
         from nlu.pipe.viz.vis_utils import VizUtils
