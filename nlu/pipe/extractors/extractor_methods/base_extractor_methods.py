@@ -80,11 +80,15 @@ def extract_base_sparkocr_features(row: pd.Series, configs: SparkOCRExtractorCon
         else:
             return {'visual_classifier_confidence': row}
 
+    # if 'FULL binary to image extractor ' in configs.name:
+    #     if not isinstance(row, str):
+    #         return {'path': row}
+
+
     else:
         # # OCR unpackers (TODO WIP)
         # unpack_text = lambda x: unpack_dict_list(x, 'text')
-        # # unpack_image = lambda x : unpack_dict_list(x, 'TODO') # is data?
-        # unpack_image_origin = lambda x: unpack_dict_list(x, 'origin')
+        # # unpack_image = lambda x : unpack_dict_list(x, 'TODO') # is data?       # unpack_image_origin = lambda x: unpack_dict_list(x, 'origin')
         # unpack_image_height = lambda x: unpack_dict_list(x, 'height')
         # unpack_image_width = lambda x: unpack_dict_list(x, 'width')
         # unpack_image_n_channels = lambda x: unpack_dict_list(x, 'nChannels')
@@ -316,6 +320,8 @@ def apply_extractors_and_merge(df, anno_2_ex_config, keep_stranger_features, str
     # keep df and ex_resolver in closure and apply base extractor with configs for each col
     extractor = lambda c: df[c].apply(extract_master, configs=anno_2_ex_config[c])
     keep_strangers = lambda c: df[c]
+
+    stranger_features.append('path') if 'path' in df.columns and 'text_entity' in anno_2_ex_config.keys() else None
 
     # merged_extraction_df
     # apply the extract_master together with it's configs to every column and geenrate a list of output DF's, one per Spark NLP COL
