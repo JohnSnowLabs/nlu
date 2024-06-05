@@ -1,6 +1,3 @@
-__version__ = '5.1.5rc19'
-
-
 import nlu.utils.environment.env_utils as env_utils
 
 if not env_utils.try_import_pyspark_in_streamlit():
@@ -22,6 +19,13 @@ from nlu.pipe.component_resolution import *
 # apply hotfix
 import pandas as pd
 pd.DataFrame.iteritems = pd.DataFrame.items
+
+def version():
+    version_path = os.path.abspath(os.path.dirname(__file__))
+    with open(os.path.join(version_path, '../VERSION'), encoding="utf-8") as version_file:
+        return version_file.read().strip()
+
+__version__ = version()
 
 def version(): return __version__
 
