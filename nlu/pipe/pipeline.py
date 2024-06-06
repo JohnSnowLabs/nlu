@@ -62,6 +62,7 @@ class NLUPipeline(dict):
         self.requires_image_format = False
         self.requires_binary_format = False
         self.is_light_pipe_incompatible = False
+
     def add(self, component: NluComponent, nlu_reference=None, pretrained_pipe_component=False,
             name_to_add='', idx=None):
         '''
@@ -281,7 +282,7 @@ class NLUPipeline(dict):
 
            Can process Spark DF output from Vanilla pipes and Pandas Converts outputs of Lightpipeline
            """
-        if isinstance(pdf,pyspark.sql.dataframe.DataFrame):
+        if isinstance(pdf, pyspark.sql.dataframe.DataFrame):
             if 'modificationTime' in pdf.columns:
                 # drop because of
                 # 'TypeError: Casting to unit-less dtype 'datetime64' is not supported.
@@ -435,7 +436,24 @@ class NLUPipeline(dict):
     def save(self, path, component='entire_pipeline', overwrite=True):
         # serialize data
         data = {}
-        data[0] = {'nlu_ref': self.nlu_ref}
+        data[0] = {
+            'nlu_ref': self.nlu_ref,
+            'contains_ocr_components': self.contains_ocr_components,
+            'contains_audio_components': self.contains_audio_components,
+            'has_nlp_components': self.has_nlp_components,
+            'has_span_classifiers': self.has_span_classifiers,
+            'prefer_light': self.prefer_light,
+            'has_table_qa_models': self.has_table_qa_models,
+            'requires_image_format': self.requires_image_format,
+            'requires_binary_format': self.requires_binary_format,
+            'is_light_pipe_incompatible': self.is_light_pipe_incompatible,
+
+
+            # 'output_positions' :self.output_positions,
+            # 'prediction_output_level' :self.prediction_output_level,
+            # 'component_output_level' :self.component_output_level,
+
+        }
         data['is_nlu_pipe'] = True
         for i, c in enumerate(self.components):
             data[i + 1] = {'nlu_ref': c.nlu_ref, 'nlp_ref': c.nlp_ref,
@@ -496,6 +514,7 @@ class NLUPipeline(dict):
         from nlu.pipe.utils.predict_helper import __predict__
         return __predict__(self, data, output_level, positions, keep_stranger_features, metadata, multithread,
                            drop_irrelevant_cols, return_spark_df, get_embeddings)
+
     def predict_embeds(self,
                        data,
                        multithread=True,
@@ -517,6 +536,7 @@ class NLUPipeline(dict):
                            multithread=multithread,
                            drop_irrelevant_cols=True, return_spark_df=return_spark_df, get_embeddings=True,
                            embed_only=True)
+
     def print_info(self, minimal=True):
         '''
         Print out information about every component_to_resolve currently loaded in the component_list and their configurable parameters.
@@ -982,7 +1002,7 @@ class NLUPipeline(dict):
         """
 
         confs = {}
-        m =  finisher.model
+        m = finisher.model
         as_arr = m.getOutputAsArray()
         for c in m.getOutputCols():
             confs[c] = FinisherExtractorConfig(output_as_array=as_arr,
