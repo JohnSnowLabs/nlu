@@ -137,6 +137,24 @@ def extract_base_sparkocr_features(row: pd.Series, configs: SparkOCRExtractorCon
         return {}
 
 
+def extract_finisher_rows(row: pd.Series, configs: FinisherExtractorConfig):
+    keys = [d['_1'] for d in row]
+    keys
+    keys = [d['_1'] for d in row]
+
+    values = [d['_2'] for d in row]
+    keys, values
+    d = {}
+    for r in row:
+        key = r['_1']
+        key = f'{configs.source_col_name}_{key}'
+        value = r['_2']
+        if key not in d:
+            d[key] = []
+        d[key].append(value)
+    return d
+
+
 def extract_base_sparknlp_features(row: pd.Series, configs: SparkNLPExtractorConfig) -> dict:
     """
     Extract base features common in all saprk NLP annotators
@@ -280,7 +298,7 @@ def extract_master(row: pd.Series, configs: SparkNLPExtractorConfig) -> pd.Serie
             if configs.is_meta_field:
                 return pd.Series(
                     {
-                        configs.source_col_name: row
+                        **extract_finisher_rows(row, configs)
                     })
             else:
                 return pd.Series(

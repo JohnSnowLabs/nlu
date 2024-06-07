@@ -433,8 +433,7 @@ class NLUPipeline(dict):
         if keep_origin_index == False and 'origin_index' in cols: cols.remove('origin_index')
         return cols
 
-    def save(self, path, component='entire_pipeline', overwrite=True):
-        # serialize data
+    def _get_uid_payload(self):
         data = {}
         data[0] = {
             'nlu_ref': self.nlu_ref,
@@ -447,28 +446,21 @@ class NLUPipeline(dict):
             'requires_image_format': self.requires_image_format,
             'requires_binary_format': self.requires_binary_format,
             'is_light_pipe_incompatible': self.is_light_pipe_incompatible,
-
-
-            # 'output_positions' :self.output_positions,
-            # 'prediction_output_level' :self.prediction_output_level,
-            # 'component_output_level' :self.component_output_level,
-
         }
         data['is_nlu_pipe'] = True
         for i, c in enumerate(self.components):
             data[i + 1] = {'nlu_ref': c.nlu_ref, 'nlp_ref': c.nlp_ref,
                            'loaded_from_pretrained_pipe': c.loaded_from_pretrained_pipe}
 
-        data = json.dumps(data)
+        return json.dumps(data)
+    def save(self, path, component='entire_pipeline', overwrite=True):
+        # serialize data
+        data = self._get_uid_payload()
         if not self.is_fitted or not hasattr(self, 'vanilla_transformer_pipe'):
             self.fit()
             self.is_fitted = True
         # self.vanilla_transformer_pipe.extractParamMap()
         if hasattr(self, 'nlu_ref'):
-            """ ATTRS TO SAVE FOR EACH COMPONENT / PIPELINE: 
-            - nlp ref/nlu ref
-            - is loaded_form_pipe
-            """
             self.vanilla_transformer_pipe._resetUid(data)
         if component == 'entire_pipeline':
             if overwrite:
@@ -1003,13 +995,23 @@ class NLUPipeline(dict):
 
         confs = {}
         m = finisher.model
+        m.setIncludeMetadata(True)
         as_arr = m.getOutputAsArray()
+        # hotfix because finisher has no getIncludeMetadata()
+        # For now we always extract all meta
+        has_meta = True
         for c in m.getOutputCols():
             confs[c] = FinisherExtractorConfig(output_as_array=as_arr,
-                                               is_meta_field=True if c.endswith('_metadata') else False,
+                                               is_meta_field=False,
                                                annotation_split_symbol=m.getAnnotationSplitSymbol(),
                                                value_split_symbol=m.getValueSplitSymbol(),
                                                source_col_name=c,
                                                )
-
+            if has_meta: # since metadata fields dont show up in getOutputCols we need to add them manually
+                confs[f'{c}_metadata'] = FinisherExtractorConfig(output_as_array=as_arr,
+                                                   is_meta_field=True,
+                                                   annotation_split_symbol=m.getAnnotationSplitSymbol(),
+                                                   value_split_symbol=m.getValueSplitSymbol(),
+                                                   source_col_name=f'{c}_metadata',
+                                                   )
         return confs
