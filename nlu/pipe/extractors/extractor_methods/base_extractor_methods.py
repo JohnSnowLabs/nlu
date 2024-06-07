@@ -138,12 +138,6 @@ def extract_base_sparkocr_features(row: pd.Series, configs: SparkOCRExtractorCon
 
 
 def extract_finisher_rows(row: pd.Series, configs: FinisherExtractorConfig):
-    keys = [d['_1'] for d in row]
-    keys
-    keys = [d['_1'] for d in row]
-
-    values = [d['_2'] for d in row]
-    keys, values
     d = {}
     for r in row:
         key = r['_1']

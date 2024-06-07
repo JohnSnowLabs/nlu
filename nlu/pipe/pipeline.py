@@ -1008,10 +1008,12 @@ class NLUPipeline(dict):
                                                source_col_name=c,
                                                )
             if has_meta: # since metadata fields dont show up in getOutputCols we need to add them manually
-                confs[f'{c}_metadata'] = FinisherExtractorConfig(output_as_array=as_arr,
+                meta_col = f'{c}_metadata'
+                finisher.spark_output_column_names.append(meta_col)
+                confs[meta_col] = FinisherExtractorConfig(output_as_array=as_arr,
                                                    is_meta_field=True,
                                                    annotation_split_symbol=m.getAnnotationSplitSymbol(),
                                                    value_split_symbol=m.getValueSplitSymbol(),
-                                                   source_col_name=f'{c}_metadata',
+                                                   source_col_name=meta_col,
                                                    )
         return confs
