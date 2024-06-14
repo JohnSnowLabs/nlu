@@ -212,8 +212,10 @@ class NLP_NODE_IDS:
     PARTIAL_EntityRulerApproach = JslAnnoId('PARTIAL_EntityRulerApproach')
     PARTIAL_EntityRulerModel = JslAnnoId('PARTIAL_EntityRulerModel')
     PARTIAL_TextMatcherModel = JslAnnoId('PARTIAL_TextMatcherModel')
+    PARTIAL_TextMatcherModel = JslAnnoId('PARTIAL_TextMatcherModel')
     PARTIAL_BigTextMatcher = JslAnnoId('PARTIAL_BigTextMatcher')
     PARTIAL_BigTextMatcherModel = JslAnnoId('PARTIAL_BigTextMatcherModel')
+    PARTIAL_TextMatcherInternalModel = JslAnnoId('PARTIAL_TextMatcherInternalModel')
     PARTIAL_DateMatcher = JslAnnoId('PARTIAL_DateMatcher')
     PARTIAL_MultiDateMatcher = JslAnnoId('PARTIAL_MultiDateMatcher')
     PARTIAL_RegexMatcher = JslAnnoId('PARTIAL_RegexMatcher')
@@ -317,9 +319,11 @@ class OCR_NODE_IDS:
     """All available Feature nodes in OCR
     Used to cast the pipeline dependency resolution algorithm into an abstract graph
     """
+
+    FORM_RELATION_EXTRACTOR = JslAnnoId('visual_form_relation_extractor')
     # Visual Document Understanding
     VISUAL_DOCUMENT_CLASSIFIER = JslAnnoId('visual_document_classifier')
-    VISUAL_DOCUMENT_NER = JslAnnoId('visual_document_NER')
+    VISUAL_DOCUMENT_NER = JslAnnoId('visual_document_ner')
 
     # Object Detection
     IMAGE_HANDWRITTEN_DETECTOR = JslAnnoId('image_handwritten_detector')

@@ -18,7 +18,7 @@ logger = logging.getLogger('nlu')
 from nlu.pipe.utils.component_utils import ComponentUtils
 from typing import List, Union, Dict
 from nlu.universe.annotator_class_universe import AnnoClassRef
-from nlu.utils.environment.env_utils import is_running_in_databricks
+from nlu.utils.environment.env_utils import is_running_in_databricks_runtime
 import os
 import glob
 import json
@@ -140,12 +140,12 @@ class PipeUtils:
             pipe_path = glob.glob(f'{pipe_path}*')
             if len(pipe_path) == 0:
                 # try databricks env path
-                if is_running_in_databricks():
+                if is_running_in_databricks_runtime():
                     pipe_path = [f'dbfs:/root/cache_pretrained/{nlp_ref}_{lang}']
                 else:
                     raise FileNotFoundError(f"Could not find downloaded Pipeline at path={pipe_path}")
             pipe_path = pipe_path[0]
-            if not os.path.exists(pipe_path) and not is_running_in_databricks():
+            if not os.path.exists(pipe_path) and not is_running_in_databricks_runtime():
                 raise FileNotFoundError(f"Could not find downloaded Pipeline at path={pipe_path}")
 
         # Find HDD location of component_list and read out input/output cols
@@ -155,7 +155,7 @@ class PipeUtils:
 
         for c in component_list:
             model_name = c.model.uid.split('_')[0]
-            if is_running_in_databricks():
+            if is_running_in_databricks_runtime():
                 data = PipeUtils.get_json_data_for_pipe_model_at_stage_number_on_databricks(nlp_ref, lang, digit_str)
             else:
                 data = PipeUtils.get_json_data_for_pipe_model_at_stage_number(pipe_path, digit_str)

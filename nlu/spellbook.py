@@ -10631,6 +10631,8 @@ class Spellbook:
             'en.deid.clinical_wip': 'clinical_deidentification_wip',
             'en.deid.glove_augmented.pipeline': 'clinical_deidentification_glove_augmented',
             'en.deid.glove_pipeline': 'clinical_deidentification_glove',
+            'en.deid.generic_optimized.pipeline': 'clinical_deidentification_generic_optimized',
+            'en.deid.subentity_optimized.pipeline': 'clinical_deidentification_subentity_optimized',
             'en.deid.med_ner_large.pipeline': 'ner_deid_sd_large_pipeline',
             'en.deid.ner_augmented.pipeline': 'ner_deid_augmented_pipeline',
             'en.deid.ner_biobert.pipeline': 'ner_deid_biobert_pipeline',
@@ -10644,6 +10646,9 @@ class Spellbook:
             'en.explain_doc.clinical_radiology.pipeline': 'explain_clinical_doc_radiology',
             'en.explain_doc.era': 'explain_clinical_doc_era',
             'en.explain_doc.clinical_granular': 'explain_clinical_doc_granular',
+            'en.explain_doc.pipeline_vop': 'explain_clinical_doc_radiology',
+            'en.explain_doc.clinical_oncology.pipeline': 'explain_clinical_doc_oncology',
+            'en.explain_doc.clinical_generic.pipeline': 'explain_clinical_doc_generic',
             'en.icd10_icd9.mapping': 'icd10_icd9_mapping',
             'en.icd10cm.umls.mapping': 'icd10cm_umls_mapping',
             'en.icd10cm_resolver.pipeline': 'icd10cm_resolver_pipeline',
@@ -10651,6 +10656,7 @@ class Spellbook:
             'en.map_entity.icdo_to_snomed.pipe': 'icdo_snomed_mapping',
             'en.map_entity.rxnorm_to_ndc.pipe': 'rxnorm_ndc_mapping',
             'en.map_entity.rxnorm_resolver.pipe': 'rxnorm_resolver_pipeline',
+            'en.map_entity.hpo_resolver_pipe': 'hpo_resolver_pipeline',
             'en.map_entity.snomed_to_icd10cm.pipe': 'snomed_icd10cm_mapping',
             'en.map_entity.snomed_to_icdo.pipe': 'snomed_icdo_mapping',
             'en.map_entity.umls_clinical_findings_resolver': 'umls_clinical_findings_resolver_pipeline',
@@ -11316,7 +11322,9 @@ class Spellbook:
         'ppt2table': OCR_NODE_IDS.PPT2TEXT_TABLE,
         'classify.image': OCR_NODE_IDS.VISUAL_DOCUMENT_CLASSIFIER,
         'en.classify_image.tabacco': 'visual_document_classifier_tobacco3482',
-        'en.image_table_detector':'general_model_table_detection_v2'
+        'en.image_table_detector':'general_model_table_detection_v2',
+        'en.lilt_roberta_funds.v1': 'lilt_roberta_funsd_v1',
+        'visual_form_relation_extractor': OCR_NODE_IDS.FORM_RELATION_EXTRACTOR,
     }
 
     # ocr_model_references = {
@@ -16292,6 +16300,8 @@ class Spellbook:
                              'general_model_table_detection_v2': 'ImageTableDetector',
                              'image_table_cell_detector': 'ImageTableCellDetector',
                              'image_table_cell2text_table': 'ImageCellsToTextTable',
+                             'visual_form_relation_extractor':'FormRelationExtractor',
+                             'lilt_roberta_funsd_v1': 'VisualDocumentNer',
                              'instructor_large':'InstructorEmbeddings',
                              'instructor_base':'InstructorEmbeddings',
                              'initial_model': 'MPNetEmbeddings',
