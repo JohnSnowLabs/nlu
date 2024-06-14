@@ -144,19 +144,24 @@ from nlu.ocr_components.text_recognizers.doc2text.doc2text import Doc2Text
 from nlu.ocr_components.text_recognizers.img2text.img2text import Img2Text
 from nlu.ocr_components.text_recognizers.pdf2text.pdf2text import Pdf2Text
 from nlu.ocr_components.utils.binary2image.binary2image import Binary2Image
+from nlu.ocr_components.utils.hocr_tokenizer.hocr_tokenizer import HocrTokenizer
 from nlu.ocr_components.utils.image2hocr.image2hocr import Image2Hocr
 from nlu.ocr_components.table_extractors.image2table.image2table import IMAGE_TABLE_DETECTOR
+from nlu.ocr_components.visual_ner.visual_document_ner.visual_document_ner import VisualDocumentNer
 from nlu.ocr_components.table_extractors.image2table_cell.image2table_cell import ImageTableCellDetector
+from nlu.ocr_components.form_relation_extractor.form_relation_extractor import FormRelationExtractor
 from nlu.ocr_components.table_extractors.image_table_cell2text.image_table_cell2text import ImageTable2Cell2TextTable
 from nlu.ocr_components.utils.image_split_regions.image_split_regions import ImageSplitRegions
 # from nlu.ocr_components.visual_classifiers.visual_doc_classifier.visual_doc_classifier import VisualDocClassifier
 from nlu.pipe.col_substitution.col_substitution_HC import *
 from nlu.pipe.col_substitution.col_substitution_OCR import substitute_recognized_text_cols, \
-    substitute_document_classifier_text_cols
+    substitute_document_classifier_text_cols, substitute_form_extractor_text_cols
+from nlu.pipe.col_substitution.col_substitution_OCR import substitute_recognized_text_cols,substitute_document_ner_cols
 from nlu.pipe.col_substitution.col_substitution_OS import *
 from nlu.pipe.extractors.extractor_configs_HC import *
 from nlu.pipe.extractors.extractor_configs_OCR import default_text_recognizer_config, default_binary_to_image_config, \
-    default_visual_classifier_config
+    default_visual_classifier_config,default_form_relation_extractor_config
+from nlu.pipe.extractors.extractor_configs_OCR import default_text_recognizer_config, default_binary_to_image_config, default_visual_ner_config
 from nlu.pipe.extractors.extractor_configs_OS import *
 from nlu.pipe.nlu_component import NluComponent
 from nlu.universe.annotator_class_universe import AnnoClassRef
@@ -773,6 +778,23 @@ class ComponentUniverse:
                                             name=A.PARTIAL_ChunkMergeApproach,
                                             jsl_anno_class_id=A.PARTIAL_TextMatcherModel,
                                             jsl_anno_py_class=ACR.JSL_anno2_py_class[A.PARTIAL_TextMatcherModel],
+                                            node=NLP_FEATURE_NODES.nodes[A.PARTIALLY_IMPLEMENTED],
+                                            type=T.PARTIALLY_READY,
+                                            pdf_extractor_methods={'default': default_partial_implement_config,
+                                                                   'default_full': default_full_config, },
+                                            pdf_col_name_substitutor=partially_implemented_substitutor,
+                                            output_level=L.DOCUMENT,
+                                            description='Not fully integrated',
+                                            provider=ComponentBackends.open_source,
+                                            license=Licenses.open_source,
+                                            computation_context=ComputeContexts.spark,
+                                            output_context=ComputeContexts.spark,
+                                            ),
+
+        A.PARTIAL_TextMatcherInternalModel: partial(NluComponent,
+                                            name=A.PARTIAL_ChunkMergeApproach,
+                                            jsl_anno_class_id=A.PARTIAL_TextMatcherInternalModel,
+                                            jsl_anno_py_class=ACR.JSL_anno2_py_class[A.PARTIAL_TextMatcherInternalModel],
                                             node=NLP_FEATURE_NODES.nodes[A.PARTIALLY_IMPLEMENTED],
                                             type=T.PARTIALLY_READY,
                                             pdf_extractor_methods={'default': default_partial_implement_config,
@@ -4455,5 +4477,68 @@ class ComponentUniverse:
                                     O_A.IMAGE2HOCR],
                                 applicable_file_types=['DOCX', 'DOC'],
                                 ),
+
+        O_A.HOCR_TOKENIZER: partial(NluComponent,
+                                    name=O_A.HOCR_TOKENIZER,
+                                    type=T.OCR_UTIL,
+                                    get_default_model=HocrTokenizer.get_default_model,
+                                    # TODO EXtractor0
+                                    pdf_extractor_methods={'default': default_binary_to_image_config},
+                                    # TODO substitor
+                                    pdf_col_name_substitutor=substitute_recognized_text_cols,
+                                    output_level=L.DOCUMENT,
+                                    node=OCR_FEATURE_NODES.nodes[O_A.HOCR_TOKENIZER],
+                                    description='Convert text to PDF file',
+                                    provider=ComponentBackends.ocr,
+                                    license=Licenses.ocr,
+                                    computation_context=ComputeContexts.spark,
+                                    output_context=ComputeContexts.spark,
+                                    jsl_anno_class_id=O_A.HOCR_TOKENIZER,
+                                    jsl_anno_py_class=ACR.JSL_anno_OCR_ref_2_py_class[
+                                        O_A.HOCR_TOKENIZER],
+                                    applicable_file_types=['DOCX', 'DOC'],
+                                    ),
+
+        O_A.VISUAL_DOCUMENT_NER: partial(NluComponent,
+                                         name=O_A.VISUAL_DOCUMENT_NER,
+                                         type=T.PDF_BUILDER,
+                                         get_default_model=VisualDocumentNer.get_default_model,
+                                         pdf_extractor_methods={'default': default_visual_ner_config},
+                                         # TODO EXtractor
+                                         pdf_col_name_substitutor=substitute_document_ner_cols,
+                                         # TODO substitor
+                                         output_level=L.CHUNK,
+                                         node=OCR_FEATURE_NODES.nodes[O_A.VISUAL_DOCUMENT_NER],
+                                         description='Convert text to PDF file',
+                                         provider=ComponentBackends.ocr,
+                                         license=Licenses.ocr,
+                                         computation_context=ComputeContexts.spark,
+                                         output_context=ComputeContexts.spark,
+                                         jsl_anno_class_id=O_A.VISUAL_DOCUMENT_NER,
+                                         jsl_anno_py_class=ACR.JSL_anno_OCR_ref_2_py_class[
+                                             O_A.VISUAL_DOCUMENT_NER],
+                                         applicable_file_types=['JPG', 'JPEG']
+                                         ),
+
+        O_A.FORM_RELATION_EXTRACTOR: partial(NluComponent,
+                                             name=O_A.FORM_RELATION_EXTRACTOR,
+                                             type=T.TEXT_RECOGNIZER,
+                                             get_default_model=FormRelationExtractor.get_default_model,
+                                             # TODO EXtractor0
+                                             pdf_extractor_methods={'default': default_form_relation_extractor_config},
+                                             # TODO substitor
+                                             pdf_col_name_substitutor=substitute_form_extractor_text_cols,
+                                             output_level=L.RELATION,
+                                             node=OCR_FEATURE_NODES.nodes[O_A.FORM_RELATION_EXTRACTOR],
+                                             description='Convert text to PDF file',
+                                             provider=ComponentBackends.ocr,
+                                             license=Licenses.ocr,
+                                             computation_context=ComputeContexts.spark,
+                                             output_context=ComputeContexts.spark,
+                                             jsl_anno_class_id=O_A.FORM_RELATION_EXTRACTOR,
+                                             jsl_anno_py_class=ACR.JSL_anno_OCR_ref_2_py_class[
+                                                 O_A.FORM_RELATION_EXTRACTOR],
+                                             applicable_file_types=['DOCX', 'DOC'],
+                                             ),
 
     }

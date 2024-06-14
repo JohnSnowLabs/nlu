@@ -84,13 +84,10 @@ def try_import_streamlit():
         print("You need to install Streamlit to run this functionality.")
 
 
-def is_running_in_databricks():
-    """ Check if the currently running Python Process is running in Databricks or not
-     If any Environment Variable name contains 'DATABRICKS' this will return True, otherwise False"""
-    for k in os.environ.keys():
-        if 'DATABRICKS' in k:
-            return True
-    return False
+def is_running_in_databricks_runtime():
+    """ Check if the currently running Python Process is running in Databricks runtime or not
+    """
+    return "DATABRICKS_RUNTIME_VERSION" in os.environ
 
 
 def install_and_import_package(pkg_name, version='', import_name=''):

@@ -207,6 +207,7 @@ class AnnoClassRef:
         A_N.PARTIAL_EntityRulerApproach: 'EntityRulerApproach',
         A_N.PARTIAL_EntityRulerModel: 'EntityRulerModel',
         A_N.PARTIAL_TextMatcherModel: 'TextMatcherModel',
+        A_N.PARTIAL_TextMatcherInternalModel: 'TextMatcherInternalModel',
         A_N.PARTIAL_BigTextMatcher: 'BigTextMatcher',
         A_N.PARTIAL_BigTextMatcherModel: 'BigTextMatcherModel',
         A_N.PARTIAL_DateMatcher: 'DateMatcher',
@@ -314,6 +315,9 @@ class AnnoClassRef:
         OCR_NODE_IDS.IMAGE_TABLE_CELL_DETECTOR: 'ImageTableCellDetector',
         OCR_NODE_IDS.IMAGE_TABLE_CELL2TEXT_TABLE: 'ImageCellsToTextTable',
         OCR_NODE_IDS.IMAGE_SPLIT_REGIONS: 'ImageSplitRegions',
+        OCR_NODE_IDS.VISUAL_DOCUMENT_NER: 'VisualDocumentNer',
+        OCR_NODE_IDS.HOCR_TOKENIZER: 'HocrTokenizer',
+        OCR_NODE_IDS.FORM_RELATION_EXTRACTOR:  'FormRelationExtractor',
     }
 
     @staticmethod

@@ -301,12 +301,17 @@ class OCR_FEATURE_NODES:
     A = OCR_NODE_IDS
     F = OCR_FEATURES
     nodes = {
+        A.FORM_RELATION_EXTRACTOR: OcrFeatureNode(A.FORM_RELATION_EXTRACTOR, [F.TEXT_ENTITY],
+                                                  [F.VISUAL_RELATION]),
+
         A.VISUAL_DOCUMENT_CLASSIFIER: OcrFeatureNode(A.VISUAL_DOCUMENT_CLASSIFIER, [F.HOCR],
                                                      [F.VISUAL_CLASSIFIER_PREDICTION, F.VISUAL_CLASSIFIER_CONFIDENCE, F.FILE_PATH]),
 
         A.IMAGE2HOCR: OcrFeatureNode(A.IMAGE2HOCR, [F.OCR_IMAGE], [F.HOCR]),
 
         # VISUAL_DOCUMENT_NER : OcrFeatureNode(A.VISUAL_DOCUMENT_NER, [OcrFeature.HOCR, OcrFeature.FILE_PATH], [NlpFeature.NER_Annotation]), # TODO NlpFeature Space!
+        A.VISUAL_DOCUMENT_NER: OcrFeatureNode(A.VISUAL_DOCUMENT_NER, [F.TEXT_DOCUMENT_TOKENIZED, F.OCR_IMAGE],
+                                              [F.TEXT_ENTITY]),
 
         # Object Detection
         A.IMAGE_SPLIT_REGIONS: OcrFeatureNode(A.IMAGE_SPLIT_REGIONS, [F.OCR_IMAGE,F.OCR_REGION], [F.IMG_SPLIT_REGIONS]),
