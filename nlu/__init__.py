@@ -1,4 +1,4 @@
-__version__ = '5.3.2'
+__version__ = '5.3.3rc5'
 
 
 import nlu.utils.environment.env_utils as env_utils
@@ -351,8 +351,17 @@ def load_nlu_pipe_from_hdd(pipe_path, request) -> NLUPipeline:
             pipe.add(c, nlu_ref, pretrained_pipe_component=True)
         if is_nlu_uid(uid):
             data = json.loads(uid)
-            print(data)
             pipe.nlu_ref = data['0']['nlu_ref']
+            pipe.contains_ocr_components = data['0']['contains_ocr_components']
+            pipe.contains_audio_components = data['0']['contains_audio_components']
+            pipe.has_nlp_components = data['0']['has_nlp_components']
+            pipe.has_span_classifiers = data['0']['has_span_classifiers']
+            pipe.prefer_light = data['0']['prefer_light']
+            pipe.has_table_qa_models = data['0']['has_table_qa_models']
+            pipe.requires_image_format = data['0']['requires_image_format']
+            pipe.requires_binary_format = data['0']['requires_binary_format']
+            pipe.is_light_pipe_incompatible = data['0']['is_light_pipe_incompatible']
+
             for i, c in enumerate(pipe.components):
                 c.nlu_ref = data[str(i + 1)]['nlu_ref']
                 c.nlp_ref = data[str(i + 1)]['nlp_ref']
