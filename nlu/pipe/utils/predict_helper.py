@@ -118,7 +118,7 @@ def predict_multi_threaded_light_pipe(pipe, data, output_level, positions, keep_
                                           )
 
 
-def __predict_ocr_spark(pipe, data, output_level, positions, keep_stranger_features, metadata,
+def __predict_ocr_spark(pipe, data, output_level, output_path, positions, keep_stranger_features, metadata,
                         drop_irrelevant_cols, get_embeddings):
     """
         Check if there are any OCR components in the Pipe.
@@ -160,14 +160,21 @@ def __predict_ocr_spark(pipe, data, output_level, positions, keep_stranger_featu
     data = data.withColumn('origin_index', monotonically_increasing_id().alias('origin_index'))
 
     data = pipe.vanilla_transformer_pipe.transform(data)
-    return pipe.pythonify_spark_dataframe(data,
-                                          keep_stranger_features=keep_stranger_features,
-                                          output_metadata=metadata,
-                                          drop_irrelevant_cols=drop_irrelevant_cols,
-                                          positions=positions,
-                                          output_level=output_level,
-                                          get_embeddings=get_embeddings
+
+    if 'ImageToPdf' in str(list(pipe.values())[-1]):
+        return pipe.pythonify_spark_ocr_dataframe(data,
+                                          output_path=output_path,
+                                          file_paths=file_paths
                                           )
+    else:
+        return pipe.pythonify_spark_dataframe(data,
+                                              keep_stranger_features=keep_stranger_features,
+                                              output_metadata=metadata,
+                                              drop_irrelevant_cols=drop_irrelevant_cols,
+                                              positions=positions,
+                                              output_level=output_level,
+                                              get_embeddings=get_embeddings
+                                              )
 
 
 def __predict_audio_spark(pipe, data, output_level, positions, keep_stranger_features, metadata,
@@ -267,7 +274,7 @@ def try_update_session():
     except Exception as e:
         print(f"Error updating session: {e}")
 
-def __predict__(pipe, data, output_level, positions, keep_stranger_features, metadata, multithread,
+def __predict__(pipe, data, output_level, output_path, positions, keep_stranger_features, metadata, multithread,
                 drop_irrelevant_cols, return_spark_df, get_embeddings, embed_only=False,normal_pred_on_db=False):
     '''
     Annotates a Pandas Dataframe/Pandas Series/Numpy Array/Spark DataFrame/Python List strings /Python String
@@ -281,6 +288,8 @@ def __predict__(pipe, data, output_level, positions, keep_stranger_features, met
     :param return_spark_df: Prediction results will be returned right after transforming with the Spark NLP pipeline
     :return:
     '''
+    if output_path is None:
+        output_path = []
 
     if embed_only:
         pipe.fit()
@@ -341,7 +350,7 @@ def __predict__(pipe, data, output_level, positions, keep_stranger_features, met
     if pipe.contains_ocr_components:
         # Ocr processing
         try:
-            return __predict_ocr_spark(pipe, data, output_level, positions, keep_stranger_features,
+            return __predict_ocr_spark(pipe, data, output_level, output_path, positions, keep_stranger_features,
                                        metadata, drop_irrelevant_cols, get_embeddings=get_embeddings)
         except Exception as err:
             logger.warning(f"Predictions Failed={err}")

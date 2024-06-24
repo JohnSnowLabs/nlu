@@ -303,6 +303,7 @@ class AnnoClassRef:
     JSL_anno_OCR_ref_2_py_class: Dict[JslAnnoId, JslAnnoPyClass] = {
         OCR_NODE_IDS.IMAGE2TEXT: 'ImageToText',
         OCR_NODE_IDS.PDF2TEXT: 'PdfToText',
+        OCR_NODE_IDS.PDF2IMAGE: 'PdfToImage',
         OCR_NODE_IDS.DOC2TEXT: 'DocToText',
         OCR_NODE_IDS.BINARY2IMAGE: 'BinaryToImage',
         OCR_NODE_IDS.PDF2TEXT_TABLE: 'PdfToTextTable',
@@ -318,6 +319,10 @@ class AnnoClassRef:
         OCR_NODE_IDS.VISUAL_DOCUMENT_NER: 'VisualDocumentNer',
         OCR_NODE_IDS.HOCR_TOKENIZER: 'HocrTokenizer',
         OCR_NODE_IDS.FORM_RELATION_EXTRACTOR:  'FormRelationExtractor',
+        OCR_NODE_IDS.IMAGE_DRAW_REGIONS: 'ImageDrawRegions',
+        OCR_NODE_IDS.POSITION_FINDER: 'PositionFinder',
+        OCR_NODE_IDS.IMAGE2PDF: 'ImageToPdf',
+        OCR_NODE_IDS.POSITION_FINDER: 'PositionFinder'
     }
 
     @staticmethod
