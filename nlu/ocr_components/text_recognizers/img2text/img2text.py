@@ -3,7 +3,10 @@ class Img2Text:
     def get_default_model():
         from sparkocr.transformers import ImageToText
         return ImageToText() \
-            .setInputCol("image") \
+            .setInputCol("ocr_image") \
             .setOutputCol("text") \
-            .setOcrParams(["preserve_interword_spaces=1", ])
+            .setIgnoreResolution(False) \
+            .setPageIteratorLevel(PageIteratorLevel.SYMBOL) \
+            .setPageSegMode(PageSegmentationMode.SPARSE_TEXT) \
+            .setConfidenceThreshold(70)
 

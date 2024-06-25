@@ -12,7 +12,7 @@ os.environ['PYSPARK_PYTHON'] = sys.executable
 os.environ['PYSPARK_DRIVER_PYTHON'] = sys.executable
 from johnsnowlabs import nlp, visual
 
-nlp.install(visual=True,json_license_path="license.json")
+# nlp.install(visual=True,json_license_path="license.json")
 nlp.start(visual=True)
 
 class OCRTests(unittest.TestCase):
@@ -22,7 +22,7 @@ class OCRTests(unittest.TestCase):
 
         p = nlu.load('image_table_cell2text_table', verbose=True)
 
-        images = ['test.jpg']
+        images = ['form.png']
         for path in images:
             dfs = p.predict(path)
             print(dfs)

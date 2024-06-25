@@ -1,25 +1,25 @@
+import os
+import sys
 import unittest
+sys.path.append(os.getcwd())
 
 import nlu
-import tests.secrets as sct
 
-
+os.environ["PYTHONPATH"] = "F:/Work/repos/nlu"
+os.environ['PYSPARK_PYTHON'] = sys.executable
+os.environ['PYSPARK_DRIVER_PYTHON'] = sys.executable
+from johnsnowlabs import nlp, visual
+# nlp.settings.enforce_versions=False
+# nlp.install(json_license_path='license.json',visual=True)
+spark = nlp.start()
 class DeidentificationTests(unittest.TestCase):
     def test_deidentification(self):
-
-        SPARK_NLP_LICENSE = sct.SPARK_NLP_LICENSE
-        AWS_ACCESS_KEY_ID = sct.AWS_ACCESS_KEY_ID
-        AWS_SECRET_ACCESS_KEY = sct.AWS_SECRET_ACCESS_KEY
-        JSL_SECRET = sct.JSL_SECRET
-        nlu.auth(
-            SPARK_NLP_LICENSE, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, JSL_SECRET
-        )
         # b = BertSentenceEmbeddings.pretrained('sbiobert_base_cased_mli','en','clinical/models')
         # m = RelationExtractionModel().pretrained("posology_re")
         #
         # res = nlu.load('en.ner.deid.augmented  en.de_identify', verbose=True).predict('DR Johnson administerd to the patient Peter Parker last week 30 MG of penicilin', return_spark_df=True)
 
-        res = nlu.load("en.de_identify", verbose=True).predict(
+        res = nlu.load("en.de_identify").predict(
             "DR Johnson administerd to the patient Peter Parker last week 30 MG of penicilin",
             drop_irrelevant_cols=False,
             metadata=True,

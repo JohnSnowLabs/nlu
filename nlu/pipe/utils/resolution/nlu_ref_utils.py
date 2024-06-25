@@ -107,6 +107,12 @@ def nlu_ref_to_nlp_metadata(nlu_ref, is_recursive_call=False):
         nlp_ref = Spellbook.ocr_model_references[nlu_ref]
         license_type = Licenses.ocr
 
+    if lang in Spellbook.pretrained_ocr_pipe_references.keys():
+        if nlu_ref in Spellbook.pretrained_ocr_pipe_references[lang].keys():
+            nlp_ref = Spellbook.pretrained_ocr_pipe_references[lang][nlu_ref]
+            license_type = Licenses.ocr
+            is_pipe = True
+
     # Check if multi lingual ner
     if not nlp_ref and 'ner' in nlu_ref:
         all_component_info = AllComponentsInfo()

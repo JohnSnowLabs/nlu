@@ -8,9 +8,10 @@ import nlu
 os.environ["PYTHONPATH"] = "F:/Work/repos/nlu"
 os.environ['PYSPARK_PYTHON'] = sys.executable
 os.environ['PYSPARK_DRIVER_PYTHON'] = sys.executable
+
 from johnsnowlabs import nlp, visual
 
-# nlp.install(json_license_path='license.json',visual=True)
+# nlp.install(force_browser=True,visual=True)
 nlp.start(visual=True)
 
 class OcrTest(unittest.TestCase):

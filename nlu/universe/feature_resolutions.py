@@ -118,4 +118,14 @@ class FeatureResolutions:
                                            ComponentUniverse.components[OCR_NODE_IDS.HOCR_TOKENIZER]),
         OCR_FEATURES.TEXT_ENTITY: ResolvedFeature(OCR_NODE_IDS.VISUAL_DOCUMENT_NER, OCR_NODE_IDS.VISUAL_DOCUMENT_NER,
                                             'xx', False,ComponentUniverse.components[OCR_NODE_IDS.VISUAL_DOCUMENT_NER]),
+        OCR_FEATURES.OCR_POSITIONS: ResolvedFeature(OCR_NODE_IDS.POSITION_FINDER, OCR_NODE_IDS.POSITION_FINDER,
+                                                  'xx', False,
+                                                  ComponentUniverse.components[OCR_NODE_IDS.POSITION_FINDER]),
+        OCR_FEATURES.IMG_DRAW_REGIONS: ResolvedFeature(OCR_NODE_IDS.IMAGE_DRAW_REGIONS, OCR_NODE_IDS.IMAGE_DRAW_REGIONS,
+                                                  'xx', False,
+                                                  ComponentUniverse.components[OCR_NODE_IDS.IMAGE_DRAW_REGIONS]),
+        OCR_FEATURES.TEXT: ResolvedFeature(OCR_NODE_IDS.IMAGE2TEXT, OCR_NODE_IDS.IMAGE2TEXT,
+                                                  'xx', False,
+                                                  ComponentUniverse.components[OCR_NODE_IDS.IMAGE2TEXT]),
+
     }

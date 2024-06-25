@@ -114,8 +114,7 @@ class OCR_FEATURES(JslFeature):
     FALL_BACK = JslFeature("fall_back")  #
     OCR_IMAGE = JslFeature("ocr_image")  # OCR struct image representation
     OCR_PAGE_MATRIX = JslFeature("ocr_page_matrix")  # OCR struct image representation
-    OCR_POSITIONS = JslFeature(
-        "ocr_positions")  # OCR struct POSITION representation # TODO is POSITIONS==COORDINATES???
+    OCR_POSITIONS = JslFeature("ocr_positions")  # OCR struct POSITION representation # TODO is POSITIONS==COORDINATES???
     OCR_REGION = JslFeature("region")  # OCR array of POSITION struct
     OCR_TEXT = JslFeature("ocr_text")  # raw text extracted by OCR anno like PDFtoImage
     OCR_TABLE = JslFeature("ocr_table")  # OCR extracted table TODO array of COORDINATES/POSITION?
@@ -130,7 +129,7 @@ class OCR_FEATURES(JslFeature):
     VISUAL_CLASSIFIER_CONFIDENCE = JslFeature("visual_classifier_confidence")
     VISUAL_CLASSIFIER_PREDICTION = JslFeature("visual_classifier_prediction")
     VISUAL_RELATION = JslFeature("visual_classifier_prediction")
-
+    IMG_DRAW_REGIONS = JslFeature("image_with_regions")
     FORM_RELATION = JslFeature('ocr_relations')
 
 class NLP_HC_FEATURES(JslFeature):
