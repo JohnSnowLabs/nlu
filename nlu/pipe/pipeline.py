@@ -62,6 +62,7 @@ class NLUPipeline(dict):
         self.requires_image_format = False
         self.requires_binary_format = False
         self.is_light_pipe_incompatible = False
+
     def add(self, component: NluComponent, nlu_reference=None, pretrained_pipe_component=False,
             name_to_add='', idx=None):
         '''
@@ -281,7 +282,7 @@ class NLUPipeline(dict):
 
            Can process Spark DF output from Vanilla pipes and Pandas Converts outputs of Lightpipeline
            """
-        if isinstance(pdf,pyspark.sql.dataframe.DataFrame):
+        if isinstance(pdf, pyspark.sql.dataframe.DataFrame):
             if 'modificationTime' in pdf.columns:
                 # drop because of
                 # 'TypeError: Casting to unit-less dtype 'datetime64' is not supported.
@@ -432,25 +433,34 @@ class NLUPipeline(dict):
         if keep_origin_index == False and 'origin_index' in cols: cols.remove('origin_index')
         return cols
 
-    def save(self, path, component='entire_pipeline', overwrite=True):
-        # serialize data
+    def _get_uid_payload(self):
         data = {}
-        data[0] = {'nlu_ref': self.nlu_ref}
+        data[0] = {
+            'nlu_ref': self.nlu_ref,
+            'contains_ocr_components': self.contains_ocr_components,
+            'contains_audio_components': self.contains_audio_components,
+            'has_nlp_components': self.has_nlp_components,
+            'has_span_classifiers': self.has_span_classifiers,
+            'prefer_light': self.prefer_light,
+            'has_table_qa_models': self.has_table_qa_models,
+            'requires_image_format': self.requires_image_format,
+            'requires_binary_format': self.requires_binary_format,
+            'is_light_pipe_incompatible': self.is_light_pipe_incompatible,
+        }
         data['is_nlu_pipe'] = True
         for i, c in enumerate(self.components):
             data[i + 1] = {'nlu_ref': c.nlu_ref, 'nlp_ref': c.nlp_ref,
                            'loaded_from_pretrained_pipe': c.loaded_from_pretrained_pipe}
 
-        data = json.dumps(data)
+        return json.dumps(data)
+    def save(self, path, component='entire_pipeline', overwrite=True):
+        # serialize data
+        data = self._get_uid_payload()
         if not self.is_fitted or not hasattr(self, 'vanilla_transformer_pipe'):
             self.fit()
             self.is_fitted = True
         # self.vanilla_transformer_pipe.extractParamMap()
         if hasattr(self, 'nlu_ref'):
-            """ ATTRS TO SAVE FOR EACH COMPONENT / PIPELINE: 
-            - nlp ref/nlu ref
-            - is loaded_form_pipe
-            """
             self.vanilla_transformer_pipe._resetUid(data)
         if component == 'entire_pipeline':
             if overwrite:
@@ -496,6 +506,7 @@ class NLUPipeline(dict):
         from nlu.pipe.utils.predict_helper import __predict__
         return __predict__(self, data, output_level, positions, keep_stranger_features, metadata, multithread,
                            drop_irrelevant_cols, return_spark_df, get_embeddings)
+
     def predict_embeds(self,
                        data,
                        multithread=True,
@@ -517,6 +528,7 @@ class NLUPipeline(dict):
                            multithread=multithread,
                            drop_irrelevant_cols=True, return_spark_df=return_spark_df, get_embeddings=True,
                            embed_only=True)
+
     def print_info(self, minimal=True):
         '''
         Print out information about every component_to_resolve currently loaded in the component_list and their configurable parameters.
@@ -982,14 +994,26 @@ class NLUPipeline(dict):
         """
 
         confs = {}
-        m =  finisher.model
+        m = finisher.model
+        m.setIncludeMetadata(True)
         as_arr = m.getOutputAsArray()
+        # hotfix because finisher has no getIncludeMetadata()
+        # For now we always extract all meta
+        has_meta = True
         for c in m.getOutputCols():
             confs[c] = FinisherExtractorConfig(output_as_array=as_arr,
-                                               is_meta_field=True if c.endswith('_metadata') else False,
+                                               is_meta_field=False,
                                                annotation_split_symbol=m.getAnnotationSplitSymbol(),
                                                value_split_symbol=m.getValueSplitSymbol(),
                                                source_col_name=c,
                                                )
-
+            if has_meta: # since metadata fields dont show up in getOutputCols we need to add them manually
+                meta_col = f'{c}_metadata'
+                finisher.spark_output_column_names.append(meta_col)
+                confs[meta_col] = FinisherExtractorConfig(output_as_array=as_arr,
+                                                   is_meta_field=True,
+                                                   annotation_split_symbol=m.getAnnotationSplitSymbol(),
+                                                   value_split_symbol=m.getValueSplitSymbol(),
+                                                   source_col_name=meta_col,
+                                                   )
         return confs

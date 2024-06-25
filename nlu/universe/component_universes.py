@@ -3509,6 +3509,30 @@ class ComponentUniverse:
                                             is_visual_annotator=True,
                                             ),
 
+        A.CONVNEXT_IMAGE_CLASSIFICATIONFITTED: partial(NluComponent,
+                                                       name=A.CONVNEXT_IMAGE_CLASSIFICATIONFITTED,
+                                                       type=T.IMAGE_CLASSIFICATION,
+                                                       get_default_model=ConvNextImageClassifier.get_default_model,
+                                                       get_pretrained_model=ConvNextImageClassifier.get_pretrained_model,
+                                                       pdf_extractor_methods={'default': default_document_config,
+                                                                              'default_full': default_full_config},
+                                                       pdf_col_name_substitutor=substitute_recognized_text_cols,
+                                                       output_level=L.DOCUMENT,
+                                                       node=NLP_FEATURE_NODES.nodes[
+                                                           A.CONVNEXT_IMAGE_CLASSIFICATION],
+                                                       description='TODO',
+                                                       provider=ComponentBackends.open_source,
+
+                                                       license=Licenses.open_source,
+                                                       computation_context=ComputeContexts.spark,
+                                                       output_context=ComputeContexts.spark,
+                                                       jsl_anno_class_id=A.CONVNEXT_IMAGE_CLASSIFICATION,
+                                                       jsl_anno_py_class=ACR.JSL_anno2_py_class[
+                                                           A.CONVNEXT_IMAGE_CLASSIFICATIONFITTED],
+                                                       requires_image_format=True,
+                                                       is_visual_annotator=True,
+
+                                                       ),
         A.CONVNEXT_IMAGE_CLASSIFICATION: partial(NluComponent,
                                                  name=A.CONVNEXT_IMAGE_CLASSIFICATION,
                                                  type=T.IMAGE_CLASSIFICATION,
