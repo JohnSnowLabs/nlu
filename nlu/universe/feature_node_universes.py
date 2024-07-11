@@ -330,8 +330,7 @@ class OCR_FEATURE_NODES:
                                                       [F.OCR_TABLE]),
         # PDF Processing
         A.PDF2TEXT: OcrFeatureNode(A.PDF2TEXT, [F.BINARY_PDF, F.FILE_PATH], [F.TEXT, F.PAGE_NUM]),
-        A.PDF2IMAGE: OcrFeatureNode(A.PDF2IMAGE, [F.BINARY_PDF, F.FILE_PATH, F.FALL_BACK], [F.OCR_IMAGE, F.PAGE_NUM]),
-        A.IMAGE2PDF: OcrFeatureNode(A.IMAGE2PDF, [F.OCR_IMAGE, F.FILE_PATH], [F.BINARY_PDF]),
+
         A.TEXT2PDF: OcrFeatureNode(A.TEXT2PDF, [F.OCR_POSITIONS, F.OCR_IMAGE, F.OCR_TEXT, F.FILE_PATH, F.BINARY_PDF],
                                    [F.BINARY_PDF]),
         A.PDF_ASSEMBLER: OcrFeatureNode(A.PDF_ASSEMBLER, [F.BINARY_PDF_PAGE, F.FILE_PATH, F.PAGE_NUM], [F.BINARY_PDF]),
@@ -371,21 +370,15 @@ class OCR_FEATURE_NODES:
         A.IMAGE2REGION: OcrFeatureNode(A.IMAGE2PDF, [F.OCR_IMAGE], [F.OCR_IMAGE]),  # TODO
         A.IMAGE_LAYOUT_ANALZYER: OcrFeatureNode(A.IMAGE_LAYOUT_ANALZYER, [F.OCR_IMAGE], [F.OCR_IMAGE]),  # TODO
         # A.IMAGE_SPLIT_REGIONS: OcrFeatureNode(A.IMAGE_SPLIT_REGIONS, [F.OCR_IMAGE], [F.OCR_IMAGE]),  # TODO
-        A.IMAGE_DRAW_REGIONS: OcrFeatureNode(A.IMAGE_DRAW_REGIONS, [F.OCR_IMAGE], [F.OCR_IMAGE]),  # TODO
 
-        # Character Recognition .. TODO these should be correct but not 100% sure about the positions
-        A.IMAGE2TEXT: OcrFeatureNode(A.IMAGE2TEXT, [F.OCR_IMAGE], [F.TEXT, F.OCR_POSITIONS]),
-        A.IMAGE2TEXTPDF: OcrFeatureNode(A.IMAGE2TEXTPDF, [F.OCR_IMAGE, F.FILE_PATH, F.PAGE_NUM], [F.BINARY_PDF]),
+        # Character Recognition .. TODO these should be correct but not 100% sure about the position
 
         # TODO is ouput HOCR format as in HOCR_DOCUMENT_ASSAMBLER???
         A.IMAGE_BRANDS2TEXT: OcrFeatureNode(A.IMAGE_BRANDS2TEXT, [F.OCR_IMAGE], [F.OCR_POSITIONS, F.TEXT,
                                                                                  F.OCR_IMAGE]),
-        # TODO what is the STRUCTURE of output image_brand ??? OCR_IE??
-        A.POSITION_FINDER: OcrFeatureNode(A.POSITION_FINDER, [F.TEXT_ENTITY, F.OCR_PAGE_MATRIX], [F.OCR_POSITIONS]),
-        # TODO COORDINATE::POSITION??
         ##  TODO Updates text at a position? I.e. Change the text at given corodinates BUT THEN why is output position???
         A.UPDATE_TEXT_POSITION: OcrFeatureNode(A.POSITION_FINDER, [F.OCR_POSITIONS, F.TEXT_ENTITY], [F.OCR_POSITIONS]),
-        # TODO COORDINATE::POSITION??
+
         ## Cancer Document Test parser. Required Text of Header Field of something
         A.FOUNDATION_ONE_REPORT_PARSER: OcrFeatureNode(A.FOUNDATION_ONE_REPORT_PARSER, [F.OCR_TEXT, F.FILE_PATH],
                                                        [F.JSON_FOUNDATION_ONE_REPORT]),
@@ -393,6 +386,18 @@ class OCR_FEATURE_NODES:
         A.HOCR_DOCUMENT_ASSEMBLER: OcrFeatureNode(A.HOCR_TOKENIZER, [F.HOCR], [F.TEXT_DOCUMENT]),
 
         A.HOCR_TOKENIZER: OcrFeatureNode(A.HOCR_TOKENIZER, [F.HOCR], [F.TEXT_DOCUMENT_TOKENIZED]),
+
+        A.PDF2IMAGE: OcrFeatureNode(A.PDF2IMAGE, [F.BINARY_PDF], [F.OCR_IMAGE]),
+
+        A.IMAGE2TEXT: OcrFeatureNode(A.IMAGE2TEXT, [F.OCR_IMAGE], [F.TEXT]),
+
+        A.POSITION_FINDER: OcrFeatureNode(A.POSITION_FINDER, [F.TEXT_ENTITY, F.OCR_PAGE_MATRIX], [F.OCR_POSITIONS]),
+
+        A.IMAGE_DRAW_REGIONS: OcrFeatureNode(A.IMAGE_DRAW_REGIONS, [F.OCR_IMAGE, F.OCR_POSITIONS], [F.IMG_DRAW_REGIONS]),  # TODO
+
+        A.IMAGE2PDF: OcrFeatureNode(A.IMAGE2PDF, [F.IMG_DRAW_REGIONS], [F.BINARY_PDF]),
+
+        A.IMAGE2TEXTPDF: OcrFeatureNode(A.IMAGE2TEXTPDF, [F.OCR_IMAGE, F.FILE_PATH, F.PAGE_NUM], [F.BINARY_PDF]),
     }
 
 

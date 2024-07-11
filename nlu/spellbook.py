@@ -10599,6 +10599,9 @@ class Spellbook:
                'zu.stopwords': 'stopwords_zu'}}
 
     healthcare_component_alias_references = {}
+    pretrained_ocr_pipe_references = {
+        'en': {'en.image_deid': 'pdf_deid_pdf_output'}}
+
     pretrained_healthcare_pipe_references = {
         'ar': {'ar.deid.clinical': 'clinical_deidentification'
                },
@@ -10607,6 +10610,7 @@ class Spellbook:
                'de.deid.pipeline': 'german_deid_pipeline_spark24',
                'de.med_ner.deid_generic.pipeline': 'ner_deid_generic_pipeline'},
         'en': {
+            'en.image_deid' : 'image_printed_transformer_extraction',
             'en.answer_question.clinical_notes_onnx.pipeline': 'clinical_notes_qa_base_onnx_pipeline',
             'en.classify.bert_sequence.binary_rct_biobert.pipeline': 'bert_sequence_classifier_binary_rct_biobert_pipeline',
             'en.classify.bert_sequence.vop_hcp_consult.pipeline': 'bert_sequence_classifier_vop_hcp_consult_pipeline',
@@ -11313,10 +11317,14 @@ class Spellbook:
         'png2text': OCR_NODE_IDS.IMAGE2TEXT,  # Alias for img2text
         'jpg2text': OCR_NODE_IDS.IMAGE2TEXT,  # Alias for img2text
         'pdf2text': OCR_NODE_IDS.PDF2TEXT,
+        'pdf2image':OCR_NODE_IDS.PDF2IMAGE,
         'doc2text': OCR_NODE_IDS.DOC2TEXT,
         #  'image_table_detector': OCR_NODE_IDS.IMAGE_TABLE_DETECTOR,
         'image_table_cell_detector': OCR_NODE_IDS.IMAGE_TABLE_CELL_DETECTOR,
         'image_table_cell2text_table': OCR_NODE_IDS.IMAGE_TABLE_CELL2TEXT_TABLE,
+        'image_draw_regions': OCR_NODE_IDS.IMAGE_DRAW_REGIONS,
+        'position_finder': OCR_NODE_IDS.POSITION_FINDER,
+        'image2pdf': OCR_NODE_IDS.IMAGE2PDF,
         'pdf2table': OCR_NODE_IDS.PDF2TEXT_TABLE,
         'doc2table': OCR_NODE_IDS.DOC2TEXT_TABLE,
         'ppt2table': OCR_NODE_IDS.PPT2TEXT_TABLE,
@@ -18215,6 +18223,10 @@ class Spellbook:
                              'patentsberta_v2': 'MPNetEmbeddings',
                              'pdf2table': 'PdfToTextTable',
                              'pdf2text': 'PdfToText',
+                             'pdf2image': 'PdfToImage',
+                             'image_draw_regions': 'ImageDrawRegions',
+                             'position_finder': 'PositionFinder',
+                             'image2pdf': 'ImageToPdf',
                              'pdfsegs': 'MPNetEmbeddings',
                              'persian_w2v_cc_300d': 'WordEmbeddingsModel',
                              'personer_cc_300d': 'NerDLModel',

@@ -297,6 +297,33 @@ class NLUPipeline(dict):
         # Vanilla Spark Pipe
         return apply_extractors_and_merge(pdf.toPandas().applymap(extract_pyspark_rows), anno_2_ex_config,
                                           keep_stranger_features, stranger_features)
+    # def pythonify_spark_ocr_dataframe(self, processed,
+    #                               output_path=[],
+    #                                   file_paths=[]):
+    #
+    #     result = processed.select("pdf", "path").collect()
+    #     for index, row in enumerate(result):
+    #         pdf_content = row.pdf
+    #         outputFilePath = output_path[index]
+    #         with open(outputFilePath, "wb") as f:
+    #             f.write(pdf_content)
+    #     # for index, row in enumerate(result.select("pdf", "path").toLocalIterator()):
+    #     #     outputFilePath = output_path[index]
+    #     #     with open(outputFilePath, "wb") as f:
+    #     #         f.write(row.pdf)
+    #     # return
+    def pythonify_spark_ocr_dataframe(self, processed, output_path=[], file_paths=[]):
+        result = processed.select("pdf", "path").collect()
+
+        for value in result:
+            temp_path = value.path.split('/')[-1]
+            for index, path in enumerate(file_paths):
+                if path == temp_path:
+                    outputFilePath = output_path[index]
+                    pdf_content = value.pdf
+                    with open(outputFilePath, "wb") as f:
+                        f.write(pdf_content)
+                    break
 
     def pythonify_spark_dataframe(self, processed,
                                   keep_stranger_features=True,
@@ -476,6 +503,7 @@ class NLUPipeline(dict):
     def predict(self,
                 data,
                 output_level='',
+                output_path='',
                 positions=False,
                 keep_stranger_features=True,
                 metadata=False,
@@ -504,7 +532,7 @@ class NLUPipeline(dict):
         :return:
         '''
         from nlu.pipe.utils.predict_helper import __predict__
-        return __predict__(self, data, output_level, positions, keep_stranger_features, metadata, multithread,
+        return __predict__(self, data, output_level, output_path, positions, keep_stranger_features, metadata, multithread,
                            drop_irrelevant_cols, return_spark_df, get_embeddings)
 
     def predict_embeds(self,

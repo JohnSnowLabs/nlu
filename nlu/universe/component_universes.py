@@ -138,6 +138,8 @@ from nlu.components.utils.sentence_embeddings.spark_nlp_sentence_embedding impor
 from nlu.components.utils.table_assembler.spark_nlp_multi_document_assembler import SparkNlpTableAssembler
 from nlu.ocr_components.table_extractors.doc_table_extractor.doc2table import Doc2TextTable
 from nlu.ocr_components.table_extractors.pdf_table_extractor.pdf2table import PDF2TextTable
+from nlu.ocr_components.table_extractors.pdf2image.pdf2image import PDF2Image
+from nlu.ocr_components.table_extractors.imag2pdf.image2pdf import Image2PDF
 from nlu.ocr_components.table_extractors.ppt_table_extractor.ppt2table import PPT2TextTable
 from nlu.ocr_components.visual_classifiers.visual_document_classifier.visual_document_classifier import VisualDocClassifier
 from nlu.ocr_components.text_recognizers.doc2text.doc2text import Doc2Text
@@ -152,6 +154,8 @@ from nlu.ocr_components.table_extractors.image2table_cell.image2table_cell impor
 from nlu.ocr_components.form_relation_extractor.form_relation_extractor import FormRelationExtractor
 from nlu.ocr_components.table_extractors.image_table_cell2text.image_table_cell2text import ImageTable2Cell2TextTable
 from nlu.ocr_components.utils.image_split_regions.image_split_regions import ImageSplitRegions
+from nlu.ocr_components.utils.image_draw_regions.image_draw_regions import ImageDrawRegions
+from nlu.ocr_components.utils.position_finder.position_finder import PositionFinder
 # from nlu.ocr_components.visual_classifiers.visual_doc_classifier.visual_doc_classifier import VisualDocClassifier
 from nlu.pipe.col_substitution.col_substitution_HC import *
 from nlu.pipe.col_substitution.col_substitution_OCR import substitute_recognized_text_cols, \
@@ -160,8 +164,8 @@ from nlu.pipe.col_substitution.col_substitution_OCR import substitute_recognized
 from nlu.pipe.col_substitution.col_substitution_OS import *
 from nlu.pipe.extractors.extractor_configs_HC import *
 from nlu.pipe.extractors.extractor_configs_OCR import default_text_recognizer_config, default_binary_to_image_config, \
-    default_visual_classifier_config,default_form_relation_extractor_config
-from nlu.pipe.extractors.extractor_configs_OCR import default_text_recognizer_config, default_binary_to_image_config, default_visual_ner_config
+    default_visual_classifier_config,default_form_relation_extractor_config, default_position_finder_config
+from nlu.pipe.extractors.extractor_configs_OCR import default_text_recognizer_config, default_binary_to_image_config, default_visual_ner_config, default_pdf_to_image_config
 from nlu.pipe.extractors.extractor_configs_OS import *
 from nlu.pipe.nlu_component import NluComponent
 from nlu.universe.annotator_class_universe import AnnoClassRef
@@ -4346,6 +4350,43 @@ class ComponentUniverse:
 
                                     ),
 
+        O_A.PDF2IMAGE: partial(NluComponent,
+                                    name=O_A.PDF2IMAGE,
+                                    type=T.TABLE_RECOGNIZER,
+                                    get_default_model=PDF2Image.get_default_model,
+                                    pdf_extractor_methods={'default': default_pdf_to_image_config},  # TODO EXtractor
+                                    pdf_col_name_substitutor=substitute_recognized_text_cols,  # TODO substitor
+                                    output_level=L.IMAGE,
+                                    node=OCR_FEATURE_NODES.nodes[O_A.PDF2IMAGE],
+                                    description='Extract Tables from PDFs with have highlightable text',
+                                    provider=ComponentBackends.ocr,
+                                    license=Licenses.ocr,
+                                    computation_context=ComputeContexts.spark,
+                                    output_context=ComputeContexts.spark,
+                                    jsl_anno_class_id=O_A.PDF2IMAGE,
+                                    jsl_anno_py_class=ACR.JSL_anno_OCR_ref_2_py_class[O_A.PDF2IMAGE],
+                                    applicable_file_types=['JPEG', 'PNG', 'PDF']
+                                    ),
+
+        O_A.IMAGE2PDF: partial(NluComponent,
+                               name=O_A.IMAGE2PDF,
+                               type=T.TABLE_RECOGNIZER,
+                               get_default_model=Image2PDF.get_default_model,
+                               pdf_extractor_methods={'default': default_pdf_to_image_config},  # TODO EXtractor
+                               pdf_col_name_substitutor=substitute_recognized_text_cols,  # TODO substitor
+                               output_level=L.IMAGE,
+                               node=OCR_FEATURE_NODES.nodes[O_A.IMAGE2PDF],
+                               description='Extract Tables from PDFs with have highlightable text',
+                               provider=ComponentBackends.ocr,
+                               license=Licenses.ocr,
+                               computation_context=ComputeContexts.spark,
+                               output_context=ComputeContexts.spark,
+                               jsl_anno_class_id=O_A.IMAGE2PDF,
+                               jsl_anno_py_class=ACR.JSL_anno_OCR_ref_2_py_class[O_A.IMAGE2PDF],
+                               applicable_file_types=['JPEG', 'PNG', 'PDF']
+
+                               ),
+
         O_A.PPT2TEXT_TABLE: partial(NluComponent,
                                     name=O_A.PPT2TEXT_TABLE,
                                     type=T.TABLE_RECOGNIZER,
@@ -4459,6 +4500,24 @@ class ComponentUniverse:
                                          is_light_pipe_incompatible=True
                                          ),
 
+        O_A.IMAGE_DRAW_REGIONS: partial(NluComponent,
+                                         name=O_A.IMAGE_DRAW_REGIONS,
+                                         type=T.OCR_UTIL,
+                                         get_default_model=ImageDrawRegions.get_default_model,
+                                         pdf_extractor_methods={'default': default_binary_to_image_config},
+                                         pdf_col_name_substitutor=substitute_recognized_text_cols,
+                                         output_level=L.DOCUMENT,
+                                         node=OCR_FEATURE_NODES.nodes[O_A.IMAGE_DRAW_REGIONS],
+                                         description='Convert Image to split regions',
+                                         provider=ComponentBackends.ocr,
+                                         license=Licenses.ocr,
+                                         computation_context=ComputeContexts.spark,
+                                         output_context=ComputeContexts.spark,
+                                         jsl_anno_class_id=O_A.IMAGE_DRAW_REGIONS,
+                                         jsl_anno_py_class=ACR.JSL_anno_OCR_ref_2_py_class[
+                                             O_A.IMAGE_DRAW_REGIONS],
+                                         applicable_file_types=['DOCX', 'DOC', 'JPEG', 'PNG', 'PDF']
+                                         ),
 
         O_A.VISUAL_DOCUMENT_CLASSIFIER: partial(NluComponent,
                                                 name=O_A.VISUAL_DOCUMENT_CLASSIFIER,
@@ -4562,6 +4621,26 @@ class ComponentUniverse:
                                              jsl_anno_class_id=O_A.FORM_RELATION_EXTRACTOR,
                                              jsl_anno_py_class=ACR.JSL_anno_OCR_ref_2_py_class[
                                                  O_A.FORM_RELATION_EXTRACTOR],
+                                             applicable_file_types=['DOCX', 'DOC'],
+                                             ),
+        O_A.POSITION_FINDER: partial(NluComponent,
+                                             name=O_A.POSITION_FINDER,
+                                             type=T.OCR_UTIL,
+                                             get_default_model=PositionFinder.get_default_model,
+                                             # TODO EXtractor0
+                                             pdf_extractor_methods={'default': default_position_finder_config},
+                                             # TODO substitor
+                                             pdf_col_name_substitutor=substitute_recognized_text_cols,
+                                             output_level=L.RELATION,
+                                             node=OCR_FEATURE_NODES.nodes[O_A.POSITION_FINDER],
+                                             description='Convert text to PDF file',
+                                             provider=ComponentBackends.ocr,
+                                             license=Licenses.ocr,
+                                             computation_context=ComputeContexts.spark,
+                                             output_context=ComputeContexts.spark,
+                                             jsl_anno_class_id=O_A.POSITION_FINDER,
+                                             jsl_anno_py_class=ACR.JSL_anno_OCR_ref_2_py_class[
+                                                 O_A.POSITION_FINDER],
                                              applicable_file_types=['DOCX', 'DOC'],
                                              ),
 

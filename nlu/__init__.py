@@ -180,6 +180,7 @@ def load(request: str = 'from_disk', path: Optional[str] = None, verbose: bool =
          streamlit_caching: bool = False,
          apple_silicon: bool = False
          ) -> NLUPipeline:
+
     '''
     Load either a prebuild pipeline or a set of components identified by a whitespace seperated list of components
     You must call nlu.auth() BEFORE calling nlu.load() to access licensed models.
@@ -192,6 +193,7 @@ def load(request: str = 'from_disk', path: Optional[str] = None, verbose: bool =
     :param request: A NLU model_anno_obj/pipeline/component_to_resolve reference. You can request multiple components by separating them with whitespace. I.e. nlu.load('elmo bert albert')
     :return: returns a non fitted nlu pipeline object
     '''
+
     if streamlit_caching and not nlu.st_cache_enabled:
         enable_streamlit_caching()
         return nlu.load(request, path, verbose, gpu, streamlit_caching)
