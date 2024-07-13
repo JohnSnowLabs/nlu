@@ -44,6 +44,7 @@ from nlu.components.classifiers.seq_longformer.seq_longformer import SeqLongform
 from nlu.components.classifiers.seq_roberta.seq_roberta import SeqRobertaClassifier
 from nlu.components.classifiers.seq_xlm_roberta.seq_xlm_roberta import SeqXlmRobertaClassifier
 from nlu.components.classifiers.seq_xlnet.seq_xlnet import SeqXlnetClassifier
+from nlu.components.classifiers.seq_mpnet.seq_mpnet import SeqMPNetClassifier 
 from nlu.components.classifiers.span_bert.span_bert import SpanBertClassifier
 from nlu.components.classifiers.span_albert.span_albert import SpanAlbertClassifier
 from nlu.components.classifiers.span_camembert.span_camembert import SpanCamemBert
@@ -2723,6 +2724,25 @@ class ComponentUniverse:
                                             has_storage_ref=True,
                                             is_storage_ref_producer=True,
                                             ),
+        A.MPNET_FOR_SEQUENCE_CLASSIFICATION: partial(NluComponent,
+                                            name=A.MPNET_FOR_SEQUENCE_CLASSIFICATION,
+                                            type=T.TRANSFORMER_SEQUENCE_CLASSIFIER,
+                                            get_default_model=SeqMPNetClassifier.get_default_model,
+                                            get_pretrained_model=SeqMPNetClassifier.get_pretrained_model,
+                                            pdf_extractor_methods={'default': default_classifier_dl_config,
+                                                                   'default_full': default_full_config, },
+                                            pdf_col_name_substitutor=substitute_seq_bert_classifier_cols,
+                                            output_level=L.INPUT_DEPENDENT_DOCUMENT_CLASSIFIER,
+                                            node=NLP_FEATURE_NODES.nodes[A.MPNET_FOR_SEQUENCE_CLASSIFICATION],
+                                            description='MPNetForSequenceClassification can load MPNet Models with sequence classification/regression head on top (a linear layer on top of the pooled output) e.g. for multi-class document classification tasks.',
+                                            provider=ComponentBackends.open_source,
+                                            license=Licenses.open_source,
+                                            computation_context=ComputeContexts.spark,
+                                            output_context=ComputeContexts.spark,
+                                            jsl_anno_class_id=A.MPNET_FOR_SEQUENCE_CLASSIFICATION,
+                                            jsl_anno_py_class=ACR.JSL_anno2_py_class[
+                                            A.MPNET_FOR_SEQUENCE_CLASSIFICATION],
+                                                     ),
         A.ROBERTA_EMBEDDINGS: partial(NluComponent,
                                       name=A.ROBERTA_EMBEDDINGS,
                                       type=T.TOKEN_EMBEDDING,
@@ -2743,7 +2763,6 @@ class ComponentUniverse:
                                       has_storage_ref=True,
                                       is_storage_ref_producer=True,
                                       ),
-
         A.ROBERTA_FOR_TOKEN_CLASSIFICATION: partial(NluComponent,
                                                     name=A.ROBERTA_FOR_TOKEN_CLASSIFICATION,
                                                     type=T.TRANSFORMER_SEQUENCE_CLASSIFIER,

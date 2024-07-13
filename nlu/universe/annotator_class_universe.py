@@ -115,6 +115,7 @@ class AnnoClassRef:
         A_N.LONGFORMER_FOR_TOKEN_CLASSIFICATION: 'LongformerForTokenClassification',
         A_N.MARIAN_TRANSFORMER: 'MarianTransformer',
         A_N.MPNET_SENTENCE_EMBEDDINGS: 'MPNetEmbeddings',
+        A_N.MPNET_FOR_SEQUENCE_CLASSIFICATION: 'MPNetForSequenceClassification',
         A_N.ROBERTA_EMBEDDINGS: 'RoBertaEmbeddings',
         A_N.ROBERTA_FOR_TOKEN_CLASSIFICATION: 'RoBertaForTokenClassification',
         A_N.ROBERTA_SENTENCE_EMBEDDINGS: 'RoBertaSentenceEmbeddings',
