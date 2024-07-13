@@ -1052,3 +1052,21 @@ class NLUPipeline(dict):
         self.fit()
         pipe_tracer = PipelineTracer(self.vanilla_transformer_pipe)
         return pipe_tracer
+    def createParserDictionary(self):
+        return self.Tracer().createParserDictionary()
+    def getPossibleAssertions(self):
+        return self.Tracer().getPossibleAssertions()
+
+    def printPipelineSchema(self):
+        return self.Tracer().printPipelineSchema()
+
+
+    def getPossibleRelations(self):
+        return self.Tracer().getPossibleRelations()
+
+    def getPossibleEntities(self):
+        return self.Tracer().getPossibleEntities()
+    def getPipelineStages(self):
+        return self.Tracer().getPipelineStages()
+
+
