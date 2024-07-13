@@ -3564,6 +3564,7 @@ class Spellbook:
             'en.classify.ag_news.longformer': 'longformer_base_sequence_classifier_ag_news',
             'en.classify.ag_news.xlnet': 'xlnet_base_sequence_classifier_ag_news',
             'en.classify.albert.ag_news': 'albert_base_sequence_classifier_ag_news',
+            'en.classify.mpnet.ukr_message': 'mpnet_sequence_classifier_ukr_message',
             'en.classify.albert.imdb': 'albert_base_sequence_classifier_imdb',
             'en.classify.bbc.roberta.by_abhishek': 'roberta_classifier_autonlp_bbc_37249301',
             'en.classify.bert': 'bert_sequence_classifier_antisemitism',
@@ -9196,6 +9197,7 @@ class Spellbook:
                'xx.embed_sentence.bert_use_cmlm_multi_base_br': 'sent_bert_use_cmlm_multi_base_br',
                'xx.embed_sentence.labse': 'labse',
                'xx.embed_sentence.xlm_roberta.base': 'sent_xlm_roberta_base',
+               'xx.m2m100_418M': 'm2m100_418M',
                'xx.en.marian.translate_to.aav': 'opus_mt_en_aav',
                'xx.en.marian.translate_to.af': 'opus_mt_en_af',
                'xx.en.marian.translate_to.afa': 'opus_mt_en_afa',
@@ -10599,6 +10601,9 @@ class Spellbook:
                'zu.stopwords': 'stopwords_zu'}}
 
     healthcare_component_alias_references = {}
+    pretrained_ocr_pipe_references = {
+        'en': {'en.image_deid': 'pdf_deid_pdf_output'}}
+
     pretrained_healthcare_pipe_references = {
         'ar': {'ar.deid.clinical': 'clinical_deidentification'
                },
@@ -10607,6 +10612,7 @@ class Spellbook:
                'de.deid.pipeline': 'german_deid_pipeline_spark24',
                'de.med_ner.deid_generic.pipeline': 'ner_deid_generic_pipeline'},
         'en': {
+            'en.image_deid' : 'image_printed_transformer_extraction',
             'en.answer_question.clinical_notes_onnx.pipeline': 'clinical_notes_qa_base_onnx_pipeline',
             'en.classify.bert_sequence.binary_rct_biobert.pipeline': 'bert_sequence_classifier_binary_rct_biobert_pipeline',
             'en.classify.bert_sequence.vop_hcp_consult.pipeline': 'bert_sequence_classifier_vop_hcp_consult_pipeline',
@@ -11313,10 +11319,14 @@ class Spellbook:
         'png2text': OCR_NODE_IDS.IMAGE2TEXT,  # Alias for img2text
         'jpg2text': OCR_NODE_IDS.IMAGE2TEXT,  # Alias for img2text
         'pdf2text': OCR_NODE_IDS.PDF2TEXT,
+        'pdf2image':OCR_NODE_IDS.PDF2IMAGE,
         'doc2text': OCR_NODE_IDS.DOC2TEXT,
         #  'image_table_detector': OCR_NODE_IDS.IMAGE_TABLE_DETECTOR,
         'image_table_cell_detector': OCR_NODE_IDS.IMAGE_TABLE_CELL_DETECTOR,
         'image_table_cell2text_table': OCR_NODE_IDS.IMAGE_TABLE_CELL2TEXT_TABLE,
+        'image_draw_regions': OCR_NODE_IDS.IMAGE_DRAW_REGIONS,
+        'position_finder': OCR_NODE_IDS.POSITION_FINDER,
+        'image2pdf': OCR_NODE_IDS.IMAGE2PDF,
         'pdf2table': OCR_NODE_IDS.PDF2TEXT_TABLE,
         'doc2table': OCR_NODE_IDS.DOC2TEXT_TABLE,
         'ppt2table': OCR_NODE_IDS.PPT2TEXT_TABLE,
@@ -16657,6 +16667,7 @@ class Spellbook:
                              'mpnet_retriever_squad2': 'MPNetEmbeddings',
                              'mpnet_snli': 'MPNetEmbeddings',
                              'mpnet_snli_negatives': 'MPNetEmbeddings',
+                             'mpnet_sequence_classifier_ukr_message': 'MPNetForSequenceClassification',
                              'multiclassifierdl_hoc': 'MultiClassifierDLModel',
                              'multiclassifierdl_use_e2e': 'MultiClassifierDLModel',
                              'multiclassifierdl_use_toxic': 'MultiClassifierDLModel',
@@ -16886,6 +16897,7 @@ class Spellbook:
                              'onto_small_bert_L8_512': 'NerDLModel',
                              'openai.completion': 'OpenAICompletion',
                              'openai.embeddings': 'OpenAIEmbeddings',
+                             'm2m100_418M': 'M2M100Transformer',
                              'opus_mt_aav_en': 'MarianTransformer',
                              'opus_mt_aed_es': 'MarianTransformer',
                              'opus_mt_af_de': 'MarianTransformer',
@@ -18215,6 +18227,10 @@ class Spellbook:
                              'patentsberta_v2': 'MPNetEmbeddings',
                              'pdf2table': 'PdfToTextTable',
                              'pdf2text': 'PdfToText',
+                             'pdf2image': 'PdfToImage',
+                             'image_draw_regions': 'ImageDrawRegions',
+                             'position_finder': 'PositionFinder',
+                             'image2pdf': 'ImageToPdf',
                              'pdfsegs': 'MPNetEmbeddings',
                              'persian_w2v_cc_300d': 'WordEmbeddingsModel',
                              'personer_cc_300d': 'NerDLModel',

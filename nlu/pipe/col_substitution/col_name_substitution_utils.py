@@ -130,8 +130,7 @@ class ColSubstitutionUtils:
 
         if c.name == NLP_NODE_IDS.FINISHER:
             result_cols = c.model.getOutputCols()
-            if c.model.getIncludeMetadata():
-                result_cols = result_cols + [f'{col}_metadata' for col in result_cols]
+            result_cols = [c for c in df.columns if any(c.startswith(s) for s in result_cols)]
             return result_cols
         result_cols = []
         if isinstance(configs, SparkOCRExtractorConfig):
