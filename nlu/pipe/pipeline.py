@@ -472,7 +472,9 @@ class NLUPipeline(dict):
                 multithread=True,
                 drop_irrelevant_cols=True,
                 return_spark_df=False,
-                get_embeddings=True
+                get_embeddings=True,
+                parser_output=False,
+                parser_config=''
                 ):
         '''
         Annotates a Pandas Dataframe/Pandas Series/Numpy Array/Spark DataFrame/Python List strings /Python String
@@ -495,7 +497,7 @@ class NLUPipeline(dict):
         '''
         from nlu.pipe.utils.predict_helper import __predict__
         return __predict__(self, data, output_level, positions, keep_stranger_features, metadata, multithread,
-                           drop_irrelevant_cols, return_spark_df, get_embeddings)
+                           drop_irrelevant_cols, return_spark_df, get_embeddings, parser_output, parser_config)
     def predict_embeds(self,
                        data,
                        multithread=True,
@@ -993,3 +995,9 @@ class NLUPipeline(dict):
                                                )
 
         return confs
+
+    def Tracer(self):
+        from sparknlp_jsl.pipeline_tracer import PipelineTracer
+        self.fit()
+        pipe_tracer = PipelineTracer(self.vanilla_transformer_pipe)
+        return pipe_tracer

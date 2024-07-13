@@ -1,21 +1,30 @@
+import os
+import sys
+
+sys.path.append(os.getcwd())
 import unittest
-
 import nlu
-import tests.secrets as sct
 
+os.environ["PYTHONPATH"] = "F:/Work/repos/nlu"
+os.environ['PYSPARK_PYTHON'] = sys.executable
+os.environ['PYSPARK_DRIVER_PYTHON'] = sys.executable
+from johnsnowlabs import nlp, visual
+
+# nlp.install(json_license_path='license.json',visual=True)
+nlp.start()
 
 class DeidentificationTests(unittest.TestCase):
     def test_generic_classifier(self):
-
-        SPARK_NLP_LICENSE = sct.SPARK_NLP_LICENSE
-        AWS_ACCESS_KEY_ID = sct.AWS_ACCESS_KEY_ID
-        AWS_SECRET_ACCESS_KEY = sct.AWS_SECRET_ACCESS_KEY
-        JSL_SECRET = sct.JSL_SECRET
-
-        nlu.auth(
-            SPARK_NLP_LICENSE, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, JSL_SECRET
-        )
         #
+        # SPARK_NLP_LICENSE = sct.SPARK_NLP_LICENSE
+        # AWS_ACCESS_KEY_ID = sct.AWS_ACCESS_KEY_ID
+        # AWS_SECRET_ACCESS_KEY = sct.AWS_SECRET_ACCESS_KEY
+        # JSL_SECRET = sct.JSL_SECRET
+        #
+        # nlu.auth(
+        #     SPARK_NLP_LICENSE, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, JSL_SECRET
+        # )
+        # #
 
         res = nlu.load("bert elmo", verbose=True).predict(
             "DR Johnson administerd to the patient Peter Parker last week 30 MG of penicilin"

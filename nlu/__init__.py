@@ -178,7 +178,8 @@ def to_nlu_pipe(nlp_pipe: Union[Pipeline, LightPipeline, PipelineModel, List], i
 
 def load(request: str = 'from_disk', path: Optional[str] = None, verbose: bool = False, gpu: bool = False,
          streamlit_caching: bool = False,
-         apple_silicon: bool = False
+         apple_silicon: bool = False,
+         get_tracer=False
          ) -> NLUPipeline:
     '''
     Load either a prebuild pipeline or a set of components identified by a whitespace seperated list of components
@@ -206,7 +207,6 @@ def load(request: str = 'from_disk', path: Optional[str] = None, verbose: bool =
     if verbose:
         enable_verbose()
     else:
-
         disable_verbose()
     try:
         if path is not None:
