@@ -314,11 +314,10 @@ class NLUPipeline(dict):
     #     # return
     def pythonify_spark_ocr_dataframe(self, processed, output_path=[], file_paths=[]):
         result = processed.select("pdf", "path").collect()
-
+        from pathlib import Path
         for value in result:
-            temp_path = value.path.split('/')[-1]
             for index, path in enumerate(file_paths):
-                if path == temp_path:
+                if Path(path).name == Path(value.path).name:
                     outputFilePath = output_path[index]
                     pdf_content = value.pdf
                     with open(outputFilePath, "wb") as f:
