@@ -107,6 +107,7 @@ from nlu.components.resolutions.sentence_entity_resolver.sentence_resolver impor
 from nlu.components.sentence_detectors.deep_sentence_detector.deep_sentence_detector import SentenceDetectorDeep
 from nlu.components.sentence_detectors.pragmatic_sentence_detector.sentence_detector import PragmaticSentenceDetector
 from nlu.components.seq2seqs.bart_transformer.bart_transformer import SparkNLPBartTransformer
+from nlu.components.seq2seqs.m2m100_transformer.m2m100_transformer import M2M100
 from nlu.components.seq2seqs.gpt2.gpt2 import GPT2
 from nlu.components.seq2seqs.openai_completion.openai_completion import OpenaiCompletion
 from nlu.components.embeddings.openai_embeddings.openai_embeddings import OpenaiEmbeddings
@@ -2839,6 +2840,26 @@ class ComponentUniverse:
                                     jsl_anno_class_id=A.BART_TRANSFORMER,
                                     jsl_anno_py_class=ACR.JSL_anno2_py_class[A.BART_TRANSFORMER],
                                     ),
+
+        A.M2M100_TRANSFORMER: partial(NluComponent,
+                                    name=A.M2M100_TRANSFORMER,
+                                    type=T.DOCUMENT_CLASSIFIER,
+                                    get_default_model=M2M100.get_default_model,
+                                    get_pretrained_model=M2M100.get_pretrained_model,
+                                    pdf_extractor_methods={'default': default_gpt2_config,
+                                                           'default_full': default_full_config, },
+                                    pdf_col_name_substitutor=substitute_gpt2_cols,
+                                    output_level=L.INPUT_DEPENDENT_DOCUMENT_CLASSIFIER,
+                                    node=NLP_FEATURE_NODES.nodes[A.M2M100_TRANSFORMER],
+                                    description='Bart Transformer',
+                                    provider=ComponentBackends.open_source,
+                                    license=Licenses.open_source,
+                                    computation_context=ComputeContexts.spark,
+                                    output_context=ComputeContexts.spark,
+                                    jsl_anno_class_id=A.M2M100_TRANSFORMER,
+                                    jsl_anno_py_class=ACR.JSL_anno2_py_class[A.M2M100_TRANSFORMER],
+                                    ),
+
 
         H_A.MEDICAL_TEXT_GENERATOR: partial(NluComponent,
                                             name=H_A.MEDICAL_TEXT_GENERATOR,

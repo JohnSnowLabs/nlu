@@ -110,6 +110,9 @@ class NLP_NODE_IDS:
     CONVNEXT_IMAGE_CLASSIFICATIONFITTED = JslAnnoId("convnext_image_classification_fitted")
     SWIN_IMAGE_CLASSIFICATION = JslAnnoId("swin_image_classification")
     BART_TRANSFORMER = JslAnnoId("bart_transformer")
+
+    M2M100_TRANSFORMER = JslAnnoId("m2m100_transformer")
+
     INSTRUCTOR_SENTENCE_EMBEDDINGS = JslAnnoId('instructor_sentence_embeddings')
 
     MPNET_SENTENCE_EMBEDDINGS = JslAnnoId('mpnet_sentence_embeddings')
