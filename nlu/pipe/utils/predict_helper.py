@@ -1,7 +1,6 @@
 import logging
 import os
 from typing import Optional
-from typing import Optional
 import os
 import sparknlp
 from pyspark.sql.functions import monotonically_increasing_id
@@ -117,6 +116,23 @@ def predict_multi_threaded_light_pipe(pipe, data, output_level, positions, keep_
                                           get_embeddings=get_embeddings
                                           )
 
+def __output_parser(pipeline_model, data, parser_config):
+    from sparknlp_jsl.pipeline_tracer import PipelineTracer
+    from sparknlp_jsl.pipeline_output_parser import PipelineOutputParser
+
+
+    pipe_tracer = PipelineTracer(pipeline_model.vanilla_transformer_pipe)
+    results = pipeline_model.light_transformer_pipe.fullAnnotate(data)
+
+    if parser_config == '':
+        column_maps = pipe_tracer.createParserDictionary()
+        column_maps.update({"document_identifier": "Document"})
+    else:
+        column_maps = parser_config
+
+    pipeline_parser = PipelineOutputParser(column_maps)
+    output_parser = pipeline_parser.run(results)
+    return output_parser
 
 def __predict_ocr_spark(pipe, data, output_level, output_path, positions, keep_stranger_features, metadata,
                         drop_irrelevant_cols, get_embeddings):
@@ -160,21 +176,14 @@ def __predict_ocr_spark(pipe, data, output_level, output_path, positions, keep_s
     data = data.withColumn('origin_index', monotonically_increasing_id().alias('origin_index'))
 
     data = pipe.vanilla_transformer_pipe.transform(data)
-
-    if 'ImageToPdf' in str(list(pipe.values())[-1]):
-        return pipe.pythonify_spark_ocr_dataframe(data,
-                                          output_path=output_path,
-                                          file_paths=file_paths
+    return pipe.pythonify_spark_dataframe(data,
+                                          keep_stranger_features=keep_stranger_features,
+                                          output_metadata=metadata,
+                                          drop_irrelevant_cols=drop_irrelevant_cols,
+                                          positions=positions,
+                                          output_level=output_level,
+                                          get_embeddings=get_embeddings
                                           )
-    else:
-        return pipe.pythonify_spark_dataframe(data,
-                                              keep_stranger_features=keep_stranger_features,
-                                              output_metadata=metadata,
-                                              drop_irrelevant_cols=drop_irrelevant_cols,
-                                              positions=positions,
-                                              output_level=output_level,
-                                              get_embeddings=get_embeddings
-                                              )
 
 
 def __predict_audio_spark(pipe, data, output_level, positions, keep_stranger_features, metadata,
@@ -274,8 +283,8 @@ def try_update_session():
     except Exception as e:
         print(f"Error updating session: {e}")
 
-def __predict__(pipe, data, output_level, output_path, positions, keep_stranger_features, metadata, multithread,
-                drop_irrelevant_cols, return_spark_df, get_embeddings, embed_only=False,normal_pred_on_db=False):
+def __predict__(pipe, data, output_level,output_path, positions, keep_stranger_features, metadata, multithread,
+                drop_irrelevant_cols, return_spark_df, get_embeddings, parser_output, parser_config, embed_only=False,normal_pred_on_db=False):
     '''
     Annotates a Pandas Dataframe/Pandas Series/Numpy Array/Spark DataFrame/Python List strings /Python String
     :param data: Data to predict on
@@ -290,6 +299,10 @@ def __predict__(pipe, data, output_level, output_path, positions, keep_stranger_
     '''
     if output_path is None:
         output_path = []
+
+    if parser_output:
+        pipeline_model = pipe.fit()
+        return __output_parser(pipeline_model,data, parser_config)
 
     if embed_only:
         pipe.fit()
@@ -335,6 +348,7 @@ def __predict__(pipe, data, output_level, output_path, positions, keep_stranger_
 
         if not pipe.is_light_pipe_incompatible:
             pipe.__configure_light_pipe_usage__(DataConversionUtils.size_of(data), multithread)
+
 
     if pipe.contains_ocr_components and pipe.contains_audio_components:
         """ Idea:
