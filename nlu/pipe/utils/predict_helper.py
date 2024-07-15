@@ -247,7 +247,7 @@ def __db_endpoint_predict__(pipe, data):
         return __predict__(pipe, data, **params, normal_pred_on_db=True)
     else:
         # no params detect, we call again with default params
-        return __predict__(pipe, data, **PredictParams().dict(), normal_pred_on_db=True)
+        return __predict__(pipe, data, output_path=None, **PredictParams().dict(), normal_pred_on_db=True)
 
 
 def __predict_standard_spark_only_embed(pipe, data, return_spark_df):
@@ -284,7 +284,7 @@ def try_update_session():
         print(f"Error updating session: {e}")
 
 def __predict__(pipe, data, output_level,output_path, positions, keep_stranger_features, metadata, multithread,
-                drop_irrelevant_cols, return_spark_df, get_embeddings, parser_output, parser_config, embed_only=False,normal_pred_on_db=False):
+                drop_irrelevant_cols, return_spark_df, get_embeddings, parser_output=None, parser_config=False, embed_only=False,normal_pred_on_db=False):
     '''
     Annotates a Pandas Dataframe/Pandas Series/Numpy Array/Spark DataFrame/Python List strings /Python String
     :param data: Data to predict on
