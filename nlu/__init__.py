@@ -20,16 +20,6 @@ from nlu.pipe.component_resolution import *
 import pandas as pd
 pd.DataFrame.iteritems = pd.DataFrame.items
 
-def version():
-    version_path = os.path.abspath(os.path.dirname(__file__))
-    with open(os.path.join(version_path, '../VERSION'), encoding="utf-8") as version_file:
-        return version_file.read().strip()
-
-__version__ = version()
-
-def version(): return __version__
-
-
 warnings.filterwarnings("ignore")
 logger = logging.getLogger('nlu')
 logger.setLevel(logging.CRITICAL)
