@@ -1,6 +1,3 @@
-__version__ = '5.4.0'
-
-
 import nlu.utils.environment.env_utils as env_utils
 
 if not env_utils.try_import_pyspark_in_streamlit():
@@ -22,9 +19,6 @@ from nlu.pipe.component_resolution import *
 # apply hotfix
 import pandas as pd
 pd.DataFrame.iteritems = pd.DataFrame.items
-
-def version(): return __version__
-
 
 warnings.filterwarnings("ignore")
 logger = logging.getLogger('nlu')

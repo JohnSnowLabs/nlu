@@ -35,3 +35,4 @@ class DeidentificationTests(unittest.TestCase):
 
 if __name__ == "__main__":
     DeidentificationTests().test_deidentification()
+
