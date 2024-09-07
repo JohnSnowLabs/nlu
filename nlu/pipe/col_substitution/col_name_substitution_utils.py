@@ -14,9 +14,6 @@ from sparknlp.annotator import *
 
 import nlu
 from nlu.pipe.col_substitution import substitution_map_OS
-from nlu.universe.feature_universes import NLP_FEATURES
-from nlu.pipe.col_substitution import substitution_map_OS
-from nlu.pipe.col_substitution import col_substitution_OS
 import logging
 
 from nlu.pipe.extractors.extractor_base_data_classes import SparkOCRExtractorConfig
@@ -133,13 +130,31 @@ class ColSubstitutionUtils:
 
         if c.name == NLP_NODE_IDS.FINISHER:
             result_cols = c.model.getOutputCols()
-            if c.model.getIncludeMetadata():
-                result_cols = result_cols + [f'{col}_metadata' for col in result_cols]
+            result_cols = [c for c in df.columns if any(c.startswith(s) for s in result_cols)]
             return result_cols
         result_cols = []
         if isinstance(configs, SparkOCRExtractorConfig):
             # TODO better OCR-EX handling --> Col Name generator function which we use everywhere for unified col naming !!!!!
-            return ['text']
+            # return ['text']
+            for col in df.columns:
+                if 'meta_' + configs.output_col_prefix in col:
+                    base_meta_prefix = 'meta_' + configs.output_col_prefix
+                    meta_col_name = base_meta_prefix + col.split(base_meta_prefix)[-1]
+                    if meta_col_name in df.columns:
+                        # special case for overlapping names with _
+                        if col.split(base_meta_prefix)[-1].split('_')[1].isnumeric() and not \
+                                c.spark_output_column_names[0].split('_')[-1].isnumeric(): continue
+                        if col.split(base_meta_prefix)[-1].split('_')[1].isnumeric() and \
+                                c.spark_output_column_names[0].split('_')[-1].isnumeric():
+                            id1 = int(col.split(base_meta_prefix)[-1].split('_')[1])
+                            id2 = int(c.spark_output_column_names.split('_')[-1])
+                            if id1 != id2: continue
+                        result_cols.append(meta_col_name)
+                    elif c.type == AnnoTypes.CHUNK_CLASSIFIER:
+                        result_cols.append(col)
+                    else:
+                        logger.info(f"Could not find meta col for os_components={c}, col={col}. Ommiting col..")
+            return result_cols
         if isinstance(c.model, MultiDocumentAssembler):
             return [f'{NLP_FEATURES.DOCUMENT_QUESTION}_results', f'{NLP_FEATURES.DOCUMENT_QUESTION_CONTEXT}_results']
 

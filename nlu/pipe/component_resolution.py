@@ -199,8 +199,12 @@ def get_trained_component_list_for_nlp_pipe_ref(language, nlp_ref, nlu_ref, path
         # special edge case for lang detectors
         language = 'xx'
     if path is None:
-        if license_type != Licenses.open_source:
+        if license_type != Licenses.open_source and license_type != Licenses.ocr:
             pipe = PretrainedPipeline(nlp_ref, lang=language, remote_loc='clinical/models')
+            uid = pipe.model.uid
+
+        elif license_type == Licenses.ocr:
+            pipe = PretrainedPipeline(nlp_ref, lang=language, remote_loc='clinical/ocr')
             uid = pipe.model.uid
 
         else:

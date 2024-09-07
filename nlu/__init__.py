@@ -172,8 +172,10 @@ def to_nlu_pipe(nlp_pipe: Union[Pipeline, LightPipeline, PipelineModel, List], i
 
 def load(request: str = 'from_disk', path: Optional[str] = None, verbose: bool = False, gpu: bool = False,
          streamlit_caching: bool = False,
-         apple_silicon: bool = False
+         apple_silicon: bool = False,
+         get_tracer=False
          ) -> NLUPipeline:
+
     '''
     Load either a prebuild pipeline or a set of components identified by a whitespace seperated list of components
     You must call nlu.auth() BEFORE calling nlu.load() to access licensed models.
@@ -186,6 +188,7 @@ def load(request: str = 'from_disk', path: Optional[str] = None, verbose: bool =
     :param request: A NLU model_anno_obj/pipeline/component_to_resolve reference. You can request multiple components by separating them with whitespace. I.e. nlu.load('elmo bert albert')
     :return: returns a non fitted nlu pipeline object
     '''
+
     if streamlit_caching and not nlu.st_cache_enabled:
         enable_streamlit_caching()
         return nlu.load(request, path, verbose, gpu, streamlit_caching)
@@ -200,7 +203,6 @@ def load(request: str = 'from_disk', path: Optional[str] = None, verbose: bool =
     if verbose:
         enable_verbose()
     else:
-
         disable_verbose()
     try:
         if path is not None:
@@ -319,7 +321,7 @@ def load_nlu_pipe_from_hdd(pipe_path, request) -> NLUPipeline:
     If it is a component_list,  load the component_list and return it.
     If it is a singular model_anno_obj, load it to the correct AnnotatorClass and NLU component_to_resolve and then generate pipeline for it
     """
-    if is_running_in_databricks():
+    if is_running_in_databricks_runtime():
         return load_nlu_pipe_from_hdd_in_databricks(pipe_path, request)
     pipe = NLUPipeline()
     pipe.nlu_ref = request
@@ -345,8 +347,17 @@ def load_nlu_pipe_from_hdd(pipe_path, request) -> NLUPipeline:
             pipe.add(c, nlu_ref, pretrained_pipe_component=True)
         if is_nlu_uid(uid):
             data = json.loads(uid)
-            print(data)
             pipe.nlu_ref = data['0']['nlu_ref']
+            pipe.contains_ocr_components = data['0']['contains_ocr_components']
+            pipe.contains_audio_components = data['0']['contains_audio_components']
+            pipe.has_nlp_components = data['0']['has_nlp_components']
+            pipe.has_span_classifiers = data['0']['has_span_classifiers']
+            pipe.prefer_light = data['0']['prefer_light']
+            pipe.has_table_qa_models = data['0']['has_table_qa_models']
+            pipe.requires_image_format = data['0']['requires_image_format']
+            pipe.requires_binary_format = data['0']['requires_binary_format']
+            pipe.is_light_pipe_incompatible = data['0']['is_light_pipe_incompatible']
+
             for i, c in enumerate(pipe.components):
                 c.nlu_ref = data[str(i + 1)]['nlu_ref']
                 c.nlp_ref = data[str(i + 1)]['nlp_ref']

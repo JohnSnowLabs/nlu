@@ -3564,6 +3564,7 @@ class Spellbook:
             'en.classify.ag_news.longformer': 'longformer_base_sequence_classifier_ag_news',
             'en.classify.ag_news.xlnet': 'xlnet_base_sequence_classifier_ag_news',
             'en.classify.albert.ag_news': 'albert_base_sequence_classifier_ag_news',
+            'en.classify.mpnet.ukr_message': 'mpnet_sequence_classifier_ukr_message',
             'en.classify.albert.imdb': 'albert_base_sequence_classifier_imdb',
             'en.classify.bbc.roberta.by_abhishek': 'roberta_classifier_autonlp_bbc_37249301',
             'en.classify.bert': 'bert_sequence_classifier_antisemitism',
@@ -9196,6 +9197,7 @@ class Spellbook:
                'xx.embed_sentence.bert_use_cmlm_multi_base_br': 'sent_bert_use_cmlm_multi_base_br',
                'xx.embed_sentence.labse': 'labse',
                'xx.embed_sentence.xlm_roberta.base': 'sent_xlm_roberta_base',
+               'xx.m2m100_418M': 'm2m100_418M',
                'xx.en.marian.translate_to.aav': 'opus_mt_en_aav',
                'xx.en.marian.translate_to.af': 'opus_mt_en_af',
                'xx.en.marian.translate_to.afa': 'opus_mt_en_afa',
@@ -10599,6 +10601,9 @@ class Spellbook:
                'zu.stopwords': 'stopwords_zu'}}
 
     healthcare_component_alias_references = {}
+    pretrained_ocr_pipe_references = {
+        'en': {'en.image_deid': 'pdf_deid_pdf_output'}}
+
     pretrained_healthcare_pipe_references = {
         'ar': {'ar.deid.clinical': 'clinical_deidentification'
                },
@@ -10607,6 +10612,7 @@ class Spellbook:
                'de.deid.pipeline': 'german_deid_pipeline_spark24',
                'de.med_ner.deid_generic.pipeline': 'ner_deid_generic_pipeline'},
         'en': {
+            'en.image_deid' : 'image_printed_transformer_extraction',
             'en.answer_question.clinical_notes_onnx.pipeline': 'clinical_notes_qa_base_onnx_pipeline',
             'en.classify.bert_sequence.binary_rct_biobert.pipeline': 'bert_sequence_classifier_binary_rct_biobert_pipeline',
             'en.classify.bert_sequence.vop_hcp_consult.pipeline': 'bert_sequence_classifier_vop_hcp_consult_pipeline',
@@ -10631,6 +10637,8 @@ class Spellbook:
             'en.deid.clinical_wip': 'clinical_deidentification_wip',
             'en.deid.glove_augmented.pipeline': 'clinical_deidentification_glove_augmented',
             'en.deid.glove_pipeline': 'clinical_deidentification_glove',
+            'en.deid.generic_optimized.pipeline': 'clinical_deidentification_generic_optimized',
+            'en.deid.subentity_optimized.pipeline': 'clinical_deidentification_subentity_optimized',
             'en.deid.med_ner_large.pipeline': 'ner_deid_sd_large_pipeline',
             'en.deid.ner_augmented.pipeline': 'ner_deid_augmented_pipeline',
             'en.deid.ner_biobert.pipeline': 'ner_deid_biobert_pipeline',
@@ -10644,6 +10652,9 @@ class Spellbook:
             'en.explain_doc.clinical_radiology.pipeline': 'explain_clinical_doc_radiology',
             'en.explain_doc.era': 'explain_clinical_doc_era',
             'en.explain_doc.clinical_granular': 'explain_clinical_doc_granular',
+            'en.explain_doc.pipeline_vop': 'explain_clinical_doc_radiology',
+            'en.explain_doc.clinical_oncology.pipeline': 'explain_clinical_doc_oncology',
+            'en.explain_doc.clinical_generic.pipeline': 'explain_clinical_doc_generic',
             'en.icd10_icd9.mapping': 'icd10_icd9_mapping',
             'en.icd10cm.umls.mapping': 'icd10cm_umls_mapping',
             'en.icd10cm_resolver.pipeline': 'icd10cm_resolver_pipeline',
@@ -10651,6 +10662,7 @@ class Spellbook:
             'en.map_entity.icdo_to_snomed.pipe': 'icdo_snomed_mapping',
             'en.map_entity.rxnorm_to_ndc.pipe': 'rxnorm_ndc_mapping',
             'en.map_entity.rxnorm_resolver.pipe': 'rxnorm_resolver_pipeline',
+            'en.map_entity.hpo_resolver_pipe': 'hpo_resolver_pipeline',
             'en.map_entity.snomed_to_icd10cm.pipe': 'snomed_icd10cm_mapping',
             'en.map_entity.snomed_to_icdo.pipe': 'snomed_icdo_mapping',
             'en.map_entity.umls_clinical_findings_resolver': 'umls_clinical_findings_resolver_pipeline',
@@ -11307,16 +11319,22 @@ class Spellbook:
         'png2text': OCR_NODE_IDS.IMAGE2TEXT,  # Alias for img2text
         'jpg2text': OCR_NODE_IDS.IMAGE2TEXT,  # Alias for img2text
         'pdf2text': OCR_NODE_IDS.PDF2TEXT,
+        'pdf2image':OCR_NODE_IDS.PDF2IMAGE,
         'doc2text': OCR_NODE_IDS.DOC2TEXT,
         #  'image_table_detector': OCR_NODE_IDS.IMAGE_TABLE_DETECTOR,
         'image_table_cell_detector': OCR_NODE_IDS.IMAGE_TABLE_CELL_DETECTOR,
         'image_table_cell2text_table': OCR_NODE_IDS.IMAGE_TABLE_CELL2TEXT_TABLE,
+        'image_draw_regions': OCR_NODE_IDS.IMAGE_DRAW_REGIONS,
+        'position_finder': OCR_NODE_IDS.POSITION_FINDER,
+        'image2pdf': OCR_NODE_IDS.IMAGE2PDF,
         'pdf2table': OCR_NODE_IDS.PDF2TEXT_TABLE,
         'doc2table': OCR_NODE_IDS.DOC2TEXT_TABLE,
         'ppt2table': OCR_NODE_IDS.PPT2TEXT_TABLE,
         'classify.image': OCR_NODE_IDS.VISUAL_DOCUMENT_CLASSIFIER,
         'en.classify_image.tabacco': 'visual_document_classifier_tobacco3482',
-        'en.image_table_detector':'general_model_table_detection_v2'
+        'en.image_table_detector':'general_model_table_detection_v2',
+        'en.lilt_roberta_funds.v1': 'lilt_roberta_funsd_v1',
+        'visual_form_relation_extractor': OCR_NODE_IDS.FORM_RELATION_EXTRACTOR,
     }
 
     # ocr_model_references = {
@@ -16292,6 +16310,8 @@ class Spellbook:
                              'general_model_table_detection_v2': 'ImageTableDetector',
                              'image_table_cell_detector': 'ImageTableCellDetector',
                              'image_table_cell2text_table': 'ImageCellsToTextTable',
+                             'visual_form_relation_extractor':'FormRelationExtractor',
+                             'lilt_roberta_funsd_v1': 'VisualDocumentNer',
                              'instructor_large':'InstructorEmbeddings',
                              'instructor_base':'InstructorEmbeddings',
                              'initial_model': 'MPNetEmbeddings',
@@ -16647,6 +16667,7 @@ class Spellbook:
                              'mpnet_retriever_squad2': 'MPNetEmbeddings',
                              'mpnet_snli': 'MPNetEmbeddings',
                              'mpnet_snli_negatives': 'MPNetEmbeddings',
+                             'mpnet_sequence_classifier_ukr_message': 'MPNetForSequenceClassification',
                              'multiclassifierdl_hoc': 'MultiClassifierDLModel',
                              'multiclassifierdl_use_e2e': 'MultiClassifierDLModel',
                              'multiclassifierdl_use_toxic': 'MultiClassifierDLModel',
@@ -16876,6 +16897,7 @@ class Spellbook:
                              'onto_small_bert_L8_512': 'NerDLModel',
                              'openai.completion': 'OpenAICompletion',
                              'openai.embeddings': 'OpenAIEmbeddings',
+                             'm2m100_418M': 'M2M100Transformer',
                              'opus_mt_aav_en': 'MarianTransformer',
                              'opus_mt_aed_es': 'MarianTransformer',
                              'opus_mt_af_de': 'MarianTransformer',
@@ -18205,6 +18227,10 @@ class Spellbook:
                              'patentsberta_v2': 'MPNetEmbeddings',
                              'pdf2table': 'PdfToTextTable',
                              'pdf2text': 'PdfToText',
+                             'pdf2image': 'PdfToImage',
+                             'image_draw_regions': 'ImageDrawRegions',
+                             'position_finder': 'PositionFinder',
+                             'image2pdf': 'ImageToPdf',
                              'pdfsegs': 'MPNetEmbeddings',
                              'persian_w2v_cc_300d': 'WordEmbeddingsModel',
                              'personer_cc_300d': 'NerDLModel',

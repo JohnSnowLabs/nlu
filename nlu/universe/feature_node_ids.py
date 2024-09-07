@@ -107,16 +107,15 @@ class NLP_NODE_IDS:
     T5_TRANSFORMER = JslAnnoId('t5_transformer')
     VIT_IMAGE_CLASSIFICATION = JslAnnoId("vit_image_classification")
     CONVNEXT_IMAGE_CLASSIFICATION = JslAnnoId("convnext_image_classification")
+    CONVNEXT_IMAGE_CLASSIFICATIONFITTED = JslAnnoId("convnext_image_classification_fitted")
     SWIN_IMAGE_CLASSIFICATION = JslAnnoId("swin_image_classification")
     BART_TRANSFORMER = JslAnnoId("bart_transformer")
+
+    M2M100_TRANSFORMER = JslAnnoId("m2m100_transformer")
+
     INSTRUCTOR_SENTENCE_EMBEDDINGS = JslAnnoId('instructor_sentence_embeddings')
-
     MPNET_SENTENCE_EMBEDDINGS = JslAnnoId('mpnet_sentence_embeddings')
-
-
-
-
-
+    MPNET_FOR_SEQUENCE_CLASSIFICATION = JslAnnoId('mpnet_for_sequence_classification')
     DISTIL_BERT_FOR_ZERO_SHOT_CLASSIFICATION = JslAnnoId('distil_bert_zero_shot')
     XLM_ROBERTA_FOR_ZERO_SHOT_CLASSIFICATION = JslAnnoId('xlm_roberta_zero_shot')
 
@@ -212,8 +211,10 @@ class NLP_NODE_IDS:
     PARTIAL_EntityRulerApproach = JslAnnoId('PARTIAL_EntityRulerApproach')
     PARTIAL_EntityRulerModel = JslAnnoId('PARTIAL_EntityRulerModel')
     PARTIAL_TextMatcherModel = JslAnnoId('PARTIAL_TextMatcherModel')
+    PARTIAL_TextMatcherModel = JslAnnoId('PARTIAL_TextMatcherModel')
     PARTIAL_BigTextMatcher = JslAnnoId('PARTIAL_BigTextMatcher')
     PARTIAL_BigTextMatcherModel = JslAnnoId('PARTIAL_BigTextMatcherModel')
+    PARTIAL_TextMatcherInternalModel = JslAnnoId('PARTIAL_TextMatcherInternalModel')
     PARTIAL_DateMatcher = JslAnnoId('PARTIAL_DateMatcher')
     PARTIAL_MultiDateMatcher = JslAnnoId('PARTIAL_MultiDateMatcher')
     PARTIAL_RegexMatcher = JslAnnoId('PARTIAL_RegexMatcher')
@@ -317,9 +318,11 @@ class OCR_NODE_IDS:
     """All available Feature nodes in OCR
     Used to cast the pipeline dependency resolution algorithm into an abstract graph
     """
+
+    FORM_RELATION_EXTRACTOR = JslAnnoId('visual_form_relation_extractor')
     # Visual Document Understanding
     VISUAL_DOCUMENT_CLASSIFIER = JslAnnoId('visual_document_classifier')
-    VISUAL_DOCUMENT_NER = JslAnnoId('visual_document_NER')
+    VISUAL_DOCUMENT_NER = JslAnnoId('visual_document_ner')
 
     # Object Detection
     IMAGE_HANDWRITTEN_DETECTOR = JslAnnoId('image_handwritten_detector')
