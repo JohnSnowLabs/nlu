@@ -10994,7 +10994,7 @@ class Spellbook:
                                                   'en.map_entity.umls_disease_syndrome_mapper': 'umls_disease_syndrome_mapper',
                                                   'en.map_entity.umls_drug_substance_mapper': 'umls_drug_substance_mapper',
                                                   'en.map_entity.umls_major_concepts_mapper': 'umls_major_concepts_mapper',
-                                                  'en.med_ner': 'jsl_ner_wip_clinical',
+                                                  # 'en.med_ner': 'jsl_ner_wip_clinical',
                                                   'en.med_ner.abbreviation_clinical': 'ner_abbreviation_clinical',
                                                   'en.med_ner.ade.ade_healthcare': 'ner_ade_healthcare',
                                                   'en.med_ner.ade.clinical': 'ner_ade_clinical',
