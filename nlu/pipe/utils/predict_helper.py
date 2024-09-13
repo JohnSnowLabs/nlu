@@ -43,6 +43,7 @@ class PredictParams(BaseModel):
     drop_irrelevant_cols: Optional[bool] = True
     return_spark_df: Optional[bool] = False
     get_embeddings: Optional[bool] = True
+    partition: Optional[int] = 1000
 
     @staticmethod
     def has_param_cols(df: pd.DataFrame):
@@ -73,13 +74,14 @@ def get_first_anno_with_output_type(pipe, out_type):
 
 
 def __predict_standard_spark(pipe, data, output_level, positions, keep_stranger_features, metadata,
-                             drop_irrelevant_cols, return_spark_df, get_embeddings):
+                             drop_irrelevant_cols, return_spark_df, get_embeddings, partition):
     # 1. Convert data to Spark DF
     data, stranger_features, output_datatype = DataConversionUtils.to_spark_df(data, pipe.spark, pipe.raw_text_column,
                                                                                is_span_data=pipe.has_span_classifiers,
                                                                                is_tabular_qa_data=pipe.has_table_qa_models,
                                                                                )
-
+    if partition:
+        data = data.repartition(partition)
     # 3. Apply Spark Pipeline
     data = pipe.vanilla_transformer_pipe.transform(data)
 
@@ -135,7 +137,7 @@ def __output_parser(pipeline_model, data, parser_config):
     return output_parser
 
 def __predict_ocr_spark(pipe, data, output_level, output_path, positions, keep_stranger_features, metadata,
-                        drop_irrelevant_cols, get_embeddings):
+                        drop_irrelevant_cols, get_embeddings, partition):
     """
         Check if there are any OCR components in the Pipe.
         If yes, we verify data contains pointer to jsl_folder or image files.
@@ -173,6 +175,8 @@ def __predict_ocr_spark(pipe, data, output_level, output_path, positions, keep_s
     else:
         # fallback default
         data = spark.read.format("binaryFile").load(file_paths)
+    if partition:
+        data = data.repartition(partition)
     data = data.withColumn('origin_index', monotonically_increasing_id().alias('origin_index'))
 
     data = pipe.vanilla_transformer_pipe.transform(data)
@@ -187,7 +191,7 @@ def __predict_ocr_spark(pipe, data, output_level, output_path, positions, keep_s
 
 
 def __predict_audio_spark(pipe, data, output_level, positions, keep_stranger_features, metadata,
-                          drop_irrelevant_cols, get_embeddings):
+                          drop_irrelevant_cols, get_embeddings, partition=1000):
     """
         Check if there are any OCR components in the Pipe.
         If yes, we verify data contains pointer to jsl_folder or image files.
@@ -209,6 +213,8 @@ def __predict_audio_spark(pipe, data, output_level, positions, keep_stranger_fea
     file_paths = AudioDataConversionUtils.glob_files_of_accepted_type(paths, accepted_file_types)
     data = AudioDataConversionUtils.data_to_spark_audio_df(data=file_paths, sample_rate=sample_rate,
                                                            spark=sparknlp.start())
+    if partition:
+        data = data.repartition(partition)
     data = pipe.vanilla_transformer_pipe.transform(data).withColumn(
         'origin_index', monotonically_increasing_id().alias('origin_index'))
 
@@ -250,13 +256,15 @@ def __db_endpoint_predict__(pipe, data):
         return __predict__(pipe, data, output_path=None, **PredictParams().dict(), normal_pred_on_db=True)
 
 
-def __predict_standard_spark_only_embed(pipe, data, return_spark_df):
+def __predict_standard_spark_only_embed(pipe, data, return_spark_df, partition):
     # 1. Convert data to Spark DF
     data, stranger_features, output_datatype = DataConversionUtils.to_spark_df(data, pipe.spark, pipe.raw_text_column,
                                                                                is_span_data=pipe.has_span_classifiers,
                                                                                is_tabular_qa_data=pipe.has_table_qa_models,
                                                                                )
 
+    if partition:
+        data = data.repartition(partition)
     # 2. Apply Spark Pipeline
     data = pipe.vanilla_transformer_pipe.transform(data)
 
@@ -284,7 +292,8 @@ def try_update_session():
         print(f"Error updating session: {e}")
 
 def __predict__(pipe, data, output_level,output_path, positions, keep_stranger_features, metadata, multithread,
-                drop_irrelevant_cols, return_spark_df, get_embeddings, parser_output=None, parser_config=False, embed_only=False,normal_pred_on_db=False):
+                drop_irrelevant_cols, return_spark_df, get_embeddings, parser_output=None, parser_config=False, embed_only=False,normal_pred_on_db=False,
+                partition=1000):
     '''
     Annotates a Pandas Dataframe/Pandas Series/Numpy Array/Spark DataFrame/Python List strings /Python String
     :param data: Data to predict on
@@ -306,10 +315,9 @@ def __predict__(pipe, data, output_level,output_path, positions, keep_stranger_f
 
     if embed_only:
         pipe.fit()
-        return __predict_standard_spark_only_embed(pipe, data, return_spark_df)
+        return __predict_standard_spark_only_embed(pipe, data, return_spark_df, partition)
 
     if 'DB_ENDPOINT_ENV' in os.environ and not normal_pred_on_db:
-
         try_update_session()
         df = __db_endpoint_predict__(pipe,data)
         if isinstance(df, pd.DataFrame):
@@ -359,13 +367,13 @@ def __predict__(pipe, data, output_level,output_path, positions, keep_stranger_f
 
     if pipe.contains_audio_components:
         return __predict_audio_spark(pipe, data, output_level, positions, keep_stranger_features,
-                                     metadata, drop_irrelevant_cols, get_embeddings=get_embeddings)
+                                     metadata, drop_irrelevant_cols, get_embeddings=get_embeddings, partition=partition)
 
     if pipe.contains_ocr_components:
         # Ocr processing
         try:
             return __predict_ocr_spark(pipe, data, output_level, output_path, positions, keep_stranger_features,
-                                       metadata, drop_irrelevant_cols, get_embeddings=get_embeddings)
+                                       metadata, drop_irrelevant_cols, get_embeddings=get_embeddings, partition=partition)
         except Exception as err:
             logger.warning(f"Predictions Failed={err}")
             pipe.print_exception_err(err)
@@ -373,7 +381,7 @@ def __predict__(pipe, data, output_level,output_path, positions, keep_stranger_f
     if return_spark_df:
         try:
             return __predict_standard_spark(pipe, data, output_level, positions, keep_stranger_features, metadata,
-                                            drop_irrelevant_cols, return_spark_df, get_embeddings)
+                                            drop_irrelevant_cols, return_spark_df, get_embeddings, partition=partition)
         except Exception as err:
             logger.warning(f"Predictions Failed={err}")
             pipe.print_exception_err(err)
@@ -392,7 +400,7 @@ def __predict__(pipe, data, output_level,output_path, positions, keep_stranger_f
                 f"err={err}")
             try:
                 return __predict_standard_spark(pipe, data, output_level, positions, keep_stranger_features, metadata,
-                                                drop_irrelevant_cols, return_spark_df, get_embeddings)
+                                                drop_irrelevant_cols, return_spark_df, get_embeddings, partition=partition)
             except Exception as err:
                 logger.warning(f"Predictions Failed={err}")
                 pipe.print_exception_err(err)
@@ -401,7 +409,7 @@ def __predict__(pipe, data, output_level,output_path, positions, keep_stranger_f
         # Standard predict with no fallback
         try:
             return __predict_standard_spark(pipe, data, output_level, positions, keep_stranger_features, metadata,
-                                            drop_irrelevant_cols, return_spark_df, get_embeddings)
+                                            drop_irrelevant_cols, return_spark_df, get_embeddings, partition=partition)
         except NluDataParseException as err:
             logger.warning(f"Predictions Failed={err}")
             raise err

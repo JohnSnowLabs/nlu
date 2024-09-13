@@ -511,7 +511,8 @@ class NLUPipeline(dict):
                 return_spark_df=False,
                 get_embeddings=True,
                 parser_output=False,
-                parser_config=''
+                parser_config='',
+                partition=1000,
                 ):
         '''
         Annotates a Pandas Dataframe/Pandas Series/Numpy Array/Spark DataFrame/Python List strings /Python String
@@ -530,16 +531,20 @@ class NLUPipeline(dict):
         :param return_spark_df: Prediction results will be returned right after transforming with the Spark NLP pipeline
                                  This will run fully distributed in on the Spark Master, but not prettify the output dataframe
         :param get_embeddings: Whether to return embeddings or not
+        :param parser_output: Whether to return the output of the parser or not
+        :param parser_config: Configuration for the parser
+        :param partition: Number of partitions to use when processing spark dataframes
         :return:
         '''
         from nlu.pipe.utils.predict_helper import __predict__
         return __predict__(self, data, output_level, output_path, positions, keep_stranger_features, metadata, multithread,
-                           drop_irrelevant_cols, return_spark_df, get_embeddings, parser_output, parser_config)
+                           drop_irrelevant_cols, return_spark_df, get_embeddings, parser_output, parser_config, partition=partition)
 
     def predict_embeds(self,
                        data,
                        multithread=True,
                        return_spark_df=False,
+                       partition=1000,
                        ):
         '''
         Annotates a Pandas Dataframe/Pandas Series/Numpy Array/Spark DataFrame/Python List strings /Python String abd returns List of Floats or Spark-Df, only with embeddings.
@@ -549,6 +554,7 @@ class NLUPipeline(dict):
                                  This will run fully distributed in on the Spark Master, but not prettify the output dataframe
         :param return_spark_df: return Spark-DF and not collect all data into driver instead of returning list of float
         :param multithread: Use multithreaded Light-pipeline instead of spark-pipeline
+        :param partition: Number of partitions to use when processing spark dataframes
 
         :return:
         '''
@@ -556,7 +562,8 @@ class NLUPipeline(dict):
         return __predict__(self, data=data, output_level=None, output_path=None, positions=False, keep_stranger_features=False, metadata=False,
                            multithread=multithread,
                            drop_irrelevant_cols=True, return_spark_df=return_spark_df, get_embeddings=True,
-                           embed_only=True)
+                           embed_only=True,
+                           partition=partition)
 
     def print_info(self, minimal=True):
         '''
