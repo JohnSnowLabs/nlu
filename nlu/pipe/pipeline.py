@@ -553,7 +553,7 @@ class NLUPipeline(dict):
         :return:
         '''
         from nlu.pipe.utils.predict_helper import __predict__
-        return __predict__(self, data, output_level=None, positions=False, keep_stranger_features=False, metadata=False,
+        return __predict__(self, data=data, output_level=None, output_path=None, positions=False, keep_stranger_features=False, metadata=False,
                            multithread=multithread,
                            drop_irrelevant_cols=True, return_spark_df=return_spark_df, get_embeddings=True,
                            embed_only=True)
