@@ -2,6 +2,7 @@ from functools import partial
 
 from nlu.components.assertions.assertion_dl.assertion_dl import AssertionDL
 from nlu.components.assertions.assertion_log_reg.assertion_log_reg import AssertionLogReg
+from nlu.components.assertions.few_shot_assertion_classifier.few_shot_assertion_classifier import FewShotAssertionClassifierModel
 from nlu.components.chunkers.chunk_mapper.chunk_mapper import ChunkMapper
 from nlu.components.chunkers.contextual_parser.contextual_parser import ContextualParser
 from nlu.components.chunkers.default_chunker.default_chunker import DefaultChunker
@@ -4294,6 +4295,29 @@ class ComponentUniverse:
                                                                     jsl_anno_py_class=ACR.JSL_anno_HC_ref_2_py_class[
                                                                         H_A.MEDICAL_DISTILBERT_FOR_SEQUENCE_CLASSIFICATION],
                                                                     ),
+
+        H_A.FEW_SHOT_ASSERTION_CLASSIFIER: partial(NluComponent,
+                                                                    name=H_A.FEW_SHOT_ASSERTION_CLASSIFIER,
+                                                                    type=T.CHUNK_CLASSIFIER,
+                                                                    get_default_model=FewShotAssertionClassifierModel.get_default_model,
+                                                                    get_pretrained_model=FewShotAssertionClassifierModel.get_pretrained_model,
+                                                                    pdf_extractor_methods={'default': default_assertion_config,
+                                                                                          'default_full': default_full_config, },
+                                                                    pdf_col_name_substitutor=substitute_assertion_cols,
+                                                                    output_level=L.CHUNK,
+                                                                    # Handled like NER model_anno_obj
+                                                                    node=NLP_HC_FEATURE_NODES.nodes[
+                                                                        H_A.FEW_SHOT_ASSERTION_CLASSIFIER],
+                                                                    description='Custom Architecture John Snow labs developed, called MedicalDistilBertForSequenceClassification. It can load DistilBERT Models with sequence classification/regression head on top (a linear layer on top of the pooled output) e.g. for multi-class document classification tasks.',
+                                                                    provider=ComponentBackends.hc,
+                                                                    license=Licenses.hc,
+                                                                    computation_context=ComputeContexts.spark,
+                                                                    output_context=ComputeContexts.spark,
+                                                                    jsl_anno_class_id=H_A.FEW_SHOT_ASSERTION_CLASSIFIER,
+                                                                    jsl_anno_py_class=ACR.JSL_anno_HC_ref_2_py_class[
+                                                                        H_A.FEW_SHOT_ASSERTION_CLASSIFIER],
+                                                                    ),
+
 
         ######### OCR ##############
         O_A.IMAGE2TEXT: partial(NluComponent,
