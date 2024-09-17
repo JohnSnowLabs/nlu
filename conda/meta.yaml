@@ -1,0 +1,34 @@
+package:
+  name: nlu
+  version: {{ environ.get('CODE_VERSION', '') }}
+
+app:
+  entry: nlu
+  summary: The power of 15000+ State-of-the-art pre-trained NLP models in 300 languages with 1 line of Python code.
+
+source:
+  path: ../conda_src
+
+build:
+  noarch: generic
+  number: 0
+  script: "python3 -m pip install . --no-deps -vv"
+
+requirements:
+  build:
+    - python
+  run:
+    - python
+    - pyspark==3.0.1
+    - spark-nlp >=5.2.0
+    - numpy
+    - pyarrow >=0.16.0
+    - pandas >=1.3.5
+    - dataclasses
+about:
+  home: https://nlu.johnsnowlabs.com/
+  license: Apache License 2.0
+  license_family: APACHE
+  license_url: https://github.com/JohnSnowLabs/nlu/blob/master/LICENSE
+  description: John Snow Labs' NLU is a Python library for applying state-of-the-art text mining, directly on any dataframe, with a single line of code. As a facade of the award-winning Spark NLP library, it comes with hundreds of pretrained models in tens of languages - all production-grade, scalable, and trainable.
+  summary: The The power of 15000+ State-of-the-art pre-trained NLP models in 300 languages with 1 line of Python code.  
