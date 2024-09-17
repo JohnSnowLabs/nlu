@@ -1,5 +1,3 @@
-import nlu
-
 from codecs import open
 from os import path
 
@@ -9,6 +7,10 @@ here = path.abspath(path.dirname(__file__))
 
 with open(path.join(here, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
+
+# Get the version from file
+with open(path.join(here, 'VERSION')) as version_file:
+    version = f"{version_file.read().strip()}"
 
 REQUIRED_PKGS = [
     'spark-nlp>=5.0.2',
@@ -22,7 +24,7 @@ setup(
 
     name='nlu',
 
-    version=nlu.version(),
+    version=version,
 
     description='John Snow Labs NLU provides state of the art algorithms for NLP&NLU with 20000+ of pretrained models in 200+ languages. It enables swift and simple development and research with its powerful Pythonic and Keras inspired API. It is powerd by John Snow Labs powerful Spark NLP library.',
 
