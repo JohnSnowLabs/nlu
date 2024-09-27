@@ -300,6 +300,7 @@ class AnnoClassRef:
         HC_A_N.MEDICAL_DISTILBERT_FOR_SEQUENCE_CLASSIFICATION: 'MedicalDistilBertForSequenceClassification',
         HC_A_N.ENTITY_CHUNK_EMBEDDING: 'EntityChunkEmbeddings',
         HC_A_N.ZERO_SHOT_RELATION_EXTRACTION: 'ZeroShotRelationExtractionModel',
+        HC_A_N.FEW_SHOT_ASSERTION_CLASSIFIER: 'FewShotAssertionClassifierModel'
 
     }
     JSL_anno_OCR_ref_2_py_class: Dict[JslAnnoId, JslAnnoPyClass] = {

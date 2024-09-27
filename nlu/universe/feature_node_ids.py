@@ -313,6 +313,7 @@ class NLP_HC_NODE_IDS:  # or Mode Node?
     MEDICAL_SUMMARIZER = JslAnnoId('med_summarizer')
     MEDICAL_TEXT_GENERATOR = JslAnnoId('med_text_generator')
     MEDICAL_QUESTION_ANSWERING = JslAnnoId('med_question_answering')
+    FEW_SHOT_ASSERTION_CLASSIFIER = JslAnnoId('few_shot_assertion_classifier')
 
 class OCR_NODE_IDS:
     """All available Feature nodes in OCR
