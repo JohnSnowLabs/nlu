@@ -1,4 +1,4 @@
-
+ 
 # NLU: The Power of Spark NLP, the Simplicity of Python
 John Snow Labs' NLU is a Python library for applying state-of-the-art text mining, directly on any dataframe, with a single line of code.
 As a facade of the award-winning Spark NLP library, it comes with **1000+** of pretrained models in **100+**, all production-grade, scalable, and trainable, with **everything in 1 line of code.**
