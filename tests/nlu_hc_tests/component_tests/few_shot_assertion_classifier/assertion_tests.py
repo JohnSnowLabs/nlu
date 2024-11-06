@@ -7,7 +7,7 @@ import sys
 import unittest
 import nlu
 
-# os.environ["PYTHONPATH"] = "F:/Work/repos/nlu_new/nlu"
+os.environ["PYTHONPATH"] = "F:/Work/repos/nlu_new/nlu"
 os.environ['PYSPARK_PYTHON'] = sys.executable
 os.environ['PYSPARK_DRIVER_PYTHON'] = sys.executable
 from johnsnowlabs import nlp, visual

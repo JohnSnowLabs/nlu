@@ -70,6 +70,7 @@ class NLP_NODE_IDS:
     SENTENCE_DETECTOR = JslAnnoId('sentence_detector')
     SENTENCE_DETECTOR_DL = JslAnnoId('sentence_detector_dl')
     SENTENCE_EMBEDDINGS_CONVERTER = JslAnnoId('sentence_embeddings_converter')
+    MXBAI_EMBEDDINGS = JslAnnoId('mxbai_embeddings')
     STEMMER = JslAnnoId('stemmer')
     STOP_WORDS_CLEANER = JslAnnoId('stop_words_cleaner')
     SYMMETRIC_DELETE_SPELLCHECKER = JslAnnoId('symmetric_delete_spellchecker')

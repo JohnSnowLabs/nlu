@@ -96,6 +96,7 @@ from nlu.components.embeddings.word2vec.word2vec import Word2Vec
 from nlu.components.embeddings.xlm.xlm import XLM
 from nlu.components.embeddings.xlnet.spark_nlp_xlnet import SparkNLPXlnet
 from nlu.components.embeddings_chunks.chunk_embedder.chunk_embedder import ChunkEmbedder
+from nlu.components.embeddings.mxbai.MxbaiEmbeddings import MxbaiEmbeddings
 from nlu.components.lemmatizers.lemmatizer.spark_nlp_lemmatizer import SparkNLPLemmatizer
 from nlu.components.matchers.regex_matcher.regex_matcher import RegexMatcher
 from nlu.components.normalizers.document_normalizer.spark_nlp_document_normalizer import SparkNLPDocumentNormalizer
@@ -1988,6 +1989,49 @@ class ComponentUniverse:
                                                  is_storage_ref_producer=True,
                                                  has_storage_ref=True
                                                  ),
+
+        A.MXBAI_EMBEDDINGS: partial(NluComponent,
+                                                 name=A.MXBAI_EMBEDDINGS,
+                                                 type=T.DOCUMENT_EMBEDDING,
+                                                 get_default_model=MxbaiEmbeddings.get_default_model,
+                                                 pdf_extractor_methods={'default': default_sentence_embedding_config,
+                                                                        'default_full': default_full_config, },
+                                                 pdf_col_name_substitutor=substitute_sent_embed_cols,
+                                                 output_level=L.INPUT_DEPENDENT_DOCUMENT_EMBEDDING,
+                                                 node=NLP_FEATURE_NODES.nodes[A.MXBAI_EMBEDDINGS],
+                                                 description='Converts Word Embeddings to Sentence/Document Embeddings',
+                                                 provider=ComponentBackends.open_source,
+                                                 license=Licenses.open_source,
+                                                 computation_context=ComputeContexts.spark,
+                                                 output_context=ComputeContexts.spark,
+                                                 jsl_anno_class_id=A.MXBAI_EMBEDDINGS,
+                                                 jsl_anno_py_class=ACR.JSL_anno2_py_class[
+                                                     A.MXBAI_EMBEDDINGS],
+                                                 is_storage_ref_producer=True,
+                                                 has_storage_ref=True
+                                                 ),
+
+        A.E5_SENTENCE_EMBEDDINGS: partial(NluComponent,
+                                          name=A.E5_SENTENCE_EMBEDDINGS,
+                                          type=T.DOCUMENT_EMBEDDING,
+                                          get_default_model=E5.get_default_model,
+                                          get_pretrained_model=E5.get_pretrained_model,
+                                          pdf_extractor_methods={'default': default_sentence_embedding_config,
+                                                                 'default_full': default_full_config, },
+                                          pdf_col_name_substitutor=substitute_sent_embed_cols,
+                                          output_level=L.INPUT_DEPENDENT_DOCUMENT_EMBEDDING,
+                                          node=NLP_FEATURE_NODES.nodes[A.E5_SENTENCE_EMBEDDINGS],
+                                          description='Sentence-level embeddings using E5. E5, a weakly supervised text embedding model that can generate text embeddings tailored to any task (e.g., classification, retrieval, clustering, text evaluation, etc.).',
+                                          provider=ComponentBackends.open_source,
+                                          license=Licenses.open_source,
+                                          computation_context=ComputeContexts.spark,
+                                          output_context=ComputeContexts.spark,
+                                          jsl_anno_class_id=A.E5_SENTENCE_EMBEDDINGS,
+                                          jsl_anno_py_class=ACR.JSL_anno2_py_class[A.E5_SENTENCE_EMBEDDINGS],
+                                          has_storage_ref=True,
+                                          is_storage_ref_producer=True,
+                                          ),
+
         A.STEMMER: partial(NluComponent,
                            name=A.STEMMER,
                            type=T.TOKEN_NORMALIZER,

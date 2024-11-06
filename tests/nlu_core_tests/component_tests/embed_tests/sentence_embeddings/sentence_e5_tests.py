@@ -1,7 +1,17 @@
+import sys
+import os
+# sys.path.append(os.getcwd())
 import unittest
+import nlu
 
-from nlu import *
+os.environ["PYTHONPATH"] = "F:/Work/repos/nlu_new/nlu"
+os.environ['PYSPARK_PYTHON'] = sys.executable
+os.environ['PYSPARK_DRIVER_PYTHON'] = sys.executable
+from johnsnowlabs import nlp, visual
 
+# nlp.install(json_license_path="license.json")
+
+nlp.start()
 
 class TestE5SentenceEmbeddings(unittest.TestCase):
     def test_e5_embeds(self):

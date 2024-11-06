@@ -97,6 +97,7 @@ class AnnoClassRef:
         A_N.ALBERT_EMBEDDINGS: 'AlbertEmbeddings',
         A_N.ALBERT_FOR_TOKEN_CLASSIFICATION: 'AlbertForTokenClassification',
         A_N.BERT_EMBEDDINGS: 'BertEmbeddings',
+        A_N.MXBAI_EMBEDDINGS: 'MxbaiEmbeddings',
         A_N.BERT_FOR_TOKEN_CLASSIFICATION: 'BertForTokenClassification',
         A_N.BERT_SENTENCE_EMBEDDINGS: 'BertSentenceEmbeddings',
         A_N.DISTIL_BERT_EMBEDDINGS: 'DistilBertEmbeddings',
