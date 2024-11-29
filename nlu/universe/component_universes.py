@@ -2009,7 +2009,7 @@ class ComponentUniverse:
                                                      A.MXBAI_EMBEDDINGS],
                                                  is_storage_ref_producer=True,
                                                  has_storage_ref=True
-                                                 ),git 
+                                                 ),
         A.STEMMER: partial(NluComponent,
                            name=A.STEMMER,
                            type=T.TOKEN_NORMALIZER,
