@@ -3,6 +3,8 @@ from typing import Dict
 from nlu.universe.atoms import JslAnnoId, JslAnnoPyClass
 from nlu.universe.feature_node_ids import OCR_NODE_IDS, NLP_NODE_IDS, NLP_HC_NODE_IDS
 
+import sparknlp_jsl.llm
+
 
 class AnnoClassRef:
     # Reference of every Annotator class name in OS/HC/OCR
@@ -13,7 +15,7 @@ class AnnoClassRef:
     HC_A_N = NLP_HC_NODE_IDS
     # Map AnnoID to PyCLass
     JSL_anno2_py_class: Dict[JslAnnoId, JslAnnoPyClass] = {
-
+        A_N.ALBERT_FOR_ZERO_SHOT_CLASSIFICATION: 'AlbertForZeroShotClassification',
         A_N.E5_SENTENCE_EMBEDDINGS: 'E5Embeddings',
         A_N.BGE_SENTENCE_EMBEDDINGS: 'BGEEmbeddings',
         A_N.INSTRUCTOR_SENTENCE_EMBEDDINGS: 'InstructorEmbeddings',
@@ -105,7 +107,7 @@ class AnnoClassRef:
         A_N.DISTIL_BERT_FOR_ZERO_SHOT_CLASSIFICATION: 'DistilBertForZeroShotClassification',
 
         A_N.DEBERTA_FOR_ZERO_SHOT_CLASSIFICATION: 'DeBertaForZeroShotClassification',
-        
+
         A_N.BERT_FOR_SEQUENCE_CLASSIFICATION: 'BertForSequenceClassification',
         A_N.XLM_ROBERTA_FOR_ZERO_SHOT_CLASSIFICATION: 'XlmRoBertaForZeroShotClassification',
         A_N.BERT_FOR_ZERO_SHOT_CLASSIFICATION: 'BertForZeroShotClassification',
@@ -133,7 +135,7 @@ class AnnoClassRef:
         A_N.ALBERT_FOR_SEQUENCE_CLASSIFICATION: 'AlbertForSequenceClassification',
         A_N.XLNET_FOR_SEQUENCE_CLASSIFICATION: 'XlnetForSequenceClassification',
         A_N.GPT2: 'GPT2Transformer',
-        A_N.OPENAI_COMPLETION : 'OpenAICompletion',
+        A_N.OPENAI_COMPLETION: 'OpenAICompletion',
         A_N.OPENAI_EMBEDDINGS: 'OpenAIEmbeddings',
         A_N.DEBERTA_WORD_EMBEDDINGS: 'DeBertaEmbeddings',
         A_N.DEBERTA_FOR_TOKEN_CLASSIFICATION: 'DeBertaForTokenClassification',
@@ -254,7 +256,7 @@ class AnnoClassRef:
     JSL_anno_HC_ref_2_py_class: Dict[JslAnnoId, JslAnnoPyClass] = {
         HC_A_N.MEDICAL_QUESTION_ANSWERING: 'MedicalQuestionAnswering',
         HC_A_N.MEDICAL_TEXT_GENERATOR: 'MedicalTextGenerator',
-        HC_A_N.MEDICAL_SUMMARIZER:'MedicalSummarizer',
+        HC_A_N.MEDICAL_SUMMARIZER: 'MedicalSummarizer',
         HC_A_N.ZERO_SHOT_NER: 'ZeroShotNerModel',
         HC_A_N.CHUNK_MAPPER_MODEL: 'ChunkMapperModel',
         HC_A_N.ASSERTION_DL: 'AssertionDLModel',
@@ -322,7 +324,7 @@ class AnnoClassRef:
         OCR_NODE_IDS.IMAGE_SPLIT_REGIONS: 'ImageSplitRegions',
         OCR_NODE_IDS.VISUAL_DOCUMENT_NER: 'VisualDocumentNer',
         OCR_NODE_IDS.HOCR_TOKENIZER: 'HocrTokenizer',
-        OCR_NODE_IDS.FORM_RELATION_EXTRACTOR:  'FormRelationExtractor',
+        OCR_NODE_IDS.FORM_RELATION_EXTRACTOR: 'FormRelationExtractor',
         OCR_NODE_IDS.IMAGE_DRAW_REGIONS: 'ImageDrawRegions',
         OCR_NODE_IDS.POSITION_FINDER: 'PositionFinder',
         OCR_NODE_IDS.IMAGE2PDF: 'ImageToPdf',
