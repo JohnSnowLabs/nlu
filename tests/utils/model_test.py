@@ -264,6 +264,7 @@ nlp_tests = [
                                     param_val='translate English to French')]),
     NluTest(nlu_ref="match.chunks", lang='en', test_group='matcher', input_data_type='generic',
             library='open_source'),
+    NluTest(nlu_ref="en.classify_zero_shot.albert.onnx", lang='en', test_group='chunker', input_data_type='generic', library='open_source'),
 
 ]
 
@@ -276,5 +277,9 @@ one_per_lib = [
             library='ocr'),
 ]
 
+
+quick_test = [
+    NluTest(nlu_ref="en.classify_zero_shot.abert.onnx", lang='en', test_group='chunker', input_data_type='generic', library='open_source'),
+]
 
 all_tests = ocr_tests + medical_tests + nlp_tests

@@ -7,6 +7,7 @@ from nlu.components.chunkers.chunk_mapper.chunk_mapper import ChunkMapper
 from nlu.components.chunkers.contextual_parser.contextual_parser import ContextualParser
 from nlu.components.chunkers.default_chunker.default_chunker import DefaultChunker
 from nlu.components.chunkers.ngram.ngram import NGram
+from nlu.components.classifiers.albert_zero_shot_classification.albert_zero_shot import AlbertZeroShotClassifier
 from nlu.components.classifiers.asr.wav2Vec import Wav2Vec
 from nlu.components.classifiers.asr_hubert.hubert import Hubert
 from nlu.components.classifiers.asr_whisper.whisper import Whisper
@@ -96,6 +97,7 @@ from nlu.components.embeddings.word2vec.word2vec import Word2Vec
 from nlu.components.embeddings.xlm.xlm import XLM
 from nlu.components.embeddings.xlnet.spark_nlp_xlnet import SparkNLPXlnet
 from nlu.components.embeddings_chunks.chunk_embedder.chunk_embedder import ChunkEmbedder
+from nlu.components.embeddings.mxbai.MxbaiEmbeddings import MxbaiEmbeddings
 from nlu.components.lemmatizers.lemmatizer.spark_nlp_lemmatizer import SparkNLPLemmatizer
 from nlu.components.matchers.regex_matcher.regex_matcher import RegexMatcher
 from nlu.components.normalizers.document_normalizer.spark_nlp_document_normalizer import SparkNLPDocumentNormalizer
@@ -1988,6 +1990,27 @@ class ComponentUniverse:
                                                  is_storage_ref_producer=True,
                                                  has_storage_ref=True
                                                  ),
+
+        A.MXBAI_EMBEDDINGS: partial(NluComponent,
+                                                 name=A.MXBAI_EMBEDDINGS,
+                                                 type=T.DOCUMENT_EMBEDDING,
+                                                 get_default_model=MxbaiEmbeddings.get_default_model,
+                                                 pdf_extractor_methods={'default': default_sentence_embedding_config,
+                                                                        'default_full': default_full_config, },
+                                                 pdf_col_name_substitutor=substitute_sent_embed_cols,
+                                                 output_level=L.INPUT_DEPENDENT_DOCUMENT_EMBEDDING,
+                                                 node=NLP_FEATURE_NODES.nodes[A.MXBAI_EMBEDDINGS],
+                                                 description='Converts Word Embeddings to Sentence/Document Embeddings',
+                                                 provider=ComponentBackends.open_source,
+                                                 license=Licenses.open_source,
+                                                 computation_context=ComputeContexts.spark,
+                                                 output_context=ComputeContexts.spark,
+                                                 jsl_anno_class_id=A.MXBAI_EMBEDDINGS,
+                                                 jsl_anno_py_class=ACR.JSL_anno2_py_class[
+                                                     A.MXBAI_EMBEDDINGS],
+                                                 is_storage_ref_producer=True,
+                                                 has_storage_ref=True
+                                                 ),
         A.STEMMER: partial(NluComponent,
                            name=A.STEMMER,
                            type=T.TOKEN_NORMALIZER,
@@ -3149,6 +3172,29 @@ class ComponentUniverse:
                                                             jsl_anno_class_id=A.DISTIL_BERT_FOR_ZERO_SHOT_CLASSIFICATION,
                                                             jsl_anno_py_class=ACR.JSL_anno2_py_class[
                                                                 A.DISTIL_BERT_FOR_ZERO_SHOT_CLASSIFICATION],
+                                                            ),
+
+
+        A.ALBERT_FOR_ZERO_SHOT_CLASSIFICATION: partial(NluComponent,
+                                                            name=A.ALBERT_FOR_ZERO_SHOT_CLASSIFICATION,
+                                                            type=T.TRANSFORMER_SEQUENCE_CLASSIFIER,
+                                                            get_default_model=AlbertZeroShotClassifier.get_default_model,
+                                                            get_pretrained_model=AlbertZeroShotClassifier.get_pretrained_model,
+                                                            pdf_extractor_methods={
+                                                                'default': default_seq_classifier_config,
+                                                                'default_full': default_full_config, },
+                                                            pdf_col_name_substitutor=substitute_seq_bert_classifier_cols,
+                                                            output_level=L.INPUT_DEPENDENT_DOCUMENT_CLASSIFIER,
+                                                            node=NLP_FEATURE_NODES.nodes[
+                                                                A.ALBERT_FOR_ZERO_SHOT_CLASSIFICATION],
+                                                            description='ALBERT Zero Shot Classifier.',
+                                                            provider=ComponentBackends.open_source,
+                                                            license=Licenses.open_source,
+                                                            computation_context=ComputeContexts.spark,
+                                                            output_context=ComputeContexts.spark,
+                                                            jsl_anno_class_id=A.ALBERT_FOR_ZERO_SHOT_CLASSIFICATION,
+                                                            jsl_anno_py_class=ACR.JSL_anno2_py_class[
+                                                                A.ALBERT_FOR_ZERO_SHOT_CLASSIFICATION],
                                                             ),
 
 

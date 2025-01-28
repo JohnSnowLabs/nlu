@@ -70,6 +70,7 @@ class NLP_NODE_IDS:
     SENTENCE_DETECTOR = JslAnnoId('sentence_detector')
     SENTENCE_DETECTOR_DL = JslAnnoId('sentence_detector_dl')
     SENTENCE_EMBEDDINGS_CONVERTER = JslAnnoId('sentence_embeddings_converter')
+    MXBAI_EMBEDDINGS = JslAnnoId('mxbai_embeddings')
     STEMMER = JslAnnoId('stemmer')
     STOP_WORDS_CLEANER = JslAnnoId('stop_words_cleaner')
     SYMMETRIC_DELETE_SPELLCHECKER = JslAnnoId('symmetric_delete_spellchecker')
@@ -117,6 +118,7 @@ class NLP_NODE_IDS:
     MPNET_SENTENCE_EMBEDDINGS = JslAnnoId('mpnet_sentence_embeddings')
     MPNET_FOR_SEQUENCE_CLASSIFICATION = JslAnnoId('mpnet_for_sequence_classification')
     DISTIL_BERT_FOR_ZERO_SHOT_CLASSIFICATION = JslAnnoId('distil_bert_zero_shot')
+    ALBERT_FOR_ZERO_SHOT_CLASSIFICATION = JslAnnoId('albert_bert_zero_shot')
     XLM_ROBERTA_FOR_ZERO_SHOT_CLASSIFICATION = JslAnnoId('xlm_roberta_zero_shot')
 
     DEBERTA_FOR_ZERO_SHOT_CLASSIFICATION = JslAnnoId('deberta_zero_shot')
