@@ -4,9 +4,9 @@ import sys
 import pandas as pd
 import sparknlp
 
-import _secrets as secrets
 import nlu
-from test_data import get_test_data
+from .test_data import get_test_data
+from . import _secrets as secrets
 
 os.environ['PYSPARK_PYTHON'] = sys.executable
 os.environ['PYSPARK_DRIVER_PYTHON'] = sys.executable

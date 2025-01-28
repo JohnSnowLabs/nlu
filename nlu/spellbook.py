@@ -2438,6 +2438,9 @@ class Spellbook:
                'el.stopwords.iso': 'stopwords_iso'},
         'eml': {'eml.embed.w2v_cc_300d': 'w2v_cc_300d'},
         'en': {
+
+            'en.classify_zero_shot.albert.onnx' : 'albert_zero_shot_classifier_onnx',
+            'en.classify_zero_shot.albert.tf' : 'albert_zero_shot_classifier_tf',
             'en.distilbert.zero_shot_classifier': 'distilbert_base_zero_shot_classifier_uncased_mnli',
             'en.deberta.zero_shot_classifier': 'deberta_base_zero_shot_classifier_mnli_anli_v3',
             'en.classify_image.convnext.tiny': 'image_classifier_convnext_tiny_224_local',
@@ -11526,7 +11529,10 @@ class Spellbook:
     # Map every nlp_ref to an Annotator class. Language Agnostic and includes HC+OS
     # For models with no pretrained weight, i.e. most OCR annotators, it maps AnnoId to Class
 
-    nlp_ref_to_anno_class = {'579_stmodel_product_rem_v3a': 'MPNetEmbeddings',
+    nlp_ref_to_anno_class = {
+                            'albert_zero_shot_classifier_onnx': 'AlbertForZeroShotClassification',
+                            'albert_zero_shot_classifier_tf': 'AlbertForZeroShotClassification',
+                            '579_stmodel_product_rem_v3a': 'MPNetEmbeddings',
                              'abbreviation_category_mapper': 'ChunkMapperModel',
                              'abbreviation_mapper': 'ChunkMapperModel',
                              'abbreviation_mapper_augmented': 'ChunkMapperModel',
